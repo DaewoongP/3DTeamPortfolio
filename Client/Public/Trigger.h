@@ -16,10 +16,16 @@ class CTrigger final : public CGameObject
 public:
 	typedef struct tagTriggerDesc
 	{
+		// 본인의 충돌을 위한 태그
 		_char szCollisionTag[MAX_PATH] = "";
+		// 상대방의 뭐랑 충돌할지
 		_tchar szOtherTag[MAX_PATH] = TEXT("");
+		// 사이즈
 		_float3	vTriggerSize;
+		// 포지션
 		_float3	vTriggerWorldPos;
+		// 충돌하면 이 트리거를 죽일지 살려둘지 선택
+		_bool	isCollisionToDead = { false };
 	}TRIGGERDESC;
 
 private:
@@ -35,12 +41,14 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
+	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 
 private:
 	CRigidBody*			m_pRigidBody = { nullptr };
 
 private:
 	_bool				m_isCollision = { false };
+	_bool				m_isCollToDead = { false };
 	_tchar				m_szOtherTag[MAX_PATH] = TEXT("");
 
 #ifdef _DEBUG

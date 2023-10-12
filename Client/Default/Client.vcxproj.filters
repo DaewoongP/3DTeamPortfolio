@@ -613,9 +613,6 @@
     <Filter Include="02. GameObject\02. Enemy\05. DarkWizard\Weapon">
       <UniqueIdentifier>{231c744f-ab40-44fe-8fe7-d4cd81fb4189}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\10. Trigger">
-      <UniqueIdentifier>{27de4cc5-7089-4e2c-9a0b-777722be03fa}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\02. Enemy\04. Dragon">
       <UniqueIdentifier>{0af7f112-5794-49f9-b566-5e0282856103}</UniqueIdentifier>
     </Filter>
@@ -1275,7 +1272,7 @@
       <Filter>99. Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Trigger.h">
-      <Filter>02. GameObject\10. Trigger</Filter>
+      <Filter>02. GameObject\07. Trigger</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1873,7 +1870,7 @@
       <Filter>01. Levels\98. Static</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Trigger.cpp">
-      <Filter>02. GameObject\10. Trigger</Filter>
+      <Filter>02. GameObject\07. Trigger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -41,13 +41,23 @@ void CTrigger::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	if (wcswcs(CollisionEventDesc.pOtherCollisionTag, m_szOtherTag))
 	{
 		m_isCollision = true;
-		Set_ObjEvent(OBJ_DEAD);
+		if (true == m_isCollToDead)
+			Set_ObjEvent(OBJ_DEAD);
+	}
+}
+
+void CTrigger::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
+{
+	if (wcswcs(CollisionEventDesc.pOtherCollisionTag, m_szOtherTag))
+	{
+		m_isCollision = false;
 	}
 }
 
 HRESULT CTrigger::Add_Components(TRIGGERDESC* pTriggerDesc)
 {
 	lstrcpy(m_szOtherTag, pTriggerDesc->szOtherTag);
+	m_isCollToDead = pTriggerDesc->isCollisionToDead;
 
 	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
 	RigidBodyDesc.isStatic = true;
