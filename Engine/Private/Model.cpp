@@ -490,7 +490,7 @@ HRESULT CModel::Bind_Notify(const _uint& iAnimIndex, const wstring& wstrNotifyTa
 HRESULT CModel::Bind_Notify(const wstring& wstrAnimIndex, const wstring& wstrNotifyTag, function<void()> Func, ANIMTYPE eType)
 {
 	_uint iAnimationIndex = { 0 };
-	iAnimationIndex = Find_Animation_Index(wstrAnimIndex);
+	iAnimationIndex = Find_Animation_Index(wstrAnimIndex, eType);
 
 	return Bind_Notify(iAnimationIndex, wstrNotifyTag, Func, eType);
 }

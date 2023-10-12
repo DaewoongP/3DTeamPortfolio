@@ -3,23 +3,20 @@
 
 BEGIN(Client)
 
-class CRollState :
+class CUseItemState :
     public CStateMachine
 {
-    enum BLINK
-    {
-        BLINK_START,
-        BLINK_END
-    };
 public:
-    struct tagRollStateDesc
+    typedef struct tagUseItemDesc
     {
-        _bool IsBlink;
-    };
+        ITEM_ID eItem_Id = { ITEM_ID_END };
+        function<void()> funcPotion = { nullptr };
+    }USEITEMDESC;
+
 private:
-    explicit CRollState(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
-    explicit CRollState(const CRollState& rhs);
-    virtual ~CRollState() = default;
+    explicit CUseItemState(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
+    explicit CUseItemState(const CUseItemState& rhs);
+    virtual ~CUseItemState() = default;
 
 public:
     //Get,Set
@@ -37,16 +34,11 @@ public:
 
     virtual void Bind_Notify();
 
-
-private:
-    _bool m_isBlink = { true };
-    BLINK m_eBlink = { BLINK_END };
 private:
     void Go_Idle();
 
-
 public:
-    static CRollState* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
+    static CUseItemState* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
     virtual CComposite* Clone(void* pArg) override;
     virtual void Free() override;
 };

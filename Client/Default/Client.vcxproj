@@ -195,6 +195,7 @@
     <ClInclude Include="..\Public\EnergyBall.h" />
     <ClInclude Include="..\Public\Level_Sanctum.h" />
     <ClInclude Include="..\public\PotionStationCamera.h" />
+    <ClInclude Include="..\Public\UseItemState.h" />
     <ClInclude Include="..\Public\UI_Damage.h" />
     <ClInclude Include="..\Public\UI_Store.h" />
     <ClInclude Include="..\Public\UI_DamageFont.h" />
@@ -444,6 +445,7 @@
     <ClCompile Include="..\Private\EnergyBall.cpp" />
     <ClCompile Include="..\Private\Level_Sanctum.cpp" />
     <ClCompile Include="..\private\PotionStationCamera.cpp" />
+    <ClCompile Include="..\Private\UseItemState.cpp" />
     <ClCompile Include="..\Private\UI_Damage.cpp" />
     <ClCompile Include="..\Private\UI_Store.cpp" />
     <ClCompile Include="..\Private\UI_DamageFont.cpp" />

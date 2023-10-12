@@ -95,15 +95,15 @@ HRESULT CPlayer_Camera::Initialize(void* pArg)
 
 	m_vAtStandard = _float3(0.0f, 0.0f, 1.0f);
 
-	m_vEyeStandard = _float3(sinf(XMConvertToRadians(30.0f)), 0.0f, -cosf(XMConvertToRadians(30.f)));
+	m_vEyeStandard = _float3(sinf(XMConvertToRadians(45.0f)), 0.0f, -cosf(XMConvertToRadians(45.f)));
 
-	m_fEyeMaxDistance = m_fAtMaxDistance = 2.0f;
+	m_fEyeMaxDistance = m_fAtMaxDistance = 1.5f;
 	m_fEyeMinDistance = m_fAtMinDistance = 0.2f;
 
 
 	m_fTimeSpeed = 10.0f;
 
-	m_fCameraHeight = 1.0f;
+	m_fCameraHeight = 1.2f;
 
 	Ready_Animation_Camera();
 

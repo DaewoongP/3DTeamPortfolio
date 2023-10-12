@@ -19,11 +19,16 @@ HRESULT CWeapon_Player_Wand::Initialize_Prototype()
 
 HRESULT CWeapon_Player_Wand::Initialize(void* pArg)
 {
-	if (FAILED(__super::Initialize(pArg)))
+	CWEAPON_PLAYER_WAND_DESC* pCweapon_Player_Wand_Desc = static_cast<CWEAPON_PLAYER_WAND_DESC*>(pArg);
+	
+	if (FAILED(__super::Initialize(&pCweapon_Player_Wand_Desc->ParentMatrixDesc)))
 		return E_FAIL;
 
 	if (FAILED(Add_Components(pArg)))
 		return E_FAIL;
+
+
+	m_pisLightOn = pCweapon_Player_Wand_Desc->pisLightOn;
 
 	//매쉬에서 원점과 가장 먼 지점을 찾는 로직.(지팡이 끝 지점을 얻어내기 위함임.)
 	vector<class CMesh*>* meshVec = m_pModelCom->Get_MeshesVec();
@@ -131,20 +136,25 @@ void CWeapon_Player_Wand::Do_Lumos(_float fTimeDelta)
 {
 	DelayTime += fTimeDelta;
 	BEGININSTANCE;
-	if (false == m_isLightOn && pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
+	/*if (false == *m_pisLightOn)
 	{
-		m_isLightOn = true;
 		AccTime = 0.f;
 		DelayTime = 0.0f;
+	}
+	else if (true == *m_pisLightOn)
+	{
+		AccTime = 0.f;
+		DelayTime = 0.0f;
+	}*/
+	if (m_isPreLight != *m_pisLightOn)
+	{
+		AccTime = 0.f;
+		DelayTime = 0.0f;
+	}
 
-	}
-	else if (true == m_isLightOn && pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
-	{
-		m_isLightOn = false;
-		AccTime = 0.f;
-		DelayTime = 0.0f;
-	}
-	if (m_isLightOn && DelayTime >= 0.5f)
+	m_isPreLight = *m_pisLightOn;
+
+	if (*m_pisLightOn && DelayTime >= 0.1f)
 	{
 		CLight::LIGHTDESC LightInfo;
 		ZEROMEM(&LightInfo);
@@ -189,7 +199,7 @@ void CWeapon_Player_Wand::Do_Lumos(_float fTimeDelta)
 				m_pVaultLight->Set_LightDesc(LightInfo);
 		}
 	}
-	else if (false == m_isLightOn && DelayTime >= 0.5f)
+	else if (false == *m_pisLightOn && DelayTime >= 0.1f)
 	{
 		CLight::LIGHTDESC LightInfo;
 		ZEROMEM(&LightInfo);
