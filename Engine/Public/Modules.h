@@ -32,7 +32,6 @@ public:
 public:
 	_float		fAge = { 0.f };
 	_float		fGravityAccel = { 0.f };
-	_float4     vAccel = _float4();
 	_float4     vVelocity = _float4();
 	_float4x4   WorldMatrix = _float4x4();
 	_float		fGenTime = { 0.f };
@@ -180,7 +179,6 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 	_bool isUseMeshColors = { true }; // 버퍼의 꼭지점이 가진 색상을 입자와 섞는다.
 	_float fNormalOffset = { 0.f }; // 0인 경우 메쉬의 노말벡터의 꼬리에서 시작, 오프셋 값 만큼 시작위치는 노말 벡터 방향으로 이동한다.
 	
-
 	_bool isLengthRange = { false }; //--------
 	_float2 vLength = { 0.f, 5.f };
 
@@ -224,6 +222,7 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 
 	_bool isChase = { false };
 	_bool isCameraAxis = { false };
+	_float3 vShapeRotation = { _float3() };
 };
 
 struct ENGINE_DLL ROTATION_OVER_LIFETIME_MODULE : public MODULE
@@ -357,44 +356,37 @@ struct ENGINE_DLL VELOCITY_OVER_LIFETIME : public MODULE
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
 	void Action(PARTICLE_IT& _particle_iter, const _float4x4* pLocalMatrix, _float fTimeDelta);
-	void Reset(PARTICLE_IT& _particle_iter);
+	void Reset(PARTICLE_IT& _particle_iter, const _float4x4* pLocalMatrix);
 	void Restart();
 
+public:
+	// Space
 	string strSpace = { "Local" }; // Local, World
+
 	// Linear
 	_float3 vLinear = { _float3() };
 	_float3 vLinearMin = { _float3() };
 	_float3 vLinearMax = { _float3() };
-	CEase::EASE eLinearEaseX;
-	CEase::EASE eLinearEaseY;
-	CEase::EASE eLinearEaseZ;
-	
-	string strLinearOption = { "Constant" }; // Constant, Range, Curve
-	
-	_float3 vLinearStartCurve3D = { _float3() };
-	_float3 vLinearEndCurve3D = { _float3() };
+	string strLinearOption = { "Constant" }; // Constant, Range
 
 	// Orbital
 	_float3 vOrbital = { _float3() };
 	_float3 vOrbitalMin = { _float3() };
 	_float3 vOrbitalMax = { _float3() };
-	CEase::EASE eOrbitalEase;
+	string strOrbitalOption = { "Constant" }; // Constant, Range
 
 	// Offset
 	_float3 vOffset = { _float3() };
-	_float3 vOffsetMin = { _float3() };
-	_float3 vOffsetMax = { _float3() };
-	CEase::EASE eOffsetEase;
 
 	// Radial
-	_float fRadial;
-	_float2 vRadialRange;
-	CEase::EASE eRadialEase;
+	_float fRadial = { 0.f };
+	_float2 vRadialRange = { 0.f, 0.f };
+	string strRadialOption = { "Constant" }; // Constant, Range
 
 	// SpeedModifier
-	_float fSpeedModifier;
-	_float2 vSpeedModifierRange;
-	CEase::EASE eSpeedModifierEase;
+	_float fSpeedModifier = { 1.f };
+	_float2 vSpeedModifierRange = { 1.f, 1.f };
+	string strSpeedModifierOption = { "Constant" }; // Constant, Range
 };
 
 struct ENGINE_DLL RENDERER_MODULE : public MODULE

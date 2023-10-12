@@ -6,6 +6,8 @@ matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D		g_Texture;
 texture2D		g_ClipTexture;
 texture2D		g_GradientTexture;
+texture2D		g_NoiseTexture;
+float			g_fTime;
 float			g_fClipThreshold = 0.33f;
 float			g_fCamFar;
 int				g_iClipChannel;
@@ -171,6 +173,51 @@ PS_NONBLEND_OUT PS_NONBLEND(PS_IN In)
 	
 	return Out;
 }
+
+PS_OUT PS_SMOKE(PS_IN In)
+{
+	PS_OUT Out = (PS_OUT)0;
+
+	//float4 vNormalColor = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	//float2 vGradientUV = float2(vNormalColor.r, 0);
+	//float4 vGradientColor = g_GradientTexture.Sample(LinearSampler, vGradientUV);
+	//Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+	//
+	//float4 vNoiseValue = g_NoiseTexture.Sample(LinearSampler, In.vTexUV);
+	//float2 vOffsetNoise;
+
+
+
+	//TilingAndOffset_float(In.vTexUV, 1.f, g_fTime * 0.15f, vOffsetNoise);
+	//vector vClipTexture = g_ClipTexture.Sample(LinearSampler, vOffsetNoise);
+
+	//if (0 == g_iClipChannel)
+	//	Out.vColor.a = vClipTexture.r;
+	//else if (1 == g_iClipChannel)
+	//	Out.vColor.a = vClipTexture.g;
+	//else if (2 == g_iClipChannel)
+	//	Out.vColor.a = vClipTexture.b;
+	//else if (3 == g_iClipChannel)
+	//	Out.vColor.a = vClipTexture.a;
+
+
+	//Out.vColor.a *= vWisps2.r;
+
+	//Out.vColor *= (In.vColor);
+	//// r는 색상 피킹용도
+	//Out.vColor *= (vGradientColor);
+	//// g는 세기용도
+	//Out.vColor *= 1 / (1 - vNormalColor.g);
+	//// b는 모름
+
+	//if (Out.vColor.a < g_fClipThreshold)
+	//{
+	//	discard;
+	//}
+
+	return Out;
+}
+
 technique11		DefaultTechnique
 {
 	pass Default
@@ -228,6 +275,18 @@ technique11		DefaultTechnique
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader = compile ps_5_0 PS_MAIN();
     }
+
+	pass Smoke
+	{
+		SetRasterizerState(RS_Cull_None);
+		SetDepthStencilState(DSS_Depth_Disable, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+		DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+		PixelShader = compile ps_5_0 PS_SMOKE();
+	}
 }
 
 

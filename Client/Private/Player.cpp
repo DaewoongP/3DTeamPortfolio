@@ -1218,6 +1218,8 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		// m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::INVISIBILITY_POTION);
 		// m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::MAXIMA_POTION);
 		// m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::THUNDERBREW_POTION);
+		wstring temp = TEXT("Drink_Potion_Throw");
+		m_pCustomModel->Change_Animation(temp);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
@@ -1243,8 +1245,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_TROLL_BOGEYS);
 		m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_SHRIVELFIG);
 
-		//wstring temp = TEXT("Drink_Potion_Throw");
-		//m_pCustomModel->Change_Animation(temp);
+
 	}
 #endif //_DEBUG
 

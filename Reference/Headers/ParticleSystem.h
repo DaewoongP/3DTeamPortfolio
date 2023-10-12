@@ -75,12 +75,11 @@ public:
 	EMISSION_MODULE&				Get_EmissionModuleRef() { return m_EmissionModuleDesc; }
 	SHAPE_MODULE&					Get_ShapeModuleRef() { return m_ShapeModuleDesc; }
 	RENDERER_MODULE&				Get_RendererModuleRef() { return m_RendererModuleDesc; }
-	VELOCITY_OVER_LIFETIME& Get_VelocityOverLifetimeModuleRef() { return m_VelocityOverLifeTimeModuleDesc; }
+	VELOCITY_OVER_LIFETIME&			Get_VelocityOverLifetimeModuleRef() { return m_VelocityOverLifeTimeModuleDesc; }
 	COLOR_OVER_LIFETIME&			Get_ColorOverLifetimeModuleRef() { return m_ColorOverLifeTimeModuleDesc; }
 	SIZE_OVER_LIFETIME&				Get_SizeOverLifetimeModuleRef() { return m_SizeOverLifeTimeModuleDesc; }
 	ROTATION_OVER_LIFETIME_MODULE&	Get_RotationOverLifetimeModuleRef() { return m_RotationOverLifetimeModuleDesc; }
 
-	
 public:
 	void Play(_float3 vPosition = _float3());
 	void Stop();
@@ -88,6 +87,7 @@ public:
 	// Stop vs Disable
 	// Stop : 새로운 파티클의 생성을 막는다.(Alive와 Delay에 남은 파티클들이 여전히 연산을 진행하고있음.)
 	// Disable : 파티클 객체를 비활성화 시킨다.(Tick과 Late Tick을 강제로 멈춤)
+
 public:
 	void Enable();
 	void Enable(_float3 vPos);
@@ -147,7 +147,7 @@ protected:
 	CTexture* m_pClipTexture = { nullptr }; // 알파테스트에 사용될 텍스처
 	CTexture* m_pGradientTexture = { nullptr }; // 알파테스트에 사용될 텍스처
 	CTexture* m_pNormalTexture = { nullptr }; // 텍스처시트에 사용될 텍스처
-	CTexture* m_pDistortionTexture = { nullptr }; // 디스토션에 사용될 텍스처
+	CTexture* m_pNoiseTexture = { nullptr }; // 노이즈에 사용될 텍스처
 	CVIBuffer_Rect_Particle_Instance* m_pBuffer = { nullptr };
 	CShader* m_pShader = { nullptr };
 	CModel* m_pModel = { nullptr };

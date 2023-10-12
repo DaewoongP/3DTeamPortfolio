@@ -695,7 +695,6 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-
 	CUI::UIDESC UIDesc;
 	ZEROMEM(&UIDesc);
 	UIDesc.vCombinedXY = _float2(0.f, 0.f);

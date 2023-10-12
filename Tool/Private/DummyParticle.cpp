@@ -13,7 +13,6 @@ CDummyParticle::CDummyParticle(ID3D11Device* _pDevice, ID3D11DeviceContext* _pCo
 CDummyParticle::CDummyParticle(const CDummyParticle& _rhs)
 	: CParticleSystem(_rhs)
 	, vShapePosition(_rhs.vShapePosition)
-	, vShapeRotation(_rhs.vShapeRotation)
 	, vShapeScale(_rhs.vShapeScale)
 {
 }
@@ -54,6 +53,10 @@ HRESULT CDummyParticle::Initialize(void* _pArg)
 	m_pNoiseStrengthOptionComboBox = CComboBox::Create(Generate_Hashtag(true).data(), "Strength Option", { "Constant", "Range", "Curve"}, "Constant");
 	m_pNoiseStrengthCurveEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Easing", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
 	m_pVelocitySpaceCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Space", { "Local", "World" });
+	m_pLinearOptionCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Linear Option", { "Constant", "Range" });
+	m_pOrbitalOptionCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Orbital Option", { "Constant", "Range" });
+	m_pRadialOptionCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Radial Option", { "Constant", "Range" });
+	m_pSpeedModifierOptionCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Speed Modifier Option", { "Constant", "Range" });
 	//CComboBox::Create(Generate_Hashtag(true).data(), "xvclk", CEase::asdfED, "vsd");
 
 	m_pAlphaTextureIFD = CImageFileDialog::Create(m_pDevice, "SelectTexture2D");
@@ -405,6 +408,13 @@ void CDummyParticle::ShapeModule_TreeNode(CEffect_Window* pEffectWindow)
 				pEffectWindow->Table_CheckBox("CameraAxis", "ckjv939jdjcvcsxv", &m_ShapeModuleDesc.isCameraAxis);
 			}
 
+			if ("Edge" == strShape)
+			{
+				pEffectWindow->Table_DragFloat("Length", "ck93jkdkf", &m_ShapeModuleDesc.vLength.x);
+				m_ShapeModuleDesc.strPhiMode = m_pPhiModeCombo->Tick(CComboBox::FLAG::TABLE);
+				pEffectWindow->Table_DragFloat("   Spread", "cijiflk239", &m_ShapeModuleDesc.fPhiSpread, 0.01f, 0.f, 1.f);
+			}
+
 			// ---------------------------------------------------------------
 			pEffectWindow->Table_Void();
 
@@ -431,32 +441,30 @@ void CDummyParticle::ShapeModule_TreeNode(CEffect_Window* pEffectWindow)
 			{
 				_float4x4 TranslationMatrix = _float4x4::MatrixTranslation(vShapePosition);
 				_float4x4 RotationMatrix = _float4x4::MatrixFromQuaternion(XMQuaternionRotationRollPitchYaw(
-					XMConvertToRadians(vShapeRotation.x),
-					XMConvertToRadians(vShapeRotation.y),
-					XMConvertToRadians(vShapeRotation.z)));
+					XMConvertToRadians(m_ShapeModuleDesc.vShapeRotation.x),
+					XMConvertToRadians(m_ShapeModuleDesc.vShapeRotation.y),
+					XMConvertToRadians(m_ShapeModuleDesc.vShapeRotation.z)));
 				_float4x4 ScaleMatrix = _float4x4::MatrixScale(vShapeScale);
 				m_ShapeModuleDesc.ShapeMatrix = ScaleMatrix * RotationMatrix * TranslationMatrix;
 			}
 
-			if (pEffectWindow->Table_DragXYZ("Rotation", "vioc4ijdfg", &vShapeRotation))
+			if (pEffectWindow->Table_DragXYZ("Rotation", "vioc4ijdfg", &m_ShapeModuleDesc.vShapeRotation))
 			{
 				_float4x4 TranslationMatrix = _float4x4::MatrixTranslation(vShapePosition);
 				_float4x4 RotationMatrix = _float4x4::MatrixFromQuaternion(XMQuaternionRotationRollPitchYaw(
-					XMConvertToRadians(vShapeRotation.x),
-					XMConvertToRadians(vShapeRotation.y),
-					XMConvertToRadians(vShapeRotation.z)));
+					XMConvertToRadians(m_ShapeModuleDesc.vShapeRotation.x),
+					XMConvertToRadians(m_ShapeModuleDesc.vShapeRotation.y),
+					XMConvertToRadians(m_ShapeModuleDesc.vShapeRotation.z)));
 				_float4x4 ScaleMatrix = _float4x4::MatrixScale(vShapeScale);
 				m_ShapeModuleDesc.ShapeMatrix = ScaleMatrix * RotationMatrix * TranslationMatrix;
-
-
 			}
 			if (pEffectWindow->Table_DragXYZ("Scale", "xciv8348kd", &vShapeScale))
 			{
 				_float4x4 TranslationMatrix = _float4x4::MatrixTranslation(vShapePosition);
 				_float4x4 RotationMatrix = _float4x4::MatrixFromQuaternion(XMQuaternionRotationRollPitchYaw(
-					XMConvertToRadians(vShapeRotation.x),
-					XMConvertToRadians(vShapeRotation.y),
-					XMConvertToRadians(vShapeRotation.z)));
+					XMConvertToRadians(m_ShapeModuleDesc.vShapeRotation.x),
+					XMConvertToRadians(m_ShapeModuleDesc.vShapeRotation.y),
+					XMConvertToRadians(m_ShapeModuleDesc.vShapeRotation.z)));
 				_float4x4 ScaleMatrix = _float4x4::MatrixScale(vShapeScale);
 				m_ShapeModuleDesc.ShapeMatrix = ScaleMatrix * RotationMatrix * TranslationMatrix;
 			}
@@ -496,8 +504,61 @@ void CDummyParticle::VelocityOverLifeTime_TreeNode(CEffect_Window* pEffectWindow
 		{
 			ImGui::TableNextRow();
 
-			pEffectWindow->Table_DragXYZ("Linear", "ivj939kdlk", &VelocityModule.vLinear);
 			VelocityModule.strSpace = m_pVelocitySpaceCombo->Tick(CComboBox::TABLE);
+
+			// Linear
+			pEffectWindow->Table_Void();
+			VelocityModule.strLinearOption = m_pLinearOptionCombo->Tick(CComboBox::TABLE);
+			if ("Constant" == VelocityModule.strLinearOption)
+			{
+				pEffectWindow->Table_DragXYZ("Linear", "ivj939kdlk", &VelocityModule.vLinear);
+			}
+			else
+			{
+				pEffectWindow->Table_DragXYZ("Linear Min", "ck893jdkcm", &VelocityModule.vLinearMin);
+				pEffectWindow->Table_DragXYZ("Linear Max", "ckiz939ksd", &VelocityModule.vLinearMax);
+			}
+
+			// Orbital
+			pEffectWindow->Table_Void();
+			VelocityModule.strOrbitalOption = m_pOrbitalOptionCombo->Tick(CComboBox::TABLE);
+			if ("Constant" == VelocityModule.strLinearOption)
+			{
+				pEffectWindow->Table_DragXYZ("Orbit", "vkjsdfijfe", &VelocityModule.vOrbital, 0.01f, -FLT_MAX, FLT_MAX);
+			}
+			else
+			{
+				pEffectWindow->Table_DragXYZ("Orbit Min", "dkcj93jdxcv", &VelocityModule.vOrbitalMin);
+				pEffectWindow->Table_DragXYZ("Orbit Max", "dkdkkckck90", &VelocityModule.vOrbitalMax);
+			}
+
+			pEffectWindow->Table_DragXYZ("Offset", "kc838jdkcx", &VelocityModule.vOffset, 0.01f, -FLT_MAX, FLT_MAX);
+
+			// Radial
+			pEffectWindow->Table_Void();
+			VelocityModule.strRadialOption = m_pRadialOptionCombo->Tick(CComboBox::TABLE);
+			if ("Constant" == VelocityModule.strLinearOption)
+			{
+				pEffectWindow->Table_DragFloat("Radial", "9839jkfi4g", &VelocityModule.fRadial, 0.01f, -FLT_MAX, FLT_MAX);
+			}
+			else
+			{
+				pEffectWindow->Table_DragFloat("Radial Min", "ckk939kdcv", &VelocityModule.vRadialRange.x);
+				pEffectWindow->Table_DragFloat("Radial Max", "kpiuri9321", &VelocityModule.vRadialRange.y);
+			}
+
+			// Speed Modifier
+			pEffectWindow->Table_Void();
+			VelocityModule.strSpeedModifierOption = m_pSpeedModifierOptionCombo->Tick(CComboBox::TABLE);
+			if ("Constant" == VelocityModule.strLinearOption)
+			{
+				pEffectWindow->Table_DragFloat("Speed Modifier", "kcv893jdf", &VelocityModule.fSpeedModifier);
+			}
+			else
+			{
+				pEffectWindow->Table_DragFloat("Speed Min", "xclvkj93jd", &VelocityModule.vSpeedModifierRange.x);
+				pEffectWindow->Table_DragFloat("Speed Max", "9c993ikdck", &VelocityModule.vSpeedModifierRange.y);
+			}
 
 			ImGui::EndTable();
 		}
@@ -558,7 +619,7 @@ void CDummyParticle::RendererModule_TreeNode(CEffect_Window* pEffectWindow)
 				{
 					string strFilePath = m_pDistortionTextureIFD->Get_FilePathName();
 					fs::path fsFilePath = ToRelativePath(strFilePath.data());
-					ChangeTexture(&m_pDistortionTexture, m_RendererModuleDesc.wstrDistortionTexture, fsFilePath.wstring().data());
+					ChangeTexture(&m_pNoiseTexture, m_RendererModuleDesc.wstrDistortionTexture, fsFilePath.wstring().data());
 					// ../../Resources/Effect/Default_Particle.png;
 					////////
 				}
@@ -887,7 +948,6 @@ void CDummyParticle::Load_After()
 {
 	Restart();
 	m_ShapeModuleDesc.ShapeMatrix.Decompose(vShapeScale, vShapeQuaternion, vShapePosition);
-	vShapeRotation = QuaternionToEuler(vShapeQuaternion);
 	RemakeBuffer(m_MainModuleDesc.iMaxParticles);
 	Resize_Container(m_MainModuleDesc.iMaxParticles);
 	m_pShapeCombo->Update_Current_Item(m_ShapeModuleDesc.strShape);
@@ -1028,6 +1088,11 @@ void CDummyParticle::Free(void)
 	Safe_Release(m_pNoiseStrengthOptionComboBox);
 	Safe_Release(m_pNoiseStrengthCurveEaseCombo);
 	Safe_Release(m_pVelocitySpaceCombo);
+	Safe_Release(m_pLinearOptionCombo);
+	Safe_Release(m_pOrbitalOptionCombo);
+	Safe_Release(m_pRadialOptionCombo);
+	Safe_Release(m_pSpeedModifierOptionCombo);
+
 	Safe_Release(m_pPassComboBox);
 	for (auto& pEaseCombo : m_pEaseCombo)
 		Safe_Release(pEaseCombo);

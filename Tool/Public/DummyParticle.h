@@ -82,7 +82,7 @@ public:
 
 private:
 	_float3 vShapePosition = { _float3() };
-	_float3 vShapeRotation = {  };
+	
 	_float3 vShapeScale = { 2.f, 2.f, 2.f };
 	Quaternion vShapeQuaternion = { Quaternion() };
 
@@ -109,6 +109,10 @@ private:
 	class CComboBox* m_pNoiseStrengthOptionComboBox = { nullptr };
 	class CComboBox* m_pNoiseStrengthCurveEaseCombo = { nullptr };
 	class CComboBox* m_pVelocitySpaceCombo = { nullptr };
+	class CComboBox* m_pLinearOptionCombo = { nullptr };
+	class CComboBox* m_pOrbitalOptionCombo = { nullptr };
+	class CComboBox* m_pRadialOptionCombo = { nullptr };
+	class CComboBox* m_pSpeedModifierOptionCombo = { nullptr };
 
 	class CImageFileDialog* m_pMaterialTextureIFD = { nullptr };
 	class CImageFileDialog* m_pAlphaTextureIFD = { nullptr };
