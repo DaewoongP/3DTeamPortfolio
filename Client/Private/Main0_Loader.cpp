@@ -231,6 +231,8 @@ HRESULT CMain0_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 
 HRESULT CMain0_Loader::Loading_For_Vault(LEVELID eLevelID)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	/* For.Prototype_GameObject_MeshEffect*/
 	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Cloister_MeshEffect"),
 		CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Cloister/Cloister.ME")))))
