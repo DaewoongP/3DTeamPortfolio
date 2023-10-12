@@ -762,8 +762,8 @@ void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 			//{
 			//	_float3 vLength = m_ShapeModuleDesc.fPhiSpread * _float3(-1.f, 0.f, 0.f);
 			//	vRightPos += 
-			//	
-			//	
+			// 	
+			// 	
 			//}
 		}
 		
@@ -1031,6 +1031,7 @@ CGameObject* CParticleSystem::Clone(void* _pArg)
 void CParticleSystem::Free()
 {
 	__super::Free();
+
 	if (true == m_isCloned)
 	{
 		Safe_Release(m_pRenderer);

@@ -34,7 +34,7 @@
 #include "UI_Group_SKillTap.h"
 #include "UI_Farming.h"
 #include "UI_Dynamic_Back.h"
-#include "UI_Shop.h"
+
 #pragma endregion UI
 
 #pragma region Effects
@@ -249,21 +249,6 @@ HRESULT CMain0_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
 
-	try /* Failed Check Add_Prototype*/
-	{
-		/* For.Prototype_GameObject_MeshEffect*/
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Shop"),
-			CUI_Shop::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_UI_Shop");
-	}
-	catch (const _tchar* pErrorTag)
-	{
-		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
-		wstrErrorMSG += pErrorTag;
-		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
-		__debugbreak();
-		return E_FAIL;
-	}
 
 	return S_OK;
 }
