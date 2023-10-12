@@ -115,6 +115,29 @@ HRESULT CLevel_Smith::Ready_Lights()
 	return S_OK;
 }
 
+HRESULT CLevel_Smith::Ready_UI(const _tchar* pLayerTag)
+{
+	BEGININSTANCE;
+
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SMITH, TEXT("Prototype_GameObject_UI_Store"), pLayerTag, TEXT("GameObject_UI_Store"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Store)");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
 HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 {
 	std::lock_guard<std::mutex> lock(mtx);

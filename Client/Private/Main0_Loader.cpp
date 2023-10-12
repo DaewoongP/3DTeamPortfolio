@@ -34,6 +34,7 @@
 #include "UI_Group_SKillTap.h"
 #include "UI_Farming.h"
 #include "UI_Dynamic_Back.h"
+
 #pragma endregion UI
 
 #pragma region Effects
@@ -247,6 +248,10 @@ HRESULT CMain0_Loader::Loading_For_GreatHall(LEVELID eLevelID)
 
 HRESULT CMain0_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 {
+	if (nullptr == m_pGameInstance)
+		return E_FAIL;
+
+
 	return S_OK;
 }
 

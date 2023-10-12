@@ -62,6 +62,8 @@ HRESULT MAIN_MODULE::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &isAutoRandomSeed, sizeof isAutoRandomSeed, &dwByte, nullptr);
 	WriteFile(hFile, strStopAction.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	WriteFile(hFile, &isDirectionRotation, sizeof(_bool), &dwByte, nullptr);
+	WriteFile(hFile, &isStartColorRange, sizeof(isStartColorRange), &dwByte, nullptr);
+	WriteFile(hFile, &vStartColor2, sizeof(vStartColor2), &dwByte, nullptr);
 
 	CloseHandle(hFile);
 
@@ -123,6 +125,8 @@ HRESULT MAIN_MODULE::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	strStopAction = szBuffer;
 	ReadFile(hFile, &isDirectionRotation, sizeof isDirectionRotation, &dwByte, nullptr);
+	ReadFile(hFile, &isStartColorRange, sizeof(isStartColorRange), &dwByte, nullptr);
+	ReadFile(hFile, &vStartColor2, sizeof(vStartColor2), &dwByte, nullptr);
 	CloseHandle(hFile);
 
 	return S_OK;
@@ -373,6 +377,7 @@ HRESULT SHAPE_MODULE::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &fLoopPhi, sizeof(fLoopPhi), &dwByte, nullptr);
 	WriteFile(hFile, &fLoopTheta, sizeof(fLoopTheta), &dwByte, nullptr);
 	WriteFile(hFile, &isCameraAxis, sizeof(isCameraAxis), &dwByte, nullptr);
+	WriteFile(hFile, &vShapeRotation, sizeof(vShapeRotation), &dwByte, nullptr);
 
 	CloseHandle(hFile);
 	return S_OK;
@@ -453,6 +458,8 @@ HRESULT SHAPE_MODULE::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &fLoopPhi, sizeof(fLoopPhi), &dwByte, nullptr);
 	ReadFile(hFile, &fLoopTheta, sizeof(fLoopTheta), &dwByte, nullptr);
 	ReadFile(hFile, &isCameraAxis, sizeof(isCameraAxis), &dwByte, nullptr);
+	ReadFile(hFile, &vShapeRotation, sizeof(vShapeRotation), &dwByte, nullptr);
+
 	CloseHandle(hFile);
 	return S_OK;
 }
@@ -560,7 +567,6 @@ HRESULT RENDERER_MODULE::Load(const _tchar* _pDirectoyPath)
 	return S_OK;
 }
 
-
 HRESULT VELOCITY_OVER_LIFETIME::Save(const _tchar* _pDirectoyPath)
 {
 	fs::path fsFilePath = _pDirectoyPath;
@@ -584,65 +590,185 @@ HRESULT VELOCITY_OVER_LIFETIME::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &vLinear, sizeof(vLinear), &dwByte, nullptr);
 	WriteFile(hFile, &vLinearMin, sizeof(vLinearMin), &dwByte, nullptr);
 	WriteFile(hFile, &vLinearMax, sizeof(vLinearMax), &dwByte, nullptr);
-	//WriteFile(hFile, &eLinearEase, sizeof(eLinearEase), &dwByte, nullptr);
-
-
+	WriteFile(hFile, strSpace.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, strLinearOption.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, &vOrbital, sizeof(vOrbital), &dwByte, nullptr);
+	WriteFile(hFile, &vOrbitalMin, sizeof(vOrbitalMin), &dwByte, nullptr);
+	WriteFile(hFile, &vOrbitalMin, sizeof(vOrbitalMin), &dwByte, nullptr);
+	WriteFile(hFile, strOrbitalOption.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, &vOffset, sizeof(vOffset), &dwByte, nullptr);
+	WriteFile(hFile, &fRadial, sizeof(fRadial), &dwByte, nullptr);
+	WriteFile(hFile, &vRadialRange, sizeof(vRadialRange), &dwByte, nullptr);
+	WriteFile(hFile, strRadialOption.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, &fSpeedModifier, sizeof(fRadial), &dwByte, nullptr);
+	WriteFile(hFile, &vSpeedModifierRange, sizeof(vSpeedModifierRange), &dwByte, nullptr);
+	WriteFile(hFile, strSpeedModifierOption.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 
 	CloseHandle(hFile);
 	return S_OK;
 }
 HRESULT VELOCITY_OVER_LIFETIME::Load(const _tchar* _pDirectoyPath)
 {
+	fs::path fsFilePath = _pDirectoyPath;
+	fsFilePath = fsFilePath / TEXT("VelocityOverLifeTimeModule.ptc");
+	if (false == fs::exists(fsFilePath))
+		return S_OK;
+
+	HANDLE hFile = CreateFile(fsFilePath.wstring().data()
+		, GENERIC_READ
+		, 0
+		, 0
+		, OPEN_EXISTING
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	_ulong dwByte = 0;
+
+	_tchar wszBuffer[MAX_PATH];
+	_char szBuffer[MAX_PATH];
+
+	__super::Load(hFile, dwByte);
+
+	ReadFile(hFile, &vLinear, sizeof(vLinear), &dwByte, nullptr);
+	ReadFile(hFile, &vLinearMin, sizeof(vLinearMin), &dwByte, nullptr);
+	ReadFile(hFile, &vLinearMax, sizeof(vLinearMax), &dwByte, nullptr);
+	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	strSpace = szBuffer;
+	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	strLinearOption = szBuffer;
+	ReadFile(hFile, &vOrbital, sizeof(vOrbital), &dwByte, nullptr);
+	ReadFile(hFile, &vOrbitalMin, sizeof(vOrbitalMin), &dwByte, nullptr);
+	ReadFile(hFile, &vOrbitalMin, sizeof(vOrbitalMin), &dwByte, nullptr);
+	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	strOrbitalOption = szBuffer;
+	ReadFile(hFile, &vOffset, sizeof(vOffset), &dwByte, nullptr);
+	ReadFile(hFile, &fRadial, sizeof(fRadial), &dwByte, nullptr);
+	ReadFile(hFile, &vRadialRange, sizeof(vRadialRange), &dwByte, nullptr);
+	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	strRadialOption = szBuffer;
+	ReadFile(hFile, &fSpeedModifier, sizeof(fRadial), &dwByte, nullptr);
+	ReadFile(hFile, &vSpeedModifierRange, sizeof(vSpeedModifierRange), &dwByte, nullptr);
+	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	strSpeedModifierOption = szBuffer;
+
+	CloseHandle(hFile);
 	return S_OK;
 }
-void VELOCITY_OVER_LIFETIME::Action(PARTICLE_IT& _particle_iter, _float fTimeDelta)
+void VELOCITY_OVER_LIFETIME::Action(PARTICLE_IT& _particle_iter, const _float4x4* pLocalMatrix, _float fTimeDelta)
 {
 	if (false == isActivate)
 		return;
+	_float3 vRight, vUp, vLook, vPos;
+	_float3 vOrbitCenter, vOrbitVelocity, vParticlePos, vRadial;
+	_float3 vOrbitCenterDir;
+	
+	// 필요한 지역변수들 값 계산
+	vRight = pLocalMatrix->Right();
+	vUp = pLocalMatrix->Up();
+	vLook = pLocalMatrix->Look();
+	vPos = pLocalMatrix->Translation();
 
+	// 구심점 계산
+	vOrbitCenter = vPos - _particle_iter->WorldMatrix.Translation() + vOffset;
+	vOrbitCenter.Normalize(vOrbitCenterDir);
+	vParticlePos = _particle_iter->WorldMatrix.Translation();
 
+	// Linear 계산
+	if ("Local" == strSpace)
+	{
+		_float3 vNormalRight, vNormalUp, vNormalLook;
+		vRight.Normalize(vNormalRight);
+		vUp.Normalize(vNormalUp);
+		vLook.Normalize(vNormalLook);
+		
+		// Orbit 계산
+		vOrbitVelocity =
+			(vOrbital.x * vNormalRight.Cross(vOrbitCenterDir) +
+			vOrbital.y * vNormalUp.Cross(vOrbitCenterDir) +
+			vOrbital.z * vNormalLook.Cross(vOrbitCenterDir)) * fTimeDelta;
+	}
+	else // World
+	{
+		// Orbit 계산
+		vOrbitVelocity =
+			(vOrbital.x * _float3(1.f, 0.f, 0.f).Cross(vOrbitCenterDir) +
+			vOrbital.y * _float3(0.f, 1.f, 0.f).Cross(vOrbitCenterDir) +
+			vOrbital.z * _float3(0.f, 0.f, 1.f).Cross(vOrbitCenterDir)) * fTimeDelta;
+	}
 
-	_particle_iter->vVelocity += vLinear.TransNorm() * fTimeDelta;
+	// Radial 적용
+	vRadial = -1.f * vOrbitCenterDir * fRadial * fTimeDelta;
 
+	// Orbit 적용
+	vParticlePos += (vRadial + vOrbitVelocity) * fSpeedModifier;
 
-
-
-	_particle_iter->vVelocity += vLinear.TransNorm() * fTimeDelta;
+	// 위치 적용
+	_particle_iter->WorldMatrix.Translation(vParticlePos);
 }
 void VELOCITY_OVER_LIFETIME::Restart()
 {
 
-
 }
-void VELOCITY_OVER_LIFETIME::Reset(PARTICLE_IT& _particle_iter)
+void VELOCITY_OVER_LIFETIME::Reset(PARTICLE_IT& _particle_iter, const _float4x4* pLocalMatrix)
 {
-	_particle_iter->vAccel = { _float4() };
+	if (false == isActivate)
+		return;
 
-	if ("World" == strSpace)
+	// 자동으로 0,0,0으로 초기화됨.
+	_float3 vRight, vUp, vLook;
+	_float3 vNormalRight, vNormalUp, vNormalLook;
+	_float3 vVelocity;
+
+	// 필요한 지역변수들 값 계산
+	vRight = pLocalMatrix->Right();
+	vUp = pLocalMatrix->Up();
+	vLook = pLocalMatrix->Look();
+	vRight.Normalize(vNormalRight);
+	vUp.Normalize(vNormalUp);
+	vLook.Normalize(vNormalLook);
+
+	// SpeedModifier계산
+	if ("Range" == strSpeedModifierOption)
+	{
+		fSpeedModifier = Random_Generator(vSpeedModifierRange.x, vSpeedModifierRange.y);
+	}
+
+	// Velocity 계산
+	if ("Local" == strSpace) // Local일 경우
 	{
 		if ("Constant" == strLinearOption)
 		{
-			//_particle_iter->vVelocity += vLinear.TransNorm();
+			vVelocity += vLinear.x * vNormalRight;
+			vVelocity += vLinear.y * vNormalUp;
+			vVelocity += vLinear.z * vNormalLook;
 		}
 		else if ("Range" == strLinearOption)
 		{
-			_particle_iter->vVelocity.x = Random_Generator(vLinearMin.x, vLinearMax.x);
-			_particle_iter->vVelocity.y = Random_Generator(vLinearMin.y, vLinearMax.y);
-			_particle_iter->vVelocity.z = Random_Generator(vLinearMin.z, vLinearMax.z);
+			vVelocity += Random_Generator(vLinearMin.x, vLinearMax.x) * vNormalRight;
+			vVelocity += Random_Generator(vLinearMin.y, vLinearMax.y) * vNormalUp;
+			vVelocity += Random_Generator(vLinearMin.z, vLinearMax.z) * vNormalLook;
 		}
-		else if ("Curve" == strLinearOption)
+	}
+	else // World일 경우
+	{
+		if ("Constant" == strLinearOption)
 		{
-			{ // X
-				_float changeAmount = vLinearEndCurve3D.x - vLinearStartCurve3D.x;
-				_particle_iter->vAccel.x = vLinearStartCurve3D.x * CEase::Ease(eLinearEaseX, _particle_iter->fAge
-					, vLinearStartCurve3D.x
-					, changeAmount
-					, _particle_iter->fLifeTime);
-			}
-
+			vVelocity += vLinear.x * _float3(1.f, 0.f, 0.f);
+			vVelocity += vLinear.y * _float3(0.f, 1.f, 0.f);
+			vVelocity += vLinear.z * _float3(0.f, 0.f, 1.f);
+		}
+		else if ("Range" == strLinearOption)
+		{
+			vVelocity += Random_Generator(vLinearMin.x, vLinearMax.x) * _float3(1.f, 0.f, 0.f);
+			vVelocity += Random_Generator(vLinearMin.y, vLinearMax.y) * _float3(0.f, 1.f, 0.f);
+			vVelocity += Random_Generator(vLinearMin.z, vLinearMax.z) * _float3(0.f, 0.f, 1.f);
 		}
 	}
 
+	_particle_iter->vVelocity += (vVelocity * fSpeedModifier).TransNorm();
 }
 
 HRESULT ROTATION_OVER_LIFETIME_MODULE::Save(const _tchar* _pDirectoyPath)
@@ -708,7 +834,6 @@ void ROTATION_OVER_LIFETIME_MODULE::Action(PARTICLE_IT& _particle_iter, _float _
 	// 이 구조에서는 빌보드를 가정(메쉬나 사용안함)하기 때문에 Angle에 대해서만 다룸.
 	_particle_iter->fAngle += _particle_iter->fAngularVelocity * _fTimeDelta;
 }
-
 void ROTATION_OVER_LIFETIME_MODULE::Reset(PARTICLE_IT& _particle_iter)
 {
 	if (false == isActivate)
@@ -723,6 +848,7 @@ void ROTATION_OVER_LIFETIME_MODULE::Reset(PARTICLE_IT& _particle_iter)
 		_particle_iter->fAngularVelocity = Random_Generator(vAngularVelocityRange.x, vAngularVelocityRange.y);
 	}
 }
+
 HRESULT COLOR_OVER_LIFETIME::Save(const _tchar* _pDirectoyPath)
 {
 	fs::path fsFilePath = _pDirectoyPath;
@@ -779,29 +905,29 @@ HRESULT COLOR_OVER_LIFETIME::Load(const _tchar* _pDirectoyPath)
 	CloseHandle(hFile);
 	return S_OK;
 }
-void COLOR_OVER_LIFETIME::Action(PARTICLE_IT& _particle_iter, _float4 vMainColor, _float fTimeDelta)
+void COLOR_OVER_LIFETIME::Action(PARTICLE_IT& _particle_iter, _float fTimeDelta)
 {
 	if (false == isActivate)
 		return;
 
 	_float4 changeAmount = vEndColor - vStartColor;
 
-	_particle_iter->vColor.x = vMainColor.x * CEase::Ease(eEase, _particle_iter->fAge
+	_particle_iter->vColor.x = _particle_iter->vStartColor.x * CEase::Ease(eEase, _particle_iter->fAge
 		, vStartColor.x
 		, changeAmount.x
 		, _particle_iter->fLifeTime);
 
-	_particle_iter->vColor.y = vMainColor.y * CEase::Ease(eEase, _particle_iter->fAge
+	_particle_iter->vColor.y = _particle_iter->vStartColor.y * CEase::Ease(eEase, _particle_iter->fAge
 		, vStartColor.y
 		, changeAmount.y
 		, _particle_iter->fLifeTime);
 
-	_particle_iter->vColor.z = vMainColor.z * CEase::Ease(eEase, _particle_iter->fAge
+	_particle_iter->vColor.z = _particle_iter->vStartColor.z * CEase::Ease(eEase, _particle_iter->fAge
 		, vStartColor.z
 		, changeAmount.z
 		, _particle_iter->fLifeTime);
 
-	_particle_iter->vColor.w = vMainColor.w * CEase::Ease(eEase, _particle_iter->fAge
+	_particle_iter->vColor.w = _particle_iter->vStartColor.w * CEase::Ease(eEase, _particle_iter->fAge
 		, vStartColor.w
 		, changeAmount.w
 		, _particle_iter->fLifeTime);
@@ -1068,7 +1194,6 @@ void PARTICLE::Restart()
 {
 	fAge = { 0.f };
 	fGravityAccel = { 0.f };
-	vAccel = _float4();
 	vVelocity = _float4();
 	WorldMatrix = _float4x4();
 	fGenTime = { 0.f };

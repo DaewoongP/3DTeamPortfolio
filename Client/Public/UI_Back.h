@@ -22,7 +22,7 @@ public:
 	void Set_RemoveBlack(_bool isRemove = true) { m_isRemoveBlack = isRemove; }
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
+	HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void	Tick(_float fTimeDelta) override;
 	virtual void	Late_Tick(_float fTimeDelta) override;
