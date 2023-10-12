@@ -27,7 +27,7 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype() override { return S_OK; }
 	virtual HRESULT Initialize(void* pArg) override;
-	virtual HRESULT Tick(const _float& fTimeDelta) override;
+	virtual HRESULT Tick_Behavior(const _float& fTimeDelta) override;
 
 public:
 	/* 

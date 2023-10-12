@@ -57,10 +57,9 @@ private:
 private:
 	// 리스트 내에 들어있는 오브젝트 중 가장 가까운 객체 포인터
 	const CGameObject* m_pTarget = { nullptr };
-	// 범위 안에 들어온 몬스터 리스트
-	unordered_map<wstring, const CGameObject*> m_RangeInEnemies;
 
 	CMagic::MAGICDESC m_MagicDesc;
+	_uint m_iCurrentSpell = { 0 };
 
 	_bool m_isChangeAnimation = { false };
 	_bool m_isRangeInEnemy = { false };
@@ -74,6 +73,9 @@ private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix);
+
+public:
+	//void Set_Protego_Collision(CTransform* pTransform, CEnemy::ATTACKTYPE eType) const;
 
 private:
 	// 가까운 적을 타겟으로 세팅

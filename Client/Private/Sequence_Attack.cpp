@@ -55,12 +55,12 @@ HRESULT CSequence_Attack::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CSequence_Attack::Tick(const _float& fTimeDelta)
+HRESULT CSequence_Attack::Tick_Behavior(const _float& fTimeDelta)
 {
 	if (FAILED(m_pBlackBoard->Set_Type("fAttackRange", m_fAttackRange)))
 		return E_FAIL;
 
-	return __super::Tick(fTimeDelta);
+	return __super::Tick_Behavior(fTimeDelta);
 }
 
 HRESULT CSequence_Attack::Assemble_Childs()

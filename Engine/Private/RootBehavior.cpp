@@ -25,13 +25,18 @@ HRESULT CRootBehavior::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CRootBehavior::Tick(const _float& fTimeDelta)
+void CRootBehavior::Tick(_float fTimeDelta)
+{
+	Tick_Behavior(fTimeDelta);
+}
+
+HRESULT CRootBehavior::Tick_Behavior(const _float& fTimeDelta)
 {
 #ifdef _DEBUG
 	m_DebugBehaviorTags.clear();
 #endif // _DEBUG
 
-	m_ReturnData = (*m_iterCurBehavior)->Tick(fTimeDelta);
+	m_ReturnData = (*m_iterCurBehavior)->Tick_Behavior(fTimeDelta);
 
 #ifdef _DEBUG
 	Find_Running_Behavior(m_DebugBehaviorTags);

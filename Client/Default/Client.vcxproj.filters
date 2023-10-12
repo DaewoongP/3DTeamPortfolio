@@ -394,9 +394,6 @@
     <Filter Include="96. ImGui">
       <UniqueIdentifier>{a50a5e26-6a04-4c0e-a541-6d264c6a12fd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\02. Enemy\04. Boss">
-      <UniqueIdentifier>{0af7f112-5794-49f9-b566-5e0282856103}</UniqueIdentifier>
-    </Filter>
     <Filter Include="05. Magic\MagicBall\17. Stupefy">
       <UniqueIdentifier>{3889487f-722c-4c11-99ae-a49e505aff2c}</UniqueIdentifier>
     </Filter>
@@ -597,9 +594,6 @@
     </Filter>
     <Filter Include="02. GameObject\02. Enemy\04. Boss">
       <UniqueIdentifier>{0af7f112-5794-49f9-b566-5e0282856103}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\04. Boss\EnergyBall">
-      <UniqueIdentifier>{79dcddca-11cc-4450-a7ad-d7866f733612}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\02. Enemy\05. DarkWizard">
       <UniqueIdentifier>{344e3ca3-42ef-4166-b228-a633658f314b}</UniqueIdentifier>

@@ -62,7 +62,6 @@ HRESULT CGolem_Combat::Initialize_Level(_uint iCurrentLevelIndex)
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 	m_pModelCom->Change_Animation(TEXT("Spawn_Fall_Loop"));
-	m_isSpawn = true;
 
 	if (FAILED(Bind_HitMatrices()))
 		return E_FAIL;
@@ -78,6 +77,8 @@ HRESULT CGolem_Combat::Initialize_Level(_uint iCurrentLevelIndex)
 
 void CGolem_Combat::Tick(_float fTimeDelta)
 {
+	Set_Current_Target();
+
 	__super::Tick(fTimeDelta);
 
 	/////////// Test Code///////////
@@ -91,11 +92,6 @@ void CGolem_Combat::Tick(_float fTimeDelta)
 	////////////////////////////////
 
 	m_pHitMatrix = m_HitMatrices[rand() % 3];
-
-	Set_Current_Target();
-	
-	if (nullptr != m_pRootBehavior)
-		m_pRootBehavior->Tick(fTimeDelta);
 
 	if (true == m_isParring ||
 		true == IsDebuff(BUFF_TYPE(m_iCurrentSpell)))
@@ -117,7 +113,7 @@ void CGolem_Combat::Late_Tick(_float fTimeDelta)
 void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionEnter(CollisionEventDesc);
-
+	
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 	wstring wstrOtherCollisionTag = CollisionEventDesc.pOtherCollisionTag;
@@ -341,7 +337,7 @@ HRESULT CGolem_Combat::Add_Components()
 		/* For.Collider Enemy_Range */
 		RigidBodyDesc.isStatic = true;
 		RigidBodyDesc.isTrigger = true;
-		PxSphereGeometry pSphereGeomatry1 = PxSphereGeometry(15.f);
+		PxSphereGeometry pSphereGeomatry1 = PxSphereGeometry(7.f);
 		RigidBodyDesc.pGeometry = &pSphereGeomatry1;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Range");
 		RigidBodyDesc.eThisCollsion = COL_ENEMY_RANGE;

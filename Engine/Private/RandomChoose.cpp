@@ -34,7 +34,7 @@ HRESULT CRandomChoose::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CRandomChoose::Tick(const _float& fTimeDelta)
+HRESULT CRandomChoose::Tick_Behavior(const _float& fTimeDelta)
 {
 	if (0 == m_Behaviors.size())
 		return E_FAIL;
@@ -43,7 +43,7 @@ HRESULT CRandomChoose::Tick(const _float& fTimeDelta)
 	if (false == Check_Decorators())
 		return BEHAVIOR_FAIL;
 
-	m_ReturnData = (*m_iterCurBehavior)->Tick(fTimeDelta);
+	m_ReturnData = (*m_iterCurBehavior)->Tick_Behavior(fTimeDelta);
 
 	switch (m_ReturnData)
 	{

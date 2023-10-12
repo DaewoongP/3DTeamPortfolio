@@ -189,13 +189,13 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_DOF_Blured"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
-	
+
+	m_isDebugRender = false;
+	m_isMRTRender = false;
 #endif // _DEBUG
 
 	m_fGlowPower = 3.f;
 	m_fHDR = 0.7f;
-	m_isDebugRender = false;
-	m_isMRTRender = false;
 
 	return S_OK;
 }

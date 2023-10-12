@@ -27,7 +27,7 @@ HRESULT CTurn::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CTurn::Tick(const _float& fTimeDelta)
+HRESULT CTurn::Tick_Behavior(const _float& fTimeDelta)
 {
 	if (false == Check_Decorators())
 	{
@@ -56,7 +56,7 @@ HRESULT CTurn::Tick(const _float& fTimeDelta)
 	// 목표 각도 설정시 목표 각도가 달성될때까지 running한다.
 	if (0.f < m_fTargetDegree)
 	{
-		m_pCheckDegree->Tick(fTimeDelta);
+		m_pCheckDegree->Tick_Behavior(fTimeDelta);
 
 		if (FAILED(m_pBlackBoard->Get_Type("fTargetToDegree", fDegree)))
 			return E_FAIL;

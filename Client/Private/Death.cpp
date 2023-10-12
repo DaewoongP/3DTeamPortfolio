@@ -19,7 +19,7 @@ HRESULT CDeath::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CDeath::Tick(const _float& fTimeDelta)
+HRESULT CDeath::Tick_Behavior(const _float& fTimeDelta)
 {
 	if (false == Check_Decorators())
 		return BEHAVIOR_FAIL;

@@ -61,12 +61,9 @@ HRESULT CProfessor_Fig::Initialize(void* pArg)
 
 void CProfessor_Fig::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
-
 	Set_Current_Target();
 
-	if (nullptr != m_pRootBehavior)
-		m_pRootBehavior->Tick(fTimeDelta);
+	__super::Tick(fTimeDelta);
 
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
@@ -88,20 +85,46 @@ void CProfessor_Fig::Late_Tick(_float fTimeDelta)
 
 void CProfessor_Fig::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
+	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
 
-	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
+	if (wstring::npos != wstrCollisionTag.find(TEXT("Attack")))
 	{
-		if (false == IsEnemy(wstrObjectTag))
-			return;
+		CEnemy::COLLISIONREQUESTDESC* pDesc = static_cast<CEnemy::COLLISIONREQUESTDESC*>(CollisionEventDesc.pArg);
 
-		if (CollisionEventDesc.pOtherOwner->isDead())
+		if (nullptr == pDesc ||
+			CEnemy::ATTACK_NONE == pDesc->eType)
+		{
 			return;
+		}
 
-		auto iter = m_RangeInEnemies.find(wstrObjectTag);
-		if (iter == m_RangeInEnemies.end())
-			m_RangeInEnemies.emplace(wstrObjectTag, CollisionEventDesc.pOtherOwner);
+		//Protego
+		if (BUFF_PROTEGO & m_iCurrentSpell)
+		{
+
+		}
+		//피격중인 상태일 경우 무시
+		/*else if (m_pStateContext->Is_Current_State(TEXT("Hit")))
+		{
+
+		}*/
+		//Hit
+		else
+		{
+			switch (pDesc->eType)
+			{
+			case CEnemy::ATTACK_NONE:
+				break;
+
+			case CEnemy::ATTACK_LIGHT:
+				break;
+			case CEnemy::ATTACK_HEAVY:
+				break;
+
+			case CEnemy::ATTACKTYPE_END:
+			default:
+				break;
+			}
+		}
 	}
 }
 
@@ -377,7 +400,7 @@ HRESULT CProfessor_Fig::Add_Components()
 		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Body");
 		RigidBodyDesc.eThisCollsion = COL_NPC;
-		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_ENEMY | COL_ENEMY_RANGE;
+		RigidBodyDesc.eCollisionFlag = COL_STATIC | COL_ENEMY_RANGE;
 
 		/* Com_RigidBody */
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
@@ -385,7 +408,7 @@ HRESULT CProfessor_Fig::Add_Components()
 			throw TEXT("Com_RigidBody");
 
 		m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
-		
+
 		/* Collision Range */
 		RigidBodyDesc.isStatic = true;
 		RigidBodyDesc.isTrigger = true;
@@ -485,50 +508,51 @@ HRESULT CProfessor_Fig::SetUp_ShaderResources()
 
 void CProfessor_Fig::Set_Current_Target()
 {
-	_float3 vPosition = m_pTransform->Get_Position();
+	BEGININSTANCE;
+	_uint iCurrentLevelIndex = pGameInstance->Get_CurrentLevelIndex();
+	auto pLayer = pGameInstance->Find_Components_In_Layer(iCurrentLevelIndex, TEXT("Layer_Monster"));
+	ENDINSTANCE;
 
-	for (auto& Pair : m_RangeInEnemies)
+	if (nullptr == pLayer)
+		return;
+
+	m_pTarget = { nullptr };
+	for (auto& Pair : *pLayer)
 	{
+		CGameObject* pGameObject = static_cast<CGameObject*>(Pair.second);
+		_float3 vTargetPosition = pGameObject->Get_Transform()->Get_Position();
+		_float3 vPosition = m_pTransform->Get_Position();
+
+		if (10.f < _float3::Distance(vTargetPosition, vPosition))
+			continue;
+
 		if (nullptr == m_pTarget)
-			m_pTarget = Pair.second;
+			m_pTarget = pGameObject;
 		else
 		{
-			if (true == Pair.second->isDead())
-			{
-				Remove_GameObject(Pair.first);
-				if (0 == m_RangeInEnemies.size())
-					break;
-
+			if (true == pGameObject->isDead())
 				continue;
-			}
 
 			_float3 vSrcTargetPosition = m_pTarget->Get_Transform()->Get_Position();
-			_float3 vDstTargetPosition = Pair.second->Get_Transform()->Get_Position();
+			_float3 vDstTargetPosition = pGameObject->Get_Transform()->Get_Position();
 
 			_float vSrcDistance = _float3::Distance(vPosition, vSrcTargetPosition);
 			_float vDstDistance = _float3::Distance(vPosition, vDstTargetPosition);
 
-			m_pTarget = (vSrcDistance < vDstDistance) ? m_pTarget : Pair.second;
+			m_pTarget = (vSrcDistance < vDstDistance) ? m_pTarget : pGameObject;
 		}
 	}
 
-	m_isRangeInEnemy = (0 < m_RangeInEnemies.size()) ? true : false;
-
-	if (false == m_isRangeInEnemy)
-	{
-
-		m_pTarget = { nullptr };
-	}
+	m_isRangeInEnemy = (nullptr == m_pTarget) ? false : true;
 }
 
 HRESULT CProfessor_Fig::Remove_GameObject(const wstring& wstrObjectTag)
 {
-	auto iter = m_RangeInEnemies.find(wstrObjectTag);
+	/*auto iter = m_RangeInEnemies.find(wstrObjectTag);
 	if (iter == m_RangeInEnemies.end())
 		return E_FAIL;
 
-	//Safe_Release(iter->second);
-	m_RangeInEnemies.erase(iter);
+	m_RangeInEnemies.erase(iter);*/
 
 	return S_OK;
 }
@@ -1004,7 +1028,7 @@ void CProfessor_Fig::Cast_Protego()
 {
 	if (nullptr == m_pTarget)
 		return;
-	
+
 	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COL_ENEMY_ATTACK);
 }
 

@@ -37,6 +37,9 @@ HRESULT CBreath::Initialize(void* pArg)
 
 void CBreath::Tick(_float fTimeDelta)
 {
+	if (false == m_isActionBreath)
+		return;
+
 	__super::Tick(fTimeDelta);
 
 	if (nullptr != m_pCylinder)
@@ -45,6 +48,9 @@ void CBreath::Tick(_float fTimeDelta)
 
 void CBreath::Late_Tick(_float fTimeDelta)
 {
+	if (false == m_isActionBreath)
+		return;
+
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pCylinder)

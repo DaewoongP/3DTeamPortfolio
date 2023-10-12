@@ -1927,19 +1927,19 @@ void CPlayer::Shot_Basic_Spell()
 {
 	//Find_Target_For_Distance();
 	m_pMagicSlot->Add_Magics(m_BasicDesc_Light);
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, (COLLISIONFLAG)(COL_ENEMY | COL_SHIELD), m_isPowerUp);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_SHIELD), m_isPowerUp);
 }
 
 void CPlayer::Shot_Basic_Last_Spell()
 {
 	//Find_Target_For_Distance();
 	m_pMagicSlot->Add_Magics(m_BasicDesc_Heavy);
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, (COLLISIONFLAG)(COL_ENEMY | COL_SHIELD), m_isPowerUp);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_SHIELD), m_isPowerUp);
 }
 
 void CPlayer::Protego()
 {
-	m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, (COLLISIONFLAG)(COL_ENEMY | COL_ENEMY_ATTACK|COL_MAGIC), m_isPowerUp);
+	m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_ENEMY_ATTACK|COL_SHIELD), m_isPowerUp);
 }
 
 void CPlayer::Gravity_On()
@@ -3010,7 +3010,7 @@ void CPlayer::Shot_Magic_Spell_Button_1()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(SKILLINPUT_1, m_pTarget, m_pWeapon, (COLLISIONFLAG)(COL_ENEMY | COL_SHIELD), m_isPowerUp);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(SKILLINPUT_1, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_SHIELD), m_isPowerUp);
 }
 
 void CPlayer::Shot_Magic_Spell_Button_2()
@@ -3022,7 +3022,7 @@ void CPlayer::Shot_Magic_Spell_Button_2()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(SKILLINPUT_2, m_pTarget, m_pWeapon, (COLLISIONFLAG)(COL_ENEMY | COL_SHIELD), m_isPowerUp);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(SKILLINPUT_2, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_SHIELD), m_isPowerUp);
 }
 
 void CPlayer::Shot_Magic_Spell_Button_3()
@@ -3034,7 +3034,7 @@ void CPlayer::Shot_Magic_Spell_Button_3()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(SKILLINPUT_3, m_pTarget, m_pWeapon, (COLLISIONFLAG)(COL_ENEMY | COL_SHIELD), m_isPowerUp);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(SKILLINPUT_3, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_SHIELD), m_isPowerUp);
 }
 
 void CPlayer::Clear_Target()
@@ -3054,7 +3054,7 @@ void CPlayer::Shot_Magic_Spell_Button_4()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(SKILLINPUT_4, m_pTarget, m_pWeapon, (COLLISIONFLAG)(COL_ENEMY | COL_SHIELD), m_isPowerUp);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(SKILLINPUT_4, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_SHIELD), m_isPowerUp);
 }
 
 

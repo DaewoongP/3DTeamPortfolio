@@ -167,14 +167,17 @@ HRESULT CLevel_Static::Add_Cameras(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 	return S_OK;
 }
+#ifdef _DEBUG
 
 HRESULT CLevel_Static::Ready_Layer_Debug(const _tchar* pLayerTag)
 {
 	FAILED_CHECK_RETURN(m_pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC,
 		TEXT("Prototype_GameObject_Camera_Debug"), pLayerTag, TEXT("GameObject_Camera_Debug")), E_FAIL)
 
-	return S_OK;
+		return S_OK;
 }
+
+#endif // _DEBUG
 
 void CLevel_Static::Free()
 {

@@ -30,9 +30,9 @@ HRESULT CSequence_AirHit::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CSequence_AirHit::Tick(const _float& fTimeDelta)
+HRESULT CSequence_AirHit::Tick_Behavior(const _float& fTimeDelta)
 {
-	return __super::Tick(fTimeDelta);
+	return __super::Tick_Behavior(fTimeDelta);
 }
 
 HRESULT CSequence_AirHit::Assemble_Behavior(const _float& fWeight)

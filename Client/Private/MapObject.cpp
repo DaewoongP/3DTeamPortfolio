@@ -63,7 +63,7 @@ HRESULT CMapObject::Initialize_Level(_uint iCurrentLevelIndex)
 	RigidBodyDesc.pOwnerObject = this;
 	RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 1.f, 1.f);
 	RigidBodyDesc.eThisCollsion = COL_STATIC;
-	RigidBodyDesc.eCollisionFlag = COL_ENEMY | COL_PLAYER | COL_ITEM;
+	RigidBodyDesc.eCollisionFlag = COL_ENEMY | COL_PLAYER | COL_NPC | COL_ITEM;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "MapObject");
 
 	vector<CMesh*> Meshes = *m_pModel->Get_MeshesVec();

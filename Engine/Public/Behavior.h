@@ -50,7 +50,7 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype() = 0;
 	virtual HRESULT Initialize(void* pArg) = 0;
-	virtual HRESULT Tick(const _float & fTimeDelta) = 0;
+	virtual HRESULT Tick_Behavior(const _float & fTimeDelta) = 0;
 
 public:
 	HRESULT Add_Decorator(function<_bool(class CBlackBoard*)> Func);
