@@ -74,7 +74,7 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
     }
 
     Out.vColor /= fTotal;
-    Out.vColor.a = 1.f;
+    
     return Out;
 }
 
@@ -96,7 +96,7 @@ PS_OUT PS_MAIN_BLURY(PS_IN In)
     }
 
     Out.vColor /= fTotal;
-    Out.vColor.a = 1.f;
+    
     return Out;
 }
 

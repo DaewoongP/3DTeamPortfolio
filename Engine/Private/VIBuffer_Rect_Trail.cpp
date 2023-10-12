@@ -34,8 +34,6 @@ HRESULT CVIBuffer_Rect_Trail::Reset_Trail()
 			m_pVertices[i].vPosition = vLowPos;
 	}
 
-	std::lock_guard<std::mutex> lock(mtx);
-
 	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
 
 	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubResource);
@@ -58,8 +56,6 @@ HRESULT CVIBuffer_Rect_Trail::Reset_Trail(_float3 vHighPos, _float3 vLowPos)
 		else
 			m_pVertices[i].vPosition = vLowPos;
 	}
-
-	//std::lock_guard<std::mutex> lock(mtx);
 
 	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
 

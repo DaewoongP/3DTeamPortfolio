@@ -247,7 +247,7 @@ void CMainApp::Debug_ImGui()
 	GetWindowRect(g_hWnd, &rc);
 
 	ImGui::SetNextWindowPos(ImVec2(0.f, 0.f));
-	ImGui::SetNextWindowSize(ImVec2(300.f, 200.f));
+	ImGui::SetNextWindowSize(ImVec2(300.f, 400.f));
 
 	ImGui::Begin("Main Debug");
 
@@ -287,6 +287,19 @@ void CMainApp::Debug_ImGui()
 
 	if (LEVEL_LOGO != m_eLevelID)
 		m_isStaticLoaded = true;
+
+
+	ImGui::Separator();
+
+	list<const _tchar*> LayerTags = m_pGameInstance->Get_CurrentSceneLayers(m_pGameInstance->Get_CurrentSceneTag());
+	for (auto& LayerTag : LayerTags)
+	{
+		_char szTag[MAX_PATH] = "";
+		WCharToChar(LayerTag, szTag);
+		ImGui::Text(szTag);
+	}
+
+	ImGui::Separator();
 
 	ImGui::End();
 }

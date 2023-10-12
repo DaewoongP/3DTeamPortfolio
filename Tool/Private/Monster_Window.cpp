@@ -181,10 +181,11 @@ void CMonster_Window::Show_MonsterTable()
 		| ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY
 		| ImGuiTableFlags_SizingFixedFit;
 
-	if (ImGui::BeginTable("Table_Model_Monster", 2, flags, ImVec2(0, 600), 0.f))
+	if (ImGui::BeginTable("Table_Model_Monster", 3, flags, ImVec2(0, 600), 0.f))
 	{
 		ImGui::TableSetupColumn("Index", ImGuiTableColumnFlags_NoSort | ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoHide, 0.0f, 1);
-		ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoSort | ImGuiTableColumnFlags_WidthFixed, 0.0f);
+		ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_NoSort | ImGuiTableColumnFlags_WidthFixed, 0.0f);
+		ImGui::TableSetupColumn("Tag", ImGuiTableColumnFlags_NoSort | ImGuiTableColumnFlags_WidthFixed, 0.0f);
 
 		ImGui::TableHeadersRow();
 
@@ -192,17 +193,24 @@ void CMonster_Window::Show_MonsterTable()
 		_uint iIndex = 0;
 		for (auto& MonsterData : m_MonsterDatas)
 		{
-			ImGui::TableNextRow();
+			ImGui::TableNextRow(0, 20.f);
 
 			ImGui::TableSetColumnIndex(0);
 			if (ImGui::Selectable(std::to_string(iIndex).c_str(), m_iTableIndex == iIndex))
 			{
 				m_iTableIndex = iIndex;
 				m_pCurrentDummy = MonsterData.pDummy;
+				m_pCurrentDummy->Get_Model()->Change_Animation(0);
 			}
 
 			ImGui::TableSetColumnIndex(1);
 			ImGui::TextUnformatted(wstrToStr(MonsterData.wstrTag).c_str());
+
+			ImGui::TableSetColumnIndex(2);
+			if (m_iTableIndex == iIndex)
+				ImGui::InputText("##MonsterComponentTag", MonsterData.szComponentTag, MAX_PATH);
+			else
+				ImGui::Text(MonsterData.szComponentTag);
 
 			++iIndex;
 		}
@@ -312,6 +320,19 @@ HRESULT CMonster_Window::Save_Monsters(const wstring& wstrMapDataName)
 			return E_FAIL;
 		}
 
+		/* Write Monster ComponentTag */
+		iLength = strlen(MonsterData.szComponentTag);
+		if (!WriteFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Write wstrComponentTag.iTagLen");
+			return E_FAIL;
+		}
+		if (!WriteFile(hFile, MonsterData.szComponentTag, iLength, &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Write wstrComponentTag.wszTag");
+			return E_FAIL;
+		}
+
 		/* Write Monster PrototypeModelTag */
 		 iLength = wstrPrototypeModelTag.size();
 		if (!WriteFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr))
@@ -356,7 +377,7 @@ HRESULT CMonster_Window::Load_Monsters(const wstring& wstrMapDataPath)
 
 	if (INVALID_HANDLE_VALUE == hFile)
 	{
-		MSG_BOX("Failed to Create MapObject File for Load MapObject");
+		MSG_BOX("Failed to Create Monster File for Load Monster");
 		CloseHandle(hFile);
 		return E_FAIL;
 	}
@@ -383,14 +404,29 @@ HRESULT CMonster_Window::Load_Monsters(const wstring& wstrMapDataPath)
 			MSG_BOX("Failed to Read m_vecSaveObject.iLength");
 			CloseHandle(hFile);
 		}
-		_tchar szTag[MAX_PATH] = { TEXT("") };
-		if (!ReadFile(hFile, szTag, sizeof(_tchar) * iLength, &dwByte, nullptr))
+		_tchar wszTag[MAX_PATH] = { TEXT("") };
+		if (!ReadFile(hFile, wszTag, sizeof(_tchar) * iLength, &dwByte, nullptr))
 		{
 			MSG_BOX("Failed to Read m_vecSaveObject.wszTag");
 			CloseHandle(hFile);
 			return E_FAIL;
 		}
-		SaveDesc.wstrTag = szTag;
+		SaveDesc.wstrTag = wszTag;
+
+		/* Read Monster ComponentTag */
+		iLength = { 0 };
+		if (!ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read wstrComponentTag.iTagLen");
+			return E_FAIL;
+		}
+		_char szTag[MAX_PATH] = { "" };
+		if (!ReadFile(hFile, szTag, iLength, &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read wstrComponentTag.wszTag");
+			return E_FAIL;
+		}
+		strcpy_s(SaveDesc.szComponentTag,szTag);
 
 		/* Read Monster PrototypeModelTag */
 		iLength = { 0 };
@@ -399,14 +435,14 @@ HRESULT CMonster_Window::Load_Monsters(const wstring& wstrMapDataPath)
 			MSG_BOX("Failed to Read m_vecSaveObject.iLength");
 			CloseHandle(hFile);
 		}
-		ZEROMEM(szTag);
-		if (!ReadFile(hFile, szTag, sizeof(_tchar) * iLength, &dwByte, nullptr))
+		ZEROMEM(wszTag);
+		if (!ReadFile(hFile, wszTag, sizeof(_tchar) * iLength, &dwByte, nullptr))
 		{
 			MSG_BOX("Failed to Read m_vecSaveObject.wszTag");
 			CloseHandle(hFile);
 			return E_FAIL;
 		}
-		SaveDesc.wstrPrototypeModelTag = szTag;
+		SaveDesc.wstrPrototypeModelTag = wszTag;
 
 		/* Read Monster ModelFilePath */
 		iLength = { 0 };
@@ -415,14 +451,14 @@ HRESULT CMonster_Window::Load_Monsters(const wstring& wstrMapDataPath)
 			MSG_BOX("Failed to Read m_vecSaveObject.iLength");
 			CloseHandle(hFile);
 		}
-		ZEROMEM(szTag);
-		if (!ReadFile(hFile, szTag, sizeof(_tchar) * iLength, &dwByte, nullptr))
+		ZEROMEM(wszTag);
+		if (!ReadFile(hFile, wszTag, sizeof(_tchar) * iLength, &dwByte, nullptr))
 		{
 			MSG_BOX("Failed to Read m_vecSaveObject.wszTag");
 			CloseHandle(hFile);
 			return E_FAIL;
 		}
-		SaveDesc.wstrModelFilePath = szTag;
+		SaveDesc.wstrModelFilePath = wszTag;
 
 		if (dwByte == 0)
 		{
@@ -440,14 +476,12 @@ HRESULT CMonster_Window::Load_Monsters(const wstring& wstrMapDataPath)
 	// 로드한 데이터를 적용시켜 주는 부분
 	for (auto& Data : vecDatas)
 	{
-		// 맵 오브젝트에 번호 붙여줌
-		wstring wstrName = TEXT("GameObject_Monster_");
-		wstrName += Data.wstrTag + to_wstring(iIndex++);
-
+		string strComponentTag = Data.szComponentTag;
+		wstring wstrComponentTag = strToWStr(strComponentTag);
 		// 번호를 붙인 태그로 MapObject 등록
 		if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL,
 			TEXT("Prototype_GameObject_Dummy"), TEXT("Layer_Monster"),
-			wstrName.c_str())))
+			wstrComponentTag.c_str())))
 		{
 			MSG_BOX("Failed to Install MapObject");
 			return E_FAIL;
@@ -455,7 +489,7 @@ HRESULT CMonster_Window::Load_Monsters(const wstring& wstrMapDataPath)
 
 		// 마지막에 설치한 맵 오브젝트 주소 가져옴
 		Data.pDummy = static_cast<CDummy*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
-			TEXT("Layer_Monster"), wstrName.c_str()));
+			TEXT("Layer_Monster"), wstrComponentTag.c_str()));
 		if (nullptr == Data.pDummy)
 		{
 			MSG_BOX("pDummy is nullptr");
@@ -677,6 +711,9 @@ HRESULT CMonster_Window::Load_Model_Prototypes(const wstring& wstrFilePath)
 				{
 				}
 				else if (wstring::npos != result1.find(TEXT("Troll")))
+				{
+				}
+				else if (wstring::npos != result1.find(TEXT("Wizard")))
 				{
 				}
 				else

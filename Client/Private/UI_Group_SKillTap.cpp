@@ -35,7 +35,7 @@ HRESULT CUI_Group_SkillTap::Initialize_Prototype()
 HRESULT CUI_Group_SkillTap::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
-		return E_FAIL;	
+		return E_FAIL;
 
 	Ready_DefaultTexture();
 
@@ -52,9 +52,9 @@ void CUI_Group_SkillTap::Tick(_float fTimeDelta)
 		return;
 
 	Open_SkillTap();
-		
+
 	__super::Tick(fTimeDelta);
-	
+
 	Drag_Slot();
 
 
@@ -196,7 +196,8 @@ HRESULT CUI_Group_SkillTap::Read_File_Select(const _tchar* pFilePath, SKILLTAP i
 
 	m_pSelectBacks[iIndex]->Load(Load_File(hFile));
 	m_pSelectBacks[iIndex]->Set_Parent(m_pSelectFrames[iIndex]);
-
+	m_pSelectBacks[iIndex]->Set_Effecttype(CUI_Effect_Back::SKILLBACK);
+	m_pSelectBacks[iIndex]->Set_SkillBackType((SKILLTAP)iIndex);
 	CloseHandle(hFile);
 
 	return S_OK;
@@ -296,8 +297,7 @@ HRESULT CUI_Group_SkillTap::Read_File_Slot(const _tchar* pFilePath, SKILLSLOT iI
 	ImageDesc.fSizeY = 64.f;
 
 	m_pSlotMains[iIndex]->Set_ImageCom(ImageDesc);
-	m_pSlotMains[iIndex]->Set_Effecttype(CUI_Effect_Back::SKILL);
-	m_pSlotMains[iIndex]->Set_ImageComShader(CUI_Image::SHADERTYPE::SKILL);
+	m_pSlotMains[iIndex]->Set_Effecttype(CUI_Effect_Back::SKILLBACK);
 	_uint iSize = { 0 };
 	ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
 
@@ -379,7 +379,7 @@ HRESULT CUI_Group_SkillTap::Ready_DefaultTexture()
 	lstrcpy(UIDesc.szTexturePath, szTexturePath);
 
 	m_pBack->Load(UIDesc);
-	
+
 
 	_tchar szFilePath[MAX_PATH] = TEXT("");
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Cursor.uidata"));
@@ -482,9 +482,17 @@ void CUI_Group_SkillTap::Set_SkillLIst()
 	if (nullptr != pPlayer)
 	{
 		m_pSlotMains[FIRST]->Set_Texture(m_SkillTextures[Translation_SkillTap(pPlayer->Get_SpellList(CPlayer::SKILLINPUT_1))]);
+		m_pSlotMains[FIRST]->Set_SkillBackType(Translation_SkillTap(pPlayer->Get_SpellList(CPlayer::SKILLINPUT_1)));
+
 		m_pSlotMains[SECOND]->Set_Texture(m_SkillTextures[Translation_SkillTap(pPlayer->Get_SpellList(CPlayer::SKILLINPUT_2))]);
+		m_pSlotMains[SECOND]->Set_SkillBackType(Translation_SkillTap(pPlayer->Get_SpellList(CPlayer::SKILLINPUT_2)));
+
 		m_pSlotMains[THIRD]->Set_Texture(m_SkillTextures[Translation_SkillTap(pPlayer->Get_SpellList(CPlayer::SKILLINPUT_3))]);
+		m_pSlotMains[THIRD]->Set_SkillBackType(Translation_SkillTap(pPlayer->Get_SpellList(CPlayer::SKILLINPUT_3)));
+
 		m_pSlotMains[FOURTH]->Set_Texture(m_SkillTextures[Translation_SkillTap(pPlayer->Get_SpellList(CPlayer::SKILLINPUT_4))]);
+		m_pSlotMains[FOURTH]->Set_SkillBackType(Translation_SkillTap(pPlayer->Get_SpellList(CPlayer::SKILLINPUT_4)));
+
 	}
 
 
@@ -503,6 +511,7 @@ void CUI_Group_SkillTap::Drag_Slot()
 			{
 				static_cast<CPlayer*>(m_pOwner)->Set_Spell_Botton(iIndexSlot, Translation_Spell(m_eSlectedSkill));
 				pSlot->Set_Texture(m_SkillTextures[m_eSlectedSkill]);
+				pSlot->Set_SkillBackType(m_eSlectedSkill);
 
 				m_eSlectedSkill = SKILLTAP_END;
 				m_pCursor->Set_Image(nullptr);
@@ -536,7 +545,7 @@ void CUI_Group_SkillTap::Drag_Slot()
 		}
 		++iIndex;
 	}
-	
+
 }
 
 SPELL CUI_Group_SkillTap::Translation_Spell(SKILLTAP eSkill)

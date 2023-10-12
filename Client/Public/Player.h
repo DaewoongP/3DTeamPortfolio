@@ -117,6 +117,7 @@ private:
 
 	CUI_Group_Skill* m_UI_Group_Skill_01 = { nullptr };
 	CUI_Group_SkillTap* m_UI_Group_SkillTap = { nullptr };
+	_bool			m_isOpenSkillTap = { false };
 
 	CTool* m_pCurTool = { nullptr };
 
@@ -208,7 +209,7 @@ private:
 	vector<SPELL> m_vecSpellCheck;
 	
 
-
+	_bool m_isFlying = { false };
 	_bool m_isLumosOn = { false };
 
 	_bool m_isBlink = { false };
@@ -232,6 +233,7 @@ private:
 
 private:
 	void Key_Input(_float fTimeDelta);
+	void Key_input_Flying(_float fTimeDelta);
 	void Fix_Mouse();
 
 private:

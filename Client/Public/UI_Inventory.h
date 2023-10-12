@@ -26,7 +26,7 @@ public:
 		_float					fHeight;
 		_uint					iHorizontal;
 		_uint					iVertical;
-		ITEMTYPE					eItemtype;
+		ITEMTYPE				eItemtype;
 	};
 
 private:

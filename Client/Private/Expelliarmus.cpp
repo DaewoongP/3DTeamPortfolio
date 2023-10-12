@@ -25,7 +25,7 @@ HRESULT CExpelliarmus::Initialize_Prototype(_uint iLevel)
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Expelliarmus_Trail")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Expelliarmus_Trail")
-			, CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Expelliarmus/Expelliarmus.trail"), m_iLevel))))
+			, CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Expelliarmus/Ripples.trail"), m_iLevel))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;

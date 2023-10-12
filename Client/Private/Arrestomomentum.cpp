@@ -111,11 +111,6 @@ void CArrestomomentum::Late_Tick(_float fTimeDelta)
 void CArrestomomentum::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionEnter(CollisionEventDesc);
-	//몹이랑 충돌했으면?
-	if (wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Enemy_Body")) != nullptr)
-	{
-		Set_MagicBallState(MAGICBALL_STATE_DYING);
-	}
 }
 
 void CArrestomomentum::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
@@ -146,7 +141,9 @@ void CArrestomomentum::Ready_DrawMagic()
 
 void CArrestomomentum::Ready_CastMagic()
 {
+	__super::Ready_CastMagic();
 	_float distance = 30.0f;
+	m_fWandParticleDelayTimer = 0.05f;
 	if (m_pTarget == nullptr)
 	{
 		BEGININSTANCE;
@@ -169,7 +166,6 @@ void CArrestomomentum::Ready_CastMagic()
 		//목표지점
 		m_vEndPosition = m_vStartPosition + vDirStartToPicked * distance;
 	}
-	__super::Ready_CastMagic();
 }
 
 void CArrestomomentum::Ready_Dying()
@@ -189,8 +185,10 @@ void CArrestomomentum::Tick_DrawMagic(_float fTimeDelta)
 
 void CArrestomomentum::Tick_CastMagic(_float fTimeDelta)
 {
+	__super::Tick_CastMagic(fTimeDelta);
+	if(m_ParticleVec[EFFECT_STATE_MAIN][0]->IsEnable())
+		Do_MagicBallState_To_Next();
 	m_pTransform->Set_Position(m_vEndPosition);
-	Do_MagicBallState_To_Next();
 }
 
 void CArrestomomentum::Tick_Dying(_float fTimeDelta)

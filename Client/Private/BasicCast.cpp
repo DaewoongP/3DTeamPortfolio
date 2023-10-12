@@ -39,6 +39,16 @@ HRESULT CBasicCast::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Hit_Particle")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Hit_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Hit"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Glow_Particle")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Glow_Particle")
@@ -266,7 +276,7 @@ HRESULT CBasicCast::Add_Components()
 	}
 	
 	
-	m_ParticleVec[EFFECT_STATE_HIT].resize(3);
+	m_ParticleVec[EFFECT_STATE_HIT].resize(4);
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_DefaultConeBoom_Particle")
 		, TEXT("Com_DefaultConeBoom_Particle"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][0])))
 	{
@@ -286,6 +296,12 @@ HRESULT CBasicCast::Add_Components()
 		return E_FAIL;
 	}
 
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Hit_Particle")
+		, TEXT("Com_Hit_Particle"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][3])))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
 	return S_OK;
 }
 

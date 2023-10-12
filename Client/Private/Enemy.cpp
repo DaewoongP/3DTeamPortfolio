@@ -388,7 +388,7 @@ HRESULT CEnemy::Make_Check_Spell(_Inout_ CSelector* pSelector)
 	return S_OK;
 }
 
-HRESULT CEnemy::Make_Fly_Descendo(CSequence* pSequence)
+HRESULT CEnemy::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 {
 	pSequence->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 		{

@@ -81,7 +81,6 @@ HRESULT CPlayer_Camera::Initialize(void* pArg)
 	m_pTransform->Set_RotationSpeed(1.0f);
 
 	m_pisMove = pCameraDesc->IsMove;
-	m_eLevelID = pCameraDesc->eLevelID;
 	m_ppTargetTransform = pCameraDesc->ppTargetTransform;
 	m_pPlayerTransform = pCameraDesc->pPlayerTransform;
 	Safe_AddRef(m_pPlayerTransform);

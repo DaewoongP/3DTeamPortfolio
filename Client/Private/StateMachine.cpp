@@ -100,6 +100,11 @@ void CStateMachine::Change_Animation(const wstring& _AnimationTag, _bool _isLumo
 	}
 }
 
+void CStateMachine::Change_Animation_Part(const wstring& _AnimationTag, _uint iPartIndex)
+{
+	m_StateMachineDesc.pOwnerModel->Change_Animation(_AnimationTag, (CModel::ANIMTYPE)iPartIndex);
+}
+
 CStateMachine* CStateMachine::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CStateMachine* pInstance = New CStateMachine(pDevice, pContext);

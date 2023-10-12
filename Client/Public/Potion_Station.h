@@ -30,6 +30,10 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 
+#ifdef _DEBUG
+	void Tick_Imgui(_float fTimeDelta);
+#endif // _DEBUG
+
 private:
 	CUI_Group_Brew* m_pCUI_Group_Brew = {nullptr};
 
@@ -42,7 +46,8 @@ private:
 	_uint m_iLevel = {};
 
 private: // For.Components
-	CParticleSystem* m_pParticleSystem = { nullptr };
+	CParticleSystem* m_pWaterSmoke = { nullptr };
+	CParticleSystem* m_pPotFire = { nullptr };
 
 private:
 	HRESULT Add_Components();

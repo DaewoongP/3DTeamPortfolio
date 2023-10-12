@@ -4,6 +4,7 @@
 #include "UI_Back.h"
 #include "UI_Slot.h"
 #include "Inventory.h"
+#include "Item.h"
 
 CUI_Inventory::CUI_Inventory(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
