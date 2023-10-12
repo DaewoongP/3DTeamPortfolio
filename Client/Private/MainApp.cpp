@@ -247,7 +247,7 @@ void CMainApp::Debug_ImGui()
 	GetWindowRect(g_hWnd, &rc);
 
 	ImGui::SetNextWindowPos(ImVec2(0.f, 0.f));
-	ImGui::SetNextWindowSize(ImVec2(150.f, 400.f));
+	ImGui::SetNextWindowSize(ImVec2(300.f, 400.f));
 
 	ImGui::Begin("Main Debug");
 

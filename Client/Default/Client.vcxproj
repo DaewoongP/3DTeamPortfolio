@@ -183,6 +183,7 @@
     <ClInclude Include="..\Public\EnergyBall.h" />
     <ClInclude Include="..\Public\Level_Sanctum.h" />
     <ClInclude Include="..\public\PotionStationCamera.h" />
+    <ClInclude Include="..\public\Trigger.h" />
     <ClInclude Include="..\Public\Weapon_DarkWizard_Wand.h" />
     <ClInclude Include="..\Public\Diffindo.h" />
     <ClInclude Include="..\public\Dittany_Leaves_Item.h" />
@@ -410,6 +411,7 @@
     <ClCompile Include="..\Private\EnergyBall.cpp" />
     <ClCompile Include="..\Private\Level_Sanctum.cpp" />
     <ClCompile Include="..\private\PotionStationCamera.cpp" />
+    <ClCompile Include="..\private\Trigger.cpp" />
     <ClCompile Include="..\Private\Weapon_DarkWizard_Wand.cpp" />
     <ClCompile Include="..\Private\Diffindo.cpp" />
     <ClCompile Include="..\private\Dittany_Leaves_Item.cpp" />

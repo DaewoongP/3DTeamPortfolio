@@ -613,6 +613,9 @@
     <Filter Include="02. GameObject\02. Enemy\05. DarkWizard\Weapon">
       <UniqueIdentifier>{231c744f-ab40-44fe-8fe7-d4cd81fb4189}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\10. Trigger">
+      <UniqueIdentifier>{27de4cc5-7089-4e2c-9a0b-777722be03fa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1229,6 +1232,9 @@
     <ClInclude Include="..\Public\Camera_Includes.h">
       <Filter>99. Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Trigger.h">
+      <Filter>02. GameObject\10. Trigger</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1805,6 +1811,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Level_Static.cpp">
       <Filter>01. Levels\98. Static</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Trigger.cpp">
+      <Filter>02. GameObject\10. Trigger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
