@@ -298,6 +298,7 @@ void CMainApp::Debug_ImGui()
 		WCharToChar(LayerTag, szTag);
 		ImGui::Text(szTag);
 	}
+
 	ImGui::Separator();
 
 	ImGui::End();

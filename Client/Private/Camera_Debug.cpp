@@ -191,7 +191,7 @@ void CCamera_Debug::Tick_ImGui()
 
 	if (ImGui::Button("Teleport Pos to Cam"))
 	{
-		CPlayer* pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(pGameInstance->Get_CurrentLevelIndex(), TEXT("Layer_Player"), TEXT("GameObject_Player")));
+		CPlayer* pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
 		if (nullptr != pPlayer)
 		{
 			_float3 vPos = m_pTransform->Get_Position();

@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+#include "DOF.h"
 
 BEGIN(Engine)
 
@@ -52,6 +53,7 @@ private:
 	HRESULT Render_Distortion();
 	HRESULT Render_RadialBlur();
 	HRESULT Render_Screen();
+	HRESULT Render_Rain();
 	HRESULT Render_UI();
 
 #ifdef _DEBUG

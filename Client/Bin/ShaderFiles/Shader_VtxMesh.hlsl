@@ -63,6 +63,7 @@ struct PS_OUT
     vector vDiffuse : SV_TARGET0;
     vector vNormal : SV_TARGET1;
     vector vDepth : SV_TARGET2;
+    float4 vEmissive : SV_TARGET3;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
