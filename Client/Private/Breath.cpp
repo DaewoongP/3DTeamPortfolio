@@ -2,6 +2,8 @@
 
 #include "GameInstance.h"
 
+#include "Cylinder.h"
+
 CBreath::CBreath(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -17,10 +19,6 @@ HRESULT CBreath::Initialize_Prototype()
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	BEGININSTANCE;
-	pGameInstance->Find_And_Add_Model(m_pDevice, m_pContext, LEVEL_SANCTUM, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/VFX_SM_Cylinder_1m/VFX_SM_Cylinder_1m.dat"));
-	ENDINSTANCE;
-
 	return S_OK;
 }
 
@@ -33,15 +31,6 @@ HRESULT CBreath::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pTransform->Set_RigidBody(m_pRigidBody);
-	m_pTransform->Set_Scale(_float3(0.2f, 1.f, 0.2f));
-
-	return S_OK;
-}
-
-HRESULT CBreath::Initialize_Level(_uint iCurrentLevelIndex)
-{
-	if (FAILED(Add_Components_Level(iCurrentLevelIndex)))
-		return E_FAIL;
 
 	return S_OK;
 }
@@ -50,11 +39,16 @@ void CBreath::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	if (nullptr != m_pCylinder)
+		m_pCylinder->Tick(fTimeDelta);
 }
 
 void CBreath::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	if (nullptr != m_pCylinder)
+		m_pCylinder->Late_Tick(fTimeDelta);
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -71,6 +65,14 @@ void CBreath::Late_Tick(_float fTimeDelta)
 	Safe_Release(pGameInstance);
 }
 
+void CBreath::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
+{
+}
+
+void CBreath::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
+{
+}
+
 HRESULT CBreath::Render()
 {
 	if (FAILED(__super::Render()))
@@ -79,20 +81,20 @@ HRESULT CBreath::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	_uint iNumMeshes = m_pModel->Get_NumMeshes();
-
-	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; ++iMeshCount)
-	{
-		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
-		m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
-
-		m_pShader->Begin("Mesh");
-
-		if (FAILED(m_pModel->Render(iMeshCount)))
-			return E_FAIL;
-	}
-
 	return S_OK;
+}
+
+void CBreath::Reset(const BREATHINITDESC& tagResetDesc)
+{
+	m_pTransform->Set_Position(tagResetDesc.vPosition);
+	m_pTransform->Rotation(tagResetDesc.vRight, tagResetDesc.fRadian);
+
+	CCylinder::CYLINDERINITDESC CylinderDesc;
+	CylinderDesc.fRadian = tagResetDesc.fRadian;
+	CylinderDesc.vPosition = tagResetDesc.vPosition;
+	CylinderDesc.vRight = tagResetDesc.vRight;
+	CylinderDesc.vSacle = _float3(0.2f, tagResetDesc.fDistance, 0.2f);
+	m_pCylinder->Reset(CylinderDesc);
 }
 
 HRESULT CBreath::Add_Components()
@@ -141,23 +143,16 @@ HRESULT CBreath::Add_Components()
 		return E_FAIL;
 	}
 
-	return S_OK;
-}
-
-HRESULT CBreath::Add_Components_Level(const _uint& iLevel)
-{
+	/* Object Cylinder */
 	BEGININSTANCE;
-
-	/* Com_Model */
-	if (FAILED(CComposite::Add_Component(iLevel, TEXT("Prototype_Component_Model_VFX_SM_Cylinder_1m"),
-		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
+	m_pCylinder = dynamic_cast<CCylinder*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Cylinder")));
+	ENDINSTANCE;
+	if(nullptr == m_pCylinder)
 	{
-		MSG_BOX("Failed CBreath Add_Component : (Com_Model)");
+		MSG_BOX("Failed CBreath Add_Component : m_pCylinder is nullptr");
 		__debugbreak();
 		return E_FAIL;
 	}
-
-	ENDINSTANCE;
 
 	return S_OK;
 }
@@ -211,9 +206,9 @@ void CBreath::Free()
 
 	if (true == m_isCloned)
 	{
+		Safe_Release(m_pCylinder);
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pShader);
-		Safe_Release(m_pModel);
 		Safe_Release(m_pRenderer);
 	}
 }

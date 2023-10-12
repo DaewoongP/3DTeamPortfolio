@@ -313,13 +313,13 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}*/
-	/*Matrix = XMMatrixTranslation(35.f, 10.f, 65.f);
+	Matrix = XMMatrixTranslation(35.f, 10.f, 65.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_DarkWizard_M"), pLayerTag, TEXT("GameObject_DarkWizard_M"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_DarkWizard_M)");
 		ENDINSTANCE;
 		return E_FAIL;
-	}*/
+	}
 	///////////////////////////////////////////////////////////////////////
 
 	//Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Cliff1.mon"));
@@ -601,6 +601,7 @@ HRESULT CLevel_Cliffside::Load_Monsters(const wstring& wstrMonsterFilePath)
 	{
 		_float4x4 WorldMatrix = _float4x4();
 		wstring wstrMonsterTag = { TEXT("") };
+		string strComponentTag = { "" };
 		wstring wstrModelFilePath = { TEXT("") };
 		wstring wstrPrototypeModelTag = { TEXT("") };
 
@@ -619,14 +620,29 @@ HRESULT CLevel_Cliffside::Load_Monsters(const wstring& wstrMonsterFilePath)
 			MSG_BOX("Failed to Read iLength");
 			CloseHandle(hFile);
 		}
-		_tchar szTag[MAX_PATH] = { TEXT("") };
-		if (!ReadFile(hFile, szTag, sizeof(_tchar) * iLength, &dwByte, nullptr))
+		_tchar wszTag[MAX_PATH] = { TEXT("") };
+		if (!ReadFile(hFile, wszTag, sizeof(_tchar) * iLength, &dwByte, nullptr))
 		{
 			MSG_BOX("Failed to Read m_vecSaveObject.wszTag");
 			CloseHandle(hFile);
 			return E_FAIL;
 		}
-		wstrMonsterTag = szTag;
+		wstrMonsterTag = wszTag;
+
+		/* Read Monster ComponentTag */
+		iLength = { 0 };
+		if (!ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read wstrComponentTag.iTagLen");
+			return E_FAIL;
+		}
+		_char szTag[MAX_PATH] = { "" };
+		if (!ReadFile(hFile, szTag, iLength, &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read wstrComponentTag.wszTag");
+			return E_FAIL;
+		}
+		strComponentTag = szTag;
 
 		/* Read Monster PrototypeModelTag */
 		iLength = { 0 };
@@ -635,14 +651,14 @@ HRESULT CLevel_Cliffside::Load_Monsters(const wstring& wstrMonsterFilePath)
 			MSG_BOX("Failed to Read m_vecSaveObject.iLength");
 			CloseHandle(hFile);
 		}
-		ZEROMEM(szTag);
-		if (!ReadFile(hFile, szTag, sizeof(_tchar) * iLength, &dwByte, nullptr))
+		ZEROMEM(wszTag);
+		if (!ReadFile(hFile, wszTag, sizeof(_tchar) * iLength, &dwByte, nullptr))
 		{
 			MSG_BOX("Failed to Read m_vecSaveObject.wszTag");
 			CloseHandle(hFile);
 			return E_FAIL;
 		}
-		wstrPrototypeModelTag = szTag;
+		wstrPrototypeModelTag = wszTag;
 
 		/* Read Monster ModelFilePath */
 		iLength = { 0 };
@@ -651,14 +667,14 @@ HRESULT CLevel_Cliffside::Load_Monsters(const wstring& wstrMonsterFilePath)
 			MSG_BOX("Failed to Read m_vecSaveObject.iLength");
 			CloseHandle(hFile);
 		}
-		ZEROMEM(szTag);
-		if (!ReadFile(hFile, szTag, sizeof(_tchar) * iLength, &dwByte, nullptr))
+		ZEROMEM(wszTag);
+		if (!ReadFile(hFile, wszTag, sizeof(_tchar) * iLength, &dwByte, nullptr))
 		{
 			MSG_BOX("Failed to Read m_vecSaveObject.wszTag");
 			CloseHandle(hFile);
 			return E_FAIL;
 		}
-		wstrModelFilePath = szTag;
+		wstrModelFilePath = wszTag;
 
 		if (dwByte == 0)
 		{
@@ -667,7 +683,8 @@ HRESULT CLevel_Cliffside::Load_Monsters(const wstring& wstrMonsterFilePath)
 
 		wstring wstrPrototypeTag = TEXT("Prototype_GameObject_");
 		wstrPrototypeTag += wstrMonsterTag;
-		wstring wstrComponentTag = TEXT("Monster_") + to_wstring(iMonsterNum++);
+		wstring wstrComponentTag = strToWStr(strComponentTag);
+
 		BEGININSTANCE;
 		if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, wstrPrototypeTag.c_str(),
 			TEXT("Layer_Monster"), wstrComponentTag.c_str(), &WorldMatrix)))

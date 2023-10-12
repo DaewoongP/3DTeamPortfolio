@@ -192,13 +192,6 @@ HRESULT CLevel_Sanctum::Ready_Layer_Monsters(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_Breath"), pLayerTag, TEXT("GameObject_Breath"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Breath)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-
 	ENDINSTANCE;
 
 	return S_OK;

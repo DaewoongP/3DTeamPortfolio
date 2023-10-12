@@ -412,9 +412,6 @@
     <Filter Include="05. Magic\MagicBall\16. Imperio">
       <UniqueIdentifier>{3e5daa2a-0540-4c2b-b10a-c7031295ac39}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\02. Enemy\04. Boss">
-      <UniqueIdentifier>{0af7f112-5794-49f9-b566-5e0282856103}</UniqueIdentifier>
-    </Filter>
     <Filter Include="05. Magic\MagicBall\17. Stupefy">
       <UniqueIdentifier>{3889487f-722c-4c11-99ae-a49e505aff2c}</UniqueIdentifier>
     </Filter>
@@ -610,14 +607,32 @@
     <Filter Include="02. GameObject\09. Item\02. Ingredient\Mongrel_Fur_Item">
       <UniqueIdentifier>{1d482665-58b1-4b52-8f5a-7ca07153b2d1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\02. Enemy\04. Boss\EnergyBall">
-      <UniqueIdentifier>{79dcddca-11cc-4450-a7ad-d7866f733612}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Levels\05. Sky">
       <UniqueIdentifier>{8daaa0f5-8eda-4c23-b5f9-f4ec1e89c6c1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\02. Enemy\04. Boss\Breath">
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon">
+      <UniqueIdentifier>{0af7f112-5794-49f9-b566-5e0282856103}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\00. Breath">
       <UniqueIdentifier>{d27190fb-93b1-4fc8-a3ec-cd4237d610f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\00. Breath\Cylinder">
+      <UniqueIdentifier>{a2c2803d-c44f-4cce-979e-3f110506685d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\01. EnergyBall">
+      <UniqueIdentifier>{79dcddca-11cc-4450-a7ad-d7866f733612}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\02. Pulse">
+      <UniqueIdentifier>{577c4cca-621b-45e1-95a4-5f05df3bff21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\03. Projectile_Black">
+      <UniqueIdentifier>{6d239c05-d6d4-4004-932d-61a54fb474d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\04. Projectile_White">
+      <UniqueIdentifier>{90270eef-d6f0-4ecb-9e8f-1de3ab28c703}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\Weapon">
+      <UniqueIdentifier>{4825389d-2310-47a8-8256-7d05c14ba302}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1083,7 +1098,7 @@
       <Filter>02. GameObject\11. Potion\InvisibilityPotion</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ConjuredDragon.h">
-      <Filter>02. GameObject\02. Enemy\04. Boss</Filter>
+      <Filter>02. GameObject\02. Enemy\04. Dragon</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\RigidMove.h">
       <Filter>03. Behaviors\03. Movement</Filter>
@@ -1224,13 +1239,28 @@
       <Filter>02. GameObject\09. Item\02. Ingredient\Mongrel_Fur_Item</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\EnergyBall.h">
-      <Filter>02. GameObject\02. Enemy\04. Boss\EnergyBall</Filter>
+      <Filter>02. GameObject\02. Enemy\04. Dragon\01. EnergyBall</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Level_Sky.h">
       <Filter>01. Levels\05. Sky</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Breath.h">
-      <Filter>02. GameObject\02. Enemy\04. Boss\Breath</Filter>
+      <Filter>02. GameObject\02. Enemy\04. Dragon\00. Breath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cylinder.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\00. Breath\Cylinder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Projectile_White.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\04. Projectile_White</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pulse.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\02. Pulse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Projectile_Black.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\03. Projectile_Black</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Dragon_Head.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1663,7 +1693,7 @@
       <Filter>02. GameObject\11. Potion\InvisibilityPotion</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ConjuredDragon.cpp">
-      <Filter>02. GameObject\02. Enemy\04. Boss</Filter>
+      <Filter>02. GameObject\02. Enemy\04. Dragon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\RigidMove.cpp">
       <Filter>03. Behaviors\03. Movement</Filter>
@@ -1804,13 +1834,28 @@
       <Filter>02. GameObject\09. Item\02. Ingredient\Mongrel_Fur_Item</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\EnergyBall.cpp">
-      <Filter>02. GameObject\02. Enemy\04. Boss\EnergyBall</Filter>
+      <Filter>02. GameObject\02. Enemy\04. Dragon\01. EnergyBall</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Level_Sky.cpp">
       <Filter>01. Levels\05. Sky</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Breath.cpp">
-      <Filter>02. GameObject\02. Enemy\04. Boss\Breath</Filter>
+      <Filter>02. GameObject\02. Enemy\04. Dragon\00. Breath</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cylinder.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\00. Breath\Cylinder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Projectile_White.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\04. Projectile_White</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pulse.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\02. Pulse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Projectile_Black.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\03. Projectile_Black</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Dragon_Head.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

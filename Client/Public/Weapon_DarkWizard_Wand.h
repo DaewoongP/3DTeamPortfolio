@@ -34,18 +34,10 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-public:
-	_float4x4 Get_Wand_Point_OffsetMatrix() {
-		return m_WandPointOffsetMatrix;
-	}
-
 private:
 	CModel* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	CRenderer* m_pRendererCom = { nullptr };
-
-private:
-	_float4x4 m_WandPointOffsetMatrix = {};
 
 private:
 	HRESULT Add_Components(void* pArg);
