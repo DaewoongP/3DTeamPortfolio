@@ -38,6 +38,10 @@ private:
 	virtual void Tick_Dying(_float fTimeDelta) override;
 
 private:
+	CMeshEffect* m_pMeshEffect = { nullptr };
+
+
+private:
 	HRESULT Add_Components();
 
 public:

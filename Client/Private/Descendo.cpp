@@ -101,7 +101,15 @@ HRESULT CDescendo::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
-	
+	//if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Decendo_MeshEffect")))
+	//{
+	//	if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Decendo_MeshEffect")
+	//		, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Decendo/Decendo.ME"), m_iLevel))))
+	//	{
+	//		ENDINSTANCE;
+	//		return E_FAIL;
+	//	}
+	//}
 	ENDINSTANCE;
 
 
@@ -158,6 +166,8 @@ void CDescendo::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	if (wcsstr(CollisionEventDesc.pOtherCollisionTag,TEXT("Enemy_Body")) != nullptr)
 	{
 		Set_MagicBallState(MAGICBALL_STATE_DYING);
+
+	//	m_pMeshEffect->Play(m_vStartPosition);
 	}
 	__super::OnCollisionEnter(CollisionEventDesc);
 }
@@ -191,6 +201,7 @@ void CDescendo::Ready_DrawMagic()
 void CDescendo::Ready_CastMagic()
 {
 	Ready_SplineMove_Accio(m_TrailVec[EFFECT_STATE_MAIN][0],_float3(0,1,0));
+
 	__super::Ready_CastMagic();
 }
 
@@ -312,7 +323,14 @@ HRESULT CDescendo::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
-	
+
+	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Decendo_MeshEffect"),
+	//	TEXT("Com_Mesh_Effect"), reinterpret_cast<CComponent**>(&m_pMeshEffect))))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Decendo_MeshEffect)");
+	//	__debugbreak();
+	//	return E_FAIL;
+	//}
 
 	return S_OK;
 }
@@ -345,4 +363,8 @@ CGameObject* CDescendo::Clone(void* pArg)
 void CDescendo::Free()
 {
 	__super::Free();
+	if(m_isCloned)
+	{
+		Safe_Release(m_pMeshEffect);
+	}
 }

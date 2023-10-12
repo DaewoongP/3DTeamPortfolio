@@ -65,7 +65,7 @@ HRESULT CComponent_Manager::Add_Component(_uint iPrototypeLevelIndex, _uint iLev
 	CComponent* pPrototype = Find_Prototype(iPrototypeLevelIndex, pPrototypeTag);
 
  	NULL_CHECK_RETURN(pPrototype, E_FAIL);
-
+	 
 	CComponent* pComponent = nullptr;
 	pComponent = pPrototype->Clone(pArg);
 
@@ -76,6 +76,7 @@ HRESULT CComponent_Manager::Add_Component(_uint iPrototypeLevelIndex, _uint iLev
 	pComponent->Set_Tag(pComponentTag);
 
 	FAILED_CHECK_RETURN(pComponent->Initialize_Level(iLevelIndex), E_FAIL);
+
 
 	if (nullptr == pLayer)
 	{
