@@ -68,6 +68,9 @@ HRESULT CGolem_Combat::Initialize_Level(_uint iCurrentLevelIndex)
 	if (FAILED(Make_Notifies()))
 		return E_FAIL;
 
+	if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
+		return E_FAIL;
+
 	return S_OK;
 }
 

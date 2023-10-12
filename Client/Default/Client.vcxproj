@@ -170,7 +170,9 @@
     <ClInclude Include="..\public\AshwinderEggs_Item.h" />
     <ClInclude Include="..\Public\Bombarda.h" />
     <ClInclude Include="..\Public\Breath.h" />
+    <ClInclude Include="..\Public\Camera_Includes.h" />
     <ClInclude Include="..\public\ChineseChompingCabbageItem.h" />
+    <ClInclude Include="..\Public\Client_Enum.h" />
     <ClInclude Include="..\Public\ConjuredDragon.h" />
     <ClInclude Include="..\public\CraftState.h" />
     <ClInclude Include="..\Public\Cylinder.h" />
@@ -178,6 +180,7 @@
     <ClInclude Include="..\Public\Door.h" />
     <ClInclude Include="..\Public\Gull.h" />
     <ClInclude Include="..\Public\Level_Sky.h" />
+    <ClInclude Include="..\public\Level_Static.h" />
     <ClInclude Include="..\public\Mongrel_Fur_Item.h" />
     <ClInclude Include="..\Public\EnergyBall.h" />
     <ClInclude Include="..\Public\Level_Sanctum.h" />
@@ -188,12 +191,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="..\public\Trigger.h" />
     <ClInclude Include="..\Public\Weapon_DarkWizard_Wand.h" />
     <ClInclude Include="..\Public\Diffindo.h" />
     <ClInclude Include="..\public\Dittany_Leaves_Item.h" />
     <ClInclude Include="..\public\Dugbog_Tongue_Item.h" />
     <ClInclude Include="..\public\EdurusPotion_Item.h" />
-    <ClInclude Include="..\public\FlowMap.h" />
     <ClInclude Include="..\public\Fluxweed_Stem_Item.h" />
     <ClInclude Include="..\public\FocusPotion_Item.h" />
     <ClInclude Include="..\public\Horklump_Juice_Item.h" />
@@ -414,6 +417,7 @@
     <ClCompile Include="..\Private\Door.cpp" />
     <ClCompile Include="..\Private\Gull.cpp" />
     <ClCompile Include="..\Private\Level_Sky.cpp" />
+    <ClCompile Include="..\private\Level_Static.cpp" />
     <ClCompile Include="..\private\Mongrel_Fur_Item.cpp" />
     <ClCompile Include="..\Private\EnergyBall.cpp" />
     <ClCompile Include="..\Private\Level_Sanctum.cpp" />
@@ -424,12 +428,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\private\Trigger.cpp" />
     <ClCompile Include="..\Private\Weapon_DarkWizard_Wand.cpp" />
     <ClCompile Include="..\Private\Diffindo.cpp" />
     <ClCompile Include="..\private\Dittany_Leaves_Item.cpp" />
     <ClCompile Include="..\private\Dugbog_Tongue_Item.cpp" />
     <ClCompile Include="..\private\EdurusPotion_Item.cpp" />
-    <ClCompile Include="..\private\FlowMap.cpp" />
     <ClCompile Include="..\private\Fluxweed_Stem_Item.cpp" />
     <ClCompile Include="..\private\FocusPotion_Item.cpp" />
     <ClCompile Include="..\private\Horklump_Juice_Item.cpp" />
@@ -643,7 +647,6 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_FlowMap.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Protego.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowAnimMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMesh.hlsl" />

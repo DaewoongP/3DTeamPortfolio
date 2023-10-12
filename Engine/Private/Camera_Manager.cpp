@@ -251,6 +251,9 @@ HRESULT CCamera_Manager::Set_Camera(const _tchar* _CameraTag, _float _fLerpTime)
 
 _bool CCamera_Manager::Is_Current_Camera(const _tchar* _CameraTag)
 {
+	if (m_Cameras.empty())
+		return false;
+
 	if (m_Cameras.end() == m_iterCamera || nullptr == m_pCurrentCamera)
 	{
 		return false;
@@ -298,6 +301,8 @@ HRESULT CCamera_Manager::Clear()
 	m_SplineData.clear();
 
 	m_SplineDataIndexAccess.clear();
+
+	m_iterCamera = m_Cameras.end();
 
 	return S_OK;
 }

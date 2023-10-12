@@ -40,6 +40,12 @@ HRESULT CGatherer::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	// 플레이어 찾기
+	BEGININSTANCE;
+	m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+	m_pPlayerInformation = m_pPlayer->Get_Player_Information();
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
@@ -87,12 +93,6 @@ HRESULT CGatherer::Initialize_Level(_uint iCurrentLevelIndex)
 	// 1번이 IDLE이라고 생각할 수 있음
 	m_pModel->Set_CurrentAnimIndex(1);
 	m_pModel->Get_Animation(1)->Set_Loop(true);
-
-	// 플레이어 찾기
-	BEGININSTANCE;
-	m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(iCurrentLevelIndex, TEXT("Layer_Player"), TEXT("GameObject_Player")));
-	m_pPlayerInformation = m_pPlayer->Get_Player_Information();
-	ENDINSTANCE;
 
 	return S_OK;
 }

@@ -5,6 +5,14 @@ CLayer::CLayer()
 {
 }
 
+HRESULT CLayer::Initialize_Level(_uint iCurrentLevelIndex)
+{
+	for (auto& pComponent : m_Components)
+		pComponent.second->Initialize_Level(iCurrentLevelIndex);
+
+	return S_OK;
+}
+
 HRESULT CLayer::Add_Component(const _tchar* pComponentTag, CComponent* pComponent)
 {
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
@@ -69,7 +77,7 @@ void CLayer::Late_Tick(_float fTimeDelta)
 
 		if (CComponent::OBJ_DEAD == iter->second->Get_ObjEvent())
 		{
-			Safe_Release(iter->second);
+			m_DeadComponents.emplace(iter->first, iter->second);
 			iter = m_Components.erase(iter);
 		}
 		else
@@ -100,5 +108,10 @@ void CLayer::Free()
 		Safe_Release(pComponent.second);
 
 	m_Components.clear();
+
+	for (auto& pComponent : m_DeadComponents)
+		Safe_Release(pComponent.second);
+
+	m_DeadComponents.clear();
 }
 

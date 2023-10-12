@@ -1,10 +1,3 @@
-float3 Multiply(const float3 m[3], const float3 v)
-{
-    float x = m[0][0] * v[0] + m[0][1] * v[1] + m[0][2] * v[2];
-    float y = m[1][0] * v[1] + m[1][1] * v[1] + m[1][2] * v[2];
-    float z = m[2][0] * v[1] + m[2][1] * v[1] + m[2][2] * v[2];
-    return float3(x, y, z);
-}
 
 float3 rtt_and_odt_fit(float3 v)
 {

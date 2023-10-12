@@ -9,7 +9,7 @@ CLevel_Manager::CLevel_Manager()
 {
 }
 
-list<const _tchar*> CLevel_Manager::Get_Layers(const _tchar* pSceneTag)
+list<const _tchar*> CLevel_Manager::Get_CurrentSceneLayers(const _tchar* pSceneTag)
 {
 	auto iter = find_if(m_Scenes.begin(), m_Scenes.end(), CTag_Finder(pSceneTag));
 	if (iter == m_Scenes.end())
@@ -30,14 +30,16 @@ HRESULT CLevel_Manager::Open_Level(_uint iLevelIndex, CLevel* pNewLevel)
 		pGameInstance->Clear_LevelResources(m_iLevelIndex);
 	}
 
-	Safe_Release(pGameInstance);
-
 	// 현재레벨과 다음레벨 교체
 	Safe_Release(m_pCurrentLevel);
 
 	m_pCurrentLevel = pNewLevel;
 
 	m_iLevelIndex = iLevelIndex;
+
+	pGameInstance->Initialize_Level(m_iLevelIndex);
+
+	Safe_Release(pGameInstance);
 
 	return S_OK;
 }
@@ -75,6 +77,7 @@ HRESULT CLevel_Manager::Add_Scene(const _tchar* pSceneTag, const _tchar* pLayerT
 		{
 			if (!lstrcmp(ListLayerTag, pLayerTag))
 			{
+				__debugbreak();
 				return S_FALSE;
 			}
 		}
