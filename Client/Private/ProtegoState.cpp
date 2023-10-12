@@ -57,39 +57,41 @@ void CProtegoState::OnStateEnter(void* _pArg)
 
 #pragma region 바라보기
 		//맞았으면 그놈을 바라보자
-//나에서 타겟을 향한 벡터
-		_float3 vDirTarget{};
+		//나에서 타겟을 향한 벡터
+		//_float3 vDirTarget{};
 
-		vDirTarget = ProtegoStateDesc->pTransform->Get_Position() - m_StateMachineDesc.pPlayerTransform->Get_Position();
+		//vDirTarget = ProtegoStateDesc->pTransform->Get_Position() - m_StateMachineDesc.pPlayerTransform->Get_Position();
 
-		vDirTarget = XMVectorSetY(vDirTarget, 0.0f);
+		//vDirTarget = XMVectorSetY(vDirTarget, 0.0f);
 
-		vDirTarget.Normalize();
+		//vDirTarget.Normalize();
 
-		//내 룩 벡터
-		_float3 vLook{};
+		////내 룩 벡터
+		//_float3 vLook{};
 
-		vLook = m_StateMachineDesc.pPlayerTransform->Get_Look();
+		//vLook = m_StateMachineDesc.pPlayerTransform->Get_Look();
 
-		vLook = XMVectorSetY(vLook, 0.0f);
+		//vLook = XMVectorSetY(vLook, 0.0f);
 
-		vLook.Normalize();
+		//vLook.Normalize();
 
-		_float fTargetAngle = vLook.Dot(vDirTarget);
+		//_float fTargetAngle = vLook.Dot(vDirTarget);
 
-		if (1.0f < fTargetAngle)
-		{
-			fTargetAngle = 1.0f;
-		}
+		//if (1.0f < fTargetAngle)
+		//{
+		//	fTargetAngle = 1.0f;
+		//}
 
-		fTargetAngle = acosf(fTargetAngle);
+		//fTargetAngle = acosf(fTargetAngle);
 
-		if (0.0f > vLook.Cross(vDirTarget).y)
-		{
-			fTargetAngle *= -1;
-		}
+		//if (0.0f > vLook.Cross(vDirTarget).y)
+		//{
+		//	fTargetAngle *= -1;
+		//}
 
-		m_StateMachineDesc.pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fTargetAngle);
+		//m_StateMachineDesc.pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fTargetAngle);
+
+		m_StateMachineDesc.pPlayerTransform->LookAt(ProtegoStateDesc->pTransform->Get_Position(), true);
 #pragma endregion
 
 		m_isHit = ProtegoStateDesc->isHit;
@@ -155,14 +157,22 @@ void CProtegoState::Bind_Notify()
 	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Protego_Loop_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
 	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_Slide_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
 	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
+
+	function<void()> funcPointer = [&] {(*this).Stupefy(); };
+
 	//스투페파이
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_Slide_anm"), TEXT("Stupefy"), funcPointer);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_anm"), TEXT("Stupefy"), funcPointer);
+	
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_01_Spin_anm"), TEXT("Spell_Ready"), m_StateMachineDesc.pfuncFinishAnimation);
 }
 
 void CProtegoState::Go_Idle()
 {
 	if (true == *m_StateMachineDesc.pisFinishAnimation &&(
 		!wcscmp(m_StateMachineDesc.pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Cmbt_Protego_Loop_anm")) ||
-		!wcscmp(m_StateMachineDesc.pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_Slide_anm")))
+		!wcscmp(m_StateMachineDesc.pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_Slide_anm")) ||
+		!wcscmp(m_StateMachineDesc.pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_01_Spin_anm")))
 		)
 	{
 		Set_StateMachine(TEXT("Idle"));
@@ -175,7 +185,12 @@ void CProtegoState::Stupefy()
 	
 	if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_PRESSING))
 	{
-		//스투페파이 발사~ 이건 플레이어에서 처리해야 할지도
+		if (nullptr != *m_StateMachineDesc.ppTarget)
+		{
+			m_StateMachineDesc.pPlayerTransform->LookAt((*m_StateMachineDesc.ppTarget)->Get_Transform()->Get_Position(), true);
+		}
+
+		Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_01_Spin_anm"), false);
 	}
 	
 	ENDINSTANCE;
@@ -187,7 +202,7 @@ void CProtegoState::Powerful_Stupefy()
 
 	if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_PRESSING))
 	{
-		//스투페파이 발사~ 이건 플레이어에서 처리해야 할지도
+		//스투페파이 발사~ 이건 플레이어에서 처리해야 할지도//Hu_Broom_Hover_Rct_Impact_Hvy_Rht_anm
 	}
 
 	ENDINSTANCE;

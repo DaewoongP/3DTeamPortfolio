@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -166,28 +166,53 @@
   <ItemGroup>
     <ClInclude Include="..\Public\Accio.h" />
     <ClInclude Include="..\Public\Action.h" />
+    <ClInclude Include="..\Public\AncientDoor_L.h" />
+    <ClInclude Include="..\Public\AncientDoor_R.h" />
     <ClInclude Include="..\Public\Animation_Camera_Model.h" />
     <ClInclude Include="..\public\AshwinderEggs_Item.h" />
     <ClInclude Include="..\Public\Bombarda.h" />
+    <ClInclude Include="..\Public\Broom_Begin.h" />
+    <ClInclude Include="..\Public\Broom_Break.h" />
+    <ClInclude Include="..\Public\Broom_End.h" />
+    <ClInclude Include="..\Public\Breath.h" />
+    <ClInclude Include="..\Public\Camera_Includes.h" />
     <ClInclude Include="..\public\ChineseChompingCabbageItem.h" />
     <ClInclude Include="..\Public\Cliff_Gate.h" />
+    <ClInclude Include="..\Public\Client_Enum.h" />
     <ClInclude Include="..\Public\ConjuredDragon.h" />
     <ClInclude Include="..\public\CraftState.h" />
+    <ClInclude Include="..\Public\Cylinder.h" />
     <ClInclude Include="..\Public\DarkWizard_M.h" />
     <ClInclude Include="..\Public\Door.h" />
+    <ClInclude Include="..\Public\Fly_Move.h" />
+    <ClInclude Include="..\Public\Fly_Turn.h" />
     <ClInclude Include="..\Public\Gull.h" />
+    <ClInclude Include="..\Public\Hover_Idle.h" />
+    <ClInclude Include="..\Public\Hover_Move.h" />
+    <ClInclude Include="..\Public\Hover_Turn.h" />
     <ClInclude Include="..\Public\Level_Sky.h" />
+    <ClInclude Include="..\public\Level_Static.h" />
     <ClInclude Include="..\public\Mongrel_Fur_Item.h" />
     <ClInclude Include="..\Public\EnergyBall.h" />
     <ClInclude Include="..\Public\Level_Sanctum.h" />
     <ClInclude Include="..\public\PotionStationCamera.h" />
     <ClInclude Include="..\Public\Vault_Gate.h" />
+    <ClInclude Include="..\Public\UseItemState.h" />
+    <ClInclude Include="..\Public\UI_Damage.h" />
+    <ClInclude Include="..\Public\UI_Store.h" />
+    <ClInclude Include="..\Public\UI_DamageFont.h" />
+    <ClInclude Include="..\Public\Projectile_Black.h" />
+    <ClInclude Include="..\Public\Projectile_White.h" />
+    <ClInclude Include="..\Public\Pulse.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\public\Trigger.h" />
     <ClInclude Include="..\Public\Weapon_DarkWizard_Wand.h" />
     <ClInclude Include="..\Public\Diffindo.h" />
     <ClInclude Include="..\public\Dittany_Leaves_Item.h" />
     <ClInclude Include="..\public\Dugbog_Tongue_Item.h" />
     <ClInclude Include="..\public\EdurusPotion_Item.h" />
-    <ClInclude Include="..\public\FlowMap.h" />
     <ClInclude Include="..\public\Fluxweed_Stem_Item.h" />
     <ClInclude Include="..\public\FocusPotion_Item.h" />
     <ClInclude Include="..\public\Horklump_Juice_Item.h" />
@@ -260,6 +285,7 @@
     <ClInclude Include="..\public\UI_Farming.h" />
     <ClInclude Include="..\Public\UI_Potion_Tap.h" />
     <ClInclude Include="..\Public\RigidMove.h" />
+    <ClInclude Include="..\Public\Weapon_Dragon_Head.h" />
     <ClInclude Include="..\Public\Weapon_Goblin_Assasin.h" />
     <ClInclude Include="..\public\WiggenweldPotion.h" />
     <ClInclude Include="..\Public\Sequence_AirHit.h" />
@@ -396,28 +422,50 @@
   <ItemGroup>
     <ClCompile Include="..\Private\Accio.cpp" />
     <ClCompile Include="..\Private\Action.cpp" />
+    <ClCompile Include="..\Private\AncientDoor_L.cpp" />
     <ClCompile Include="..\Private\Animation_Camera_Model.cpp" />
     <ClCompile Include="..\Private\AshwinderEggs_Item.cpp" />
     <ClCompile Include="..\Private\Bombarda.cpp" />
+    <ClCompile Include="..\Private\Broom_Begin.cpp" />
+    <ClCompile Include="..\Private\Broom_Break.cpp" />
+    <ClCompile Include="..\Private\Broom_End.cpp" />
+    <ClCompile Include="..\Private\Breath.cpp" />
     <ClCompile Include="..\private\ChineseChompingCabbageItem.cpp" />
     <ClCompile Include="..\Private\Cliff_Gate.cpp" />
     <ClCompile Include="..\Private\ConjuredDragon.cpp" />
     <ClCompile Include="..\private\CraftState.cpp" />
+    <ClCompile Include="..\Private\Cylinder.cpp" />
     <ClCompile Include="..\Private\DarkWizard_M.cpp" />
     <ClCompile Include="..\Private\Door.cpp" />
+    <ClCompile Include="..\Private\Fly_Move.cpp" />
+    <ClCompile Include="..\Private\Fly_Turn.cpp" />
     <ClCompile Include="..\Private\Gull.cpp" />
+    <ClCompile Include="..\Private\Hover_Idle.cpp" />
+    <ClCompile Include="..\Private\Hover_Move.cpp" />
+    <ClCompile Include="..\Private\Hover_Turn.cpp" />
     <ClCompile Include="..\Private\Level_Sky.cpp" />
+    <ClCompile Include="..\private\Level_Static.cpp" />
     <ClCompile Include="..\private\Mongrel_Fur_Item.cpp" />
     <ClCompile Include="..\Private\EnergyBall.cpp" />
     <ClCompile Include="..\Private\Level_Sanctum.cpp" />
     <ClCompile Include="..\private\PotionStationCamera.cpp" />
     <ClCompile Include="..\Private\Vault_Gate.cpp" />
+    <ClCompile Include="..\Private\UseItemState.cpp" />
+    <ClCompile Include="..\Private\UI_Damage.cpp" />
+    <ClCompile Include="..\Private\UI_Store.cpp" />
+    <ClCompile Include="..\Private\UI_DamageFont.cpp" />
+    <ClCompile Include="..\Private\Projectile_Black.cpp" />
+    <ClCompile Include="..\Private\Projectile_White.cpp" />
+    <ClCompile Include="..\Private\Pulse.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\private\Trigger.cpp" />
     <ClCompile Include="..\Private\Weapon_DarkWizard_Wand.cpp" />
     <ClCompile Include="..\Private\Diffindo.cpp" />
     <ClCompile Include="..\private\Dittany_Leaves_Item.cpp" />
     <ClCompile Include="..\private\Dugbog_Tongue_Item.cpp" />
     <ClCompile Include="..\private\EdurusPotion_Item.cpp" />
-    <ClCompile Include="..\private\FlowMap.cpp" />
     <ClCompile Include="..\private\Fluxweed_Stem_Item.cpp" />
     <ClCompile Include="..\private\FocusPotion_Item.cpp" />
     <ClCompile Include="..\private\Horklump_Juice_Item.cpp" />
@@ -489,6 +537,7 @@
     <ClCompile Include="..\private\UI_Farming.cpp" />
     <ClCompile Include="..\Private\UI_Potion_Tap.cpp" />
     <ClCompile Include="..\Private\RigidMove.cpp" />
+    <ClCompile Include="..\Private\Weapon_Dragon_Head.cpp" />
     <ClCompile Include="..\Private\Weapon_Goblin_Assasin.cpp" />
     <ClCompile Include="..\private\WiggenweldPotion.cpp" />
     <ClCompile Include="..\Private\Sequence_AirHit.cpp" />
@@ -580,6 +629,7 @@
     <ClCompile Include="..\Private\Wingardiumleviosa.cpp" />
     <ClCompile Include="..\Private\Wingardium_Effect.cpp" />
     <ClCompile Include="..\Private\Wolf.cpp" />
+    <ClCompile Include="AncientDoor_R.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ImGui\backends\imgui_impl_dx11.cpp">
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
@@ -631,7 +681,6 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_FlowMap.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Protego.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowAnimMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMesh.hlsl" />

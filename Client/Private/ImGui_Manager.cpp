@@ -80,7 +80,7 @@ HRESULT CImGui_Manager::Render()
 	// 원래의 백버퍼를 다시 장치에 바인딩 해준다.
 	FAILED_CHECK_RETURN(pGameInstance->Bind_BackBuffer(), E_FAIL);
 	Safe_Release(pGameInstance);
-	
+
 	return S_OK;
 }
 
@@ -94,6 +94,84 @@ HRESULT CImGui_Manager::Add_Function(function<void()> Function)
 void CImGui_Manager::Clear_Function()
 {
 	m_Functions.clear();
+}
+
+void CImGui_Manager::NextWindow_LeftBottom()
+{
+	RECT clientRect;
+	GetClientRect(g_hWnd, &clientRect);
+	POINT leftTop = { clientRect.left, clientRect.top };
+	POINT rightBottom = { clientRect.right, clientRect.bottom };
+	ClientToScreen(g_hWnd, &leftTop);
+	ClientToScreen(g_hWnd, &rightBottom);
+	int Left = leftTop.x;
+	int Top = rightBottom.y;
+	ImVec2 vWinpos = { _float(Left + 500.f), _float(Top) };
+	ImGui::SetNextWindowPos(vWinpos);
+}
+
+void CImGui_Manager::MatrixImgui(_float4x4& pMatrix, const _char* pNodeName)
+{
+	if (nullptr == pNodeName)
+		return;
+
+	ImGui::Begin(pNodeName);
+	// 인자를 통해서 고유한 태그를 만들어줌.
+	string strPositionTag = "Position";
+	string strRotationTag = "Rotation";
+	string strScaleTag = "Scale";
+	string strPositionName = strPositionTag + "##" + pNodeName;
+	string strRotationName = strRotationTag + "##" + pNodeName;
+	string strScaleName = strScaleTag + "##" + pNodeName;
+
+	// 인자로 들어온 매트릭스로부터 이동, 거리, 크기를 만듬.
+	_float3 vTranslations = pMatrix.Translation();
+	_float3 vAngles = pMatrix.ToEuler();
+	_float3 vScales = _float3(pMatrix.Right().Length(), pMatrix.Up().Length(), pMatrix.Look().Length());
+
+	vAngles.x = XMConvertToDegrees(vAngles.x);
+	vAngles.y = XMConvertToDegrees(vAngles.y);
+	vAngles.z = XMConvertToDegrees(vAngles.z);
+
+	// 좌우가 반전 되어 있었는지 확인.
+	_float3 vXAxis = pMatrix.Right();
+	_float3 vYAxis = pMatrix.Up();
+	_float3 vZAxis = pMatrix.Look();
+	if (vXAxis.x < 0.f)
+	{
+		vScales.x = -vScales.x;
+	}
+	if (vYAxis.y < 0.f)
+	{
+		vScales.y = -vScales.y;
+	}
+	if (vZAxis.z < 0.f)
+	{
+		vScales.z = -vScales.z;
+	}
+
+	// 위젯에 값 대입
+	ImGui::Text("Position"); ImGui::SameLine();
+	ImGui::DragFloat3(strPositionName.data(), reinterpret_cast<_float*>(&vTranslations), 0.01f);
+	ImGui::Text("Rotation"); ImGui::SameLine();
+	ImGui::DragFloat3(strRotationName.data(), reinterpret_cast<_float*>(&vAngles), 0.01f);
+	ImGui::Text("   Scale"); ImGui::SameLine();
+	ImGui::DragFloat3(strScaleName.data(), reinterpret_cast<_float*>(&vScales), 0.01f);
+
+	// 회전행렬을 만들기 위한 라디안 변환
+	vAngles.x = XMConvertToRadians(vAngles.x);
+	vAngles.y = XMConvertToRadians(vAngles.y);
+	vAngles.z = XMConvertToRadians(vAngles.z);
+
+	// SRT연산
+	_float4x4 ScaleMatrix = _float4x4::MatrixScale(vScales);
+	_float4x4 RotMatrix = _float4x4::MatrixFromQuaternion(XMQuaternionRotationRollPitchYaw(vAngles.x, vAngles.y, vAngles.z));
+	_float4x4 TransMatrix = _float4x4::MatrixTranslation(vTranslations);
+
+	// 새로운 월드행렬 만듬.
+	pMatrix = ScaleMatrix * RotMatrix * TransMatrix;
+
+	ImGui::End();
 }
 
 void CImGui_Manager::Free()

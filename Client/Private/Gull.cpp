@@ -41,6 +41,12 @@ HRESULT CGull::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	// 플레이어 찾기
+	BEGININSTANCE;
+	m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+	Safe_AddRef(m_pPlayer);
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
@@ -82,12 +88,6 @@ HRESULT CGull::Initialize_Level(_uint iCurrentLevelIndex)
 		__debugbreak();
 		return E_FAIL;
 	}
-
-	// 플레이어 찾기
-	BEGININSTANCE;
-	m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(iCurrentLevelIndex, TEXT("Layer_Player"), TEXT("GameObject_Player")));
-	Safe_AddRef(m_pPlayer);
-	ENDINSTANCE;
 
 	return S_OK;
 }

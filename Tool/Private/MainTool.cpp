@@ -474,6 +474,42 @@ HRESULT CMainTool::Ready_Prototype_Object()
 		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Golem_Slash_Trace_Twinkle"),
 			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Golem_Slash/Trace_Twinkle/"), 3)))
 			throw TEXT("Reserve Particle : Particle_Golem_Slash_Trace_Twinkle");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_Hammer_Trace_Rock"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Troll_Hammer_Trace_Rock/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Troll_Hammer_Trace_Rock");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_Hand_Black"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Troll_Hand_Black/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Troll_Hand_Black");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_TwoHand_Dust"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Troll_TwoHand_Dust/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Troll_TwoHand_Dust");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_TwoHand_Stone"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Troll_TwoHand_Stone/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Troll_TwoHand_Stone");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_TwoHand_Dust_Mini"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Troll_TwoHand_Dust_Mini/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Troll_TwoHand_Dust_Mini");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_TwoHand_Stone_Mini"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Troll_TwoHand_Stone_Mini/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Troll_TwoHand_Stone_Mini");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_TwoHand_StoneRain"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Troll_TwoHand_StoneRain/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Troll_TwoHand_StoneRain");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_Foot_Circle_Dust"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Troll_Foot_Circle_Dust/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Troll_Foot_Circle_Dust");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_Landing_Dust"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Troll_Landing_Dust/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Troll_Landing_Dust");
 	}
 #pragma endregion
 

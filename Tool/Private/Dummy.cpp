@@ -35,9 +35,10 @@ void CDummy::Tick(_float fTimeDelta)
 {
 	if (nullptr != m_pModel)
 	{
-		m_pModel->Play_Animation(fTimeDelta,CModel::UPPERBODY,m_pTransform);
-		m_pModel->Play_Animation(fTimeDelta, CModel::UNDERBODY, m_pTransform);
-		m_pModel->Play_Animation(fTimeDelta, CModel::OTHERBODY, m_pTransform);
+		for (size_t i = 0; i < CModel::ANIM_END; i++)
+		{
+			m_pModel->Play_Animation(fTimeDelta, (CModel::ANIMTYPE)i, m_pTransform);
+		}
 	}
 
 	__super::Tick(fTimeDelta);

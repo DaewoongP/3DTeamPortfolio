@@ -22,6 +22,12 @@ BEGIN(Client)
 
 class CWeapon_Player_Wand : public CParts
 {
+public:
+	typedef struct tagCWeapon_Player_WandDesc
+	{
+		PARENTMATRIXDESC ParentMatrixDesc;
+		_bool* pisLightOn;
+	}CWEAPON_PLAYER_WAND_DESC;
 private:
 	explicit CWeapon_Player_Wand(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CWeapon_Player_Wand(const CWeapon_Player_Wand& rhs);
@@ -41,10 +47,11 @@ private:
 	CRenderer*			m_pRendererCom = { nullptr };
 
 private:
-	_bool				m_isLightOn = false;
+	_bool*				m_pisLightOn = { nullptr };
 	_float4				m_LightIntensity = { 0.f,0.f,0.f,0.f };
 	_float				AccTime = 0.f;
 	_float				DelayTime = 0.0f;
+	_bool				m_isPreLight = { false };
 
 private:
 	class CLight*		m_pLight = { nullptr };

@@ -30,7 +30,7 @@ HRESULT CMagicSlot::Initialize(void* pArg)
 		magicInitDesc.eMagicTag = PROTEGO;
 		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 0;
-		magicInitDesc.fLifeTime = 3.f;
+		magicInitDesc.fLifeTime = 1.3f;
 		Add_Magics(magicInitDesc);
 	}
 	//Basic Magic BasicCast

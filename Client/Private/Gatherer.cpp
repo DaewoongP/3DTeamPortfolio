@@ -41,6 +41,14 @@ HRESULT CGatherer::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	// 플레이어 찾기
+	BEGININSTANCE;
+	m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+	Safe_AddRef(m_pPlayer);
+	m_pPlayerInformation = m_pPlayer->Get_Player_Information();
+	Safe_AddRef(m_pPlayerInformation);
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
@@ -113,15 +121,6 @@ HRESULT CGatherer::Initialize_Level(_uint iCurrentLevelIndex)
 		__debugbreak();
 		return E_FAIL;
 	}
-
-	// 플레이어 찾기
-	BEGININSTANCE;
-	m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(iCurrentLevelIndex, TEXT("Layer_Player"), TEXT("GameObject_Player")));
-	m_pPlayerInformation = m_pPlayer->Get_Player_Information();
-
-	Safe_AddRef(m_pPlayer);
-	Safe_AddRef(m_pPlayerInformation);
-	ENDINSTANCE;
 
 	return S_OK;
 }

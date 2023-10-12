@@ -1,6 +1,7 @@
 #pragma once
 #include "UI.h"
 #include "UI_Image.h"
+#include "UI_Group_SKillTap.h"
 #include "Client_Defines.h"
 
 BEGIN(Engine)
@@ -25,6 +26,7 @@ public:
 		ALPHA,
 		SKILL,
 		INTERACT,
+		SKILLBACK,
 		EFFECTTYPE_END
 	};
 
@@ -42,6 +44,9 @@ public:
 		m_isCool = isCool;
 		if (nullptr != m_pImageCom)
 			m_pImageCom->Set_isCool(isCool);
+	}
+	void	Set_SkillBackType(CUI_Group_SkillTap::SKILLTAP eType) {
+		m_eSkillType = eType;
 	}
 
 
@@ -62,11 +67,11 @@ public:
 	virtual HRESULT Render() override;
 
 private:
-	CShader*				m_pShaderCom = { nullptr };
-	CRenderer*			m_pRendererCom = { nullptr };
-	CVIBuffer_Rect*		m_pVIBufferCom = { nullptr };
-	CUI_Image*			m_pImageCom = { nullptr };
-	CUI_Button*			m_pButtonCom = { nullptr };
+	CShader* m_pShaderCom = { nullptr };
+	CRenderer* m_pRendererCom = { nullptr };
+	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
+	CUI_Image* m_pImageCom = { nullptr };
+	CUI_Button* m_pButtonCom = { nullptr };
 
 private:
 	HRESULT Add_Components();
@@ -83,8 +88,11 @@ private:
 	_bool			m_isClicked = { false };
 	_bool			m_isInteract = { false };
 private:
-	_float*			 m_fCoolTime = { 0 };
+	_float* m_fCoolTime = { 0 };
 	_bool			m_isCool = { false };
+
+private: // for SkillBack
+	CUI_Group_SkillTap::SKILLTAP	m_eSkillType = { CUI_Group_SkillTap::SKILLTAP_END };
 
 public:
 	static CUI_Effect_Back* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
