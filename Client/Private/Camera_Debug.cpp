@@ -41,6 +41,7 @@ HRESULT CCamera_Debug::Initialize(void* pArg)
 	Safe_Release(pGameInstance);
 
 #endif
+	CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"), (CComponent**)(&m_pRenderer));
 	return S_OK;
 }
 
@@ -201,6 +202,37 @@ void CCamera_Debug::Tick_ImGui()
 	}
 
 	ImGui::End();
+	ImGui::SetNextWindowPos(ImVec2(0.f, 500.f));
+	ImGui::SetNextWindowSize(ImVec2(300.f, 400.f));
+
+	// Shader
+	ImGui::Begin("Shader");
+
+	_float fGlowPower = m_pRenderer->Get_GlowPower();
+	if (ImGui::SliderFloat("GlowPower", &fGlowPower, 0.1f, 10.f))
+	{
+		m_pRenderer->Set_GlowPower(fGlowPower);
+	}
+
+	_float fHDR = m_pRenderer->Get_HDR();
+	if (ImGui::SliderFloat("HDR", &fHDR, 0.f, 1.5f))
+	{
+		m_pRenderer->Set_HDR(fHDR);
+	}
+
+	CDOF* pDOF = m_pRenderer->Get_Dof();
+	_float fFocusDistance = pDOF->Get_FocusDistance();
+	_float fFocusRange = pDOF->Get_FocusRange();
+	if (ImGui::SliderFloat("FocusDistance", &fFocusDistance, 0.1f, 100.f, "%.1f"))
+	{
+		pDOF->Set_FocusDistance(fFocusDistance);
+	}
+	if (ImGui::SliderFloat("FocusRange", &fFocusRange, 0.1f, 100.f, "%.1f"))
+	{
+		pDOF->Set_FocusRange(fFocusRange);
+	}
+
+	ImGui::End();
 
 	_uint iCurrentLevelIndex = pGameInstance->Get_CurrentLevelIndex();
 	CLayer* pLayer = pGameInstance->Find_Layer(iCurrentLevelIndex, TEXT("Layer_Monster"));
@@ -215,7 +247,7 @@ void CCamera_Debug::Tick_ImGui()
 		Safe_Release(pGameInstance);
 		return;
 	}
-	ImGui::SetNextWindowPos(ImVec2(0.f, 500.f));
+	ImGui::SetNextWindowPos(ImVec2(0.f, 900.f));
 	ImGui::SetNextWindowSize(ImVec2(300.f, 200.f));
 
 	ImGui::Begin("Mob");
@@ -240,6 +272,8 @@ void CCamera_Debug::Tick_ImGui()
 	}
 
 	ImGui::End();
+
+	
 
 	Safe_Release(pGameInstance);
 }
@@ -274,4 +308,6 @@ CGameObject* CCamera_Debug::Clone(void* pArg)
 void CCamera_Debug::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pRenderer);
 }

@@ -249,10 +249,6 @@ public:
 
 #ifdef _DEBUG
 private:
-	void Tick_ImGui();
-	void Tick_Magic_ImGui();
-	_bool m_isGravity = { false };
-
 	void Tick_TestShake();
 #endif // _DEBUG
 

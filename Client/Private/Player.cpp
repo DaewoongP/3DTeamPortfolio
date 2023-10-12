@@ -296,7 +296,6 @@ void CPlayer::Tick(_float fTimeDelta)
 
 
 #ifdef _DEBUG
-	ADD_IMGUI([&] { this->Tick_ImGui(); });
 	ADD_IMGUI([&] { this->Tick_TestShake(); });
 #endif // _DEBUG
 }
@@ -1516,54 +1515,6 @@ void CPlayer::MagicTestTextOutput()
 {
 }
 
-#ifdef _DEBUG
-
-void CPlayer::Tick_ImGui()
-{
-	ImGui::Begin("Player");
-
-	if (ImGui::Checkbox("Gravity", &m_isGravity))
-	{
-		m_pRigidBody->Set_Gravity(m_isGravity);
-	}
-
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-	if (ImGui::Button("Go to Level Init Position"))
-	{
-		m_pTransform->Set_Position(m_vLevelInitPosition[pGameInstance->Get_CurrentLevelIndex()]);
-		m_pRigidBody->Clear_Force();
-	}
-	Safe_Release(pGameInstance);
-
-
-	_float3 vVelocity = m_pTransform->Get_Velocity();
-	ImGui::InputFloat3("Velocity", reinterpret_cast<_float*>(&vVelocity));
-
-	_float fGlowPower = m_pRenderer->Get_GlowPower();
-	if (ImGui::SliderFloat("GlowPower", &fGlowPower, 0.1f, 10.f))
-	{
-		m_pRenderer->Set_GlowPower(fGlowPower);
-	}
-
-	_float fHDR = m_pRenderer->Get_HDR();
-	if (ImGui::SliderFloat("HDR", &fHDR, 0.f, 1.5f))
-	{
-		m_pRenderer->Set_HDR(fHDR);
-	}
-
-	ImGui::End();
-}
-
-void CPlayer::Tick_Magic_ImGui()
-{
-	ImGui::Begin("Magic");
-
-	ImGui::End();
-}
-
-#endif // _DEBUG
-
 void CPlayer::UpdateLookAngle()
 {
 	BEGININSTANCE;
@@ -2610,6 +2561,12 @@ void CPlayer::Go_Jump()
 
 void CPlayer::Tick_TestShake()
 {
+	RECT rc;
+	GetWindowRect(g_hWnd, &rc);
+	
+	ImGui::SetNextWindowPos(ImVec2(_float(rc.right) - 8.f, _float(rc.top)));
+	ImGui::SetNextWindowSize(ImVec2(300.f, 600.f));
+
 	ImGui::Begin("TestShake");
 
 	ImGui::Text("Shake_Type");

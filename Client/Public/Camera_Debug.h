@@ -2,6 +2,10 @@
 #include "GameObject.h"
 #include "Client_Defines.h"
 
+BEGIN(Engine)
+class CRenderer;
+END
+
 BEGIN(Client)
 
 class CCamera_Debug final : public CGameObject
@@ -32,10 +36,13 @@ private:
 #endif // _DEBUG
 
 private:
-	_bool		m_isFixMouse = { 0 };
-	_bool		m_isDebug = { false };
-	_float		m_fSpeed = { 0.f };
-	_float		m_fCameraNear = { 0.f };
+	CRenderer*		m_pRenderer = { nullptr };
+
+private:
+	_bool			m_isFixMouse = { 0 };
+	_bool			m_isDebug = { false };
+	_float			m_fSpeed = { 0.f };
+	_float			m_fCameraNear = { 0.f };
 
 public:
 	static CCamera_Debug* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

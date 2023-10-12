@@ -17,6 +17,7 @@ public:
 	void Set_GlowPower(_float fPower) { m_fGlowPower = fPower; }
 	_float Get_HDR() { return m_fHDR; }
 	void Set_HDR(_float fPower) { m_fHDR = fPower; }
+	class CDOF* Get_Dof() { return m_pDOF; }
 
 private:
 	explicit CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

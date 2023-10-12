@@ -55,6 +55,9 @@ HRESULT CDOF::Initialize(CVIBuffer_Rect* pRectBuffer)
 
 	Safe_Release(pRenderTarget_Manager);
 
+	m_fFocusDistance = 3.f;
+	m_fFocusRange = 2.f;
+
 	return S_OK;
 }
 
@@ -88,10 +91,7 @@ HRESULT CDOF::Render(const _tchar* pTargetTag)
 
 	Safe_Release(pPipeLine);
 
-	m_fFocusDis = 3.f;
-	m_fFocusRange = 1.f;
-	
-	if (FAILED(m_pShader->Bind_RawValue("g_fFocusDis", &m_fFocusDis, sizeof(_float))))
+	if (FAILED(m_pShader->Bind_RawValue("g_fFocusDistance", &m_fFocusDistance, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_RawValue("g_fFocusRange", &m_fFocusRange, sizeof(_float))))
 		return E_FAIL;
