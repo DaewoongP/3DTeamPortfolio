@@ -56,6 +56,7 @@ void CUI_Damage::Tick(_float fTimeDelta)
 	{
 		pDmageFont->Tick(fTimeDelta);
 	}
+	__super::Tick(fTimeDelta);
 }
 
 void CUI_Damage::Late_Tick(_float fTimeDelta)
@@ -74,6 +75,8 @@ void CUI_Damage::Late_Tick(_float fTimeDelta)
 			++iter;
 		}
 	}
+
+	__super::Late_Tick(fTimeDelta);
 }
 
 HRESULT CUI_Damage::Add_Prototype()

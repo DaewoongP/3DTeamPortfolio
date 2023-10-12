@@ -627,6 +627,12 @@
     </Filter>
     <Filter Include="02. GameObject\04. UI\UI_Group\UI_Store">
       <UniqueIdentifier>{855a2556-f88a-48b0-a687-12cebb69022e}</UniqueIdentifier>
+	</Filter>
+    <Filter Include="02. GameObject\04. UI\Font\DamageFont">
+      <UniqueIdentifier>{de3fa021-8d91-41bb-9c35-a3c8c9e7d681}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\04. UI\Font\Normal">
+      <UniqueIdentifier>{1a0785f9-ac30-401c-8602-a10c1a2b05a5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1246,6 +1252,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_Store.h">
       <Filter>02. GameObject\04. UI\UI_Group\UI_Store</Filter>
+	</ClInclude>
+    <ClInclude Include="..\Public\UI_Font.h">
+      <Filter>02. GameObject\04. UI\Font\Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_DamageFont.h">
+      <Filter>02. GameObject\04. UI\Font\DamageFont</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1832,6 +1844,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_Store.cpp">
       <Filter>02. GameObject\04. UI\UI_Group\UI_Store</Filter>
+	</ClCompile>
+    <ClCompile Include="..\Private\UI_DamageFont.cpp">
+      <Filter>02. GameObject\04. UI\Font\DamageFont</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

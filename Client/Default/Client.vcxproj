@@ -181,8 +181,8 @@
     <ClInclude Include="..\Public\Level_Sanctum.h" />
     <ClInclude Include="..\public\PotionStationCamera.h" />
     <ClInclude Include="..\Public\UI_Damage.h" />
-    <ClInclude Include="..\Public\UI_DamageFont.h" />
     <ClInclude Include="..\Public\UI_Store.h" />
+    <ClInclude Include="..\Public\UI_DamageFont.h" />
     <ClInclude Include="..\Public\Weapon_DarkWizard_Wand.h" />
     <ClInclude Include="..\Public\Diffindo.h" />
     <ClInclude Include="..\public\Dittany_Leaves_Item.h" />
@@ -411,8 +411,8 @@
     <ClCompile Include="..\Private\Level_Sanctum.cpp" />
     <ClCompile Include="..\private\PotionStationCamera.cpp" />
     <ClCompile Include="..\Private\UI_Damage.cpp" />
-    <ClCompile Include="..\Private\UI_DamageFont.cpp" />
     <ClCompile Include="..\Private\UI_Store.cpp" />
+    <ClCompile Include="..\Private\UI_DamageFont.cpp" />
     <ClCompile Include="..\Private\Weapon_DarkWizard_Wand.cpp" />
     <ClCompile Include="..\Private\Diffindo.cpp" />
     <ClCompile Include="..\private\Dittany_Leaves_Item.cpp" />
