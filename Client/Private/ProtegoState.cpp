@@ -57,39 +57,41 @@ void CProtegoState::OnStateEnter(void* _pArg)
 
 #pragma region ¹Ù¶óº¸±â
 		//¸Â¾ÒÀ¸¸é ±×³ðÀ» ¹Ù¶óº¸ÀÚ
-//³ª¿¡¼­ Å¸°ÙÀ» ÇâÇÑ º¤ÅÍ
-		_float3 vDirTarget{};
+		//³ª¿¡¼­ Å¸°ÙÀ» ÇâÇÑ º¤ÅÍ
+		//_float3 vDirTarget{};
 
-		vDirTarget = ProtegoStateDesc->pTransform->Get_Position() - m_StateMachineDesc.pPlayerTransform->Get_Position();
+		//vDirTarget = ProtegoStateDesc->pTransform->Get_Position() - m_StateMachineDesc.pPlayerTransform->Get_Position();
 
-		vDirTarget = XMVectorSetY(vDirTarget, 0.0f);
+		//vDirTarget = XMVectorSetY(vDirTarget, 0.0f);
 
-		vDirTarget.Normalize();
+		//vDirTarget.Normalize();
 
-		//³» ·è º¤ÅÍ
-		_float3 vLook{};
+		////³» ·è º¤ÅÍ
+		//_float3 vLook{};
 
-		vLook = m_StateMachineDesc.pPlayerTransform->Get_Look();
+		//vLook = m_StateMachineDesc.pPlayerTransform->Get_Look();
 
-		vLook = XMVectorSetY(vLook, 0.0f);
+		//vLook = XMVectorSetY(vLook, 0.0f);
 
-		vLook.Normalize();
+		//vLook.Normalize();
 
-		_float fTargetAngle = vLook.Dot(vDirTarget);
+		//_float fTargetAngle = vLook.Dot(vDirTarget);
 
-		if (1.0f < fTargetAngle)
-		{
-			fTargetAngle = 1.0f;
-		}
+		//if (1.0f < fTargetAngle)
+		//{
+		//	fTargetAngle = 1.0f;
+		//}
 
-		fTargetAngle = acosf(fTargetAngle);
+		//fTargetAngle = acosf(fTargetAngle);
 
-		if (0.0f > vLook.Cross(vDirTarget).y)
-		{
-			fTargetAngle *= -1;
-		}
+		//if (0.0f > vLook.Cross(vDirTarget).y)
+		//{
+		//	fTargetAngle *= -1;
+		//}
 
-		m_StateMachineDesc.pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fTargetAngle);
+		//m_StateMachineDesc.pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fTargetAngle);
+
+		m_StateMachineDesc.pPlayerTransform->LookAt(ProtegoStateDesc->pTransform->Get_Position(), true);
 #pragma endregion
 
 		m_isHit = ProtegoStateDesc->isHit;

@@ -6,6 +6,7 @@
 #include "HitState.h"
 #include "StateMachine.h"
 #include "Enemy.h"
+#include "ProtegoState.h"
 
 BEGIN(Engine)
 class CShader;
@@ -73,7 +74,7 @@ public:
 	_float3 Get_PlayerPos() { return m_pTransform->Get_Position(); }
 	SPELL Get_SpellList(SKILLINPUT eType) { return m_vecSpellCheck[eType]; }
 	void Set_TargetTransform(CTransform* _pTargetTransform = nullptr) { m_pTargetTransform = _pTargetTransform; }
-	void Set_Protego_Collision(CEnemy::ATTACKTYPE _eAttackType, CTransform* _pTransform);
+	void Set_Protego_Collision(CTransform* _pTransform, CEnemy::ATTACKTYPE _eAttackType) const;
 
 
 	void Set_PowerUp(_bool isPowerUp) { m_isPowerUp = isPowerUp; }
@@ -209,6 +210,22 @@ private:
 
 	_bool m_isLumosOn = { false };
 
+	_bool m_isBlink = { false };
+
+
+	//프로테고 const 이주...
+	_bool m_isPrepareProtego = { false };
+	
+	mutable _bool m_isCollisionEnterProtego = { false };
+
+	mutable CProtegoState::PROTEGOSTATEDESC m_ProtegoStateDesc = { CProtegoState::PROTEGOSTATEDESC() };
+
+	//루모스 끄기
+	_bool m_isPreLumos = { false };
+
+	//아이템 사용중
+	_bool m_isUseItem = { false };
+
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
@@ -284,6 +301,12 @@ private:
 	void Protego();
 	void Add_Layer_Item();
 	void Drink_Potion();
+
+	void Blink_Start();
+	void Blink_End();
+
+	void Use_Item_End();
+
 #pragma endregion
 
 #pragma region 스테이트 변경 함수
@@ -301,6 +324,9 @@ private:
 	void Go_Switch_Start();
 
 	void Go_Switch_Loop();
+
+	void Prepare_Protego();
+
 
 #pragma endregion
 

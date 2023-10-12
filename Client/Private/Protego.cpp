@@ -279,10 +279,15 @@ void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		wstring::npos != wstrCollisionTag.find(TEXT("Enemy_Body")))
 	{
 		CEnemy::COLLISIONREQUESTDESC* pDesc = static_cast<CEnemy::COLLISIONREQUESTDESC*>(CollisionEventDesc.pArg);
-		if (pDesc == nullptr|| CEnemy::ATTACK_NONE == eAttackType)
+		
+		if (pDesc == nullptr)
 			return;
 
 		eAttackType = pDesc->eType;
+		
+		if (CEnemy::ATTACK_NONE == eAttackType)
+			return;
+
 		pTransform = pDesc->pEnemyTransform;
 		Hit_Effect(CollisionEventDesc.pOtherTransform->Get_Position());
 		Safe_AddRef(pTransform);
@@ -341,11 +346,11 @@ void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 	Hit_Effect(CollisionEventDesc.pOtherTransform->Get_Position());
 
-	/*if (!lstrcmp(m_pTarget->Get_Tag(), TEXT("GameObject_Player")))
+	if (!lstrcmp(m_pTarget->Get_Tag(), TEXT("GameObject_Player")))
 	{
-		static_cast<CPlayer*>(m_pTarget)->Set_Protego_Collision(pTransform, eAttackType);
+		static_cast<const CPlayer*>(m_pTarget)->Set_Protego_Collision(pTransform, eAttackType);
 	}
-	else */if (!lstrcmp(m_pTarget->Get_Tag(), TEXT("GameObject_Professor_Fig")))
+	else if (!lstrcmp(m_pTarget->Get_Tag(), TEXT("GameObject_Professor_Fig")))
 	{
 		static_cast<const CProfessor_Fig*>(m_pTarget)->Set_Protego_Collision(pTransform, eAttackType);
 	}

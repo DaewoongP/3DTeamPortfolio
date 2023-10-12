@@ -46,13 +46,11 @@ CPlayer::CPlayer(const CPlayer& rhs)
 {
 }
 
-void CPlayer::Set_Protego_Collision(CEnemy::ATTACKTYPE _eAttackType, CTransform* _pTransform)
+void CPlayer::Set_Protego_Collision(CTransform* _pTransform, CEnemy::ATTACKTYPE _eAttackType) const
 {
 	if (m_pStateContext->Is_Current_State(TEXT("Protego")))
 	{
-		CProtegoState::PROTEGOSTATEDESC ProtegoStateDesc;
-
-		ProtegoStateDesc.isHit = true;
+		m_ProtegoStateDesc.isHit = true;
 
 		switch (_eAttackType)
 		{
@@ -61,12 +59,12 @@ void CPlayer::Set_Protego_Collision(CEnemy::ATTACKTYPE _eAttackType, CTransform*
 		break;
 		case CEnemy::ATTACK_LIGHT:
 		{
-			ProtegoStateDesc.iHitType = CProtegoState::HIT_LIGHT;
+			m_ProtegoStateDesc.iHitType = CProtegoState::HIT_LIGHT;
 		}
 		break;
 		case CEnemy::ATTACK_HEAVY:
 		{
-			ProtegoStateDesc.iHitType = CProtegoState::HIT_HEABY;
+			m_ProtegoStateDesc.iHitType = CProtegoState::HIT_HEABY;
 		}
 		break;
 		case CEnemy::ATTACKTYPE_END:
@@ -77,9 +75,9 @@ void CPlayer::Set_Protego_Collision(CEnemy::ATTACKTYPE _eAttackType, CTransform*
 			break;
 		}
 
-		ProtegoStateDesc.pTransform = _pTransform;
+		m_ProtegoStateDesc.pTransform = _pTransform;
 
-		Go_Protego(&ProtegoStateDesc);
+		m_isCollisionEnterProtego = true;
 	}
 }
 
@@ -240,6 +238,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	}
 	
 	ENDINSTANCE;
+
 	
 
 	Update_Skill_CoolTime();
@@ -253,11 +252,17 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
+	Prepare_Protego();
+
+	UpdateLookAngle();
+
 	Key_Input(fTimeDelta);
+
+	Go_Protego(&m_ProtegoStateDesc);
 
 	Fix_Mouse();
 
-	UpdateLookAngle();
+	
 
 
 	//m_pStateContext->Tick(fTimeDelta)
@@ -269,6 +274,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::OTHERBODY);
+	m_pCustomModel->Play_Animation(fTimeDelta, CModel::OTHERBODY2);
 
 
 	//루모스 업데이트
@@ -276,6 +282,14 @@ void CPlayer::Tick(_float fTimeDelta)
 	{
 		m_pFrncSpellToggle(nullptr);
 	}
+
+	if (true == m_isPreLumos && m_isPreLumos != m_isLumosOn)
+	{
+		Lumos();
+		Next_Spell_Action();
+	}
+
+	m_isPreLumos = m_isLumosOn;
 
 	//m_pCooltime->Tick(fTimeDelta);
 	//Potion_Duration(fTimeDelta);
@@ -607,11 +621,12 @@ HRESULT CPlayer::Add_Components()
 	if (nullptr == pBone)
 		throw TEXT("pBone is nullptr");
 
-	CWeapon_Player_Wand::PARENTMATRIXDESC ParentMatrixDesc;
-	ParentMatrixDesc.OffsetMatrix = pBone->Get_OffsetMatrix();
-	ParentMatrixDesc.PivotMatrix = m_pCustomModel->Get_PivotFloat4x4();
-	ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
-	ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+	CWeapon_Player_Wand::CWEAPON_PLAYER_WAND_DESC ParentMatrixDesc;
+	ParentMatrixDesc.ParentMatrixDesc.OffsetMatrix = pBone->Get_OffsetMatrix();
+	ParentMatrixDesc.ParentMatrixDesc.PivotMatrix = m_pCustomModel->Get_PivotFloat4x4();
+	ParentMatrixDesc.ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
+	ParentMatrixDesc.ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+	ParentMatrixDesc.pisLightOn = &m_isLumosOn;
 
 	if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Weapon_Player_Wand"),
 		TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
@@ -1019,8 +1034,34 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		Find_Target_For_ViewSpace();
 	}
 
+	//눌렀을 때
+	if (pGameInstance->Get_DIKeyState(DIK_TAB, CInput_Device::KEY_DOWN))
+	{
+		m_pCustomModel->Change_Animation(TEXT("Drink_Potion_Throw"), CModel::OTHERBODY2);
+		
+		/*switch (m_pPlayer_Information->Get_PotionTap()->Get_CurTool()->Get_ItemID())
+		{
+		case Client::ITEM_ID_EDURUS_POTION:
+		case Client::ITEM_ID_FOCUS_POTION:
+		case Client::ITEM_ID_MAXIMA_POTION:
+		case Client::ITEM_ID_INVISIBILITY_POTION:
+		case Client::ITEM_ID_THUNDERBEW_POTION:
+		case Client::ITEM_ID_FELIX_FELICIS_POTION:
+		{
+			m_pCustomModel->Change_Animation(TEXT("Drink_Potion_Throw"), CModel::OTHERBODY2);
+		}
+			break;
+		case Client::ITEM_ID_CHINESE_CHOMPING_CABBAGE:
+		{
+			m_pCustomModel->Change_Animation(TEXT("Throw_Plant"), CModel::OTHERBODY2);
+		}
+			break;
+		default:
+			break;
+		}*/
+	}
 
-
+		//case Client::ITEM_ID_WIGGENWELD_POTION:
 
 #pragma region 스테이트 변경 키 입력
 
@@ -1036,7 +1077,12 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
-		Go_Jump();
+		CRollState::tagRollStateDesc RollStateDesc;
+
+		RollStateDesc.IsBlink = true;
+
+		Go_Roll(&RollStateDesc);
+		//Go_Jump();
 	}
 
 	if (true == m_isReadySpell)
@@ -1156,22 +1202,32 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 		if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_DOWN) && false == m_pStateContext->Is_Current_State(TEXT("Protego")))
 		{
+			m_isCollisionEnterProtego = true;
 			Go_Protego(nullptr);
 		}
 	}
 #pragma endregion
 
 	//루모스
-	if (false == m_isLumosOn &&
-		pGameInstance->Get_DIKeyState(DIK_Z, CInput_Device::KEY_DOWN) && 
+	if (pGameInstance->Get_DIKeyState(DIK_Z, CInput_Device::KEY_DOWN) && 
 		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
 			m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
 			m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
 			m_pStateContext->Is_Current_State(TEXT("Jump")) ||
 			m_pStateContext->Is_Current_State(TEXT("Move Loop"))))
 	{
-		m_pCustomModel->Change_Animation(TEXT("Lumos_Start"),CModel::OTHERBODY);
-		m_isLumosOn = true;
+		//켜기
+		if (false == m_isLumosOn)
+		{
+			m_pCustomModel->Change_Animation(TEXT("Lumos_Start"), CModel::OTHERBODY);
+			m_isLumosOn = true;
+		}
+		//끄기
+		else if (true == m_isLumosOn)
+		{
+			m_pCustomModel->Change_Animation(TEXT("Lumos_Stop"), CModel::OTHERBODY);
+			m_isLumosOn = false;
+		}
 	}
 
 
@@ -1998,6 +2054,12 @@ HRESULT CPlayer::Bind_Notify()
 
 		return E_FAIL;
 	}
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Lumos_Start"), TEXT("Shot_Lumos"), funcNotify, CModel::OTHERBODY)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+	
+		return E_FAIL;
+	}
 
 
 
@@ -2060,6 +2122,48 @@ HRESULT CPlayer::Bind_Notify()
 		return E_FAIL;
 	}
 
+	
+	funcNotify = [&] {(*this).Blink_Start(); };
+
+	//Blink_Start
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_DdgeRll_Fwd_anm"), TEXT("Blink_Start"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+	
+
+	funcNotify = [&] {(*this).Blink_End(); };
+
+	//Blink_End
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_DdgeRll_Fwd_anm"), TEXT("Blink_End"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Blink_Start"), TEXT("Blink_End"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
+
+	funcNotify = [&] {(*this).Lumos(); };
+
+	//Ready_Lumos
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Lumos_Start"), TEXT("Ready_Lumos"), funcNotify, CModel::OTHERBODY)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
+
+
 	funcNotify = [&] { (*this).Drink_Potion(); };
 	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Drink_Potion"), funcNotify)))
 	{
@@ -2076,6 +2180,16 @@ HRESULT CPlayer::Bind_Notify()
 
 		return E_FAIL;
 	}
+
+	funcNotify = [&] { (*this).Use_Item_End(); };
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("End_Animation"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
+
 
 	return S_OK;
 }
@@ -2323,12 +2437,14 @@ void CPlayer::Finish_Animation()
 
 void CPlayer::Go_Roll(void* _pArg)
 {
-	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
-		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
-		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
-		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
-		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
-		m_pStateContext->Is_Current_State(TEXT("Magic_Cast"))))
+	if (true == m_isBlink ||
+			(true == m_pPlayer_Camera->Is_Finish_Animation() &&
+				(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+				m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
+				m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
+				m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
+				m_pStateContext->Is_Current_State(TEXT("Magic_Cast"))))
+		)
 	{
 		m_pStateContext->Set_StateMachine(TEXT("Roll"), _pArg);
 	}
@@ -2337,11 +2453,11 @@ void CPlayer::Go_Roll(void* _pArg)
 void CPlayer::Go_Jump()
 {
 	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
-		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
-		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
-		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
-		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
-		m_pStateContext->Is_Current_State(TEXT("Magic_Cast"))))
+			(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+			m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
+			m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
+			m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
+			m_pStateContext->Is_Current_State(TEXT("Magic_Cast"))))
 	{
 		m_pStateContext->Set_StateMachine(TEXT("Jump"));
 	}
@@ -2492,6 +2608,8 @@ void CPlayer::Add_Layer_Item()
 	if (nullptr == pTool)
 		return;
 	pTool->CreateTool();
+
+	m_isUseItem = true;
 }
 
 void CPlayer::Drink_Potion()
@@ -2501,15 +2619,11 @@ void CPlayer::Drink_Potion()
 
 void CPlayer::Go_Protego(void* _pArg)
 {
-	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
-		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
-		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
-		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
-		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
-		m_pStateContext->Is_Current_State(TEXT("Magic_Cast")) ||
-		m_pStateContext->Is_Current_State(TEXT("Protego"))))
+	if (true == m_isPrepareProtego && true == m_isCollisionEnterProtego)
 	{
 		m_pStateContext->Set_StateMachine(TEXT("Protego"), _pArg);
+
+		m_isCollisionEnterProtego = false;
 	}
 }
 
@@ -2536,6 +2650,26 @@ void CPlayer::Update_Skill_CoolTime()
 	}
 }
 
+void CPlayer::Blink_Start()
+{
+	m_isBlink = true;
+}
+
+void CPlayer::Blink_End()
+{
+	m_isBlink = false;
+}
+
+void CPlayer::Use_Item_End()
+{
+	m_isUseItem = false;
+
+	//현제 진행되고 있는 애니메이션으로 변경
+	m_pCustomModel->Change_Animation(m_pCustomModel->Get_CurrentAnimIndex(), CModel::OTHERBODY2);
+	//시간도 적용해준다.
+	*m_pCustomModel->Get_Animation(CModel::OTHERBODY2)->Get_Accmulation_Pointer() = m_pCustomModel->Get_Animation()->Get_Accmulation();
+}
+
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CPlayer* pInstance = New CPlayer(pDevice, pContext);
@@ -2547,6 +2681,24 @@ CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	}
 
 	return pInstance;
+}
+
+void CPlayer::Prepare_Protego()
+{
+	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
+		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+			m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
+			m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
+			m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
+			m_pStateContext->Is_Current_State(TEXT("Magic_Cast")) ||
+			m_pStateContext->Is_Current_State(TEXT("Protego"))))
+	{
+		m_isPrepareProtego = true;
+	}
+	else
+	{
+		m_isPrepareProtego = false;
+	}
 }
 
 void CPlayer::Shot_Magic_Spell_Button_1()
