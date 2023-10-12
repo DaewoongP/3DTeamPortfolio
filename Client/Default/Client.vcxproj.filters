@@ -700,6 +700,15 @@
     <Filter Include="02. GameObject\01. Player\01. StateMachine\09. UseItem">
       <UniqueIdentifier>{71339f20-0740-4bfd-88f3-aebe95c69956}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Cliff_Gate">
+      <UniqueIdentifier>{8c4fbf71-2b03-4298-81fe-afb775f60a81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Vault_Gate">
+      <UniqueIdentifier>{ccd8f7ca-c51d-4f96-bfa8-3ffc359c5efb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\06. Wolf">
+      <UniqueIdentifier>{6b94e34b-9d3a-4ed2-b20c-95deea862a47}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1300,6 +1309,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\Level_Sky.h">
       <Filter>01. Levels\05. Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cliff_Gate.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Cliff_Gate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Vault_Gate.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Vault_Gate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Wolf.h">
+      <Filter>02. GameObject\02. Enemy\06. Wolf</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UseItemState.h">
       <Filter>02. GameObject\01. Player\01. StateMachine\09. UseItem</Filter>
@@ -1955,6 +1973,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\Level_Sky.cpp">
       <Filter>01. Levels\05. Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cliff_Gate.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Cliff_Gate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Vault_Gate.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Vault_Gate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Wolf.cpp">
+      <Filter>02. GameObject\02. Enemy\06. Wolf</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UseItemState.cpp">
       <Filter>02. GameObject\01. Player\01. StateMachine\09. UseItem</Filter>

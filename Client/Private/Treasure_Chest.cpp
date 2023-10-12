@@ -60,6 +60,9 @@ HRESULT CTreasure_Chest::Initialize_Level(_uint iCurrentLevelIndex)
 	BEGININSTANCE;
 	m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(iCurrentLevelIndex, TEXT("Layer_Player"), TEXT("GameObject_Player")));
 	m_pPlayerInformation = m_pPlayer->Get_Player_Information();
+
+	Safe_AddRef(m_pPlayer);
+	Safe_AddRef(m_pPlayerInformation);
 	ENDINSTANCE;
 
 	return S_OK;
@@ -89,7 +92,9 @@ void CTreasure_Chest::Tick(_float fTimeDelta)
 
 			// 인벤토리 획득 처리
 			//m_pPlayerInformation->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_"));
+#ifdef _DEBUG
 			cout << "보물 상자가 열리고 어떤 아이템 획득" << '\n';
+#endif // _DEBUG
 		}
 
 		ENDINSTANCE;
@@ -286,6 +291,9 @@ CGameObject* CTreasure_Chest::Clone(void* pArg)
 void CTreasure_Chest::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pPlayer);
+	Safe_Release(m_pPlayerInformation);
 
 	//Safe_Release(m_pRigidBody);
 	Safe_Release(m_pShadowShader);

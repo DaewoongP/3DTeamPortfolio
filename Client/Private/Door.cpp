@@ -211,4 +211,6 @@ void CDoor::Free()
 	__super::Free();
 
 	//Safe_Release(m_pRigidBody);
+
+	Safe_Release(m_pPlayer);
 }

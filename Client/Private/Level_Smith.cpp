@@ -191,24 +191,24 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 		wstring wsPotionStation(TEXT("SM_HM_Potion_Table"));
 		wstring wsShopDoor(TEXT("SM_HM_Shop_Door"));
 
-		// 보물상자
-		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
-		{
-			_tchar wszobjName[MAX_PATH] = { 0 };
-			_stprintf_s(wszobjName, TEXT("GameObject_Treasure_Chest_%d"), (iObjectNum));
+		//// 보물상자
+		//if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
+		//{
+		//	_tchar wszobjName[MAX_PATH] = { 0 };
+		//	_stprintf_s(wszobjName, TEXT("GameObject_Treasure_Chest_%d"), (iObjectNum));
 
-			if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH,
-				TEXT("Prototype_GameObject_Treasure_Chest"), TEXT("Layer_BackGround"),
-				wszobjName, &MapObjectDesc)))
-			{
-				MSG_BOX("Failed to Clone Treasure_Chest in Level_Smith");
-				ENDINSTANCE;
-				return E_FAIL;
-			}
-		}
+		//	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH,
+		//		TEXT("Prototype_GameObject_Treasure_Chest"), TEXT("Layer_BackGround"),
+		//		wszobjName, &MapObjectDesc)))
+		//	{
+		//		MSG_BOX("Failed to Clone Treasure_Chest in Level_Smith");
+		//		ENDINSTANCE;
+		//		return E_FAIL;
+		//	}
+		//}
 
 		// 포션 제작소
-		else if (0 == lstrcmp(modelName.c_str(), wsPotionStation.c_str()))
+		if (0 == lstrcmp(modelName.c_str(), wsPotionStation.c_str()))
 		{
 			_tchar wszobjName[MAX_PATH] = { 0 };
 			_stprintf_s(wszobjName, TEXT("GameObject_Potion_Station_%d"), (iObjectNum));

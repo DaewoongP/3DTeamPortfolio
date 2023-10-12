@@ -95,6 +95,12 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 	///////////////	테스트용 몬스터 배치 코드 입니다. /////////////////////
 	///////////////	실전 배치시 해당 코드는 지워주세요.////////////////////
 	///////////////////////////////////////////////////////////////////////
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Wolf"), pLayerTag, TEXT("GameObject_Wolf"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Wolf)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}*/
 	_float4x4 Matrix = XMMatrixTranslation(40.f, 10.f, 60.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Golem_CombatGrunt"), pLayerTag, TEXT("GameObject_Golem_Combat"), &Matrix)))
 	{
@@ -197,25 +203,26 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 		wstring wsAshwinderEggs(TEXT("Anim_AshwinderEggs"));
 		wstring wsLeapingToadStools(TEXT("Anim_LeapingToadStools"));
 		wstring wsGull(TEXT("Anim_Gull"));
+		wstring wsCliffGate(TEXT("Anim_Gate_Reparo"));
 
-		// 보물상자
-		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
-		{
-			_tchar wszobjName[MAX_PATH] = { 0 };
-			_stprintf_s(wszobjName, TEXT("GameObject_Treasure_Chest_%d"), (iObjectNum));
+		//// 보물상자
+		//if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
+		//{
+		//	_tchar wszobjName[MAX_PATH] = { 0 };
+		//	_stprintf_s(wszobjName, TEXT("GameObject_Treasure_Chest_%d"), (iObjectNum));
 
-			if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE,
-				TEXT("Prototype_GameObject_Treasure_Chest"), TEXT("Layer_BackGround"),
-				wszobjName, &MapObjectDesc)))
-			{
-				MSG_BOX("Failed to Clone Treasure_Chest");
-				ENDINSTANCE;
-				return E_FAIL;
-			}
-		}
+		//	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE,
+		//		TEXT("Prototype_GameObject_Treasure_Chest"), TEXT("Layer_BackGround"),
+		//		wszobjName, &MapObjectDesc)))
+		//	{
+		//		MSG_BOX("Failed to Clone Treasure_Chest");
+		//		ENDINSTANCE;
+		//		return E_FAIL;
+		//	}
+		//}
 
 		// 채집물
-		else if (0 == lstrcmp(modelName.c_str(), wsAshwinderEggs.c_str()) ||
+		if (0 == lstrcmp(modelName.c_str(), wsAshwinderEggs.c_str()) ||
 			0 == lstrcmp(modelName.c_str(), wsLeapingToadStools.c_str()))
 		{
 			_tchar wszobjName[MAX_PATH] = { 0 };
@@ -242,6 +249,22 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 				wszobjName, &MapObjectDesc)))
 			{
 				MSG_BOX("Failed to Clone Gull");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}
+
+		// 절벽 게이트
+		else if (0 == lstrcmp(modelName.c_str(), wsCliffGate.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_Cliff_Gate_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE,
+				TEXT("Prototype_GameObject_Cliff_Gate"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone Cliff_Gate");
 				ENDINSTANCE;
 				return E_FAIL;
 			}

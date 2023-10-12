@@ -1,20 +1,17 @@
-#include "..\Public\Gull.h"
+#include "..\Public\Vault_Gate.h"
 #include "GameInstance.h"
 
-#include "Player.h"
-
-CGull::CGull(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CVault_Gate::CVault_Gate(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
 }
 
-CGull::CGull(const CGull& rhs)
+CVault_Gate::CVault_Gate(const CVault_Gate& rhs)
 	: CGameObject(rhs)
 {
 }
 
-
-HRESULT CGull::Initialize_Prototype()
+HRESULT CVault_Gate::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -22,11 +19,11 @@ HRESULT CGull::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CGull::Initialize(void* pArg)
+HRESULT CVault_Gate::Initialize(void* pArg)
 {
 	if (nullptr == pArg)
 	{
-		MSG_BOX("CGull Argument is NULL");
+		MSG_BOX("CVault_Gate Argument is NULL");
 		return E_FAIL;
 	}
 
@@ -35,56 +32,48 @@ HRESULT CGull::Initialize(void* pArg)
 
 	m_ObjectDesc = *reinterpret_cast<MAPOBJECTDESC*>(pArg);
 	m_pTransform->Set_WorldMatrix(m_ObjectDesc.WorldMatrix);
-	m_pTransform->Set_RigidBody(m_pRigidBody);
-	m_pTransform->Set_Speed(-7.5f);
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	// 플레이어 찾기
-	BEGININSTANCE;
-	m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
-	Safe_AddRef(m_pPlayer);
-	ENDINSTANCE;
-
 	return S_OK;
 }
 
-HRESULT CGull::Initialize_Level(_uint iCurrentLevelIndex)
+HRESULT CVault_Gate::Initialize_Level(_uint iCurrentLevelIndex)
 {
 	/* Com_Model */
 	if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, m_ObjectDesc.wszTag,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{
-		MSG_BOX("Failed CGatherer Add_Component : (Com_Model)");
+		MSG_BOX("Failed CVault_Gate Add_Component : (Com_Model)");
 		__debugbreak();
 		return E_FAIL;
 	}
 
-	m_GullAnimIndex = GULL_IDLE2;
-	m_pModel->Change_Animation((_uint)m_GullAnimIndex);
+	m_pModel->Set_CurrentAnimIndex(0);
+	m_pModel->Get_Animation(0)->Set_Loop(false);
 
 	// 리지드 바디 초기화
 	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
-	RigidBodyDesc.isStatic = false;
+	RigidBodyDesc.isStatic = true;
 	RigidBodyDesc.isTrigger = true;
 	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
 	RigidBodyDesc.eConstraintFlag = CRigidBody::All;
 	RigidBodyDesc.fStaticFriction = 1.f;
 	RigidBodyDesc.fDynamicFriction = 1.f;
 	RigidBodyDesc.fRestitution = 0.f;
-	PxSphereGeometry MyGeometry = PxSphereGeometry(3.f);
+	PxSphereGeometry MyGeometry = PxSphereGeometry(8.f);
 	RigidBodyDesc.pGeometry = &MyGeometry;
 	RigidBodyDesc.pOwnerObject = this;
 	RigidBodyDesc.vDebugColor = _float4(0.f, 1.f, 0.f, 1.f);
 	RigidBodyDesc.eThisCollsion = COL_STATIC;
 	RigidBodyDesc.eCollisionFlag = COL_PLAYER;
-	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Gull");
+	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Vault_Gate");
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 	{
-		MSG_BOX("Failed CDoor Add_Component : (Com_RigidBody)");
+		MSG_BOX("Failed CVault_Gate Add_Component : (Com_RigidBody)");
 		__debugbreak();
 		return E_FAIL;
 	}
@@ -92,71 +81,61 @@ HRESULT CGull::Initialize_Level(_uint iCurrentLevelIndex)
 	return S_OK;
 }
 
-void CGull::Tick(_float fTimeDelta)
+void CVault_Gate::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	// 플레이어와 거리 비교
-	_float3 vPlayerPos = m_pPlayer->Get_PlayerPos();
-	_float3 vGullPos = m_pTransform->Get_Position();
+	BEGININSTANCE;
 
-	m_fDist_From_Player = sqrtf((vPlayerPos.x - vGullPos.x) * (vPlayerPos.x - vGullPos.x) +
-		(vPlayerPos.y - vGullPos.y) * (vPlayerPos.y - vGullPos.y) +
-		(vPlayerPos.z - vGullPos.z) * (vPlayerPos.z - vGullPos.z));
-
-	Check_Dist_From_Player(fTimeDelta); // 플레이어 거리에 따른 애니메이션 변경
-
-	// 애니메이션이 변경되면 그때 애니메이션 삽입
-	if (m_PreGullAnimIndex != m_GullAnimIndex)
+	// 퍼즐로 열려야 하는데 일단 그냥 열리게 해둠
+	if (pGameInstance->Get_DIKeyState(DIK_R, CInput_Device::KEY_DOWN) && true == m_isCol_with_Player)
 	{
-		m_PreGullAnimIndex = m_GullAnimIndex;
-		m_pModel->Change_Animation(m_GullAnimIndex);
+		m_isCheckOnce = false;
 	}
 
-	if (nullptr != m_pModel)
+	ENDINSTANCE;
+
+	if (false == m_isCheckOnce)
 		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+	else
+		m_pModel->Play_Animation(0, CModel::UPPERBODY, m_pTransform);
 }
 
-void CGull::Late_Tick(_float fTimeDelta)
+void CVault_Gate::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
-	BEGININSTANCE;
 
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
-
 #ifdef _DEBUG
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
 #endif // _DEBUG
 	}
-
-	ENDINSTANCE;
 }
 
-void CGull::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
+void CVault_Gate::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wsCollisionTag = CollisionEventDesc.pOtherCollisionTag;
 	wstring wsPlayer(TEXT("Player_Default"));
 
-	// 플레이어와 충돌했다면 채집 활성화
+	// 플레이어와 충돌했다면 활성화
 	if (0 == lstrcmp(wsCollisionTag.c_str(), wsPlayer.c_str()))
 		m_isCol_with_Player = true;
 }
 
-void CGull::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
+void CVault_Gate::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wsCollisionTag = CollisionEventDesc.pOtherCollisionTag;
 	wstring wsPlayer(TEXT("Player_Default"));
 
-	// 플레이어와 충돌이 끝났다면 채집 비활성화
+	// 플레이어와 충돌이 끝났다면 비활성화
 	if (0 == lstrcmp(wsCollisionTag.c_str(), wsPlayer.c_str()))
 		m_isCol_with_Player = false;
 }
 
-HRESULT CGull::Render()
+HRESULT CVault_Gate::Render()
 {
 	if (FAILED(__super::Render()))
 		return E_FAIL;
@@ -182,7 +161,7 @@ HRESULT CGull::Render()
 	return S_OK;
 }
 
-HRESULT CGull::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
+HRESULT CVault_Gate::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
 	if (FAILED(SetUp_ShadowShaderResources(LightViewMatrix, LightProjMatrix)))
 		return E_FAIL;
@@ -203,13 +182,13 @@ HRESULT CGull::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix
 	return S_OK;
 }
 
-HRESULT CGull::Add_Components()
+HRESULT CVault_Gate::Add_Components()
 {
 	/* Com_Renderer */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
-		MSG_BOX("Failed CGull Add_Component : (Com_Renderer)");
+		MSG_BOX("Failed CCliff_Gate Add_Component : (Com_Renderer)");
 		__debugbreak();
 		return E_FAIL;
 	}
@@ -218,7 +197,7 @@ HRESULT CGull::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
-		MSG_BOX("Failed CGull Add_Component : (Com_Shader)");
+		MSG_BOX("Failed CCliff_Gate Add_Component : (Com_Shader)");
 		__debugbreak();
 		return E_FAIL;
 	}
@@ -227,7 +206,7 @@ HRESULT CGull::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowAnimMesh"),
 		TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShader))))
 	{
-		MSG_BOX("Failed CGull Add_Component : (Com_ShadowShader)");
+		MSG_BOX("Failed CCliff_Gate Add_Component : (Com_ShadowShader)");
 		__debugbreak();
 		return E_FAIL;
 	}
@@ -235,7 +214,7 @@ HRESULT CGull::Add_Components()
 	return S_OK;
 }
 
-HRESULT CGull::SetUp_ShaderResources()
+HRESULT CVault_Gate::SetUp_ShaderResources()
 {
 	BEGININSTANCE;
 
@@ -253,7 +232,7 @@ HRESULT CGull::SetUp_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CGull::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
+HRESULT CVault_Gate::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
 	BEGININSTANCE;
 
@@ -271,95 +250,51 @@ HRESULT CGull::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 
 	return S_OK;
 }
 
-void CGull::Check_Dist_From_Player(_float fTimeDelta)
+void CVault_Gate::Check_MinMaxPoint(_float3 vPoint)
 {
-	if (nullptr == m_pModel)
-		return;
+	if (m_vMinPoint.x > vPoint.x)
+		m_vMinPoint.x = vPoint.x;
+	if (m_vMinPoint.y > vPoint.y)
+		m_vMinPoint.y = vPoint.y;
+	if (m_vMinPoint.z > vPoint.z)
+		m_vMinPoint.z = vPoint.z;
 
-	// 비행 시작과 관련된 상태일 경우
-	if (GULL_START_FLY == m_GullAnimIndex)
-	{
-		// 해당 애니메이션이 끝나면 바꿔버림
-		if (true == m_pModel->Is_Finish_Animation())
-		{
-			m_GullAnimIndex = GULL_FLY;
-		}
-		return;
-	}
-
-	// 비행 중일 경우
-	if (GULL_FLY == m_GullAnimIndex)
-	{
-		_float3 vLook = m_pTransform->Get_Look();
-		_float3 vUp = m_pTransform->Get_Up() * -1.f;
-
-		_float3 vDir = vLook + vUp;
-		vDir += vLook;
-		vDir += vLook;
-		vDir += vLook;
-		vDir.Normalize();
-
-		m_pTransform->Move_Direction(vDir, fTimeDelta);
-		m_fDeadTime += fTimeDelta;
-
-		// 일정 시간이 지나면 사망처리
-		if (10.f <= m_fDeadTime)
-		{
-			Set_ObjEvent(OBJ_DEAD);
-		}
-		return;
-	}
-
-	// 거리에 따른 애니메이션 처리
-	// 일정 거리로 다가오면 경계
-	if (5.f >= m_fDist_From_Player && false == m_isCol_with_Player)
-	{
-		m_GullAnimIndex = GULL_ALERT;
-	}
-
-	// 경계에서 더 다가오면 날아감
-	else if (5.f >= m_fDist_From_Player && true == m_isCol_with_Player)
-	{
-		m_GullAnimIndex = GULL_START_FLY;
-	}
-
-	// 평상시
-	else
-	{
-		m_GullAnimIndex = GULL_IDLE2;
-	}
+	if (m_vMaxPoint.x < vPoint.x)
+		m_vMaxPoint.x = vPoint.x;
+	if (m_vMaxPoint.y < vPoint.y)
+		m_vMaxPoint.y = vPoint.y;
+	if (m_vMaxPoint.z < vPoint.z)
+		m_vMaxPoint.z = vPoint.z;
 }
 
-CGull* CGull::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CVault_Gate* CVault_Gate::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CGull* pInstance = New CGull(pDevice, pContext);
+	CVault_Gate* pInstance = New CVault_Gate(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CGull");
+		MSG_BOX("Failed to Created CVault_Gate");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CGull::Clone(void* pArg)
+CGameObject* CVault_Gate::Clone(void* pArg)
 {
-	CGull* pInstance = New CGull(*this);
+	CVault_Gate* pInstance = New CVault_Gate(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CGameObject");
+		MSG_BOX("Failed to Cloned CVault_Gate");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CGull::Free()
+void CVault_Gate::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pPlayer);
 
 	Safe_Release(m_pRigidBody);
 	Safe_Release(m_pShadowShader);
