@@ -11,6 +11,7 @@
 #include "ProtegoState.h"
 #include "MagicCastingState.h"
 #include "RollState.h"
+#include "UseItemState.h"
 
 #include "Armored_Troll.h"
 #include "MagicBall.h"
@@ -274,7 +275,6 @@ void CPlayer::Tick(_float fTimeDelta)
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::OTHERBODY);
-	m_pCustomModel->Play_Animation(fTimeDelta, CModel::OTHERBODY2);
 
 
 	//루모스 업데이트
@@ -945,7 +945,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = STUPEFY;
-		magicInitDesc.fInitCoolTime = 5.f;
+		magicInitDesc.fInitCoolTime = 1.f;
 		magicInitDesc.iDamage = 40;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
@@ -981,6 +981,7 @@ HRESULT CPlayer::Add_Magic()
 
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(2, LUMOS);
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(3, FINISHER);
+	m_pMagicSlot->Add_Magic_To_Basic_Slot(4, STUPEFY);
 
 	Set_Spell_Botton(0, BOMBARDA);
 	Set_Spell_Botton(1, LEVIOSO);
@@ -1037,8 +1038,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	//눌렀을 때
 	if (pGameInstance->Get_DIKeyState(DIK_TAB, CInput_Device::KEY_DOWN))
 	{
-		m_pCustomModel->Change_Animation(TEXT("Drink_Potion_Throw"), CModel::OTHERBODY2);
-		
+		Go_Use_Item();
 		/*switch (m_pPlayer_Information->Get_PotionTap()->Get_CurTool()->Get_ItemID())
 		{
 		case Client::ITEM_ID_EDURUS_POTION:
@@ -1609,6 +1609,7 @@ HRESULT CPlayer::Ready_StateMachine()
 	m_StateMachineDesc.pOwnerLookAngle = &m_fLookAngle;
 	m_StateMachineDesc.pfuncFinishAnimation = [&] { (*this).Finish_Animation(); };
 	m_StateMachineDesc.pLumosOn = &m_isLumosOn;
+	m_StateMachineDesc.ppTarget = &m_pTarget;
 
 	Safe_AddRef(m_StateMachineDesc.pOwnerModel);
 	Safe_AddRef(m_StateMachineDesc.pPlayerTransform);
@@ -1742,6 +1743,18 @@ HRESULT CPlayer::Ready_StateMachine()
 		&m_StateMachineDesc)))
 	{
 		MSG_BOX("Failed Add Standing State");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pStateContext->Add_StateMachine(
+		LEVEL_STATIC,
+		TEXT("Com_Player_UseItem_State"),
+		TEXT("UseItem"),
+		TEXT("Prototype_Component_State_UseItem"),
+		&m_StateMachineDesc)))
+	{
+		MSG_BOX("Failed Add UseItem State");
 
 		return E_FAIL;
 	}
@@ -2054,13 +2067,19 @@ HRESULT CPlayer::Bind_Notify()
 
 		return E_FAIL;
 	}
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_01_Spin_anm"), TEXT("Shot_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
 	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Lumos_Start"), TEXT("Shot_Lumos"), funcNotify, CModel::OTHERBODY)))
 	{
 		MSG_BOX("Failed Bind_Notify");
 	
 		return E_FAIL;
 	}
-
+	
 
 
 
@@ -2181,14 +2200,14 @@ HRESULT CPlayer::Bind_Notify()
 		return E_FAIL;
 	}
 
-	funcNotify = [&] { (*this).Use_Item_End(); };
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("End_Animation"), funcNotify)))
+
+	funcNotify = [&] { (*this).Stupefy(); };
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_01_Spin_anm"), TEXT("Ready_Spell"), funcNotify)))
 	{
 		MSG_BOX("Failed Bind_Notify");
 
 		return E_FAIL;
 	}
-
 
 
 	return S_OK;
@@ -2415,6 +2434,20 @@ void CPlayer::Finisher()
 	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(3, m_pTarget, m_pWeapon, COL_ENEMY, m_isPowerUp);
 }
 
+void CPlayer::Stupefy()
+{
+	
+
+	_float4x4 OffSetMatrix = XMMatrixIdentity();
+
+	if (nullptr != m_pTarget)
+	{
+		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
+	}
+
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(4, m_pTarget, m_pWeapon, COL_ENEMY, m_isPowerUp);
+}
+
 
 void CPlayer::Lumos()
 {
@@ -2608,8 +2641,6 @@ void CPlayer::Add_Layer_Item()
 	if (nullptr == pTool)
 		return;
 	pTool->CreateTool();
-
-	m_isUseItem = true;
 }
 
 void CPlayer::Drink_Potion()
@@ -2660,14 +2691,9 @@ void CPlayer::Blink_End()
 	m_isBlink = false;
 }
 
-void CPlayer::Use_Item_End()
+void CPlayer::Healing()
 {
-	m_isUseItem = false;
-
-	//현제 진행되고 있는 애니메이션으로 변경
-	m_pCustomModel->Change_Animation(m_pCustomModel->Get_CurrentAnimIndex(), CModel::OTHERBODY2);
-	//시간도 적용해준다.
-	*m_pCustomModel->Get_Animation(CModel::OTHERBODY2)->Get_Accmulation_Pointer() = m_pCustomModel->Get_Animation()->Get_Accmulation();
+	m_pPlayer_Information->fix_HP(40);
 }
 
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -2698,6 +2724,50 @@ void CPlayer::Prepare_Protego()
 	else
 	{
 		m_isPrepareProtego = false;
+	}
+}
+
+void CPlayer::Go_Use_Item()
+{
+	CTool* pTool = m_pPlayer_Information->Get_PotionTap()->Get_CurTool();
+
+	if (nullptr == pTool)
+		return;
+
+	CUseItemState::USEITEMDESC UseItemDesc;
+
+	UseItemDesc.eItem_Id = pTool->Get_ItemID();
+	
+	switch (UseItemDesc.eItem_Id)
+	{
+	case Client::ITEM_ID_WIGGENWELD_POTION:
+	{
+		UseItemDesc.funcPotion = [&] {(*this).Healing(); };
+	}
+	break;
+	case Client::ITEM_ID_EDURUS_POTION:
+	case Client::ITEM_ID_FOCUS_POTION:
+	case Client::ITEM_ID_MAXIMA_POTION:
+	case Client::ITEM_ID_INVISIBILITY_POTION:
+	case Client::ITEM_ID_THUNDERBEW_POTION:
+	case Client::ITEM_ID_FELIX_FELICIS_POTION:
+	{
+		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
+	}
+	break;
+	case Client::ITEM_ID_CHINESE_CHOMPING_CABBAGE:
+	{
+		UseItemDesc.funcPotion = nullptr;
+	}
+	break;
+	default:
+		break;
+	}
+
+	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
+		(m_pStateContext->Is_Current_State(TEXT("Idle"))))
+	{
+		m_pStateContext->Set_StateMachine(TEXT("UseItem"));
 	}
 }
 

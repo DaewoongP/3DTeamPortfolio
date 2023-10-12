@@ -32,6 +32,7 @@ public:
         function<void()> pfuncFinishAnimation = { nullptr };//플
         //루모스 진행중인지 아닌지 
         _bool* pLumosOn = { nullptr };
+        CGameObject** ppTarget = { nullptr };
 
         //값이 비어 있는게 있다면 false 전부 채워져 있다면 true
         _bool IsValid()
@@ -48,6 +49,7 @@ public:
             if (nullptr == pfRotaionSpeed) { return false; }
             if (nullptr == pfuncFinishAnimation) { return false; }
             if (nullptr == pLumosOn) { return false; }
+            if (nullptr == ppTarget) { return false; }
             
             return true;
         };

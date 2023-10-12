@@ -223,9 +223,6 @@ private:
 	//루모스 끄기
 	_bool m_isPreLumos = { false };
 
-	//아이템 사용중
-	_bool m_isUseItem = { false };
-
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
@@ -288,6 +285,8 @@ private:
 
 	void Finisher();
 
+	void Stupefy();
+
 	void Lumos();
 
 	void Finish_Animation();
@@ -305,7 +304,7 @@ private:
 	void Blink_Start();
 	void Blink_End();
 
-	void Use_Item_End();
+	void Healing();
 
 #pragma endregion
 
@@ -326,6 +325,8 @@ private:
 	void Go_Switch_Loop();
 
 	void Prepare_Protego();
+
+	void Go_Use_Item();
 
 
 #pragma endregion
