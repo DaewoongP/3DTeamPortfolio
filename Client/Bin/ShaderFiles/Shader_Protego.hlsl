@@ -133,10 +133,10 @@ PS_OUT PS_MAIN(PS_IN In)
 	}
 
 	// 노이즈 생성
-	TilingAndOffset_float(In.vTexUV, 1.f, g_fTime * 0.15f, vOffsetNoiseUV1);
-	TilingAndOffset_float(In.vTexUV, 1.f, -g_fTime * 0.15f, vOffsetNoiseUV2);
-	vOffsetNoiseUV = vOffsetNoiseUV1 * vOffsetNoiseUV2;
-	vNoise04 = g_Noise04_Texture.Sample(LinearSampler, vOffsetNoiseUV);
+	TilingAndOffset_float(In.vTexUV, 1.f, g_fTime * 0.15f, vOffsetNoiseUV1); // 우상으로 이동
+	TilingAndOffset_float(In.vTexUV, 1.f, -g_fTime * 0.15f, vOffsetNoiseUV2); // 좌상으로 이동
+	vOffsetNoiseUV = vOffsetNoiseUV1 * vOffsetNoiseUV2; // 노이즈 섞기
+	vNoise04 = g_Noise04_Texture.Sample(LinearSampler, vOffsetNoiseUV); // 노이즈로 샘플링
 
 	// 색상 섞기.
 	Out.vColor = lerp(g_vColor1, g_vColor2, vNoise04.r);
@@ -159,7 +159,7 @@ technique11 DefaultTechnique
 	pass Protego
 	{
 		SetRasterizerState(RS_Cull_None);
-		SetDepthStencilState(DSS_Alpha, 0);
+		SetDepthStencilState(DSS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();

@@ -34,7 +34,6 @@ public:
 		CAMERADESC CameraDesc{};
 		CTransform* pPlayerTransform = { nullptr };
 		CTransform** ppTargetTransform = { nullptr };
-		LEVELID eLevelID = { LEVEL_END };
 		_bool* IsMove = { nullptr };
 	}PLAYERCAMERADESC;
 

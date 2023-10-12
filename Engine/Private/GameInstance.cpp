@@ -138,8 +138,9 @@ void CGameInstance::Clear_Resources()
 	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, , TEXT("Camera_Manager NULL"));
 	NULL_CHECK_RETURN_MSG(m_pTimer_Manager, , TEXT("Timer_Manager NULL"));
 
-	m_pCamera_Manager->Clear();
-	m_pTimer_Manager->Clear();
+	//m_pCamera_Manager->Clear();
+	m_pTimer_Manager->Reset_World_TimeAcc();
+	//m_pTimer_Manager->Clear();
 	m_pLight_Manager->Clear_Lights();
 }
 
@@ -289,6 +290,20 @@ HRESULT CGameInstance::Add_Scene(const _tchar* pSceneTag, const _tchar* pLayerTa
 	NULL_CHECK_RETURN_MSG(m_pLevel_Manager, E_FAIL, TEXT("Level_Manager NULL"));
 
 	return m_pLevel_Manager->Add_Scene(pSceneTag, pLayerTag);
+}
+
+list<const _tchar*> CGameInstance::Get_CurrentSceneLayers(const _tchar* pSceneTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pLevel_Manager, list<const _tchar*>(), TEXT("Level_Manager NULL"));
+
+	return m_pLevel_Manager->Get_CurrentSceneLayers(pSceneTag);
+}
+
+HRESULT CGameInstance::Initialize_Level(_uint iCurrentLevelIndex)
+{
+	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, E_FAIL, TEXT("Component_Manager NULL"));
+
+	return m_pComponent_Manager->Initialize_Level(iCurrentLevelIndex);
 }
 
 CComponent* CGameInstance::Find_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag)

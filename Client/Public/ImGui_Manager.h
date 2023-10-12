@@ -20,6 +20,9 @@ public:
 	HRESULT Add_Function(function<void()> Function);
 	void Clear_Function();
 
+	static void NextWindow_LeftBottom();
+	static void MatrixImgui(_float4x4& pMatrix, const _char* pNodeName);
+
 private:
 	_float4					m_vImGuiClearColor;
 	ID3D11Texture2D*		m_pTexture2D = { nullptr };
