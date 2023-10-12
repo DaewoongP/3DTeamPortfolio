@@ -217,6 +217,7 @@ private:
 
 private:
 	void Key_Input(_float fTimeDelta);
+	void Key_input_Flying(_float fTimeDelta);
 	void Fix_Mouse();
 
 private:

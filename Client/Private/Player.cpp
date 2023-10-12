@@ -241,19 +241,29 @@ void CPlayer::Tick(_float fTimeDelta)
 	
 	ENDINSTANCE;
 	
-
+	//스킬 쿨 갱신용도
 	Update_Skill_CoolTime();
 
+	//타겟을 초기화시키는 용도
 	if (nullptr != m_pTarget && m_pTarget->isDead())
 	{
 		Clear_Target();
 	}
 
+	//타겟을 잡는 용도
 	Update_Target_Angle();
 
 	__super::Tick(fTimeDelta);
 
-	Key_Input(fTimeDelta);
+	if (m_isFlying)
+	{
+
+	}
+	else 
+	{
+		Key_Input(fTimeDelta);
+	}
+	
 
 	Fix_Mouse();
 
@@ -891,7 +901,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.fInitCoolTime = 5.f;
 		magicInitDesc.iDamage = 50;
 		magicInitDesc.isChase = true;
-		magicInitDesc.fLifeTime = 1.2f;
+		magicInitDesc.fLifeTime = 0.6f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
@@ -967,10 +977,10 @@ HRESULT CPlayer::Add_Magic()
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(2, LUMOS);
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(3, FINISHER);
 
-	Set_Spell_Botton(0, CONFRINGO);
-	Set_Spell_Botton(1, LEVIOSO);
-	Set_Spell_Botton(2, CRUCIO);
-	Set_Spell_Botton(3, FLIPENDO);
+	Set_Spell_Botton(0, FLIPENDO);
+	Set_Spell_Botton(1, DIFFINDO);
+	Set_Spell_Botton(2, EXPELLIARMUS);
+	Set_Spell_Botton(3, ARRESTOMOMENTUM);
 
 	return S_OK;
 }
@@ -1553,6 +1563,7 @@ HRESULT CPlayer::Ready_StateMachine()
 	m_StateMachineDesc.pOwnerLookAngle = &m_fLookAngle;
 	m_StateMachineDesc.pfuncFinishAnimation = [&] { (*this).Finish_Animation(); };
 	m_StateMachineDesc.pLumosOn = &m_isLumosOn;
+	m_StateMachineDesc.pIsFlying = &m_isFlying;
 
 	Safe_AddRef(m_StateMachineDesc.pOwnerModel);
 	Safe_AddRef(m_StateMachineDesc.pPlayerTransform);
@@ -1690,6 +1701,83 @@ HRESULT CPlayer::Ready_StateMachine()
 		return E_FAIL;
 	}
 
+#pragma region Flying
+
+	try 
+	{
+		//지팡이 탑승 스테이트
+		if (FAILED(m_pStateContext->Add_StateMachine(
+			LEVEL_STATIC,
+			TEXT("Com_Player_Broom_Begin"),
+			TEXT("Broom_Begin"),
+			TEXT("Prototype_Component_State_Broom_Begin"),
+			&m_StateMachineDesc)))
+			throw("Failed Add Broom_Begin State");
+
+		//호버 idle
+		if (FAILED(m_pStateContext->Add_StateMachine(
+			LEVEL_STATIC,
+			TEXT("Com_Player_Hover_Idle"),
+			TEXT("Hover_Idle"),
+			TEXT("Prototype_Component_State_Hover_Idle"),
+			&m_StateMachineDesc)))
+			throw("Failed Add Hover_Idle State");
+
+		//호버 move
+		if (FAILED(m_pStateContext->Add_StateMachine(
+			LEVEL_STATIC,
+			TEXT("Com_Player_Hover_Move"),
+			TEXT("Hover_Move"),
+			TEXT("Prototype_Component_State_Hover_Move"),
+			&m_StateMachineDesc)))
+			throw("Failed Add Hover_Move State");
+
+		//호버 turn
+		if (FAILED(m_pStateContext->Add_StateMachine(
+			LEVEL_STATIC,
+			TEXT("Com_Player_Hover_Turn"),
+			TEXT("Hover_Turn"),
+			TEXT("Prototype_Component_State_Hover_Turn"),
+			&m_StateMachineDesc)))
+			throw("Failed Add Hover_Turn State");
+
+		//fly move
+		if (FAILED(m_pStateContext->Add_StateMachine(
+			LEVEL_STATIC,
+			TEXT("Com_Player_Fly_Move"),
+			TEXT("Hover_Move"),
+			TEXT("Prototype_Component_State_Fly_Move"),
+			&m_StateMachineDesc)))
+			throw("Failed Add Fly_Move State");
+
+		//Break
+		if (FAILED(m_pStateContext->Add_StateMachine(
+			LEVEL_STATIC,
+			TEXT("Com_Player_Broom_Break"),
+			TEXT("Broom_Break"),
+			TEXT("Prototype_Component_State_Broom_Break"),
+			&m_StateMachineDesc)))
+			throw("Failed Add Broom_Break State");
+
+		//지팡이 착지 스테이트
+		if (FAILED(m_pStateContext->Add_StateMachine(
+			LEVEL_STATIC,
+			TEXT("Com_Player_Broom_End"),
+			TEXT("Broom_End"),
+			TEXT("Prototype_Component_State_Broom_End"),
+			&m_StateMachineDesc)))
+			throw("Failed Add Broom_End State");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = {};
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
+		return E_FAIL;
+	}
+
+#pragma endregion
 	m_pStateContext->Set_StateMachine(TEXT("Idle"));
 
 	return S_OK;
@@ -2383,7 +2471,129 @@ void CPlayer::Tick_TestShake()
 	ImGui::End();
 
 }
+void CPlayer::Key_input_Flying(_float fTimeDelta)
+{
+	BEGININSTANCE;
+	//조준
+	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_RBUTTON, CInput_Device::KEY_PRESSING))
+	{
+		Find_Target_For_ViewSpace();
+	}
 
+#pragma region 스테이트 변경 키 입력
+
+	//if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
+	//{
+	//	Go_Landing();
+	//}
+
+	if (true == m_isReadySpell)
+	{
+		CMagicCastingState::MAGICCASTINGSTATEDESC MagicCastingStateDesc = CMagicCastingState::MAGICCASTINGSTATEDESC();
+
+		MagicCastingStateDesc.pisReadySpell = &m_isReadySpell;
+
+		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_BASIC;
+
+		// 평타 : 타입과 레디 변수만 넘겨준다.
+		if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
+		{
+			Go_MagicCast(&MagicCastingStateDesc);
+		}
+
+		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_NORMAL;
+
+		for (size_t i = 0; i < SKILLINPUT_END; i++)
+		{
+			if (pGameInstance->Get_DIKeyState(DIK_1 + i, CInput_Device::KEY_DOWN) && m_pMagicSlot->IsCoolOn_Skill(i))
+			{
+				//액션
+				MagicCastingStateDesc.iSpecialAction = Special_Action(i);
+
+				//함수 포인터
+				switch (i)
+				{
+				case Client::CPlayer::SKILLINPUT_1:
+				{
+					MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Magic_Spell_Button_1(); };
+				}
+				break;
+				case Client::CPlayer::SKILLINPUT_2:
+				{
+					MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Magic_Spell_Button_2(); };
+				}
+				break;
+				case Client::CPlayer::SKILLINPUT_3:
+				{
+					MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Magic_Spell_Button_3(); };
+				}
+				break;
+				case Client::CPlayer::SKILLINPUT_4:
+				{
+					MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Magic_Spell_Button_4(); };
+				}
+				break;
+				case Client::CPlayer::SKILLINPUT_END:
+					break;
+				default:
+					break;
+				}
+				Go_MagicCast(&MagicCastingStateDesc);
+			}
+		}
+
+		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_FINISHER;
+
+		//조건 추가함
+		if (pGameInstance->Get_DIKeyState(DIK_X, CInput_Device::KEY_DOWN) && m_pPlayer_Information->Is_Use_Fnisher() && nullptr != m_pTarget)
+		{
+			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Finisher(); };
+
+			static_cast<CEnemy*>(m_pTarget)->Ready_Hit_Finisher();
+
+			m_pPlayer_Information->Using_Fnisher();
+
+			Go_MagicCast(&MagicCastingStateDesc);
+
+			m_pPlayer_Camera->Change_Animation(TEXT("Cam_Finisher_Lightning_01_anm"));
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_DOWN) && false == m_pStateContext->Is_Current_State(TEXT("Protego")))
+		{
+			Go_Protego(nullptr);
+		}
+	}
+#pragma endregion
+
+	//루모스
+	if (false == m_isLumosOn &&
+		pGameInstance->Get_DIKeyState(DIK_Z, CInput_Device::KEY_DOWN) &&
+		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+			m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
+			m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
+			m_pStateContext->Is_Current_State(TEXT("Jump")) ||
+			m_pStateContext->Is_Current_State(TEXT("Move Loop"))))
+	{
+		m_pCustomModel->Change_Animation(TEXT("Lumos_Start"), CModel::OTHERBODY);
+		m_isLumosOn = true;
+	}
+
+
+	if (pGameInstance->Get_DIKeyState(DIK_GRAVE, CInput_Device::KEY_DOWN))
+	{
+		if (true == m_isFixMouse)
+			m_isFixMouse = false;
+		else
+			m_isFixMouse = true;
+	}
+
+	/*if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
+	{
+		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 10.f, PxForceMode::eIMPULSE);
+	}*/
+
+	ENDINSTANCE;
+}
 #endif // _DEBUG
 
 void CPlayer::Go_MagicCast(void* _pArg)

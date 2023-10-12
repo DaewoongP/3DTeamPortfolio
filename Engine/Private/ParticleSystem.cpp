@@ -132,8 +132,7 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 		WorldMatrix.m[3][0] = 0;
 		WorldMatrix.m[3][1] = 0;
 		WorldMatrix.m[3][2] = 0;
-
-		Get_ShapeModuleRef().ShapeMatrix *= WorldMatrix;
+		Get_ShapeModuleRef().ShapeMatrix = Get_ShapeModuleRef().ShapeMatrixInit * WorldMatrix;
 	}
 
 	// Stop버튼을 누른 후 모든 파티클들이 소멸하면 자동으로 Disable이 된다.

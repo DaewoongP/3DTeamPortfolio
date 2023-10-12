@@ -360,6 +360,7 @@ HRESULT SHAPE_MODULE::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &isAlphaAffectsParticles, sizeof(isAlphaAffectsParticles), &dwByte, nullptr);
 	WriteFile(hFile, &isBilinearFiltering, sizeof(isBilinearFiltering), &dwByte, nullptr);
 	WriteFile(hFile, &ShapeMatrix, sizeof(ShapeMatrix), &dwByte, nullptr);
+	ShapeMatrixInit = ShapeMatrix;
 	WriteFile(hFile, &isAlignToDirection, sizeof(isAlignToDirection), &dwByte, nullptr);
 	WriteFile(hFile, &fRandomizeDirection, sizeof(fRandomizeDirection), &dwByte, nullptr);
 	WriteFile(hFile, &fSpherizeDirection, sizeof(fSpherizeDirection), &dwByte, nullptr);
@@ -437,6 +438,7 @@ HRESULT SHAPE_MODULE::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &isAlphaAffectsParticles, sizeof(isAlphaAffectsParticles), &dwByte, nullptr);
 	ReadFile(hFile, &isBilinearFiltering, sizeof(isBilinearFiltering), &dwByte, nullptr);
 	ReadFile(hFile, &ShapeMatrix, sizeof(ShapeMatrix), &dwByte, nullptr);
+	ShapeMatrixInit = ShapeMatrix;
 	ReadFile(hFile, &isAlignToDirection, sizeof(isAlignToDirection), &dwByte, nullptr);
 	ReadFile(hFile, &fRandomizeDirection, sizeof(fRandomizeDirection), &dwByte, nullptr);
 	ReadFile(hFile, &fSpherizeDirection, sizeof(fSpherizeDirection), &dwByte, nullptr);
