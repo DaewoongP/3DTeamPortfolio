@@ -29,25 +29,35 @@ public:
 	HRESULT Initialize();
 
 public:
-	void			Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameIndex, _Inout_ _float* fSpeed, const _float4x4* pWorldMatrix, _float4x4 PivotMatrix);
+	void			Invalidate_Frame(_float fTimeAcc, _Inout_ _uint * pCurrentKeyFrameIndex, _Inout_ _float * fSpeed, const _float4x4 * pWorldMatrix, _float4x4 PivotMatrix);
 	//인덱스를 이용한 검색
-	KEYFRAME*		Find_Frame(_uint iFindFrame);
-	const _tchar*	Find_Frame_Key(_uint iFindFrame);
+	KEYFRAME* Find_Frame(_uint iFindFrame);
+	const _tchar* Find_Frame_Key(_uint iFindFrame);
 	void			Delete_Frame(_uint iFindFrame);
-	void			Edit_Frame(_uint iFindFrame, KEYFRAME::KEYFRAMETYPE eFrameType, _float fActionTime, _float fSpeed, _char* szActionTag, _int iBondIndex, _float4x4 OffsetMatrix, const CModel::BONES& Bones);
+	void			Edit_Frame(_uint iFindFrame, KEYFRAME::KEYFRAMETYPE eFrameType, _float fActionTime, _float fSpeed, _char * szActionTag, _int iBondIndex, _float4x4 OffsetMatrix, const CModel::BONES & Bones);
 	//태그를 이용한 검색
-	KEYFRAME*		Find_Frame(const wchar_t* wszKeyFrameTag);
+	KEYFRAME* Find_Frame(const wchar_t* wszKeyFrameTag);
 	//추가(툴용)
-	HRESULT			AddFrame(KEYFRAME_GCM* data, const CModel::BONES& Bones);
+	HRESULT			AddFrame(KEYFRAME_GCM * data, const CModel::BONES & Bones);
 
-	void			BindBoneMatrixForParticle(const CModel::BONES& Bones);
+	void			BindBoneMatrixForParticle(const CModel::BONES & Bones);
+
 public:
 	void			Notify_NULL_WarningAlam();
 
 private:
+	SPEEDFRAME*			m_pPrevSpeedFrame = { nullptr };
+	SPEEDFRAME*			m_pCurrentSpeedFrame = { nullptr };
+	_uint				m_iPrevSpeedFramesIndex = { 999 };
+	_uint				m_iCurrentSpeedFramesIndex = { 999 };
+	_bool				m_isFinalSpeedFrame = { false };
+
 	vector<pair<wstring, KEYFRAME*>>	m_KeyFrames;
 	_uint				m_iNumKeyFrames = { 0 };
 	_uint				m_iCurrentKeyFramesIndex = { 0 };
+
+private:
+	void Find_SpeedFrame();
 
 public:
 	static CNotify* Create();
