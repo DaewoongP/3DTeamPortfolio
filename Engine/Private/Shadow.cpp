@@ -27,11 +27,21 @@ HRESULT CShadow::Initialize(CVIBuffer_Rect* pRectBuffer)
 	/*if (FAILED(pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_Shadow_DownSample"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;*/
+	if (FAILED(pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_Shadow_BlurX"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
+	if (FAILED(pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_Shadow_Blured"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
 
 	if (FAILED(pRenderTarget_Manager->Add_MRT(TEXT("MRT_Shadow"), TEXT("Target_Shadow"))))
 		return E_FAIL;
 	/*if (FAILED(pRenderTarget_Manager->Add_MRT(TEXT("MRT_Shadow_DownSample"), TEXT("Target_Shadow_DownSample"))))
 		return E_FAIL;*/
+	if (FAILED(pRenderTarget_Manager->Add_MRT(TEXT("MRT_Shadow_BlurX"), TEXT("Target_Shadow_BlurX"))))
+		return E_FAIL;
+	if (FAILED(pRenderTarget_Manager->Add_MRT(TEXT("MRT_Shadow_Blured"), TEXT("Target_Shadow_Blured"))))
+		return E_FAIL;
 
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
 	m_vWinSize.x = m_WorldMatrix._11 = ViewportDesc.Width;
@@ -112,6 +122,11 @@ HRESULT CShadow::Render()
 		return E_FAIL;
 
 	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Shadow"))))
+		return E_FAIL;
+
+	if (FAILED(m_pBlur->Render(TEXT("MRT_Shadow_BlurX"), TEXT("Target_Shadow"), CBlur::BLUR_X)))
+		return E_FAIL;
+	if (FAILED(m_pBlur->Render(TEXT("MRT_Shadow_Blured"), TEXT("Target_Shadow_BlurX"), CBlur::BLUR_Y)))
 		return E_FAIL;
 
 	// Down Sampling

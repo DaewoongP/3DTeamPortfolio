@@ -188,7 +188,7 @@ float Create_ShadowPower(float4 vWorldPos, matrix LightViewMatrix, matrix LightP
     }
     // 빛의 뷰스페이스 포지션 z와 픽셀의 라이트 뎁스 (실제 월드공간상의 viewz값)
     // 빛의 뷰스페이스 z값이 UV좌표의 뷰스페이스 z값보다 "클경우 (깊을경우)" 그림자.
-    else if (vLightViewPos.z - 0.2f > vLightDepth.x * g_fCamFar)
+    else if (vLightViewPos.z - 0.22f > vLightDepth.x * g_fCamFar)
     {
         fRetValue = fShadowPower;
     }
