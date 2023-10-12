@@ -75,7 +75,6 @@ void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameI
 		{
 			//새로운 속도 프레임을 설정해줍니다.
 			Find_SpeedFrame();
-			cout << "새로운 속도 설정" << m_iCurrentSpeedFramesIndex << endl;
 		}
 		
 		//만약 내 속도 프레임보다 앞질러갔으면?
@@ -93,7 +92,6 @@ void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameI
 		if (fRatio <= 1&& fRatio >= 0)
 		{
 			*fSpeed = Lerp(*fSpeed, m_pCurrentSpeedFrame->fSpeed, fRatio);
-			cout << "속도 : " << *fSpeed <<endl;
 		}
 	}
 
