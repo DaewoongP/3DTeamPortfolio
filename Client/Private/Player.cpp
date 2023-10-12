@@ -49,7 +49,7 @@ CPlayer::CPlayer(const CPlayer& rhs)
 
 void CPlayer::Set_Protego_Collision(CTransform* _pTransform, CEnemy::ATTACKTYPE _eAttackType) const
 {
-	if (m_pStateContext->Is_Current_State(TEXT("Protego")))
+	if (false == m_isUseProtego && m_pStateContext->Is_Current_State(TEXT("Protego")))
 	{
 		m_ProtegoStateDesc.isHit = true;
 
@@ -79,6 +79,8 @@ void CPlayer::Set_Protego_Collision(CTransform* _pTransform, CEnemy::ATTACKTYPE 
 		m_ProtegoStateDesc.pTransform = _pTransform;
 
 		m_isCollisionEnterProtego = true;
+
+		m_isUseProtego = true;
 	}
 }
 
@@ -240,6 +242,10 @@ void CPlayer::Tick(_float fTimeDelta)
 	
 	ENDINSTANCE;
 
+	if (false == m_pStateContext->Is_Current_State(TEXT("Protego")))
+	{
+		m_isUseProtego = false;
+	}
 	
 
 	Update_Skill_CoolTime();
@@ -362,24 +368,16 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 		//Protego
 		if (m_pStateContext->Is_Current_State(TEXT("Protego")))
-		{
-			
-		}
+		{	}
 		//회피시 무시
 		else if (m_pStateContext->Is_Current_State(TEXT("Roll")))
-		{
-
-		}
+		{	}
 		//피격중인 상태일 경우 무시
 		else if (m_pStateContext->Is_Current_State(TEXT("Hit")))
-		{
-
-		}
+		{	}
 		//에두루스 마법약 상태일때 슈퍼아머 혹은 무적
 		else if (m_isDefUp)
-		{
-
-		}
+		{	}
 		//Hit
 		else
 		{
@@ -408,9 +406,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			}
 			break;
 			case CEnemy::ATTACKTYPE_END:
-			{
-
-			}
+			{	}
 			break;
 
 			default:
@@ -424,7 +420,41 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			//체력 수정
 			m_pPlayer_Information->fix_HP((pDesc->iDamage) * -1);
 		}
+	}
+	else if (wstring::npos != wstrCollisionTag.find(TEXT("Magic_Ball")))
+	{
+		CMagicBall::COLLSIONREQUESTDESC* pDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
 
+		//Protego
+		if (m_pStateContext->Is_Current_State(TEXT("Protego")))
+		{
+		}
+		//회피시 무시
+		else if (m_pStateContext->Is_Current_State(TEXT("Roll")))
+		{
+		}
+		//피격중인 상태일 경우 무시
+		//else if (m_pStateContext->Is_Current_State(TEXT("Hit")))
+		//{
+		//}
+		//에두루스 마법약 상태일때 슈퍼아머 혹은 무적
+		else if (m_isDefUp)
+		{
+		}
+		//Hit
+		else
+		{
+			CHitState::HITSTATEDESC HitStateDesc;
+
+			HitStateDesc.iHitType = CHitState::HIT_LIGHT;
+
+			HitStateDesc.pTransform = pDesc->pTransform;
+
+			Go_Hit(&HitStateDesc);
+
+			//체력 수정
+			m_pPlayer_Information->fix_HP((pDesc->iDamage) * -1);
+		}
 	}
 }
 
@@ -656,7 +686,7 @@ HRESULT CPlayer::Add_Components()
 	RigidBodyDesc.vDebugColor = _float4(1.f, 105 / 255.f, 180 / 255.f, 1.f); // hot pink
 	RigidBodyDesc.pOwnerObject = this;
 	RigidBodyDesc.eThisCollsion = COL_PLAYER;
-	RigidBodyDesc.eCollisionFlag = COL_ENEMY_RANGE | COL_ENEMY_ATTACK | COL_TRIGGER | COL_STATIC;
+	RigidBodyDesc.eCollisionFlag = COL_ENEMY_RANGE | COL_ENEMY_ATTACK | COL_TRIGGER | COL_STATIC | COL_MAGIC;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Player_Default");
 
 	/* Com_RigidBody */
@@ -946,7 +976,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = STUPEFY;
 		magicInitDesc.fInitCoolTime = 1.f;
-		magicInitDesc.iDamage = 40;
+		magicInitDesc.iDamage = 0;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);

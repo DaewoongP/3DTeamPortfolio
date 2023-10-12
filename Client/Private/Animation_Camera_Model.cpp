@@ -108,8 +108,8 @@ void CAnimation_Camera_Model::Update_Up_Eye_At()
 	//At
 	m_vAt = m_vEye + vBoneLook.Cross(m_vUp);
 
-	m_vEye.y -= 0.5f;
-	m_vAt.y -= 0.5f;
+	m_vEye.y -= 0.7f;
+	m_vAt.y -= 0.7f;
 }
 
 HRESULT CAnimation_Camera_Model::Add_Components()

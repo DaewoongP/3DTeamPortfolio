@@ -141,6 +141,7 @@ private:
 	CMagicBall* m_pMagicBall = { nullptr };
 
 	mutable function< void(void*)> m_pFrncSpellToggle = { nullptr };
+	mutable _bool m_isUseProtego = { false };
 
 	LEVELID m_eLevelID = { LEVEL_END };
 	
