@@ -116,6 +116,7 @@ private:
 
 	CUI_Group_Skill* m_UI_Group_Skill_01 = { nullptr };
 	CUI_Group_SkillTap* m_UI_Group_SkillTap = { nullptr };
+	_bool			m_isOpenSkillTap = { false };
 
 	CTool* m_pCurTool = { nullptr };
 

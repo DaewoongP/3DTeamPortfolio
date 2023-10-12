@@ -616,6 +616,18 @@
     <Filter Include="01. Levels\05. Sky">
       <UniqueIdentifier>{8daaa0f5-8eda-4c23-b5f9-f4ec1e89c6c1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\04. UI\Font\Damage">
+      <UniqueIdentifier>{33a1a9e3-3ae3-47e4-9a5d-84571b868dfd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\04. UI\Font\Normal">
+      <UniqueIdentifier>{a6ce031a-ee39-48b9-aa3c-287c539e6515}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\04. UI\UI_Composite\UI_Damage">
+      <UniqueIdentifier>{7d0f777e-6a04-4283-a9c2-832e921428e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\04. UI\UI_Group\UI_Store">
+      <UniqueIdentifier>{855a2556-f88a-48b0-a687-12cebb69022e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -857,9 +869,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_Group_Enemy_HP.h">
       <Filter>02. GameObject\04. UI\UI_Group\UI_Group_Enemy_HP</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\UI_Font.h">
-      <Filter>02. GameObject\04. UI\Font</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Main1_Loader.h">
       <Filter>01. Levels\99. Loading\Loader</Filter>
@@ -1226,6 +1235,18 @@
     <ClInclude Include="..\Public\Level_Sky.h">
       <Filter>01. Levels\05. Sky</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_DamageFont.h">
+      <Filter>02. GameObject\04. UI\Font\Damage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Font.h">
+      <Filter>02. GameObject\04. UI\Font\Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Damage.h">
+      <Filter>02. GameObject\04. UI\UI_Composite\UI_Damage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Store.h">
+      <Filter>02. GameObject\04. UI\UI_Group\UI_Store</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1440,9 +1461,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_Group_Enemy_HP.cpp">
       <Filter>02. GameObject\04. UI\UI_Group\UI_Group_Enemy_HP</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\UI_Font.cpp">
-      <Filter>02. GameObject\04. UI\Font</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Main1_Loader.cpp">
       <Filter>01. Levels\99. Loading\Loader</Filter>
@@ -1802,6 +1820,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\Level_Sky.cpp">
       <Filter>01. Levels\05. Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Font.cpp">
+      <Filter>02. GameObject\04. UI\Font\Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Damage.cpp">
+      <Filter>02. GameObject\04. UI\UI_Composite\UI_Damage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_DamageFont.cpp">
+      <Filter>02. GameObject\04. UI\Font\Damage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Store.cpp">
+      <Filter>02. GameObject\04. UI\UI_Group\UI_Store</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

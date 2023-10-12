@@ -63,7 +63,7 @@ private:
 	SpriteFont* m_pFont = { nullptr };
 
 private:
-	CRenderer*		m_pRendererCom = { nullptr };
+	CRenderer* m_pRendererCom = { nullptr };
 
 public:
 	static CUI_Font* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFontFilePath);
