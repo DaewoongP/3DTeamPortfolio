@@ -65,12 +65,11 @@ PS_OUT PS_MAIN(PS_IN In)
     if (g_fFocusDis - g_fFocusRange > fViewZ)
     {
         Out.vColor = vTarget;
-        // pow 처리로 확증가하게 변경
-        Out.vColor.a = 1.f;
+        Out.vColor.a = saturate(1.f - (fViewZ / (g_fFocusDis - g_fFocusRange)));
     }
     else if (g_fFocusDis + g_fFocusRange < fViewZ)
     {
-        Out.vColor = vTarget * 0.8f;
+        Out.vColor = vTarget * 0.7f;
         Out.vColor.a = saturate((fViewZ - g_fFocusDis + g_fFocusRange) / g_fCamFar * 25);
     }
     else

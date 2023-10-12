@@ -88,7 +88,7 @@ HRESULT CDOF::Render(const _tchar* pTargetTag)
 
 	Safe_Release(pPipeLine);
 
-	m_fFocusDis = 2.f;
+	m_fFocusDis = 3.f;
 	m_fFocusRange = 1.f;
 	
 	if (FAILED(m_pShader->Bind_RawValue("g_fFocusDis", &m_fFocusDis, sizeof(_float))))
