@@ -12,6 +12,7 @@
 #include "Forest_Troll.h"
 #include "Golem_Combat.h"
 #include "Dugbog.h"
+#include "Wolf.h"
 #pragma endregion Monsters
 
 #pragma region Weapon
@@ -192,6 +193,17 @@ HRESULT CMain2_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_DarkWizard_M"),
 			CDarkWizard_M::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_DarkWizard_M");
+
+		PivotMatrix = XMMatrixScaling(0.25f, 0.25f, 0.25f);
+		/* For.Prototype_Component_Model_Wolf */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Wolf"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Wolf/Wolf.gcm"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Wolf");
+
+		/* For.Prototype_GameObject_Wolf */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Wolf"),
+			CWolf::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Wolf");
 
 		/* =========================================================== */
 	}
