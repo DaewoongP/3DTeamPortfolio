@@ -615,23 +615,24 @@ HRESULT CConjuredDragon::Add_Components_Level(_uint iCurrentLevelIndex)
 		CEnergyBall::ENERGYBALLINITDESC EnergyBallInitDesc;
 		EnergyBallInitDesc.DeathFunction = [&](const _float& fTimeDelta)->_bool { return this->Break_Invincible(fTimeDelta); };
 		EnergyBallInitDesc.fActionProtegoTime = 2.f;
-		m_pEnergyBall = dynamic_cast<CEnergyBall*>(pGameInstance->Clone_Component(iCurrentLevelIndex, TEXT("Prototype_GameObject_EnergyBall"), &EnergyBallInitDesc));
-		if (nullptr == m_pEnergyBall)
-			throw TEXT("m_pEnergyBall is nullptr");
 
-		/* Fro.Breath */
-		m_pBreath = dynamic_cast<CBreath*>(pGameInstance->Clone_Component(iCurrentLevelIndex, TEXT("Prototype_GameObject_Breath")));
-		if (nullptr == m_pBreath)
-			throw TEXT("m_pBreath is nullptr");
+		if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, TEXT("Prototype_GameObject_EnergyBall"),
+			TEXT("Com_EnergyBall"), reinterpret_cast<CComponent**>(&m_pEnergyBall), &EnergyBallInitDesc)))
+			throw TEXT("Com_EnergyBall");
 
-		/* Fro.Pulse */
+		/* For.Breath */
+		if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, TEXT("Prototype_GameObject_Breath"),
+			TEXT("Com_Breath"), reinterpret_cast<CComponent**>(&m_pBreath))))
+			throw TEXT("Com_Breath");
+
+		/* For.Pulse */
 		CPulse::PULSEINITDESC PulseInitDesc;
 		PulseInitDesc.fLifeTime = 5.f;
 		PulseInitDesc.fSpeed = 2.f;
 		PulseInitDesc.pTarget = m_pTarget;
-		m_pPulse = dynamic_cast<CPulse*>(pGameInstance->Clone_Component(iCurrentLevelIndex, TEXT("Prototype_GameObject_Pulse"), &PulseInitDesc));
-		if (nullptr == m_pPulse)
-			throw TEXT("m_pBreath is nullptr");
+		if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, TEXT("Prototype_GameObject_Pulse"),
+			TEXT("Com_Pulse"), reinterpret_cast<CComponent**>(&m_pPulse), &PulseInitDesc)))
+			throw TEXT("Com_Pulse");
 
 		/* For.Com_Weapon */
 		const CBone* pBone = m_pModelCom->Get_Bone(TEXT("head"));
@@ -1784,15 +1785,15 @@ HRESULT CConjuredDragon::Make_Air_Attacks(_Inout_ CRandomChoose* pRandomChoose)
 		/* Assemble Behaviors */
 		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Attack_Fireball"), pSequence_Attack_Fireball, 0.45f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Fireball");
-		/*if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Attack_Breath"), pSequence_Attack_Breath, 0.35f)))
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Attack_Breath"), pSequence_Attack_Breath, 0.35f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Breath");
 		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Attack_Purse"), pSequence_Attack_Purse, 0.2f)))
-			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Purse");*/
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Purse");
 
-		/*if (FAILED(pSequence_Attack_Breath->Assemble_Behavior(TEXT("Action_Breath_WindUp"), pAction_Breath_WindUp)))
+		if (FAILED(pSequence_Attack_Breath->Assemble_Behavior(TEXT("Action_Breath_WindUp"), pAction_Breath_WindUp)))
 			throw TEXT("Failed Assemble_Behavior Action_Breath_WindUp");
 		if (FAILED(pSequence_Attack_Breath->Assemble_Behavior(TEXT("Attack_Breath"), pAttack_Breath)))
-			throw TEXT("Failed Assemble_Behavior Attack_Breath");*/
+			throw TEXT("Failed Assemble_Behavior Attack_Breath");
 
 		if (FAILED(Make_Attack_Fireball(pSequence_Attack_Fireball)))
 			throw TEXT("Failed Make_Attack_Fireball");
