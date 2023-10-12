@@ -157,6 +157,13 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
+	if (FAILED(Ready_Camera()))
+	{
+		MSG_BOX("Failed Ready Player Camera");
+
+		return E_FAIL;
+	}
+
 	m_pTransform->Set_Speed(1.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(180.f));
 	m_pTransform->Set_RigidBody(m_pRigidBody);
@@ -183,9 +190,9 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(25.f, 3.f, 22.5f);
 	m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
-	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(30.f, 3.f, 15.f); // ±âº» À§Ä¡
-	m_vLevelInitPosition[LEVEL_SMITH] = _float3(94.5f, 7.2f, 78.f); // Æ÷¼Ç ½ºÅ×ÀÌ¼Ç ¹Ù·Î ¾Õ
-	m_vLevelInitPosition[LEVEL_SKY] = _float3(88.8f, 12.5f, 69.8f); // Æ÷¼Ç ½ºÅ×ÀÌ¼Ç ¹Ù·Î ¾Õ
+	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(30.f, 3.f, 15.f); // ï¿½âº» ï¿½ï¿½Ä¡
+	m_vLevelInitPosition[LEVEL_SMITH] = _float3(94.5f, 7.2f, 78.f); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì¼ï¿½ ï¿½Ù·ï¿½ ï¿½ï¿½
+	m_vLevelInitPosition[LEVEL_SKY] = _float3(88.8f, 12.5f, 69.8f); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì¼ï¿½ ï¿½Ù·ï¿½ ï¿½ï¿½
 
 
 
@@ -216,13 +223,8 @@ HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 	m_pTransform->Set_Position(m_vLevelInitPosition[iCurrentLevelIndex]);
 	m_eLevelID = (LEVELID)iCurrentLevelIndex;
 
-
-	if (FAILED(Ready_Camera()))
-	{
-		MSG_BOX("Failed Ready Player Camera");
-
-		return E_FAIL;
-	}
+	/*if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
+		return E_FAIL;*/
 
 	return S_OK;
 }
@@ -231,7 +233,7 @@ void CPlayer::Tick(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
-	//ÇÃ·¹ÀÌ¾î Ä«¸Þ¶ó°¡ ¾Æ´Ï¶ó¸é 
+	//ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½Æ´Ï¶ï¿½ï¿½ 
 	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
 	{
 		ENDINSTANCE;
@@ -281,7 +283,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::OTHERBODY);
 
 
-	//·ç¸ð½º ¾÷µ¥ÀÌÆ®
+	//ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
 	if (nullptr != m_pFrncSpellToggle)
 	{
 		m_pFrncSpellToggle(nullptr);
@@ -301,7 +303,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
-	//ÇÃ·¹ÀÌ¾î Ä«¸Þ¶ó°¡ ¾Æ´Ï¶ó¸é 
+	//ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½Æ´Ï¶ï¿½ï¿½ 
 	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
 	{
 		ENDINSTANCE;
@@ -361,17 +363,17 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		{
 			
 		}
-		//È¸ÇÇ½Ã ¹«½Ã
+		//È¸ï¿½Ç½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		else if (m_pStateContext->Is_Current_State(TEXT("Roll")))
 		{
 
 		}
-		//ÇÇ°ÝÁßÀÎ »óÅÂÀÏ °æ¿ì ¹«½Ã
+		//ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		else if (m_pStateContext->Is_Current_State(TEXT("Hit")))
 		{
 
 		}
-		//¿¡µÎ·ç½º ¸¶¹ý¾à »óÅÂÀÏ¶§ ½´ÆÛ¾Æ¸Ó È¤Àº ¹«Àû
+		//ï¿½ï¿½ï¿½Î·ç½º ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¶ï¿½ ï¿½ï¿½ï¿½Û¾Æ¸ï¿½ È¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		else if (m_isDefUp)
 		{
 
@@ -417,7 +419,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 			Go_Hit(&HitStateDesc);
 
-			//Ã¼·Â ¼öÁ¤
+			//Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			m_pPlayer_Information->fix_HP((pDesc->iDamage) * -1);
 		}
 
@@ -500,7 +502,7 @@ HRESULT CPlayer::Render()
 		}
 	}
 
-	//if(m_isInvisible) Åõ¸í¸ÁÅä »ç¿ë½Ã ShaderPass ¹Ù²ãÁÖ¸é µÉ°Í°°À½.
+	//if(m_isInvisible) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ShaderPass ï¿½Ù²ï¿½ï¿½Ö¸ï¿½ ï¿½É°Í°ï¿½ï¿½ï¿½.
 
 	return S_OK;
 }
@@ -651,7 +653,7 @@ HRESULT CPlayer::Add_Components()
 	RigidBodyDesc.vDebugColor = _float4(1.f, 105 / 255.f, 180 / 255.f, 1.f); // hot pink
 	RigidBodyDesc.pOwnerObject = this;
 	RigidBodyDesc.eThisCollsion = COL_PLAYER;
-	RigidBodyDesc.eCollisionFlag = COL_ENEMY_RANGE | COL_ENEMY_ATTACK | COL_TRIGGER | COL_STATIC;
+	RigidBodyDesc.eCollisionFlag = COL_ENEMY_RANGE | COL_ENEMY_ATTACK | COL_TRIGGER | COL_STATIC | COL_MAGIC;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Player_Default");
 
 	/* Com_RigidBody */
@@ -765,7 +767,7 @@ HRESULT CPlayer::Add_Magic()
 {
 	CMagic::MAGICDESC magicInitDesc;
 
-	// ·¹ºñ¿À¼Ò
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	{
 		magicInitDesc.eBuffType = BUFF_LEVIOSO;
 		magicInitDesc.eMagicGroup = CMagic::MG_CONTROL;
@@ -778,7 +780,7 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// ÄÜÇÁ¸µ°í
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	{
 		magicInitDesc.eBuffType = BUFF_CONFRINGO;
 		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
@@ -791,7 +793,7 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// ÇÇ´Ï¼Å
+	// ï¿½Ç´Ï¼ï¿½
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
@@ -804,7 +806,7 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// ÀÎ¼¾µð¿À
+	// ï¿½Î¼ï¿½ï¿½ï¿½ï¿½
 	{
 		magicInitDesc.eBuffType = BUFF_NCENDIO;
 		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
@@ -817,7 +819,7 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// ·ç¸ð½º
+	// ï¿½ï¿½ï¿½
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
@@ -830,9 +832,9 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// ¾Æ¸®½ºÅä¸ð¸àÅÒ
-	// ¼Óµµ Á¦¾î ¸¶¹ýÀÔ´Ï´Ù.
-	// µôÀº ¾ø½À´Ï´Ù.
+	// ï¿½Æ¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_CONTROL;
@@ -845,9 +847,9 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// ¾Æ¾¾¿À
-	// °øÁß¿¡ ¶ç¿îÃ¤ ²ø¾î´ç±â´Â ¸¶¹ýÀÔ´Ï´Ù.
-	// µôÀº ¾ø½À´Ï´Ù.
+	// ï¿½Æ¾ï¿½ï¿½ï¿½
+	// ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½ï¿½ï¿½Ã¤ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.
 	{
 		magicInitDesc.eBuffType = BUFF_ACCIO;
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
@@ -860,9 +862,9 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// µð¼¾µµ
-	// ¶¥¿¡ ¹ÚÈ÷°Ô ÇÏ´Â ¸¶¹ýÀÔ´Ï´Ù.
-	// µôÀº ¾àÇÕ´Ï´Ù.
+	// ï¿½ð¼¾µï¿½
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 	{
 		magicInitDesc.eBuffType = BUFF_DESCENDO;
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
@@ -875,9 +877,9 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// ÇÃ¸®Ææµµ
-	// °øÁß¿¡ ¶ç¿ö ÇÑ¹ÙÄû xÃàÀ¸·Î È¸Àü½ÃÅ°´Â ¸¶¹ýÀÔ´Ï´Ù.
-	// µôÀº ¾ø½À´Ï´Ù.
+	// ï¿½Ã¸ï¿½ï¿½æµµ
+	// ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½ï¿½ï¿½ ï¿½Ñ¹ï¿½ï¿½ï¿½ xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ï¿½ï¿½Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.
 	{
 		magicInitDesc.eBuffType = BUFF_FLIPENDO;
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
@@ -890,9 +892,9 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// ¿¢½ºÆç¸®¾Æ¸£¹«½º
-	// ¹«±â¸¦ ³¯·Á¹ö¸®´Â ¸¶¹ýÀÔ´Ï´Ù.
-	// µôÀº Áß°£ÀÔ´Ï´Ù.
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ç¸®ï¿½Æ¸ï¿½ï¿½ï¿½ï¿½ï¿½
+	// ï¿½ï¿½ï¿½â¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ô´Ï´ï¿½.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
@@ -905,9 +907,9 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// ÀÓÆä¸®¿À
-	// Àû¿¡°Ô ÀúÁÖ¸¦ °É¾î ´Ù¸¥ Àû°ú ½Î¿ì°Ô ¸¸µå´Â ¸¶¹ýÀÔ´Ï´Ù.
-	// µôÀº Áß°£ÀÔ´Ï´Ù.
+	// ï¿½ï¿½ï¿½ä¸®ï¿½ï¿½
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ö¸ï¿½ ï¿½É¾ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Î¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ô´Ï´ï¿½.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_CURSE;
@@ -920,21 +922,21 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// Å©·ç½Ã¿À
-	// °ø°ÝÀ» ¸ÂÀº ÀûÀº ´Ù¸¥ ÀûÀ» ÇâÇØ µµÅºµÇ´Â Åõ»çÃ¼¸¦ ¹ß»çÇÕ´Ï´Ù.
+	// Å©ï¿½ï¿½Ã¿ï¿½
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Åºï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ß»ï¿½ï¿½Õ´Ï´ï¿½.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_CURSE;
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = CRUCIO;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 200;
+		magicInitDesc.iDamage = 0;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	//½ºÅõÆäÆÄÀÌ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
@@ -947,7 +949,7 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	//µðÇÉµµ
+	//ï¿½ï¿½ï¿½Éµï¿½
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
@@ -960,7 +962,7 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	//º½¹Ù¸£´Ù
+	//ï¿½ï¿½ï¿½Ù¸ï¿½ï¿½ï¿½
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
@@ -989,7 +991,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
-#pragma region Ä«¸Þ¶ó º¯°æ Å×½ºÆ®
+#pragma region Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½×½ï¿½Æ®
 //	if (pGameInstance->Get_DIKeyState(DIK_J, CInput_Device::KEY_DOWN))
 //{
 //	pGameInstance->Set_Camera(TEXT("Player_Camera"),2.0f);
@@ -1004,7 +1006,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 
 #ifdef _DEBUG
-	//Ä«¸Þ¶ó ½¦ÀÌÅ© Å×½ºÆ®
+	//Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½Å© ï¿½×½ï¿½Æ®
 	if (pGameInstance->Get_DIKeyState(DIK_K,CInput_Device::KEY_DOWN))
 	{
 		_float3 vAxis = _float3(m_fx, m_fy, m_fz);
@@ -1023,7 +1025,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	}
 #endif // _DEBUG
 
-	//Á¶ÁØ
+	//ï¿½ï¿½ï¿½ï¿½
 	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_RBUTTON, CInput_Device::KEY_PRESSING))
 	{
 		Find_Target_For_ViewSpace();
@@ -1032,7 +1034,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 
 
-#pragma region ½ºÅ×ÀÌÆ® º¯°æ Å° ÀÔ·Â
+#pragma region ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ Å° ï¿½Ô·ï¿½
 
 	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_DOWN))
 	{
@@ -1057,7 +1059,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_BASIC;
 
-		// ÆòÅ¸ : Å¸ÀÔ°ú ·¹µð º¯¼ö¸¸ ³Ñ°ÜÁØ´Ù.
+		// ï¿½ï¿½Å¸ : Å¸ï¿½Ô°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ°ï¿½ï¿½Ø´ï¿½.
 		if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
 		{
 			Go_MagicCast(&MagicCastingStateDesc);
@@ -1065,7 +1067,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_NORMAL;
 
-		//±âº» ½ºÆÓ
+		//ï¿½âº» ï¿½ï¿½ï¿½ï¿½
 		/*if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN) && m_pMagicSlot->IsCoolOn_Skill(SKILLINPUT_1))
 		{
 			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Magic_Spell_Button_1(); };
@@ -1095,10 +1097,10 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		{
 			if (pGameInstance->Get_DIKeyState(DIK_1 + i, CInput_Device::KEY_DOWN) && m_pMagicSlot->IsCoolOn_Skill(i))
 			{
-				//¾×¼Ç
+				//ï¿½×¼ï¿½
 				MagicCastingStateDesc.iSpecialAction = Special_Action(i);
 
-				//ÇÔ¼ö Æ÷ÀÎÅÍ
+				//ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				switch (i)
 				{
 				case Client::CPlayer::SKILLINPUT_1:
@@ -1150,7 +1152,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_FINISHER;
 
-		//Á¶°Ç Ãß°¡ÇÔ
+		//ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½ï¿½
 		if (pGameInstance->Get_DIKeyState(DIK_X, CInput_Device::KEY_DOWN) && m_pPlayer_Information->Is_Use_Fnisher() && nullptr != m_pTarget)
 		{
 			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Finisher(); };
@@ -1171,7 +1173,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	}
 #pragma endregion
 
-	//·ç¸ð½º
+	//ï¿½ï¿½ï¿½
 	if (false == m_isLumosOn &&
 		pGameInstance->Get_DIKeyState(DIK_Z, CInput_Device::KEY_DOWN) && 
 		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
@@ -1223,11 +1225,11 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))
 	{
-		m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::FOCUS_POTION);
+		/*m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::FOCUS_POTION);
 		m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::ENDURUS_POTION);
 		m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::INVISIBILITY_POTION);
 		m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::MAXIMA_POTION);
-		m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::THUNDERBREW_POTION);
+		m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::THUNDERBREW_POTION);*/
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
@@ -1237,23 +1239,22 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_RockChunksRough"), m_pTransform->Get_Position());
 
 		//m_pPlayer_Information->Get_Inventory()->Add_Item(pItem, pItem->Get_Type());
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_ASHWINDER_EGGS);
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_DITTANY_LEAVES);
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_DUGBOG_TONGUE);
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LEAPING_TOADSTOOL_CAPS);
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LACEWING_FLIES);
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_KNOTGRASS);
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_HORKLUMP_JUICE);
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LEECH_JUICE);
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_MALLOWSWEET);
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_MOONSTONE);
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_FLUXWEED_STEM);
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_SPIDER_FANG);
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_TROLL_BOGEYS);
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_SHRIVELFIG);
+		m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_ASHWINDER_EGGS);
+		m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_DITTANY_LEAVES);
+		m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_DUGBOG_TONGUE);
+		m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LEAPING_TOADSTOOL_CAPS);
+		m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LACEWING_FLIES);
+		m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_KNOTGRASS);
+		m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_HORKLUMP_JUICE);
+		m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LEECH_JUICE);
+		m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_MALLOWSWEET);
+		m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_MOONSTONE);
+		m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_FLUXWEED_STEM);
+		m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_SPIDER_FANG);
+		m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_TROLL_BOGEYS);
+		m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_SHRIVELFIG);
 
-		//wstring temp = TEXT("Drink_Potion_Throw");
-		//m_pCustomModel->Change_Animation(temp);
+
 	}
 #endif //_DEBUG
 
@@ -1266,6 +1267,7 @@ void CPlayer::Fix_Mouse()
 	{
 		return;
 	}
+
 
 	POINT	ptMouse{ g_iWinSizeX >> 1, g_iWinSizeY >> 1 };
 
@@ -1384,7 +1386,6 @@ HRESULT CPlayer::Ready_Camera()
 	PlayerCameraDesc.CameraDesc = CameraDesc;
 	PlayerCameraDesc.pPlayerTransform = m_pTransform;
 	PlayerCameraDesc.ppTargetTransform = &m_pTargetTransform;
-	PlayerCameraDesc.eLevelID = m_eLevelID;
 	PlayerCameraDesc.IsMove = &m_isFixMouse;
 
 	m_pPlayer_Camera = CPlayer_Camera::Create(m_pDevice, m_pContext, &PlayerCameraDesc);
@@ -1544,7 +1545,7 @@ void CPlayer::UpdateLookAngle()
 
 HRESULT CPlayer::Ready_StateMachine()
 {
-	//Ã¤¿öÁ® ÀÖ´Ù¸é ¾ÈµÇ´Ï±î E_Fail
+	//Ã¤ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ù¸ï¿½ ï¿½ÈµÇ´Ï±ï¿½ E_Fail
 	if (true == m_StateMachineDesc.IsValid())
 	{
 		MSG_BOX("Failed Ready_StateMachine");
@@ -1785,7 +1786,7 @@ HRESULT CPlayer::Ready_StateMachine()
 
 void CPlayer::Update_Target_Angle()
 {
-	//³ª¿¡¼­ Å¸°ÙÀ» ÇâÇÑ º¤ÅÍ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	_float3 vDirTarget{};
 
 	if (nullptr == m_pTargetTransform)
@@ -1801,7 +1802,7 @@ void CPlayer::Update_Target_Angle()
 		vDirTarget.Normalize();
 	}
 
-	//³» ·è º¤ÅÍ
+	//ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	_float3 vLook{};
 
 	vLook = m_pTransform->Get_Look();
@@ -2170,7 +2171,7 @@ HRESULT CPlayer::Bind_Notify()
 
 void CPlayer::Update_Cloth(_float fTimeDelta)
 {
-	// ÇöÀç y°ªÀÌ ¹Ý´ëÀÓ
+	// ï¿½ï¿½ï¿½ï¿½ yï¿½ï¿½ï¿½ï¿½ ï¿½Ý´ï¿½ï¿½ï¿½
 	_float3 vVelocity = m_pTransform->Get_Velocity();
 	vVelocity.y *= -1.f;
 	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(m_fClothPower * vVelocity,
@@ -2199,7 +2200,7 @@ void CPlayer::Find_Target_For_Distance()
 	_float fMinDistance = { 50.0f };
 
 
-	//°Å¸®°¡ ³·Àº ³ðÀ» ÀúÀå
+	//ï¿½Å¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	CGameObject* pTarget = { nullptr };
 
 	for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
@@ -2207,63 +2208,63 @@ void CPlayer::Find_Target_For_Distance()
 		if (true == static_cast<CGameObject*>(iter->second)->isDead())
 			continue;
 
-		//ÇÃ·¹ÀÌ¾î¿Í
+		//ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½
 		_float3 vPlayerPos = m_pTransform->Get_Position();
 
-		//¸ó½ºÅÍÀÇ 
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 		_float3 vMonsterPos = dynamic_cast<CGameObject*>(iter->second)->Get_Transform()->Get_Position();
 
-		//°Å¸®¸¦ ±¸ÇÏ°í
+		//ï¿½Å¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï°ï¿½
 		_float fDistance = XMVectorGetX(XMVector3Length(vPlayerPos - vMonsterPos));
 
-		//±âÁ¸ °ªº¸´Ù ÀÛ´Ù¸é
+		//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Û´Ù¸ï¿½
 		if (fMinDistance > fDistance)
 		{
-			//°Å¸®¸¦ °»½ÅÇÏ°í
+			//ï¿½Å¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½
 			fMinDistance = fDistance;
-			//°´Ã¼µµ °»½ÅÇÑ´Ù.
+			//ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 			pTarget = dynamic_cast<CGameObject*>(iter->second);
 		}
 	}
 
-	// °´Ã¼°¡ ÀÖ´Ù¸é
+	// ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Ö´Ù¸ï¿½
 	if (nullptr != pTarget)
 	{
-		//±âÁ¸ °´Ã¼´Â Áö¿öÁÖ°í
+		//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö°ï¿½
 		if (nullptr != m_pTargetTransform)
 		{
 			Safe_Release(m_pTargetTransform);
 		}
 
-		//Å¸°ÙÀ¸·Î ÇÑ´Ù.
+		//Å¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ´ï¿½.
 		m_pTargetTransform = pTarget->Get_Transform();
 
 		Safe_AddRef(m_pTargetTransform);
 
 
-		//±âÁ¸ °´Ã¼´Â Áö¿öÁÖ°í
+		//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö°ï¿½
 		if (nullptr != m_pTarget)
 		{
 			Safe_Release(m_pTarget);
 		}
 
-		//Å¸°ÙÀ¸·Î ÇÑ´Ù.
+		//Å¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ´ï¿½.
 		m_pTarget = pTarget;
 
 		Safe_AddRef(m_pTarget);
 	}
 
-	//°´Ã¼°¡ ¾ø´Ù¸é 
+	//ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½Ù¸ï¿½ 
 	else if (nullptr == pTarget)
 	{
-		//±âÁ¸ °´Ã¼´Â Áö¿öÁÖ°í
+		//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö°ï¿½
 		if (nullptr != m_pTargetTransform)
 		{
 			Safe_Release(m_pTargetTransform);
 			m_pTargetTransform = nullptr;
 		}
 
-		//±âÁ¸ °´Ã¼´Â Áö¿öÁÖ°í
+		//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö°ï¿½
 		if (nullptr != m_pTarget)
 		{
 			Safe_Release(m_pTarget);
@@ -2275,7 +2276,7 @@ void CPlayer::Find_Target_For_Distance()
 
 void CPlayer::Find_Target_For_ViewSpace()
 {
-	//ÀÖ´Â°Ç Áö¿ì°í
+	//ï¿½Ö´Â°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
 	if (nullptr != m_pTarget)
 	{
 		Clear_Target();
@@ -2293,30 +2294,30 @@ void CPlayer::Find_Target_For_ViewSpace()
 
 	_float fMinDistance = { 50.0f };
 
-	//°Å¸®°¡ ³·Àº ³ðÀ» ÀúÀå
+	//ï¿½Å¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	CGameObject* pTarget = { nullptr };
 
-	//¸ó½ºÅÍ¿ùµå¸¦ ºä½ºÆäÀÌ½º·Î ¿Ã¸°´Ù.
-	//x, y±âÁØÀ¸·Î +,- ¹üÀ§¸¦ ÁöÁ¤ÇØ¼­ ¾È¿¡ ÀÖ´ÂÁö È®ÀÎÇÑ´Ù.
+	//ï¿½ï¿½ï¿½Í¿ï¿½ï¿½å¸¦ ï¿½ä½ºï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ ï¿½Ã¸ï¿½ï¿½ï¿½.
+	//x, yï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ +,- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½È¿ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½Ñ´ï¿½.
 
 	_float4x4 viewMatrix = *pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW);
 
-	//ÀÓ½Ã ÀúÀå ÄÁÅ×ÀÌ³Ê
+	//ï¿½Ó½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì³ï¿½
 	list<pair<CEnemy*,_float>> EnemyList;
 
-	//¹üÀ§ ¾È¿¡ ÀÖ´Â°Íµé¸¸ ÀúÀå
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½È¿ï¿½ ï¿½Ö´Â°Íµé¸¸ ï¿½ï¿½ï¿½ï¿½
 	for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
 	{
 		CEnemy* pEnemy = static_cast<CEnemy*>((*iter).second);
 		
-		//ºä½ºÆäÀÌ½º·Î ¿Ã¸®±â
+		//ï¿½ä½ºï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ ï¿½Ã¸ï¿½ï¿½ï¿½
 		_float4x4 TargetWorldMatrix = pEnemy->Get_Transform()->Get_WorldMatrix();
 
 		_float4x4 TargetViewMatrix = TargetWorldMatrix * viewMatrix;
 
 		_float3 vTargetViewPosition = TargetViewMatrix.Translation();
 
-		//-1 ~ 1 »çÀÌ¿¡ ÀÖ´Â °ÍµéÀ» Áß¿¡ Ä«¸Þ¶óº¸´Ù ¾Õ¿¡ ÀÖ´Â°Í
+		//-1 ~ 1 ï¿½ï¿½ï¿½Ì¿ï¿½ ï¿½Ö´ï¿½ ï¿½Íµï¿½ï¿½ï¿½ ï¿½ß¿ï¿½ Ä«ï¿½Þ¶óº¸´ï¿½ ï¿½Õ¿ï¿½ ï¿½Ö´Â°ï¿½
 		if (-m_fTargetViewRange < vTargetViewPosition.x &&
 			m_fTargetViewRange > vTargetViewPosition.x &&
 			-m_fTargetViewRange < vTargetViewPosition.y &&
@@ -2327,7 +2328,7 @@ void CPlayer::Find_Target_For_ViewSpace()
 		}
 	}
 
-	//ºñ¾ú´Ù¸é
+	//ï¿½ï¿½ï¿½ï¿½Ù¸ï¿½
 	if (true == EnemyList.empty())
 	{
 		ENDINSTANCE;
@@ -2350,25 +2351,25 @@ void CPlayer::Find_Target_For_ViewSpace()
 		return;
 	}
 
-	//±âÁ¸ °´Ã¼´Â Áö¿öÁÖ°í
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö°ï¿½
 	if (nullptr != m_pTargetTransform)
 	{
 		Safe_Release(m_pTargetTransform);
 	}
 
-	//Å¸°ÙÀ¸·Î ÇÑ´Ù.
+	//Å¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ´ï¿½.
 	m_pTargetTransform = pTarget->Get_Transform();
 
 	Safe_AddRef(m_pTargetTransform);
 
 
-	//±âÁ¸ °´Ã¼´Â Áö¿öÁÖ°í
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö°ï¿½
 	if (nullptr != m_pTarget)
 	{
 		Safe_Release(m_pTarget);
 	}
 
-	//Å¸°ÙÀ¸·Î ÇÑ´Ù.
+	//Å¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ´ï¿½.
 	m_pTarget = pTarget;
 
 	Safe_AddRef(m_pTarget);

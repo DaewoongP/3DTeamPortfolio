@@ -17,8 +17,12 @@ class CRandomChoose;
 END
 
 BEGIN(Client)
+class CPulse;
 class CAction;
+class CBreath;
+class CMagicSlot;
 class CEnergyBall;
+class CWeapon_Dragon_Head;
 END
 
 BEGIN(Client)
@@ -47,13 +51,23 @@ private:
 	_bool m_isBreakInvincible = { false };
 	void Update_Invincible(const _float& fTimeDelta);
 
-private: /* 구체 패턴 관련 함수 */
+private: /* 구체 패턴 관련 데이터 */
 	CEnergyBall* m_pEnergyBall;
 	_float m_fSpawnBallTimeAcc = { 0.f };
 	void Spawn_EnergyBall(const _float& fTimeDelta);
 	_bool Break_Invincible(const _float& fTimeDelta);
 
-private: /* 사망처리 전용 함수 */
+private: /* 브레스 관련 데이터 */
+	CBreath* m_pBreath = { nullptr };
+	const _float4x4* m_pHeadMatrix = { nullptr };
+	_float3 m_vTargetPosition;
+	_bool m_isActionBreath = { false };
+	void Update_Breath(const _float& fTimeDelta);
+
+private: /* 펄스 패턴 관련 데이터 */
+	CPulse* m_pPulse = { nullptr };
+
+private: /* 사망처리 전용 데이터 */
 	_float m_fDeadTimeAcc = { 0.f };
 	void DeathBehavior(const _float& fTimeDelta);
 
@@ -69,7 +83,12 @@ private: /* 페이즈 관련 함수 */
 	void Check_Phase();
 
 private:
+	CMagicSlot* m_pMagicSlot = { nullptr };
+	CWeapon_Dragon_Head* m_pWeapon = { nullptr };
+
+private:
 	HRESULT Make_AI();
+	HRESULT Make_Magics();
 	HRESULT Make_Notifies();
 	HRESULT Add_Components();
 	HRESULT Add_Components_Level(_uint iCurrentLevelIndex);
@@ -103,7 +122,15 @@ private: /* 행동 묶음들 */
 	HRESULT Make_Air_Hover(_Inout_ CAction* pAction);
 	
 private: /* Notify Func */
-	void Shot_Fireball();
+	void Shot_Fireball_Black();
+	void Shot_Fireball_White();
+	void On_Breath() {
+		m_isActionBreath = true;
+	}
+	void Off_Breath() {
+		m_isActionBreath = false;
+	}
+	void Action_Pulse();
 
 public:
 	static CConjuredDragon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

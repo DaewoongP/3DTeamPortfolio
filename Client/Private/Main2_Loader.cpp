@@ -20,6 +20,7 @@
 #include "Weapon_Forest_Troll.h"
 #include "Weapon_Golem_Combat.h"
 #include "Weapon_Player_Wand.h"
+#include "Weapon_Dragon_Head.h"
 #pragma endregion Weapon
 
 
@@ -327,6 +328,11 @@ HRESULT CMain2_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_ConjuredDragon"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/SK_HebrideanBlack_Skeleton/SK_HebrideanBlack_Skeleton.gcm"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_ConjuredDragon");
+
+		/* For.Prototype_GameObject_Dragon_Head */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Dragon_Head"),
+			CWeapon_Dragon_Head::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Dragon_Head");
 
 		/* For.Prototype_GameObject_ConjuredDragon */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_ConjuredDragon"),

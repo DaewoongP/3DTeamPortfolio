@@ -121,23 +121,23 @@ void CRigidBody::Set_Constraint(_uint eConstraintFlag, _bool _isEnable)
 	{
 		pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, !_isEnable);
 	}
-	if (eConstraintFlag & TransZ)
-	{
-		pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, !_isEnable);
-	}
+if (eConstraintFlag & TransZ)
+{
+	pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, !_isEnable);
+}
 
-	if (eConstraintFlag & RotX)
-	{
-		pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, !_isEnable);
-	}
-	if (eConstraintFlag & RotY)
-	{
-		pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, !_isEnable);
-	}
-	if (eConstraintFlag & RotZ)
-	{
-		pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, !_isEnable);
-	}
+if (eConstraintFlag & RotX)
+{
+	pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, !_isEnable);
+}
+if (eConstraintFlag & RotY)
+{
+	pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, !_isEnable);
+}
+if (eConstraintFlag & RotZ)
+{
+	pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, !_isEnable);
+}
 }
 
 void CRigidBody::Set_Kinematic(_bool isKinematic)
@@ -145,14 +145,14 @@ void CRigidBody::Set_Kinematic(_bool isKinematic)
 	// static 객체는 kinematic 옵션 없음.
 	if (true == m_isStatic)
 		return;
-	
+
 	m_isKinematic = isKinematic;
 	reinterpret_cast<PxRigidDynamic*>(m_pActor)->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, isKinematic);
 }
 
 void CRigidBody::Set_Density(_float _fDensity) const
 {
-	if (nullptr != m_pActor && 
+	if (nullptr != m_pActor &&
 		nullptr != m_pActor->is<PxRigidBody>())
 	{
 		PxRigidBodyExt::updateMassAndInertia(*m_pActor->is<PxRigidBody>(), _fDensity);
@@ -368,7 +368,7 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 	m_pGeometry = pRigidBodyDesc->pGeometry;
 	PxShape* pShape = pPhysX->createShape(*pRigidBodyDesc->pGeometry,
 		*m_pMaterial, false, ePxFlag);
-
+	
 	// filterdata
 	// 충돌처리를 할 데이터 값을 처리해주는 값 (유저가 직접 모든 충돌 처리)
 	// word0 -> 내 충돌값

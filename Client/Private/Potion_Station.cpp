@@ -1,7 +1,6 @@
 #include "..\Public\Potion_Station.h"
 #include "GameInstance.h"
 #include "Player.h"
-#include "PotionStationCamera.h"
 #include "UI_Group_Brew.h"
 #include "ParticleSystem.h"
 
@@ -38,10 +37,21 @@ HRESULT CPotion_Station::Initialize_Prototype(_uint iLevel)
 		}
 	}
 
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_GreenBall")))
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_WaterSmoke")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_GreenBall")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/PotionStation/GreenBall/"), m_iLevel))))
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_WaterSmoke")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/PotionStation/WaterSmoke/"), m_iLevel))))
+		{
+			__debugbreak();
+			Safe_Release(pGameInstance);
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_PotFire")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_PotFire")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/PotionStation/PotFire/"), m_iLevel))))
 		{
 			__debugbreak();
 			Safe_Release(pGameInstance);
@@ -66,21 +76,15 @@ HRESULT CPotion_Station::Initialize(void* pArg)
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
-
+	m_pWaterSmoke->Disable();
+	m_pPotFire->Disable();
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	// 모든 레벨을 조사해서 플레이어 주소를 가져옴.
-	for (_uint i = 0; i < LEVEL_END; ++i)
-	{
-		m_pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(
-			i
-			, TEXT("Layer_Player")
-			, TEXT("GameObject_Player")));
-
-		if (m_pPlayer != nullptr)
-			break;
-	}
+	m_pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(
+		LEVEL_STATIC
+		, TEXT("Layer_Player")
+		, TEXT("GameObject_Player")));
 
 	// 플레이어 주소에 대한 유효성 검사.
 	if (nullptr == m_pPlayer)
@@ -94,21 +98,6 @@ HRESULT CPotion_Station::Initialize(void* pArg)
 
 	m_pPlayerTransform = m_pPlayer->Get_Transform();
 	Safe_AddRef(m_pPlayerTransform);
-
-	//카메라 추가
-	CCamera::CAMERADESC CameraDesc;
-
-	CameraDesc.m_fAspect = _float(g_iWinSizeX) / _float(g_iWinSizeY);
-	CameraDesc.m_fFovY = XMConvertToRadians(90.f);
-	CameraDesc.m_fNear = 0.1f;
-	CameraDesc.m_fFar = 1000.f;
-
-	CPotionStationCamera::POTIONSTATION_CAMERA_DESC Potionstation_Camera_Desc;
-
-	Potionstation_Camera_Desc.vAt = { 98.124f, 8.180f, 77.079f };
-	Potionstation_Camera_Desc.pSuperDesc = CameraDesc;
-
-	pGameInstance->Add_Camera(TEXT("Potion_Station_Camera"), CPotionStationCamera::Create(m_pDevice, m_pContext, &Potionstation_Camera_Desc));
 
 	Safe_Release(pGameInstance);
 
@@ -136,22 +125,22 @@ void CPotion_Station::Tick(_float fTimeDelta)
 			m_eState = IDLE;
 
 		// E버튼 누르면 활성화
-		if (pGameInstance->Get_DIKeyState(DIK_E, CInput_Device::KEY_DOWN))
+		if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
 		{
 			m_pCUI_Group_Brew->Set_isOpen(true);
-			m_pParticleSystem->Play(m_pTransform->Get_Position());
-
+			m_pWaterSmoke->Play(_float3(99.574f, 7.540f, 77.789f));
+			m_pPotFire->Play(_float3(99.144f, 7.160f, 77.909f));
 			pGameInstance->Set_Camera(TEXT("Potion_Station_Camera"), 0.5f);
 			m_eState = SHOW;
 		}
 		break;
 	case Client::CPotion_Station::SHOW:
 		// E버튼 누르면 비활성화
-		if (pGameInstance->Get_DIKeyState(DIK_E, CInput_Device::KEY_DOWN))
+		if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
 		{
 			m_pCUI_Group_Brew->Set_isOpen(false);
-			m_pParticleSystem->Stop();
-
+			m_pWaterSmoke->Stop();
+			m_pPotFire->Stop();
 			pGameInstance->Set_Camera(TEXT("Player_Camera"), 1.f);
 			m_eState = IDLE;
 		}
@@ -160,9 +149,11 @@ void CPotion_Station::Tick(_float fTimeDelta)
 		break;
 	}
 
-
-
 	Safe_Release(pGameInstance);
+
+#ifdef _DEBUG
+	ADD_IMGUI([&] { this->Tick_Imgui(fTimeDelta); });
+#endif // _DEBUG
 }
 
 void CPotion_Station::Late_Tick(_float fTimeDelta)
@@ -170,13 +161,24 @@ void CPotion_Station::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 }
 
+#ifdef _DEBUG
+void CPotion_Station::Tick_Imgui(_float fTimeDelta)
+{
+	CImGui_Manager::NextWindow_LeftBottom();
+	CImGui_Manager::MatrixImgui(m_pPotFire->Get_Transform()->Get_WorldMatrixRef(), "Particle");
+}
+#endif // _DEBUG
+
 HRESULT CPotion_Station::Add_Components()
 {
 	FAILED_CHECK(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_UI_Group_Brew")
 		, TEXT("Com_UI_Group_Brew"), reinterpret_cast<CComponent**>(&m_pCUI_Group_Brew)));
 
-	FAILED_CHECK(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_GreenBall")
-		, TEXT("Com_Particle_GreenBall"), reinterpret_cast<CComponent**>(&m_pParticleSystem)));
+	FAILED_CHECK(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_WaterSmoke")
+		, TEXT("Com_Particle_WaterSmoke"), reinterpret_cast<CComponent**>(&m_pWaterSmoke)));
+
+	FAILED_CHECK(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_PotFire")
+		, TEXT("Com_Particle_PotFire"), reinterpret_cast<CComponent**>(&m_pPotFire)));
 
 	return S_OK;
 }
@@ -213,9 +215,11 @@ void CPotion_Station::Free()
 
 	if (true == m_isCloned)
 	{
+		// DEELTE CAM 만들기ㅣ;ㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣ
 		Safe_Release(m_pPlayer);
 		Safe_Release(m_pPlayerTransform);
 		Safe_Release(m_pCUI_Group_Brew);
-		Safe_Release(m_pParticleSystem);
+		Safe_Release(m_pWaterSmoke);
+		Safe_Release(m_pPotFire);
 	}
 }

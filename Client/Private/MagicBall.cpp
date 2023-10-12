@@ -314,9 +314,9 @@ void CMagicBall::Ready_Dying()
 	}
 
 	//히트 이펙트 재생
-	if (m_TrailVec[EFFECT_STATE_MAIN].size() > 0)
+	if (m_TrailVec[EFFECT_STATE_HIT].size() > 0)
 	{
-		CTransform* hitPos = m_TrailVec[EFFECT_STATE_MAIN].data()[0]->Get_Transform();
+		CTransform* hitPos = m_TrailVec[EFFECT_STATE_HIT].data()[0]->Get_Transform();
 		Safe_AddRef(hitPos);
 		for (int i = 0; i < m_TrailVec[EFFECT_STATE_HIT].size(); i++)
 		{

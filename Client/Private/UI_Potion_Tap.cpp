@@ -469,7 +469,6 @@ void CUI_Potion_Tap::Free()
 {
 	__super::Free();
 
-
 	for (auto& pIcon : m_pIcons)
 	{
 		Safe_Release(pIcon);

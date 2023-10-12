@@ -45,7 +45,6 @@ struct VS_OUT
 {
 	float4 vPosition : SV_POSITION;
 	float2 vTexUV : TEXCOORD0;
-	float2 vMiniMapTexUV : TEXCOORD1;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -57,19 +56,6 @@ VS_OUT VS_MAIN(VS_IN In)
 
 	Out.vPosition = mul(vector(In.vPosition, 1.f), WVPMatrix);
 	Out.vTexUV = In.vTexUV;
-
-	return Out;
-}
-
-VS_OUT VS_MINIMAP(VS_IN In)
-{
-	VS_OUT Out = (VS_OUT)0;
-
-	float4x4 WVMatrix = mul(g_WorldMatrix, g_ViewMatrix);
-	float4x4 WVPMatrix = mul(WVMatrix, g_ProjMatrix);
-
-	Out.vPosition = mul(vector(In.vPosition, 1.f), WVPMatrix);
-	Out.vMiniMapTexUV = In.vTexUV;
 
 	return Out;
 }

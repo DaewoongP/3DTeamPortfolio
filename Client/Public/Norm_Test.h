@@ -30,7 +30,7 @@ private:
 	class CTexture*					m_pTexture = { nullptr };
 	class CRenderer*				m_pRenderer = { nullptr };
 	class CVIBuffer_Point_Instance*	m_pBuffer = { nullptr };
-	CRadialBlur* m_pRadial;
+	CRadialBlur*					m_pRadial = { nullptr };
 
 private:
 	HRESULT Add_Components();

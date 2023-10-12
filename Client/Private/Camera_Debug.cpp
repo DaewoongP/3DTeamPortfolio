@@ -1,7 +1,7 @@
 #include "..\Public\Camera_Debug.h"
 #include "GameInstance.h"
 #include "Player.h"
-
+#include "Layer.h"
 
 CCamera_Debug::CCamera_Debug(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -172,8 +172,8 @@ void CCamera_Debug::Tick_ImGui()
 	ZEROMEM(&rc);
 	GetWindowRect(g_hWnd, &rc);
 
-	ImGui::SetNextWindowPos(ImVec2(0.f, 200.f));
-	ImGui::SetNextWindowSize(ImVec2(300.f, 200.f));
+	ImGui::SetNextWindowPos(ImVec2(0.f, 400.f));
+	ImGui::SetNextWindowSize(ImVec2(300.f, 100.f));
 
 	ImGui::Begin("Camera");
 	_float3 vPos = m_pTransform->Get_Position();
@@ -191,7 +191,7 @@ void CCamera_Debug::Tick_ImGui()
 
 	if (ImGui::Button("Teleport Pos to Cam"))
 	{
-		CPlayer* pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(pGameInstance->Get_CurrentLevelIndex(), TEXT("Layer_Player"), TEXT("GameObject_Player")));
+		CPlayer* pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
 		if (nullptr != pPlayer)
 		{
 			_float3 vPos = m_pTransform->Get_Position();
@@ -199,7 +199,46 @@ void CCamera_Debug::Tick_ImGui()
 			pPlayer->Get_Transform()->Set_Position(vPos + vLook);
 		}
 	}
-	
+
+	ImGui::End();
+
+	_uint iCurrentLevelIndex = pGameInstance->Get_CurrentLevelIndex();
+	CLayer* pLayer = pGameInstance->Find_Layer(iCurrentLevelIndex, TEXT("Layer_Monster"));
+	if (nullptr == pLayer)
+	{
+		Safe_Release(pGameInstance);
+		return;
+	}
+	_umap<const _tchar*, class CComponent*>* pDeadComponents = pLayer->Get_DeadComponents();
+	if (nullptr == pDeadComponents)
+	{
+		Safe_Release(pGameInstance);
+		return;
+	}
+	ImGui::SetNextWindowPos(ImVec2(0.f, 500.f));
+	ImGui::SetNextWindowSize(ImVec2(300.f, 200.f));
+
+	ImGui::Begin("Mob");
+		
+	for (auto& Pair : *pDeadComponents)
+	{
+		_char szTag[MAX_PATH] = "";
+		WCharToChar(Pair.first, szTag);
+		string szCutTag = szTag;
+		if (ImGui::Button(szCutTag.substr(11).c_str(), ImVec2(150.f, 20.f)))
+		{
+			wstring wstrObjTag = Pair.first + Generate_HashtagW();
+			_float3 vPos = static_cast<CGameObject*>(Pair.second)->Get_Transform()->Get_Position();
+			_float4x4 matrix = XMMatrixTranslation(vPos.x, vPos.y, vPos.z);
+			pGameInstance->Add_Component(iCurrentLevelIndex, iCurrentLevelIndex,
+				Pair.second->Get_PrototypeTag(), TEXT("Layer_Monster"), wstrObjTag.c_str(), &matrix);
+
+			CComponent* pCom = pGameInstance->Find_Component_In_Layer(iCurrentLevelIndex, TEXT("Layer_Monster"), wstrObjTag.c_str());
+			if (nullptr != pCom)
+				pCom->Initialize_Level(iCurrentLevelIndex);
+		}
+	}
+
 	ImGui::End();
 
 	Safe_Release(pGameInstance);

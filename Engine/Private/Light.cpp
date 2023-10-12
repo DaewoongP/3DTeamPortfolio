@@ -30,9 +30,6 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 
 	if (TYPE_DIRECTIONAL == m_LightDesc.eType)
 	{
-		if (FAILED(pShader->Bind_RawValue("g_vCamPosition", &m_LightDesc.vDir, sizeof(_float4))))
-			return E_FAIL;
-
 		if (FAILED(pShader->Bind_RawValue("g_vLightDir", &m_LightDesc.vDir, sizeof(_float4))))
 			return E_FAIL;
 

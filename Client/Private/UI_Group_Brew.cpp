@@ -60,6 +60,29 @@ HRESULT CUI_Group_Brew::Initialize(void* pArg)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
+	CPlayer* pPlayer = { nullptr };
+
+	// 모든 레벨을 조사해서 플레이어 주소를 가져옴.
+	for (_uint i = 0; i < LEVEL_END; ++i)
+	{
+		pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(
+			i
+			, TEXT("Layer_Player")
+			, TEXT("GameObject_Player")));
+
+		if (pPlayer != nullptr)
+			break;
+	}
+
+	// 플레이어 주소에 대한 유효성 검사.
+	if (nullptr == pPlayer)
+	{
+		__debugbreak();
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
+	m_pPotionTap = pPlayer->Get_Player_Information()->Get_PotionTap();
 
 	Safe_Release(pGameInstance);
 
@@ -80,8 +103,6 @@ void CUI_Group_Brew::Tick(_float fTimeDelta)
 
 		m_pInventory = static_cast<CInventory*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Inventory"), TEXT("GameObject_Inventory")));
 		Safe_AddRef(m_pInventory);
-		m_pPotionTap = static_cast<CPotionTap*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_UI"), TEXT("GameObject_Potion_Tap")));
-		Safe_AddRef(m_pPotionTap);
 
 		Safe_Release(pGameInstance);
 	}
