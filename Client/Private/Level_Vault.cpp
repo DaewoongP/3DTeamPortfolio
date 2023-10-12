@@ -260,24 +260,24 @@ HRESULT CLevel_Vault::Load_MapObject(const _tchar* pObjectFilePath)
 		wstring wsLeech(TEXT("Anim_Leech"));
 		wstring wsVaultGate(TEXT("Anim_Gate_Vault"));
 
-		// 보물상자
-		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
-		{
-			_tchar wszobjName[MAX_PATH] = { 0 };
-			_stprintf_s(wszobjName, TEXT("GameObject_Treasure_Chest_%d"), (iObjectNum));
+		//// 보물상자
+		//if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
+		//{
+		//	_tchar wszobjName[MAX_PATH] = { 0 };
+		//	_stprintf_s(wszobjName, TEXT("GameObject_Treasure_Chest_%d"), (iObjectNum));
 
-			if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT,
-				TEXT("Prototype_GameObject_Treasure_Chest"), TEXT("Layer_BackGround"),
-				wszobjName, &MapObjectDesc)))
-			{
-				MSG_BOX("Failed to Clone Treasure_Chest");
-				ENDINSTANCE;
-				return E_FAIL;
-			}
-		}
+		//	if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT,
+		//		TEXT("Prototype_GameObject_Treasure_Chest"), TEXT("Layer_BackGround"),
+		//		wszobjName, &MapObjectDesc)))
+		//	{
+		//		MSG_BOX("Failed to Clone Treasure_Chest");
+		//		ENDINSTANCE;
+		//		return E_FAIL;
+		//	}
+		//}
 
 		// 채집물
-		else if (0 == lstrcmp(modelName.c_str(), wsHorklump.c_str()) ||
+		if (0 == lstrcmp(modelName.c_str(), wsHorklump.c_str()) ||
 			0 == lstrcmp(modelName.c_str(), wsLeech.c_str()))
 		{
 			_tchar wszobjName[MAX_PATH] = { 0 };
