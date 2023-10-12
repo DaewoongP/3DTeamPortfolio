@@ -87,7 +87,7 @@ HRESULT CLevel_Sanctum::Ready_Layer_Monsters(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}
-	
+
 	ENDINSTANCE;
 
 	return S_OK;

@@ -24,25 +24,6 @@ HRESULT CWeapon_Fig_Wand::Initialize(void* pArg)
 	if (FAILED(Add_Components(pArg)))
 		return E_FAIL;
 
-	//매쉬에서 원점과 가장 먼 지점을 찾는 로직.(지팡이 끝 지점을 얻어내기 위함임.)
-	vector<class CMesh*>* meshVec = m_pModelCom->Get_MeshesVec();
-
-	_float dist = 1000;
-	_float sub = 0;
-	for (auto mesh : (*meshVec))
-	{
-		vector<_float3>* pointVec = mesh->Get_VerticesPositionVec();
-		for (auto point : (*pointVec))
-		{
-			sub = XMVectorGetX(point - _float3(0, 0, 0));
-			if (sub < dist)
-			{
-				dist = sub;
-				m_WandPointOffsetMatrix = XMMatrixTranslation(point.x, point.y, point.z);
-			}
-		}
-	}
-
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 

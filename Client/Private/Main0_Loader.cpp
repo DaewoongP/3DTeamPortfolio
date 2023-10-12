@@ -43,6 +43,8 @@
 #include "MeshEffect.h"
 #include "Wingardium_Effect.h"
 #include "EnergyBall.h"
+#include "Breath.h"
+#include "Pulse.h"
 #include "RadialBlur.h"
 #pragma endregion Effects
 
@@ -70,10 +72,14 @@
 #include "Stupefy.h"
 #include "Diffindo.h"
 #include "Bombarda.h"
+
+#include "Projectile_Black.h"
+#include "Projectile_White.h"
 #pragma endregion Magic
 
 #include "Trigger_Vault.h"
 #include "Phase.h"
+#include "Cylinder.h"
 
 #ifdef _DEBUG
 #include "Test_Player.h"
@@ -260,6 +266,16 @@ HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_EnergyBall"),
 			CEnergyBall::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_EnergyBall");
+
+		/* Prototype_GameObject_Breath */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Breath"),
+			CBreath::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Breath");
+
+		/* Prototype_GameObject_Pulse */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Pulse"),
+			CPulse::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Pulse");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -504,6 +520,20 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 				throw TEXT("Prototype_Component_RadialBlur");
 		}
 
+		/* Prototype_Component_Model_Shpere */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Shpere"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat")))))
+			throw TEXT("Prototype_Component_Model_Shpere");
+
+		/* Prototype_Component_Model_Cylinder */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Cylinder"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/VFX_SM_Cylinder_1m/VFX_SM_Cylinder_1m.dat")))))
+			throw TEXT("Prototype_Component_Model_Cylinder");
+
+		/* Prototype_GameObject_Cylinder */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Cylinder"),
+			CCylinder::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Cylinder");
 #pragma endregion
 
 #pragma region Load Magic
@@ -611,6 +641,16 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 				CBombarda::Create(m_pDevice, m_pContext, eLevelID))))
 				throw TEXT("Prototype_GameObject_Bombarda");
 		}
+
+		/* For.Prototype_GameObject_Projectile_Black */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Projectile_Black"),
+			CProjectile_Black::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Projectile_Black");
+
+		/* For.Prototype_GameObject_Projectile_White */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Projectile_White"),
+			CProjectile_White::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Projectile_White");
 
 #pragma endregion
 		{
