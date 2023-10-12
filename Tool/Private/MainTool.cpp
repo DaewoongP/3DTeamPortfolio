@@ -510,6 +510,38 @@ HRESULT CMainTool::Ready_Prototype_Object()
 		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_Landing_Dust"),
 			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Troll_Landing_Dust/"), 3)))
 			throw TEXT("Reserve Particle : Particle_Troll_Landing_Dust");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_Toe_Landing_Dust"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Troll_Toe_Landing_Dust/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Troll_Toe_Landing_Dust");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_Weapon_Trace"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Troll_Weapon_Trace/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Troll_Weapon_Trace");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DugBog_Chim"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/DugBog_Chim/"), 3)))
+			throw TEXT("Reserve Particle : Particle_DugBog_Chim");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DogBog_Trace_Rock"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/DogBog_Trace_Rock/"), 3)))
+			throw TEXT("Reserve Particle : Particle_DogBog_Trace_Rock");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DogBog_Chim_Red"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/DogBog_Chim_Red/"), 3)))
+			throw TEXT("Reserve Particle : Particle_DogBog_Chim_Red");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DogBog_Chim_Blue"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/DogBog_Chim_Blue/"), 3)))
+			throw TEXT("Reserve Particle : Particle_DogBog_Chim_Blue");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DogBog_Trace_Water"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/DogBog_Trace_Water/"), 3)))
+			throw TEXT("Reserve Particle : Particle_DogBog_Trace_Water");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DogBog_Water_Foot"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/DogBog_Water_Foot/"), 3)))
+			throw TEXT("Reserve Particle : Particle_DogBog_Water_Foot");
 	}
 #pragma endregion
 
