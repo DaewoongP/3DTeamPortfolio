@@ -637,6 +637,15 @@
     <Filter Include="02. GameObject\02. Enemy\04. Dragon\Weapon">
       <UniqueIdentifier>{4825389d-2310-47a8-8256-7d05c14ba302}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Door\AncientDoor_L">
+      <UniqueIdentifier>{56443a02-375f-4a90-9d44-bfd48cf55f16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Door\AncientDoor_R">
+      <UniqueIdentifier>{81c40fce-6b8e-4ad2-b3a9-4cf39725c754}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\RP_Core">
+      <UniqueIdentifier>{f8e2e068-d9cf-4946-a565-8d0e2044214d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1240,6 +1249,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\Level_Sky.h">
       <Filter>01. Levels\05. Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AncientDoor_L.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\AncientDoor_L</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AncientDoor_R.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\AncientDoor_R</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Breath.h">
       <Filter>02. GameObject\02. Enemy\04. Dragon\00. Breath</Filter>
@@ -1847,6 +1862,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Level_Sky.cpp">
       <Filter>01. Levels\05. Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AncientDoor_L.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\AncientDoor_L</Filter>
+    </ClCompile>
+    <ClCompile Include="AncientDoor_R.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\AncientDoor_R</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Breath.cpp">
       <Filter>02. GameObject\02. Enemy\04. Dragon\00. Breath</Filter>

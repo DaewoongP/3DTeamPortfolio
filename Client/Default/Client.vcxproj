@@ -166,6 +166,8 @@
   <ItemGroup>
     <ClInclude Include="..\Public\Accio.h" />
     <ClInclude Include="..\Public\Action.h" />
+    <ClInclude Include="..\Public\AncientDoor_L.h" />
+    <ClInclude Include="..\Public\AncientDoor_R.h" />
     <ClInclude Include="..\Public\Animation_Camera_Model.h" />
     <ClInclude Include="..\public\AshwinderEggs_Item.h" />
     <ClInclude Include="..\Public\Bombarda.h" />
@@ -405,6 +407,7 @@
   <ItemGroup>
     <ClCompile Include="..\Private\Accio.cpp" />
     <ClCompile Include="..\Private\Action.cpp" />
+    <ClCompile Include="..\Private\AncientDoor_L.cpp" />
     <ClCompile Include="..\Private\Animation_Camera_Model.cpp" />
     <ClCompile Include="..\Private\AshwinderEggs_Item.cpp" />
     <ClCompile Include="..\Private\Bombarda.cpp" />
@@ -596,6 +599,7 @@
     <ClCompile Include="..\private\WiggenweldPotion_Item.cpp" />
     <ClCompile Include="..\Private\Wingardiumleviosa.cpp" />
     <ClCompile Include="..\Private\Wingardium_Effect.cpp" />
+    <ClCompile Include="AncientDoor_R.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ImGui\backends\imgui_impl_dx11.cpp">
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>

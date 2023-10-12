@@ -920,7 +920,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = CRUCIO;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 200;
+		magicInitDesc.iDamage = 0;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
@@ -969,10 +969,10 @@ HRESULT CPlayer::Add_Magic()
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(2, LUMOS);
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(3, FINISHER);
 
-	Set_Spell_Botton(0, DIFFINDO);
-	Set_Spell_Botton(1, LEVIOSO);
-	Set_Spell_Botton(2, CRUCIO);
-	Set_Spell_Botton(3, FLIPENDO);
+	Set_Spell_Botton(0, CRUCIO);
+	Set_Spell_Botton(1, IMPERIO);
+	Set_Spell_Botton(2, BOMBARDA);
+	Set_Spell_Botton(3, DESCENDO);
 
 	return S_OK;
 }
