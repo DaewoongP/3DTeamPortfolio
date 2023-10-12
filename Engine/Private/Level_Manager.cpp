@@ -77,6 +77,7 @@ HRESULT CLevel_Manager::Add_Scene(const _tchar* pSceneTag, const _tchar* pLayerT
 		{
 			if (!lstrcmp(ListLayerTag, pLayerTag))
 			{
+				__debugbreak();
 				return S_FALSE;
 			}
 		}

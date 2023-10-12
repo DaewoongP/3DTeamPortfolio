@@ -6,6 +6,7 @@
 #include "Main3_Loader.h"
 
 #include "Level_Logo.h"
+#include "Level_Static.h"
 #include "Level_CliffSide.h"
 #include "Level_Vault.h"
 #include "Level_GreatHall.h"
@@ -89,10 +90,12 @@ HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID, _bool isStaticLoaded)
 		break;
 	}
 
-	m_pMain0_Loader = CMain0_Loader::Create(m_pDevice, m_pContext, eNextLevelID, isStaticLoaded);
-	m_pMain1_Loader = CMain1_Loader::Create(m_pDevice, m_pContext, eNextLevelID, isStaticLoaded);
-	m_pMain2_Loader = CMain2_Loader::Create(m_pDevice, m_pContext, eNextLevelID, isStaticLoaded);
-	m_pMain3_Loader = CMain3_Loader::Create(m_pDevice, m_pContext, eNextLevelID, isStaticLoaded);
+	m_isStaticLoaded = isStaticLoaded;
+
+	m_pMain0_Loader = CMain0_Loader::Create(m_pDevice, m_pContext, eNextLevelID, m_isStaticLoaded);
+	m_pMain1_Loader = CMain1_Loader::Create(m_pDevice, m_pContext, eNextLevelID, m_isStaticLoaded);
+	m_pMain2_Loader = CMain2_Loader::Create(m_pDevice, m_pContext, eNextLevelID, m_isStaticLoaded);
+	m_pMain3_Loader = CMain3_Loader::Create(m_pDevice, m_pContext, eNextLevelID, m_isStaticLoaded);
 
 	if(nullptr == m_pMain0_Loader || 
 		nullptr == m_pMain1_Loader || 
@@ -144,6 +147,9 @@ void CLevel_Loading::Tick(_float fTimeDelta)
 	pGameInstance->Clear_Resources();
 
 	CLevel* pLevel = { nullptr };
+
+	if (false == m_isStaticLoaded)
+		LOAD_STATIC_LEVEL;
 
 	switch (m_eNextLevelID)
 	{

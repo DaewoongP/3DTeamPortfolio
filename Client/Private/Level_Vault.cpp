@@ -51,30 +51,7 @@ HRESULT CLevel_Vault::Initialize()
 		return E_FAIL;
 	}
 
-#ifdef _DEBUG
-	if (FAILED(Ready_Debug(TEXT("Layer_Debug"))))
-	{
-		MSG_BOX("Failed Load Layer_Debug");
-
-		return E_FAIL;
-	}
-#endif // _DEBUG
-
 	BEGININSTANCE;
-
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), TEXT("Layer_Magic"))))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Main)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), TEXT("Layer_Particle"))))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Main)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
 
 	pGameInstance->Reset_World_TimeAcc();
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
@@ -114,42 +91,10 @@ HRESULT CLevel_Vault::Render()
 	return S_OK;
 }
 
-HRESULT CLevel_Vault::Ready_Layer_Player(const _tchar* pLayerTag)
-{
-	BEGININSTANCE;
-
-	/* Add Scene : Main */
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Main)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_VAULT, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Player)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-
-	ENDINSTANCE;
-
-	return S_OK;
-}
-
 HRESULT CLevel_Vault::Ready_Layer_BackGround(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-
-	/* Add Scene : Main */
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Main)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
 
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_VAULT, TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"))))
 	{
@@ -178,20 +123,6 @@ HRESULT CLevel_Vault::Ready_Lights()
 	LightDesc.vSpecular = BLACKDEFAULT;
 
 	pGameInstance->Add_Light(LightDesc);
-
-	// 라이트 매니저 문제로 이 부분을 지금 설정할 수 없다.
-	/*CLight::LIGHTDESC		LightDescHork;
-	ZeroMemory(&LightDescHork, sizeof LightDescHork);
-
-	LightDescHork.eType = CLight::TYPE_POINT;
-	LightDescHork.vPos = _float4(15.7, 0.25f, 21.7f, 1.f);
-	LightDescHork.fRange = 3.f;
-
-	LightDescHork.vDiffuse = _float4(90.f / 255.f, 109.f / 255.f, 231.f / 255.f, 1.f);
-	LightDescHork.vAmbient = WHITEDEFAULT;
-	LightDescHork.vSpecular =  LightDescHork.vDiffuse;
-
-	pGameInstance->Add_Lights(LightDescHork);*/
 
 	ENDINSTANCE;
 	
@@ -509,43 +440,9 @@ HRESULT CLevel_Vault::Load_Monsters(const wstring& wstrMonsterFilePath)
 	return S_OK;
 }
 
-#ifdef _DEBUG
-HRESULT CLevel_Vault::Ready_Debug(const _tchar* pLayerTag)
-{
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-	/* Add Scene : Main */
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Main)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_VAULT, TEXT("Prototype_GameObject_Camera_Debug"), pLayerTag, TEXT("GameObject_Camera_Debug"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Camera_Debug)");
-		return E_FAIL;
-	}
-
-	Safe_Release(pGameInstance);
-
-	return S_OK;
-}
-#endif // _DEBUG
-
 HRESULT CLevel_Vault::Ready_Layer_Monster(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
-
-	/* Add Scene : Main */
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Main)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
 
 	ENDINSTANCE;
 

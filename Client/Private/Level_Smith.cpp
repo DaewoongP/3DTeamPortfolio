@@ -11,9 +11,6 @@ CLevel_Smith::CLevel_Smith(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CLevel_Smith::Initialize()
 {
-	if (FAILED(__super::Initialize()))
-		return E_FAIL;
-
 	if (FAILED(Ready_Lights()))
 	{
 		MSG_BOX("Failed to Ready_Lights in Level_Smith");
@@ -41,15 +38,6 @@ HRESULT CLevel_Smith::Initialize()
 
 		return E_FAIL;
 	}
-
-#ifdef _DEBUG
-	if (FAILED(Ready_Debug(TEXT("Layer_Debug"))))
-	{
-		MSG_BOX("Failed to Load Layer_Debug in Level_Smith");
-
-		return E_FAIL;
-	}
-#endif // _DEBUG
 
 	BEGININSTANCE;
 
@@ -83,50 +71,10 @@ void CLevel_Smith::Tick(_float fTimeDelta)
 #endif //_DEBUG
 }
 
-HRESULT CLevel_Smith::Render()
-{
-	if (FAILED(__super::Render()))
-		return E_FAIL;
-
-	return S_OK;
-}
-
-HRESULT CLevel_Smith::Ready_Layer_Player(const _tchar* pLayerTag)
-{
-	BEGININSTANCE;
-
-	/* Add Scene : Main */
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Main) in Level_Smith");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SMITH, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Player) in Level_Smith");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-
-	ENDINSTANCE;
-
-	return S_OK;
-}
-
 HRESULT CLevel_Smith::Ready_Layer_BackGround(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-
-	/* Add Scene : Main */
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Main) in Level_Smith");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
 
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SMITH, TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"))))
 	{
@@ -143,14 +91,6 @@ HRESULT CLevel_Smith::Ready_Layer_Monsters(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-
-	/* Add Scene : Main */
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Main) in Level_Smith");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
 
 	_float4x4 Matrix = XMMatrixTranslation(86.f, 10.f, 129.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"), &Matrix)))
@@ -411,32 +351,6 @@ HRESULT CLevel_Smith::Load_MapObject_Ins(const _tchar* pObjectFilePath)
 
 	return S_OK;
 }
-
-#ifdef _DEBUG
-HRESULT CLevel_Smith::Ready_Debug(const _tchar* pLayerTag)
-{
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-	/* Add Scene : Main */
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Main) in Level_Smith");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SMITH, TEXT("Prototype_GameObject_Camera_Debug"), pLayerTag, TEXT("GameObject_Camera_Debug"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Camera_Debug) in Level_Smith");
-		return E_FAIL;
-	}
-
-	Safe_Release(pGameInstance);
-
-	return S_OK;
-}
-#endif // _DEBUG
 
 CLevel_Smith* CLevel_Smith::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
