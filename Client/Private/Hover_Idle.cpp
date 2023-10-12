@@ -26,7 +26,7 @@ HRESULT CHover_Idle::Initialize(void* pArg)
 
 	//루프상태에서 공격/비공격 상태 전환용도임.
 	m_fAction_Change_Duration = 10.0f;
-	ADD_TIMER_SAFELY("Action_Change", true, m_fAction_Change_Duration);
+	//ADD_TIMER_SAFELY("Action_Change", true, m_fAction_Change_Duration);
 	return S_OK;
 }
 
@@ -56,7 +56,7 @@ void CHover_Idle::OnStateEnter(void* _pArg)
 		//만약 이전 상태가 전투였으면?
 		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Broom_Hover_Idle_anm"));
 		//한쪽 팔 공격 모션 가져와서 넣어주자.
-		Change_Animation(TEXT("Hu_Broom_Hover_Idle_anm"),2);
+		//Change_Animation(TEXT("Hu_Broom_Hover_Idle_anm"),2);
 		break;
 	}
 	}

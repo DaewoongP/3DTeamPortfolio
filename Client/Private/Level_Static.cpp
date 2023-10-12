@@ -93,7 +93,6 @@ HRESULT CLevel_Static::Add_Scene()
 	/* Add Scene : Main */
 	vector<const _tchar*>		MainSceneLayerTags;
 	MainSceneLayerTags.push_back(TEXT("Layer_Player"));
-	MainSceneLayerTags.push_back(TEXT("Layer_Inventory"));
 	MainSceneLayerTags.push_back(TEXT("Layer_UI"));
 	MainSceneLayerTags.push_back(TEXT("Layer_BackGround"));
 	MainSceneLayerTags.push_back(TEXT("Layer_Monster"));
@@ -112,6 +111,7 @@ HRESULT CLevel_Static::Add_Scene()
 	/* Add Scene : Menu */
 	vector<const _tchar*>		MenuSceneLayerTags;
 	MenuSceneLayerTags.push_back(TEXT("Layer_Menu_UI"));
+	MenuSceneLayerTags.push_back(TEXT("Layer_Inventory"));
 
 	try
 	{

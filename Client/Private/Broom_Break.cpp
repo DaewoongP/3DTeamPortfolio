@@ -32,11 +32,11 @@ HRESULT CBroom_Break::Initialize(void* pArg)
 
 	BEGININSTANCE;
 
-	pGameInstance->Add_Timer(TEXT("Fix_Angle_Magic_Cast"), false, 0.2f);
+	//pGameInstance->Add_Timer(TEXT("Fix_Angle_Magic_Cast"), false, 0.2f);
 
-	pGameInstance->Add_Timer(TEXT("Fix_Angle_Magic_Cast_Last"), false, 0.4f);
+	//pGameInstance->Add_Timer(TEXT("Fix_Angle_Magic_Cast_Last"), false, 0.4f);
 
-	pGameInstance->Add_Timer(TEXT("Go_Idle_Key_Delay"), false, 0.2f);
+	//pGameInstance->Add_Timer(TEXT("Go_Idle_Key_Delay"), false, 0.2f);
 
 	m_fFixAngleSpeed = 5.0f;
 

@@ -36,7 +36,7 @@ HRESULT CMenu_Inventory::Initialize(void* pArg)
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-
+	std::lock_guard<std::mutex> lock(mtx);
 	wstring tag;
 	CUI_Back* pBack = nullptr;
 

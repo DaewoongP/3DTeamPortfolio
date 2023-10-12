@@ -312,9 +312,6 @@ HRESULT CArmored_Troll::Add_Components_Level(_uint iCurrentLevelIndex)
 		if (FAILED(Add_Component(iCurrentLevelIndex, TEXT("Prototype_Component_Weapon_Armored_Troll"),
 			TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
 			throw TEXT("Com_Weapon");
-
-		if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
-			return E_FAIL;
 	}
 	catch (const _tchar* pErrorTag)
 	{

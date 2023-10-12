@@ -106,9 +106,6 @@
     <Filter Include="01. Levels\03. GreatHall">
       <UniqueIdentifier>{6547d751-b0f6-4c08-bb0f-9c0040437448}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Levels\04. Smith">
-      <UniqueIdentifier>{93532b46-fcf5-4814-9232-b40f168761fd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Levels\99. Loading">
       <UniqueIdentifier>{884f056e-8693-460c-8907-198be0f4c197}</UniqueIdentifier>
     </Filter>
@@ -463,24 +460,6 @@
     <Filter Include="02. GameObject\04. UI\UI\UI Behavior">
       <UniqueIdentifier>{c8770083-7040-4ffe-848c-04ec093f0dac}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\11. Potion">
-      <UniqueIdentifier>{d222bc39-5d68-4a81-b3ee-7248d5f63e62}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\11. Potion\EdurusPotion">
-      <UniqueIdentifier>{e0f8e81c-7682-4cf5-a671-009fe0c7b2dc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\11. Potion\FocusPotion">
-      <UniqueIdentifier>{7cb5d380-3253-4755-a164-7338fda2ebf8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\11. Potion\MaximaPotion">
-      <UniqueIdentifier>{5a4aa143-71df-4884-91e1-ca2caf295348}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\11. Potion\ThunderBrewPotion">
-      <UniqueIdentifier>{53450692-f201-4b2c-a74b-edc0d08f89e2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\11. Potion\WiggenweldPotion">
-      <UniqueIdentifier>{c07071fe-c006-4bca-b390-e403b214f1e9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\09. Item\01. Tool">
       <UniqueIdentifier>{9cd20c79-d1dd-4c10-aa3f-aa47c981708a}</UniqueIdentifier>
     </Filter>
@@ -504,9 +483,6 @@
     </Filter>
     <Filter Include="02. GameObject\09. Item\01. Tool\ChineseChompingCabbage_Item">
       <UniqueIdentifier>{26e2e61d-8c32-4e1e-869e-f932d2308d43}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\11. Potion\InvisibilityPotion">
-      <UniqueIdentifier>{e904701a-4d69-4b17-8f05-2bc317be6f15}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\08. Inventory\PotionTap">
       <UniqueIdentifier>{bb5f7ed2-3b1a-4f84-9841-e49923a81270}</UniqueIdentifier>
@@ -684,7 +660,7 @@
     </Filter>
     <Filter Include="02. GameObject\04. UI\UI_Group\UI_Store">
       <UniqueIdentifier>{855a2556-f88a-48b0-a687-12cebb69022e}</UniqueIdentifier>
-	</Filter>
+    </Filter>
     <Filter Include="02. GameObject\04. UI\Font\DamageFont">
       <UniqueIdentifier>{de3fa021-8d91-41bb-9c35-a3c8c9e7d681}</UniqueIdentifier>
     </Filter>
@@ -702,6 +678,30 @@
     </Filter>
     <Filter Include="02. GameObject\02. Enemy\06. Wolf">
       <UniqueIdentifier>{6b94e34b-9d3a-4ed2-b20c-95deea862a47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Potion">
+      <UniqueIdentifier>{d222bc39-5d68-4a81-b3ee-7248d5f63e62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Potion\EdurusPotion">
+      <UniqueIdentifier>{e0f8e81c-7682-4cf5-a671-009fe0c7b2dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Potion\FocusPotion">
+      <UniqueIdentifier>{7cb5d380-3253-4755-a164-7338fda2ebf8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Potion\MaximaPotion">
+      <UniqueIdentifier>{5a4aa143-71df-4884-91e1-ca2caf295348}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Potion\ThunderBrewPotion">
+      <UniqueIdentifier>{53450692-f201-4b2c-a74b-edc0d08f89e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Potion\WiggenweldPotion">
+      <UniqueIdentifier>{c07071fe-c006-4bca-b390-e403b214f1e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Potion\InvisibilityPotion">
+      <UniqueIdentifier>{e904701a-4d69-4b17-8f05-2bc317be6f15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\04. Hogsmeade">
+      <UniqueIdentifier>{93532b46-fcf5-4814-9232-b40f168761fd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -827,9 +827,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\PhysXRender.h">
       <Filter>02. GameObject\99. Debug\PhysxRender</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Player.h">
-      <Filter>02. GameObject\01. Player</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Turn.h">
       <Filter>03. Behaviors\03. Movement</Filter>
@@ -1033,7 +1030,7 @@
       <Filter>01. Levels\03. GreatHall</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Level_Smith.h">
-      <Filter>01. Levels\04. Smith</Filter>
+      <Filter>01. Levels\04. Hogsmeade</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\LookAt.h">
       <Filter>03. Behaviors\03. Movement</Filter>
@@ -1084,7 +1081,7 @@
       <Filter>02. GameObject\04. UI\UI_Group</Filter>
     </ClInclude>
     <ClInclude Include="..\public\WiggenweldPotion.h">
-      <Filter>02. GameObject\11. Potion\WiggenweldPotion</Filter>
+      <Filter>02. GameObject\10. Potion\WiggenweldPotion</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MPBall.h">
       <Filter>02. GameObject\08. Inventory\Item\MPBall</Filter>
@@ -1093,7 +1090,7 @@
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\Treasure_Chest</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\FocusPotion.h">
-      <Filter>02. GameObject\11. Potion\FocusPotion</Filter>
+      <Filter>02. GameObject\10. Potion\FocusPotion</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Arrestomomentum.h">
       <Filter>05. Magic\MagicBall\09. Arrestomomentum</Filter>
@@ -1105,7 +1102,7 @@
       <Filter>05. Magic\MagicBall\11. Accio</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MaximaPotion.h">
-      <Filter>02. GameObject\11. Potion\MaximaPotion</Filter>
+      <Filter>02. GameObject\10. Potion\MaximaPotion</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Item.h">
       <Filter>02. GameObject\09. Item</Filter>
@@ -1152,13 +1149,13 @@
       <Filter>05. Magic\MagicBall\15. Crucio</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\EdurusPotion.h">
-      <Filter>02. GameObject\11. Potion\EdurusPotion</Filter>
+      <Filter>02. GameObject\10. Potion\EdurusPotion</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ImGui_Manager.h">
       <Filter>96. ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\InvisibilityPotion.h">
-      <Filter>02. GameObject\11. Potion\InvisibilityPotion</Filter>
+      <Filter>02. GameObject\10. Potion\InvisibilityPotion</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ConjuredDragon.h">
       <Filter>02. GameObject\02. Enemy\04. Dragon</Filter>
@@ -1191,7 +1188,7 @@
       <Filter>05. Magic\MagicBall\13. Diffindo</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThunderBrewPotion.h">
-      <Filter>02. GameObject\11. Potion\ThunderBrewPotion</Filter>
+      <Filter>02. GameObject\10. Potion\ThunderBrewPotion</Filter>
     </ClInclude>
     <ClInclude Include="..\public\AshwinderEggs_Item.h">
       <Filter>02. GameObject\09. Item\02. Ingredient\AshwinderEggs_Item</Filter>
@@ -1242,7 +1239,7 @@
       <Filter>02. GameObject\04. UI\UI\UI_Dynamic_Back</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Potion.h">
-      <Filter>02. GameObject\11. Potion</Filter>
+      <Filter>02. GameObject\10. Potion</Filter>
     </ClInclude>
     <ClInclude Include="..\public\WiggenweldPotion_Item.h">
       <Filter>02. GameObject\09. Item\01. Tool\WiggenweldPotion_Item</Filter>
@@ -1327,7 +1324,7 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_Store.h">
       <Filter>02. GameObject\04. UI\UI_Group\UI_Store</Filter>
-	  </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_Font.h">
       <Filter>02. GameObject\04. UI\Font\Normal</Filter>
     </ClInclude>
@@ -1396,6 +1393,9 @@
     </ClInclude>
     <ClInclude Include="..\public\Trigger.h">
       <Filter>02. GameObject\07. Trigger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player.h">
+      <Filter>02. GameObject\01. Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1491,9 +1491,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\PhysXRender.cpp">
       <Filter>02. GameObject\99. Debug\PhysxRender</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Player.cpp">
-      <Filter>02. GameObject\01. Player</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Turn.cpp">
       <Filter>03. Behaviors\03. Movement</Filter>
@@ -1703,7 +1700,7 @@
       <Filter>01. Levels\03. GreatHall</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Level_Smith.cpp">
-      <Filter>01. Levels\04. Smith</Filter>
+      <Filter>01. Levels\04. Hogsmeade</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\LookAt.cpp">
       <Filter>03. Behaviors\03. Movement</Filter>
@@ -1748,7 +1745,7 @@
       <Filter>02. GameObject\04. UI\UI_Group</Filter>
     </ClCompile>
     <ClCompile Include="..\private\WiggenweldPotion.cpp">
-      <Filter>02. GameObject\11. Potion\WiggenweldPotion</Filter>
+      <Filter>02. GameObject\10. Potion\WiggenweldPotion</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Magic.cpp">
       <Filter>05. Magic</Filter>
@@ -1757,7 +1754,7 @@
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\Treasure_Chest</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\FocusPotion.cpp">
-      <Filter>02. GameObject\11. Potion\FocusPotion</Filter>
+      <Filter>02. GameObject\10. Potion\FocusPotion</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Arrestomomentum.cpp">
       <Filter>05. Magic\MagicBall\09. Arrestomomentum</Filter>
@@ -1769,7 +1766,7 @@
       <Filter>05. Magic\MagicBall\11. Accio</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MaximaPotion.cpp">
-      <Filter>02. GameObject\11. Potion\MaximaPotion</Filter>
+      <Filter>02. GameObject\10. Potion\MaximaPotion</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Item.cpp">
       <Filter>02. GameObject\09. Item</Filter>
@@ -1816,13 +1813,13 @@
       <Filter>05. Magic\MagicBall\15. Crucio</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\EdurusPotion.cpp">
-      <Filter>02. GameObject\11. Potion\EdurusPotion</Filter>
+      <Filter>02. GameObject\10. Potion\EdurusPotion</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ImGui_Manager.cpp">
       <Filter>96. ImGui</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\InvisibilityPotion.cpp">
-      <Filter>02. GameObject\11. Potion\InvisibilityPotion</Filter>
+      <Filter>02. GameObject\10. Potion\InvisibilityPotion</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ConjuredDragon.cpp">
       <Filter>02. GameObject\02. Enemy\04. Dragon</Filter>
@@ -1855,7 +1852,7 @@
       <Filter>05. Magic\MagicBall\13. Diffindo</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThunderBrewPotion.cpp">
-      <Filter>02. GameObject\11. Potion\ThunderBrewPotion</Filter>
+      <Filter>02. GameObject\10. Potion\ThunderBrewPotion</Filter>
     </ClCompile>
     <ClCompile Include="..\private\AshwinderEggs_Item.cpp">
       <Filter>02. GameObject\09. Item\02. Ingredient\AshwinderEggs_Item</Filter>
@@ -1906,7 +1903,7 @@
       <Filter>02. GameObject\04. UI\UI\UI_Dynamic_Back</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Potion.cpp">
-      <Filter>02. GameObject\11. Potion</Filter>
+      <Filter>02. GameObject\10. Potion</Filter>
     </ClCompile>
     <ClCompile Include="..\private\WiggenweldPotion_Item.cpp">
       <Filter>02. GameObject\09. Item\01. Tool\WiggenweldPotion_Item</Filter>
@@ -1991,7 +1988,7 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_Store.cpp">
       <Filter>02. GameObject\04. UI\UI_Group\UI_Store</Filter>
-	  </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\UI_DamageFont.cpp">
       <Filter>02. GameObject\04. UI\Font\DamageFont</Filter>
     </ClCompile>
@@ -2048,6 +2045,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Trigger.cpp">
       <Filter>02. GameObject\07. Trigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player.cpp">
+      <Filter>02. GameObject\01. Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

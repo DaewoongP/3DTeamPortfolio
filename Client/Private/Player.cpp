@@ -95,7 +95,7 @@ void CPlayer::Set_Spell_Botton(_uint _Button, SPELL _eSpell)
 	}
 
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(_Button, _eSpell);
-	
+
 	m_UI_Group_Skill_01->Set_SpellTexture((CUI_Group_Skill::KEYLIST)_Button, _eSpell);
 
 	m_vecSpellCheck[_Button] = _eSpell;
@@ -126,7 +126,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
-	
+
 	m_vecCoolTimeRatio.resize(SKILLINPUT_END);
 	m_vecSpellCheck.resize(SKILLINPUT_END);
 
@@ -169,7 +169,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(180.f));
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 
-	
+
 	Bind_Notify();
 
 	m_fClothPower = 3.0f;
@@ -234,21 +234,21 @@ void CPlayer::Tick(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
-	//ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½Æ´Ï¶ï¿½ï¿½ 
+	//ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½Æ´Ï¶ï¿½ï¿?
 	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
 	{
 		ENDINSTANCE;
 
 		return;
 	}
-	
+
 	ENDINSTANCE;
 
 	if (false == m_pStateContext->Is_Current_State(TEXT("Protego")))
 	{
 		m_isUseProtego = false;
 	}
-	
+
 	//½ºÅ³ Äð °»½Å¿ëµµ
 	Update_Skill_CoolTime();
 
@@ -277,7 +277,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::OTHERBODY);
 
 
-	//ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
+	//ï¿½ï¿½ï¿?ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
 	if (nullptr != m_pFrncSpellToggle)
 	{
 		m_pFrncSpellToggle(nullptr);
@@ -305,7 +305,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
-	//ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½Æ´Ï¶ï¿½ï¿½ 
+	//ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½Æ´Ï¶ï¿½ï¿?
 	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
 	{
 		ENDINSTANCE;
@@ -362,16 +362,20 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 		//Protego
 		if (m_pStateContext->Is_Current_State(TEXT("Protego")))
-		{	}
+		{
+		}
 		//È¸ÇÇ½Ã ¹«½Ã
 		else if (m_pStateContext->Is_Current_State(TEXT("Roll")))
-		{	}
+		{
+		}
 		//ÇÇ°ÝÁßÀÎ »óÅÂÀÏ °æ¿ì ¹«½Ã
 		else if (m_pStateContext->Is_Current_State(TEXT("Hit")))
-		{	}
+		{
+		}
 		//¿¡µÎ·ç½º ¸¶¹ý¾à »óÅÂÀÏ¶§ ½´ÆÛ¾Æ¸Ó È¤Àº ¹«Àû
 		else if (m_isDefUp)
-		{	}
+		{
+		}
 		//Hit
 		else
 		{
@@ -718,7 +722,7 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
-	
+
 	//_int DefValue = 15;
 	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_EndurusPotion"),
 	//	TEXT("Com_EndurusPotion"), reinterpret_cast<CComponent**>(&m_pEndurusPotion),&DefValue)))
@@ -794,7 +798,7 @@ HRESULT CPlayer::Add_Magic()
 {
 	CMagic::MAGICDESC magicInitDesc;
 
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?
 	{
 		magicInitDesc.eBuffType = BUFF_LEVIOSO;
 		magicInitDesc.eMagicGroup = CMagic::MG_CONTROL;
@@ -833,7 +837,7 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// ï¿½Î¼ï¿½ï¿½ï¿½ï¿½
+	// ï¿½Î¼ï¿½ï¿½ï¿½ï¿?
 	{
 		magicInitDesc.eBuffType = BUFF_NCENDIO;
 		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
@@ -846,7 +850,7 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// ï¿½ï¿½ï¿½
+	// ï¿½ï¿½ï¿?
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
@@ -875,7 +879,7 @@ HRESULT CPlayer::Add_Magic()
 	}
 
 	// ï¿½Æ¾ï¿½ï¿½ï¿½
-	// ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½ï¿½ï¿½Ã¤ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½.
+	// ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½ï¿½ï¿½Ã?ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½.
 	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.
 	{
 		magicInitDesc.eBuffType = BUFF_ACCIO;
@@ -905,7 +909,7 @@ HRESULT CPlayer::Add_Magic()
 	}
 
 	// ï¿½Ã¸ï¿½ï¿½æµµ
-	// ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½ï¿½ï¿½ ï¿½Ñ¹ï¿½ï¿½ï¿½ xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ï¿½ï¿½Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½.
+	// ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½ï¿½ï¿?ï¿½Ñ¹ï¿½ï¿½ï¿½ xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ï¿½ï¿½Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½.
 	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.
 	{
 		magicInitDesc.eBuffType = BUFF_FLIPENDO;
@@ -935,7 +939,7 @@ HRESULT CPlayer::Add_Magic()
 	}
 
 	// ï¿½ï¿½ï¿½ä¸®ï¿½ï¿½
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ö¸ï¿½ ï¿½É¾ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Î¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½.
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ö¸ï¿½ ï¿½É¾ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Î¿ï¿½ï¿?ï¿½ï¿½ï¿½ï¿½ï¿?ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½.
 	// ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ô´Ï´ï¿½.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
@@ -949,7 +953,7 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// Å©ï¿½ï¿½Ã¿ï¿½
+	// Å©ï¿½ï¿½Ã¿ï¿?
 	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Åºï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ß»ï¿½ï¿½Õ´Ï´ï¿½.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
@@ -1020,22 +1024,22 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	BEGININSTANCE;
 
 #pragma region Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½×½ï¿½Æ®
-//	if (pGameInstance->Get_DIKeyState(DIK_J, CInput_Device::KEY_DOWN))
-//{
-//	pGameInstance->Set_Camera(TEXT("Player_Camera"),2.0f);
-//}
-//
-//
-//if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
-//{
-//	pGameInstance->Set_Camera(TEXT("Other_Camera"), 2.0f);
-//}  
+	//	if (pGameInstance->Get_DIKeyState(DIK_J, CInput_Device::KEY_DOWN))
+	//{
+	//	pGameInstance->Set_Camera(TEXT("Player_Camera"),2.0f);
+	//}
+	//
+	//
+	//if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
+	//{
+	//	pGameInstance->Set_Camera(TEXT("Other_Camera"), 2.0f);
+	//}  
 #pragma endregion
 
 
 #ifdef _DEBUG
 	//Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½Å© ï¿½×½ï¿½Æ®
-	if (pGameInstance->Get_DIKeyState(DIK_K,CInput_Device::KEY_DOWN))
+	if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))
 	{
 		_float3 vAxis = _float3(m_fx, m_fy, m_fz);
 
@@ -1085,7 +1089,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		}*/
 	}
 
-		//case Client::ITEM_ID_WIGGENWELD_POTION:
+	//case Client::ITEM_ID_WIGGENWELD_POTION:
 
 #pragma region ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ Å° ï¿½Ô·ï¿½
 
@@ -1187,10 +1191,10 @@ void CPlayer::Key_Input(_float fTimeDelta)
 					break;
 				}
 
-				
 
 
-				
+
+
 
 
 
@@ -1233,7 +1237,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 #pragma endregion
 
 	//·ç¸ð½º
-	if (pGameInstance->Get_DIKeyState(DIK_Z, CInput_Device::KEY_DOWN) && 
+	if (pGameInstance->Get_DIKeyState(DIK_Z, CInput_Device::KEY_DOWN) &&
 		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
 			m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
 			m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
@@ -1792,79 +1796,79 @@ HRESULT CPlayer::Ready_StateMachine()
 
 #pragma region Flying
 
-	try 
-	{
-		//ÁöÆÎÀÌ Å¾½Â ½ºÅ×ÀÌÆ®
-		if (FAILED(m_pStateContext->Add_StateMachine(
-			LEVEL_STATIC,
-			TEXT("Com_Player_Broom_Begin"),
-			TEXT("Broom_Begin"),
-			TEXT("Prototype_Component_State_Broom_Begin"),
-			&m_StateMachineDesc)))
-			throw("Failed Add Broom_Begin State");
+	//try
+	//{
+	//	//ÁöÆÎÀÌ Å¾½Â ½ºÅ×ÀÌÆ®
+	//	if (FAILED(m_pStateContext->Add_StateMachine(
+	//		LEVEL_STATIC,
+	//		TEXT("Com_Player_Broom_Begin"),
+	//		TEXT("Broom_Begin"),
+	//		TEXT("Prototype_Component_State_Broom_Begin"),
+	//		&m_StateMachineDesc)))
+	//		throw("Failed Add Broom_Begin State");
 
-		//È£¹ö idle
-		if (FAILED(m_pStateContext->Add_StateMachine(
-			LEVEL_STATIC,
-			TEXT("Com_Player_Hover_Idle"),
-			TEXT("Hover_Idle"),
-			TEXT("Prototype_Component_State_Hover_Idle"),
-			&m_StateMachineDesc)))
-			throw("Failed Add Hover_Idle State");
+	//	//È£¹ö idle
+	//	if (FAILED(m_pStateContext->Add_StateMachine(
+	//		LEVEL_STATIC,
+	//		TEXT("Com_Player_Hover_Idle"),
+	//		TEXT("Hover_Idle"),
+	//		TEXT("Prototype_Component_State_Hover_Idle"),
+	//		&m_StateMachineDesc)))
+	//		throw("Failed Add Hover_Idle State");
 
-		//È£¹ö move
-		if (FAILED(m_pStateContext->Add_StateMachine(
-			LEVEL_STATIC,
-			TEXT("Com_Player_Hover_Move"),
-			TEXT("Hover_Move"),
-			TEXT("Prototype_Component_State_Hover_Move"),
-			&m_StateMachineDesc)))
-			throw("Failed Add Hover_Move State");
+	//	//È£¹ö move
+	//	if (FAILED(m_pStateContext->Add_StateMachine(
+	//		LEVEL_STATIC,
+	//		TEXT("Com_Player_Hover_Move"),
+	//		TEXT("Hover_Move"),
+	//		TEXT("Prototype_Component_State_Hover_Move"),
+	//		&m_StateMachineDesc)))
+	//		throw("Failed Add Hover_Move State");
 
-		//È£¹ö turn
-		if (FAILED(m_pStateContext->Add_StateMachine(
-			LEVEL_STATIC,
-			TEXT("Com_Player_Hover_Turn"),
-			TEXT("Hover_Turn"),
-			TEXT("Prototype_Component_State_Hover_Turn"),
-			&m_StateMachineDesc)))
-			throw("Failed Add Hover_Turn State");
+	//	//È£¹ö turn
+	//	if (FAILED(m_pStateContext->Add_StateMachine(
+	//		LEVEL_STATIC,
+	//		TEXT("Com_Player_Hover_Turn"),
+	//		TEXT("Hover_Turn"),
+	//		TEXT("Prototype_Component_State_Hover_Turn"),
+	//		&m_StateMachineDesc)))
+	//		throw("Failed Add Hover_Turn State");
 
-		//fly move
-		if (FAILED(m_pStateContext->Add_StateMachine(
-			LEVEL_STATIC,
-			TEXT("Com_Player_Fly_Move"),
-			TEXT("Hover_Move"),
-			TEXT("Prototype_Component_State_Fly_Move"),
-			&m_StateMachineDesc)))
-			throw("Failed Add Fly_Move State");
+	//	//fly move
+	//	if (FAILED(m_pStateContext->Add_StateMachine(
+	//		LEVEL_STATIC,
+	//		TEXT("Com_Player_Fly_Move"),
+	//		TEXT("Hover_Move"),
+	//		TEXT("Prototype_Component_State_Fly_Move"),
+	//		&m_StateMachineDesc)))
+	//		throw("Failed Add Fly_Move State");
 
-		//Break
-		if (FAILED(m_pStateContext->Add_StateMachine(
-			LEVEL_STATIC,
-			TEXT("Com_Player_Broom_Break"),
-			TEXT("Broom_Break"),
-			TEXT("Prototype_Component_State_Broom_Break"),
-			&m_StateMachineDesc)))
-			throw("Failed Add Broom_Break State");
+	//	//Break
+	//	if (FAILED(m_pStateContext->Add_StateMachine(
+	//		LEVEL_STATIC,
+	//		TEXT("Com_Player_Broom_Break"),
+	//		TEXT("Broom_Break"),
+	//		TEXT("Prototype_Component_State_Broom_Break"),
+	//		&m_StateMachineDesc)))
+	//		throw("Failed Add Broom_Break State");
 
-		//ÁöÆÎÀÌ ÂøÁö ½ºÅ×ÀÌÆ®
-		if (FAILED(m_pStateContext->Add_StateMachine(
-			LEVEL_STATIC,
-			TEXT("Com_Player_Broom_End"),
-			TEXT("Broom_End"),
-			TEXT("Prototype_Component_State_Broom_End"),
-			&m_StateMachineDesc)))
-			throw("Failed Add Broom_End State");
-	}
-	catch (const _tchar* pErrorTag)
-	{
-		wstring wstrErrorMSG = {};
-		wstrErrorMSG += pErrorTag;
-		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
-		__debugbreak();
-		return E_FAIL;
-	}
+	//	//ÁöÆÎÀÌ ÂøÁö ½ºÅ×ÀÌÆ®
+	//	if (FAILED(m_pStateContext->Add_StateMachine(
+	//		LEVEL_STATIC,
+	//		TEXT("Com_Player_Broom_End"),
+	//		TEXT("Broom_End"),
+	//		TEXT("Prototype_Component_State_Broom_End"),
+	//		&m_StateMachineDesc)))
+	//		throw("Failed Add Broom_End State");
+	//}
+	//catch (const _tchar* pErrorTag)
+	//{
+	//	wstring wstrErrorMSG = {};
+	//	wstrErrorMSG += pErrorTag;
+	//	MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+	//	__debugbreak();
+	//	return E_FAIL;
+	//}
 
 #pragma endregion
 	m_pStateContext->Set_StateMachine(TEXT("Idle"));
@@ -1939,7 +1943,7 @@ void CPlayer::Shot_Basic_Last_Spell()
 
 void CPlayer::Protego()
 {
-	m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_ENEMY_ATTACK|COL_SHIELD), m_isPowerUp);
+	m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_ENEMY_ATTACK | COL_SHIELD), m_isPowerUp);
 }
 
 void CPlayer::Gravity_On()
@@ -2184,10 +2188,10 @@ HRESULT CPlayer::Bind_Notify()
 	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Lumos_Start"), TEXT("Shot_Lumos"), funcNotify, CModel::OTHERBODY)))
 	{
 		MSG_BOX("Failed Bind_Notify");
-	
+
 		return E_FAIL;
 	}
-	
+
 
 
 
@@ -2249,7 +2253,7 @@ HRESULT CPlayer::Bind_Notify()
 		return E_FAIL;
 	}
 
-	
+
 	funcNotify = [&] {(*this).Blink_Start(); };
 
 	//Blink_Start
@@ -2259,7 +2263,7 @@ HRESULT CPlayer::Bind_Notify()
 
 		return E_FAIL;
 	}
-	
+
 
 	funcNotify = [&] {(*this).Blink_End(); };
 
@@ -2361,7 +2365,7 @@ void CPlayer::Find_Target_For_Distance()
 		if (true == static_cast<CGameObject*>(iter->second)->isDead())
 			continue;
 
-		//ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½
+		//ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿?
 		_float3 vPlayerPos = m_pTransform->Get_Position();
 
 		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
@@ -2429,7 +2433,7 @@ void CPlayer::Find_Target_For_Distance()
 
 void CPlayer::Find_Target_For_ViewSpace()
 {
-	//ï¿½Ö´Â°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
+	//ï¿½Ö´Â°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿?
 	if (nullptr != m_pTarget)
 	{
 		Clear_Target();
@@ -2456,13 +2460,13 @@ void CPlayer::Find_Target_For_ViewSpace()
 	_float4x4 viewMatrix = *pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW);
 
 	//ï¿½Ó½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì³ï¿½
-	list<pair<CEnemy*,_float>> EnemyList;
+	list<pair<CEnemy*, _float>> EnemyList;
 
 	//ï¿½ï¿½ï¿½ï¿½ ï¿½È¿ï¿½ ï¿½Ö´Â°Íµé¸¸ ï¿½ï¿½ï¿½ï¿½
 	for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
 	{
 		CEnemy* pEnemy = static_cast<CEnemy*>((*iter).second);
-		
+
 		//ï¿½ä½ºï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ ï¿½Ã¸ï¿½ï¿½ï¿½
 		_float4x4 TargetWorldMatrix = pEnemy->Get_Transform()->Get_WorldMatrix();
 
@@ -2481,7 +2485,7 @@ void CPlayer::Find_Target_For_ViewSpace()
 		}
 	}
 
-	//ï¿½ï¿½ï¿½ï¿½Ù¸ï¿½
+	//ï¿½ï¿½ï¿½ï¿½Ù¸ï¿?
 	if (true == EnemyList.empty())
 	{
 		ENDINSTANCE;
@@ -2489,10 +2493,10 @@ void CPlayer::Find_Target_For_ViewSpace()
 	}
 
 	EnemyList.sort(
-	[](const pair<CEnemy*, _float>& _pEnemy_1, const pair<CEnemy*, _float>& _pEnemy_2)
-	{
-		return _pEnemy_1.second < _pEnemy_2.second;
-	});
+		[](const pair<CEnemy*, _float>& _pEnemy_1, const pair<CEnemy*, _float>& _pEnemy_2)
+		{
+			return _pEnemy_1.second < _pEnemy_2.second;
+		});
 
 	pTarget = EnemyList.front().first;
 
@@ -2544,8 +2548,6 @@ void CPlayer::Finisher()
 
 void CPlayer::Stupefy()
 {
-	
-
 	_float4x4 OffSetMatrix = XMMatrixIdentity();
 
 	if (nullptr != m_pTarget)
@@ -2579,8 +2581,8 @@ void CPlayer::Finish_Animation()
 void CPlayer::Go_Roll(void* _pArg)
 {
 	if (true == m_isBlink ||
-			(true == m_pPlayer_Camera->Is_Finish_Animation() &&
-				(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+		(true == m_pPlayer_Camera->Is_Finish_Animation() &&
+			(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
 				m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
 				m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
 				m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
@@ -2594,7 +2596,7 @@ void CPlayer::Go_Roll(void* _pArg)
 void CPlayer::Go_Jump()
 {
 	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
-			(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
 			m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
 			m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
 			m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
@@ -2838,27 +2840,27 @@ _uint CPlayer::Special_Action(_uint _iButton)
 	{
 		iSpecial_Action_Spell = CMagicCastingState::SPECIAL_ACTION_AVADA_KEDAVRA;
 	}
-		break;
+	break;
 	case Client::CRUCIO:
 	{
 		iSpecial_Action_Spell = CMagicCastingState::SPECIAL_ACTION_CRUCIO;
 	}
-		break;
+	break;
 	case Client::DIFFINDO:
 	{
 		iSpecial_Action_Spell = CMagicCastingState::SPECIAL_ACTION_DIFFINDO;
 	}
-		break;
+	break;
 	case Client::IMPERIO:
 	{
 		iSpecial_Action_Spell = CMagicCastingState::SPECIAL_ACTION_IMPERIO;
 	}
-		break;
+	break;
 	default:
 	{
 		iSpecial_Action_Spell = CMagicCastingState::SPECIAL_ACTION_NONE;
 	}
-		break;
+	break;
 	}
 
 	return iSpecial_Action_Spell;
@@ -2892,12 +2894,12 @@ void CPlayer::Go_Hit(void* _pArg)
 {
 	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
 		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
-		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
-		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
-		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
-		m_pStateContext->Is_Current_State(TEXT("Magic_Cast")) ||
-		m_pStateContext->Is_Current_State(TEXT("Standing")) ||
-		m_pStateContext->Is_Current_State(TEXT("Jump"))))
+			m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
+			m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
+			m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
+			m_pStateContext->Is_Current_State(TEXT("Magic_Cast")) ||
+			m_pStateContext->Is_Current_State(TEXT("Standing")) ||
+			m_pStateContext->Is_Current_State(TEXT("Jump"))))
 	{
 		m_pStateContext->Set_StateMachine(TEXT("Hit"), _pArg);
 	}
@@ -2907,7 +2909,7 @@ void CPlayer::Update_Skill_CoolTime()
 {
 	for (size_t i = 0; i < SKILLINPUT_END; i++)
 	{
- 		m_vecCoolTimeRatio[i] = 1.0f - m_pMagicSlot->Get_CoolTimeRatio(i);
+		m_vecCoolTimeRatio[i] = 1.0f - m_pMagicSlot->Get_CoolTimeRatio(i);
 	}
 }
 
@@ -2967,7 +2969,7 @@ void CPlayer::Go_Use_Item()
 	CUseItemState::USEITEMDESC UseItemDesc;
 
 	UseItemDesc.eItem_Id = pTool->Get_ItemID();
-	
+
 	switch (UseItemDesc.eItem_Id)
 	{
 	case Client::ITEM_ID_WIGGENWELD_POTION:

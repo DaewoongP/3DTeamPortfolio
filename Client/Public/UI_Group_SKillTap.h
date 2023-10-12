@@ -111,7 +111,7 @@ private:
 	CUI_Group_Cursor* m_pCursor;
 
 private:
-	_bool		m_isOpen = { true };
+	_bool		m_isOpen = { false };
 	_bool		m_isSetSkill = { true };
 
 	SKILLTAP	m_eSlectedSkill = { SKILLTAP_END };

@@ -36,16 +36,14 @@ HRESULT CEnemy::Initialize(void* pArg)
 		m_pTransform->Set_Position(_float3(_float(rand() % 5) + 20.f, 2.f, 20.f - _float(rand() % 5)));
 
 	BEGININSTANCE;
-	for (_uint i = 0; i < LEVEL_END; ++i)
+	if (nullptr == m_pPlayer)
 	{
-		if (nullptr == m_pPlayer)
-		{
-			m_pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(i, TEXT("Layer_Player"), TEXT("GameObject_Player")));
-			if (nullptr != m_pPlayer)
-				break;
-		}
+		m_pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
 	}
 	ENDINSTANCE;
+
+	if (nullptr == m_pPlayer)
+		return E_FAIL;
 
 	//미리 구조체 만들어주기~
 	m_pTransform->Get_Position();

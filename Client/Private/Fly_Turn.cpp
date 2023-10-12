@@ -34,7 +34,7 @@ HRESULT CFly_Turn::Initialize(void* pArg)
 
 	BEGININSTANCE;
 
-	pGameInstance->Add_Timer(TEXT("Turn to Start Delay"), false, 0.1f);
+	//pGameInstance->Add_Timer(TEXT("Turn to Start Delay"), false, 0.1f);
 
 	ENDINSTANCE;
 

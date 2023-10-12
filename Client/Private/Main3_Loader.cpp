@@ -27,14 +27,14 @@
 #include "StandingState.h"
 #include "UseItemState.h"
 
-#include "Fly_Move.h"
-#include "Fly_Turn.h"
-#include "Hover_Idle.h"
-#include "Hover_Move.h"
-#include "Hover_Turn.h"
-#include "Broom_Begin.h"
-#include "Broom_End.h"
-#include "Broom_Break.h"
+//#include "Fly_Move.h"
+//#include "Fly_Turn.h"
+//#include "Hover_Idle.h"
+//#include "Hover_Move.h"
+//#include "Hover_Turn.h"
+//#include "Broom_Begin.h"
+//#include "Broom_End.h"
+//#include "Broom_Break.h"
 #pragma endregion
 
 
@@ -369,45 +369,45 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 			CUseItemState::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_State_UseItem");
 
-		/* For.Prototype_Component_State_Fly_Turn */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_State_Fly_Turn"),
-			CFly_Turn::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_State_Fly_Turn");
+		///* For.Prototype_Component_State_Fly_Turn */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_State_Fly_Turn"),
+		//	CFly_Turn::Create(m_pDevice, m_pContext))))
+		//	throw TEXT("Prototype_Component_State_Fly_Turn");
 
-		/* For.Prototype_Component_State_Fly_Move */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_State_Fly_Move"),
-			CFly_Move::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_State_Fly_Move");
+		///* For.Prototype_Component_State_Fly_Move */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_State_Fly_Move"),
+		//	CFly_Move::Create(m_pDevice, m_pContext))))
+		//	throw TEXT("Prototype_Component_State_Fly_Move");
 
-		/* For.Prototype_Component_State_Hover_Idle */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_State_Hover_Idle"),
-			CHover_Idle::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_State_Hover_Idle");
+		///* For.Prototype_Component_State_Hover_Idle */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_State_Hover_Idle"),
+		//	CHover_Idle::Create(m_pDevice, m_pContext))))
+		//	throw TEXT("Prototype_Component_State_Hover_Idle");
 
-		/* For.Prototype_Component_State_Hover_Move */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_State_Hover_Move"),
-			CHover_Move::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_State_Hover_Move");
+		///* For.Prototype_Component_State_Hover_Move */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_State_Hover_Move"),
+		//	CHover_Move::Create(m_pDevice, m_pContext))))
+		//	throw TEXT("Prototype_Component_State_Hover_Move");
 
-		/* For.Prototype_Component_State_Hover_Turn */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_State_Hover_Turn"),
-			CHover_Turn::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_State_Hover_Turn");
+		///* For.Prototype_Component_State_Hover_Turn */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_State_Hover_Turn"),
+		//	CHover_Turn::Create(m_pDevice, m_pContext))))
+		//	throw TEXT("Prototype_Component_State_Hover_Turn");
 
-		/* For.Prototype_Component_State_Broom_Begin */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_State_Broom_Begin"),
-			CBroom_Begin::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_State_Broom_Begin");
+		///* For.Prototype_Component_State_Broom_Begin */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_State_Broom_Begin"),
+		//	CBroom_Begin::Create(m_pDevice, m_pContext))))
+		//	throw TEXT("Prototype_Component_State_Broom_Begin");
 
-		/* For.Prototype_Component_State_Broom_End */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_State_Broom_End"),
-			CBroom_End::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_State_Broom_End");
+		///* For.Prototype_Component_State_Broom_End */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_State_Broom_End"),
+		//	CBroom_End::Create(m_pDevice, m_pContext))))
+		//	throw TEXT("Prototype_Component_State_Broom_End");
 
-		/* For.Prototype_Component_State_Broom_Break */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_State_Broom_Break"),
-			CBroom_Break::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_State_Broom_Break");
+		///* For.Prototype_Component_State_Broom_Break */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_State_Broom_Break"),
+		//	CBroom_Break::Create(m_pDevice, m_pContext))))
+		//	throw TEXT("Prototype_Component_State_Broom_Break");
 
 #pragma endregion
 

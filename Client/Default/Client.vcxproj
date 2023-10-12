@@ -195,6 +195,7 @@
     <ClInclude Include="..\public\Mongrel_Fur_Item.h" />
     <ClInclude Include="..\Public\EnergyBall.h" />
     <ClInclude Include="..\Public\Level_Sanctum.h" />
+    <ClInclude Include="..\Public\Player.h" />
     <ClInclude Include="..\public\PotionStationCamera.h" />
     <ClInclude Include="..\Public\Vault_Gate.h" />
     <ClInclude Include="..\Public\UseItemState.h" />
@@ -350,7 +351,6 @@
     <ClInclude Include="..\Public\Pensive.h" />
     <ClInclude Include="..\Public\PhysXRender.h" />
     <ClInclude Include="..\public\Player_Camera.h" />
-    <ClInclude Include="..\Public\Player.h" />
     <ClInclude Include="..\Public\Turn.h" />
     <ClInclude Include="..\Public\UI_Image.h" />
     <ClInclude Include="..\Public\UI_Inventory.h" />
@@ -448,6 +448,7 @@
     <ClCompile Include="..\private\Mongrel_Fur_Item.cpp" />
     <ClCompile Include="..\Private\EnergyBall.cpp" />
     <ClCompile Include="..\Private\Level_Sanctum.cpp" />
+    <ClCompile Include="..\Private\Player.cpp" />
     <ClCompile Include="..\private\PotionStationCamera.cpp" />
     <ClCompile Include="..\Private\Vault_Gate.cpp" />
     <ClCompile Include="..\Private\UseItemState.cpp" />
@@ -599,7 +600,6 @@
     <ClCompile Include="..\Private\MapObject.cpp" />
     <ClCompile Include="..\Private\Pensive.cpp" />
     <ClCompile Include="..\Private\PhysXRender.cpp" />
-    <ClCompile Include="..\Private\Player.cpp" />
     <ClCompile Include="..\Private\Turn.cpp" />
     <ClCompile Include="..\Private\UI_Image.cpp" />
     <ClCompile Include="..\Private\UI_Inventory.cpp" />

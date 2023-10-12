@@ -34,7 +34,7 @@ HRESULT CHover_Move::Initialize(void* pArg)
 
 	BEGININSTANCE;
 
-	pGameInstance->Add_Timer(TEXT("Meter per Sconde"), true, 1.0f);
+	//pGameInstance->Add_Timer(TEXT("Meter per Sconde"), true, 1.0f);
 
 	ENDINSTANCE;
 
