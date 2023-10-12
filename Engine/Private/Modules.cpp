@@ -627,7 +627,6 @@ HRESULT VELOCITY_OVER_LIFETIME::Load(const _tchar* _pDirectoyPath)
 
 	_ulong dwByte = 0;
 
-	_tchar wszBuffer[MAX_PATH];
 	_char szBuffer[MAX_PATH];
 
 	__super::Load(hFile, dwByte);

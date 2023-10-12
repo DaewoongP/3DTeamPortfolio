@@ -65,7 +65,7 @@ PS_OUT PS_MAIN(PS_IN In)
     if (g_fFocusDis - g_fFocusRange > fViewZ)
     {
         Out.vColor = vTarget;
-        Out.vColor.a = saturate(1.f - (fViewZ / (g_fFocusDis - g_fFocusRange)));
+        Out.vColor.a = saturate(1.f - (fViewZ / (g_fFocusDis - g_fFocusRange)) * 1.5f);
     }
     else if (g_fFocusDis + g_fFocusRange < fViewZ)
     {
