@@ -11,47 +11,13 @@ CLevel_Sanctum::CLevel_Sanctum(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
 HRESULT CLevel_Sanctum::Initialize()
 {
-	if (FAILED(Ready_Lights()))
-	{
-		MSG_BOX("Failed to Ready_Lights in Level_Sanctum");
-
-		return E_FAIL;
-	}
-
-	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-	{
-		MSG_BOX("Failed to Ready_Layer_BackGround in Level_Sanctum");
-
-		return E_FAIL;
-	}
-
-	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData4.ddd"))))
-	{
-		MSG_BOX("Failed Load Map Object Level_Sanctum");
-
-		return E_FAIL;
-	}
-
-	//if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins2.ddd"))))
-	//{
-	//	MSG_BOX("Failed Load Map Object_Ins");
-	//
-	//	return E_FAIL;
-	//}
-
-	if (FAILED(Ready_Layer_Monsters(TEXT("Layer_Monster"))))
-	{
-		MSG_BOX("Failed to Ready_Layer_Monsters in Level_Sanctum");
-
-		return E_FAIL;
-	}
-
+	FAILED_CHECK_RETURN(Ready_Lights(), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Layer_Monsters(TEXT("Layer_Monster")), E_FAIL);
 
 	BEGININSTANCE;
-
 	pGameInstance->Reset_World_TimeAcc();
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
-
 	ENDINSTANCE;
 
 	return S_OK;
@@ -82,19 +48,25 @@ HRESULT CLevel_Sanctum::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	/* Add Scene : Main */
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Main)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SANCTUM, TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Sky)");
 		return E_FAIL;
 	}
+
+	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData4.ddd"))))
+	{
+		MSG_BOX("Failed Load Map Object Level_Sanctum");
+
+		return E_FAIL;
+	}
+
+	//if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins2.ddd"))))
+	//{
+	//	MSG_BOX("Failed Load Map Object_Ins");
+	//
+	//	return E_FAIL;
+	//}
 
 	Safe_Release(pGameInstance);
 
@@ -104,14 +76,6 @@ HRESULT CLevel_Sanctum::Ready_Layer_BackGround(const _tchar* pLayerTag)
 HRESULT CLevel_Sanctum::Ready_Layer_Monsters(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
-
-	/* Add Scene : Main */
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Main)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
 
 	_float4x4 Matrix = XMMatrixTranslation(-2.f, -22.f, 130.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_ConjuredDragon"), pLayerTag, TEXT("GameObject_ConjuredDragon"), &Matrix)))

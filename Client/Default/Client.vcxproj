@@ -169,7 +169,9 @@
     <ClInclude Include="..\Public\Animation_Camera_Model.h" />
     <ClInclude Include="..\public\AshwinderEggs_Item.h" />
     <ClInclude Include="..\Public\Bombarda.h" />
+    <ClInclude Include="..\Public\Camera_Includes.h" />
     <ClInclude Include="..\public\ChineseChompingCabbageItem.h" />
+    <ClInclude Include="..\Public\Client_Enum.h" />
     <ClInclude Include="..\Public\ConjuredDragon.h" />
     <ClInclude Include="..\public\CraftState.h" />
     <ClInclude Include="..\Public\DarkWizard_M.h" />

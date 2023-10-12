@@ -138,7 +138,7 @@ void CGameInstance::Clear_Resources()
 	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, , TEXT("Camera_Manager NULL"));
 	NULL_CHECK_RETURN_MSG(m_pTimer_Manager, , TEXT("Timer_Manager NULL"));
 
-	m_pCamera_Manager->Clear();
+	//m_pCamera_Manager->Clear();
 	m_pTimer_Manager->Reset_World_TimeAcc();
 	//m_pTimer_Manager->Clear();
 	m_pLight_Manager->Clear_Lights();

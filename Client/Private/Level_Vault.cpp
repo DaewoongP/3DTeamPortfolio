@@ -13,49 +13,13 @@ CLevel_Vault::CLevel_Vault(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CLevel_Vault::Initialize()
 {
-    if (FAILED(__super::Initialize()))
-        return E_FAIL;
-
-	if (FAILED(Ready_Lights()))
-	{
-		MSG_BOX("Failed Ready_Lights");
-
-		return E_FAIL;
-	}
-
-	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-	{
-		MSG_BOX("Failed Layer_BackGround");
-
-		return E_FAIL;
-	}
-
-	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-	{
-		MSG_BOX("Failed Ready_Layer_Monster");
-
-		return E_FAIL;
-	}
-
-	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData1.ddd"))))
-	{
-		MSG_BOX("Failed Load Map Object");
-
-		return E_FAIL;
-	}
-
-	if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins1.ddd"))))
-	{
-		MSG_BOX("Failed Load Map Object_Ins");
-
-		return E_FAIL;
-	}
+	FAILED_CHECK_RETURN(Ready_Lights(), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Layer_Monster(TEXT("Layer_Monster")), E_FAIL);
 
 	BEGININSTANCE;
-
 	pGameInstance->Reset_World_TimeAcc();
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
-
 	ENDINSTANCE;
 
     return S_OK;
@@ -99,6 +63,20 @@ HRESULT CLevel_Vault::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_VAULT, TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Sky)");
+		return E_FAIL;
+	}
+
+	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData1.ddd"))))
+	{
+		MSG_BOX("Failed Load Map Object");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins1.ddd"))))
+	{
+		MSG_BOX("Failed Load Map Object_Ins");
+
 		return E_FAIL;
 	}
 

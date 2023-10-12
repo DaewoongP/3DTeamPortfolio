@@ -942,9 +942,6 @@
     <ClInclude Include="..\Public\Finisher.h">
       <Filter>05. Magic\MagicBall\07. Finisher</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Level_Vault.h">
-      <Filter>01. Levels\02. Vault</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Level_GreatHall.h">
       <Filter>01. Levels\03. GreatHall</Filter>
     </ClInclude>
@@ -1222,6 +1219,15 @@
     </ClInclude>
     <ClInclude Include="..\public\Level_Static.h">
       <Filter>01. Levels\98. Static</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Client_Enum.h">
+      <Filter>99. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_Vault.h">
+      <Filter>01. Levels\02. Vault</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Includes.h">
+      <Filter>99. Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

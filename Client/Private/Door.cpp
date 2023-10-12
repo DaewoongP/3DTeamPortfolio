@@ -33,6 +33,11 @@ HRESULT CDoor::Initialize(void* pArg)
 		return E_FAIL;
 
 	//m_pTransform->Set_RigidBody(m_pRigidBody);
+	// 
+	// 플레이어 찾기
+	BEGININSTANCE;
+	m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+	ENDINSTANCE;
 
 	return S_OK;
 }
@@ -74,11 +79,6 @@ HRESULT CDoor::Initialize_Level(_uint iCurrentLevelIndex)
 	//	__debugbreak();
 	//	return E_FAIL;
 	//}
-
-	// 플레이어 찾기
-	BEGININSTANCE;
-	m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
-	ENDINSTANCE;
 
 	return S_OK;
 }

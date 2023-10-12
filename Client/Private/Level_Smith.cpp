@@ -11,39 +11,12 @@ CLevel_Smith::CLevel_Smith(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CLevel_Smith::Initialize()
 {
-	if (FAILED(Ready_Lights()))
-	{
-		MSG_BOX("Failed to Ready_Lights in Level_Smith");
-
-		return E_FAIL;
-	}
-
-	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-	{
-		MSG_BOX("Failed to Ready_Layer_BackGround in Level_Smith");
-
-		return E_FAIL;
-	}
-
-	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData3.ddd"))))
-	{
-		MSG_BOX("Failed to Load Map Object in Level_Smith");
-
-		return E_FAIL;
-	}
-
-	if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins3.ddd"))))
-	{
-		MSG_BOX("Failed to Load Map Object_Ins in Level_Smith");
-
-		return E_FAIL;
-	}
+	FAILED_CHECK_RETURN(Ready_Lights(), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
 
 	BEGININSTANCE;
-
 	pGameInstance->Reset_World_TimeAcc();
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
-
 	ENDINSTANCE;
 
 	return S_OK;
@@ -79,6 +52,20 @@ HRESULT CLevel_Smith::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SMITH, TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Sky) in Level_Smith");
+		return E_FAIL;
+	}
+
+	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData3.ddd"))))
+	{
+		MSG_BOX("Failed to Load Map Object in Level_Smith");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins3.ddd"))))
+	{
+		MSG_BOX("Failed to Load Map Object_Ins in Level_Smith");
+
 		return E_FAIL;
 	}
 

@@ -1,10 +1,11 @@
 #include "..\Public\Level_Static.h"
 #include "GameInstance.h"
+#include "Camera_Includes.h"
 #include "UI.h"
 
 IMPLEMENT_SINGLETON(CLevel_Static)
 
-HRESULT CLevel_Static::Initialize()
+HRESULT CLevel_Static::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	m_pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(m_pGameInstance);
@@ -20,6 +21,7 @@ HRESULT CLevel_Static::Initialize()
 #endif // _DEBUG
 
 	FAILED_CHECK_RETURN(Add_Scene(), E_FAIL);
+	FAILED_CHECK_RETURN(Add_Cameras(pDevice, pContext), E_FAIL);
 
 	m_pGameInstance->Reset_World_TimeAcc();
 	m_pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
@@ -98,6 +100,7 @@ HRESULT CLevel_Static::Add_Scene()
 	MainSceneLayerTags.push_back(TEXT("Layer_NPC"));
 	MainSceneLayerTags.push_back(TEXT("Layer_Magic"));
 	MainSceneLayerTags.push_back(TEXT("Layer_Particle"));
+	MainSceneLayerTags.push_back(TEXT("Layer_Item"));
 #ifdef _DEBUG
 	MainSceneLayerTags.push_back(TEXT("Layer_Debug"));
 #endif // _DEBUG
@@ -141,6 +144,26 @@ HRESULT CLevel_Static::Add_Scene()
 		__debugbreak();
 		return E_FAIL;
 	}
+
+	return S_OK;
+}
+
+HRESULT CLevel_Static::Add_Cameras(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+	//카메라 추가
+	CCamera::CAMERADESC CameraDesc;
+	CameraDesc.m_fAspect = _float(g_iWinSizeX) / _float(g_iWinSizeY);
+	CameraDesc.m_fFovY = XMConvertToRadians(90.f);
+	CameraDesc.m_fNear = 0.1f;
+	CameraDesc.m_fFar = 1000.f;
+
+	// PotionStation
+	CPotionStationCamera::POTIONSTATION_CAMERA_DESC Potionstation_Camera_Desc;
+	Potionstation_Camera_Desc.vAt = { 98.124f, 8.180f, 77.079f };
+	Potionstation_Camera_Desc.pSuperDesc = CameraDesc;
+
+	m_pGameInstance->Add_Camera(TEXT("Potion_Station_Camera"), 
+		CPotionStationCamera::Create(pDevice, pContext, &Potionstation_Camera_Desc));
 
 	return S_OK;
 }

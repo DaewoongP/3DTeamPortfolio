@@ -24,6 +24,15 @@ HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID, _bool isStaticLoaded)
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
 
+	if (false == isStaticLoaded)
+	{
+		BEGININSTANCE;
+
+		FAILED_CHECK(pGameInstance->Add_Scene(TEXT("Scene_Loading"), TEXT("Layer_Loading")));
+
+		ENDINSTANCE;
+	}
+
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 	
@@ -149,7 +158,7 @@ void CLevel_Loading::Tick(_float fTimeDelta)
 	CLevel* pLevel = { nullptr };
 
 	if (false == m_isStaticLoaded)
-		LOAD_STATIC_LEVEL;
+		LOAD_STATIC_LEVEL(m_pDevice, m_pContext);
 
 	switch (m_eNextLevelID)
 	{
@@ -221,14 +230,6 @@ HRESULT CLevel_Loading::Loading_Cliffside(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-	// 로고 이동전 로딩씬에 대한 객체 생성
-
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Loading"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Loading)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
 
 	_tchar wszFilePath[MAX_PATH] = TEXT("");
 	lstrcpy(wszFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Loading1.uidata"));
@@ -248,14 +249,6 @@ HRESULT CLevel_Loading::Loading_Vault(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-	// 로고 이동전 로딩씬에 대한 객체 생성
-
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Loading"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Loading)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
 
 	_tchar wszFilePath[MAX_PATH] = TEXT("");
 	lstrcpy(wszFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Loading2.uidata"));
@@ -279,14 +272,6 @@ HRESULT CLevel_Loading::Loading_GreatHall(const _tchar* pLayerTag)
 HRESULT CLevel_Loading::Loading_Hogsmeade(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
-	// 로고 이동전 로딩씬에 대한 객체 생성
-
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Loading"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Loading)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
 
 	ENDINSTANCE;
 

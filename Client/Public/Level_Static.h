@@ -16,8 +16,8 @@ private:
 	virtual ~CLevel_Static() = default;
 
 public:
-	HRESULT Initialize();
-
+	HRESULT Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	
 private:
 	HRESULT Ready_Layer_Player(const _tchar * pLayerTag);
 	HRESULT Ready_Layer_Inventory(const _tchar * pLayerTag);
@@ -27,6 +27,7 @@ private:
 
 private:
 	HRESULT Add_Scene();
+	HRESULT Add_Cameras(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 
 #ifdef _DEBUG
 private:
@@ -42,4 +43,4 @@ public:
 
 END
 
-#define LOAD_STATIC_LEVEL		CLevel_Static::GetInstance()->Initialize()
+#define LOAD_STATIC_LEVEL(_pDevice, _pContext)		CLevel_Static::GetInstance()->Initialize(_pDevice, _pContext)

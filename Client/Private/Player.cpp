@@ -157,6 +157,13 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
+	if (FAILED(Ready_Camera()))
+	{
+		MSG_BOX("Failed Ready Player Camera");
+
+		return E_FAIL;
+	}
+
 	m_pTransform->Set_Speed(1.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(180.f));
 	m_pTransform->Set_RigidBody(m_pRigidBody);
@@ -216,16 +223,8 @@ HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 	m_pTransform->Set_Position(m_vLevelInitPosition[iCurrentLevelIndex]);
 	m_eLevelID = (LEVELID)iCurrentLevelIndex;
 
-
-	if (FAILED(Ready_Camera()))
-	{
-		MSG_BOX("Failed Ready Player Camera");
-
-		return E_FAIL;
-	}
-
-	if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
-		return E_FAIL;
+	/*if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
+		return E_FAIL;*/
 
 	return S_OK;
 }
@@ -1377,7 +1376,6 @@ HRESULT CPlayer::Ready_Camera()
 	PlayerCameraDesc.CameraDesc = CameraDesc;
 	PlayerCameraDesc.pPlayerTransform = m_pTransform;
 	PlayerCameraDesc.ppTargetTransform = &m_pTargetTransform;
-	PlayerCameraDesc.eLevelID = m_eLevelID;
 	PlayerCameraDesc.IsMove = &m_isFixMouse;
 
 	m_pPlayer_Camera = CPlayer_Camera::Create(m_pDevice, m_pContext, &PlayerCameraDesc);
