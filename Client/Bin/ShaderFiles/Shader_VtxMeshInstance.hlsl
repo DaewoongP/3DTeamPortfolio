@@ -73,9 +73,10 @@ struct PS_IN
 
 struct PS_OUT
 {
-	vector		vDiffuse : SV_TARGET0;
-	vector		vNormal : SV_TARGET1;
+    float4		vDiffuse : SV_TARGET0;
+    float4		vNormal : SV_TARGET1;
 	float4		vDepth : SV_TARGET2;
+    float4		vEmissive : SV_TARGET3;
 };
 
 /* 픽셀을 받고 픽셀의 색을 결정하여 리턴한다. */

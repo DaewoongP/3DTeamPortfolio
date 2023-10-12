@@ -53,7 +53,7 @@ private:
 	// 절두체 컬링을 위해 Bounding Box를 생성 하기위한 최소, 최대 정점
 	_float3			m_vMinPoint, m_vMaxPoint, m_vCenterPoint;
 	_float			m_fRadius = { 0.f };
-	_float			m_fDist_From_Player = { 0.f }; // 채집물과 플레이어와의 거리
+	_float			m_fDist_From_Player = { 0.f }; // 상자와 플레이어와의 거리
 
 	_bool			m_isGetItem = { true }; // 아이템 획득 가능 여부
 

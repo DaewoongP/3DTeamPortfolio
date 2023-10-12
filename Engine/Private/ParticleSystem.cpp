@@ -86,6 +86,9 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 			return E_FAIL;
 	}
 
+	pGameInstance->Find_And_Add_Texture(m_pDevice, m_pContext, m_iLevel
+		, TEXT("../../Resources/Effects/Textures/Noises/VFX_T_Noise04_D.png"));
+
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_Component_Shader_VtxRectColIdxInstance")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
@@ -127,13 +130,12 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 	{
 		_float4x4 PositionMatrix = m_TraceOffsetMatrix * (*m_pTraceBindBoneMatrix) * m_TracePivotMatrix * (*m_pTraceWorldMatrix);
 		m_pTransform->Set_Position(PositionMatrix.Translation());
-		
+
 		_float4x4 WorldMatrix = *m_pTraceWorldMatrix;
 		WorldMatrix.m[3][0] = 0;
 		WorldMatrix.m[3][1] = 0;
 		WorldMatrix.m[3][2] = 0;
-
-		Get_ShapeModuleRef().ShapeMatrix *= WorldMatrix;
+		Get_ShapeModuleRef().ShapeMatrix = Get_ShapeModuleRef().ShapeMatrixInit * WorldMatrix;
 	}
 
 	// Stop버튼을 누른 후 모든 파티클들이 소멸하면 자동으로 Disable이 된다.
@@ -191,6 +193,8 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 		// 위치 갱신
 		Particle_iter->WorldMatrix.Translation(vPos);
 
+		m_VelocityOverLifeTimeModuleDesc.Action(Particle_iter, m_pTransform->Get_WorldMatrixPtr(), _fTimeDelta);
+
 		// LifeTime 관련모듈
 		if (true == m_MainModuleDesc.is3DStartSize)
 			m_SizeOverLifeTimeModuleDesc.Action(m_MainModuleDesc.v3DSizeXYZ, Particle_iter, _fTimeDelta);
@@ -201,7 +205,7 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 		}
 
 		m_RotationOverLifetimeModuleDesc.Action(Particle_iter, _fTimeDelta);
-		m_ColorOverLifeTimeModuleDesc.Action(Particle_iter, m_MainModuleDesc.vStartColor, _fTimeDelta);
+		m_ColorOverLifeTimeModuleDesc.Action(Particle_iter, _fTimeDelta);
 
 		// 텍스처 시트 모듈
 		m_TextureSheetAnimationModuleDesc.Action(Particle_iter, _fTimeDelta);
@@ -357,12 +361,16 @@ HRESULT CParticleSystem::Setup_ShaderResources()
 		if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 			throw "g_fCamFar";
 
+		_float fTimeAcc = pGameInstance->Get_World_TimeAcc();
+		if (FAILED(m_pShader->Bind_RawValue("g_fTime", &fTimeAcc, sizeof(_float))))
+			throw "g_fTime";
+
 		_int iClipChannel = { 3 };
 		if (m_ShapeModuleDesc.strClipChannel == "Red") { iClipChannel = 0; }
 		else if (m_ShapeModuleDesc.strClipChannel == "Green") { iClipChannel = 1; }
 		else if (m_ShapeModuleDesc.strClipChannel == "Blue") { iClipChannel = 2; }
 		else if (m_ShapeModuleDesc.strClipChannel == "Alpha") { iClipChannel = 3; }
-		
+
 		if (FAILED(m_pShader->Bind_RawValue("g_iClipChannel", &iClipChannel, sizeof(_int))))
 			throw "g_iClipChannel";
 
@@ -379,8 +387,12 @@ HRESULT CParticleSystem::Setup_ShaderResources()
 		}
 		if (FAILED(m_pNormalTexture->Bind_ShaderResource(m_pShader, "g_NormalTexture")))
 			throw "g_NormalTexture";
+
 		if (FAILED(m_pGradientTexture->Bind_ShaderResource(m_pShader, "g_GradientTexture")))
 			throw "g_GradientTexture";
+
+		if (FAILED(m_pNoiseTexture->Bind_ShaderResource(m_pShader, "g_NoiseTexture")))
+			throw "g_NoiseTexture";
 
 		if (FAILED(m_pShader->Bind_RawValue("g_isUseGradientTexture", &m_RendererModuleDesc.isUseGradientTexture, sizeof(_bool))))
 			throw "g_isUseGradientTexture";
@@ -554,7 +566,7 @@ void CParticleSystem::Action_By_StopOption()
 	}
 	else if ("Callback" == m_MainModuleDesc.strStopAction)
 	{
-		if(m_StopAction) // 콜백함수의 주소가 있는지 검사.
+		if (m_StopAction) // 콜백함수의 주소가 있는지 검사.
 			m_StopAction();
 		Disable();
 		Restart();
@@ -732,7 +744,30 @@ void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 
 		vDirection = pGameInstance->PolarToCartesian(1.f, fTheta, fPhi);
 	}
-
+	else if ("Edge" == m_ShapeModuleDesc.strShape)
+	{
+		_float3 vRightPos = m_ShapeModuleDesc.vLength * _float3(1.f, 0.f, 0.f) * 0.5f;
+		_float3 vLeftPos = vRightPos * -1.f;
+		
+		if ("Random" == m_ShapeModuleDesc.strPhiMode)
+		{
+			if (m_ShapeModuleDesc.fPhiSpread <= 0.01f) // Spread가 0.f일 경우
+			{
+				vPosition.x = Random_Generator(vRightPos.x, vLeftPos.x);
+				vPosition.y = Random_Generator(vRightPos.y, vLeftPos.y);
+				vPosition.z = Random_Generator(vRightPos.z, vLeftPos.z);
+			}
+			//else // Spread가 0.f보다 클 경우
+			//{
+			//	_float3 vLength = m_ShapeModuleDesc.fPhiSpread * _float3(-1.f, 0.f, 0.f);
+			//	vRightPos += 
+			// 	
+			// 	
+			//}
+		}
+		
+		vDirection = _float3(0.f, 0.f, 1.f);
+	}
 	vPosition = XMVector3TransformCoord(vPosition, m_ShapeModuleDesc.ShapeMatrix);
 	vDirection = XMVector3TransformNormal(vDirection, m_ShapeModuleDesc.ShapeMatrix);
 	vDirection.Normalize();
@@ -773,6 +808,11 @@ HRESULT CParticleSystem::Add_Components()
 		, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_RendererModuleDesc.wstrGraientTexture.c_str()).c_str()
 		, TEXT("Com_GradientTexture")
 		, reinterpret_cast<CComponent**>(&m_pGradientTexture)), E_FAIL);
+
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel
+		, ToPrototypeTag(TEXT("Prototype_Component_Texture"), TEXT("../../Resources/Effets/Textures/Noises/VFX_T_Noise04_D.png")).c_str()
+		, TEXT("Com_NoiseTexture")
+		, reinterpret_cast<CComponent**>(&m_pNoiseTexture)), E_FAIL);
 
 	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Shader_VtxRectColIdxInstance")
 		, TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader)), E_FAIL);
@@ -815,7 +855,6 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 
 	// 늦게 나온만큼 수명 추가.
 	_particle_iter->fLifeTime += _particle_iter->fGenTime;
-	_particle_iter->vAccel = _float4(); // 미구현
 
 	// 시작회전 ------------- 안씀
 	if (false == m_MainModuleDesc.is3DStartAngle)
@@ -837,7 +876,7 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 		_particle_iter->fAngle *= -1.f;
 		_particle_iter->fAngularVelocity *= -1.f;
 	}
-		
+
 
 	// 시작 크기 결정
 	if (true == m_MainModuleDesc.is3DStartSize)
@@ -864,12 +903,29 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 	ResetStartPosition(_particle_iter);
 
 	// 시작 색상
-	_particle_iter->vColor = m_MainModuleDesc.vStartColor;
+	if (false == m_MainModuleDesc.isStartColorRange)
+	{
+		_particle_iter->vColor = m_MainModuleDesc.vStartColor;
+	}
+	else
+	{
+		if (RandomBool(0.5f))
+		{
+			_particle_iter->vColor = m_MainModuleDesc.vStartColor;
+			_particle_iter->vStartColor = m_MainModuleDesc.vStartColor;
+		}
+		else
+		{
+			_particle_iter->vColor = m_MainModuleDesc.vStartColor2;
+			_particle_iter->vStartColor = m_MainModuleDesc.vStartColor2;
+		}
+	}
 	//_particle_iter->fAngle = m_MainModuleDesc.f
 
 	_particle_iter->fGravityAccel = { 0.f };
 
 	m_TextureSheetAnimationModuleDesc.Reset(_particle_iter);
+	m_VelocityOverLifeTimeModuleDesc.Reset(_particle_iter, m_pTransform->Get_WorldMatrixPtr());
 
 	for (auto& Event : _particle_iter->Events)
 		Event.Reset();
@@ -974,6 +1030,7 @@ CGameObject* CParticleSystem::Clone(void* _pArg)
 void CParticleSystem::Free()
 {
 	__super::Free();
+
 	if (true == m_isCloned)
 	{
 		Safe_Release(m_pRenderer);
@@ -981,6 +1038,7 @@ void CParticleSystem::Free()
 		Safe_Release(m_pClipTexture);
 		Safe_Release(m_pNormalTexture);
 		Safe_Release(m_pGradientTexture);
+		Safe_Release(m_pNoiseTexture);
 		Safe_Release(m_pBuffer);
 		Safe_Release(m_pShader);
 		Safe_Release(m_pModel);

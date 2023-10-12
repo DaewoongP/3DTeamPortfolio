@@ -32,3 +32,32 @@ using namespace Client;
 #define			BEGININSTANCE					CGameInstance* pGameInstance = CGameInstance::GetInstance();		\
 												Safe_AddRef(pGameInstance);
 #define			ENDINSTANCE						Safe_Release(pGameInstance);
+
+#define ADD_TIMER_SAFELY(timerName, isRepeating, duration) \
+    CGameInstance* instancePtr = CGameInstance::GetInstance(); \
+    if (instancePtr) \
+    { \
+        Safe_AddRef(instancePtr); \
+        instancePtr->Add_Timer(TEXT(timerName), isRepeating, duration); \
+        Safe_Release(instancePtr); \
+    }
+
+#define RESET_TIMER_SAFELY(timerName) \
+    CGameInstance* instancePtr = CGameInstance::GetInstance(); \
+    if (instancePtr) \
+    { \
+        Safe_AddRef(instancePtr); \
+        instancePtr->Reset_Timer(TEXT(timerName)); \
+        Safe_Release(instancePtr); \
+    }
+
+#define CHECK_TIMER_SAFELY(timerName, result) \
+    CGameInstance* pInstance = CGameInstance::GetInstance(); \
+    if (pInstance) \
+    { \
+        Safe_AddRef(pInstance); \
+        _bool result = pInstance->Check_Timer(TEXT(timerName)); \
+        Safe_Release(pInstance); \
+        result; \
+    }
+

@@ -17,6 +17,8 @@
 #include "Gatherer.h"
 #include "Gull.h"
 #include "Door.h"
+#include "Cliff_Gate.h"
+#include "Vault_Gate.h"
 
 CMain1_Loader::CMain1_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -422,6 +424,16 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 		CDoor::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Door");
 
+	/* For.Prototype_GameObject_Cliff_Gate */
+	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Cliff_Gate"),
+		CCliff_Gate::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Cliff_Gate");
+
+	/* For.Prototype_GameObject_Vault_Gate */
+	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Vault_Gate"),
+		CVault_Gate::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Vault_Gate");
+
 	HANDLE hFile = CreateFile(pMapObjectPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 	if (INVALID_HANDLE_VALUE == hFile)
@@ -487,6 +499,8 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 		wstring wsLeapingToadStools(TEXT("Anim_LeapingToadStools"));
 		wstring wsLeech(TEXT("Anim_Leech"));
 		wstring wsGull(TEXT("Anim_Gull"));
+		wstring wsCliffGate(TEXT("Anim_Gate_Reparo"));
+		wstring wsVaultGate(TEXT("Anim_Gate_Vault"));
 
 		// Anim이 있는 맵 오브젝트
 		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()) ||
@@ -494,7 +508,9 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 			0 == lstrcmp(modelName.c_str(), wsHorklump.c_str()) ||
 			0 == lstrcmp(modelName.c_str(), wsLeapingToadStools.c_str()) ||
 			0 == lstrcmp(modelName.c_str(), wsLeech.c_str()) ||
-			0 == lstrcmp(modelName.c_str(), wsGull.c_str()))
+			0 == lstrcmp(modelName.c_str(), wsGull.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsCliffGate.c_str()) || 
+			0 == lstrcmp(modelName.c_str(), wsVaultGate.c_str()))
 		{
 			if (FAILED(pGameInstance->Add_Prototype(eID, LoadDesc.wszTag,
 				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, modelPath.c_str()), true)))

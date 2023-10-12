@@ -7,6 +7,7 @@ class CMesh;
 class CModel;
 class CShader;
 class CRenderer;
+class CRigidBody;
 END
 
 BEGIN(Client)
@@ -41,6 +42,8 @@ public:
 	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
+	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
+	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix) override;
 
@@ -49,6 +52,7 @@ private:
 	CShader* m_pShadowShader = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 	CModel* m_pModel = { nullptr };
+	CRigidBody* m_pRigidBody = { nullptr };
 
 	CPlayer* m_pPlayer = { nullptr };			 // 플레이어 주소
 
@@ -58,6 +62,8 @@ private:
 	_float			m_fRadius = { 0.f };
 	_float			m_fDist_From_Player = { 0.f }; // 갈매기와 플레이어와의 거리
 	_float			m_fDeadTime = { 0.f }; // 갈매기 죽는 시간
+
+	_bool			m_isCol_with_Player = { false }; // 플레이어와 충돌 여부
 
 private:
 	MAPOBJECTDESC	m_ObjectDesc;

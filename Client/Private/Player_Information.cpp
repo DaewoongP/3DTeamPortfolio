@@ -181,9 +181,11 @@ void CPlayer_Information::Using_Fnisher()
 
 void CPlayer_Information::fix_HP(_int _iNum)
 {
-	if (0 <=  m_pHealth->Get_HP() + _iNum)
+	_int iResult = m_pHealth->Get_HP() + _iNum;
+	if (0 <= iResult)
 	{
-		m_pHealth->Set_HP(m_pHealth->Get_HP() + _iNum);
+		Clamp<_int>(iResult, 0, m_pHealth->Get_MaxHP());
+		m_pHealth->Set_HP(iResult);
 	}
 }
 

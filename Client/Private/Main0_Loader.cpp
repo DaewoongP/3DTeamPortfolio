@@ -34,6 +34,9 @@
 #include "UI_Group_SKillTap.h"
 #include "UI_Farming.h"
 #include "UI_Dynamic_Back.h"
+#include "UI_Damage.h"
+#include "UI_Store.h"
+
 #pragma endregion UI
 
 #pragma region Effects
@@ -247,6 +250,10 @@ HRESULT CMain0_Loader::Loading_For_GreatHall(LEVELID eLevelID)
 
 HRESULT CMain0_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 {
+	if (nullptr == m_pGameInstance)
+		return E_FAIL;
+
+
 	return S_OK;
 }
 
@@ -382,6 +389,14 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Farming"),
 				CUI_Farming::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_GameObject_UI_Farming");
+
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Damage"),
+				CUI_Damage::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_UI_Damage");
+
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Store"),
+				CUI_Store::Create(m_pDevice, m_pContext, eLevelID))))
+				throw TEXT("Prototype_GameObject_UI_Store");
 		}
 #pragma endregion
 
@@ -514,10 +529,10 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 				CRigidBody::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_Component_RigidBody");
 
-			/* For.Prototype_Component_RadialBlur */
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RadialBlur"),
-				CRadialBlur::Create(m_pDevice, m_pContext))))
-				throw TEXT("Prototype_Component_RadialBlur");
+			///* For.Prototype_Component_RadialBlur */
+			//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RadialBlur"),
+			//	CRadialBlur::Create(m_pDevice, m_pContext))))
+			//	throw TEXT("Prototype_Component_RadialBlur");
 		}
 
 		/* Prototype_Component_Model_Shpere */

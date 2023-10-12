@@ -51,6 +51,9 @@ HRESULT CRenderer::Initialize_Prototype()
 		TEXT("Target_Depth"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_Emissive"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_Shade"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 1.f))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
@@ -92,6 +95,12 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_RadialBlur"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 0.f))))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_Final"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 0.f))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_Rain"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
 
 #ifdef _DEBUG
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
@@ -109,6 +118,8 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Normal"))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Depth"))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Emissive"))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Lights"), TEXT("Target_Shade"))))
 		return E_FAIL;
@@ -137,6 +148,10 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_DistortionRender"), TEXT("Target_DistortionRender"))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_RadialBlur"), TEXT("Target_RadialBlur"))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Final"), TEXT("Target_Final"))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Rain"), TEXT("Target_Rain"))))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -170,9 +185,9 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO_Blured"), 240.f, 240.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Specular"), 240.f, 400.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_DOF"), 240.f, 400.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shade"), 240.f, 560.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_DOF_Blured"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
 
 	m_isDebugRender = false;
@@ -242,6 +257,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 #pragma endregion
 
 #pragma region Render Targets
+	if (FAILED(m_pDOF->Render(TEXT("Target_Deferred"))))
+		return E_FAIL;
 	if (FAILED(Render_HDR()))
 		return E_FAIL;
 
@@ -275,6 +292,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 	// Screen Shading
 	if (FAILED(Render_Screen()))
+		return E_FAIL;
+	if (FAILED(Render_Rain()))
 		return E_FAIL;
 
 	// UI 렌더링
@@ -645,6 +664,8 @@ HRESULT CRenderer::Render_HDR()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Deferred"), m_pPostProcessingShader, "g_DeferredTexture")))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_DOF_Blured"), m_pPostProcessingShader, "g_DOFTexture")))
+		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_fHDRPower", &m_fHDR, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
@@ -752,6 +773,8 @@ HRESULT CRenderer::Render_RadialBlur()
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_RadialBlur"))))
 		return E_FAIL;
 
+	/*if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Final"))))
+		return E_FAIL;*/
 	// Shader
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_RadialBlur"), m_pRadialBlurShader, "g_RadialBlurTexture")))
 		return E_FAIL;
@@ -770,6 +793,9 @@ HRESULT CRenderer::Render_RadialBlur()
 	if (FAILED(m_pRectBuffer->Render()))
 		return E_FAIL;
 
+	/*if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Final"))))
+		return E_FAIL;*/
+
 	return S_OK;
 }
 
@@ -787,6 +813,12 @@ HRESULT CRenderer::Render_Screen()
 	}
 
 	m_RenderObjects[RENDER_SCREEN].clear();
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_Rain()
+{
 
 	return S_OK;
 }
@@ -915,6 +947,10 @@ HRESULT CRenderer::Add_Components()
 
 	m_pGlow = CGlow::Create(m_pDevice, m_pContext, m_pRectBuffer);
 	if (nullptr == m_pGlow)
+		return E_FAIL;
+	
+	m_pDOF = CDOF::Create(m_pDevice, m_pContext, m_pRectBuffer);
+	if (nullptr == m_pDOF)
 		return E_FAIL;
 	
 	return S_OK;

@@ -6,6 +6,11 @@ BEGIN(Client)
 class CRollState :
     public CStateMachine
 {
+    enum BLINK
+    {
+        BLINK_START,
+        BLINK_END
+    };
 public:
     struct tagRollStateDesc
     {
@@ -35,7 +40,7 @@ public:
 
 private:
     _bool m_isBlink = { true };
-
+    BLINK m_eBlink = { BLINK_END };
 private:
     void Go_Idle();
 

@@ -90,7 +90,7 @@ HRESULT CLevel_Vault::Ready_Lights()
 {
 	BEGININSTANCE;
 
-	CLight::LIGHTDESC		LightDesc;
+	/*CLight::LIGHTDESC		LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
 	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
@@ -101,7 +101,7 @@ HRESULT CLevel_Vault::Ready_Lights()
 	LightDesc.vAmbient = _float4(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.vSpecular = BLACKDEFAULT;
 
-	pGameInstance->Add_Light(LightDesc);
+	pGameInstance->Add_Light(LightDesc);*/
 
 	ENDINSTANCE;
 	
@@ -161,25 +161,26 @@ HRESULT CLevel_Vault::Load_MapObject(const _tchar* pObjectFilePath)
 		wstring wsTreasureChestName(TEXT("Anim_TreasureChest"));
 		wstring wsHorklump(TEXT("Anim_Horklump"));
 		wstring wsLeech(TEXT("Anim_Leech"));
+		wstring wsVaultGate(TEXT("Anim_Gate_Vault"));
 
-		// 보물상자
-		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
-		{
-			_tchar wszobjName[MAX_PATH] = { 0 };
-			_stprintf_s(wszobjName, TEXT("GameObject_Treasure_Chest_%d"), (iObjectNum));
+		//// 보물상자
+		//if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
+		//{
+		//	_tchar wszobjName[MAX_PATH] = { 0 };
+		//	_stprintf_s(wszobjName, TEXT("GameObject_Treasure_Chest_%d"), (iObjectNum));
 
-			if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT,
-				TEXT("Prototype_GameObject_Treasure_Chest"), TEXT("Layer_BackGround"),
-				wszobjName, &MapObjectDesc)))
-			{
-				MSG_BOX("Failed to Clone Treasure_Chest");
-				ENDINSTANCE;
-				return E_FAIL;
-			}
-		}
+		//	if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT,
+		//		TEXT("Prototype_GameObject_Treasure_Chest"), TEXT("Layer_BackGround"),
+		//		wszobjName, &MapObjectDesc)))
+		//	{
+		//		MSG_BOX("Failed to Clone Treasure_Chest");
+		//		ENDINSTANCE;
+		//		return E_FAIL;
+		//	}
+		//}
 
 		// 채집물
-		else if (0 == lstrcmp(modelName.c_str(), wsHorklump.c_str()) ||
+		if (0 == lstrcmp(modelName.c_str(), wsHorklump.c_str()) ||
 			0 == lstrcmp(modelName.c_str(), wsLeech.c_str()))
 		{
 			_tchar wszobjName[MAX_PATH] = { 0 };
@@ -190,6 +191,22 @@ HRESULT CLevel_Vault::Load_MapObject(const _tchar* pObjectFilePath)
 				wszobjName, &MapObjectDesc)))
 			{
 				MSG_BOX("Failed to Clone Gatherer");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}
+
+		// 볼트 게이트
+		else if (0 == lstrcmp(modelName.c_str(), wsVaultGate.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_Vault_Gate_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT,
+				TEXT("Prototype_GameObject_Vault_Gate"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone Vault_Gate");
 				ENDINSTANCE;
 				return E_FAIL;
 			}
