@@ -193,7 +193,7 @@ void CMagicBall::Ready_SplineMove(CTrail* pTrail,_float3 Aixs)
 	//진행 경로만큼 뒤로 이동한 뒤
 	m_vSplineLerp[0] = m_vStartPosition - vDir;
 	//임의의 랜덤 값을 구하고
-	_float fRandom = Random_Generator(-20.f, 20.f);
+	_float fRandom = Random_Generator(-10.f, 10.f);
 	// 외적 방향으로 튄다.
 	m_vSplineLerp[0] += _float3(normal.x * fRandom, normal.y * fabsf(fRandom), normal.z * fRandom);
 
@@ -202,7 +202,7 @@ void CMagicBall::Ready_SplineMove(CTrail* pTrail,_float3 Aixs)
 	//임의의 랜덤 값을 구하고
 	fRandom = Random_Generator(-20.f, 20.f);
 	// 외적 방향으로 튄다.
-	m_vSplineLerp[1] += _float3(normal.x * fRandom, normal.y * fabsf(fRandom), normal.z * fRandom);
+	m_vSplineLerp[1] += _float3(normal.x * fRandom, -normal.y * fabsf(fRandom), normal.z * fRandom);
 }
 
 void CMagicBall::Ready_SplineMove_Accio(CTrail* pTrail, _float3 Aixs)
@@ -302,11 +302,6 @@ void CMagicBall::Ready_CastMagic()
 	for (int i = 0; i < m_TrailVec[EFFECT_STATE_MAIN].size(); i++)
 	{
 		m_TrailVec[EFFECT_STATE_MAIN].data()[i]->Enable(m_CurrentWeaponMatrix.Translation());
-	}
-	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_WAND].size(); i++)
-	{
-		m_ParticleVec[EFFECT_STATE_MAIN].data()[i]->Enable(m_CurrentWeaponMatrix.Translation());
-		m_ParticleVec[EFFECT_STATE_MAIN].data()[i]->Play(m_CurrentWeaponMatrix.Translation());
 	}
 }
 

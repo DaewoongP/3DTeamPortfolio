@@ -646,6 +646,39 @@
     <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\RP_Core">
       <UniqueIdentifier>{f8e2e068-d9cf-4946-a565-8d0e2044214d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying">
+      <UniqueIdentifier>{fb04081b-632f-4b46-8340-fa8eea9b3f9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Hover">
+      <UniqueIdentifier>{c34becda-e8f5-45d0-954f-ab88adb9236a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Fly">
+      <UniqueIdentifier>{e06f1f0b-1100-4600-a574-4d7ac87ad207}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Fly\Move">
+      <UniqueIdentifier>{2404f150-e1be-45a4-a6f2-c8df7eae227e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Fly\Turn">
+      <UniqueIdentifier>{6e019151-4c6e-4a1c-849d-fb7625130e1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Begin">
+      <UniqueIdentifier>{0c403044-32c4-418b-b61e-769717983493}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\End">
+      <UniqueIdentifier>{cb45375f-726f-4341-a96b-8f5708737058}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Idle">
+      <UniqueIdentifier>{93967255-71fb-465d-af15-960c334b8a05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Move">
+      <UniqueIdentifier>{0e2579a0-1d86-4ec8-beac-e26459a4385b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Turn">
+      <UniqueIdentifier>{bd3cc937-a6b8-46d4-a90c-9cc87c222813}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Break">
+      <UniqueIdentifier>{efc4ee26-398a-4d26-a05a-41a298491857}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1249,6 +1282,30 @@
     </ClInclude>
     <ClInclude Include="..\Public\Level_Sky.h">
       <Filter>01. Levels\05. Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Fly_Move.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Fly\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Fly_Turn.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Fly\Turn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Hover_Idle.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Hover_Move.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Hover_Turn.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Turn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Broom_End.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\End</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Broom_Begin.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Begin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Broom_Break.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Break</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\AncientDoor_L.h">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\AncientDoor_L</Filter>
@@ -1862,6 +1919,30 @@
     </ClCompile>
     <ClCompile Include="..\Private\Level_Sky.cpp">
       <Filter>01. Levels\05. Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Fly_Turn.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Fly\Turn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Fly_Move.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Fly\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hover_Idle.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hover_Move.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hover_Turn.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Turn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Broom_Begin.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Begin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Broom_End.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\End</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Broom_Break.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Break</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\AncientDoor_L.cpp">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\AncientDoor_L</Filter>

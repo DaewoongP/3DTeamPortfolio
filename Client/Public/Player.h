@@ -206,7 +206,7 @@ private:
 	vector<SPELL> m_vecSpellCheck;
 	
 
-
+	_bool m_isFlying = { false };
 	_bool m_isLumosOn = { false };
 
 private:
@@ -217,6 +217,7 @@ private:
 
 private:
 	void Key_Input(_float fTimeDelta);
+	void Key_input_Flying(_float fTimeDelta);
 	void Fix_Mouse();
 
 private:

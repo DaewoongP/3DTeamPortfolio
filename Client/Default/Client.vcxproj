@@ -171,6 +171,9 @@
     <ClInclude Include="..\Public\Animation_Camera_Model.h" />
     <ClInclude Include="..\public\AshwinderEggs_Item.h" />
     <ClInclude Include="..\Public\Bombarda.h" />
+    <ClInclude Include="..\Public\Broom_Begin.h" />
+    <ClInclude Include="..\Public\Broom_Break.h" />
+    <ClInclude Include="..\Public\Broom_End.h" />
     <ClInclude Include="..\Public\Breath.h" />
     <ClInclude Include="..\Public\Camera_Includes.h" />
     <ClInclude Include="..\public\ChineseChompingCabbageItem.h" />
@@ -180,7 +183,12 @@
     <ClInclude Include="..\Public\Cylinder.h" />
     <ClInclude Include="..\Public\DarkWizard_M.h" />
     <ClInclude Include="..\Public\Door.h" />
+    <ClInclude Include="..\Public\Fly_Move.h" />
+    <ClInclude Include="..\Public\Fly_Turn.h" />
     <ClInclude Include="..\Public\Gull.h" />
+    <ClInclude Include="..\Public\Hover_Idle.h" />
+    <ClInclude Include="..\Public\Hover_Move.h" />
+    <ClInclude Include="..\Public\Hover_Turn.h" />
     <ClInclude Include="..\Public\Level_Sky.h" />
     <ClInclude Include="..\public\Level_Static.h" />
     <ClInclude Include="..\public\Mongrel_Fur_Item.h" />
@@ -411,6 +419,9 @@
     <ClCompile Include="..\Private\Animation_Camera_Model.cpp" />
     <ClCompile Include="..\Private\AshwinderEggs_Item.cpp" />
     <ClCompile Include="..\Private\Bombarda.cpp" />
+    <ClCompile Include="..\Private\Broom_Begin.cpp" />
+    <ClCompile Include="..\Private\Broom_Break.cpp" />
+    <ClCompile Include="..\Private\Broom_End.cpp" />
     <ClCompile Include="..\Private\Breath.cpp" />
     <ClCompile Include="..\private\ChineseChompingCabbageItem.cpp" />
     <ClCompile Include="..\Private\ConjuredDragon.cpp" />
@@ -418,7 +429,12 @@
     <ClCompile Include="..\Private\Cylinder.cpp" />
     <ClCompile Include="..\Private\DarkWizard_M.cpp" />
     <ClCompile Include="..\Private\Door.cpp" />
+    <ClCompile Include="..\Private\Fly_Move.cpp" />
+    <ClCompile Include="..\Private\Fly_Turn.cpp" />
     <ClCompile Include="..\Private\Gull.cpp" />
+    <ClCompile Include="..\Private\Hover_Idle.cpp" />
+    <ClCompile Include="..\Private\Hover_Move.cpp" />
+    <ClCompile Include="..\Private\Hover_Turn.cpp" />
     <ClCompile Include="..\Private\Level_Sky.cpp" />
     <ClCompile Include="..\private\Level_Static.cpp" />
     <ClCompile Include="..\private\Mongrel_Fur_Item.cpp" />

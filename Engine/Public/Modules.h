@@ -214,6 +214,7 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 	_bool isBilinearFiltering = { false };
 
 	_float4x4 ShapeMatrix = { _float4x4() };
+	_float4x4 ShapeMatrixInit = { _float4x4() };
 
 	_bool isAlignToDirection = false;
 	_float fRandomizeDirection = { 0.f }; //[0, 1]
