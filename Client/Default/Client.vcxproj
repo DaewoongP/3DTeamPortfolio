@@ -249,7 +249,7 @@
     <ClInclude Include="..\Public\Death.h" />
     <ClInclude Include="..\Public\Descendo.h" />
     <ClInclude Include="..\Public\Enemy.h" />
-    <ClInclude Include="..\public\Game_Manager.h" />
+    <ClInclude Include="..\public\Event_Vault_Spawn.h" />
     <ClInclude Include="..\Public\Lumos.h" />
     <ClInclude Include="..\Public\FocusPotion.h" />
     <ClInclude Include="..\Public\MPBall.h" />
@@ -487,7 +487,7 @@
     <ClCompile Include="..\Private\Death.cpp" />
     <ClCompile Include="..\Private\Descendo.cpp" />
     <ClCompile Include="..\Private\Enemy.cpp" />
-    <ClCompile Include="..\private\Game_Manager.cpp" />
+    <ClCompile Include="..\private\Event_Vault_Spawn.cpp" />
     <ClCompile Include="..\private\Knotgrass_Item.cpp" />
     <ClCompile Include="..\private\Lacewing_Flies_Item.cpp" />
     <ClCompile Include="..\private\Leaping_Toadstool_Caps_Item.cpp" />

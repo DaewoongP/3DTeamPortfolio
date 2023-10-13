@@ -100,6 +100,7 @@ HRESULT CLevel_Static::Add_Scene()
 	MainSceneLayerTags.push_back(TEXT("Layer_Magic"));
 	MainSceneLayerTags.push_back(TEXT("Layer_Particle"));
 	MainSceneLayerTags.push_back(TEXT("Layer_Item"));
+	MainSceneLayerTags.push_back(TEXT("Layer_Event"));
 #ifdef _DEBUG
 	MainSceneLayerTags.push_back(TEXT("Layer_Debug"));
 #endif // _DEBUG

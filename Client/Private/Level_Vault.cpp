@@ -16,6 +16,7 @@ HRESULT CLevel_Vault::Initialize()
 	FAILED_CHECK_RETURN(Ready_Lights(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_Monster(TEXT("Layer_Monster")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Events(TEXT("Layer_Event")), E_FAIL);
 
 	BEGININSTANCE;
 	pGameInstance->Reset_World_TimeAcc();
@@ -86,22 +87,39 @@ HRESULT CLevel_Vault::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	return S_OK;
 }
 
+HRESULT CLevel_Vault::Ready_Events(const _tchar* pLayerTag)
+{
+	BEGININSTANCE;
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT, TEXT("Prototype_GameObject_Event_Spawn"), pLayerTag, TEXT("Event_Spawn"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Event_Spawn)");
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
 HRESULT CLevel_Vault::Ready_Lights()
 {
 	BEGININSTANCE;
 
-	/*CLight::LIGHTDESC		LightDesc;
+	CLight::LIGHTDESC		LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
 	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
-	LightDesc.vPos = _float4(2.f, 30.f, 2.f, 1.f);
-	LightDesc.vDir = _float4(0.33f, -0.99f, 0.33f, 0.f);
+	LightDesc.vPos = _float4(12.5f, 40.5f, 44.f, 1.f);
+	LightDesc.vLookAt = _float4(51.7f, 0.f, 52.4f, 1.f);
+	LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
 
-	LightDesc.vDiffuse = BLACKDEFAULT;
-	LightDesc.vAmbient = _float4(0.1f, 0.1f, 0.1f, 1.f);
-	LightDesc.vSpecular = BLACKDEFAULT;
+	LightDesc.vDiffuse = WHITEDEFAULT;
+	LightDesc.vAmbient = WHITEDEFAULT;
+	LightDesc.vSpecular = WHITEDEFAULT;
 
-	pGameInstance->Add_Light(LightDesc);*/
+	if (FAILED(pGameInstance->Add_Light(LightDesc, nullptr, true, 0, _float(g_iWinSizeX) / g_iWinSizeY)))
+		return E_FAIL;
 
 	ENDINSTANCE;
 	
@@ -342,7 +360,7 @@ HRESULT CLevel_Vault::Load_Monsters(const wstring& wstrMonsterFilePath)
 
 	if (INVALID_HANDLE_VALUE == hFile)
 	{
-		MSG_BOX("Failed to Create Monsters File for Load Monsters");
+		MSG_BOX("Failed to Create MapObject File for Load MapObject");
 		return E_FAIL;
 	}
 
@@ -353,6 +371,7 @@ HRESULT CLevel_Vault::Load_Monsters(const wstring& wstrMonsterFilePath)
 	{
 		_float4x4 WorldMatrix = _float4x4();
 		wstring wstrMonsterTag = { TEXT("") };
+		string strComponentTag = { "" };
 		wstring wstrModelFilePath = { TEXT("") };
 		wstring wstrPrototypeModelTag = { TEXT("") };
 
@@ -371,14 +390,29 @@ HRESULT CLevel_Vault::Load_Monsters(const wstring& wstrMonsterFilePath)
 			MSG_BOX("Failed to Read iLength");
 			CloseHandle(hFile);
 		}
-		_tchar szTag[MAX_PATH] = { TEXT("") };
-		if (!ReadFile(hFile, szTag, sizeof(_tchar) * iLength, &dwByte, nullptr))
+		_tchar wszTag[MAX_PATH] = { TEXT("") };
+		if (!ReadFile(hFile, wszTag, sizeof(_tchar) * iLength, &dwByte, nullptr))
 		{
 			MSG_BOX("Failed to Read m_vecSaveObject.wszTag");
 			CloseHandle(hFile);
 			return E_FAIL;
 		}
-		wstrMonsterTag = szTag;
+		wstrMonsterTag = wszTag;
+
+		/* Read Monster ComponentTag */
+		iLength = { 0 };
+		if (!ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read wstrComponentTag.iTagLen");
+			return E_FAIL;
+		}
+		_char szTag[MAX_PATH] = { "" };
+		if (!ReadFile(hFile, szTag, iLength, &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read wstrComponentTag.wszTag");
+			return E_FAIL;
+		}
+		strComponentTag = szTag;
 
 		/* Read Monster PrototypeModelTag */
 		iLength = { 0 };
@@ -387,14 +421,14 @@ HRESULT CLevel_Vault::Load_Monsters(const wstring& wstrMonsterFilePath)
 			MSG_BOX("Failed to Read m_vecSaveObject.iLength");
 			CloseHandle(hFile);
 		}
-		ZEROMEM(szTag);
-		if (!ReadFile(hFile, szTag, sizeof(_tchar) * iLength, &dwByte, nullptr))
+		ZEROMEM(wszTag);
+		if (!ReadFile(hFile, wszTag, sizeof(_tchar) * iLength, &dwByte, nullptr))
 		{
 			MSG_BOX("Failed to Read m_vecSaveObject.wszTag");
 			CloseHandle(hFile);
 			return E_FAIL;
 		}
-		wstrPrototypeModelTag = szTag;
+		wstrPrototypeModelTag = wszTag;
 
 		/* Read Monster ModelFilePath */
 		iLength = { 0 };
@@ -403,14 +437,14 @@ HRESULT CLevel_Vault::Load_Monsters(const wstring& wstrMonsterFilePath)
 			MSG_BOX("Failed to Read m_vecSaveObject.iLength");
 			CloseHandle(hFile);
 		}
-		ZEROMEM(szTag);
-		if (!ReadFile(hFile, szTag, sizeof(_tchar) * iLength, &dwByte, nullptr))
+		ZEROMEM(wszTag);
+		if (!ReadFile(hFile, wszTag, sizeof(_tchar) * iLength, &dwByte, nullptr))
 		{
 			MSG_BOX("Failed to Read m_vecSaveObject.wszTag");
 			CloseHandle(hFile);
 			return E_FAIL;
 		}
-		wstrModelFilePath = szTag;
+		wstrModelFilePath = wszTag;
 
 		if (dwByte == 0)
 		{
@@ -419,7 +453,8 @@ HRESULT CLevel_Vault::Load_Monsters(const wstring& wstrMonsterFilePath)
 
 		wstring wstrPrototypeTag = TEXT("Prototype_GameObject_");
 		wstrPrototypeTag += wstrMonsterTag;
-		wstring wstrComponentTag = TEXT("Monster_") + to_wstring(iMonsterNum++);
+		wstring wstrComponentTag = strToWStr(strComponentTag);
+
 		BEGININSTANCE;
 		if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT, wstrPrototypeTag.c_str(),
 			TEXT("Layer_Monster"), wstrComponentTag.c_str(), &WorldMatrix)))
@@ -439,7 +474,7 @@ HRESULT CLevel_Vault::Load_Monsters(const wstring& wstrMonsterFilePath)
 HRESULT CLevel_Vault::Ready_Layer_Monster(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
-
+	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Vault.mon"));
 	ENDINSTANCE;
 
 	return S_OK;

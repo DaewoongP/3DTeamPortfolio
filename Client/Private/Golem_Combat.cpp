@@ -107,6 +107,9 @@ void CGolem_Combat::Tick(_float fTimeDelta)
 
 void CGolem_Combat::Late_Tick(_float fTimeDelta)
 {
+	if (false == m_isSpawn)
+		return;
+
 	__super::Late_Tick(fTimeDelta);
 }
 

@@ -208,9 +208,6 @@
     <Filter Include="04. Effect\Default_MagicTrail_Effect">
       <UniqueIdentifier>{5235bea2-54db-4f3f-b105-e99f462db57b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="07. GameManager">
-      <UniqueIdentifier>{41feed39-b5e2-4b15-99fe-18a8117aafdf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="05. Magic\MagicBall\05. Lumos">
       <UniqueIdentifier>{852374ec-175b-4b73-9ad4-fe97a917260d}</UniqueIdentifier>
     </Filter>
@@ -568,9 +565,6 @@
     <Filter Include="02. GameObject\02. Enemy\03. Golem\01. Pensive\Weapon">
       <UniqueIdentifier>{fde3512d-c9d7-4f98-baac-ed8650da6e1a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\02. Enemy\04. Boss">
-      <UniqueIdentifier>{0af7f112-5794-49f9-b566-5e0282856103}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\02. Enemy\05. DarkWizard">
       <UniqueIdentifier>{344e3ca3-42ef-4166-b228-a633658f314b}</UniqueIdentifier>
     </Filter>
@@ -702,6 +696,12 @@
     </Filter>
     <Filter Include="01. Levels\04. Hogsmeade">
       <UniqueIdentifier>{93532b46-fcf5-4814-9232-b40f168761fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events">
+      <UniqueIdentifier>{41feed39-b5e2-4b15-99fe-18a8117aafdf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Vault">
+      <UniqueIdentifier>{1f3eeadd-26c0-496a-8e7b-abb99f64931a}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\09. Item\03. Gear">
       <UniqueIdentifier>{50b1d4b5-dafa-493a-9f8c-87271ae5385f}</UniqueIdentifier>
@@ -1056,9 +1056,6 @@
     <ClInclude Include="..\public\MagicSlot.h">
       <Filter>05. Magic\MagicSlot</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Game_Manager.h">
-      <Filter>07. GameManager</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_Group_Logo.h">
       <Filter>02. GameObject\04. UI\UI_Group\UI_Group_Logo</Filter>
     </ClInclude>
@@ -1400,6 +1397,9 @@
     <ClInclude Include="..\Public\Player.h">
       <Filter>02. GameObject\01. Player</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Event_Vault_Spawn.h">
+      <Filter>07. Events\Vault</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\Gear_Item.h">
       <Filter>02. GameObject\09. Item\03. Gear</Filter>
     </ClInclude>
@@ -1722,9 +1722,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Ncendio.cpp">
       <Filter>05. Magic\MagicBall\08. Ncendio</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Game_Manager.cpp">
-      <Filter>07. GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Group_Logo.cpp">
       <Filter>02. GameObject\04. UI\UI_Group\UI_Group_Logo</Filter>
@@ -2054,6 +2051,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player.cpp">
       <Filter>02. GameObject\01. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Event_Vault_Spawn.cpp">
+      <Filter>07. Events\Vault</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Gear_Item.cpp">
       <Filter>02. GameObject\09. Item\03. Gear</Filter>

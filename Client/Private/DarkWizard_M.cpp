@@ -73,14 +73,13 @@ HRESULT CDarkWizard_M::Initialize_Level(_uint iCurrentLevelIndex)
 
 void CDarkWizard_M::Tick(_float fTimeDelta)
 {
+	Set_Current_Target();
+
+	m_fProtegoCoolTime += fTimeDelta;
+
 	__super::Tick(fTimeDelta);
 
 	m_pHitMatrix = m_HitMatrices[rand() % 3];
-
-	Set_Current_Target();
-
-	if (nullptr != m_pRootBehavior)
-		m_pRootBehavior->Tick(fTimeDelta);
 
 	Tick_Spells();
 
@@ -187,7 +186,7 @@ void CDarkWizard_M::Set_Protego_Collision(CTransform* pTransform, CEnemy::ATTACK
 	if (eType & ATTACK_BREAK || eType & ATTACK_SUPERBREAK)
 	{
 		m_iCurrentSpell ^= BUFF_PROTEGO;
-		cout << "Call Break Protego" << endl;
+		m_fProtegoCoolTime = 0.f;
 	}
 }
 
@@ -199,6 +198,9 @@ HRESULT CDarkWizard_M::Make_AI()
 	{
 		if (FAILED(__super::Make_AI()))
 			throw TEXT("Failed Enemy Make_AI");
+
+		if (FAILED(m_pRootBehavior->Add_Type("fProtegoCoolTime", &m_fProtegoCoolTime)))
+			throw TEXT("Failed Add_Type fProtegoCoolTime");
 
 		/* Make Child Behaviors */
 		CSelector* pSelector = nullptr;
@@ -654,6 +656,9 @@ HRESULT CDarkWizard_M::Make_Alive(_Inout_ CSelector* pSelector)
 		CSelector* pSelector_NormalAttack = nullptr;
 		if (FAILED(Create_Behavior(pSelector_NormalAttack)))
 			throw TEXT("Failed Create_Behavior pSelector_NormalAttack");
+		CRandomChoose* pRandom_Taunts = nullptr;
+		if (FAILED(Create_Behavior(pRandom_Taunts)))
+			throw TEXT("Failed Create_Behavior pRandom_Taunts");
 
 		/* Set Decorators */
 		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -665,6 +670,9 @@ HRESULT CDarkWizard_M::Make_Alive(_Inout_ CSelector* pSelector)
 				return !(pHealth->isDead());
 			});
 
+		/* Set Options */
+		pSelector_NormalAttack->Set_Option(2.5f);
+
 		/* Assemble Behaviors */
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_Hit_Combo"), pSelector_Hit_Combo)))
 			throw TEXT("Failed Assemble_Behavior Selector_Hit_Combo");
@@ -674,6 +682,8 @@ HRESULT CDarkWizard_M::Make_Alive(_Inout_ CSelector* pSelector)
 			throw TEXT("Failed Assemble_Behavior Sequence_Protego");
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_NormalAttack"), pSelector_NormalAttack)))
 			throw TEXT("Failed Assemble_Behavior Selector_NormalAttack");
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Random_Taunts"), pRandom_Taunts)))
+			throw TEXT("Failed Assemble_Behavior Random_Taunts");
 
 		if (FAILED(Make_Hit_Combo(pSelector_Hit_Combo)))
 			throw TEXT("Failed Make_Hit_Combo");
@@ -683,6 +693,8 @@ HRESULT CDarkWizard_M::Make_Alive(_Inout_ CSelector* pSelector)
 			throw TEXT("Failed Make_Check_Spell");
 		if (FAILED(Make_NormalAttack(pSelector_NormalAttack)))
 			throw TEXT("Failed Make_NormalAttack");
+		if (FAILED(Make_Taunts(pRandom_Taunts)))
+			throw TEXT("Failed Make_Taunts");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -831,10 +843,15 @@ HRESULT CDarkWizard_M::Make_Protego(_Inout_ CSequence* pSequence)
 		pSequence->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_uint* pICurrentSpell = { nullptr };
+				_float* pProtegoCoolTime = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("fProtegoCoolTime", pProtegoCoolTime)))
 					return false;
 
 				if (BUFF_PROTEGO & *pICurrentSpell)
+					return false;
+				if (10.f > *pProtegoCoolTime)
 					return false;
 				
 				return true;
@@ -953,6 +970,67 @@ HRESULT CDarkWizard_M::Make_NormalAttack(_Inout_ CSelector* pSelector)
 	ENDINSTANCE;
 
 	return S_OK;;
+}
+
+HRESULT CDarkWizard_M::Make_Taunts(CRandomChoose* pRandomChoose)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pRandomChoose)
+			throw TEXT("Parameter pRandomChoose is nullptr");
+
+		/* Create Child Behaviors */
+		CAction* pAction_Taunt_1 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Taunt_1)))
+			throw TEXT("Failed Create_Behavior pAction_Taunt_1");
+		CAction* pAction_Taunt_2 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Taunt_2)))
+			throw TEXT("Failed Create_Behavior pAction_Taunt_2");
+
+		/* Set Decorations */
+		pRandomChoose->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_uint* pICurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
+					return false;
+
+				if (true == IsDebuff((BUFF_TYPE)*pICurrentSpell))
+					return false;
+
+				return true;
+			});
+		pRandomChoose->Add_Change_Condition(CBehavior::BEHAVIOR_SUCCESS, [&](CBlackBoard* pBlackBoard)->_bool
+			{
+				return true;
+			});
+
+		/* Set Options */
+		pAction_Taunt_1->Set_Options(TEXT("Taunt_1"), m_pModelCom);
+		pAction_Taunt_2->Set_Options(TEXT("Taunt_2"), m_pModelCom);
+
+		/* Assemble Behaviors */
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Taunt_1"), pAction_Taunt_1, 0.5f)))
+			throw TEXT("Failed Assemble_Behavior Action_Taunt_1");
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Taunt_2"), pAction_Taunt_2, 0.5f)))
+			throw TEXT("Failed Assemble_Behavior Action_Taunt_2");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_NormalAttack : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
 }
 
 HRESULT CDarkWizard_M::Make_Fly_Combo(_Inout_ CSelector* pSelector)
