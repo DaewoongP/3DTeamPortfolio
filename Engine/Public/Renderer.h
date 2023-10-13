@@ -28,6 +28,8 @@ public:
 		m_isScreenRadial = isRadial;
 		m_fRadialBlurWidth = fRadialWidth;
 	}
+	void Set_SSAO(_bool isSSAO) { m_isSSAO = isSSAO; }
+	_bool Get_SSAO() { return m_isSSAO; }
 
 private:
 	explicit CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -114,6 +116,7 @@ private:
 	class CShader*					m_pRadialBlurShader = { nullptr };
 
 private:
+	_bool							m_isSSAO = { false };
 	_bool							m_isScreenRadial = { false };
 	_float							m_fRadialBlurWidth = { 0.f };
 

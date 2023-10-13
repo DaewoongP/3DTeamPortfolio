@@ -55,8 +55,8 @@ HRESULT CDOF::Initialize(CVIBuffer_Rect* pRectBuffer)
 
 	Safe_Release(pRenderTarget_Manager);
 
-	m_fFocusDistance = 3.f;
-	m_fFocusRange = 2.f;
+	m_fFocusDistance = 4.f;
+	m_fFocusRange = 3.f;
 
 	return S_OK;
 }

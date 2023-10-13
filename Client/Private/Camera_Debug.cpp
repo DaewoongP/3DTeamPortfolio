@@ -207,6 +207,11 @@ void CCamera_Debug::Tick_ImGui()
 
 	// Shader
 	ImGui::Begin("Shader");
+	_bool isSSAO = m_pRenderer->Get_SSAO();
+	if (ImGui::Checkbox("SSAO", &isSSAO))
+	{
+		m_pRenderer->Set_SSAO(isSSAO);
+	}
 
 	_float fGlowPower = m_pRenderer->Get_GlowPower();
 	if (ImGui::SliderFloat("GlowPower", &fGlowPower, 0.1f, 10.f))

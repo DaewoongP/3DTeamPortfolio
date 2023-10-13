@@ -271,38 +271,45 @@ HRESULT CRigidBody::Initialize(void* pArg)
 
 	RIGIDBODYDESC* pRigidBodyDesc = reinterpret_cast<RIGIDBODYDESC*>(pArg);
 
-	if (false == IsValid(pRigidBodyDesc))
 	{
-		MSG_BOX("Invalid RigidBody Description");
-		return E_FAIL;
+		std::lock_guard<std::mutex> lock(mtx);
+
+		if (false == IsValid(pRigidBodyDesc))
+		{
+			MSG_BOX("Invalid RigidBody Description");
+			return E_FAIL;
+		}
+
+		CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
+		Safe_AddRef(pPhysX_Manager);
+
+		PxPhysics* pPhysX = pPhysX_Manager->Get_Physics();
+		m_pScene = pPhysX_Manager->Get_PhysxScene();
+
+		// 초기 포지션 세팅
+		if (nullptr == m_pActor)
+		{
+			PxTransform InitTransform(PhysXConverter::ToPxVec3(pRigidBodyDesc->vInitPosition),
+				PhysXConverter::ToPxQuat(pRigidBodyDesc->vInitRotation));
+
+			// 액터생성 - 실제 월드위치 대입.
+			if (true == pRigidBodyDesc->isStatic)
+				m_pActor = pPhysX->createRigidStatic(InitTransform);
+			else
+				m_pActor = pPhysX->createRigidDynamic(InitTransform);
+		}
+
+		Safe_Release(pPhysX_Manager);
 	}
-
-	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
-	Safe_AddRef(pPhysX_Manager);
-
-	PxPhysics* pPhysX = pPhysX_Manager->Get_Physics();
-	m_pScene = pPhysX_Manager->Get_PhysxScene();
-
-	// 초기 포지션 세팅
-	if (nullptr == m_pActor)
-	{
-		PxTransform InitTransform(PhysXConverter::ToPxVec3(pRigidBodyDesc->vInitPosition),
-			PhysXConverter::ToPxQuat(pRigidBodyDesc->vInitRotation));
-
-		// 액터생성 - 실제 월드위치 대입.
-		if (true == pRigidBodyDesc->isStatic)
-			m_pActor = pPhysX->createRigidStatic(InitTransform);
-		else
-			m_pActor = pPhysX->createRigidDynamic(InitTransform);
-	}
-
-	Safe_Release(pPhysX_Manager);
 	
 	if (FAILED(Create_Collider(pRigidBodyDesc)))
 		return E_FAIL;
+
+	{
+		std::lock_guard<std::mutex> lock(mtx);
+		m_pScene->addActor(*m_pActor);
+	}
 	
-	m_pScene->addActor(*m_pActor);
-		
 	return S_OK;
 }
 
