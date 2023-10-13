@@ -87,7 +87,7 @@ void CWeapon_Player_Wand::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	// Do_Lumos(fTimeDelta);
+	Do_Lumos(fTimeDelta);
 }
 
 void CWeapon_Player_Wand::Late_Tick(_float fTimeDelta)
