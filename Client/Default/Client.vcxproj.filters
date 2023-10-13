@@ -1023,9 +1023,6 @@
     <ClInclude Include="..\Public\HitState.h">
       <Filter>02. GameObject\01. Player\01. StateMachine\07. Hit</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Player_Information.h">
-      <Filter>02. GameObject\01. Player\03. PlayerInformation</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Finisher.h">
       <Filter>05. Magic\MagicBall\07. Finisher</Filter>
     </ClInclude>
@@ -1396,6 +1393,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Player.h">
       <Filter>02. GameObject\01. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_Information.h">
+      <Filter>02. GameObject\01. Player\03. PlayerInformation</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Event_Vault_Spawn.h">
       <Filter>07. Events\Vault</Filter>
