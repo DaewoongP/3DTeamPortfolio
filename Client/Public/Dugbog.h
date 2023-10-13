@@ -14,6 +14,7 @@ BEGIN(Engine)
 class CSequence;
 class CSelector;
 class CRandomChoose;
+class CParticleSystem;
 END
 
 BEGIN(Client)
@@ -37,6 +38,7 @@ public:
 
 private:
 	_bool m_isAbleLevioso = { false };
+	array<CParticleSystem*, 3> m_DarkAura = { nullptr };
 
 private:
 	HRESULT Make_AI();

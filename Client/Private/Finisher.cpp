@@ -224,7 +224,7 @@ void CFinisher::Ready_CastMagic()
 		vWeight[1] = _float3(2.f,0.5f, 2.f);
 
 		m_pTrail[i]->Set_Threshold(0.2f);
-		m_pTrail[i]->Ready_LightningStrike(m_vEndPosition + _float3(0, 10, 0), m_vEndPosition, vWeight, 10);
+		m_pTrail[i]->Ready_LightningStrike(m_vEndPosition + _float3(0, 20, 0), m_vEndPosition - _float3(0,10,0), vWeight, 20);
 		m_pTrail[i]->Enable(m_vEndPosition);
 	}
 	m_pTransform->Set_Position(m_vEndPosition);
