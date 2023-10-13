@@ -1288,6 +1288,11 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		m_UI_Group_SkillTap->Set_isOpen(m_isOpenSkillTap);
 	}
 
+	if (pGameInstance->Get_DIKeyState(DIK_G, CInput_Device::KEY_DOWN))
+	{
+		Go_Use_Potion();
+	}
+
 	/*if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
 		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 10.f, PxForceMode::eIMPULSE);
@@ -1318,11 +1323,11 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))
 	{
-		/*m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::FOCUS_POTION);
+		m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::FOCUS_POTION);
 		m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::ENDURUS_POTION);
 		m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::INVISIBILITY_POTION);
 		m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::MAXIMA_POTION);
-		m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::THUNDERBREW_POTION);*/
+		m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::THUNDERBREW_POTION);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
@@ -2841,7 +2846,6 @@ _uint CPlayer::Special_Action(_uint _iButton)
 void CPlayer::Add_Layer_Item()
 {
 	CTool* pTool = m_pPlayer_Information->Get_PotionTap()->Get_CurTool();
-
 	if (nullptr == pTool)
 		return;
 	pTool->CreateTool();
@@ -2850,6 +2854,23 @@ void CPlayer::Add_Layer_Item()
 void CPlayer::Drink_Potion()
 {
 	m_pPlayer_Information->Get_PotionTap()->Use_Item(m_pTransform->Get_Position());
+}
+
+void CPlayer::Add_Potion()
+{
+	m_pPlayer_Information->Add_Potion();
+}
+
+void CPlayer::Drink_Heal_Potion()
+{
+	CTool* pTool = m_pPlayer_Information->Get_Healpotion();
+
+	if (nullptr == pTool)
+	{
+		return;
+	}
+
+	pTool->Use(m_pTransform->Get_Position());
 }
 
 void CPlayer::Go_Protego(void* _pArg)
@@ -2941,6 +2962,10 @@ void CPlayer::Go_Use_Item()
 		return;
 
 	CUseItemState::USEITEMDESC UseItemDesc;
+	
+	UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(); };
+
+	m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Add_Layer_Item"), UseItemDesc.funcPotion);
 
 	UseItemDesc.eItem_Id = pTool->Get_ItemID();
 
@@ -2973,7 +2998,26 @@ void CPlayer::Go_Use_Item()
 	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
 		(m_pStateContext->Is_Current_State(TEXT("Idle"))))
 	{
-		m_pStateContext->Set_StateMachine(TEXT("UseItem"));
+		m_pStateContext->Set_StateMachine(TEXT("UseItem"), &UseItemDesc);
+	}
+}
+
+void CPlayer::Go_Use_Potion()
+{
+	CUseItemState::USEITEMDESC UseItemDesc;
+
+	UseItemDesc.funcPotion = [&] {(*this).Add_Potion(); };
+
+	m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Add_Layer_Item"), UseItemDesc.funcPotion);
+
+	UseItemDesc.eItem_Id = ITEM_ID_WIGGENWELD_POTION;
+
+	UseItemDesc.funcPotion = [&] {(*this).Drink_Heal_Potion(); };
+	
+	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
+		(m_pStateContext->Is_Current_State(TEXT("Idle"))))
+	{
+		m_pStateContext->Set_StateMachine(TEXT("UseItem"), &UseItemDesc);
 	}
 }
 

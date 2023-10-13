@@ -54,6 +54,11 @@ public:
     CPotionTap* Get_PotionTap() { return m_pPotionTap; }
 
 public:
+    //test ¿ë
+    void Add_Potion();
+
+    CTool* Get_Healpotion();
+public:
     virtual HRESULT Initialize_Prototype();
     virtual HRESULT Initialize(void* pArg);
     virtual void Tick(_float fTimeDelta);
@@ -91,6 +96,10 @@ private:
 
     CUI_Group_Finisher_Icon* m_pFinisherIcon = { nullptr };
     CUI_Group_Potion* m_pPotion = { nullptr };
+
+private:
+    vector<CTool*> m_vecTool;
+    
 private:
     HRESULT Add_Components();
 

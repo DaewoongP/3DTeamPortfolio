@@ -11,6 +11,7 @@
 #include "WiggenweldPotion.h"
 #include "Item.h"
 #include "PotionTap.h"
+#include "Tool.h"
 CPlayer_Information::CPlayer_Information(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	: CComposite(_pDevice, _pContext)
 {
@@ -19,6 +20,22 @@ CPlayer_Information::CPlayer_Information(ID3D11Device* _pDevice, ID3D11DeviceCon
 CPlayer_Information::CPlayer_Information(const CPlayer_Information& rhs)
 	: CComposite(rhs)
 {
+}
+
+void CPlayer_Information::Add_Potion()
+{
+	m_vecTool.push_back(static_cast<CTool*>(CItem::SimpleFactory(ITEM_ID::ITEM_ID_WIGGENWELD_POTION, LEVEL_STATIC, nullptr)));
+	int a = 0;
+}
+
+CTool* CPlayer_Information::Get_Healpotion()
+{
+	if (true == m_vecTool.empty())
+	{
+		return nullptr;
+	}
+
+	return m_vecTool.back();
 }
 
 HRESULT CPlayer_Information::Initialize_Prototype()
@@ -65,11 +82,17 @@ void CPlayer_Information::Tick(_float fTimeDelta)
 
 		Safe_Release(pGameInstance);
 	}
+
+	/*for (size_t i = 0; i < m_vecTool.size(); i++)
+	{
+		m_vecTool[i]->Tick(fTimeDelta);m_vecTool[i]->Late_Tick(fTimeDelta);
+	}*/
 }
 
 void CPlayer_Information::Late_Tick(_float fTimeDelta)
 {
 	CComposite::Late_Tick(fTimeDelta);
+	
 }
 
 HRESULT CPlayer_Information::Add_Components()
@@ -169,7 +192,7 @@ _bool CPlayer_Information::Is_Use_Fnisher()
 	{
 		return true;
 	}
-	
+	m_vecTool.push_back(static_cast<CTool*>(CItem::SimpleFactory(ITEM_ID::ITEM_ID_WIGGENWELD_POTION, LEVEL_STATIC, nullptr)));
 	return false;
 }
 
