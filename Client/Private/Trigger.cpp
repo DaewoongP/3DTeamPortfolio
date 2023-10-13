@@ -42,7 +42,7 @@ void CTrigger::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	{
 		m_isCollision = true;
 		if (true == m_isCollToDead)
-			Set_ObjEvent(OBJ_DEAD);
+			m_isDead = true;
 	}
 }
 

@@ -86,12 +86,17 @@ private:
 	CWeapon_Dragon_Head* m_pWeapon = { nullptr };
 
 private:
+	CParticleSystem* m_pEffect_BlackSmokeIdle = { nullptr };
+	CParticleSystem* m_pEffect_BlackSmokeTrace = { nullptr };
+
+private:
 	HRESULT Make_AI();
 	HRESULT Make_Magics();
 	HRESULT Make_Notifies();
 	HRESULT Add_Components();
 	HRESULT Add_Components_Level(_uint iCurrentLevelIndex);
 	HRESULT Bind_HitMatrices();
+	HRESULT Add_Effects();
 
 private: /* Çàµ¿ ¹­À½µé */
 	HRESULT Make_Death(_Inout_ CSequence* pSequence);

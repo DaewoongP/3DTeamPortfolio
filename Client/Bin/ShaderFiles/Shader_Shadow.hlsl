@@ -88,7 +88,7 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
     float fShadowPower = 1.f;
     
     if (0 < iNumLights)
-        fShadowPower *= Create_ShadowPower(vObjectWorldPos, g_LightViewMatrix, g_LightProjMatrix, g_LightDepthTexture, 0.5f);
+        fShadowPower *= Create_ShadowPower(vObjectWorldPos, g_LightViewMatrix, g_LightProjMatrix, g_LightDepthTexture, 0.7f);
     if (1 < iNumLights)
         fShadowPower *= Create_ShadowPower(vObjectWorldPos, g_LightViewMatrix1, g_LightProjMatrix1, g_LightDepthTexture1, 0.3f);
 

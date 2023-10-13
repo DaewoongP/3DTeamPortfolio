@@ -207,6 +207,11 @@ void CCamera_Debug::Tick_ImGui()
 
 	// Shader
 	ImGui::Begin("Shader");
+	_bool isSSAO = m_pRenderer->Get_SSAO();
+	if (ImGui::Checkbox("SSAO", &isSSAO))
+	{
+		m_pRenderer->Set_SSAO(isSSAO);
+	}
 
 	_float fGlowPower = m_pRenderer->Get_GlowPower();
 	if (ImGui::SliderFloat("GlowPower", &fGlowPower, 0.1f, 10.f))
@@ -230,6 +235,16 @@ void CCamera_Debug::Tick_ImGui()
 	if (ImGui::SliderFloat("FocusRange", &fFocusRange, 0.1f, 100.f, "%.1f"))
 	{
 		pDOF->Set_FocusRange(fFocusRange);
+	}
+	_float fRadialWidth = m_pRenderer->Get_ScreenRadialBlurWidth();
+	if (ImGui::SliderFloat("Radial", &fRadialWidth, 0.001f, 0.2f))
+	{
+		m_pRenderer->Set_ScreenRadial(true, fRadialWidth);
+	}
+	_bool isRadial = m_pRenderer->Get_IsScreenRadial();
+	if (ImGui::Checkbox("Radial", &isRadial))
+	{
+		m_pRenderer->Set_ScreenRadial(isRadial, fRadialWidth);
 	}
 
 	ImGui::End();

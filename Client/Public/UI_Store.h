@@ -35,7 +35,7 @@ public:
 
 public:
 	void Open();
-
+	void Close();
 private:
 	HRESULT Ready_Offset();
 	HRESULT Ready_DefaultTexture();
@@ -48,6 +48,7 @@ private:
 
 private:
 	_uint m_iLevel = { 0 };
+	_bool m_isOpen = { true };
 
 private:
 	CUI_Back* m_pStoreDefault = { nullptr };
@@ -60,6 +61,7 @@ private:
 	CUI_Effect_Back* m_pBuyFrame = { nullptr }; // 0
 	CUI_Effect_Back* m_pBuyIcon = { nullptr }; // 1
 	CUI_Back* m_pBuyBack = { nullptr }; // 2
+
 
 private:
 	HRESULT Add_Compoents();
@@ -74,6 +76,7 @@ private:
 private:
 	vector<_float2>					m_fPosition;
 	vector<CUI_Slot*>				m_pSlots;
+	vector<CItem*>                  m_pItems;
 
 public:
 	static CUI_Store* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);

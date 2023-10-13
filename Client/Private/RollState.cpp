@@ -30,6 +30,9 @@ HRESULT CRollState::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"), (CComponent**)(&m_pRenderer))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -65,7 +68,6 @@ void CRollState::OnStateEnter(void* _pArg)
 		_float3 vLook = matCam.Look();
 		vLook.y = 0.0f;
 		vLook.Normalize();
-
 
 		if (pGameInstance->Get_DIKeyState(DIK_W, CInput_Device::KEY_PRESSING) ||
 			pGameInstance->Get_DIKeyState(DIK_W, CInput_Device::KEY_DOWN))
@@ -122,6 +124,7 @@ void CRollState::OnStateEnter(void* _pArg)
 	{
 		Change_Animation(TEXT("Blink_Start"));
 		m_eBlink = BLINK_START;
+		m_pRenderer->Set_ScreenRadial(true, 0.03f);
 	}
 
 	*m_StateMachineDesc.pisFinishAnimation = false;
@@ -141,6 +144,7 @@ void CRollState::OnStateTick()
 		{
 			if (m_eBlink == BLINK_START)
 			{
+				m_pRenderer->Set_ScreenRadial(false, 0.05f);
 				Change_Animation(TEXT("Blink_End"));
 				*m_StateMachineDesc.pisFinishAnimation = false;
 				m_eBlink = BLINK_END;
@@ -213,6 +217,6 @@ void CRollState::Free()
 
 	if (true == m_isCloned)
 	{
-
+		Safe_Release(m_pRenderer);
 	}
 }

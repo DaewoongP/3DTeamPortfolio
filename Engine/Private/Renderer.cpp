@@ -191,11 +191,13 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 
 	m_isDebugRender = false;
-	m_isMRTRender = false;
+	m_isMRTRender = false;	
 #endif // _DEBUG
-
-	m_fGlowPower = 3.f;
-	m_fHDR = 0.7f;
+	m_isSSAO = true;
+	m_fGlowPower = 4.f;
+	m_fHDR = 0.5f;
+	m_fRadialBlurWidth = 0.05f;
+	m_isScreenRadial = false;
 
 	return S_OK;
 }
@@ -248,8 +250,6 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(m_pShadow->Render()))
 		return E_FAIL;
-	if (FAILED(Render_SSAO()))
-		return E_FAIL;
 	if (FAILED(Render_Deferred()))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Deferred"))))
@@ -265,6 +265,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Sort_Render(RENDER_GLOW)))
 		return E_FAIL;
 	if (FAILED(m_pGlow->Render(m_RenderObjects[RENDER_GLOW], m_fGlowPower)))
+		return E_FAIL;
+	if (FAILED(Render_SSAO()))
 		return E_FAIL;
 #pragma endregion
 
@@ -293,7 +295,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 	// Screen Shading
 	if (FAILED(Render_Screen()))
 		return E_FAIL;
-	if (FAILED(Render_Rain()))
+	if (FAILED(Render_ScreenRadial()))
 		return E_FAIL;
 
 	// UI 렌더링
@@ -599,8 +601,6 @@ HRESULT CRenderer::Render_Deferred()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shade"), m_pDeferredShader, "g_ShadeTexture")))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_SSAO_Blured"), m_pDeferredShader, "g_SSAOTexture")))
-		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shadow_Blured"), m_pDeferredShader, "g_ShadowTexture")))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Specular"), m_pDeferredShader, "g_SpecularTexture")))
@@ -693,12 +693,18 @@ HRESULT CRenderer::Render_PostProcessing()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Glowed"), m_pPostProcessingShader, "g_GlowTexture")))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_SSAO_Blured"), m_pPostProcessingShader, "g_SSAOTexture")))
+		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
+
+	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_isSSAO", &m_isSSAO, sizeof(_bool))))
+		return E_FAIL;
+
 	if (FAILED(m_pPostProcessingShader->Begin("PostProcessing")))
 		return E_FAIL;
 
@@ -773,8 +779,8 @@ HRESULT CRenderer::Render_RadialBlur()
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_RadialBlur"))))
 		return E_FAIL;
 
-	/*if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Final"))))
-		return E_FAIL;*/
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Final"))))
+		return E_FAIL;
 	// Shader
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_RadialBlur"), m_pRadialBlurShader, "g_RadialBlurTexture")))
 		return E_FAIL;
@@ -793,8 +799,8 @@ HRESULT CRenderer::Render_RadialBlur()
 	if (FAILED(m_pRectBuffer->Render()))
 		return E_FAIL;
 
-	/*if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Final"))))
-		return E_FAIL;*/
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Final"))))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -819,6 +825,31 @@ HRESULT CRenderer::Render_Screen()
 
 HRESULT CRenderer::Render_Rain()
 {
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_ScreenRadial()
+{
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Final"), m_pRadialBlurShader, "g_TargetTexture")))
+		return E_FAIL;
+	if (FAILED(m_pRadialBlurShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pRadialBlurShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pRadialBlurShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	if (FAILED(m_pRadialBlurShader->Bind_RawValue("g_isScreenRadial", &m_isScreenRadial, sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pRadialBlurShader->Bind_RawValue("g_fBlurWidth", &m_fRadialBlurWidth, sizeof(_float))))
+		return E_FAIL;
+
+	if (FAILED(m_pRadialBlurShader->Begin("RadialScreen")))
+		return E_FAIL;
+
+	if (FAILED(m_pRectBuffer->Render()))
+		return E_FAIL;
 
 	return S_OK;
 }

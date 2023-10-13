@@ -62,7 +62,6 @@ private:
 	_tchar m_wszTexturePath[MAX_PATH] = TEXT("");
 	_tchar m_wszAlphaTexturePath[MAX_PATH] = TEXT("");
 
-
 public:
 	static CUI_Slot* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
