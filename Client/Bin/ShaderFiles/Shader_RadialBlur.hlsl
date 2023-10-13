@@ -6,7 +6,7 @@ texture2D g_TargetTexture;
 
 vector g_vCamPosition;
 
-float g_fBlurStart = 0.9f; // 확대 or 축소 // 화면비율과 연동해서 그리는 위치 결정해야함.
+float g_fBlurStart = 0.96f; // 확대 or 축소 // 화면비율과 연동해서 그리는 위치 결정해야함.
 float g_fBlurWidth; // 블러하는 양
 int g_iNumSample = 10;
 
@@ -63,7 +63,7 @@ PS_OUT PS_MAIN(PS_IN In)
         float2 vBlurCenterUV = float2(0.5f, 0.5f);
         float2 uv = In.vTexUV;
         uv -= vBlurCenterUV;
-        float fPrecompute = g_fBlurWidth * (1.0 / float(g_iNumSample - 1));
+        float fPrecompute = g_fBlurWidth * 1.f / float(g_iNumSample);
     
         float4 color = float4(0.f, 0.f, 0.f, 0.f);
     

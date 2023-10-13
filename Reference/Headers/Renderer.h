@@ -24,9 +24,15 @@ public:
 	// radial on / off , sample 최대개수 = 10
 	_float Get_ScreenRadialBlurWidth() { return m_fRadialBlurWidth; }
 	_bool Get_IsScreenRadial() { return m_isScreenRadial; }
-	void Set_ScreenRadial(_bool isRadial, _float fRadialWidth) { 
+	void Set_ScreenRadial(_bool isRadial, _float fRadialWidth) {
 		m_isScreenRadial = isRadial;
 		m_fRadialBlurWidth = fRadialWidth;
+	}
+	void Set_ScreenRadial(_bool isRadial, _float fTime, _float fRadialWidth) { 
+		m_isScreenRadial = isRadial;
+		m_fRadialBlurWidth = fRadialWidth;
+		m_fRadialTimeAcc = 0.f;
+		m_fRadialTime = fTime;
 	}
 	void Set_SSAO(_bool isSSAO) { m_isSSAO = isSSAO; }
 	_bool Get_SSAO() { return m_isSSAO; }
@@ -119,6 +125,8 @@ private:
 	_bool							m_isSSAO = { false };
 	_bool							m_isScreenRadial = { false };
 	_float							m_fRadialBlurWidth = { 0.f };
+	_float							m_fRadialTime = { 0.f };
+	_float							m_fRadialTimeAcc = { 0.f };
 
 private:
 	class CBlur*					m_pBlur = { nullptr };

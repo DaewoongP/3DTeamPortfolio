@@ -10,7 +10,6 @@ public:
 	{
 		_float3 vPos;
 		_float2 vSize;
-		_float fTime;
 	}RADIALDESC;
 
 private:

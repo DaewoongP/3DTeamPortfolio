@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "GameObject.h"
 #include "RenderTarget_Manager.h"
+#include "Timer_Manager.h"
 #include "Light_Manager.h"
 #include "PipeLine.h"
 #include "Shader.h"
@@ -196,9 +197,9 @@ HRESULT CRenderer::Initialize_Prototype()
 	m_isSSAO = true;
 	m_fGlowPower = 7.5f;
 	m_fHDR = 0.5f;
-	m_fRadialBlurWidth = 0.05f;
+	m_fRadialBlurWidth = 0.0f;
 	m_isScreenRadial = false;
-
+	m_fRadialTimeAcc = 1.f;
 	return S_OK;
 }
 
@@ -840,9 +841,28 @@ HRESULT CRenderer::Render_ScreenRadial()
 	if (FAILED(m_pRadialBlurShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
+	if (0.f < m_fRadialTime)
+	{
+		CTimer_Manager* pTimer_Manager = CTimer_Manager::GetInstance();
+		Safe_AddRef(pTimer_Manager);
+		m_fRadialTimeAcc += pTimer_Manager->Get_World_Tick();
+		Safe_Release(pTimer_Manager);
+	}
+
+	_float fRadialBlurWidth = 0.f;
+	if (m_fRadialTimeAcc > m_fRadialTime)
+	{
+		m_isScreenRadial = false;
+	}
+	else
+	{
+		fRadialBlurWidth = Lerp(m_fRadialBlurWidth, 0.f, m_fRadialTimeAcc / m_fRadialTime);
+		m_isScreenRadial = true;
+	}
+
 	if (FAILED(m_pRadialBlurShader->Bind_RawValue("g_isScreenRadial", &m_isScreenRadial, sizeof(_bool))))
 		return E_FAIL;
-	if (FAILED(m_pRadialBlurShader->Bind_RawValue("g_fBlurWidth", &m_fRadialBlurWidth, sizeof(_float))))
+	if (FAILED(m_pRadialBlurShader->Bind_RawValue("g_fBlurWidth", &fRadialBlurWidth, sizeof(_float))))
 		return E_FAIL;
 
 	if (FAILED(m_pRadialBlurShader->Begin("RadialScreen")))
