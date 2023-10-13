@@ -227,6 +227,19 @@ HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 	/*if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
 		return E_FAIL;*/
 
+	if (nullptr != m_pTarget)
+	{
+		Safe_Release(m_pTarget);
+		m_pTarget = nullptr;
+	}
+
+	if (nullptr != m_pTargetTransform)
+	{
+		Safe_Release(m_pTargetTransform);
+		m_pTargetTransform = nullptr;
+	}
+
+
 	return S_OK;
 }
 
@@ -269,7 +282,9 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	Key_Input(fTimeDelta);
 	//m_pStateContext->Tick(fTimeDelta)
+	Go_Protego(&m_ProtegoStateDesc);
 
+	Fix_Mouse();
 	Update_Cloth(fTimeDelta);
 
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
@@ -2841,6 +2856,8 @@ void CPlayer::Go_Protego(void* _pArg)
 {
 	if (true == m_isPrepareProtego && true == m_isCollisionEnterProtego)
 	{
+		Find_Target_For_Distance();
+
 		m_pStateContext->Set_StateMachine(TEXT("Protego"), _pArg);
 
 		m_isCollisionEnterProtego = false;
