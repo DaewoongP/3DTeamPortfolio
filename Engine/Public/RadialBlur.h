@@ -5,6 +5,14 @@ BEGIN(Engine)
 
 class ENGINE_DLL CRadialBlur final : public CGameObject
 {
+public:
+	typedef struct tagRadialBlurDesc
+	{
+		_float3 vPos;
+		_float2 vSize;
+		_float fTime;
+	}RADIALDESC;
+
 private:
 	explicit CRadialBlur(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CRadialBlur(const CRadialBlur& rhs);

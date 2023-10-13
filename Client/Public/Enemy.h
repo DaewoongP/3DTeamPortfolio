@@ -50,13 +50,16 @@ public:
 	CUI_Group_Enemy_HP* Get_UI_Enemy_HP() const {
 		return m_pUI_HP;
 	}
-	void Set_Parring() {
-		m_isParring = true;
-	}
 	const _float4x4* Get_HitBoneMatrix(const _uint& iIndex) {
 		if (0 > iIndex || 3 <= iIndex)
 			return nullptr;
 		return m_HitMatrices[iIndex];
+	}
+	void Set_Parring() {
+		m_isParring = true;
+	}
+	void Spawn() {
+		m_isSpawn = true;
 	}
 
 public:

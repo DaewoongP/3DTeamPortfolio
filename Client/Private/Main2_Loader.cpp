@@ -283,7 +283,9 @@ HRESULT CMain2_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 		return E_FAIL;
 
 	try
-	{	
+	{
+		std::lock_guard<std::mutex> lock(mtx);
+
 		/* ============ Enemy Weapon Models ============ */
 
 		_float4x4 PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));

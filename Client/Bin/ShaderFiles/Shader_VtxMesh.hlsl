@@ -110,6 +110,28 @@ PS_OUT PS_MAIN_SKY_BLACK(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_MAIN_SKY(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+
+    vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+    vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+    float3 vNormal = vNormalDesc.xyz * 2.f - 1.f; // 0 ~ 1 -> -1 ~ 1
+    
+    float3x3 WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal.xyz, In.vNormal.xyz);
+    
+    vNormal = mul(vNormal, WorldMatrix);
+    
+    if (vDiffuse.a < 0.1f)
+        discard;
+
+    Out.vDiffuse = vDiffuse * float4(0.9f, 0.85f, 0.87f, 1.f);
+    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
+
+    return Out;
+}
+
 PS_OUT PS_MAIN_EFFECT(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
@@ -155,7 +177,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
         HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
-        PixelShader = compile ps_5_0 PS_MAIN();
+        PixelShader = compile ps_5_0 PS_MAIN_SKY();
     }
 
     pass VaultSky

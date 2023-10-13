@@ -1,11 +1,13 @@
 #include "Shader_EngineHeader.hlsli"
 #include "Shader_RenderFunc.hlsli"
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-
+float3 g_vLuminancekey = float3(0.2126f, 0.7152f, 0.0722f);
 // PostProcessing
 texture2D g_HDRTexture;
 texture2D g_GlowTexture;
+texture2D g_SSAOTexture;
 
+bool g_isSSAO;
 
 // HDR
 texture2D g_DeferredTexture;
@@ -57,8 +59,12 @@ PS_OUT PS_MAIN(PS_IN In)
 
     vector vHDR = g_HDRTexture.Sample(LinearSampler, In.vTexUV);
     vector vGlow = g_GlowTexture.Sample(LinearSampler, In.vTexUV);
+    vector vSSAO = g_SSAOTexture.Sample(LinearSampler, In.vTexUV);
     
-    Out.vColor = vHDR + vGlow;
+    if (true == g_isSSAO)
+        Out.vColor = vHDR * vSSAO + vGlow;
+    else
+        Out.vColor = vHDR + vGlow;
 
     return Out;
 }
@@ -88,17 +94,6 @@ PS_OUT PS_MAIN_HDR(PS_IN In)
 
 technique11 DefaultTechnique
 {
-    pass HDR
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Depth_Disable, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
-        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
-        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
-        PixelShader = compile ps_5_0 PS_MAIN_HDR();
-    }
     pass PostProcessing
     {
         SetRasterizerState(RS_Default);
@@ -109,5 +104,16 @@ technique11 DefaultTechnique
         HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader = compile ps_5_0 PS_MAIN();
+    }
+    pass HDR
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Depth_Disable, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_MAIN_HDR();
     }
 }

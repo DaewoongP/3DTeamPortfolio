@@ -186,6 +186,7 @@
     <ClInclude Include="..\Public\Door.h" />
     <ClInclude Include="..\Public\Fly_Move.h" />
     <ClInclude Include="..\Public\Fly_Turn.h" />
+    <ClInclude Include="..\public\Gear_Item.h" />
     <ClInclude Include="..\Public\Gull.h" />
     <ClInclude Include="..\Public\Hover_Idle.h" />
     <ClInclude Include="..\Public\Hover_Move.h" />
@@ -248,7 +249,7 @@
     <ClInclude Include="..\Public\Death.h" />
     <ClInclude Include="..\Public\Descendo.h" />
     <ClInclude Include="..\Public\Enemy.h" />
-    <ClInclude Include="..\public\Game_Manager.h" />
+    <ClInclude Include="..\public\Event_Vault_Spawn.h" />
     <ClInclude Include="..\Public\Lumos.h" />
     <ClInclude Include="..\Public\FocusPotion.h" />
     <ClInclude Include="..\Public\MPBall.h" />
@@ -439,6 +440,7 @@
     <ClCompile Include="..\Private\Door.cpp" />
     <ClCompile Include="..\Private\Fly_Move.cpp" />
     <ClCompile Include="..\Private\Fly_Turn.cpp" />
+    <ClCompile Include="..\private\Gear_Item.cpp" />
     <ClCompile Include="..\Private\Gull.cpp" />
     <ClCompile Include="..\Private\Hover_Idle.cpp" />
     <ClCompile Include="..\Private\Hover_Move.cpp" />
@@ -485,7 +487,7 @@
     <ClCompile Include="..\Private\Death.cpp" />
     <ClCompile Include="..\Private\Descendo.cpp" />
     <ClCompile Include="..\Private\Enemy.cpp" />
-    <ClCompile Include="..\private\Game_Manager.cpp" />
+    <ClCompile Include="..\private\Event_Vault_Spawn.cpp" />
     <ClCompile Include="..\private\Knotgrass_Item.cpp" />
     <ClCompile Include="..\private\Lacewing_Flies_Item.cpp" />
     <ClCompile Include="..\private\Leaping_Toadstool_Caps_Item.cpp" />

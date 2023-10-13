@@ -249,10 +249,6 @@ public:
 
 #ifdef _DEBUG
 private:
-	void Tick_ImGui();
-	void Tick_Magic_ImGui();
-	_bool m_isGravity = { false };
-
 	void Tick_TestShake();
 #endif // _DEBUG
 
@@ -304,6 +300,10 @@ private:
 	void Add_Layer_Item();
 	void Drink_Potion();
 
+	void Add_Potion();
+
+	void Drink_Heal_Potion();
+
 	void Blink_Start();
 	void Blink_End();
 
@@ -331,6 +331,7 @@ private:
 
 	void Go_Use_Item();
 
+	void Go_Use_Potion();
 
 #pragma endregion
 

@@ -59,9 +59,9 @@ HRESULT CLevel_Cliffside::Ready_Lights()
 	LightDesc.vLookAt = _float4(51.7f, 0.f, 52.4f, 1.f);
 	LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
 	
-	LightDesc.vDiffuse = WHITEDEFAULT;
-	LightDesc.vAmbient = WHITEDEFAULT;
-	LightDesc.vSpecular = WHITEDEFAULT;
+	LightDesc.vDiffuse = _float4(0.95f, 0.95f, 0.95f, 1.f);
+	LightDesc.vAmbient = LightDesc.vDiffuse;
+	LightDesc.vSpecular = LightDesc.vDiffuse;
 
 	if (FAILED(pGameInstance->Add_Light(LightDesc, nullptr, true, 0, _float(g_iWinSizeX) / g_iWinSizeY)))
 		return E_FAIL;	
@@ -152,7 +152,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 	}*/
 	///////////////////////////////////////////////////////////////////////
 
-	//Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Cliff1.mon"));
+	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Cliff.mon"));
 
 	ENDINSTANCE;
 

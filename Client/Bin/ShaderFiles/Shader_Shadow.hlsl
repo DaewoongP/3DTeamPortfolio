@@ -88,7 +88,7 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
     float fShadowPower = 1.f;
     
     if (0 < iNumLights)
-        fShadowPower *= Create_ShadowPower(vObjectWorldPos, g_LightViewMatrix, g_LightProjMatrix, g_LightDepthTexture, 0.5f);
+        fShadowPower *= Create_ShadowPower(vObjectWorldPos, g_LightViewMatrix, g_LightProjMatrix, g_LightDepthTexture, 0.7f);
     if (1 < iNumLights)
         fShadowPower *= Create_ShadowPower(vObjectWorldPos, g_LightViewMatrix1, g_LightProjMatrix1, g_LightDepthTexture1, 0.3f);
 
@@ -188,7 +188,7 @@ float Create_ShadowPower(float4 vWorldPos, matrix LightViewMatrix, matrix LightP
     }
     // 빛의 뷰스페이스 포지션 z와 픽셀의 라이트 뎁스 (실제 월드공간상의 viewz값)
     // 빛의 뷰스페이스 z값이 UV좌표의 뷰스페이스 z값보다 "클경우 (깊을경우)" 그림자.
-    else if (vLightViewPos.z - 0.2f > vLightDepth.x * g_fCamFar)
+    else if (vLightViewPos.z - 0.22f > vLightDepth.x * g_fCamFar)
     {
         fRetValue = fShadowPower;
     }

@@ -154,6 +154,14 @@ HRESULT CUI_Slot::Add_Components()
 		return E_FAIL;
 	}
 
+	/* Com_Button */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_UI_Button"),
+		TEXT("Com_Button"), reinterpret_cast<CComponent**>(&m_pButtonCom))))
+	{
+		MSG_BOX("Failed CUI_Effect_Back Add_Component : (Com_Button)");
+		__debugbreak();
+		return E_FAIL;
+	}
 	return S_OK;
 }
 

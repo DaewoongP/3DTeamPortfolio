@@ -46,6 +46,8 @@ private:
 	CMagic::MAGICDESC m_MagicDesc;
 	CMagicBall* m_CastingMagic = { nullptr };
 
+	mutable _float m_fProtegoCoolTime = { 0.f };
+
 private:
 	HRESULT Make_AI();
 	HRESULT Make_Magics();
@@ -66,6 +68,7 @@ private: /* Çàµ¿ ¹­À½µé */
 	HRESULT Make_Check_Spell(_Inout_ CSelector* pSelector);
 	HRESULT Make_Protego(_Inout_ CSequence* pSequence);
 	HRESULT Make_NormalAttack(_Inout_ CSelector* pSelector);
+	HRESULT Make_Taunts(_Inout_ CRandomChoose* pRandomChoose);
 
 	HRESULT Make_Fly_Combo(_Inout_ CSelector* pSelector);
 	HRESULT Make_Turns(_Inout_ CSequence* pSequence);

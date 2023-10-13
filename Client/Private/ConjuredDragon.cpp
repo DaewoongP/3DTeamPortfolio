@@ -35,6 +35,27 @@ HRESULT CConjuredDragon::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
+	BEGININSTANCE;
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/BlackSmokeIdle.ptc"), LEVEL_SANCTUM))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeTrace")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/BlackSmokeTrace.ptc"), LEVEL_SANCTUM))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	ENDINSTANCE;
 
 	return S_OK;
 }
@@ -108,7 +129,6 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	m_pHitMatrix = m_HitMatrices[rand() % 3];
-
 	Update_Invincible(fTimeDelta);
 	Check_Air_Balance(fTimeDelta);
 	Check_Phase();
@@ -370,8 +390,12 @@ HRESULT CConjuredDragon::Make_AI()
 		if (FAILED(__super::Make_AI()))
 			throw TEXT("Failed Enemy Make_AI");
 
+		if (FAILED(m_pRootBehavior->Add_Type("pBreath", m_pBreath)))
+			throw TEXT("Failed Add_Type pBreath");
+
 		if (FAILED(m_pRootBehavior->Add_Type("fInvincibleGauge", &m_fInvincibleGauge)))
 			throw TEXT("Failed Add_Type fInvincibleGauge");
+
 		if (FAILED(m_pRootBehavior->Add_Type("isInvincible", &m_isInvincible)))
 			throw TEXT("Failed Add_Type isInvincible");
 		if (FAILED(m_pRootBehavior->Add_Type("isBreakInvincible", &m_isBreakInvincible)))
@@ -669,6 +693,31 @@ HRESULT CConjuredDragon::Bind_HitMatrices()
 	_float4x4 WeaponOffsetMatrix = pBone->Get_OffsetMatrix() * m_pModelCom->Get_PivotFloat4x4();
 	m_pWeapon->Set_Offset_Matrix(WeaponOffsetMatrix);
 
+	return S_OK;
+}
+
+HRESULT CConjuredDragon::Add_Effects()
+{
+	try /* Check Add_Components */
+	{
+		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle"),
+			TEXT("Com_BlackSmokeIdle"), reinterpret_cast<CComponent**>(&m_pEffect_BlackSmokeIdle))))
+			throw TEXT("Com_BlackSmokeIdle");
+
+		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeTrace"),
+			TEXT("Com_BlackSmokeIdle"), reinterpret_cast<CComponent**>(&m_pEffect_BlackSmokeTrace))))
+			throw TEXT("Com_BlackSmokeIdle");
+
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Add_Components : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		return E_FAIL;
+	}
 	return S_OK;
 }
 
@@ -1605,10 +1654,14 @@ HRESULT CConjuredDragon::Make_Air_Break_Invincible(_Inout_ CSequence* pSequence)
 		pAction_Break_Invinclble->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_bool* pIsInvincible = { nullptr };
+				CBreath* pBreath = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("isInvincible", pIsInvincible)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("pBreath", pBreath)))
 					return false;
 
 				*pIsInvincible = false;
+				pBreath->Off_Breath();
 
 				return true;
 			});
@@ -2080,7 +2133,7 @@ void CConjuredDragon::Action_Pulse()
 {
 	if (nullptr == m_pPulse)
 		return;
-	
+
 	CPulse::PULSEINITDESC PulseInitDesc;
 	PulseInitDesc.vPosition = m_pTransform->Get_Position();
 	PulseInitDesc.fLifeTime = 3.5f;

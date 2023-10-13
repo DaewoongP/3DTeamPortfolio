@@ -13,10 +13,23 @@ public:
 		RENDER_PICKING, RENDER_BRUSHING, RENDER_UITEXTURE, RENDER_END };
 
 public:
+	// Debug & Check
 	_float Get_GlowPower() { return m_fGlowPower; }
 	void Set_GlowPower(_float fPower) { m_fGlowPower = fPower; }
 	_float Get_HDR() { return m_fHDR; }
 	void Set_HDR(_float fPower) { m_fHDR = fPower; }
+	class CDOF* Get_Dof() { return m_pDOF; }
+
+public:
+	// radial on / off , sample 최대개수 = 10
+	_float Get_ScreenRadialBlurWidth() { return m_fRadialBlurWidth; }
+	_bool Get_IsScreenRadial() { return m_isScreenRadial; }
+	void Set_ScreenRadial(_bool isRadial, _float fRadialWidth) { 
+		m_isScreenRadial = isRadial;
+		m_fRadialBlurWidth = fRadialWidth;
+	}
+	void Set_SSAO(_bool isSSAO) { m_isSSAO = isSSAO; }
+	_bool Get_SSAO() { return m_isSSAO; }
 
 private:
 	explicit CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -54,6 +67,7 @@ private:
 	HRESULT Render_RadialBlur();
 	HRESULT Render_Screen();
 	HRESULT Render_Rain();
+	HRESULT Render_ScreenRadial();
 	HRESULT Render_UI();
 
 #ifdef _DEBUG
@@ -100,6 +114,11 @@ private:
 	class CShader*					m_pSSAOShader = { nullptr };
 	class CShader*					m_pDistortionShader = { nullptr };
 	class CShader*					m_pRadialBlurShader = { nullptr };
+
+private:
+	_bool							m_isSSAO = { false };
+	_bool							m_isScreenRadial = { false };
+	_float							m_fRadialBlurWidth = { 0.f };
 
 private:
 	class CBlur*					m_pBlur = { nullptr };

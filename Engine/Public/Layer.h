@@ -19,7 +19,6 @@ private:
 
 public:
 	_umap<const _tchar*, class CComponent*>* Get_Components() { return &m_Components; }
-	_umap<const _tchar*, class CComponent*>* Get_DeadComponents() { return &m_DeadComponents; }
 
 public:
 	HRESULT			Initialize_Level(_uint iCurrentLevelIndex);
@@ -37,7 +36,6 @@ public:
 
 private:
 	_umap<const _tchar*, class CComponent*>	m_Components;
-	_umap<const _tchar*, class CComponent*>	m_DeadComponents;
 
 public:
 	static CLayer* Create();

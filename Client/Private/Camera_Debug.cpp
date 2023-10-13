@@ -41,6 +41,7 @@ HRESULT CCamera_Debug::Initialize(void* pArg)
 	Safe_Release(pGameInstance);
 
 #endif
+	CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"), (CComponent**)(&m_pRenderer));
 	return S_OK;
 }
 
@@ -201,42 +202,49 @@ void CCamera_Debug::Tick_ImGui()
 	}
 
 	ImGui::End();
-
-	_uint iCurrentLevelIndex = pGameInstance->Get_CurrentLevelIndex();
-	CLayer* pLayer = pGameInstance->Find_Layer(iCurrentLevelIndex, TEXT("Layer_Monster"));
-	if (nullptr == pLayer)
-	{
-		Safe_Release(pGameInstance);
-		return;
-	}
-	_umap<const _tchar*, class CComponent*>* pDeadComponents = pLayer->Get_DeadComponents();
-	if (nullptr == pDeadComponents)
-	{
-		Safe_Release(pGameInstance);
-		return;
-	}
 	ImGui::SetNextWindowPos(ImVec2(0.f, 500.f));
-	ImGui::SetNextWindowSize(ImVec2(300.f, 200.f));
+	ImGui::SetNextWindowSize(ImVec2(300.f, 400.f));
 
-	ImGui::Begin("Mob");
-		
-	for (auto& Pair : *pDeadComponents)
+	// Shader
+	ImGui::Begin("Shader");
+	_bool isSSAO = m_pRenderer->Get_SSAO();
+	if (ImGui::Checkbox("SSAO", &isSSAO))
 	{
-		_char szTag[MAX_PATH] = "";
-		WCharToChar(Pair.first, szTag);
-		string szCutTag = szTag;
-		if (ImGui::Button(szCutTag.substr(11).c_str(), ImVec2(150.f, 20.f)))
-		{
-			wstring wstrObjTag = Pair.first + Generate_HashtagW();
-			_float3 vPos = static_cast<CGameObject*>(Pair.second)->Get_Transform()->Get_Position();
-			_float4x4 matrix = XMMatrixTranslation(vPos.x, vPos.y, vPos.z);
-			pGameInstance->Add_Component(iCurrentLevelIndex, iCurrentLevelIndex,
-				Pair.second->Get_PrototypeTag(), TEXT("Layer_Monster"), wstrObjTag.c_str(), &matrix);
+		m_pRenderer->Set_SSAO(isSSAO);
+	}
 
-			CComponent* pCom = pGameInstance->Find_Component_In_Layer(iCurrentLevelIndex, TEXT("Layer_Monster"), wstrObjTag.c_str());
-			if (nullptr != pCom)
-				pCom->Initialize_Level(iCurrentLevelIndex);
-		}
+	_float fGlowPower = m_pRenderer->Get_GlowPower();
+	if (ImGui::SliderFloat("GlowPower", &fGlowPower, 0.1f, 10.f))
+	{
+		m_pRenderer->Set_GlowPower(fGlowPower);
+	}
+
+	_float fHDR = m_pRenderer->Get_HDR();
+	if (ImGui::SliderFloat("HDR", &fHDR, 0.f, 1.5f))
+	{
+		m_pRenderer->Set_HDR(fHDR);
+	}
+
+	CDOF* pDOF = m_pRenderer->Get_Dof();
+	_float fFocusDistance = pDOF->Get_FocusDistance();
+	_float fFocusRange = pDOF->Get_FocusRange();
+	if (ImGui::SliderFloat("FocusDistance", &fFocusDistance, 0.1f, 100.f, "%.1f"))
+	{
+		pDOF->Set_FocusDistance(fFocusDistance);
+	}
+	if (ImGui::SliderFloat("FocusRange", &fFocusRange, 0.1f, 100.f, "%.1f"))
+	{
+		pDOF->Set_FocusRange(fFocusRange);
+	}
+	_float fRadialWidth = m_pRenderer->Get_ScreenRadialBlurWidth();
+	if (ImGui::SliderFloat("Radial", &fRadialWidth, 0.001f, 0.2f))
+	{
+		m_pRenderer->Set_ScreenRadial(true, fRadialWidth);
+	}
+	_bool isRadial = m_pRenderer->Get_IsScreenRadial();
+	if (ImGui::Checkbox("Radial", &isRadial))
+	{
+		m_pRenderer->Set_ScreenRadial(isRadial, fRadialWidth);
 	}
 
 	ImGui::End();
@@ -274,4 +282,6 @@ CGameObject* CCamera_Debug::Clone(void* pArg)
 void CCamera_Debug::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pRenderer);
 }

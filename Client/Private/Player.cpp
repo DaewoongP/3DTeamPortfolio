@@ -227,6 +227,19 @@ HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 	/*if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
 		return E_FAIL;*/
 
+	if (nullptr != m_pTarget)
+	{
+		Safe_Release(m_pTarget);
+		m_pTarget = nullptr;
+	}
+
+	if (nullptr != m_pTargetTransform)
+	{
+		Safe_Release(m_pTargetTransform);
+		m_pTargetTransform = nullptr;
+	}
+
+
 	return S_OK;
 }
 
@@ -269,7 +282,9 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	Key_Input(fTimeDelta);
 	//m_pStateContext->Tick(fTimeDelta)
+	Go_Protego(&m_ProtegoStateDesc);
 
+	Fix_Mouse();
 	Update_Cloth(fTimeDelta);
 
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
@@ -296,7 +311,6 @@ void CPlayer::Tick(_float fTimeDelta)
 
 
 #ifdef _DEBUG
-	ADD_IMGUI([&] { this->Tick_ImGui(); });
 	ADD_IMGUI([&] { this->Tick_TestShake(); });
 #endif // _DEBUG
 }
@@ -1274,6 +1288,11 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		m_UI_Group_SkillTap->Set_isOpen(m_isOpenSkillTap);
 	}
 
+	if (pGameInstance->Get_DIKeyState(DIK_G, CInput_Device::KEY_DOWN))
+	{
+		Go_Use_Potion();
+	}
+
 	/*if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
 		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 10.f, PxForceMode::eIMPULSE);
@@ -1304,11 +1323,11 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))
 	{
-		/*m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::FOCUS_POTION);
+		m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::FOCUS_POTION);
 		m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::ENDURUS_POTION);
 		m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::INVISIBILITY_POTION);
 		m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::MAXIMA_POTION);
-		m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::THUNDERBREW_POTION);*/
+		m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::THUNDERBREW_POTION);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
@@ -1515,54 +1534,6 @@ HRESULT CPlayer::Ready_MagicDesc()
 void CPlayer::MagicTestTextOutput()
 {
 }
-
-#ifdef _DEBUG
-
-void CPlayer::Tick_ImGui()
-{
-	ImGui::Begin("Player");
-
-	if (ImGui::Checkbox("Gravity", &m_isGravity))
-	{
-		m_pRigidBody->Set_Gravity(m_isGravity);
-	}
-
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-	if (ImGui::Button("Go to Level Init Position"))
-	{
-		m_pTransform->Set_Position(m_vLevelInitPosition[pGameInstance->Get_CurrentLevelIndex()]);
-		m_pRigidBody->Clear_Force();
-	}
-	Safe_Release(pGameInstance);
-
-
-	_float3 vVelocity = m_pTransform->Get_Velocity();
-	ImGui::InputFloat3("Velocity", reinterpret_cast<_float*>(&vVelocity));
-
-	_float fGlowPower = m_pRenderer->Get_GlowPower();
-	if (ImGui::SliderFloat("GlowPower", &fGlowPower, 0.1f, 10.f))
-	{
-		m_pRenderer->Set_GlowPower(fGlowPower);
-	}
-
-	_float fHDR = m_pRenderer->Get_HDR();
-	if (ImGui::SliderFloat("HDR", &fHDR, 0.f, 1.5f))
-	{
-		m_pRenderer->Set_HDR(fHDR);
-	}
-
-	ImGui::End();
-}
-
-void CPlayer::Tick_Magic_ImGui()
-{
-	ImGui::Begin("Magic");
-
-	ImGui::End();
-}
-
-#endif // _DEBUG
 
 void CPlayer::UpdateLookAngle()
 {
@@ -2610,6 +2581,12 @@ void CPlayer::Go_Jump()
 
 void CPlayer::Tick_TestShake()
 {
+	RECT rc;
+	GetWindowRect(g_hWnd, &rc);
+	
+	ImGui::SetNextWindowPos(ImVec2(_float(rc.right) - 8.f, _float(rc.top)));
+	ImGui::SetNextWindowSize(ImVec2(300.f, 600.f));
+
 	ImGui::Begin("TestShake");
 
 	ImGui::Text("Shake_Type");
@@ -2869,7 +2846,6 @@ _uint CPlayer::Special_Action(_uint _iButton)
 void CPlayer::Add_Layer_Item()
 {
 	CTool* pTool = m_pPlayer_Information->Get_PotionTap()->Get_CurTool();
-
 	if (nullptr == pTool)
 		return;
 	pTool->CreateTool();
@@ -2880,10 +2856,29 @@ void CPlayer::Drink_Potion()
 	m_pPlayer_Information->Get_PotionTap()->Use_Item(m_pTransform->Get_Position());
 }
 
+void CPlayer::Add_Potion()
+{
+	m_pPlayer_Information->Add_Potion();
+}
+
+void CPlayer::Drink_Heal_Potion()
+{
+	CTool* pTool = m_pPlayer_Information->Get_Healpotion();
+
+	if (nullptr == pTool)
+	{
+		return;
+	}
+
+	pTool->Use(m_pTransform->Get_Position());
+}
+
 void CPlayer::Go_Protego(void* _pArg)
 {
 	if (true == m_isPrepareProtego && true == m_isCollisionEnterProtego)
 	{
+		Find_Target_For_Distance();
+
 		m_pStateContext->Set_StateMachine(TEXT("Protego"), _pArg);
 
 		m_isCollisionEnterProtego = false;
@@ -2967,6 +2962,10 @@ void CPlayer::Go_Use_Item()
 		return;
 
 	CUseItemState::USEITEMDESC UseItemDesc;
+	
+	UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(); };
+
+	m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Add_Layer_Item"), UseItemDesc.funcPotion);
 
 	UseItemDesc.eItem_Id = pTool->Get_ItemID();
 
@@ -2999,7 +2998,26 @@ void CPlayer::Go_Use_Item()
 	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
 		(m_pStateContext->Is_Current_State(TEXT("Idle"))))
 	{
-		m_pStateContext->Set_StateMachine(TEXT("UseItem"));
+		m_pStateContext->Set_StateMachine(TEXT("UseItem"), &UseItemDesc);
+	}
+}
+
+void CPlayer::Go_Use_Potion()
+{
+	CUseItemState::USEITEMDESC UseItemDesc;
+
+	UseItemDesc.funcPotion = [&] {(*this).Add_Potion(); };
+
+	m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Add_Layer_Item"), UseItemDesc.funcPotion);
+
+	UseItemDesc.eItem_Id = ITEM_ID_WIGGENWELD_POTION;
+
+	UseItemDesc.funcPotion = [&] {(*this).Drink_Heal_Potion(); };
+	
+	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
+		(m_pStateContext->Is_Current_State(TEXT("Idle"))))
+	{
+		m_pStateContext->Set_StateMachine(TEXT("UseItem"), &UseItemDesc);
 	}
 }
 
