@@ -3,6 +3,7 @@
 
 #include "Enemy.h"
 #include "Professor_FIg.h"
+#include "EnergyBall.h"
 #include "Player.h"
 
 CProtego::CProtego(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -353,6 +354,10 @@ void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	else if (!lstrcmp(m_pTarget->Get_Tag(), TEXT("GameObject_Professor_Fig")))
 	{
 		static_cast<const CProfessor_Fig*>(m_pTarget)->Set_Protego_Collision(pTransform, eAttackType);
+	}
+	else if (!lstrcmp(m_pTarget->Get_Tag(), TEXT("Com_EnergyBall")))
+	{
+		static_cast<const CEnergyBall*>(m_pTarget)->Set_Protego_Collision(pTransform, eAttackType);
 	}
 	else
 	{

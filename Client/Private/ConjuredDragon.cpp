@@ -108,7 +108,6 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	m_pHitMatrix = m_HitMatrices[rand() % 3];
-
 	Update_Invincible(fTimeDelta);
 	Check_Air_Balance(fTimeDelta);
 	Check_Phase();
@@ -370,8 +369,12 @@ HRESULT CConjuredDragon::Make_AI()
 		if (FAILED(__super::Make_AI()))
 			throw TEXT("Failed Enemy Make_AI");
 
+		if (FAILED(m_pRootBehavior->Add_Type("pBreath", m_pBreath)))
+			throw TEXT("Failed Add_Type pBreath");
+
 		if (FAILED(m_pRootBehavior->Add_Type("fInvincibleGauge", &m_fInvincibleGauge)))
 			throw TEXT("Failed Add_Type fInvincibleGauge");
+
 		if (FAILED(m_pRootBehavior->Add_Type("isInvincible", &m_isInvincible)))
 			throw TEXT("Failed Add_Type isInvincible");
 		if (FAILED(m_pRootBehavior->Add_Type("isBreakInvincible", &m_isBreakInvincible)))
@@ -1605,10 +1608,14 @@ HRESULT CConjuredDragon::Make_Air_Break_Invincible(_Inout_ CSequence* pSequence)
 		pAction_Break_Invinclble->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_bool* pIsInvincible = { nullptr };
+				CBreath* pBreath = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("isInvincible", pIsInvincible)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("pBreath", pBreath)))
 					return false;
 
 				*pIsInvincible = false;
+				pBreath->Off_Breath();
 
 				return true;
 			});
@@ -2080,7 +2087,7 @@ void CConjuredDragon::Action_Pulse()
 {
 	if (nullptr == m_pPulse)
 		return;
-	
+
 	CPulse::PULSEINITDESC PulseInitDesc;
 	PulseInitDesc.vPosition = m_pTransform->Get_Position();
 	PulseInitDesc.fLifeTime = 3.5f;

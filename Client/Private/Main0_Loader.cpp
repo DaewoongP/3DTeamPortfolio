@@ -83,6 +83,7 @@
 #include "Trigger_Vault.h"
 #include "Phase.h"
 #include "Cylinder.h"
+#include "Event_Vault_Spawn.h"
 
 #ifdef _DEBUG
 #include "Test_Player.h"
@@ -231,14 +232,20 @@ HRESULT CMain0_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 
 HRESULT CMain0_Loader::Loading_For_Vault(LEVELID eLevelID)
 {
-	/* For.Prototype_GameObject_MeshEffect*/
+	/* For.Prototype_GameObject_MeshEffect */
 	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Cloister_MeshEffect"),
 		CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Cloister/Cloister.ME")))))
 		throw TEXT("Prototype_GameObject_Cloister_MeshEffect");
 
+	/* For.Prototype_GameObject_Trigger_Vault */
 	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Trigger_Vault"),
 		CTrigger_Vault::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Trigger_Vault");
+
+	/* For.Prototype_GameObject_Event_Spawn */
+	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Spawn"),
+		CEvent_Vault_Spawn::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Event_Spawn");
 
 	return S_OK;
 }
