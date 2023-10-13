@@ -196,6 +196,8 @@ HRESULT CRenderer::Initialize_Prototype()
 
 	m_fGlowPower = 3.f;
 	m_fHDR = 0.7f;
+	m_fRadialBlurWidth = 0.05f;
+	m_isScreenRadial = false;
 
 	return S_OK;
 }
@@ -293,7 +295,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 	// Screen Shading
 	if (FAILED(Render_Screen()))
 		return E_FAIL;
-	if (FAILED(Render_Rain()))
+	if (FAILED(Render_ScreenRadial()))
 		return E_FAIL;
 
 	// UI 렌더링
@@ -773,8 +775,8 @@ HRESULT CRenderer::Render_RadialBlur()
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_RadialBlur"))))
 		return E_FAIL;
 
-	/*if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Final"))))
-		return E_FAIL;*/
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Final"))))
+		return E_FAIL;
 	// Shader
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_RadialBlur"), m_pRadialBlurShader, "g_RadialBlurTexture")))
 		return E_FAIL;
@@ -793,8 +795,8 @@ HRESULT CRenderer::Render_RadialBlur()
 	if (FAILED(m_pRectBuffer->Render()))
 		return E_FAIL;
 
-	/*if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Final"))))
-		return E_FAIL;*/
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Final"))))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -819,6 +821,31 @@ HRESULT CRenderer::Render_Screen()
 
 HRESULT CRenderer::Render_Rain()
 {
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_ScreenRadial()
+{
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Final"), m_pRadialBlurShader, "g_TargetTexture")))
+		return E_FAIL;
+	if (FAILED(m_pRadialBlurShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pRadialBlurShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pRadialBlurShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	if (FAILED(m_pRadialBlurShader->Bind_RawValue("g_isScreenRadial", &m_isScreenRadial, sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pRadialBlurShader->Bind_RawValue("g_fBlurWidth", &m_fRadialBlurWidth, sizeof(_float))))
+		return E_FAIL;
+
+	if (FAILED(m_pRadialBlurShader->Begin("RadialScreen")))
+		return E_FAIL;
+
+	if (FAILED(m_pRectBuffer->Render()))
+		return E_FAIL;
 
 	return S_OK;
 }
