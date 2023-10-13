@@ -152,7 +152,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 	}*/
 	///////////////////////////////////////////////////////////////////////
 
-	//Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Cliff1.mon"));
+	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Cliff.mon"));
 
 	ENDINSTANCE;
 

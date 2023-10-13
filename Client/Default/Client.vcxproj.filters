@@ -97,9 +97,6 @@
     <Filter Include="02. GameObject\01. Player\03. PlayerInformation">
       <UniqueIdentifier>{32c19ffc-fb69-42ca-ba81-07c40b9b305f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Levels\02. Vault">
-      <UniqueIdentifier>{0cc40b5b-ca2a-4eb4-a4df-e1f5dbb77a1d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Levels\01. Cliffside">
       <UniqueIdentifier>{1bc6cbc7-4c2b-4ad9-9e0c-6724a4c369f3}</UniqueIdentifier>
     </Filter>
@@ -705,6 +702,9 @@
     </Filter>
     <Filter Include="02. GameObject\09. Item\03. Gear">
       <UniqueIdentifier>{50b1d4b5-dafa-493a-9f8c-87271ae5385f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\02. Vault">
+      <UniqueIdentifier>{0cc40b5b-ca2a-4eb4-a4df-e1f5dbb77a1d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
