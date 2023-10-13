@@ -147,6 +147,14 @@ HRESULT CArmored_Troll::Make_AI()
 			throw TEXT("Failed Create_Behavior pSelector_Alive");
 
 		/* Set Decorator */
+		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsSpawn = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isSpawn", pIsSpawn)))
+					return false;
+
+				return *pIsSpawn;
+			});
 
 		/* Set Options */
 

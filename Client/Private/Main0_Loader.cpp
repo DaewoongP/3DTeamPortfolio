@@ -83,7 +83,9 @@
 #include "Trigger_Vault.h"
 #include "Phase.h"
 #include "Cylinder.h"
+
 #include "Event_Vault_Spawn.h"
+#include "Event_Smeade.h"
 
 #ifdef _DEBUG
 #include "Test_Player.h"
@@ -262,6 +264,14 @@ HRESULT CMain0_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
 
+	BEGININSTANCE;
+
+	/* For.Prototype_GameObject_Event_Smeade */
+	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Smeade"),
+		CEvent_Smeade::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Event_Smeade");
+
+	ENDINSTANCE;
 
 	return S_OK;
 }

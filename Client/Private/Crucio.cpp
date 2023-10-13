@@ -297,18 +297,18 @@ void CCrucio::Tick_CastMagic(_float fTimeDelta)
 		}
 	}
 
-	if (!isAlive&& m_fWandParticleDelayTimer>500)
+	if (!isAlive && m_fWandParticleDelayTimer > 500)
 		Do_MagicBallState_To_Next();
 	
-	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_WAND].size(); i++)
+	for (_int i = 0; i < m_ParticleVec[EFFECT_STATE_WAND].size(); ++i)
 	{
 		m_ParticleVec[EFFECT_STATE_WAND].data()[i]->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
 	}
-	for (int i = 0; i < 5; i++)
+	for (_int i = 0; i < 5; ++i)
 	{
 		m_ParticleVec[EFFECT_STATE_MAIN].data()[i]->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
 	}
-	for (int i = 4; i < 11; i++)
+	for (_int i = 4; i < 11; ++i)
 	{
 		m_ParticleVec[EFFECT_STATE_MAIN].data()[i]->Get_Transform()->Set_Position(m_CurrentTargetMatrix.Translation());
 	}

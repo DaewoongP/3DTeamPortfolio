@@ -96,6 +96,7 @@ HRESULT CLumos::Reset(MAGICBALLINITDESC& InitDesc)
 {
 	__super::Reset(InitDesc);
 	m_fEndTimer = 0.3f;
+	m_fDyingTimer = 1000.f;
 	return S_OK;
 }
 

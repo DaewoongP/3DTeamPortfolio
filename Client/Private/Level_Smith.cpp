@@ -4,6 +4,7 @@
 #include "MapObject.h"
 #include "MapObject_Ins.h"
 #include "Level_Loading.h"
+#include "Trigger.h"
 
 CLevel_Smith::CLevel_Smith(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
@@ -17,6 +18,7 @@ HRESULT CLevel_Smith::Initialize()
 	FAILED_CHECK_RETURN(Ready_Layer_Monsters(TEXT("Layer_Monster")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_UI(TEXT("Layer_UI")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Event(TEXT("Layer_Event")), E_FAIL);
 
 	BEGININSTANCE;
 	pGameInstance->Reset_World_TimeAcc();
@@ -147,6 +149,21 @@ HRESULT CLevel_Smith::Ready_UI(const _tchar* pLayerTag)
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Store)");
 		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CLevel_Smith::Ready_Event(const _tchar* pLayerTag)
+{
+	BEGININSTANCE;
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Event_Smeade"), pLayerTag, TEXT("Event_Smeade"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Event_Smeade)");
 		return E_FAIL;
 	}
 

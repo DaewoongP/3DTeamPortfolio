@@ -706,6 +706,9 @@
     <Filter Include="01. Levels\02. Vault">
       <UniqueIdentifier>{0cc40b5b-ca2a-4eb4-a4df-e1f5dbb77a1d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="07. Events\Smeade">
+      <UniqueIdentifier>{2ed55d9c-62e6-455a-a77e-621148ea10a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1403,6 +1406,9 @@
     <ClInclude Include="..\public\Gear_Item.h">
       <Filter>02. GameObject\09. Item\03. Gear</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Event_Smeade.h">
+      <Filter>07. Events\Smeade</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2022,9 +2028,6 @@
     <ClCompile Include="..\Private\AncientDoor_L.cpp">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\AncientDoor_L</Filter>
     </ClCompile>
-    <ClCompile Include="AncientDoor_R.cpp">
-      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\AncientDoor_R</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Breath.cpp">
       <Filter>02. GameObject\02. Enemy\04. Dragon\00. Breath</Filter>
     </ClCompile>
@@ -2057,6 +2060,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Gear_Item.cpp">
       <Filter>02. GameObject\09. Item\03. Gear</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AncientDoor_R.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\AncientDoor_R</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Smeade.cpp">
+      <Filter>07. Events\Smeade</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
