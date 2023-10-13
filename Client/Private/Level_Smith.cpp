@@ -15,6 +15,7 @@ HRESULT CLevel_Smith::Initialize()
 	FAILED_CHECK_RETURN(Ready_Lights(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_Monsters(TEXT("Layer_Monster")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_UI(TEXT("Layer_UI")), E_FAIL);
 
 	BEGININSTANCE;
 	pGameInstance->Reset_World_TimeAcc();
@@ -121,12 +122,12 @@ HRESULT CLevel_Smith::Ready_UI(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Main)");
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
+	//if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+	//{
+	//	MSG_BOX("Failed Add Scene : (Scene_Main)");
+	//	Safe_Release(pGameInstance);
+	//	return E_FAIL;
+	//}
 
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SMITH, TEXT("Prototype_GameObject_UI_Store"), pLayerTag, TEXT("GameObject_UI_Store"))))
 	{

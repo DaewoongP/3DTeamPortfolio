@@ -92,6 +92,11 @@ HRESULT CItem::Change_Scale(_float fX, _float fY)
 	return S_OK;
 }
 
+CItem* CItem::Buy()
+{
+	return this;
+}
+
 void CItem::Tick(_float fTimeDelta)
 {
 	if (false == m_isEnable)

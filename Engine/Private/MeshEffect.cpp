@@ -63,7 +63,10 @@ HRESULT CMeshEffect::Initialize_Prototype(const _tchar* pFilePath, _uint _iLevel
 	__super::Initialize_Prototype();
 	// 여기서 m_Path로드해주기.
 
-	this->Load(pFilePath);
+	if (FAILED(this->Load(pFilePath)))
+	{
+		MSG_BOX("Failed to Load MeshEffect");
+	}
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);

@@ -7,7 +7,7 @@
 #include "UI_Dynamic_Back.h"
 #include "UI_Group_Cursor.h"
 #include "UI_Slot.h"
-
+#include "Item.h"
 CUI_Store::CUI_Store(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -57,25 +57,59 @@ HRESULT CUI_Store::Initialize(void* pArg)
 	m_fOffset = _float2(130.f, 360.f);
 	m_fWidth = 80.f;
 	m_fHeight = 80.f;
-	m_iHorizontal = 4;
-	m_iVertical = 5;
-
-	Store_Sell_Read_File(TEXT("../../Resources/GameData/UIData/UI_Group_Store_Sell_Edit.uidata"));
-	Store_Buy_Read_File(TEXT("../../Resources/GameData/UIData/UI_Group_Store_Buy.uidata"));
-	Ready_DefaultTexture();
+	m_iHorizontal = 5;
+	m_iVertical = 4;
 	Ready_Offset();
-
+	//Store_Sell_Read_File(TEXT("../../Resources/GameData/UIData/UI_Group_Store_Sell_Edit.uidata"));
+	//Store_Buy_Read_File(TEXT("../../Resources/GameData/UIData/UI_Group_Store_Buy.uidata"));
+	Ready_DefaultTexture();
+	Set_Item();
 	return S_OK;
 }
 
 void CUI_Store::Tick(_float fTimeDelta)
 {
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	if (pGameInstance->Get_DIKeyState(DIK_L))
+	{
+		(true == m_isOpen) ? m_isOpen = false : m_isOpen = true;	
+	}
+
+	Safe_Release(pGameInstance);
+	
+	if (false == m_isOpen)
+		return;
+
 	__super::Tick(fTimeDelta);
+
+	for (_uint i = 0; i < m_pSlots.size(); ++i)
+	{
+		if (m_pSlots[i]->Get_Clicked())
+		{
+			cout << i << "번째 아이템이 클릭되었습니다" << '\n';
+			cout << i << "번째 아이템이 인벤토리로 들어옵니다" << '\n';
+		}
+	}
 }
 
 void CUI_Store::Late_Tick(_float fTimeDelta)
 {
+	if (false == m_isOpen)
+		return;
+
 	__super::Late_Tick(fTimeDelta);
+}
+
+void CUI_Store::Open()
+{
+	m_isOpen = true;
+}
+
+void CUI_Store::Close()
+{
+	m_isOpen = false;
 }
 
 HRESULT CUI_Store::Store_Sell_Read_File(const _tchar* pFilePath)
@@ -242,6 +276,54 @@ CUI::UIDESC CUI_Store::Load_File(const HANDLE hFile, _bool isDDS)
 
 HRESULT CUI_Store::Set_Item()
 {
+	for (auto& pSlot : m_pSlots)
+	{
+		if (nullptr != pSlot)
+		{
+			pSlot->Set_IconTexture(nullptr);
+		}
+	}
+	m_pItems.resize(m_pSlots.size());
+	for (_uint i = 0; i < m_pSlots.size(); ++i)
+	{
+		m_pItems[i] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_DITTANY_LEAVES, LEVEL_STATIC, nullptr);
+	}
+	
+	_uint iSize = m_pItems.size();
+	_uint iIndex = 0;
+	for (auto& pItem : m_pItems)
+	{
+		if (nullptr == m_pSlots[iIndex])
+		{
+			wstring wszTag = TEXT("Com_UI_Slot");
+			wszTag += std::to_wstring(iIndex);
+			CUI::UIDESC Desc;
+			ZEROMEM(&Desc);
+			Desc.vCombinedXY = _float2(0.f, 0.f);
+			Desc.fX = m_fPosition[iIndex].x;
+			Desc.fY = m_fPosition[iIndex].y;
+			Desc.fZ = 0.1f;
+			Desc.fSizeX = 70.f;
+			Desc.fSizeY = 70.f;
+
+			lstrcpy(Desc.szTexturePath, TEXT(""));
+
+			if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Slot"),
+				wszTag.c_str(), reinterpret_cast<CComponent**>(&m_pSlots[iIndex]), &Desc)))
+			{
+				MSG_BOX("Com_Inventory : Failed Clone Component (Com_UI_Slot)");
+				__debugbreak();
+				return E_FAIL;
+			}
+			m_pSlots[iIndex]->Set_IconTexture(pItem->Get_UITexture());
+		}
+		else if (nullptr == m_pSlots[iIndex]->Get_IconTexture() && nullptr != m_pSlots[iIndex])
+		{
+			m_pSlots[iIndex]->Set_IconTexture(pItem->Get_UITexture());
+		}
+		++iIndex;
+	}
+
 	return S_OK;
 }
 
@@ -307,7 +389,28 @@ HRESULT CUI_Store::Ready_DefaultTexture()
 
 HRESULT CUI_Store::Add_Compoents()
 {
+	//const _tchar* pComTag[20] = { TEXT("Com_Slot0"), TEXT("Com_Slot1"), TEXT("Com_Slot2"),
+	//	TEXT("Com_Slot3"), TEXT("Com_Slot4"), TEXT("Com_Slot5"), TEXT("Com_Slot6"), TEXT("Com_Slot7"), TEXT("Com_Slot8"),
+	//TEXT("Com_Slot9"), TEXT("Com_Slot10"),  TEXT("Com_Slot11"),  TEXT("Com_Slot12"),  TEXT("Com_Slot13"), TEXT("Com_Slot14"),
+	//TEXT("Com_Slot15"), TEXT("Com_Slot16"), TEXT("Com_Slot17"), TEXT("Com_Slot18"), TEXT("Com_Slot19") };
+	//
+	//// Prototype_GameObject_UI_Slot;
 
+	//
+	//for (_uint i = 0; i < 20; ++i)
+	//{
+	//	CUI::UIDESC UIDesc;
+	//	UIDesc.fX = m_fPosition[i].x;
+	//	UIDesc.fY = m_fPosition[i].y;
+	//	UIDesc.fSizeX = 30.f;
+	//	UIDesc.fSizeY = 30.f;
+	//	UIDesc.fZ = 0.3f;
+	//	UIDesc.szTexturePath = TEXT("../../Resources/UI/Game/UI/Icons/MenuAssets/UI_T_ButtonBack.png");
+	//	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Slot")
+	//		, pComTag[i], reinterpret_cast<CComponent**>(&m_pSlots[i]))))
+	//		return E_FAIL;
+	//}
+	
 	return S_OK;
 }
 
@@ -357,5 +460,11 @@ void CUI_Store::Free()
 			Safe_Release(pSlot);
 		}
 		m_pSlots.clear();
+
+		for (auto& pItem : m_pItems)
+		{
+			Safe_Release(pItem);
+		}
+		m_pItems.clear();
 	}
 }
