@@ -906,6 +906,7 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 	if (false == m_MainModuleDesc.isStartColorRange)
 	{
 		_particle_iter->vColor = m_MainModuleDesc.vStartColor;
+		_particle_iter->vStartColor = m_MainModuleDesc.vStartColor;
 	}
 	else
 	{

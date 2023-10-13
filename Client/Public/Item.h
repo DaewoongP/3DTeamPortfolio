@@ -58,6 +58,8 @@ public:
 	void Set_Enable(_bool isEnable) { m_isEnable = isEnable; }
 	void Set_Alpha(_float fAlpha) { m_fAlphaRatio = fAlpha; }
 
+	CItem* Buy();
+
 public:
 	ITEM_ID Get_ItemID() { return m_ItemCreateDesc.eItemId; }
 	CTexture* Get_UITexture() { return m_pUITexture; }
