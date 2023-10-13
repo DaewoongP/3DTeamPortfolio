@@ -162,12 +162,9 @@ void CEvent_Vault_Spawn::Free()
 {
 	__super::Free();
 
-	if (true == m_isCloned)
-	{
-		Safe_Release(m_pSpawn_Stage_1);
-		Safe_Release(m_pSpawn_Stage_2);
+	Safe_Release(m_pSpawn_Stage_1);
+	Safe_Release(m_pSpawn_Stage_2);
 
-		for (auto& Pair : m_pMonsters)
-			Safe_Release(Pair.second);
-	}
+	for (auto& Pair : m_pMonsters)
+		Safe_Release(Pair.second);
 }

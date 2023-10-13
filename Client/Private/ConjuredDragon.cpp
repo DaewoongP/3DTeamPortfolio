@@ -39,7 +39,7 @@ HRESULT CConjuredDragon::Initialize_Prototype()
 	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/BlackSmokeIdle.ptc"), LEVEL_SANCTUM))))
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/BlackSmokeIdle/"), LEVEL_SANCTUM))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
@@ -48,8 +48,8 @@ HRESULT CConjuredDragon::Initialize_Prototype()
 
 	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeTrace")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/BlackSmokeTrace.ptc"), LEVEL_SANCTUM))))
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeTrace")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/BlackSmokeTrace/"), LEVEL_SANCTUM))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
@@ -72,7 +72,7 @@ HRESULT CConjuredDragon::Initialize(void* pArg)
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
-
+	m_pEffect_BlackSmokeIdle->Play(m_pTransform->Get_Position());
 	return S_OK;
 }
 
@@ -134,6 +134,10 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 	Check_Phase();
 	Spawn_EnergyBall(fTimeDelta);
 	Update_Breath(fTimeDelta);
+
+	_float3 vOffsetPos = m_pTransform->Get_Position();
+	vOffsetPos.y += 10.f;
+	m_pEffect_BlackSmokeIdle->Get_Transform()->Set_Position(vOffsetPos);
 
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
@@ -536,6 +540,10 @@ HRESULT CConjuredDragon::Add_Components()
 		if (FAILED(__super::Add_Components()))
 			throw TEXT("Failed Enemy Add_Components");
 
+		if (FAILED(Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle"),
+			TEXT("Com_Particle_BlackSmokeIdle"), reinterpret_cast<CComponent**>(&m_pEffect_BlackSmokeIdle))))
+			throw TEXT("Com_Particle_BlackSmokeIdle");
+
 		/* For.Com_Health */
 		CHealth::HEALTHDESC HealthDesc;
 		HealthDesc.iMaxHP = 500;
@@ -652,6 +660,8 @@ HRESULT CConjuredDragon::Add_Components_Level(_uint iCurrentLevelIndex)
 		if (FAILED(Add_Component(iCurrentLevelIndex, TEXT("Prototype_GameObject_Dragon_Head"),
 			TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
 			throw TEXT("Com_Weapon");
+
+
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -2180,5 +2190,6 @@ void CConjuredDragon::Free()
 
 		Safe_Release(m_pMagicSlot);
 		Safe_Release(m_pWeapon);
+		Safe_Release(m_pEffect_BlackSmokeIdle);
 	}
 }

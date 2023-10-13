@@ -55,6 +55,7 @@ private:
 
 	_bool			m_isCheckOnce = { true }; // 한번만 상호작용 가능
 	_bool			m_isCol_with_Player = { false }; // 플레이어와 충돌 여부
+	_float			m_fTimeAcc = { 0.f };
 
 private:
 	MAPOBJECTDESC	m_ObjectDesc;

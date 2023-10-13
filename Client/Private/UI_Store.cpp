@@ -64,6 +64,7 @@ HRESULT CUI_Store::Initialize(void* pArg)
 	//Store_Buy_Read_File(TEXT("../../Resources/GameData/UIData/UI_Group_Store_Buy.uidata"));
 	Ready_DefaultTexture();
 	Set_Item();
+	m_isOpen = false;
 	return S_OK;
 }
 
@@ -72,7 +73,7 @@ void CUI_Store::Tick(_float fTimeDelta)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (pGameInstance->Get_DIKeyState(DIK_L))
+	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
 	{
 		(true == m_isOpen) ? m_isOpen = false : m_isOpen = true;	
 	}

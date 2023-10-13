@@ -5,6 +5,7 @@
 #include "MapObject_Ins.h"
 #include "Trigger_Vault.h"
 #include "Player.h"
+#include "Level_Loading.h"
 
 CLevel_Vault::CLevel_Vault(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CLevel(pDevice, pContext)
@@ -40,6 +41,11 @@ void CLevel_Vault::Tick(_float fTimeDelta)
 		{
 			pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
 		}
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_BACKSPACE, CInput_Device::KEY_DOWN))
+	{
+		pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_SMITH));
 	}
 
 	ENDINSTANCE;

@@ -93,6 +93,8 @@ namespace Engine
 		PxFilterObjectAttributes attribute1, PxFilterData filterData1,
 		PxPairFlags& pairFlags, const void* constantBlockSize, PxU32 constantBlock)
 	{
+		std::lock_guard<std::mutex> lock(mtx);
+
 		PX_UNUSED(attribute0);
 		PX_UNUSED(attribute1);
 		PX_UNUSED(filterData0);

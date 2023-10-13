@@ -2,7 +2,8 @@
 #include "GameInstance.h"
 #include "MapObject.h"
 #include "MapObject_Ins.h"
-
+#include "Level_Loading.h"
+#include "Trigger.h"
 
 CLevel_Cliffside::CLevel_Cliffside(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
@@ -39,7 +40,11 @@ void CLevel_Cliffside::Tick(_float fTimeDelta)
 			pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
 		}
 	}
-
+	if (pGameInstance->Get_DIKeyState(DIK_BACKSPACE, CInput_Device::KEY_DOWN))
+	{
+		pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_SMITH));
+	}
+	
 	ENDINSTANCE;
 
 #ifdef _DEBUG
@@ -59,7 +64,7 @@ HRESULT CLevel_Cliffside::Ready_Lights()
 	LightDesc.vLookAt = _float4(51.7f, 0.f, 52.4f, 1.f);
 	LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
 	
-	LightDesc.vDiffuse = _float4(0.95f, 0.95f, 0.95f, 1.f);
+	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vAmbient = LightDesc.vDiffuse;
 	LightDesc.vSpecular = LightDesc.vDiffuse;
 

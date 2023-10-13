@@ -55,44 +55,10 @@ void CProtegoState::OnStateEnter(void* _pArg)
 	{
 		PROTEGOSTATEDESC* ProtegoStateDesc = static_cast<PROTEGOSTATEDESC*>(_pArg);
 
-#pragma region 바라보기
-		//맞았으면 그놈을 바라보자
-		//나에서 타겟을 향한 벡터
-		//_float3 vDirTarget{};
-
-		//vDirTarget = ProtegoStateDesc->pTransform->Get_Position() - m_StateMachineDesc.pPlayerTransform->Get_Position();
-
-		//vDirTarget = XMVectorSetY(vDirTarget, 0.0f);
-
-		//vDirTarget.Normalize();
-
-		////내 룩 벡터
-		//_float3 vLook{};
-
-		//vLook = m_StateMachineDesc.pPlayerTransform->Get_Look();
-
-		//vLook = XMVectorSetY(vLook, 0.0f);
-
-		//vLook.Normalize();
-
-		//_float fTargetAngle = vLook.Dot(vDirTarget);
-
-		//if (1.0f < fTargetAngle)
-		//{
-		//	fTargetAngle = 1.0f;
-		//}
-
-		//fTargetAngle = acosf(fTargetAngle);
-
-		//if (0.0f > vLook.Cross(vDirTarget).y)
-		//{
-		//	fTargetAngle *= -1;
-		//}
-
-		//m_StateMachineDesc.pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fTargetAngle);
+		if (nullptr == ProtegoStateDesc->pTransform)
+			return;
 
 		m_StateMachineDesc.pPlayerTransform->LookAt(ProtegoStateDesc->pTransform->Get_Position(), true);
-#pragma endregion
 
 		m_isHit = ProtegoStateDesc->isHit;
 

@@ -3,6 +3,7 @@
 
 #include "MapObject.h"
 #include "MapObject_Ins.h"
+#include "Level_Loading.h"
 
 CLevel_Smith::CLevel_Smith(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
@@ -39,6 +40,19 @@ void CLevel_Smith::Tick(_float fTimeDelta)
 		{
 			pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
 		}
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_F9, CInput_Device::KEY_DOWN))
+	{
+		pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE));
+	}
+	if (pGameInstance->Get_DIKeyState(DIK_F10, CInput_Device::KEY_DOWN))
+	{
+		pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_VAULT));
+	}
+	if (pGameInstance->Get_DIKeyState(DIK_F11, CInput_Device::KEY_DOWN))
+	{
+		pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_SANCTUM));
 	}
 
 	ENDINSTANCE;

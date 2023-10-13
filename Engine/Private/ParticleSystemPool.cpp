@@ -138,7 +138,7 @@ void CParticleSystemPool::Play_Particle(const _tchar* szParticleTag, _float4x4 O
 	Safe_AddRef(pString_Manager);
 
 	lstrcat(szComponentTag, szParticleTag);
-	lstrcat(szComponentTag, Generate_HashtagW().c_str());
+	lstrcat(szComponentTag, Generate_HashtagW(false, 25).c_str());
 
 	// 현재 실행중인 레이어에 할당.
 	CParticleSystem* pParticle = pParticleQueue->Pop_Front();

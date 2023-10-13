@@ -195,14 +195,22 @@ void CMagicBall::Ready_SplineMove(CTrail* pTrail,_float3 Aixs)
 	//진행 경로만큼 뒤로 이동한 뒤
 	m_vSplineLerp[0] = m_vStartPosition - vDir;
 	//임의의 랜덤 값을 구하고
-	_float fRandom = Random_Generator(-30.f, 30.f);
+	_float fRandom = { 10.f };
+	if (rand() % 2)
+		fRandom = Random_Generator(20.f, 30.f);
+	else
+		fRandom = Random_Generator(-20.f, -30.f);	
 	// 외적 방향으로 튄다.
 	m_vSplineLerp[0] += _float3(normal.x * fRandom, normal.y * fabsf(fRandom), normal.z * fRandom);
 
 	//진행 경로만큼 뒤로 이동한 뒤
 	m_vSplineLerp[1] = m_vStartPosition + vDir; 
 	//임의의 랜덤 값을 구하고
-	fRandom = Random_Generator(-30.f, 30.f);
+	fRandom = { 10.f };
+	if (rand() % 2)
+		fRandom = Random_Generator(15.f, 25.f);
+	else
+		fRandom = Random_Generator(-15.f, -25.f);
 	// 외적 방향으로 튄다.
 	m_vSplineLerp[1] += _float3(normal.x * fRandom, -normal.y * fabsf(fRandom), normal.z * fRandom);
 }
@@ -535,7 +543,7 @@ HRESULT CMagicBall::Add_RigidBody()
 	RigidBodyDesc.fStaticFriction = 0.f;
 	RigidBodyDesc.fDynamicFriction = 0.f;
 	RigidBodyDesc.fRestitution = 0.f;
-	PxSphereGeometry SphereGeometry = PxSphereGeometry(0.2f);
+	PxSphereGeometry SphereGeometry = PxSphereGeometry(0.5f);
 	RigidBodyDesc.pGeometry = &SphereGeometry;
 	RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
 	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);

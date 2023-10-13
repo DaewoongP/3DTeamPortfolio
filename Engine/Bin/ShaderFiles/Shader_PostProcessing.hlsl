@@ -6,7 +6,6 @@ float3 g_vLuminancekey = float3(0.2126f, 0.7152f, 0.0722f);
 texture2D g_HDRTexture;
 texture2D g_GlowTexture;
 texture2D g_SSAOTexture;
-
 bool g_isSSAO;
 
 // HDR
@@ -60,7 +59,7 @@ PS_OUT PS_MAIN(PS_IN In)
     vector vHDR = g_HDRTexture.Sample(LinearSampler, In.vTexUV);
     vector vGlow = g_GlowTexture.Sample(LinearSampler, In.vTexUV);
     vector vSSAO = g_SSAOTexture.Sample(LinearSampler, In.vTexUV);
-    
+
     if (true == g_isSSAO)
         Out.vColor = vHDR * vSSAO + vGlow;
     else

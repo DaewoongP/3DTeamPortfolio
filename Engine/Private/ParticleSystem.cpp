@@ -275,6 +275,16 @@ void CParticleSystem::Late_Tick(_float _fTimeDelta)
 	if (false == IsEnable())
 		return;
 
+	if (OBJ_DEAD == Get_ObjEvent())
+	{
+		CParticleSystemPool* pPool = CParticleSystemPool::GetInstance();
+		Safe_AddRef(pPool);
+		pPool->Return_Particle(this);
+		Restart();
+		Safe_Release(pPool);
+		return;
+	}
+
 	if (nullptr != m_pRenderer)
 	{
 		if (true == m_RendererModuleDesc.isGlow)
@@ -577,11 +587,6 @@ void CParticleSystem::Action_By_StopOption()
 			return;
 
 		Set_ObjEvent(CGameObject::OBJ_DEAD);
-		CParticleSystemPool* pPool = CParticleSystemPool::GetInstance();
-		Safe_AddRef(pPool);
-		pPool->Return_Particle(this);
-		Restart();
-		Safe_Release(pPool);
 	}
 }
 

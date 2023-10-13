@@ -1,5 +1,6 @@
 #include "..\Public\Cliff_Gate.h"
 #include "GameInstance.h"
+#include "Level_Loading.h"
 
 CCliff_Gate::CCliff_Gate(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -93,12 +94,12 @@ void CCliff_Gate::Tick(_float fTimeDelta)
 		m_isCheckOnce = false;
 	}
 
-	ENDINSTANCE;
-
 	if(false == m_isCheckOnce)
 		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	else
 		m_pModel->Play_Animation(0, CModel::UPPERBODY, m_pTransform);
+
+	ENDINSTANCE;
 }
 
 void CCliff_Gate::Late_Tick(_float fTimeDelta)

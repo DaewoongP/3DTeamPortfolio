@@ -191,11 +191,9 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(25.f, 3.f, 22.5f);
 	m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
-	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(30.f, 3.f, 15.f); // �⺻ ��ġ
-	m_vLevelInitPosition[LEVEL_SMITH] = _float3(94.5f, 7.2f, 78.f); // ���� �����̼� �ٷ� ��
+	m_vLevelInitPosition[LEVEL_SMITH] = _float3(30.f, 3.f, 15.f); // �⺻ ��ġ
+	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(94.5f, 7.2f, 78.f); // ���� �����̼� �ٷ� ��
 	m_vLevelInitPosition[LEVEL_SKY] = _float3(88.8f, 12.5f, 69.8f); // ���� �����̼� �ٷ� ��
-
-
 
 	m_fTargetViewRange = 1.0f;
 
@@ -215,7 +213,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	//	IN_CIRC, OUT_CIRC, INOUT_CIRC,
 	//	IN_BOUNCE, OUT_BOUNCE, INOUT_BOUNCE,
 	//	IN_BACK, OUT_BACK, INOUT_BACK,
-
+	
 	return S_OK;
 }
 
@@ -223,7 +221,7 @@ HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 {
 	m_pTransform->Set_Position(m_vLevelInitPosition[iCurrentLevelIndex]);
 	m_eLevelID = (LEVELID)iCurrentLevelIndex;
-
+	m_pRigidBody->Clear_Force(PxForceMode::eVELOCITY_CHANGE);
 	/*if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
 		return E_FAIL;*/
 
@@ -459,6 +457,8 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			CHitState::HITSTATEDESC HitStateDesc;
 
 			HitStateDesc.iHitType = CHitState::HIT_LIGHT;
+			if (nullptr == pDesc->pTransform)
+				return;
 
 			HitStateDesc.pTransform = pDesc->pTransform;
 
@@ -1329,7 +1329,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::MAXIMA_POTION);
 		m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::THUNDERBREW_POTION);
 	}
-
+#endif //_DEBUG
 	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
 	{
 		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust01"), m_pTransform->Get_Position());
@@ -1351,10 +1351,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_SPIDER_FANG);
 		m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_TROLL_BOGEYS);
 		m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_SHRIVELFIG);
-
-
 	}
-#endif //_DEBUG
 
 	ENDINSTANCE;
 }
