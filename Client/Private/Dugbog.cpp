@@ -85,6 +85,11 @@ void CDugbog::Tick(_float fTimeDelta)
 
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+	
+	for (_uint i = 0; i < m_DarkAura.size(); i++)
+	{
+		m_DarkAura[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+	}
 }
 
 void CDugbog::Late_Tick(_float fTimeDelta)
@@ -284,6 +289,17 @@ HRESULT CDugbog::Add_Components()
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 			throw TEXT("Com_Health");
+
+		/* For.Com_AuraEffect*/
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Monster_DarkFlare_Particle")
+			, TEXT("Com_DarkFlare_Particle01"), (CComponent**)&m_DarkAura[0])))
+			throw TEXT("Com_DarkFlare_Particle01");
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Monster_DarkFlare_Particle")
+			, TEXT("Com_DarkFlare_Particle02"), (CComponent**)&m_DarkAura[1])))
+			throw TEXT("Com_DarkFlare_Particle02");
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Monster_DarkFlare_Particle")
+			, TEXT("Com_DarkFlare_Particle03"), (CComponent**)&m_DarkAura[2])))
+			throw TEXT("Com_DarkFlare_Particle03");
 
 		/* For.Com_RigidBody */
 		CRigidBody::RIGIDBODYDESC RigidBodyDesc;
@@ -1846,5 +1862,12 @@ CGameObject* CDugbog::Clone(void* pArg)
 
 void CDugbog::Free()
 {
+	if (m_isCloned)
+	{
+		for (_uint i = 0; i < m_DarkAura.size(); i++)
+		{
+			Safe_Release(m_DarkAura[i]);
+		}
+	}
 	__super::Free();
 }

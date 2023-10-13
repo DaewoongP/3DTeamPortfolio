@@ -297,7 +297,7 @@ void CCrucio::Tick_CastMagic(_float fTimeDelta)
 		}
 	}
 
-	if (!isAlive)
+	if (!isAlive&& m_fWandParticleDelayTimer>500)
 		Do_MagicBallState_To_Next();
 	
 	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_WAND].size(); i++)

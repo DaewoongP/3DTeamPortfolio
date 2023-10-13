@@ -144,7 +144,7 @@ void CBasicCast::Late_Tick(_float fTimeDelta)
 void CBasicCast::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	//¸÷ÀÌ¶û Ãæµ¹ÇßÀ¸¸é?
-	if (wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Enemy_Body")) != nullptr)
+	if (wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Enemy_Body")) != nullptr&& (m_eMagicBallState != MAGICBALL_STATE_DYING))
 	{
 		Set_MagicBallState(MAGICBALL_STATE_DYING);
 	}
@@ -164,8 +164,6 @@ void CBasicCast::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 HRESULT CBasicCast::Reset(MAGICBALLINITDESC& InitDesc)
 {
 	__super::Reset(InitDesc);
-
-	// Light
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 	CLight::LIGHTDESC LightDesc;
@@ -177,7 +175,6 @@ HRESULT CBasicCast::Reset(MAGICBALLINITDESC& InitDesc)
 	LightDesc.vPos = m_pTransform->Get_Position().TransCoord();
 	pGameInstance->Add_Light(LightDesc, &m_pLight);
 	Safe_Release(pGameInstance);
-
 	return S_OK;
 }
 
@@ -223,6 +220,7 @@ void CBasicCast::Tick_CastMagic(_float fTimeDelta)
 			m_fLerpAcc = 1;
 		m_TrailVec[EFFECT_STATE_MAIN][0]->Spline_Move(m_vSplineLerp[0], m_vStartPosition, m_vEndPosition, m_vSplineLerp[1], m_fLerpAcc);
 		m_pTransform->Set_Position(XMVectorLerp(m_vStartPosition, m_vEndPosition, m_fLerpAcc));
+		m_pLight->Set_Position(m_TrailVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Get_Position().TransCoord());
 	}
 	else
 	{

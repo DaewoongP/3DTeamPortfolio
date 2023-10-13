@@ -48,7 +48,11 @@ HRESULT CMagicBall::Initialize(void* pArg)
 void CMagicBall::Tick(_float fTimeDelta)
 {
 	//실시간으로 갱신해줍니다.
-	__super::Tick(fTimeDelta);
+	m_fDyingTimer -= fTimeDelta;
+	if (m_fDyingTimer < 0&& (m_eMagicBallState < MAGICBALL_STATE_DYING))
+	{
+		Set_MagicBallState(MAGICBALL_STATE_DYING);
+	}
 
 	if(m_pTargetWorldMatrix != nullptr)
 		m_CurrentTargetMatrix = (*m_pTargetOffsetMatrix) * (*m_pTargetWorldMatrix);
@@ -65,9 +69,7 @@ void CMagicBall::Tick(_float fTimeDelta)
 	
 	//여기서 위치를 갱신해줍니다.
 	Tick_MagicBall_State(fTimeDelta);
-
-	if (nullptr != m_pLight)
-		m_pLight->Set_Position(m_pTransform->Get_Position().TransCoord());
+	__super::Tick(fTimeDelta);
 }
 
 void CMagicBall::Late_Tick(_float fTimeDelta)
@@ -193,14 +195,14 @@ void CMagicBall::Ready_SplineMove(CTrail* pTrail,_float3 Aixs)
 	//진행 경로만큼 뒤로 이동한 뒤
 	m_vSplineLerp[0] = m_vStartPosition - vDir;
 	//임의의 랜덤 값을 구하고
-	_float fRandom = Random_Generator(-10.f, 10.f);
+	_float fRandom = Random_Generator(-30.f, 30.f);
 	// 외적 방향으로 튄다.
 	m_vSplineLerp[0] += _float3(normal.x * fRandom, normal.y * fabsf(fRandom), normal.z * fRandom);
 
 	//진행 경로만큼 뒤로 이동한 뒤
-	m_vSplineLerp[1] = m_vStartPosition + vDir;
+	m_vSplineLerp[1] = m_vStartPosition + vDir; 
 	//임의의 랜덤 값을 구하고
-	fRandom = Random_Generator(-20.f, 20.f);
+	fRandom = Random_Generator(-30.f, 30.f);
 	// 외적 방향으로 튄다.
 	m_vSplineLerp[1] += _float3(normal.x * fRandom, -normal.y * fabsf(fRandom), normal.z * fRandom);
 }
@@ -456,15 +458,14 @@ void CMagicBall::Tick_MagicBall_State(_float fTimeDelta)
 			m_pRigidBody->Disable_Collision("Magic_Ball");
 			m_isFirstFrameInState = false;
 
+			CGameInstance* pGameInstance = CGameInstance::GetInstance();
+			Safe_AddRef(pGameInstance);
 			if (nullptr != m_pLight)
 			{
-				CGameInstance* pGameInstance = CGameInstance::GetInstance();
-				Safe_AddRef(pGameInstance);
 				pGameInstance->Return_Light(m_pLight);
-				Safe_Release(pGameInstance);
 			}
+			Safe_Release(pGameInstance);
 		}
-
 		Tick_Dying(fTimeDelta);
 		break;
 	}
@@ -573,7 +574,6 @@ void CMagicBall::Free()
 				Safe_Release(m_ParticleVec[i].data()[j]);
 			}
 		}
-
 		Safe_Release(m_pRenderer);
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pLight);
