@@ -364,6 +364,11 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 	if (wstring::npos != wstrCollisionTag.find(TEXT("Attack")))
 	{
+		if (nullptr == CollisionEventDesc.pArg)
+		{
+			return;
+		}
+
 		CEnemy::COLLISIONREQUESTDESC* pDesc = static_cast<CEnemy::COLLISIONREQUESTDESC*>(CollisionEventDesc.pArg);
 
 		if (nullptr == pDesc ||
@@ -433,6 +438,11 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	}
 	else if (wstring::npos != wstrCollisionTag.find(TEXT("Magic_Ball")))
 	{
+		if (nullptr == CollisionEventDesc.pArg)
+		{
+			return;
+		}
+
 		CMagicBall::COLLSIONREQUESTDESC* pDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
 
 		//Protego
