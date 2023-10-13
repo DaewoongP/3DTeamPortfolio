@@ -69,7 +69,9 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
     for (int i = -iValue; i < iValue; ++i)
     {
         vNewUV = In.vTexUV + float2(fDeltaX * i, 0.f);
-        Out.vColor += g_fBlurWeights[iValue + i] * g_TargetTexture.Sample(LinearSampler, vNewUV);
+        vector vTargetColor = g_TargetTexture.Sample(LinearSampler, vNewUV);
+        if (0.f != vTargetColor.a)
+            Out.vColor += g_fBlurWeights[iValue + i] * vTargetColor;
         fTotal += g_fBlurWeights[iValue + i];
     }
 
@@ -91,7 +93,9 @@ PS_OUT PS_MAIN_BLURY(PS_IN In)
     for (int i = -iValue; i < iValue; ++i)
     {
         vNewUV = In.vTexUV + float2(0, fDeltaY * i);
-        Out.vColor += g_fBlurWeights[iValue + i] * g_TargetTexture.Sample(LinearSampler, vNewUV);
+        vector vTargetColor = g_TargetTexture.Sample(LinearSampler, vNewUV);
+        if (0.f != vTargetColor.a)
+            Out.vColor += g_fBlurWeights[iValue + i] * vTargetColor;
         fTotal += g_fBlurWeights[iValue + i];
     }
 

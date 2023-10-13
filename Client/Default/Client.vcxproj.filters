@@ -703,6 +703,9 @@
     <Filter Include="07. Events\Vault">
       <UniqueIdentifier>{1f3eeadd-26c0-496a-8e7b-abb99f64931a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\09. Item\03. Gear">
+      <UniqueIdentifier>{50b1d4b5-dafa-493a-9f8c-87271ae5385f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1397,6 +1400,9 @@
     <ClInclude Include="..\public\Event_Vault_Spawn.h">
       <Filter>07. Events\Vault</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Gear_Item.h">
+      <Filter>02. GameObject\09. Item\03. Gear</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2048,6 +2054,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Event_Vault_Spawn.cpp">
       <Filter>07. Events\Vault</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Gear_Item.cpp">
+      <Filter>02. GameObject\09. Item\03. Gear</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

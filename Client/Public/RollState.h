@@ -1,6 +1,10 @@
 #pragma once
 #include "StateMachine.h"
 
+BEGIN(Engine)
+class CRenderer;
+END
+
 BEGIN(Client)
 
 class CRollState :
@@ -37,6 +41,8 @@ public:
 
     virtual void Bind_Notify();
 
+private:
+    CRenderer*      m_pRenderer = { nullptr };
 
 private:
     _bool m_isBlink = { true };
