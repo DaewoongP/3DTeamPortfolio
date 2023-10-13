@@ -457,7 +457,8 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			CHitState::HITSTATEDESC HitStateDesc;
 
 			HitStateDesc.iHitType = CHitState::HIT_LIGHT;
-			if (nullptr == pDesc->pTransform)
+			if (nullptr == pDesc ||
+				nullptr == pDesc->pTransform)
 				return;
 
 			HitStateDesc.pTransform = pDesc->pTransform;
