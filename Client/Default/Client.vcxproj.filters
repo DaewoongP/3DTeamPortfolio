@@ -709,6 +709,9 @@
     <Filter Include="07. Events\Smeade">
       <UniqueIdentifier>{2ed55d9c-62e6-455a-a77e-621148ea10a5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="08. GameManager">
+      <UniqueIdentifier>{f7506b35-2a98-4706-aaf0-aacbf2491e33}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1409,6 +1412,9 @@
     <ClInclude Include="..\Public\Event_Smeade.h">
       <Filter>07. Events\Smeade</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Game_Manager.h">
+      <Filter>08. GameManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2066,6 +2072,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Event_Smeade.cpp">
       <Filter>07. Events\Smeade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Game_Manager.cpp">
+      <Filter>08. GameManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

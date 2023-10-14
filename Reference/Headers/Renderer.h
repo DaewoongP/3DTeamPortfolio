@@ -137,8 +137,6 @@ private:
 	class CGlow*					m_pGlow = { nullptr };
 	_float							m_fGlowPower = { 0.f };
 	_float							m_fHDR = { 0.f };
-	class CMotionBlurInstance*		m_pMotionBlurInstance = { nullptr };
-	class CMotionBlur*				m_pMotionBlur = { nullptr };
 	class CDOF*						m_pDOF = { nullptr };
 
 public:

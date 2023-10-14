@@ -77,6 +77,7 @@ struct PS_OUT
     float4		vNormal : SV_TARGET1;
 	float4		vDepth : SV_TARGET2;
     float4		vEmissive : SV_TARGET3;
+    float4		vMRO : SV_TARGET4;
 };
 
 /* 픽셀을 받고 픽셀의 색을 결정하여 리턴한다. */
