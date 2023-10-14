@@ -65,6 +65,7 @@ void CWolf::Tick(_float fTimeDelta)
 	Set_Current_Target();
 	Wolf_Animation();
 	Wolf_Levioso(fTimeDelta);
+	Wolf_Decendo(fTimeDelta);
 
 	// 점프하면서 플레이어에 방향을 맞춤
 	if (WF_JUMP_R == m_eCurrentAnim || WF_RUN_START == m_eCurrentAnim)
@@ -124,8 +125,18 @@ void CWolf::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		if (iter == m_CurrentTickSpells.end() &&
 			BUFF_LEVIOSO & eBuff)
 		{
+			// 레비오소 피격
 			m_CurrentTickSpells.emplace(eBuff, Action);
 			m_eCurrentAnim = WF_LEVIOSO_START;
+		}
+
+		if (iter == m_CurrentTickSpells.end() &&
+			BUFF_DESCENDO & eBuff)
+		{
+			// 디센도 피격
+			m_CurrentTickSpells.emplace(eBuff, Action);
+			m_eCurrentAnim = WF_DIE; // 원래는 디센도 애니메이션인데 죽는 애니메이션도 겸함
+			m_isDecendo = true;
 		}
 
 		// 레비오소 피격중일 때 평타 반응
@@ -159,35 +170,18 @@ void CWolf::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			m_RangeInEnemies.emplace(wstrObjectTag, CollisionEventDesc.pOtherOwner);
 	}
 
-	/* Collision Player Fig */
-	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Attack")))
+	/* Collision Protego */
+	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Attack")) &&
+		//wstring::npos != wstrOtherCollisionTag.find(TEXT("Protego")))
+		wstring::npos != wstrOtherCollisionTag.find(TEXT("Magic_Ball")))
 	{
-		if (false == IsEnemy(wstrObjectTag))
-			return;
-
-		if (WF_ATTACK == m_eCurrentAnim || WF_ATTACK_END == m_eCurrentAnim)
-		{
-			int a = 0;
-		}			
+		m_eCurrentAnim = WF_PROTEGO;
 	}
-
-	///* Collision Player Fig */
-	//if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
-	//{
-	//	if (false == IsEnemy(wstrObjectTag))
-	//		return;
 
 	//	m_isSpawn = true;
 	//	auto iter = m_RangeInEnemies.find(wstrObjectTag);
 	//	if (iter == m_RangeInEnemies.end())
 	//		m_RangeInEnemies.emplace(wstrObjectTag, CollisionEventDesc.pOtherOwner);
-	//}
-
-	///* Collision Protego */
-	//if (wstring::npos != wstrMyCollisionTag.find(TEXT("Attack")) &&
-	//	wstring::npos != wstrOtherCollisionTag.find(TEXT("Protego")))
-	//{
-	//	m_isParring = true;
 	//}
 }
 
@@ -300,8 +294,8 @@ HRESULT CWolf::Add_Components()
 			throw TEXT("Failed Create_Collider");
 
 		/* For.Collider Enemy_Attack */
-		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.1f, -0.3f);
-		PxSphereGeometry pSphereGeomatry2 = PxSphereGeometry(0.25f);
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.3f, -0.5f);
+		PxSphereGeometry pSphereGeomatry2 = PxSphereGeometry(0.5f);
 		RigidBodyDesc.pGeometry = &pSphereGeomatry2;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Attack");
 		RigidBodyDesc.eThisCollsion = COL_ENEMY_ATTACK;
@@ -312,7 +306,7 @@ HRESULT CWolf::Add_Components()
 
 		/* For.Com_Health */
 		CHealth::HEALTHDESC HealthDesc;
-		HealthDesc.iMaxHP = 100;
+		HealthDesc.iMaxHP = 200;
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 			throw TEXT("Com_Health");
@@ -373,11 +367,6 @@ HRESULT CWolf::Bind_HitMatrices()
 
 void CWolf::Wolf_Attack()
 {
-	m_CollisionRequestDesc.eType = ATTACK_LIGHT;
-	m_CollisionRequestDesc.iDamage = 5;
-	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
-
-	m_pRigidBody->Enable_Collision("Enemy_Attack", this, &m_CollisionRequestDesc);
 }
 
 void CWolf::Wolf_ChangeAnim()
@@ -416,6 +405,12 @@ void CWolf::Wolf_Animation()
 	case WF_ATTACK_START: // 공격 직전 자세 잡기
 		if (true == m_pModelCom->Is_Finish_Animation())
 		{
+			m_CollisionRequestDesc.eType = ATTACK_LIGHT;
+			m_CollisionRequestDesc.iDamage = 5;
+			m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
+
+			m_pRigidBody->Enable_Collision("Enemy_Attack", this, &m_CollisionRequestDesc);
+
 			m_eCurrentAnim = WF_ATTACK;
 		}
 		break;
@@ -428,6 +423,8 @@ void CWolf::Wolf_Animation()
 	case WF_ATTACK_AFTER_180_TURN: // 공격 실패했다면 180도 회전하며 들기
 		if (true == m_pModelCom->Is_Finish_Animation())
 		{
+			m_pRigidBody->Disable_Collision("Enemy_Attack");
+
 			m_eCurrentAnim = WF_RUN_START;
 		}
 		break;
@@ -474,6 +471,18 @@ void CWolf::Wolf_Animation()
 			m_eCurrentAnim = WF_LEVIOSO_LOOP;
 		}
 		break;
+	case WF_GETUP: // 디센도 혹은 프로테고 피격 후 일어나기
+		if (true == m_pModelCom->Is_Finish_Animation())
+		{
+			m_eCurrentAnim = WF_JUMP_R;
+		}
+		break;
+	case WF_PROTEGO: // 프로테고에 튕겨나감
+		if (true == m_pModelCom->Is_Finish_Animation())
+		{
+			m_eCurrentAnim = WF_GETUP;
+		}
+		break;
 	}
 }
 
@@ -487,14 +496,37 @@ void CWolf::Wolf_Turn(_float fTimeDelta)
 void CWolf::Wolf_Levioso(_float fTimeDelta)
 {
 	// 레비오소 지속시간이 끝나면 원래 애니메이션으로 돌림
-	if(WF_LEVIOSO_LOOP == m_eCurrentAnim)
+	if(WF_LEVIOSO_LOOP == m_eCurrentAnim ||
+		WF_2SPIN == m_eCurrentAnim ||
+		WF2SPIN_2 == m_eCurrentAnim ||
+		WF_1SPIN == m_eCurrentAnim)
 		m_fLeviosoDur += fTimeDelta;
 
-	if (5.f <= m_fLeviosoDur)
+	if (6.5f <= m_fLeviosoDur)
 	{
 		m_fLeviosoDur = 0.f;
 		m_eCurrentAnim = WF_LEVIOSO_END;
 	}
+}
+
+void CWolf::Wolf_Decendo(_float fTimeDelta)
+{
+	if (false == m_isDecendo)
+		return;
+
+	m_fDecendoDur += fTimeDelta;
+
+	if (5.f <= m_fDecendoDur)
+	{
+		m_isDecendo = false;
+		m_fDecendoDur = 0.f;
+		m_eCurrentAnim = WF_GETUP;
+	}
+}
+
+void CWolf::Wolf_Protego()
+{
+	m_pRigidBody->Disable_Collision("Enemy_Attack");
 }
 
 CWolf* CWolf::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
