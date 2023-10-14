@@ -40,9 +40,11 @@ HRESULT CWolf::Initialize_Level(_uint iCurrentLevelIndex)
 
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_Speed(10.f);
-	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
+	m_pTransform->Set_RotationSpeed(-5.f);
 
-	m_pModelCom->Change_Animation(0);
+	m_eCurrentAnim = WF_IDLE;
+	m_ePreAnim = m_eCurrentAnim;
+	m_pModelCom->Change_Animation(m_eCurrentAnim);
 	//m_isSpawn = true;
 
 	if (FAILED(Bind_HitMatrices()))
@@ -58,9 +60,25 @@ void CWolf::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	// 체력이 0 이하로 떨어지면
+	if (0.f >= m_pHealth->Get_Current_HP())
+		m_eCurrentAnim = WF_DIE;
+
 	// m_pHitMatrix = m_HitMatrices[rand() % 2];
 
 	Set_Current_Target();
+	Wolf_Animation();
+
+	// 점프하면서 플레이어에 방향을 맞춤
+	if (WF_JUMP_R == m_eCurrentAnim)
+		Wolf_Turn(fTimeDelta);
+
+	// 이전 애니메이션과 달라졌다면 애니메이션 변경
+	if (m_eCurrentAnim != m_ePreAnim)
+	{
+		m_ePreAnim = m_eCurrentAnim;
+		m_pModelCom->Change_Animation(m_eCurrentAnim);
+	}
 
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
@@ -79,10 +97,34 @@ void CWolf::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 	wstring wstrOtherCollisionTag = CollisionEventDesc.pOtherCollisionTag;
 
+	wstring wsPlayer(TEXT("Player_Default"));
+
 	/* Collision Magic */
 	if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
 	{
-		int a = 0;
+		CMagicBall::COLLSIONREQUESTDESC* pCollisionMagicBallDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
+		_int iDamage = pCollisionMagicBallDesc->iDamage;
+
+		m_pHealth->Damaged(iDamage);
+	}
+
+	// 플레이어가 범위 안에 들어왔다면
+	if (0 == lstrcmp(wstrOtherCollisionTag.c_str(), wsPlayer.c_str()))
+	{
+		if (WF_IDLE == m_eCurrentAnim) // 적 발견 전 누워있는 상태
+			m_eCurrentAnim = WF_IDLE_END;
+	}
+
+	/* Collision Player Fig */
+	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
+	{
+		if (false == IsEnemy(wstrObjectTag))
+			return;
+
+		m_isSpawn = true;
+		auto iter = m_RangeInEnemies.find(wstrObjectTag);
+		if (iter == m_RangeInEnemies.end())
+			m_RangeInEnemies.emplace(wstrObjectTag, CollisionEventDesc.pOtherOwner);
 	}
 
 	///* Collision Player Fig */
@@ -171,12 +213,12 @@ HRESULT CWolf::Add_Components()
 		RigidBodyDesc.isStatic = false;
 		RigidBodyDesc.isTrigger = false;
 		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
-		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.f, 0.f);
-		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(XMConvertToRadians(90.f), 0.f, 0.f);
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.5f, 0.f);
+		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, XMConvertToRadians(90.f), 0.f);
 		RigidBodyDesc.fStaticFriction = 0.f;
 		RigidBodyDesc.fDynamicFriction = 1.f;
 		RigidBodyDesc.fRestitution = 0.f;
-		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.5f, 1.f);
+		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.45f, 0.8f);
 		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
 		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotZ;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
@@ -194,7 +236,7 @@ HRESULT CWolf::Add_Components()
 		/* For.Collider Enemy_Range */
 		RigidBodyDesc.isStatic = true;
 		RigidBodyDesc.isTrigger = true;
-		PxSphereGeometry pSphereGeomatry1 = PxSphereGeometry(15.f);
+		PxSphereGeometry pSphereGeomatry1 = PxSphereGeometry(12.5f);
 		RigidBodyDesc.pGeometry = &pSphereGeomatry1;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Range");
 		RigidBodyDesc.eThisCollsion = COL_ENEMY_RANGE;
@@ -204,8 +246,8 @@ HRESULT CWolf::Add_Components()
 			throw TEXT("Failed Create_Collider");
 
 		/* For.Collider Enemy_Attack */
-		RigidBodyDesc.vOffsetPosition = _float3(0.f, 2.2f, 1.f);
-		PxSphereGeometry pSphereGeomatry2 = PxSphereGeometry(1.f);
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.1f, -0.3f);
+		PxSphereGeometry pSphereGeomatry2 = PxSphereGeometry(0.25f);
 		RigidBodyDesc.pGeometry = &pSphereGeomatry2;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Attack");
 		RigidBodyDesc.eThisCollsion = COL_ENEMY_ATTACK;
@@ -213,6 +255,13 @@ HRESULT CWolf::Add_Components()
 
 		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
 			throw TEXT("Failed Create_Collider");
+
+		/* For.Com_Health */
+		CHealth::HEALTHDESC HealthDesc;
+		HealthDesc.iMaxHP = 200;
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
+			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
+			throw TEXT("Com_Health");
 
 		// UI
 		CUI_Group_Enemy_HP::ENEMYHPDESC  Desc;
@@ -270,6 +319,72 @@ HRESULT CWolf::Bind_HitMatrices()
 
 void CWolf::Wolf_Attack()
 {
+}
+
+void CWolf::Wolf_Animation()
+{
+	switch (m_eCurrentAnim)
+	{
+	case WF_IDLE_END: // 적 발견 후 일어남
+		if (true == m_pModelCom->Is_Finish_Animation())
+		{
+			m_eCurrentAnim = WF_HOWL;
+		}
+		break;
+	case WF_HOWL: // 일어난 후 하울링
+		if (true == m_pModelCom->Is_Finish_Animation())
+		{
+			m_eCurrentAnim = WF_BARK;
+		}
+		break;
+	case WF_BARK: // 공격 전 짖기
+		if (true == m_pModelCom->Is_Finish_Animation())
+		{
+			m_eCurrentAnim = WF_JUMP_R;
+		}
+		break;
+	case WF_JUMP_R: // 오른쪽으로 한 번 폴짝 뜀
+		if (true == m_pModelCom->Is_Finish_Animation())
+		{
+			m_eCurrentAnim = WF_ATTACK_START;
+		}
+		break;
+	case WF_ATTACK_START: // 공격 직전 자세 잡기
+		if (true == m_pModelCom->Is_Finish_Animation())
+		{
+			m_eCurrentAnim = WF_ATTACK;
+		}
+		break;
+	case WF_ATTACK: // 공격
+		if (true == m_pModelCom->Is_Finish_Animation())
+		{
+			m_eCurrentAnim = WF_ATTACK_AFTER_180_TURN;
+		}
+		break;
+	case WF_ATTACK_AFTER_180_TURN: // 공격 실패했다면 180도 회전하며 들기
+		if (true == m_pModelCom->Is_Finish_Animation())
+		{
+			m_eCurrentAnim = WF_RUN_START;
+		}
+		break;
+	case WF_RUN_START: // 공격 후 잠깐 텀
+		if (true == m_pModelCom->Is_Finish_Animation())
+		{
+			m_eCurrentAnim = WF_ATTACK_END;
+		}
+		break;
+	case WF_ATTACK_END: // 다시 공격 시작 준비
+		if (true == m_pModelCom->Is_Finish_Animation())
+		{
+			m_eCurrentAnim = WF_BARK;
+		}
+		break;
+	}
+}
+
+void CWolf::Wolf_Turn(_float fTimeDelta)
+{
+	m_pTransform->LookAt_Lerp(m_pTarget->Get_Transform()->Get_Position(), fTimeDelta, true);
 }
 
 CWolf* CWolf::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
