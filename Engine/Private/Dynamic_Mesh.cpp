@@ -306,8 +306,13 @@ HRESULT CDynamic_Mesh::Ready_VertexBuffer_Anim(const Engine::MESH Mesh, const CM
 			}
 			});
 
-		_float4x4		OffsetMatrix;
+		_float4x4 OffsetMatrix;
 		memcpy(&OffsetMatrix, &Bone.OffsetMatrix, sizeof(_float4x4));
+
+		m_OffsetMatrices.push_back(OffsetMatrix);
+
+		if (iIndex == Bones.size())
+			continue;
 
 		Bones[iIndex]->Set_OffsetMatrix(OffsetMatrix);
 

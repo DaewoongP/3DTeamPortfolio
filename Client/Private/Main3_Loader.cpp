@@ -268,6 +268,11 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Hair/Player_Hair.dat"), TEXT("Player_Hair")))))
 			throw TEXT("Prototype_Component_MeshPart_Player_Hair");
 
+		/* For.Prototype_Component_MeshPart_Player_test */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Player_test"),
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/ttest/ttest.dat"), TEXT("Player_test")))))
+			throw TEXT("Prototype_Component_MeshPart_Player_test");
+
 		/* For.Prototype_Component_MeshPart_Player_Head */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Player_Head"),
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Head/Player_Head.dat"), TEXT("Player_Head")))))

@@ -27,6 +27,9 @@ HRESULT CRootBehavior::Initialize(void* pArg)
 
 void CRootBehavior::Tick(_float fTimeDelta)
 {
+	if (0 == m_Behaviors.size())
+		return;
+
 	Tick_Behavior(fTimeDelta);
 }
 

@@ -35,6 +35,10 @@ protected:
 protected:
 	_uint			m_iNumBones = { 0 };
 	vector<_uint>	m_BoneIndices;
+	// 서로 다른 파츠가 가지고 있는 메쉬가 커스텀 모델의 뼈를 중복으로 사용할 경우
+	// 각각의 메쉬의 오프셋 값이 다를 수 있기 때문에 메쉬파츠마다
+	// 오프셋행렬을 저장해서 셰이더에 행렬을 바인딩할때 사용한다.
+	vector<_float4x4> m_OffsetMatrices;
 
 	// Physx ConvexMesh 생성용
 	vector<_float3> m_VerticesPositionVec;

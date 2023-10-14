@@ -516,7 +516,8 @@ HRESULT CPlayer::Render()
 			}
 		}
 		else if (CCustomModel::HEAD == iPartsIndex ||
-			CCustomModel::ARM == iPartsIndex)
+			CCustomModel::ARM == iPartsIndex ||
+			CCustomModel::HAT == iPartsIndex)
 		{
 			for (_uint i = 0; i < iNumMeshes; ++i)
 			{
@@ -1372,6 +1373,17 @@ void CPlayer::Fix_Mouse()
 
 HRESULT CPlayer::Ready_MeshParts()
 {
+	//Hat
+	if (FAILED(m_pCustomModel->Add_MeshParts(
+		LEVEL_STATIC,
+		TEXT("Prototype_Component_MeshPart_Player_test"),
+		CCustomModel::HAT)))
+	{
+		MSG_BOX("Failed Add MeshPart Hat");
+
+		return E_FAIL;
+	}
+
 	//Hair
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,

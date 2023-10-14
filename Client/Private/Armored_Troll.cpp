@@ -77,7 +77,7 @@ void CArmored_Troll::Tick(_float fTimeDelta)
 	Set_Current_Target();
 	if (nullptr == m_pTarget)
 		m_pTarget = m_pPlayer;
-
+	
 	__super::Tick(fTimeDelta);
 
 	m_pHitMatrix = m_HitMatrices[rand() % 3];
@@ -359,7 +359,7 @@ void CArmored_Troll::DeathBehavior(const _float& fTimeDelta)
 	m_isDead = true;
 
 	m_fDeadTimeAcc += fTimeDelta;
-	if (3.f < m_fDeadTimeAcc)
+	if (5.5f < m_fDeadTimeAcc)
 		Set_ObjEvent(OBJ_DEAD);
 }
 
@@ -462,6 +462,9 @@ HRESULT CArmored_Troll::Make_Alive(_Inout_ CSelector* pSelector)
 
 				if (true == *pIsOverheadAction && (BUFF_FLIPENDO & *pCurrentSpell))
 					return false;
+
+				if (BUFF_FLIPENDO & *pCurrentSpell)
+					*pCurrentSpell ^= BUFF_FLIPENDO;
 
 				return true;
 			});
