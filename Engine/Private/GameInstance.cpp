@@ -123,6 +123,8 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 
 	m_pCollision_Manager->Tick();
 
+	m_pLight_Manager->Tick(fTimeDelta);
+
 	m_pLevel_Manager->Tick(fTimeDelta);
 }
 
@@ -556,6 +558,13 @@ HRESULT CGameInstance::Update_ShadowMatrix(_uint iShadowIndex, CLight::LIGHTDESC
 	NULL_CHECK_RETURN_MSG(m_pLight_Manager, E_FAIL, TEXT("Light NULL"));
 
 	return m_pLight_Manager->Update_ShadowMatrix(iShadowIndex, LightDesc);
+}
+
+HRESULT CGameInstance::Add_InstanceLight(_float3 vPos, _float fStartRange, _float fTime, _float4 vColor, _bool isIncrease, _float fIncreasePower)
+{
+	NULL_CHECK_RETURN_MSG(m_pLight_Manager, E_FAIL, TEXT("Light NULL"));
+
+	return m_pLight_Manager->Add_InstanceLight(vPos, fStartRange, fTime, vColor, isIncrease, fIncreasePower);
 }
 
 HRESULT CGameInstance::Add_Sounds(const _tchar* szSoundFilePath)

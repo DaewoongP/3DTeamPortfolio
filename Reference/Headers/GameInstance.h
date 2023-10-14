@@ -136,6 +136,8 @@ public: /* For.Light_Manager */
 	HRESULT Return_Light(class CLight* pLight);
 	HRESULT Clear_Lights();
 	HRESULT Update_ShadowMatrix(_uint iShadowIndex, CLight::LIGHTDESC LightDesc);
+	// PointLight only
+	HRESULT Add_InstanceLight(_float3 vPos, _float fStartRange, _float fTime, _float4 vColor, _bool isIncrease = false, _float fIncreasePower = 0.f);
 
 public: /* For.Sound_Manager */
 	HRESULT Add_Sounds(const _tchar * szSoundFilePath);

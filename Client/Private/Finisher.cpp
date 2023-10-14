@@ -241,6 +241,10 @@ void CFinisher::Ready_Dying()
 		m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Enable(m_vEndPosition);
 		m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Play(m_vEndPosition);
 	}
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	pGameInstance->Add_InstanceLight(m_vEndPosition, 50.f, 1.f, _float4(1.f, 1.f, 1.f, 1.f));
+	Safe_Release(pGameInstance);
 }
 
 void CFinisher::Tick_Begin(_float fTimeDelta)
