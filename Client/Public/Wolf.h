@@ -39,6 +39,7 @@ public:
 
 private:
 	_float m_fDeathTimeAcc = { 0.f }; // 사망 애니메이션이 나오고 얼마 뒤에 죽을 건지
+	_float m_fLeviosoDur = { 0.f };   // 레비오소 지속 시간
 
 private:
 	W0LF_ANIMATION m_eCurrentAnim = { WF_END };
@@ -51,9 +52,12 @@ private:
 	HRESULT Bind_HitMatrices();
 
 private:
-	void Wolf_Attack();					// 늑대 공격
-	void Wolf_Animation();				// 늑대 애니메이션 변경
-	void Wolf_Turn(_float fTimeDelta);	// 늑대가 플레이어를 향해 회전
+	void Wolf_Attack();						// 늑대 공격, Notify
+	void Wolf_ChangeAnim();					// 중간 프레임에서 애니메이션 변경, Notify
+
+	void Wolf_Animation();					// 늑대 애니메이션 변경
+	void Wolf_Turn(_float fTimeDelta);		// 늑대가 플레이어를 향해 회전
+	void Wolf_Levioso(_float fTimeDelta);	// 레비오소 맞았을 때 패턴
 
 public:
 	static CWolf* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

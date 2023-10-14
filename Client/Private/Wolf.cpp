@@ -58,22 +58,13 @@ HRESULT CWolf::Initialize_Level(_uint iCurrentLevelIndex)
 
 void CWolf::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
-
-	// 체력이 0 이하로 떨어지면
-	if (0.f >= m_pHealth->Get_Current_HP())
-	{
-		m_eCurrentAnim = WF_DIE;
-		m_fDeathTimeAcc += fTimeDelta;
-
-		if (3.f >= m_fDeathTimeAcc)
-			Set_ObjEvent(OBJ_DEAD);
-	}		
+	__super::Tick(fTimeDelta);	
 
 	// m_pHitMatrix = m_HitMatrices[rand() % 2];
 
 	Set_Current_Target();
 	Wolf_Animation();
+	Wolf_Levioso(fTimeDelta);
 
 	// 점프하면서 플레이어에 방향을 맞춤
 	if (WF_JUMP_R == m_eCurrentAnim || WF_RUN_START == m_eCurrentAnim)
@@ -99,6 +90,16 @@ void CWolf::Tick(_float fTimeDelta)
 void CWolf::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	// 체력이 0 이하로 떨어지면
+	if (0.f >= m_pHealth->Get_Current_HP())
+	{
+		m_eCurrentAnim = WF_DIE;
+		m_fDeathTimeAcc += fTimeDelta;
+
+		if (3.f >= m_fDeathTimeAcc)
+			Set_ObjEvent(OBJ_DEAD);
+	}
 }
 
 void CWolf::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
@@ -125,6 +126,21 @@ void CWolf::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		{
 			m_CurrentTickSpells.emplace(eBuff, Action);
 			m_eCurrentAnim = WF_LEVIOSO_START;
+		}
+
+		// 레비오소 피격중일 때 평타 반응
+		if (WF_LEVIOSO_LOOP == m_eCurrentAnim)
+		{
+			Off_Gravity();
+
+			int iRandValue = rand() % 3;
+
+			if (0 == iRandValue)
+				m_eCurrentAnim = WF_2SPIN;
+			else if (1 == iRandValue)
+				m_eCurrentAnim = WF2SPIN_2;
+			else if (2 == iRandValue)
+				m_eCurrentAnim = WF_1SPIN;
 		}
 	}
 
@@ -224,6 +240,16 @@ HRESULT CWolf::Make_Notifies()
 {
 	function<void()> Func = [&] { this->Wolf_Attack(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Wolf_Attack"), Func)))
+		return E_FAIL;
+
+	Func = [&] { this->Wolf_ChangeAnim(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Wolf_ChangeAnim1"), Func)))
+		return E_FAIL;
+
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Wolf_ChangeAnim2"), Func)))
+		return E_FAIL;
+
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Wolf_ChangeAnim3"), Func)))
 		return E_FAIL;
 
 	return S_OK;
@@ -354,6 +380,11 @@ void CWolf::Wolf_Attack()
 	m_pRigidBody->Enable_Collision("Enemy_Attack", this, &m_CollisionRequestDesc);
 }
 
+void CWolf::Wolf_ChangeAnim()
+{
+	m_eCurrentAnim = WF_LEVIOSO_LOOP;
+}
+
 void CWolf::Wolf_Animation()
 {
 	switch (m_eCurrentAnim)
@@ -412,12 +443,58 @@ void CWolf::Wolf_Animation()
 			m_eCurrentAnim = WF_BARK;
 		}
 		break;
+	case WF_LEVIOSO_START: // 레비오소 시작
+		if (true == m_pModelCom->Is_Finish_Animation())
+		{
+			m_eCurrentAnim = WF_LEVIOSO_LOOP;
+		}
+		break;
+	case WF_LEVIOSO_END: // 레비오소 끝
+		if (true == m_pModelCom->Is_Finish_Animation())
+		{
+			On_Gravity();
+			m_eCurrentAnim = WF_BARK;
+		}
+		break;
+	case WF_2SPIN: // 레비오소 중 피격 모션 1
+		if (true == m_pModelCom->Is_Finish_Animation())
+		{
+			m_eCurrentAnim = WF_LEVIOSO_LOOP;
+		}
+		break;
+	case WF2SPIN_2: // 레비오소 중 피격 모션 2
+		if (true == m_pModelCom->Is_Finish_Animation())
+		{
+			m_eCurrentAnim = WF_LEVIOSO_LOOP;
+		}
+		break;
+	case WF_1SPIN: // 레비오소 중 피격 모션 3
+		if (true == m_pModelCom->Is_Finish_Animation())
+		{
+			m_eCurrentAnim = WF_LEVIOSO_LOOP;
+		}
+		break;
 	}
 }
 
 void CWolf::Wolf_Turn(_float fTimeDelta)
 {
-	m_pTransform->LookAt_Lerp(m_pTarget->Get_Transform()->Get_Position(), fTimeDelta, true);
+	// 타겟이 있다면 
+	if(nullptr != m_pTarget)
+		m_pTransform->LookAt_Lerp(m_pTarget->Get_Transform()->Get_Position(), fTimeDelta, true);
+}
+
+void CWolf::Wolf_Levioso(_float fTimeDelta)
+{
+	// 레비오소 지속시간이 끝나면 원래 애니메이션으로 돌림
+	if(WF_LEVIOSO_LOOP == m_eCurrentAnim)
+		m_fLeviosoDur += fTimeDelta;
+
+	if (5.f <= m_fLeviosoDur)
+	{
+		m_fLeviosoDur = 0.f;
+		m_eCurrentAnim = WF_LEVIOSO_END;
+	}
 }
 
 CWolf* CWolf::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
