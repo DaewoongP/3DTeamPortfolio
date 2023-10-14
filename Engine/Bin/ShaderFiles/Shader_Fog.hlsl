@@ -54,27 +54,23 @@ PS_OUT PS_MAIN_FOG(PS_IN In)
     vector vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
     float fViewZ = vDepthDesc.y * g_fCamFar;
     vector vPosition;
-
-	/* 투영스페이스 상의 위치 */
+    
     vPosition.x = In.vTexUV.x * 2.f - 1.f;
     vPosition.y = In.vTexUV.y * -2.f + 1.f;
     vPosition.z = vDepthDesc.x;
     vPosition.w = 1.f;
-
-	/* 뷰스페이스 상의 위치. */
+    
     vPosition = vPosition * fViewZ;
     vPosition = mul(vPosition, g_ProjMatrixInv);
-
-	/* 월드스페이스 상의 위치. */
     vPosition = mul(vPosition, g_ViewMatrixInv);
 
     float fFogPower = 0.f;
     
     // Fog Logic
-    if (vPosition.y >= 0.f)
-        Out.vColor = float4(1.f, 1.f, 1.f, 1.f);
+    if (vPosition.y >= 2.f)
+        fFogPower = 0.f;
     else
-        fFogPower = saturate(vPosition.y / -10.f);
+        fFogPower = 1.f;
     
     Out.vColor = fFogPower * g_vFogColor;
     

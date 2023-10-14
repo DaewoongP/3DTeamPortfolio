@@ -257,6 +257,13 @@ _float CGameInstance::Get_QueryTimeDelta(const _tchar* pTimerTag)
 	return m_pTimer_Manager->Get_QueryTimeDelta(pTimerTag);
 }
 
+void CGameInstance::Set_SlowTime(const _tchar* pTimerTag, _float fSlowPower, _float fTime)
+{
+	NULL_CHECK_RETURN_MSG(m_pTimer_Manager, , TEXT("Timer_Manager NULL"));
+
+	return m_pTimer_Manager->Set_SlowTime(pTimerTag, fSlowPower, fTime);
+}
+
 HRESULT CGameInstance::Open_Level(_uint iLevelIndex, CLevel* pNewLevel)
 {
 	NULL_CHECK_RETURN_MSG(m_pLevel_Manager, E_FAIL, TEXT("Level_Manager NULL"));

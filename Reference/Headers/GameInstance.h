@@ -71,6 +71,9 @@ public: /* For.Timer_Manager */
 	HRESULT	Add_QueryTimer(const _tchar * pTimerTag);
 	void	Tick_QueryTimer(const _tchar * pTimerTag);
 	_float	Get_QueryTimeDelta(const _tchar * pTimerTag);
+	/* 시간값을 변경시킴 */
+	// 1. tag 2. 느려지게 할 배율 (1.5), 1이면 정상속도 3. 몇초동안 처리할지.
+	void		Set_SlowTime(const _tchar * pTimerTag, _float fSlowPower, _float fTime);
 
 public: /* For.Level_Manager */
 	HRESULT Open_Level(_uint iLevelIndex, class CLevel * pNewLevel);
