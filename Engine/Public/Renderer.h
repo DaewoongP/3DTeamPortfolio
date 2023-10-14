@@ -68,11 +68,12 @@ private:
 	HRESULT Render_NonLight();
 	HRESULT Render_Blend();
 	HRESULT Render_HDR();
+	HRESULT Render_Fog();
 	HRESULT Render_PostProcessing();
 	HRESULT Render_Distortion();
 	HRESULT Render_RadialBlur();
 	HRESULT Render_Screen();
-	HRESULT Render_Rain();
+	
 	HRESULT Render_ScreenRadial();
 	HRESULT Render_UI();
 
@@ -116,10 +117,10 @@ private:
 	class CShader*					m_pDeferredShader = { nullptr };
 	class CShader*					m_pLightShader = { nullptr };
 	class CShader*					m_pPostProcessingShader = { nullptr };
-	class CShader*					m_pShadeTypeShader = { nullptr };
 	class CShader*					m_pSSAOShader = { nullptr };
 	class CShader*					m_pDistortionShader = { nullptr };
 	class CShader*					m_pRadialBlurShader = { nullptr };
+	class CShader*					m_pFogShader = { nullptr };
 
 private:
 	_bool							m_isSSAO = { false };
@@ -127,6 +128,7 @@ private:
 	_float							m_fRadialBlurWidth = { 0.f };
 	_float							m_fRadialTime = { 0.f };
 	_float							m_fRadialTimeAcc = { 0.f };
+	_float4							m_vFogColor;
 
 private:
 	class CBlur*					m_pBlur = { nullptr };

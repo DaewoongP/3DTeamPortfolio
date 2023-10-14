@@ -100,7 +100,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		TEXT("Target_Final"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 0.f))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_Rain"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		TEXT("Target_Fog"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -152,7 +152,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Final"), TEXT("Target_Final"))))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Rain"), TEXT("Target_Rain"))))
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Fog"), TEXT("Target_Fog"))))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -269,7 +269,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_SSAO()))
 		return E_FAIL;
-
+	if (FAILED(Render_Fog()))
+		return E_FAIL;
 	
 #pragma endregion
 
@@ -688,6 +689,42 @@ HRESULT CRenderer::Render_HDR()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_Fog()
+{
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Fog"))))
+		return E_FAIL;
+
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Depth"), m_pFogShader, "g_DepthTexture")))
+		return E_FAIL;
+
+	if (FAILED(m_pFogShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pFogShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pFogShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	CPipeLine* pPipeLine = CPipeLine::GetInstance();
+	Safe_AddRef(pPipeLine);
+	if (FAILED(m_pFogShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
+		return E_FAIL;
+	Safe_Release(pPipeLine);
+	
+	if (FAILED(m_pFogShader->Bind_RawValue("g_vFogColor", &m_vFogColor, sizeof(_float4))))
+		return E_FAIL;
+
+	if (FAILED(m_pFogShader->Begin("Fog")))
+		return E_FAIL;
+
+	if (FAILED(m_pRectBuffer->Render()))
+		return E_FAIL;
+
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Fog"))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_PostProcessing()
 {
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_HDR"), m_pPostProcessingShader, "g_HDRTexture")))
@@ -695,6 +732,8 @@ HRESULT CRenderer::Render_PostProcessing()
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Glowed"), m_pPostProcessingShader, "g_GlowTexture")))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_SSAO_Blured"), m_pPostProcessingShader, "g_SSAOTexture")))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Fog"), m_pPostProcessingShader, "g_FogTexture")))
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
@@ -820,12 +859,6 @@ HRESULT CRenderer::Render_Screen()
 	}
 
 	m_RenderObjects[RENDER_SCREEN].clear();
-
-	return S_OK;
-}
-
-HRESULT CRenderer::Render_Rain()
-{
 
 	return S_OK;
 }
@@ -983,6 +1016,10 @@ HRESULT CRenderer::Add_Components()
 	m_pRadialBlurShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_RadialBlur.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
 	if (nullptr == m_pRadialBlurShader)
 		return E_FAIL;
+	
+	m_pFogShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Fog.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
+	if (nullptr == m_pFogShader)
+		return E_FAIL;
 
 	m_pShadow = CShadow::Create(m_pDevice, m_pContext, m_pRectBuffer);
 	if (nullptr == m_pShadow)
@@ -1120,10 +1157,10 @@ void CRenderer::Free()
 	Safe_Release(m_pDeferredShader);
 	Safe_Release(m_pLightShader);
 	Safe_Release(m_pPostProcessingShader);
-	Safe_Release(m_pShadeTypeShader);
 	Safe_Release(m_pSSAOShader);
 	Safe_Release(m_pDistortionShader);
 	Safe_Release(m_pRadialBlurShader);
+	Safe_Release(m_pFogShader);
 
 	Safe_Release(m_pBlur);
 	Safe_Release(m_pBloom);

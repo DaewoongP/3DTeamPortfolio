@@ -1,11 +1,11 @@
 #include "Shader_EngineHeader.hlsli"
 #include "Shader_RenderFunc.hlsli"
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-float3 g_vLuminancekey = float3(0.2126f, 0.7152f, 0.0722f);
 // PostProcessing
 texture2D g_HDRTexture;
 texture2D g_GlowTexture;
 texture2D g_SSAOTexture;
+texture2D g_FogTexture;
 bool g_isSSAO;
 
 // HDR
@@ -59,11 +59,12 @@ PS_OUT PS_MAIN(PS_IN In)
     vector vHDR = g_HDRTexture.Sample(LinearSampler, In.vTexUV);
     vector vGlow = g_GlowTexture.Sample(LinearSampler, In.vTexUV);
     vector vSSAO = g_SSAOTexture.Sample(LinearSampler, In.vTexUV);
+    vector vFog = g_FogTexture.Sample(LinearSampler, In.vTexUV);
 
     if (true == g_isSSAO)
-        Out.vColor = vHDR * vSSAO + vGlow;
+        Out.vColor = vHDR * vSSAO * vFog + vGlow;
     else
-        Out.vColor = vHDR + vGlow;
+        Out.vColor = vHDR * vFog + vGlow;
 
     return Out;
 }
