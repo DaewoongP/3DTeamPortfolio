@@ -126,6 +126,7 @@ void CWolf::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			BUFF_LEVIOSO & eBuff)
 		{
 			// 레비오소 피격
+			m_iCurrentSpell ^= BUFF_LEVIOSO;
 			m_CurrentTickSpells.emplace(eBuff, Action);
 			m_eCurrentAnim = WF_LEVIOSO_START;
 		}
@@ -134,6 +135,7 @@ void CWolf::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			BUFF_DESCENDO & eBuff)
 		{
 			// 디센도 피격
+			m_iCurrentSpell ^= BUFF_DESCENDO;
 			m_CurrentTickSpells.emplace(eBuff, Action);
 			m_eCurrentAnim = WF_DIE; // 원래는 디센도 애니메이션인데 죽는 애니메이션도 겸함
 			m_isDecendo = true;
@@ -450,6 +452,7 @@ void CWolf::Wolf_Animation()
 		if (true == m_pModelCom->Is_Finish_Animation())
 		{
 			On_Gravity();
+			Remove_Fly_Spells();
 			m_eCurrentAnim = WF_BARK;
 		}
 		break;
