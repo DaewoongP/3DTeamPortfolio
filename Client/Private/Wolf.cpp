@@ -39,7 +39,7 @@ HRESULT CWolf::Initialize_Level(_uint iCurrentLevelIndex)
 		return E_FAIL;
 
 	m_pTransform->Set_RigidBody(m_pRigidBody);
-	m_pTransform->Set_Speed(10.f);
+	m_pTransform->Set_Speed(-1.f);
 	m_pTransform->Set_RotationSpeed(-5.f);
 
 	m_eCurrentAnim = WF_IDLE;
@@ -62,7 +62,13 @@ void CWolf::Tick(_float fTimeDelta)
 
 	// 체력이 0 이하로 떨어지면
 	if (0.f >= m_pHealth->Get_Current_HP())
+	{
 		m_eCurrentAnim = WF_DIE;
+		m_fDeathTimeAcc += fTimeDelta;
+
+		if (3.f >= m_fDeathTimeAcc)
+			Set_ObjEvent(OBJ_DEAD);
+	}		
 
 	// m_pHitMatrix = m_HitMatrices[rand() % 2];
 
@@ -70,8 +76,14 @@ void CWolf::Tick(_float fTimeDelta)
 	Wolf_Animation();
 
 	// 점프하면서 플레이어에 방향을 맞춤
-	if (WF_JUMP_R == m_eCurrentAnim)
+	if (WF_JUMP_R == m_eCurrentAnim || WF_RUN_START == m_eCurrentAnim)
 		Wolf_Turn(fTimeDelta);
+
+	// 공격 사거리 증가
+	if (WF_ATTACK == m_eCurrentAnim)
+		m_pTransform->Go_Straight(fTimeDelta);
+
+	Tick_Spells();
 
 	// 이전 애니메이션과 달라졌다면 애니메이션 변경
 	if (m_eCurrentAnim != m_ePreAnim)
@@ -97,22 +109,23 @@ void CWolf::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 	wstring wstrOtherCollisionTag = CollisionEventDesc.pOtherCollisionTag;
 
-	wstring wsPlayer(TEXT("Player_Default"));
-
 	/* Collision Magic */
 	if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
 	{
 		CMagicBall::COLLSIONREQUESTDESC* pCollisionMagicBallDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
+		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
+		auto Action = pCollisionMagicBallDesc->Action;
 		_int iDamage = pCollisionMagicBallDesc->iDamage;
 
 		m_pHealth->Damaged(iDamage);
-	}
 
-	// 플레이어가 범위 안에 들어왔다면
-	if (0 == lstrcmp(wstrOtherCollisionTag.c_str(), wsPlayer.c_str()))
-	{
-		if (WF_IDLE == m_eCurrentAnim) // 적 발견 전 누워있는 상태
-			m_eCurrentAnim = WF_IDLE_END;
+		auto iter = m_CurrentTickSpells.find(eBuff);
+		if (iter == m_CurrentTickSpells.end() &&
+			BUFF_LEVIOSO & eBuff)
+		{
+			m_CurrentTickSpells.emplace(eBuff, Action);
+			m_eCurrentAnim = WF_LEVIOSO_START;
+		}
 	}
 
 	/* Collision Player Fig */
@@ -121,10 +134,25 @@ void CWolf::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		if (false == IsEnemy(wstrObjectTag))
 			return;
 
+		if (WF_IDLE == m_eCurrentAnim) // 적 발견 전 누워있는 상태
+			m_eCurrentAnim = WF_IDLE_END;
+
 		m_isSpawn = true;
 		auto iter = m_RangeInEnemies.find(wstrObjectTag);
 		if (iter == m_RangeInEnemies.end())
 			m_RangeInEnemies.emplace(wstrObjectTag, CollisionEventDesc.pOtherOwner);
+	}
+
+	/* Collision Player Fig */
+	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Attack")))
+	{
+		if (false == IsEnemy(wstrObjectTag))
+			return;
+
+		if (WF_ATTACK == m_eCurrentAnim || WF_ATTACK_END == m_eCurrentAnim)
+		{
+			int a = 0;
+		}			
 	}
 
 	///* Collision Player Fig */
@@ -258,7 +286,7 @@ HRESULT CWolf::Add_Components()
 
 		/* For.Com_Health */
 		CHealth::HEALTHDESC HealthDesc;
-		HealthDesc.iMaxHP = 200;
+		HealthDesc.iMaxHP = 100;
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 			throw TEXT("Com_Health");
@@ -319,6 +347,11 @@ HRESULT CWolf::Bind_HitMatrices()
 
 void CWolf::Wolf_Attack()
 {
+	m_CollisionRequestDesc.eType = ATTACK_LIGHT;
+	m_CollisionRequestDesc.iDamage = 5;
+	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
+
+	m_pRigidBody->Enable_Collision("Enemy_Attack", this, &m_CollisionRequestDesc);
 }
 
 void CWolf::Wolf_Animation()

@@ -38,6 +38,9 @@ public:
 	virtual HRESULT Render() override;
 
 private:
+	_float m_fDeathTimeAcc = { 0.f }; // 사망 애니메이션이 나오고 얼마 뒤에 죽을 건지
+
+private:
 	W0LF_ANIMATION m_eCurrentAnim = { WF_END };
 	W0LF_ANIMATION m_ePreAnim = { m_eCurrentAnim }; // 이전 애니메이션이 뭔지
 
