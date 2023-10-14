@@ -72,11 +72,11 @@ PS_OUT PS_MAIN_FOG(PS_IN In)
     
     // Fog Logic
     if (vPosition.y >= 0.f)
-        fFogPower = 0.f;
+        Out.vColor = float4(1.f, 1.f, 1.f, 1.f);
     else
         fFogPower = saturate(vPosition.y / -10.f);
     
-    Out.vColor = fFogPower * g_vFogColor + (1.f - fFogPower);
+    Out.vColor = fFogPower * g_vFogColor;
     
     return Out;
 }

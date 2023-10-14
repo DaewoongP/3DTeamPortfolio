@@ -93,8 +93,7 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
         fShadowPower *= Create_ShadowPower(vObjectWorldPos, g_LightViewMatrix1, g_LightProjMatrix1, g_LightDepthTexture1, 0.3f);
 
     Out.vColor = float4(fShadowPower, fShadowPower, fShadowPower, 1.f);
-    saturate(Out.vColor);
-    
+
     return Out;
 }
 

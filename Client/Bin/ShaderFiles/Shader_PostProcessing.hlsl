@@ -59,12 +59,11 @@ PS_OUT PS_MAIN(PS_IN In)
     vector vHDR = g_HDRTexture.Sample(LinearSampler, In.vTexUV);
     vector vGlow = g_GlowTexture.Sample(LinearSampler, In.vTexUV);
     vector vSSAO = g_SSAOTexture.Sample(LinearSampler, In.vTexUV);
-    vector vFog = g_FogTexture.Sample(LinearSampler, In.vTexUV);
 
     if (true == g_isSSAO)
-        Out.vColor = vHDR * vSSAO * vFog + vGlow;
+        Out.vColor = vHDR * vSSAO + vGlow;
     else
-        Out.vColor = vHDR * vFog + vGlow;
+        Out.vColor = vHDR + vGlow;
 
     return Out;
 }
