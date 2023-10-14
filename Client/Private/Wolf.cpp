@@ -73,7 +73,7 @@ void CWolf::Tick(_float fTimeDelta)
 
 	// 공격 사거리 증가
 	if (WF_ATTACK == m_eCurrentAnim)
-		m_pTransform->Go_Straight(fTimeDelta);
+		m_pTransform->Go_Straight(fTimeDelta * 1.5);
 
 	Tick_Spells();
 
@@ -98,7 +98,7 @@ void CWolf::Late_Tick(_float fTimeDelta)
 		m_eCurrentAnim = WF_DIE;
 		m_fDeathTimeAcc += fTimeDelta;
 
-		if (3.f >= m_fDeathTimeAcc)
+		if (3.f <= m_fDeathTimeAcc)
 			Set_ObjEvent(OBJ_DEAD);
 	}
 }
@@ -135,7 +135,6 @@ void CWolf::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			BUFF_DESCENDO & eBuff)
 		{
 			// 디센도 피격
-			m_iCurrentSpell ^= BUFF_DESCENDO;
 			m_CurrentTickSpells.emplace(eBuff, Action);
 			m_eCurrentAnim = WF_DIE; // 원래는 디센도 애니메이션인데 죽는 애니메이션도 겸함
 			m_isDecendo = true;
