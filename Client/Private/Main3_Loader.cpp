@@ -232,6 +232,7 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 		std::lock_guard<std::mutex> lock(mtx);
 
 #pragma region Player
+
 		/* For.Prototype_GameObject_Player*/
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Player"),
 			CPlayer::Create(m_pDevice, m_pContext))))
@@ -259,6 +260,12 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Animation_Camera_Model"),
 			CAnimation_Camera_Model::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Animation_Camera_Model");
+
+		/* For.Prototype_Component_Model_Weapon_Player_Wand */
+		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weapon_Player_Wand"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/gaechul/gaechul.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Weapon_Player_Wand");
 
 #pragma endregion
 

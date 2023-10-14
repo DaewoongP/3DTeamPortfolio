@@ -232,15 +232,16 @@ void CFinisher::Ready_CastMagic()
 
 void CFinisher::Ready_Dying()
 {
-	for (int i = 0; i < m_TrailVec[EFFECT_STATE_HIT].size(); i++)
+	for (int i = 0; i < m_TrailVec[EFFECT_STATE_HIT].size(); ++i)
 	{
 		m_TrailVec[EFFECT_STATE_HIT].data()[i]->Enable(m_vEndPosition);
 	}
-	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_HIT].size(); i++)
+	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_HIT].size(); ++i)
 	{
 		m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Enable(m_vEndPosition);
 		m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Play(m_vEndPosition);
 	}
+
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 	pGameInstance->Add_InstanceLight(m_vEndPosition, 50.f, 1.f, _float4(1.f, 1.f, 1.f, 1.f));
