@@ -7,6 +7,7 @@
 #include "StateMachine.h"
 #include "Enemy.h"
 #include "ProtegoState.h"
+#include"Blink_Effect.h"
 
 BEGIN(Engine)
 class CShader;
@@ -32,6 +33,7 @@ class CEdurusPotion;
 class CInvisibilityPotion;
 class CWiggenweldPotion;
 class CTool;
+class CBlink_Effect;
 END
 
 BEGIN(Client)
@@ -110,6 +112,8 @@ private:
 	CRigidBody*		m_pRigidBody = { nullptr };
 	CCoolTime*		m_pCooltime = { nullptr };
 	CDefence*		m_pDefence = { nullptr };
+	CBlink_Effect* m_pBlink = { nullptr };
+
 
 private:
 	CPlayer_Camera* m_pPlayer_Camera = { nullptr };

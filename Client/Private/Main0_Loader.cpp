@@ -45,6 +45,7 @@
 #include "Trail.h"
 #include "MeshEffect.h"
 #include "Wingardium_Effect.h"
+#include "Blink_Effect.h"
 #include "EnergyBall.h"
 #include "Breath.h"
 #include "Pulse.h"
@@ -674,7 +675,15 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Bombarda"),
 				CBombarda::Create(m_pDevice, m_pContext, eLevelID))))
 				throw TEXT("Prototype_GameObject_Bombarda");
+			
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Blink_Trail"),
+				CBlink_Effect::Create(m_pDevice, m_pContext, eLevelID))))
+				throw TEXT("Prototype_GameObject_Blink_Trail");
+
+		
+
 		}
+		
 
 		/* For.Prototype_GameObject_Projectile_Black */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Projectile_Black"),

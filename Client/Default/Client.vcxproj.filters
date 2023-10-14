@@ -94,9 +94,6 @@
     <Filter Include="02. GameObject\01. Player\01. StateMachine\07. Hit">
       <UniqueIdentifier>{8100d76b-abc1-4a05-a149-ea58ea807be8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Player\03. PlayerInformation">
-      <UniqueIdentifier>{32c19ffc-fb69-42ca-ba81-07c40b9b305f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Levels\01. Cliffside">
       <UniqueIdentifier>{1bc6cbc7-4c2b-4ad9-9e0c-6724a4c369f3}</UniqueIdentifier>
     </Filter>
@@ -708,6 +705,12 @@
     </Filter>
     <Filter Include="07. Events\Smeade">
       <UniqueIdentifier>{2ed55d9c-62e6-455a-a77e-621148ea10a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. Terrain\03. PlayerInformation">
+      <UniqueIdentifier>{32c19ffc-fb69-42ca-ba81-07c40b9b305f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Effect\Blink_Effect">
+      <UniqueIdentifier>{58d8b344-dfb8-4b48-ab00-f18496e8f003}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1398,7 +1401,7 @@
       <Filter>02. GameObject\01. Player</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_Information.h">
-      <Filter>02. GameObject\01. Player\03. PlayerInformation</Filter>
+      <Filter>02. GameObject\05. Terrain\03. PlayerInformation</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Event_Vault_Spawn.h">
       <Filter>07. Events\Vault</Filter>
@@ -1408,6 +1411,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Event_Smeade.h">
       <Filter>07. Events\Smeade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Blink_Effect.h">
+      <Filter>04. Effect\Blink_Effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1700,7 +1706,7 @@
       <Filter>02. GameObject\01. Player\01. StateMachine\07. Hit</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_Information.cpp">
-      <Filter>02. GameObject\01. Player\03. PlayerInformation</Filter>
+      <Filter>02. GameObject\05. Terrain\03. PlayerInformation</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Finisher.cpp">
       <Filter>05. Magic\MagicBall\07. Finisher</Filter>
@@ -2066,6 +2072,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Event_Smeade.cpp">
       <Filter>07. Events\Smeade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Blink_Effect.cpp">
+      <Filter>04. Effect\Blink_Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

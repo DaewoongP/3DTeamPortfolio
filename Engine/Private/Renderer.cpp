@@ -194,7 +194,7 @@ HRESULT CRenderer::Initialize_Prototype()
 	m_isMRTRender = false;	
 #endif // _DEBUG
 	m_isSSAO = true;
-	m_fGlowPower = 4.f;
+	m_fGlowPower = 6.f;
 	m_fHDR = 0.5f;
 	m_fRadialBlurWidth = 0.05f;
 	m_isScreenRadial = false;

@@ -94,6 +94,16 @@ HRESULT CLevioso::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
+	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_Levioso_Distortion_Effect")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_Levioso_Distortion_Effect")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Levioso/Distortion"), iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
 	ENDINSTANCE;
 
 	return S_OK;
@@ -254,7 +264,7 @@ HRESULT CLevioso::Add_Components()
 		return E_FAIL;
 	}
 
-	m_ParticleVec[EFFECT_STATE_HIT].resize(2);
+	m_ParticleVec[EFFECT_STATE_HIT].resize(3);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Levioso_HitDust_Effect"),
 		TEXT("Com_HitDust_Effect"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_HIT][0]))))
 	{
@@ -269,7 +279,13 @@ HRESULT CLevioso::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
-
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Levioso_Distortion_Effect"),
+		TEXT("Com_Disortion_Effect"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_HIT][2]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Levioso_Distortion_Effect)");
+		__debugbreak();
+		return E_FAIL;
+	}
 	//º°µµ
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Wingardium_Effect"),
 		TEXT("Com_WingradiumEffect"), reinterpret_cast<CComponent**>(&m_pWingardiumEffect))))
