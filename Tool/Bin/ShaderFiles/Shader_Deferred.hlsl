@@ -9,7 +9,6 @@ texture2D g_ShadeTexture;
 texture2D g_DepthTexture;
 texture2D g_ShadowTexture;
 texture2D g_SpecularTexture;
-texture2D g_MROTexture;
 
 struct VS_IN
 {

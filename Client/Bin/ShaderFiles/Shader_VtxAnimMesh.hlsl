@@ -5,7 +5,6 @@ float4x4 g_BoneMatrices[256];
 texture2D g_DiffuseTexture;
 texture2D g_NormalTexture;
 texture2D g_EmissiveTexture;
-texture2D g_MROTexture;
 
 float3 g_vHairColor = float3(1.f, 1.f, 1.f);
 float4 g_vColor;
@@ -80,7 +79,6 @@ struct PS_OUT
     float4 vNormal : SV_TARGET1;
     float4 vDepth : SV_TARGET2;
     float4 vEmissive : SV_TARGET3;
-    float4 vMRO : SV_TARGET4;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -101,8 +99,7 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vDiffuse = vDiffuse;
     Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
-    Out.vMRO = g_MROTexture.Sample(LinearSampler, In.vTexUV);
-    
+
     return Out;
 }
 
