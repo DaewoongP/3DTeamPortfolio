@@ -551,10 +551,10 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 				CRigidBody::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_Component_RigidBody");
 
-			///* For.Prototype_Component_RadialBlur */
-			//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RadialBlur"),
-			//	CRadialBlur::Create(m_pDevice, m_pContext))))
-			//	throw TEXT("Prototype_Component_RadialBlur");
+			/* For.Prototype_Component_RadialBlur */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RadialBlur"),
+				CRadialBlur::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_RadialBlur");
 		}
 
 		/* Prototype_Component_Model_Shpere */

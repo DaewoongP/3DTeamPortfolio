@@ -155,7 +155,7 @@ HRESULT CLevioso::Initialize(void* pArg)
 		return E_FAIL;
 	}
 	m_CollisionDesc.Action = bind(&CLevioso::TrailAction, this, placeholders::_1);
-	m_ParticleVec[EFFECT_STATE_WAND][0]->Get_MainModuleRef().vStartColor = _float4(0.9629f, 0.169f, 0.859, 1.f);
+	m_ParticleVec[EFFECT_STATE_WAND][0]->Get_MainModuleRef().vStartColor = _float4(0.9629f, 0.169f, 0.859f, 1.f);
 	return S_OK;
 }
 
@@ -201,7 +201,7 @@ HRESULT CLevioso::Reset(MAGICBALLINITDESC& InitDesc)
 	CLight::LIGHTDESC LightDesc;
 	LightDesc.eType = CLight::TYPE_POINT;
 	LightDesc.fRange = 5.f;
-	LightDesc.vDiffuse = _float4(0.91f, 0.269f, 0.899f, 1.f);
+	m_vLightColor = LightDesc.vDiffuse = _float4(0.91f, 0.269f, 0.899f, 1.f);
 	LightDesc.vAmbient = LightDesc.vDiffuse;
 	LightDesc.vSpecular = LightDesc.vDiffuse;
 	LightDesc.vPos = m_pTransform->Get_Position().TransCoord();
@@ -213,7 +213,7 @@ HRESULT CLevioso::Reset(MAGICBALLINITDESC& InitDesc)
 
 void CLevioso::Ready_Begin()
 {
-	ADD_DECREASE_LIGHT(m_vStartPosition, 10.f, 0.2f, _float4(0.91f, 0.169f, 0.859f, 1.f));
+	ADD_DECREASE_LIGHT(m_vStartPosition, 10.f, 0.2f, m_vLightColor);
 	__super::Ready_Begin();
 }
 
@@ -232,6 +232,7 @@ void CLevioso::Ready_Dying()
 {
 	m_pWingardiumEffect->SetActionTrigger(true);
 	m_pWingardiumEffect->Enable();
+	ADD_DECREASE_LIGHT(m_vEndPosition, 20.f, 0.3f, m_vLightColor);
 	__super::Ready_Dying();
 }
 
