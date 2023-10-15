@@ -33,6 +33,13 @@ HRESULT CRollState::Initialize(void* pArg)
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"), (CComponent**)(&m_pRenderer))))
 		return E_FAIL;
 
+	BEGININSTANCE;
+
+	pGameInstance->Add_Timer(TEXT("Blink_Delay"), false, 0.5f);
+
+	ENDINSTANCE;
+
+
 	return S_OK;
 }
 
@@ -108,7 +115,7 @@ void CRollState::OnStateEnter(void* _pArg)
 		m_StateMachineDesc.pPlayerTransform->Set_Up(vUp * vScale.y);
 		m_StateMachineDesc.pPlayerTransform->Set_Look(vLook * vScale.z);
 	}
-	ENDINSTANCE;
+	
 	CRollState::tagRollStateDesc* pRollStateDesc = static_cast<CRollState::tagRollStateDesc*>(_pArg);
 
 	m_isBlink = pRollStateDesc->IsBlink;
@@ -119,15 +126,27 @@ void CRollState::OnStateEnter(void* _pArg)
 	if (false == m_isBlink)
 	{
 		Change_Animation(TEXT("Hu_Cmbt_DdgeRll_Fwd_anm"));
+		//pGameInstance->Set_Shake();
 	}
 	else if (true == m_isBlink)
 	{
 		Change_Animation(TEXT("Blink_Start"));
 		m_eBlink = BLINK_START;
 		m_pRenderer->Set_ScreenRadial(true, 0.5f, 0.05f);
+		
+		pGameInstance->Set_Shake(
+			CCamera_Manager::SHAKE_TYPE_ROTATION, 
+			CCamera_Manager::SHAKE_AXIS_LOOK,
+			CEase::IN_EXPO,
+			15.0f,
+			0.3f,
+			0.0003f,
+			CCamera_Manager::SHAKE_POWER_DECRECENDO);
 	}
 
 	*m_StateMachineDesc.pisFinishAnimation = false;
+	
+	ENDINSTANCE;
 }
 
 void CRollState::OnStateTick()
@@ -158,7 +177,39 @@ void CRollState::OnStateTick()
 	BEGININSTANCE;
 	if (m_eBlink == BLINK_START)
 	{
-		m_StateMachineDesc.pPlayerTransform->Move_Direction(XMVector3Normalize(m_StateMachineDesc.pPlayerTransform->Get_Look()), 14.0f * pGameInstance->Get_World_Tick());
+		_float fAngle = *m_StateMachineDesc.pOwnerLookAngle;
+
+		BEGININSTANCE;
+
+		if (true == *m_StateMachineDesc.pisDirectionPressed)
+		{
+			//지속적으로 회전
+			m_StateMachineDesc.pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fAngle * pGameInstance->Get_World_Tick() * (*m_StateMachineDesc.pfRotaionSpeed));
+		}
+
+		ENDINSTANCE;
+
+		m_StateMachineDesc.pPlayerTransform->Move_Direction(m_StateMachineDesc.pPlayerTransform->Get_Look(), 14.0f * pGameInstance->Get_World_Tick());
+
+		pGameInstance->Reset_Timer(TEXT("Blink_Delay"));
+	}
+	else if (m_eBlink == BLINK_END)
+	{
+		if (true == pGameInstance->Check_Timer(TEXT("Blink_Delay")) && pGameInstance->Get_DIKeyState(DIK_SPACE,CInput_Device::KEY_DOWN))
+		{
+			m_eBlink = BLINK_START;
+
+			Change_Animation(TEXT("Blink_Start"));
+
+			pGameInstance->Set_Shake(
+				CCamera_Manager::SHAKE_TYPE_ROTATION,
+				CCamera_Manager::SHAKE_AXIS_LOOK,
+				CEase::IN_EXPO,
+				15.0f,
+				0.3f,
+				0.0003f,
+				CCamera_Manager::SHAKE_POWER_DECRECENDO);
+		}
 	}
 	ENDINSTANCE;
 }

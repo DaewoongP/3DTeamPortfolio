@@ -29,6 +29,12 @@ HRESULT CProtegoState::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
+	BEGININSTANCE;
+
+	pGameInstance->Add_Timer(TEXT("Stupefy"), false, 0.2f);
+
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
@@ -67,6 +73,19 @@ void CProtegoState::OnStateEnter(void* _pArg)
 		//맞았을 때 애니메이션 재생
 		if (true == m_isHit)
 		{
+			BEGININSTANCE;
+
+			//쉐이크를 위한 변수
+
+			//타겟을 향한 방향
+			_float3 vAxisForTarget = m_StateMachineDesc.pPlayerTransform->Get_Look();
+
+			vAxisForTarget.Normalize();
+
+			//맞은 타입에 따른 파워
+			_float fPower = 0.025f;
+
+
 			//강하게 맞았냐 약하게 맞았냐
 			switch (ProtegoStateDesc->iHitType)
 			{
@@ -75,6 +94,8 @@ void CProtegoState::OnStateEnter(void* _pArg)
 				//애니메이션 실행
 				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_anm"));
 				Change_Animation(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_anm"), false);
+
+				fPower *= 2.0f;
 			}
 			break;
 			case HIT_HEABY:
@@ -82,12 +103,25 @@ void CProtegoState::OnStateEnter(void* _pArg)
 				//애니메이션 실행
 				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_Slide_anm"));
 				Change_Animation(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_Slide_anm"), false);
+				
+				fPower *= 5.0f;
 			}
 			break;
-
 			default:
 				break;
 			}
+
+			pGameInstance->Set_Shake(
+				CCamera_Manager::SHAKE_TYPE_TRANSLATION,
+				CCamera_Manager::SHAKE_AXIS_SET,
+				CEase::IN_EXPO,
+				2.5f,
+				0.4f,
+				fPower,
+				CCamera_Manager::SHAKE_POWER_DECRECENDO,
+				-vAxisForTarget);
+
+			ENDINSTANCE;
 		}
 	}
 	*m_StateMachineDesc.pLumosOn = false;
@@ -108,6 +142,25 @@ void CProtegoState::OnStateTick()
 	{
 		Set_StateMachine(TEXT("Idle"));
 	}
+	//프로테고 애니메이션이 아니라면 아이들로 보냄
+	else if (false == wcscmp(m_StateMachineDesc.pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Cmbt_Protego_Start_anm")) ||
+		false == wcscmp(m_StateMachineDesc.pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Cmbt_Protego_Loop_anm")) ||
+		false == wcscmp(m_StateMachineDesc.pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_anm")) ||
+		false == wcscmp(m_StateMachineDesc.pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_Slide_anm")) ||
+		false == wcscmp(m_StateMachineDesc.pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_01_Spin_anm")))
+	{
+	}
+	else
+	{
+		Set_StateMachine(TEXT("Idle"));
+	}
+
+	BEGININSTANCE;
+	if (false == pGameInstance->Check_Timer(TEXT("Stupefy")))
+	{
+		//m_StateMachineDesc.pCameraTransform->LookAt((*m_StateMachineDesc.ppTarget)->Get_Transform()->Get_Position());
+	}
+	ENDINSTANCE;
 }
 
 void CProtegoState::OnStateExit()
@@ -155,6 +208,8 @@ void CProtegoState::Stupefy()
 		{
 			m_StateMachineDesc.pPlayerTransform->LookAt((*m_StateMachineDesc.ppTarget)->Get_Transform()->Get_Position(), true);
 		}
+
+		pGameInstance->Reset_Timer(TEXT("Stupefy"));
 
 		Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_01_Spin_anm"), false);
 	}
