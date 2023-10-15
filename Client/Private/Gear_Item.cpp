@@ -14,8 +14,6 @@ CGear_Item::CGear_Item(const CGear_Item& rhs)
 
 HRESULT CGear_Item::Initialize_Prototype(_uint iLevel)
 {
-	m_ItemCreateDesc.eItemType = RESOURCE;
-
 	if (FAILED(__super::Initialize_Prototype(iLevel)))
 		return E_FAIL;
 

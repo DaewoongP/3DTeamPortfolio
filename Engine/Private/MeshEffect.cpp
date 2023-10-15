@@ -65,7 +65,10 @@ HRESULT CMeshEffect::Initialize_Prototype(const _tchar* pFilePath, _uint _iLevel
 
 	if (FAILED(this->Load(pFilePath)))
 	{
-		MSG_BOX("Failed to Load MeshEffect");
+		if (0 != lstrcmp(pFilePath, TEXT("")))
+		{
+			MSG_BOX("Failed to Load MeshEffect");
+		}
 	}
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -150,6 +153,7 @@ void CMeshEffect::Tick(_float _fTimeDelta)
 	//m_vColor = _float4::Lerp(m_vStartColor, m_vEndColor, fRatio);
 	//m_vSize = _float3::Lerp(m_vStartSize, m_vEndSize, fRatio);
 	//m_vRot = _float3::Lerp(m_vStartRot, m_vEndRot, fRatio);
+
 	{ // Color
 		_float fChangeAmount;
 		fChangeAmount = m_vEndColor.x - m_vStartColor.x; // R
@@ -308,7 +312,7 @@ HRESULT CMeshEffect::Setup_ShaderResources()
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	if (FAILED(m_pShader->Bind_RawValue("g_vCamPosition", pGameInstance->Get_CamPosition(), sizeof(_float4))))
+	if (FAILED(m_pShader->Bind_RawValue("g_vCamPos", pGameInstance->Get_CamPosition(), sizeof(_float4))))
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_RawValue("g_vOffset", &m_vOffset, sizeof m_vOffset)))
@@ -319,7 +323,6 @@ HRESULT CMeshEffect::Setup_ShaderResources()
 
 	if (FAILED(m_pShader->Bind_RawValue("g_vColor", &m_vColor, sizeof(_float4))))
 		return E_FAIL;
-
 
 	if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_MaterialTexture")))
 		return E_FAIL;

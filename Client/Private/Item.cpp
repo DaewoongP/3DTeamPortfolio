@@ -3,7 +3,7 @@
 #include "Player.h"
 #include "Player_Information.h"
 #include "CustomModel.h"
-
+#include "Inventory.h"
 CItem::CItem(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -90,11 +90,6 @@ HRESULT CItem::Change_Scale(_float fX, _float fY)
 	m_pTransform->Set_Scale(_float3(fX, fY, 1.f));
 
 	return S_OK;
-}
-
-CItem* CItem::Buy()
-{
-	return this;
 }
 
 void CItem::Tick(_float fTimeDelta)
@@ -192,7 +187,7 @@ CItem* CItem::SimpleFactory(ITEM_ID eItemID, _uint iLevel, void* pArg)
 	case Client::ITEM_ID_MONGREL_FUR:
 		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
 			iLevel,
-			TEXT("Prototype_GameObject_Mongrel_Fur"), pArg));
+			TEXT("Prototype_GameObject_Mongrel_Fur_Item"), pArg));
 		break;
 	case Client::ITEM_ID_TROLL_BOGEYS:
 		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
@@ -232,12 +227,33 @@ CItem* CItem::SimpleFactory(ITEM_ID eItemID, _uint iLevel, void* pArg)
 	//		iLevel,
 	//		TEXT("Prototype_GameObject_Shrivelfig_Item"), pArg));
 	//	break;
+	case Client::ITEM_ID_ROBE1:
+		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+			iLevel,
+			TEXT("Prototype_GameObject_Robe1_Item"), pArg));
+		break;
 	default:
 		break;
 	}
 
 	Safe_Release(pGameInstance);
 	return pItem;
+}
+
+_bool CItem::Buy()
+{
+	CInventory* pPlayerInventory = m_pPlayerInformation->Get_Inventory();
+	Safe_AddRef(pPlayerInventory);
+	if (false == pPlayerInventory->Can_Purchase(m_ItemCreateDesc.iCost))
+	{
+		Safe_Release(pPlayerInventory);
+		return false;
+	}
+
+	pPlayerInventory->Pay_Money(m_ItemCreateDesc.iCost);
+	Safe_Release(pPlayerInventory);
+
+	return true;
 }
 
 void CItem::ToLayer(_int iLevel, const _tchar* ComTag, const _tchar* LayerTag)

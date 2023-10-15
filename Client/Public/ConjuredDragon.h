@@ -86,8 +86,12 @@ private:
 	CWeapon_Dragon_Head* m_pWeapon = { nullptr };
 
 private:
+	_float3 vOffsetPos = { _float3() };
 	CParticleSystem* m_pEffect_BlackSmokeIdle = { nullptr };
-	CParticleSystem* m_pEffect_BlackSmokeTrace = { nullptr };
+	CParticleSystem* m_pEffect_Pulse_Charge = { nullptr };
+	CParticleSystem* m_pEffect_Pulse_CircleEmit = { nullptr };
+	CParticleSystem* m_pEffect_Pulse_Rock = { nullptr };
+	CParticleSystem* m_pEffect_Pulse_SplashWater= { nullptr };
 
 private:
 	HRESULT Make_AI();
@@ -131,7 +135,7 @@ private: /* Notify Func */
 	void On_Breath();
 	void Off_Breath();
 	void Action_Pulse();
-
+	void Pulse_Charge();
 public:
 	static CConjuredDragon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CConjuredDragon* Clone(void* pArg) override;

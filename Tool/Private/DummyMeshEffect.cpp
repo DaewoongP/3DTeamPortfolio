@@ -131,6 +131,8 @@ void CDummyMeshEffect::Tick_Imgui(_float _fTimeDelta)
 
 		ImGui::Separator();
 
+		//pEffectWindow->Table_DragFloat("RimPower", "iv893jdjxxcv", &m_fRimPower);
+
 		ImGui::EndTable();
 	}
 
@@ -303,6 +305,7 @@ HRESULT CDummyMeshEffect::Load_FileDialog()
 			}
 			else
 			{
+				// LoadAfter
 				ChangeTexture(&m_pTexture, m_Path[TEXTURE_PATH], m_Path[TEXTURE_PATH].c_str());
 				ChangeModel(&m_pModel, m_Path[MODEL_PATH], m_Path[MODEL_PATH].c_str());
 				m_pTextureIFD->ChangeTexture(wstrToStr(m_Path[TEXTURE_PATH]).c_str());
@@ -310,6 +313,7 @@ HRESULT CDummyMeshEffect::Load_FileDialog()
 				m_pScaleEaseCombo->Update_Current_Item(m_eSizeEase);
 				m_pRotEaseCombo->Update_Current_Item(m_eRotEase);
 				m_pPosEaseCombo->Update_Current_Item(m_ePosEase);
+				m_pPassComboBox->Update_Current_Item(m_strPassName);
 
 				MSG_BOX("The file has been loaded successfully");
 			}
