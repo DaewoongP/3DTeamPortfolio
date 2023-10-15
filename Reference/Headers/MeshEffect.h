@@ -94,7 +94,8 @@ protected:
 	_bool m_isAlphaBlend = { true }; // Save
 	string m_strClipChannel = { "Red" }; // Save
 	_float m_fClipThreshold = { 0.1f }; // Save
-
+	_bool m_isGlow = { false };
+	_bool m_isDistortion = { false };
 protected:
 	CModel::TYPE m_eAnimType; // Save
 	string m_strPassName = { "Default" }; // Save

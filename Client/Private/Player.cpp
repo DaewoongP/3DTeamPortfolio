@@ -107,7 +107,6 @@ HRESULT CPlayer::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -150,6 +149,13 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
+	
+	if (FAILED(Ready_Camera()))
+	{
+		MSG_BOX("Failed Ready Player Camera");
+
+		return E_FAIL;
+	}
 
 	if (FAILED(Ready_StateMachine()))
 	{
@@ -158,12 +164,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	if (FAILED(Ready_Camera()))
-	{
-		MSG_BOX("Failed Ready Player Camera");
-
-		return E_FAIL;
-	}
+	
 
 	m_pTransform->Set_Speed(1.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(180.f));
@@ -244,7 +245,6 @@ HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 void CPlayer::Tick(_float fTimeDelta)
 {
 	BEGININSTANCE;
-
 	//�÷��̾� ī�޶� �ƴ϶��?
 	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
 	{
@@ -364,6 +364,11 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 	if (wstring::npos != wstrCollisionTag.find(TEXT("Attack")))
 	{
+		if (nullptr == CollisionEventDesc.pArg)
+		{
+			return;
+		}
+
 		CEnemy::COLLISIONREQUESTDESC* pDesc = static_cast<CEnemy::COLLISIONREQUESTDESC*>(CollisionEventDesc.pArg);
 
 		if (nullptr == pDesc ||
@@ -433,6 +438,11 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	}
 	else if (wstring::npos != wstrCollisionTag.find(TEXT("Magic_Ball")))
 	{
+		if (nullptr == CollisionEventDesc.pArg)
+		{
+			return;
+		}
+
 		CMagicBall::COLLSIONREQUESTDESC* pDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
 
 		//Protego
@@ -736,7 +746,13 @@ HRESULT CPlayer::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
-
+	/* Com_Blink_Effect */
+	/*if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_Trail"),
+		TEXT("Com_Blink_Trail"), reinterpret_cast<CComponent**>(&m_pBlink))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}*/
 
 	//_int DefValue = 15;
 	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_EndurusPotion"),
@@ -761,6 +777,9 @@ HRESULT CPlayer::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+
+
+
 
 	return S_OK;
 }
@@ -1614,6 +1633,7 @@ HRESULT CPlayer::Ready_StateMachine()
 	m_StateMachineDesc.pLumosOn = &m_isLumosOn;
 	m_StateMachineDesc.ppTarget = &m_pTarget;
 	m_StateMachineDesc.pIsFlying = &m_isFlying;
+	m_StateMachineDesc.pCameraTransform = m_pPlayer_Camera->Get_TransformPtr();
 
 	Safe_AddRef(m_StateMachineDesc.pOwnerModel);
 	Safe_AddRef(m_StateMachineDesc.pPlayerTransform);
@@ -2606,8 +2626,9 @@ void CPlayer::Tick_TestShake()
 	ImGui::RadioButton("DECRECENDO", &m_iShakePower, CCamera_Manager::SHAKE_POWER_DECRECENDO);
 	ImGui::RadioButton("CRECENDO_DECRECENDO", &m_iShakePower, CCamera_Manager::SHAKE_POWER_CRECENDO_DECRECENDO);
 
+	ImGui::Combo("EASE", &m_iEase, m_pEases, CEase::EASE_END);
 
-	ImGui::DragFloat("SHAKE_SPEED", &m_fShakeSpeed, 0.1f, 1.0f, 60.0f);
+	ImGui::DragFloat("SHAKE_SPEED", &m_fShakeSpeed, 0.5f, 0.0f, 60.0f);
 	ImGui::DragFloat("SHAKE_DURATION", &m_fShakeDuration, 0.001f, 0.001f, 100.0f);
 	ImGui::DragFloat("SHAKE_POWER", &m_fShakePower, 0.001f, 0.001f, 1.0f);
 
@@ -2879,7 +2900,7 @@ void CPlayer::Go_Protego(void* _pArg)
 
 		m_pStateContext->Set_StateMachine(TEXT("Protego"), _pArg);
 
-		m_isCollisionEnterProtego = false;
+		m_isCollisionEnterProtego = false;	
 	}
 }
 
@@ -3110,6 +3131,8 @@ void CPlayer::Free()
 		Safe_Release(m_UI_Group_SkillTap);
 		Safe_Release(m_pCooltime);
 		Safe_Release(m_pDefence);
+		
+		//Safe_Release(m_pBlink);
 
 		if (nullptr != m_pTargetTransform)
 		{

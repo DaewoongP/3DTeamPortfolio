@@ -45,6 +45,7 @@
 #include "Trail.h"
 #include "MeshEffect.h"
 #include "Wingardium_Effect.h"
+#include "Blink_Effect.h"
 #include "EnergyBall.h"
 #include "Breath.h"
 #include "Pulse.h"
@@ -349,7 +350,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 				CUI_Group_Enemy_HP::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_GameObject_UI_Group_Enemy_HP");
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Font"),
-				CUI_Font::Create(m_pDevice, m_pContext, TEXT("../../Resources/Fonts/NexonGothic.spritefont")))))
+				CUI_Font::Create(m_pDevice, m_pContext, TEXT("../../Resources/Fonts/NexonGothic.spritefont")), true)))
 				throw TEXT("Prototype_GameObject_UI_Font");
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_Cursor"),
 				CUI_Group_Cursor::Create(m_pDevice, m_pContext))))
@@ -676,7 +677,15 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Bombarda"),
 				CBombarda::Create(m_pDevice, m_pContext, eLevelID))))
 				throw TEXT("Prototype_GameObject_Bombarda");
+			
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Blink_Trail"),
+				CBlink_Effect::Create(m_pDevice, m_pContext, eLevelID))))
+				throw TEXT("Prototype_GameObject_Blink_Trail");
+
+		
+
 		}
+		
 
 		/* For.Prototype_GameObject_Projectile_Black */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Projectile_Black"),
@@ -698,8 +707,6 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Monster_DarkFlare/"), eLevelID))))
 			throw TEXT("Prototype_Monster_DarkFlare_Particle");
 		
-
-#pragma endregion
 		{
 			std::lock_guard<std::mutex> lock(mtx);
 

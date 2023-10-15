@@ -323,7 +323,7 @@ HRESULT CDescendo::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
-
+	
 	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Decendo_MeshEffect"),
 	//	TEXT("Com_Mesh_Effect"), reinterpret_cast<CComponent**>(&m_pMeshEffect))))
 	//{

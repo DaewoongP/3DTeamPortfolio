@@ -445,6 +445,8 @@ HRESULT CParticleSystem::Save(const _tchar* _pDirectoryPath)
 		return E_FAIL;
 	if (FAILED(m_ShapeModuleDesc.Save(_pDirectoryPath)))
 		return E_FAIL;
+	if (FAILED(m_VelocityOverLifeTimeModuleDesc.Save(_pDirectoryPath)))
+		return E_FAIL;
 	if (FAILED(m_TextureSheetAnimationModuleDesc.Save(_pDirectoryPath)))
 		return E_FAIL;
 	if (FAILED(m_ColorOverLifeTimeModuleDesc.Save(_pDirectoryPath)))
@@ -465,6 +467,8 @@ HRESULT CParticleSystem::Load(const _tchar* _pDirectoryPath)
 	if (FAILED(m_EmissionModuleDesc.Load(_pDirectoryPath)))
 		return E_FAIL;
 	if (FAILED(m_ShapeModuleDesc.Load(_pDirectoryPath)))
+		return E_FAIL;
+	if (FAILED(m_VelocityOverLifeTimeModuleDesc.Load(_pDirectoryPath)))
 		return E_FAIL;
 	if (FAILED(m_TextureSheetAnimationModuleDesc.Load(_pDirectoryPath)))
 		return E_FAIL;

@@ -22,17 +22,11 @@
     <Filter Include="02. GameObject\99. Debug">
       <UniqueIdentifier>{286ee9a6-b9ef-449f-9303-ba3e8913d1f9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="98. Default">
-      <UniqueIdentifier>{cc18812b-2268-4f02-b60b-17a85252121a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\99. Debug\Camera">
       <UniqueIdentifier>{135ca45c-2c5b-460d-a30c-d6f6b96b6d78}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\99. Debug\Player">
       <UniqueIdentifier>{a7856930-1055-4fbe-9f00-de43c99e8340}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="98. Default\ImGui_Defaults">
-      <UniqueIdentifier>{628cd336-ebfe-4860-bfac-014e7bec45d3}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\99. Debug\PhysxRender">
       <UniqueIdentifier>{ffbc88f7-a780-4e66-87b7-7baf68d24ed3}</UniqueIdentifier>
@@ -93,9 +87,6 @@
     </Filter>
     <Filter Include="02. GameObject\01. Player\01. StateMachine\07. Hit">
       <UniqueIdentifier>{8100d76b-abc1-4a05-a149-ea58ea807be8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Player\03. PlayerInformation">
-      <UniqueIdentifier>{32c19ffc-fb69-42ca-ba81-07c40b9b305f}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Levels\01. Cliffside">
       <UniqueIdentifier>{1bc6cbc7-4c2b-4ad9-9e0c-6724a4c369f3}</UniqueIdentifier>
@@ -741,6 +732,21 @@
     </Filter>
     <Filter Include="02. GameObject\02. Enemy\07. Pensive\Pensive_Ground_Ball">
       <UniqueIdentifier>{471c54cd-7a5b-4ece-8242-6d120e185254}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. Terrain\03. PlayerInformation">
+      <UniqueIdentifier>{32c19ffc-fb69-42ca-ba81-07c40b9b305f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Effect\Blink_Effect">
+      <UniqueIdentifier>{58d8b344-dfb8-4b48-ab00-f18496e8f003}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="08. GameManager">
+      <UniqueIdentifier>{f7506b35-2a98-4706-aaf0-aacbf2491e33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. Default">
+      <UniqueIdentifier>{cc18812b-2268-4f02-b60b-17a85252121a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. Default\ImGui_Defaults">
+      <UniqueIdentifier>{628cd336-ebfe-4860-bfac-014e7bec45d3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1425,7 +1431,7 @@
       <Filter>02. GameObject\01. Player</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_Information.h">
-      <Filter>02. GameObject\01. Player\03. PlayerInformation</Filter>
+      <Filter>02. GameObject\05. Terrain\03. PlayerInformation</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Event_Vault_Spawn.h">
       <Filter>07. Events\Vault</Filter>
@@ -1477,6 +1483,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\Pensive_Ground_Ball.h">
       <Filter>02. GameObject\02. Enemy\07. Pensive\Pensive_Ground_Ball</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Blink_Effect.h">
+      <Filter>04. Effect\Blink_Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Game_Manager.h">
+      <Filter>08. GameManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1763,7 +1775,7 @@
       <Filter>02. GameObject\01. Player\01. StateMachine\07. Hit</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_Information.cpp">
-      <Filter>02. GameObject\01. Player\03. PlayerInformation</Filter>
+      <Filter>02. GameObject\05. Terrain\03. PlayerInformation</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Finisher.cpp">
       <Filter>05. Magic\MagicBall\07. Finisher</Filter>
@@ -2171,6 +2183,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Pensive_Ground_Ball.cpp">
       <Filter>02. GameObject\02. Enemy\07. Pensive\Pensive_Ground_Ball</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Blink_Effect.cpp">
+      <Filter>04. Effect\Blink_Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Game_Manager.cpp">
+      <Filter>08. GameManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

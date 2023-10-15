@@ -8,7 +8,7 @@ class ENGINE_DLL CRenderer final : public CGameObject
 {
 public:
 	enum RENDERGROUP { RENDER_PRIORITY, RENDER_DEPTH, RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_BLEND,
-					  RENDER_GLOW, RENDER_DISTORTION, RENDER_RADIALBLUR, RENDER_SCREEN, RENDER_UI,
+					  RENDER_GLOW, RENDER_DISTORTION,RENDER_DISTORTION_ZIGZAG, RENDER_RADIALBLUR, RENDER_SCREEN, RENDER_UI,
 		// ETC
 		RENDER_PICKING, RENDER_BRUSHING, RENDER_UITEXTURE, RENDER_END };
 
@@ -68,11 +68,12 @@ private:
 	HRESULT Render_NonLight();
 	HRESULT Render_Blend();
 	HRESULT Render_HDR();
+	HRESULT Render_Fog();
 	HRESULT Render_PostProcessing();
 	HRESULT Render_Distortion();
 	HRESULT Render_RadialBlur();
 	HRESULT Render_Screen();
-	HRESULT Render_Rain();
+	
 	HRESULT Render_ScreenRadial();
 	HRESULT Render_UI();
 
@@ -116,10 +117,10 @@ private:
 	class CShader*					m_pDeferredShader = { nullptr };
 	class CShader*					m_pLightShader = { nullptr };
 	class CShader*					m_pPostProcessingShader = { nullptr };
-	class CShader*					m_pShadeTypeShader = { nullptr };
 	class CShader*					m_pSSAOShader = { nullptr };
 	class CShader*					m_pDistortionShader = { nullptr };
 	class CShader*					m_pRadialBlurShader = { nullptr };
+	class CShader*					m_pFogShader = { nullptr };
 
 private:
 	_bool							m_isSSAO = { false };
@@ -127,6 +128,7 @@ private:
 	_float							m_fRadialBlurWidth = { 0.f };
 	_float							m_fRadialTime = { 0.f };
 	_float							m_fRadialTimeAcc = { 0.f };
+	_float4							m_vFogColor;
 
 private:
 	class CBlur*					m_pBlur = { nullptr };
@@ -135,8 +137,6 @@ private:
 	class CGlow*					m_pGlow = { nullptr };
 	_float							m_fGlowPower = { 0.f };
 	_float							m_fHDR = { 0.f };
-	class CMotionBlurInstance*		m_pMotionBlurInstance = { nullptr };
-	class CMotionBlur*				m_pMotionBlur = { nullptr };
 	class CDOF*						m_pDOF = { nullptr };
 
 public:

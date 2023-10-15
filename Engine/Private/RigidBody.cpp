@@ -197,6 +197,8 @@ void CRigidBody::Set_Mass(_float fMass)
 
 void CRigidBody::Set_CollisionFlag(const _char* szColliderTag, PxU32 eCollisionFlag)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	PxShape* pShape = Find_Shape(szColliderTag);
 
 	if (nullptr == pShape)
@@ -521,6 +523,8 @@ void CRigidBody::Rotate(_float4 _vRotation) const
 
 void CRigidBody::Enable_Collision(const _char* szColliderTag, CGameObject* pThisCollision)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	PxShape* pShape = Find_Shape(szColliderTag);
 
 	if (nullptr == pShape)
@@ -536,6 +540,8 @@ void CRigidBody::Enable_Collision(const _char* szColliderTag, CGameObject* pThis
 
 void CRigidBody::Enable_Collision(const _char* szColliderTag, CGameObject* pThisCollision, void* pCollisionData)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	PxShape* pShape = Find_Shape(szColliderTag);
 
 	if (nullptr == pShape)
@@ -552,6 +558,8 @@ void CRigidBody::Enable_Collision(const _char* szColliderTag, CGameObject* pThis
 
 void CRigidBody::Disable_Collision(const _char* szColliderTag)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	PxShape* pShape = Find_Shape(szColliderTag);
 
 	if (nullptr == pShape)
