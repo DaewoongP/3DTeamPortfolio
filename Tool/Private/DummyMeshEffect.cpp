@@ -128,7 +128,8 @@ void CDummyMeshEffect::Tick_Imgui(_float _fTimeDelta)
 			m_eColorEase = static_cast<CEase::EASE>(m_pColorEaseCombo->Get_Current_Item_Index());
 		pEffectWindow->Table_ColorEdit4("Start Color", "cvkjv94efcvxcv", &m_vStartColor);
 		pEffectWindow->Table_ColorEdit4("End Color", "sfgnyn45634fg", &m_vEndColor);
-
+		pEffectWindow->Table_CheckBox("Glow", "dkvijies", &m_isGlow);
+		pEffectWindow->Table_CheckBox("Distortion", "ciceicjoeijdsfs", &m_isDistortion);
 		ImGui::Separator();
 
 		ImGui::EndTable();

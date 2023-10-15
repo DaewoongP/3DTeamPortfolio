@@ -208,10 +208,20 @@ void CMeshEffect::Late_Tick(_float _fTimeDelta)
 
 	if (nullptr != m_pRenderer)
 	{
-		if(true == m_isAlphaBlend)
+		if (true == m_isAlphaBlend)
 			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
 		else
 			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+
+		if (m_isGlow)
+		{
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
+		}
+
+		if (m_isDistortion)
+		{
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DISTORTION, this);
+		}
 	}
 }
 
@@ -387,6 +397,8 @@ HRESULT CMeshEffect::Save(const _tchar* pFilePath)
 	WriteFile(hFile, &m_isAlphaBlend, sizeof(m_isAlphaBlend), &dwByte, nullptr);
 	WriteFile(hFile, m_strClipChannel.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	WriteFile(hFile, &m_fClipThreshold, sizeof(m_fClipThreshold), &dwByte, nullptr);
+	WriteFile(hFile, &m_isGlow, sizeof(m_isGlow), &dwByte, nullptr);
+	WriteFile(hFile, &m_isDistortion, sizeof(m_isDistortion), &dwByte, nullptr);
 	CloseHandle(hFile);
 
 	return S_OK;
@@ -445,6 +457,8 @@ HRESULT CMeshEffect::Load(const _tchar* pFilePath)
 	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	m_strClipChannel = szBuffer;
 	ReadFile(hFile, &m_fClipThreshold, sizeof(m_fClipThreshold), &dwByte, nullptr);
+	ReadFile(hFile, &m_isGlow, sizeof(m_isGlow), &dwByte, nullptr);
+	ReadFile(hFile, &m_isDistortion, sizeof(m_isDistortion), &dwByte, nullptr);
 	CloseHandle(hFile);
 
 	return S_OK;

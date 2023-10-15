@@ -107,7 +107,6 @@ HRESULT CPlayer::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -246,7 +245,6 @@ HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 void CPlayer::Tick(_float fTimeDelta)
 {
 	BEGININSTANCE;
-
 	//�÷��̾� ī�޶� �ƴ϶��?
 	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
 	{
@@ -366,6 +364,11 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 	if (wstring::npos != wstrCollisionTag.find(TEXT("Attack")))
 	{
+		if (nullptr == CollisionEventDesc.pArg)
+		{
+			return;
+		}
+
 		CEnemy::COLLISIONREQUESTDESC* pDesc = static_cast<CEnemy::COLLISIONREQUESTDESC*>(CollisionEventDesc.pArg);
 
 		if (nullptr == pDesc ||
@@ -435,6 +438,11 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	}
 	else if (wstring::npos != wstrCollisionTag.find(TEXT("Magic_Ball")))
 	{
+		if (nullptr == CollisionEventDesc.pArg)
+		{
+			return;
+		}
+
 		CMagicBall::COLLSIONREQUESTDESC* pDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
 
 		//Protego
@@ -738,7 +746,13 @@ HRESULT CPlayer::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
-
+	/* Com_Blink_Effect */
+	/*if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_Trail"),
+		TEXT("Com_Blink_Trail"), reinterpret_cast<CComponent**>(&m_pBlink))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}*/
 
 	//_int DefValue = 15;
 	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_EndurusPotion"),
@@ -763,6 +777,9 @@ HRESULT CPlayer::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+
+
+
 
 	return S_OK;
 }
@@ -1028,10 +1045,10 @@ HRESULT CPlayer::Add_Magic()
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(3, FINISHER);
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(4, STUPEFY);
 
-	Set_Spell_Botton(0, ARRESTOMOMENTUM);
+	Set_Spell_Botton(0, BOMBARDA);
 	Set_Spell_Botton(1, LEVIOSO);
-	Set_Spell_Botton(2, CONFRINGO);
-	Set_Spell_Botton(3, NCENDIO);
+	Set_Spell_Botton(2, DESCENDO);
+	Set_Spell_Botton(3, CRUCIO);
 
 	return S_OK;
 }
@@ -3114,6 +3131,8 @@ void CPlayer::Free()
 		Safe_Release(m_UI_Group_SkillTap);
 		Safe_Release(m_pCooltime);
 		Safe_Release(m_pDefence);
+		
+		//Safe_Release(m_pBlink);
 
 		if (nullptr != m_pTargetTransform)
 		{
