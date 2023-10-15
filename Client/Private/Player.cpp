@@ -1026,10 +1026,10 @@ HRESULT CPlayer::Add_Magic()
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(3, FINISHER);
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(4, STUPEFY);
 
-	Set_Spell_Botton(0, BOMBARDA);
+	Set_Spell_Botton(0, ARRESTOMOMENTUM);
 	Set_Spell_Botton(1, LEVIOSO);
-	Set_Spell_Botton(2, DESCENDO);
-	Set_Spell_Botton(3, CRUCIO);
+	Set_Spell_Botton(2, CONFRINGO);
+	Set_Spell_Botton(3, NCENDIO);
 
 	return S_OK;
 }

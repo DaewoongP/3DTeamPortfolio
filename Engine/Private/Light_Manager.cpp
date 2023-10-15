@@ -96,6 +96,11 @@ HRESULT CLight_Manager::Clear_Lights()
 		Safe_Release(pLight);
 
 	m_Lights.clear();
+	
+	for (auto& pLight : m_InstanceLights)
+		Safe_Release(pLight);
+
+	m_InstanceLights.clear();
 
 	return S_OK;
 }
