@@ -32,10 +32,20 @@ public:
 private:
 	CTrigger* m_pSpawn_Troll = { nullptr };
 
+
+private:
+	CTrigger* m_pCutSceneTest = { nullptr };
+	
+
 private: /* 몬스터 스폰 관련 */
 	_umap<wstring, CEnemy*> m_pMonsters;
 	_bool m_isSpawned_Troll = { false };
 	void Check_Event_Spawn_Troll();
+
+private:
+	_bool m_isPlayTestCutScene = { false };
+	void Check_Event_Play_Test_CutScene();
+
 
 private:
 	HRESULT Add_Components();

@@ -46,6 +46,8 @@ private:
 public:
 	_float3 Get_CamLookXZ();
 	_float3 Get_CamRightXZ();
+
+	CTransform* Get_TransformPtr() { return m_pTransform; }
 public:
 	void Change_Animation(const wstring& _AnimattionIndex);
 	_bool Is_Finish_Animation();
