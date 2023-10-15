@@ -487,12 +487,13 @@ HRESULT CPlayer::Render()
 	{
 		_uint		iNumMeshes = m_pCustomModel->Get_NumMeshes(iPartsIndex);
 
-		if (CCustomModel::HAIR == iPartsIndex)
+		if (CCustomModel::HAIR == iPartsIndex || 
+			CCustomModel::HAT == iPartsIndex)
 		{
 			for (_uint i = 0; i < iNumMeshes; ++i)
 			{
 				m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
-
+				m_pCustomModel->Bind_Color(m_pShader, "g_vHairColor", iPartsIndex);
 				m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
 				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
 
@@ -506,7 +507,7 @@ HRESULT CPlayer::Render()
 			for (_uint i = 0; i < iNumMeshes; ++i)
 			{
 				m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
-
+				m_pCustomModel->Bind_Color(m_pShader, "g_vColor", iPartsIndex);
 				m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
 				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
 
@@ -516,8 +517,7 @@ HRESULT CPlayer::Render()
 			}
 		}
 		else if (CCustomModel::HEAD == iPartsIndex ||
-			CCustomModel::ARM == iPartsIndex ||
-			CCustomModel::HAT == iPartsIndex)
+			CCustomModel::ARM == iPartsIndex)
 		{
 			for (_uint i = 0; i < iNumMeshes; ++i)
 			{
@@ -536,7 +536,7 @@ HRESULT CPlayer::Render()
 			for (_uint i = 0; i < iNumMeshes; ++i)
 			{
 				m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
-
+				m_pCustomModel->Bind_Color(m_pShader, "g_vColor", iPartsIndex);
 				m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
 				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
 
@@ -1373,11 +1373,13 @@ void CPlayer::Fix_Mouse()
 
 HRESULT CPlayer::Ready_MeshParts()
 {
+	_float4 vColor = _float4(0.2f, 0.2f, 0.2f, 1.f);
+
 	//Hat
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Player_test"),
-		CCustomModel::HAT)))
+		TEXT("Prototype_Component_MeshPart_Fedora"),
+		CCustomModel::HAT, vColor)))
 	{
 		MSG_BOX("Failed Add MeshPart Hat");
 
@@ -1385,10 +1387,11 @@ HRESULT CPlayer::Ready_MeshParts()
 	}
 
 	//Hair
+	vColor = _float4(0.2f, 0.2f, 0.2f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Hair"),
-		CCustomModel::HAIR)))
+		CCustomModel::HAIR, vColor)))
 	{
 		MSG_BOX("Failed Add MeshPart Hair");
 
@@ -1396,21 +1399,35 @@ HRESULT CPlayer::Ready_MeshParts()
 	}
 
 	//Head
+	vColor = _float4(0.f, 0.f, 0.f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Head"),
-		CCustomModel::HEAD)))
+		CCustomModel::HEAD, vColor)))
 	{
 		MSG_BOX("Failed Add MeshPart Head");
 
 		return E_FAIL;
 	}
 
+	//Mask
+	vColor = _float4(1.f, 1.f, 1.f, 1.f);
+	if (FAILED(m_pCustomModel->Add_MeshParts(
+		LEVEL_STATIC,
+		TEXT("Prototype_Component_MeshPart_Mask_Gardian"),
+		CCustomModel::MASK, vColor)))
+	{
+		MSG_BOX("Failed Add MeshPart Mask");
+
+		return E_FAIL;
+	}
+
 	//Arm
+	vColor = _float4(0.f, 0.f, 0.f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Arm"),
-		CCustomModel::ARM)))
+		CCustomModel::ARM, vColor)))
 	{
 		MSG_BOX("Failed Add MeshPart Arm");
 
@@ -1418,10 +1435,11 @@ HRESULT CPlayer::Ready_MeshParts()
 	}
 
 	//Robe
+	vColor = _float4(0.f, 1.f, 0.f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Robe01"),
-		CCustomModel::ROBE, TEXT("../../Resources/GameData/ClothData/Test.cloth"))))
+		CCustomModel::ROBE, vColor, TEXT("../../Resources/GameData/ClothData/Test.cloth"))))
 	{
 		MSG_BOX("Failed Add MeshPart Robe");
 
@@ -1429,10 +1447,11 @@ HRESULT CPlayer::Ready_MeshParts()
 	}
 
 	//Top
+	vColor = _float4(0.2f, 0.2f, 0.2f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Top"),
-		CCustomModel::TOP)))
+		CCustomModel::TOP, vColor)))
 	{
 		MSG_BOX("Failed Add MeshPart Top");
 
@@ -1440,10 +1459,11 @@ HRESULT CPlayer::Ready_MeshParts()
 	}
 
 	//Pants
+	vColor = _float4(0.2f, 0.2f, 0.3, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Pants"),
-		CCustomModel::PANTS)))
+		CCustomModel::PANTS, vColor)))
 	{
 		MSG_BOX("Failed Add MeshPart Pants");
 
@@ -1451,10 +1471,11 @@ HRESULT CPlayer::Ready_MeshParts()
 	}
 
 	//Socks
+	vColor = _float4(0.f, 0.f, 0.f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Socks"),
-		CCustomModel::SOCKS)))
+		CCustomModel::SOCKS, vColor)))
 	{
 		MSG_BOX("Failed Add MeshPart Socks");
 
@@ -1462,10 +1483,11 @@ HRESULT CPlayer::Ready_MeshParts()
 	}
 
 	//Shoes
+	vColor = _float4(0.3f, 0.2f, 0.3f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Shoes"),
-		CCustomModel::SHOES)))
+		CCustomModel::SHOES, vColor)))
 	{
 		MSG_BOX("Failed Add MeshPart Shoes");
 

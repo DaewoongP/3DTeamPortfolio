@@ -6,7 +6,7 @@ texture2D g_DiffuseTexture;
 texture2D g_NormalTexture;
 texture2D g_EmissiveTexture;
 
-float3 g_vHairColor = float3(1.f, 1.f, 1.f);
+float4 g_vHairColor = float4(1.f, 1.f, 1.f, 1.f);
 float4 g_vColor;
 float g_fCamFar;
 
@@ -142,7 +142,7 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
 
     vNormal = mul(vNormal, WorldMatrix);
     
-    Out.vDiffuse = float4(g_vHairColor.rgb, 1.f);
+    Out.vDiffuse = g_vHairColor;
 	
     // UNORM 4개 타입에 값을 넣으므로 여기서 0~1로 보정처리하고 나중에 받을때 -1~1로 보정처리를 다시한다.
     Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);

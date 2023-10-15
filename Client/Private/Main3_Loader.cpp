@@ -268,11 +268,6 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Hair/Player_Hair.dat"), TEXT("Player_Hair")))))
 			throw TEXT("Prototype_Component_MeshPart_Player_Hair");
 
-		/* For.Prototype_Component_MeshPart_Player_test */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Player_test"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/ttest/ttest.dat"), TEXT("Player_test")))))
-			throw TEXT("Prototype_Component_MeshPart_Player_test");
-
 		/* For.Prototype_Component_MeshPart_Player_Head */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Player_Head"),
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Head/Player_Head.dat"), TEXT("Player_Head")))))
@@ -595,6 +590,24 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 			CMongrel_Fur_Item::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Mongrel_Fur");
 #pragma endregion
+
+#pragma region MeshParts
+		/* For.Prototype_Component_MeshPart_Wizard_Hat */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Wizard_Hat"),
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Wizard_Hat/Wizard_Hat.dat"), TEXT("Wizard_Hat")))))
+			throw TEXT("Prototype_Component_MeshPart_Wizard_Hat");
+		
+		/* For.Prototype_Component_MeshPart_Fedora */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Fedora"),
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Fedora/Fedora.dat"), TEXT("Fedora")))))
+			throw TEXT("Prototype_Component_MeshPart_Fedora");
+
+		/* For.Prototype_Component_MeshPart_Mask_Gardian */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Mask_Gardian"),
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Mask_Gardian/Mask_Gardian.dat"), TEXT("Mask_Gardian")))))
+			throw TEXT("Prototype_Component_MeshPart_Mask_Gardian");
+#pragma endregion
+
 	}
 	catch (const _tchar* pErrorTag)
 	{
