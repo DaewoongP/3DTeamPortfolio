@@ -122,11 +122,11 @@ void CDugbog::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		if (iter == m_CurrentTickSpells.end() &&
 			BUFF_LEVIOSO & eBuff)
 		{
-			if (BUFF_LEVIOSO & eBuff && true == m_isAbleLevioso)
-				eBuff = BUFF_LEVIOSO_TONGUE;
-
 			m_CurrentTickSpells.emplace(eBuff, Action);
 		}
+
+		if (BUFF_LEVIOSO & eBuff && true == m_isAbleLevioso)
+			eBuff = BUFF_LEVIOSO_TONGUE;
 
 		if (true == isCombo(eBuff))
 			m_isHitCombo = true;

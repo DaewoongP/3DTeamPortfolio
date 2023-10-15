@@ -381,6 +381,9 @@ HRESULT CProtego::Reset(MAGICBALLINITDESC& InitDesc)
 {
 	//Set InitDesc to MagicBallDesc
 	__super::Reset(InitDesc);
+
+	m_fDyingTimer = 7.f;
+
 	switch (InitDesc.eMagicType)
 	{
 	case Client::CMagic::MT_NOTHING:
