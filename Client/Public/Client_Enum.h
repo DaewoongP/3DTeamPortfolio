@@ -124,6 +124,7 @@ namespace Client
 		//ITEM_ID_KNOTGRASS_SPRIG, // 마디풀
 		ITEM_ID_MALLOWSWEET_LEAVES, // 향이 나는 아욱 잎
 		//ITEM_ID_SHRIVELFIG_FRUIT, // 오그라든 무화과 나무 열매
+		ITEM_ID_ROBE1,
 		ITEM_ID_END
 	};
 

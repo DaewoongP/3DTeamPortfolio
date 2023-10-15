@@ -694,6 +694,15 @@
     <Filter Include="07. Events\Smeade">
       <UniqueIdentifier>{2ed55d9c-62e6-455a-a77e-621148ea10a5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\09. Item\03. Gear\Robe_Item">
+      <UniqueIdentifier>{70bd1214-7e78-4b8b-beeb-d7fa5c144a62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Effect\BoneDragon">
+      <UniqueIdentifier>{41a12515-ec23-459a-bdc0-6707bacb4e6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Effect\BoneDragon\ImpulseSphere">
+      <UniqueIdentifier>{a94ba46b-41cb-498e-9f1c-e6bd0ddc924e}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\02. Enemy\07. Pensive">
       <UniqueIdentifier>{d35bd40d-1992-4218-aee5-6049585803b9}</UniqueIdentifier>
     </Filter>
@@ -1442,6 +1451,12 @@
     <ClInclude Include="..\Public\Event_Smeade.h">
       <Filter>07. Events\Smeade</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Robe1_Item.h">
+      <Filter>02. GameObject\09. Item\03. Gear\Robe_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImpulseSphere_Effect.h">
+      <Filter>04. Effect\BoneDragon\ImpulseSphere</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Pensive_Appearence.h">
       <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Appearence</Filter>
     </ClInclude>
@@ -2142,6 +2157,12 @@
     <ClCompile Include="..\Private\Event_Smeade.cpp">
       <Filter>07. Events\Smeade</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Robe1_Item.cpp">
+      <Filter>02. GameObject\09. Item\03. Gear\Robe_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ImpulseSphere_Effect.cpp">
+      <Filter>04. Effect\BoneDragon\ImpulseSphere</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Pensive_Appearence.cpp">
       <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Appearence</Filter>
     </ClCompile>
@@ -2248,6 +2269,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMeshInstance.hlsl">
       <Filter>97. ShaderFiles\Meshes</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_ImpulseSphere.hlsl">
+      <Filter>04. Effect\BoneDragon\ImpulseSphere</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

@@ -74,6 +74,7 @@
 #include "Troll_Bogeys_Item.h"
 #include "Shrivelfig_Item.h"
 #include "Mongrel_Fur_Item.h"
+#include "Robe1_Item.h"
 #pragma endregion
 
 
@@ -592,10 +593,15 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 			CShrivelfig_Item::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Shrivelfig_Item");
 
-		/* For.Prototype_GameObject_Mongrel_Fur*/
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Mongrel_Fur"),
+		/* For.Prototype_GameObject_Mongrel_Fur_Item*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Mongrel_Fur_Item"),
 			CMongrel_Fur_Item::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_Mongrel_Fur");
+			throw TEXT("Prototype_GameObject_Mongrel_Fur_Item");
+
+		/* For.Prototype_GameObject_Robe1_Item*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Robe1_Item"),
+			CRobe1_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Robe1_Item");
 #pragma endregion
 
 #pragma region MeshParts
