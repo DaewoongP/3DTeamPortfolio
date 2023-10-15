@@ -6,14 +6,6 @@ IMPLEMENT_SINGLETON(CCamera_Manager);
 
 void CCamera_Manager::Set_Shake(SHAKE_TYPE _eType, SHAKE_AXIS _eAxis, CEase::EASE _eEase, _float _fSpeed, _float _Duration, _float _fPower, SHAKE_POWER _ePower, _float3 _vAxisSet)
 {
-	//작은 진동에 큰 진동이 멈추지 않게 하기 위함
-
-	//기존 파워 보다 작다면
-	if (m_fShakePower > _fPower)
-	{
-		return;
-	}
-
 	m_fShakeTimeAcc = 0.0f;
 
 	m_fShakeDuration = _Duration;
@@ -716,7 +708,7 @@ void CCamera_Manager::Shake_Update(_float _TimeDelta)
 		m_fShakeTimeAcc = m_fShakeDuration;
 	}
 
-	_float4x4 view_Matrix = *m_pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_VIEW);
+	_float4x4 Cam_Matrix = XMMatrixInverse(nullptr, *m_pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_VIEW));
 
 	_float fShakePower = { 0.0f };
 	fShakePower = m_fShakePower - CEase::Ease(m_eEase, m_fShakeTimeAcc, 0.0f, m_fShakePower, m_fShakeDuration);
@@ -767,26 +759,26 @@ void CCamera_Manager::Shake_Update(_float _TimeDelta)
 		{
 		case Engine::CCamera_Manager::SHAKE_AXIS_RIGHT:
 		{
-			_float3 vRight = view_Matrix.Right();
+			_float3 vRight = Cam_Matrix.Right();
 			vRight.Normalize();
 			vRight *= fShakeResult;
-			view_Matrix = view_Matrix * XMMatrixTranslation(vRight.x, vRight.y, vRight.z);
+			Cam_Matrix = Cam_Matrix * XMMatrixTranslation(vRight.x, vRight.y, vRight.z);
 		}
 			break;
 		case Engine::CCamera_Manager::SHAKE_AXIS_UP:
 		{
-			_float3 vUp = view_Matrix.Up();
+			_float3 vUp = Cam_Matrix.Up();
 			vUp.Normalize();
 			vUp *= fShakeResult;
-			view_Matrix = view_Matrix * XMMatrixTranslation(vUp.x, vUp.y, vUp.z);
+			Cam_Matrix = Cam_Matrix * XMMatrixTranslation(vUp.x, vUp.y, vUp.z);
 		}
 			break;
 		case Engine::CCamera_Manager::SHAKE_AXIS_LOOK:
 		{
-			_float3 vLook = view_Matrix.Look();
+			_float3 vLook = Cam_Matrix.Look();
 			vLook.Normalize();
 			vLook *= fShakeResult;
-			view_Matrix = view_Matrix * XMMatrixTranslation(vLook.x, vLook.y, vLook.z);
+			Cam_Matrix = Cam_Matrix * XMMatrixTranslation(vLook.x, vLook.y, vLook.z);
 		}
 			break;
 		case Engine::CCamera_Manager::SHAKE_AXIS_SET:
@@ -794,7 +786,7 @@ void CCamera_Manager::Shake_Update(_float _TimeDelta)
 			_float3 vAxis = m_vShake_Axis_Set;
 			vAxis.Normalize();
 			vAxis *= fShakeResult;
-			view_Matrix = view_Matrix * XMMatrixTranslation(vAxis.x, vAxis.y, vAxis.z);
+			Cam_Matrix = Cam_Matrix * XMMatrixTranslation(vAxis.x, vAxis.y, vAxis.z);
 		}
 			break;
 		case Engine::CCamera_Manager::SHAKE_AXIS_END:
@@ -806,9 +798,9 @@ void CCamera_Manager::Shake_Update(_float _TimeDelta)
 		break;
 	case Engine::CCamera_Manager::SHAKE_TYPE_ROTATION:
 	{
-		_float3 vRight = view_Matrix.Right();
-		_float3 vUp = view_Matrix.Up();
-		_float3 vLook = view_Matrix.Look();
+		_float3 vRight = Cam_Matrix.Right();
+		_float3 vUp = Cam_Matrix.Up();
+		_float3 vLook = Cam_Matrix.Look();
 
 		_float4x4 RotationMatrix = _float4x4();
 
@@ -848,9 +840,9 @@ void CCamera_Manager::Shake_Update(_float _TimeDelta)
 		vUp = XMVector3TransformNormal(vUp, RotationMatrix);
 		vLook = XMVector3TransformNormal(vLook, RotationMatrix);
 
-		memcpy(&view_Matrix.m[0][0], &vRight, sizeof(_float3));
-		memcpy(&view_Matrix.m[1][0], &vUp, sizeof(_float3));
-		memcpy(&view_Matrix.m[2][0], &vLook, sizeof(_float3));
+		memcpy(&Cam_Matrix.m[0][0], &vRight, sizeof(_float3));
+		memcpy(&Cam_Matrix.m[1][0], &vUp, sizeof(_float3));
+		memcpy(&Cam_Matrix.m[2][0], &vLook, sizeof(_float3));
 	}
 		break;
 	case Engine::CCamera_Manager::SHAKE_TYPE_END:
@@ -859,7 +851,12 @@ void CCamera_Manager::Shake_Update(_float _TimeDelta)
 		break;
 	}
 
-	m_pPipeLine->Set_Transform(CPipeLine::D3DTS_VIEW, view_Matrix);
+	_float3 vEye = Cam_Matrix.Translation();
+	_float3 vAt = vEye + Cam_Matrix.Look();
+	_float3 vUp = Cam_Matrix.Up();
+	vUp.Normalize();
+	
+	m_pPipeLine->Set_Transform(CPipeLine::D3DTS_VIEW, XMMatrixLookAtLH(vEye, vAt, vUp));
 }
 
 void CCamera_Manager::Lerp_For_Set_Camera(_float _TimeDelta)

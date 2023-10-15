@@ -89,6 +89,8 @@ HRESULT CDiffindo::Initialize(void* pArg)
 		return E_FAIL;
 	}
 	m_pTransform->Set_Speed(30);
+
+	Ready_Shake(30.0f, 2.0f, 0.04f);
 	return S_OK;
 }
 
@@ -104,6 +106,24 @@ void CDiffindo::Late_Tick(_float fTimeDelta)
 
 void CDiffindo::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
+	//¸÷ÀÌ¶û Ãæµ¹ÇßÀ¸¸é?
+	if (wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Enemy_Body")) != nullptr)
+	{
+#pragma region Ä«¸Þ¶ó ½¦ÀÌÅ©
+		BEGININSTANCE;
+
+		pGameInstance->Set_Shake(
+			CCamera_Manager::SHAKE_TYPE_TRANSLATION,
+			CCamera_Manager::SHAKE_AXIS_LOOK,
+			CEase::IN_EXPO,
+			5.0f,
+			0.2f,
+			Shake_Power(CollisionEventDesc.pOtherTransform->Get_Position()),
+			CCamera_Manager::SHAKE_POWER_DECRECENDO);
+
+		ENDINSTANCE;
+#pragma endregion
+	}
 	__super::OnCollisionEnter(CollisionEventDesc);
 }
 
@@ -164,6 +184,22 @@ void CDiffindo::Ready_CastMagic()
 	m_pMeshEffect->Play(m_vStartPosition);
 	m_pMeshEffect->Get_Transform()->LookAt(m_vEndPosition);
 	__super::Ready_CastMagic();
+
+
+#pragma region Ä«¸Þ¶ó ½¦ÀÌÅ©
+	BEGININSTANCE;
+
+	pGameInstance->Set_Shake(
+		CCamera_Manager::SHAKE_TYPE_TRANSLATION,
+		CCamera_Manager::SHAKE_AXIS_RIGHT,
+		CEase::IN_EXPO,
+		5.0f,
+		0.2f,
+		-0.05f,
+		CCamera_Manager::SHAKE_POWER_DECRECENDO);
+
+	ENDINSTANCE;
+#pragma endregion
 }
 
 void CDiffindo::Ready_Dying()

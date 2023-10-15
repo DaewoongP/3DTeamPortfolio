@@ -114,7 +114,11 @@ HRESULT CLevioso::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
+
 	m_CollisionDesc.Action = bind(&CLevioso::TrailAction, this, placeholders::_1);
+	
+	Ready_Shake(30.0f, 2.0f, 0.04f);
+
 	return S_OK;
 }
 
@@ -134,6 +138,21 @@ void CLevioso::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	if (wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Enemy_Body")) != nullptr)
 	{
 		Set_MagicBallState(MAGICBALL_STATE_DYING);
+
+#pragma region 카메라 쉐이크
+		BEGININSTANCE;
+
+		pGameInstance->Set_Shake(
+			CCamera_Manager::SHAKE_TYPE_TRANSLATION,
+			CCamera_Manager::SHAKE_AXIS_LOOK,
+			CEase::IN_EXPO,
+			5.0f,
+			0.2f,
+			-Shake_Power(CollisionEventDesc.pOtherTransform->Get_Position()),
+			CCamera_Manager::SHAKE_POWER_DECRECENDO);
+
+		ENDINSTANCE;
+#pragma endregion
 	}
 
 	__super::OnCollisionEnter(CollisionEventDesc);
