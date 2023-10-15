@@ -2,30 +2,29 @@
 /* =============================================== */
 //	[CPensive]
 // 
-//	¡§ : ¡÷º∫»Ø
+//	¡§ : æ»√∂πŒ
 //	∫Œ :
 //
 /* =============================================== */
 
-#include "GameObject.h"
-#include "Client_Defines.h"
+#include "Enemy.h"
+#include "StateMachine_Enemy.h"
 
-BEGIN(Engine)
-class CModel;
-class CShader;
-class CRenderer;
-class CRigidBody;
-class CRootBehavior;
-END
 
 BEGIN(Client)
 class CWeapon_Pensive;
+class CStateContext_Enemy;
+class CMagicSlot;
+class CWeapon_Dragon_Head;
 END
 
 BEGIN(Client)
 
-class CPensive final : public CGameObject
+class CPensive final : public CEnemy
 {
+public:
+	enum ATTACKTYPE {ATTACK_HAMMER, ATTACK_GROUND, ATTACK_SWORD, ATTACK_ORB, ATTACK_SCREAM,ATTACK_END};
+
 private:
 	explicit CPensive(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CPensive(const CPensive& rhs);
@@ -34,24 +33,32 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
 private:
-	CModel* m_pModelCom = { nullptr };
-	CShader* m_pShaderCom = { nullptr };
-	CRenderer* m_pRenderer = { nullptr };
-	CRigidBody* m_pRigidBody = { nullptr };
-	CRootBehavior* m_pRootBehavior = { nullptr };
+	CStateContext_Enemy*	m_pStateContext = { nullptr };
+	CMagicSlot*				m_pMagicSlot = { nullptr };
+	CWeapon_Dragon_Head*	m_pDragonHead = { nullptr };
 
 private:
-	CWeapon_Pensive* m_pWeapon = { nullptr };
+	CStateMachine_Enemy::STATEMACHINEDESC m_StateMachineDesc = { CStateMachine_Enemy::STATEMACHINEDESC() };
+	CWeapon_Pensive* m_pWeapon[2] = { nullptr };
+
+	_uint m_iPhase = { 1 };
+	_uint m_iAttackType = { ATTACK_END };
 
 private:
-	HRESULT Make_AI();
+	void	Attack_Ground();
+
+private:
 	HRESULT Add_Components();
-	HRESULT SetUp_ShaderResources();
+	HRESULT Add_Components_Level(_uint iCurrentLevelIndex);
+	HRESULT Ready_StateMachine(_uint iCurrentLevelIndex);
+	HRESULT Make_Notifies();
+	HRESULT Add_Magic();
 
 public:
 	static CPensive* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

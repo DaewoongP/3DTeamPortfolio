@@ -45,6 +45,7 @@
 #include "Trail.h"
 #include "MeshEffect.h"
 #include "Wingardium_Effect.h"
+#include "Blink_Effect.h"
 #include "EnergyBall.h"
 #include "Breath.h"
 #include "Pulse.h"
@@ -79,6 +80,8 @@
 
 #include "Projectile_Black.h"
 #include "Projectile_White.h"
+
+#include "Pensive_Ground_Ball.h"
 #pragma endregion Magic
 
 #include "Trigger_Vault.h"
@@ -353,7 +356,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 				CUI_Group_Enemy_HP::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_GameObject_UI_Group_Enemy_HP");
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Font"),
-				CUI_Font::Create(m_pDevice, m_pContext, TEXT("../../Resources/Fonts/NexonGothic.spritefont")))))
+				CUI_Font::Create(m_pDevice, m_pContext, TEXT("../../Resources/Fonts/NexonGothic.spritefont")), true)))
 				throw TEXT("Prototype_GameObject_UI_Font");
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_Cursor"),
 				CUI_Group_Cursor::Create(m_pDevice, m_pContext))))
@@ -554,10 +557,10 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 				CRigidBody::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_Component_RigidBody");
 
-			///* For.Prototype_Component_RadialBlur */
-			//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RadialBlur"),
-			//	CRadialBlur::Create(m_pDevice, m_pContext))))
-			//	throw TEXT("Prototype_Component_RadialBlur");
+			/* For.Prototype_Component_RadialBlur */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RadialBlur"),
+				CRadialBlur::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_RadialBlur");
 		}
 
 		/* Prototype_Component_Model_Shpere */
@@ -680,7 +683,15 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Bombarda"),
 				CBombarda::Create(m_pDevice, m_pContext, eLevelID))))
 				throw TEXT("Prototype_GameObject_Bombarda");
+			
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Blink_Trail"),
+				CBlink_Effect::Create(m_pDevice, m_pContext, eLevelID))))
+				throw TEXT("Prototype_GameObject_Blink_Trail");
+
+		
+
 		}
+		
 
 		/* For.Prototype_GameObject_Projectile_Black */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Projectile_Black"),
@@ -692,12 +703,16 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			CProjectile_White::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Projectile_White");
 
+		/* For.Prototype_GameObject_Pensive_Ground_Ball */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Pensive_Ground_Ball"),
+			CPensive_Ground_Ball::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Pensive_Ground_Ball");
+		
+
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Monster_DarkFlare_Particle"),
 			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Monster_DarkFlare/"), eLevelID))))
 			throw TEXT("Prototype_Monster_DarkFlare_Particle");
 		
-
-#pragma endregion
 		{
 			std::lock_guard<std::mutex> lock(mtx);
 
@@ -813,6 +828,14 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DogBog_Water_Foot"),
 				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/DogBog_Water_Foot/"), 3)))
 				throw TEXT("Reserve Particle : Particle_DogBog_Water_Foot");
+		
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_Dust_Hit"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Monster_Hit/Troll_Dust/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Troll_Dust_Hit");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_Stone_Hit"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Monster_Hit/Troll_Stone/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Troll_Stone_Hit");
 		}
 #pragma endregion
 

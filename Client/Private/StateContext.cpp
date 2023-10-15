@@ -121,7 +121,6 @@ HRESULT CStateContext::Add_StateMachine(LEVELID _eLevelID, const _tchar* _Compon
 	(_eLevelID,_ProtoTag,_ComponentTag, reinterpret_cast<CComponent**>(&pStateMachine),_pArg)))
 	{
 		MSG_BOX("Failed Add StateMachine");
-
 		return E_FAIL;
 	}
 

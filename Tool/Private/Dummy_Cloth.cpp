@@ -126,7 +126,7 @@ void CDummy_Cloth::Set_Model_Component(CCustomModel::MESHTYPE _eMeshType, const 
 	}
 
 	/* For.Prototype_Component_MeshParts_Robe_Student */
-	if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_TOOL, _pModelTag, _eMeshType, TEXT("Default"))))
+	if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_TOOL, _pModelTag, _eMeshType, _float4(1.f, 1.f, 1.f, 1.f), TEXT("Default"))))
 	{
 		MSG_BOX("CDummy_Cloth Failed Add_MeshParts");
 		return;

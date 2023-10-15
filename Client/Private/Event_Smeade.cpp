@@ -40,6 +40,8 @@ void CEvent_Smeade::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	Check_Event_Spawn_Troll();
+
+	//Check_Event_Play_Test_CutScene();
 }
 
 void CEvent_Smeade::Late_Tick(_float fTimeDelta)
@@ -72,6 +74,24 @@ void CEvent_Smeade::Check_Event_Spawn_Troll()
 	}
 }
 
+void CEvent_Smeade::Check_Event_Play_Test_CutScene()
+{
+	if (true == m_isPlayTestCutScene)
+		return;
+
+	if (true == m_pCutSceneTest->Is_Collision())
+	{
+		BEGININSTANCE;
+
+		pGameInstance->Add_CutScene(TEXT("CutSceneTest"));
+
+		ENDINSTANCE;
+
+		if (m_pCutSceneTest->isDead())
+			m_isPlayTestCutScene = true;
+	}
+}
+
 HRESULT CEvent_Smeade::Add_Components()
 {
 	/* For.Trigger_Spawn_1 */
@@ -88,6 +108,28 @@ HRESULT CEvent_Smeade::Add_Components()
 		MSG_BOX("CEvent_Smeade Failed Add_Components : Trigger_Spawn_Troll");
 		return E_FAIL;
 	}
+
+
+	/* For.CutSceneTest */
+	TriggerDesc.isCollisionToDead = true;
+	strcpy_s(TriggerDesc.szCollisionTag, "Trigger_CutSceneTest");
+	lstrcpy(TriggerDesc.szOtherTag, TEXT("Player_Default"));
+	TriggerDesc.vTriggerSize = _float3(15.f, 15.f, 15.f);
+	TriggerDesc.vTriggerWorldPos = _float3(50.0f, 5.f, 60.f);
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Trigger"),
+		TEXT("Trigger_CutSceneTest"), reinterpret_cast<CComponent**>(&m_pCutSceneTest), &TriggerDesc)))
+	{
+		MSG_BOX("CEvent_Smeade Failed Add_Components : Trigger_CutSceneTest");
+		return E_FAIL;
+	}
+
+	BEGININSTANCE;
+
+	pGameInstance->Read_CutSceneCamera(TEXT("CutSceneTest"), TEXT("../../Resources/GameData/CutScene/DurationTest2.cut"));
+
+	ENDINSTANCE;
+
 
 	return S_OK;
 }
@@ -125,6 +167,7 @@ void CEvent_Smeade::Free()
 	if (true == m_isCloned)
 	{
 		Safe_Release(m_pSpawn_Troll);
+		Safe_Release(m_pCutSceneTest);
 
 		for (auto& Pair : m_pMonsters)
 			Safe_Release(Pair.second);

@@ -27,69 +27,71 @@ void CPXEventCallBack::onContact(const PxContactPairHeader& pairHeader, const Px
 	}	
 	Safe_Release(pLevel_Manager);
 
-	std::lock_guard<std::mutex> lock(mtx);
-
 	for (PxU32 i = 0; i < nbPairs; ++i)
 	{
-		COLLEVENTDESC SourDesc, DestDesc;
-
-		if (nullptr == pairs[i].shapes[SHAPE_SOUR]->userData ||
-			nullptr == pairs[i].shapes[SHAPE_DEST]->userData)
-			continue;
-
-		CRigidBody::COLLISIONDATADESC SourCollisionDesc = *static_cast<CRigidBody::COLLISIONDATADESC*>(pairs[i].shapes[SHAPE_SOUR]->userData);
-		CRigidBody::COLLISIONDATADESC DestCollisionDesc = *static_cast<CRigidBody::COLLISIONDATADESC*>(pairs[i].shapes[SHAPE_DEST]->userData);
-
-		CGameObject* pSourObject = SourCollisionDesc.pOwnerObject;
-		CGameObject* pDestObject = DestCollisionDesc.pOwnerObject;
-
-		if (nullptr == pSourObject ||
-			nullptr == pDestObject)
-			continue;
-
-		SourDesc.pOtherObjectTag = pDestObject->Get_Tag();
-		MultiByteToWideChar(CP_ACP, 0, pairs[i].shapes[SHAPE_DEST]->getName(), strlen(pairs[i].shapes[SHAPE_DEST]->getName()) + 1, SourDesc.pOtherCollisionTag, MAX_PATH);
-		MultiByteToWideChar(CP_ACP, 0, pairs[i].shapes[SHAPE_SOUR]->getName(), strlen(pairs[i].shapes[SHAPE_SOUR]->getName()) + 1, SourDesc.pThisCollisionTag, MAX_PATH);
-		SourDesc.pOtherOwner = pDestObject;
-		SourDesc.pOtherTransform = pDestObject->Get_Transform();
-		SourDesc.pArg = DestCollisionDesc.pCollisionData;
-
-		DestDesc.pOtherObjectTag = pSourObject->Get_Tag();
-		MultiByteToWideChar(CP_ACP, 0, pairs[i].shapes[SHAPE_SOUR]->getName(), strlen(pairs[i].shapes[SHAPE_SOUR]->getName()) + 1, DestDesc.pOtherCollisionTag, MAX_PATH);
-		MultiByteToWideChar(CP_ACP, 0, pairs[i].shapes[SHAPE_DEST]->getName(), strlen(pairs[i].shapes[SHAPE_DEST]->getName()) + 1, DestDesc.pThisCollisionTag, MAX_PATH);
-		DestDesc.pOtherOwner = pSourObject;
-		DestDesc.pOtherTransform = pSourObject->Get_Transform();
-		DestDesc.pArg = SourCollisionDesc.pCollisionData;
-
-		if (pairs[i].events.isSet(PxPairFlag::eNOTIFY_TOUCH_FOUND))
 		{
-			pSourObject->OnCollisionEnter(SourDesc);
-			pDestObject->OnCollisionEnter(DestDesc);
-		}
+			std::lock_guard<std::mutex> lock(mtx);
 
-		if (pairs[i].events.isSet(PxPairFlag::eNOTIFY_TOUCH_PERSISTS))
-		{
-			pSourObject->OnCollisionStay(SourDesc);
-			pDestObject->OnCollisionStay(DestDesc);
+			COLLEVENTDESC SourDesc, DestDesc;
 
-			if (CComponent::OBJ_DEAD == pSourObject->Get_ObjEvent())
+			if (nullptr == pairs[i].shapes[SHAPE_SOUR]->userData ||
+				nullptr == pairs[i].shapes[SHAPE_DEST]->userData)
+				continue;
+
+			CRigidBody::COLLISIONDATADESC SourCollisionDesc = *static_cast<CRigidBody::COLLISIONDATADESC*>(pairs[i].shapes[SHAPE_SOUR]->userData);
+			CRigidBody::COLLISIONDATADESC DestCollisionDesc = *static_cast<CRigidBody::COLLISIONDATADESC*>(pairs[i].shapes[SHAPE_DEST]->userData);
+
+			CGameObject* pSourObject = SourCollisionDesc.pOwnerObject;
+			CGameObject* pDestObject = DestCollisionDesc.pOwnerObject;
+
+			if (nullptr == pSourObject ||
+				nullptr == pDestObject)
+				continue;
+
+			SourDesc.pOtherObjectTag = pDestObject->Get_Tag();
+			MultiByteToWideChar(CP_ACP, 0, pairs[i].shapes[SHAPE_DEST]->getName(), strlen(pairs[i].shapes[SHAPE_DEST]->getName()) + 1, SourDesc.pOtherCollisionTag, MAX_PATH);
+			MultiByteToWideChar(CP_ACP, 0, pairs[i].shapes[SHAPE_SOUR]->getName(), strlen(pairs[i].shapes[SHAPE_SOUR]->getName()) + 1, SourDesc.pThisCollisionTag, MAX_PATH);
+			SourDesc.pOtherOwner = pDestObject;
+			SourDesc.pOtherTransform = pDestObject->Get_Transform();
+			SourDesc.pArg = DestCollisionDesc.pCollisionData;
+
+			DestDesc.pOtherObjectTag = pSourObject->Get_Tag();
+			MultiByteToWideChar(CP_ACP, 0, pairs[i].shapes[SHAPE_SOUR]->getName(), strlen(pairs[i].shapes[SHAPE_SOUR]->getName()) + 1, DestDesc.pOtherCollisionTag, MAX_PATH);
+			MultiByteToWideChar(CP_ACP, 0, pairs[i].shapes[SHAPE_DEST]->getName(), strlen(pairs[i].shapes[SHAPE_DEST]->getName()) + 1, DestDesc.pThisCollisionTag, MAX_PATH);
+			DestDesc.pOtherOwner = pSourObject;
+			DestDesc.pOtherTransform = pSourObject->Get_Transform();
+			DestDesc.pArg = SourCollisionDesc.pCollisionData;
+
+			if (pairs[i].events.isSet(PxPairFlag::eNOTIFY_TOUCH_FOUND))
+			{
+				pSourObject->OnCollisionEnter(SourDesc);
+				pDestObject->OnCollisionEnter(DestDesc);
+			}
+
+			if (pairs[i].events.isSet(PxPairFlag::eNOTIFY_TOUCH_PERSISTS))
+			{
+				pSourObject->OnCollisionStay(SourDesc);
+				pDestObject->OnCollisionStay(DestDesc);
+
+				if (CComponent::OBJ_DEAD == pSourObject->Get_ObjEvent())
+				{
+					pSourObject->OnCollisionExit(SourDesc);
+					pDestObject->OnCollisionExit(DestDesc);
+					static_cast<CRigidBody::COLLISIONDATADESC*>(pairs[i].shapes[SHAPE_SOUR]->userData)->pOwnerObject = nullptr;
+				}
+				else if (CComponent::OBJ_DEAD == pDestObject->Get_ObjEvent())
+				{
+					pSourObject->OnCollisionExit(SourDesc);
+					pDestObject->OnCollisionExit(DestDesc);
+					static_cast<CRigidBody::COLLISIONDATADESC*>(pairs[i].shapes[SHAPE_DEST]->userData)->pOwnerObject = nullptr;
+				}
+			}
+
+			if (pairs[i].events.isSet(PxPairFlag::eNOTIFY_TOUCH_LOST))
 			{
 				pSourObject->OnCollisionExit(SourDesc);
 				pDestObject->OnCollisionExit(DestDesc);
-				static_cast<CRigidBody::COLLISIONDATADESC*>(pairs[i].shapes[SHAPE_SOUR]->userData)->pOwnerObject = nullptr;
 			}
-			else if (CComponent::OBJ_DEAD == pDestObject->Get_ObjEvent())
-			{
-				pSourObject->OnCollisionExit(SourDesc);
-				pDestObject->OnCollisionExit(DestDesc);
-				static_cast<CRigidBody::COLLISIONDATADESC*>(pairs[i].shapes[SHAPE_DEST]->userData)->pOwnerObject = nullptr;
-			}
-		}
-
-		if (pairs[i].events.isSet(PxPairFlag::eNOTIFY_TOUCH_LOST))
-		{
-			pSourObject->OnCollisionExit(SourDesc);
-			pDestObject->OnCollisionExit(DestDesc);
 		}
 	}
 }
@@ -105,69 +107,71 @@ void CPXEventCallBack::onTrigger(PxTriggerPair* pairs, PxU32 count)
 	}
 	Safe_Release(pLevel_Manager);
 
-	std::lock_guard<std::mutex> lock(mtx);
-
 	for (PxU32 i = 0; i < count; i++)
 	{
-		if (pairs[i].flags & (PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
-			continue;
-
-		if (nullptr == pairs->triggerShape->userData ||
-			nullptr == pairs->otherShape->userData)
-			continue;
-
-		CRigidBody::COLLISIONDATADESC SourCollisionDesc = *static_cast<CRigidBody::COLLISIONDATADESC*>(pairs->triggerShape->userData);
-		CRigidBody::COLLISIONDATADESC DestCollisionDesc = *static_cast<CRigidBody::COLLISIONDATADESC*>(pairs->otherShape->userData);
-
-		COLLEVENTDESC SourDesc, DestDesc;
-		CGameObject* pSourObject = SourCollisionDesc.pOwnerObject;
-		CGameObject* pDestObject = DestCollisionDesc.pOwnerObject;
-		
-		if (nullptr == pSourObject ||
-			nullptr == pDestObject)
-			continue;
-
-		SourDesc.pOtherObjectTag = pDestObject->Get_Tag();
-		MultiByteToWideChar(CP_ACP, 0, pairs[i].otherShape->getName(), strlen(pairs[i].otherShape->getName()) + 1, SourDesc.pOtherCollisionTag, MAX_PATH);
-		MultiByteToWideChar(CP_ACP, 0, pairs[i].triggerShape->getName(), strlen(pairs[i].triggerShape->getName()) + 1, SourDesc.pThisCollisionTag, MAX_PATH);
-		SourDesc.pOtherOwner = pDestObject;
-		SourDesc.pOtherTransform = pDestObject->Get_Transform();
-		SourDesc.pArg = DestCollisionDesc.pCollisionData;
-
-		DestDesc.pOtherObjectTag = pSourObject->Get_Tag();
-		MultiByteToWideChar(CP_ACP, 0, pairs[i].triggerShape->getName(), strlen(pairs[i].triggerShape->getName()) + 1, DestDesc.pOtherCollisionTag, MAX_PATH);
-		MultiByteToWideChar(CP_ACP, 0, pairs[i].otherShape->getName(), strlen(pairs[i].otherShape->getName()) + 1, DestDesc.pThisCollisionTag, MAX_PATH);
-		DestDesc.pOtherOwner = pSourObject;
-		DestDesc.pOtherTransform = pSourObject->Get_Transform();
-		DestDesc.pArg = SourCollisionDesc.pCollisionData;
-
-		if (pairs->status == PxPairFlag::eNOTIFY_TOUCH_FOUND)
 		{
-			pSourObject->OnCollisionEnter(SourDesc);
-			pDestObject->OnCollisionEnter(DestDesc);
-		}
+			std::lock_guard<std::mutex> lock(mtx);
 
-		// trigger는 stay 존재 x 따로 제작해주거나 해야함.
+			if (pairs[i].flags & (PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
+				continue;
 
-		if (CComponent::OBJ_DEAD == pSourObject->Get_ObjEvent())
-		{
-			pSourObject->OnCollisionExit(SourDesc);
-			pDestObject->OnCollisionExit(DestDesc);
-			static_cast<CRigidBody::COLLISIONDATADESC*>(pairs->triggerShape->userData)->pOwnerObject = nullptr;
-			continue;
-		}
-		else if (CComponent::OBJ_DEAD == pDestObject->Get_ObjEvent())
-		{
-			pSourObject->OnCollisionExit(SourDesc);
-			pDestObject->OnCollisionExit(DestDesc);
-			static_cast<CRigidBody::COLLISIONDATADESC*>(pairs->otherShape->userData)->pOwnerObject = nullptr;
-			continue;
-		}
+			if (nullptr == pairs->triggerShape->userData ||
+				nullptr == pairs->otherShape->userData)
+				continue;
 
-		if (pairs->status == PxPairFlag::eNOTIFY_TOUCH_LOST)
-		{
-			pSourObject->OnCollisionExit(SourDesc);
-			pDestObject->OnCollisionExit(DestDesc);
+			CRigidBody::COLLISIONDATADESC SourCollisionDesc = *static_cast<CRigidBody::COLLISIONDATADESC*>(pairs->triggerShape->userData);
+			CRigidBody::COLLISIONDATADESC DestCollisionDesc = *static_cast<CRigidBody::COLLISIONDATADESC*>(pairs->otherShape->userData);
+
+			COLLEVENTDESC SourDesc, DestDesc;
+			CGameObject* pSourObject = SourCollisionDesc.pOwnerObject;
+			CGameObject* pDestObject = DestCollisionDesc.pOwnerObject;
+
+			if (nullptr == pSourObject ||
+				nullptr == pDestObject)
+				continue;
+
+			SourDesc.pOtherObjectTag = pDestObject->Get_Tag();
+			MultiByteToWideChar(CP_ACP, 0, pairs[i].otherShape->getName(), strlen(pairs[i].otherShape->getName()) + 1, SourDesc.pOtherCollisionTag, MAX_PATH);
+			MultiByteToWideChar(CP_ACP, 0, pairs[i].triggerShape->getName(), strlen(pairs[i].triggerShape->getName()) + 1, SourDesc.pThisCollisionTag, MAX_PATH);
+			SourDesc.pOtherOwner = pDestObject;
+			SourDesc.pOtherTransform = pDestObject->Get_Transform();
+			SourDesc.pArg = DestCollisionDesc.pCollisionData;
+
+			DestDesc.pOtherObjectTag = pSourObject->Get_Tag();
+			MultiByteToWideChar(CP_ACP, 0, pairs[i].triggerShape->getName(), strlen(pairs[i].triggerShape->getName()) + 1, DestDesc.pOtherCollisionTag, MAX_PATH);
+			MultiByteToWideChar(CP_ACP, 0, pairs[i].otherShape->getName(), strlen(pairs[i].otherShape->getName()) + 1, DestDesc.pThisCollisionTag, MAX_PATH);
+			DestDesc.pOtherOwner = pSourObject;
+			DestDesc.pOtherTransform = pSourObject->Get_Transform();
+			DestDesc.pArg = SourCollisionDesc.pCollisionData;
+
+			if (pairs->status == PxPairFlag::eNOTIFY_TOUCH_FOUND)
+			{
+				pSourObject->OnCollisionEnter(SourDesc);
+				pDestObject->OnCollisionEnter(DestDesc);
+			}
+
+			// trigger는 stay 존재 x 따로 제작해주거나 해야함.
+
+			if (CComponent::OBJ_DEAD == pSourObject->Get_ObjEvent())
+			{
+				pSourObject->OnCollisionExit(SourDesc);
+				pDestObject->OnCollisionExit(DestDesc);
+				static_cast<CRigidBody::COLLISIONDATADESC*>(pairs->triggerShape->userData)->pOwnerObject = nullptr;
+				continue;
+			}
+			else if (CComponent::OBJ_DEAD == pDestObject->Get_ObjEvent())
+			{
+				pSourObject->OnCollisionExit(SourDesc);
+				pDestObject->OnCollisionExit(DestDesc);
+				static_cast<CRigidBody::COLLISIONDATADESC*>(pairs->otherShape->userData)->pOwnerObject = nullptr;
+				continue;
+			}
+
+			if (pairs->status == PxPairFlag::eNOTIFY_TOUCH_LOST)
+			{
+				pSourObject->OnCollisionExit(SourDesc);
+				pDestObject->OnCollisionExit(DestDesc);
+			}
 		}
 	}
 }

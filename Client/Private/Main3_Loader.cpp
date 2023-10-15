@@ -233,6 +233,7 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 		std::lock_guard<std::mutex> lock(mtx);
 
 #pragma region Player
+
 		/* For.Prototype_GameObject_Player*/
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Player"),
 			CPlayer::Create(m_pDevice, m_pContext))))
@@ -260,6 +261,12 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Animation_Camera_Model"),
 			CAnimation_Camera_Model::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Animation_Camera_Model");
+
+		/* For.Prototype_Component_Model_Weapon_Player_Wand */
+		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weapon_Player_Wand"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/gaechul/gaechul.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Weapon_Player_Wand");
 
 #pragma endregion
 
@@ -596,6 +603,29 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 			CRobe1_Item::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Robe1_Item");
 #pragma endregion
+
+#pragma region MeshParts
+		/* For.Prototype_Component_MeshPart_Wizard_Hat */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Wizard_Hat"),
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Wizard_Hat/Wizard_Hat.dat"), TEXT("Wizard_Hat")))))
+			throw TEXT("Prototype_Component_MeshPart_Wizard_Hat");
+		
+		/* For.Prototype_Component_MeshPart_Fedora */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Fedora"),
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Fedora/Fedora.dat"), TEXT("Fedora")))))
+			throw TEXT("Prototype_Component_MeshPart_Fedora");
+
+		/* For.Prototype_Component_MeshPart_Mask_Gardian */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Mask_Gardian"),
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Mask_Gardian/Mask_Gardian.dat"), TEXT("Mask_Gardian")))))
+			throw TEXT("Prototype_Component_MeshPart_Mask_Gardian");
+
+		/* For.Prototype_Component_MeshPart_Robe_MysticCape */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Robe_MysticCape"),
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Robe_MysticCape/Robe_MysticCape.dat"), TEXT("Robe_MysticCape")))))
+			throw TEXT("Prototype_Component_MeshPart_Robe_MysticCape");
+#pragma endregion
+
 	}
 	catch (const _tchar* pErrorTag)
 	{

@@ -14,6 +14,7 @@ BEGIN(Engine)
 class CSequence;
 class CSelector;
 class CRandomChoose;
+class CParticleSystem;
 END
 
 BEGIN(Client)
@@ -50,6 +51,9 @@ private:
 
 private:
 	_bool m_isOverheadAction = { false };
+	array<CParticleSystem*, 5> m_DarkAura = { nullptr };
+	array<const _float4x4*, 5> m_DarkAuraBoneMatrix = { nullptr };
+
 
 private:
 	_float m_fDeadTimeAcc = { 0.f };

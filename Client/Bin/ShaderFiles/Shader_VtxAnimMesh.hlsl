@@ -5,10 +5,18 @@ float4x4 g_BoneMatrices[256];
 texture2D g_DiffuseTexture;
 texture2D g_NormalTexture;
 texture2D g_EmissiveTexture;
+texture2D g_DissolveTexture;
 
-float3 g_vHairColor = float3(1.f, 1.f, 1.f);
+float4 g_vHairColor = float4(1.f, 1.f, 1.f, 1.f);
 float4 g_vColor;
 float g_fCamFar;
+
+float g_fDissolveAmount;
+
+float IsIn_Range(float fMin, float fMax, float fValue)
+{
+    return (fMin <= fValue) && (fMax >= fValue);
+}
 
 struct VS_IN
 {
@@ -99,7 +107,7 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vDiffuse = vDiffuse;
     Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
-    
+
     return Out;
 }
 
@@ -142,36 +150,12 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
 
     vNormal = mul(vNormal, WorldMatrix);
     
-    Out.vDiffuse = float4(g_vHairColor.rgb, 1.f);
+    Out.vDiffuse = g_vHairColor;
 	
     // UNORM 4개 타입에 값을 넣으므로 여기서 0~1로 보정처리하고 나중에 받을때 -1~1로 보정처리를 다시한다.
     Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
     // SV_POSITION으로 설정되지 않았던 투영포지션 값이므로 w나누기를 수행한 z값 (투영스페이스) 값을 r, 
     // 다시 이후 셰이더에서 w를 곱해주기 위해 b에 값을 다시 대입해줌.
-    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
-    
-    return Out;
-}
-
-PS_OUT PS_MAIN_NONE(PS_IN In)
-{
-    PS_OUT Out = (PS_OUT) 0;
-
-    vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-    
-    vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
-    // 텍스처의 노말값은 -1~1로 출력을 못하기때문에 0~1로 정규화되어 있다. 따라서 강제적으로 변환해줘야함.
-    float3 vNormal = vNormalDesc.xyz * 2.f - 1.f;
-
-    float3x3 WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal.xyz, In.vNormal.xyz);
-
-    vNormal = mul(vNormal, WorldMatrix);
-    
-    if (vDiffuse.a < 0.1f)
-        discard;
-
-    Out.vDiffuse = vDiffuse * 0.2f;
-    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
     
     return Out;
@@ -194,6 +178,45 @@ PS_OUT PS_MAIN_EMISSIVE(PS_IN In)
     vector vEmissive = g_EmissiveTexture.Sample(LinearSampler, In.vTexUV);
 
     Out.vDiffuse = vDiffuse * 0.1f + vEmissive * 0.25f;
+    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
+
+    return Out;
+}
+
+PS_OUT PS_MAIN_DISSOLVE(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+
+    float DissolveDesc = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
+
+    clip(DissolveDesc - g_fDissolveAmount);
+
+    float diff = DissolveDesc - g_fDissolveAmount;
+
+    Out.vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+
+    float fStepValue1 = IsIn_Range(0.03f, 0.05f, diff);
+    float fStepValue2 = IsIn_Range(0.05f, 0.065f, diff);
+    float fStepValue3 = IsIn_Range(0.065f, 0.08f, diff);
+
+    Out.vDiffuse = IsIn_Range(0.f, 0.03f, diff) * vector(1.f, 0.95f, 0.9f, 1.f) +
+                   fStepValue1 * vector(1.f, 0.9f, 0.4f, 1.f) +
+                   fStepValue2 * vector(0.9f, 0.1f, 0.f, 1.f) +
+                   fStepValue3 * vector(0.3f, 0.0f, 0.f, 1.f) +
+                   IsIn_Range(0.08f, 1.f, diff) * g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+    
+    if (Out.vDiffuse.a < 0.1f)
+        discard;
+    
+    vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+    // 텍스처의 노말값은 -1~1로 출력을 못하기때문에 0~1로 정규화되어 있다. 따라서 강제적으로 변환해줘야함.
+    float3 vNormal = vNormalDesc.xyz * 2.f - 1.f;
+
+    float3x3 WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal.xyz, In.vNormal.xyz);
+
+    vNormal = mul(vNormal, WorldMatrix);
+    
     Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
 
@@ -249,7 +272,7 @@ technique11 DefaultTechnique
 		GeometryShader	= NULL /*compile gs_5_0 GS_MAIN()*/;
 		HullShader		= NULL /*compile hs_5_0 HS_MAIN()*/;
 		DomainShader	= NULL /*compile ds_5_0 DS_MAIN()*/;
-        PixelShader     = compile ps_5_0 PS_MAIN_NONE();
+        PixelShader     = compile ps_5_0 PS_MAIN();
     }
     pass AnimMesh_E
     {
@@ -262,5 +285,17 @@ technique11 DefaultTechnique
         HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader = compile ps_5_0 PS_MAIN_EMISSIVE();
+    }
+    pass AnimMesh_Dissolve
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_MAIN_DISSOLVE();
     }
 }

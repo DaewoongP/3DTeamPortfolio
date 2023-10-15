@@ -71,6 +71,9 @@ public: /* For.Timer_Manager */
 	HRESULT	Add_QueryTimer(const _tchar * pTimerTag);
 	void	Tick_QueryTimer(const _tchar * pTimerTag);
 	_float	Get_QueryTimeDelta(const _tchar * pTimerTag);
+	/* 시간값을 변경시킴 */
+	// 1. tag 2. 느려지게 할 배율 (1.5), 1이면 정상속도 3. 몇초동안 처리할지.
+	void		Set_SlowTime(const _tchar * pTimerTag, _float fSlowPower, _float fTime);
 
 public: /* For.Level_Manager */
 	HRESULT Open_Level(_uint iLevelIndex, class CLevel * pNewLevel);
@@ -133,6 +136,8 @@ public: /* For.Light_Manager */
 	HRESULT Return_Light(class CLight* pLight);
 	HRESULT Clear_Lights();
 	HRESULT Update_ShadowMatrix(_uint iShadowIndex, CLight::LIGHTDESC LightDesc);
+	// PointLight only
+	HRESULT Add_InstanceLight(_float3 vPos, _float fStartRange, _float fTime, _float4 vColor, _bool isIncrease = false, _float fIncreasePower = 0.f);
 
 public: /* For.Sound_Manager */
 	HRESULT Add_Sounds(const _tchar * szSoundFilePath);
@@ -256,6 +261,7 @@ public:
 	HRESULT Reserve_Particle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* szParticleTag, const _tchar* szParticleDirectoryPath, _uint iNumReserveParticles = 10);
 	void Play_Particle(const _tchar* szParticleTag, _float3 vWorldPosition);
 	void Play_Particle(const _tchar* szParticleTag, _float4x4 PositionMatrix, _float4x4 ObjectMatrix);
+	void Play_Particle(const _tchar* szParticleTag, _float3 vPosition, _float3 vDir);
 	void Play_Particle(const _tchar* szParticleTag, _float4x4 OffsetMatrix, const _float4x4* pBindBoneMatrix, _float4x4 PivotMatrix,const _float4x4* pWorldMatrix);
 
 private:

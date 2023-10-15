@@ -67,23 +67,21 @@ void CEnergyBall::Tick(_float fTimeDelta)
 	if (false == m_isEnable)
 		return;
 
-	/* 테스트 코드 */
-	BEGININSTANCE;
-	if (pGameInstance->Get_DIKeyState(DIK_9))
-		m_isDead = true;
-	ENDINSTANCE;
-	/* =========== */
 	__super::Tick(fTimeDelta);
+
+	m_fTimeAcc += fTimeDelta;
 
 	if (true == m_isFirst)
 	{
-		m_fTimeAcc += fTimeDelta;
 		if (m_fActionProtegoTime < m_fTimeAcc)
 		{
 			m_pMagicSlot->Action_Magic_Basic(1, this, nullptr, COL_MAGIC);
 			m_isFirst = false;
 		}
 	}
+
+	if (9.5f <= m_fTimeAcc)
+		m_isEnable = false;
 
 	if (true == m_isDead)
 	{
@@ -170,7 +168,7 @@ HRESULT CEnergyBall::Make_Magics()
 		magicInitDesc.eMagicTag = PROTEGO;
 		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 0;
-		magicInitDesc.fLifeTime = 10.f;
+		magicInitDesc.fLifeTime = 7.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 

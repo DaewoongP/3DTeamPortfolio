@@ -7,6 +7,9 @@
 #include "StateMachine.h"
 #include "Enemy.h"
 #include "ProtegoState.h"
+#include"Blink_Effect.h"
+
+#include "Ease.h"
 
 BEGIN(Engine)
 class CShader;
@@ -32,6 +35,7 @@ class CEdurusPotion;
 class CInvisibilityPotion;
 class CWiggenweldPotion;
 class CTool;
+class CBlink_Effect;
 END
 
 BEGIN(Client)
@@ -110,6 +114,8 @@ private:
 	CRigidBody*		m_pRigidBody = { nullptr };
 	CCoolTime*		m_pCooltime = { nullptr };
 	CDefence*		m_pDefence = { nullptr };
+	CBlink_Effect* m_pBlink = { nullptr };
+
 
 private:
 	CPlayer_Camera* m_pPlayer_Camera = { nullptr };
@@ -201,6 +207,20 @@ private:
 	_float m_fx = { 1.0f };
 	_float m_fy = { 1.0f };
 	_float m_fz = { 1.0f };
+
+	const char* m_pEases[CEase::EASE_END] = {
+		"InQuad", "OutQuad", "InOutQuad"
+		, "InSine", "OutSine", "InOutSine"
+		, "InQuint", "OutQuint", "InOutQuint"
+		, "InQuart", "OutQuart", "InOutQuart"
+		, "NoneLinear", "InLinear", "OutLinear", "InOut_Linear"
+		, "InExpo", "OutExpo", "InOutExpo"
+		, "InElastic", "OutElastic", "InOutElastic"
+		, "InCubic", "OutCubic", "InOutCubic"
+		, "InCirc", "OutCirc", "InOutCirc"
+		, "InBounce", "OutBounce", "InOutBounce"
+		, "InBack", "OutBack", "InOutBack"
+	};
 
 #pragma endregion
 

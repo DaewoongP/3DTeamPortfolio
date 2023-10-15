@@ -79,9 +79,6 @@ protected:
 	virtual ~CMagic() = default;
 
 public:
-
-
-public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
@@ -112,7 +109,7 @@ private:
 		{TEXT("Disillusionment")} , {TEXT("Evaesco")} , {TEXT("Expelliarmus")} , {TEXT("Flipendo")} , {TEXT("Glacius")} , {TEXT("Imperio")} ,
 		{TEXT("Ncendio")} , {TEXT("Levioso")} , {TEXT("Lumos")} , {TEXT("Protego")} , {TEXT("Reparo")} , {TEXT("Revelio")} ,
 		{TEXT("Transformation")} , {TEXT("Transformationoverland")}, {TEXT("Wingardiumleviosa")} , {TEXT("BasicCast")} , {TEXT("Stupefy")} , {TEXT("Petrificustotalus")} ,
-		{TEXT("MagicThrow") }, {TEXT("Finisher")}, {TEXT("Projectile_White")}, {TEXT("Projectile_Black")} };
+		{TEXT("MagicThrow") }, {TEXT("Finisher")}, {TEXT("Projectile_White")}, {TEXT("Projectile_Black")} , {TEXT("Pensive_Ground_Ball")} };
 
 public:
 	static CMagic* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

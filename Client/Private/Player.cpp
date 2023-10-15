@@ -107,7 +107,6 @@ HRESULT CPlayer::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -150,6 +149,13 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
+	
+	if (FAILED(Ready_Camera()))
+	{
+		MSG_BOX("Failed Ready Player Camera");
+
+		return E_FAIL;
+	}
 
 	if (FAILED(Ready_StateMachine()))
 	{
@@ -158,12 +164,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	if (FAILED(Ready_Camera()))
-	{
-		MSG_BOX("Failed Ready Player Camera");
-
-		return E_FAIL;
-	}
+	
 
 	m_pTransform->Set_Speed(1.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(180.f));
@@ -172,7 +173,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	Bind_Notify();
 
-	m_fClothPower = 3.0f;
+	m_fClothPower = 20.0f;
 	m_fClothPowerPlus = 1.0f;
 
 	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FIRST, CONFRINGO);
@@ -244,7 +245,6 @@ HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 void CPlayer::Tick(_float fTimeDelta)
 {
 	BEGININSTANCE;
-
 	//�÷��̾� ī�޶� �ƴ϶��?
 	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
 	{
@@ -364,6 +364,11 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 	if (wstring::npos != wstrCollisionTag.find(TEXT("Attack")))
 	{
+		if (nullptr == CollisionEventDesc.pArg)
+		{
+			return;
+		}
+
 		CEnemy::COLLISIONREQUESTDESC* pDesc = static_cast<CEnemy::COLLISIONREQUESTDESC*>(CollisionEventDesc.pArg);
 
 		if (nullptr == pDesc ||
@@ -433,6 +438,11 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	}
 	else if (wstring::npos != wstrCollisionTag.find(TEXT("Magic_Ball")))
 	{
+		if (nullptr == CollisionEventDesc.pArg)
+		{
+			return;
+		}
+
 		CMagicBall::COLLSIONREQUESTDESC* pDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
 
 		//Protego
@@ -488,30 +498,17 @@ HRESULT CPlayer::Render()
 	{
 		_uint		iNumMeshes = m_pCustomModel->Get_NumMeshes(iPartsIndex);
 
-		if (CCustomModel::HAIR == iPartsIndex)
+		if (CCustomModel::HAIR == iPartsIndex || 
+			CCustomModel::HAT == iPartsIndex)
 		{
 			for (_uint i = 0; i < iNumMeshes; ++i)
 			{
 				m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
-
+				m_pCustomModel->Bind_Color(m_pShader, "g_vHairColor", iPartsIndex);
 				m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
 				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
 
 				m_pShader->Begin("HairMesh");
-
-				m_pCustomModel->Render(iPartsIndex, i);
-			}
-		}
-		else if (CCustomModel::ROBE == iPartsIndex)
-		{
-			for (_uint i = 0; i < iNumMeshes; ++i)
-			{
-				m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
-
-				m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
-				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
-
-				m_pShader->Begin("AnimMeshNonCull");
 
 				m_pCustomModel->Render(iPartsIndex, i);
 			}
@@ -531,12 +528,26 @@ HRESULT CPlayer::Render()
 				m_pCustomModel->Render(iPartsIndex, i);
 			}
 		}
-		else
+		else if (CCustomModel::ROBE == iPartsIndex)
 		{
 			for (_uint i = 0; i < iNumMeshes; ++i)
 			{
 				m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
 
+				m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
+				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
+
+				m_pShader->Begin("AnimMeshNonCull");
+
+				m_pCustomModel->Render(iPartsIndex, i);
+			}
+		}
+		else
+		{
+			for (_uint i = 0; i < iNumMeshes; ++i)
+			{
+				m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
+				m_pCustomModel->Bind_Color(m_pShader, "g_vColor", iPartsIndex);
 				m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
 				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
 
@@ -736,7 +747,13 @@ HRESULT CPlayer::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
-
+	/* Com_Blink_Effect */
+	/*if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_Trail"),
+		TEXT("Com_Blink_Trail"), reinterpret_cast<CComponent**>(&m_pBlink))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}*/
 
 	//_int DefValue = 15;
 	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_EndurusPotion"),
@@ -761,6 +778,9 @@ HRESULT CPlayer::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+
+
+
 
 	return S_OK;
 }
@@ -1026,9 +1046,9 @@ HRESULT CPlayer::Add_Magic()
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(3, FINISHER);
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(4, STUPEFY);
 
-	Set_Spell_Botton(0, BOMBARDA);
-	Set_Spell_Botton(1, LEVIOSO);
-	Set_Spell_Botton(2, DESCENDO);
+	Set_Spell_Botton(0, ACCIO);
+	Set_Spell_Botton(1, FLIPENDO);
+	Set_Spell_Botton(2, DIFFINDO);
 	Set_Spell_Botton(3, CRUCIO);
 
 	return S_OK;
@@ -1373,11 +1393,25 @@ void CPlayer::Fix_Mouse()
 
 HRESULT CPlayer::Ready_MeshParts()
 {
+	_float4 vColor = _float4(0.2f, 0.2f, 0.2f, 1.f);
+
+	//Hat
+	if (FAILED(m_pCustomModel->Add_MeshParts(
+		LEVEL_STATIC,
+		TEXT("Prototype_Component_MeshPart_Fedora"),
+		CCustomModel::HAT, vColor)))
+	{
+		MSG_BOX("Failed Add MeshPart Hat");
+
+		return E_FAIL;
+	}
+
 	//Hair
+	vColor = _float4(0.2f, 0.2f, 0.2f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Hair"),
-		CCustomModel::HAIR)))
+		CCustomModel::HAIR, vColor)))
 	{
 		MSG_BOX("Failed Add MeshPart Hair");
 
@@ -1385,21 +1419,35 @@ HRESULT CPlayer::Ready_MeshParts()
 	}
 
 	//Head
+	vColor = _float4(0.f, 0.f, 0.f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Head"),
-		CCustomModel::HEAD)))
+		CCustomModel::HEAD, vColor)))
 	{
 		MSG_BOX("Failed Add MeshPart Head");
 
 		return E_FAIL;
 	}
 
+	//Mask
+	vColor = _float4(1.f, 1.f, 1.f, 1.f);
+	if (FAILED(m_pCustomModel->Add_MeshParts(
+		LEVEL_STATIC,
+		TEXT("Prototype_Component_MeshPart_Mask_Gardian"),
+		CCustomModel::MASK, vColor)))
+	{
+		MSG_BOX("Failed Add MeshPart Mask");
+
+		return E_FAIL;
+	}
+
 	//Arm
+	vColor = _float4(0.f, 0.f, 0.f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Arm"),
-		CCustomModel::ARM)))
+		CCustomModel::ARM, vColor)))
 	{
 		MSG_BOX("Failed Add MeshPart Arm");
 
@@ -1407,10 +1455,11 @@ HRESULT CPlayer::Ready_MeshParts()
 	}
 
 	//Robe
+	vColor = _float4(0.f, 1.f, 0.f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Robe01"),
-		CCustomModel::ROBE, TEXT("../../Resources/GameData/ClothData/Test.cloth"))))
+		CCustomModel::ROBE, vColor, TEXT("../../Resources/GameData/ClothData/Test1.cloth"))))
 	{
 		MSG_BOX("Failed Add MeshPart Robe");
 
@@ -1418,10 +1467,11 @@ HRESULT CPlayer::Ready_MeshParts()
 	}
 
 	//Top
+	vColor = _float4(0.2f, 0.2f, 0.2f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Top"),
-		CCustomModel::TOP)))
+		CCustomModel::TOP, vColor)))
 	{
 		MSG_BOX("Failed Add MeshPart Top");
 
@@ -1429,10 +1479,11 @@ HRESULT CPlayer::Ready_MeshParts()
 	}
 
 	//Pants
+	vColor = _float4(0.2f, 0.2f, 0.3f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Pants"),
-		CCustomModel::PANTS)))
+		CCustomModel::PANTS, vColor)))
 	{
 		MSG_BOX("Failed Add MeshPart Pants");
 
@@ -1440,10 +1491,11 @@ HRESULT CPlayer::Ready_MeshParts()
 	}
 
 	//Socks
+	vColor = _float4(0.f, 0.f, 0.f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Socks"),
-		CCustomModel::SOCKS)))
+		CCustomModel::SOCKS, vColor)))
 	{
 		MSG_BOX("Failed Add MeshPart Socks");
 
@@ -1451,10 +1503,11 @@ HRESULT CPlayer::Ready_MeshParts()
 	}
 
 	//Shoes
+	vColor = _float4(0.3f, 0.2f, 0.3f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Shoes"),
-		CCustomModel::SHOES)))
+		CCustomModel::SHOES, vColor)))
 	{
 		MSG_BOX("Failed Add MeshPart Shoes");
 
@@ -1614,6 +1667,7 @@ HRESULT CPlayer::Ready_StateMachine()
 	m_StateMachineDesc.pLumosOn = &m_isLumosOn;
 	m_StateMachineDesc.ppTarget = &m_pTarget;
 	m_StateMachineDesc.pIsFlying = &m_isFlying;
+	m_StateMachineDesc.pCameraTransform = m_pPlayer_Camera->Get_TransformPtr();
 
 	Safe_AddRef(m_StateMachineDesc.pOwnerModel);
 	Safe_AddRef(m_StateMachineDesc.pPlayerTransform);
@@ -2301,7 +2355,7 @@ void CPlayer::Update_Cloth(_float fTimeDelta)
 	vVelocity.y *= -1.f;
 	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(m_fClothPower * vVelocity,
 		XMMatrixInverse(nullptr, XMMatrixRotationQuaternion(m_pTransform->Get_Quaternion()))));
-
+	
 	m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
 }
 
@@ -2606,8 +2660,9 @@ void CPlayer::Tick_TestShake()
 	ImGui::RadioButton("DECRECENDO", &m_iShakePower, CCamera_Manager::SHAKE_POWER_DECRECENDO);
 	ImGui::RadioButton("CRECENDO_DECRECENDO", &m_iShakePower, CCamera_Manager::SHAKE_POWER_CRECENDO_DECRECENDO);
 
+	ImGui::Combo("EASE", &m_iEase, m_pEases, CEase::EASE_END);
 
-	ImGui::DragFloat("SHAKE_SPEED", &m_fShakeSpeed, 0.1f, 1.0f, 60.0f);
+	ImGui::DragFloat("SHAKE_SPEED", &m_fShakeSpeed, 0.5f, 0.0f, 60.0f);
 	ImGui::DragFloat("SHAKE_DURATION", &m_fShakeDuration, 0.001f, 0.001f, 100.0f);
 	ImGui::DragFloat("SHAKE_POWER", &m_fShakePower, 0.001f, 0.001f, 1.0f);
 
@@ -2879,7 +2934,7 @@ void CPlayer::Go_Protego(void* _pArg)
 
 		m_pStateContext->Set_StateMachine(TEXT("Protego"), _pArg);
 
-		m_isCollisionEnterProtego = false;
+		m_isCollisionEnterProtego = false;	
 	}
 }
 
@@ -3110,6 +3165,8 @@ void CPlayer::Free()
 		Safe_Release(m_UI_Group_SkillTap);
 		Safe_Release(m_pCooltime);
 		Safe_Release(m_pDefence);
+		
+		//Safe_Release(m_pBlink);
 
 		if (nullptr != m_pTargetTransform)
 		{

@@ -170,6 +170,7 @@
     <ClInclude Include="..\Public\AncientDoor_R.h" />
     <ClInclude Include="..\Public\Animation_Camera_Model.h" />
     <ClInclude Include="..\public\AshwinderEggs_Item.h" />
+    <ClInclude Include="..\Public\Blink_Effect.h" />
     <ClInclude Include="..\Public\Bombarda.h" />
     <ClInclude Include="..\Public\Broom_Begin.h" />
     <ClInclude Include="..\Public\Broom_Break.h" />
@@ -187,6 +188,7 @@
     <ClInclude Include="..\Public\Event_Smeade.h" />
     <ClInclude Include="..\Public\Fly_Move.h" />
     <ClInclude Include="..\Public\Fly_Turn.h" />
+    <ClInclude Include="..\public\Game_Manager.h" />
     <ClInclude Include="..\public\Gear_Item.h" />
     <ClInclude Include="..\Public\Gull.h" />
     <ClInclude Include="..\Public\Hover_Idle.h" />
@@ -198,9 +200,20 @@
     <ClInclude Include="..\public\Mongrel_Fur_Item.h" />
     <ClInclude Include="..\Public\EnergyBall.h" />
     <ClInclude Include="..\Public\Level_Sanctum.h" />
+    <ClInclude Include="..\Public\Pensive_Appearence.h" />
+    <ClInclude Include="..\Public\Pensive_Charge_Attack.h" />
+    <ClInclude Include="..\Public\Pensive_Death.h" />
+    <ClInclude Include="..\Public\Pensive_Groogy.h" />
+    <ClInclude Include="..\Public\Pensive_Ground_Ball.h" />
+    <ClInclude Include="..\Public\Pensive_Hit.h" />
+    <ClInclude Include="..\Public\Pensive_Idle.h" />
+    <ClInclude Include="..\Public\Pensive_Orb_Attack.h" />
+    <ClInclude Include="..\Public\Pensive_Physical_Attack.h" />
     <ClInclude Include="..\Public\Player.h" />
     <ClInclude Include="..\public\PotionStationCamera.h" />
     <ClInclude Include="..\public\Robe1_Item.h" />
+    <ClInclude Include="..\Public\StateContext_Enemy.h" />
+    <ClInclude Include="..\Public\StateMachine_Enemy.h" />
     <ClInclude Include="..\Public\Vault_Gate.h" />
     <ClInclude Include="..\Public\UseItemState.h" />
     <ClInclude Include="..\Public\UI_Damage.h" />
@@ -292,6 +305,8 @@
     <ClInclude Include="..\Public\RigidMove.h" />
     <ClInclude Include="..\Public\Weapon_Dragon_Head.h" />
     <ClInclude Include="..\Public\Weapon_Goblin_Assasin.h" />
+    <ClInclude Include="..\Public\Weapon_Pensive_Flail.h" />
+    <ClInclude Include="..\Public\Weapon_Pensive_Sword.h" />
     <ClInclude Include="..\public\WiggenweldPotion.h" />
     <ClInclude Include="..\Public\Sequence_AirHit.h" />
     <ClInclude Include="..\Public\StandingState.h" />
@@ -376,7 +391,6 @@
     <ClInclude Include="..\Public\Weapon_Fig_Wand.h" />
     <ClInclude Include="..\Public\Weapon_Forest_Troll.h" />
     <ClInclude Include="..\Public\Weapon_Golem_Combat.h" />
-    <ClInclude Include="..\Public\Weapon_Pensive.h" />
     <ClInclude Include="..\Public\Weapon_Player_Wand.h" />
     <ClInclude Include="..\public\WiggenweldPotion_Item.h" />
     <ClInclude Include="..\Public\Wingardiumleviosa.h" />
@@ -430,6 +444,7 @@
     <ClCompile Include="..\Private\AncientDoor_R.cpp" />
     <ClCompile Include="..\Private\Animation_Camera_Model.cpp" />
     <ClCompile Include="..\Private\AshwinderEggs_Item.cpp" />
+    <ClCompile Include="..\Private\Blink_Effect.cpp" />
     <ClCompile Include="..\Private\Bombarda.cpp" />
     <ClCompile Include="..\Private\Broom_Begin.cpp" />
     <ClCompile Include="..\Private\Broom_Break.cpp" />
@@ -445,6 +460,7 @@
     <ClCompile Include="..\Private\Event_Smeade.cpp" />
     <ClCompile Include="..\Private\Fly_Move.cpp" />
     <ClCompile Include="..\Private\Fly_Turn.cpp" />
+    <ClCompile Include="..\private\Game_Manager.cpp" />
     <ClCompile Include="..\private\Gear_Item.cpp" />
     <ClCompile Include="..\Private\Gull.cpp" />
     <ClCompile Include="..\Private\Hover_Idle.cpp" />
@@ -456,9 +472,20 @@
     <ClCompile Include="..\private\Mongrel_Fur_Item.cpp" />
     <ClCompile Include="..\Private\EnergyBall.cpp" />
     <ClCompile Include="..\Private\Level_Sanctum.cpp" />
+    <ClCompile Include="..\Private\Pensive_Appearence.cpp" />
+    <ClCompile Include="..\Private\Pensive_Charge_Attack.cpp" />
+    <ClCompile Include="..\Private\Pensive_Death.cpp" />
+    <ClCompile Include="..\Private\Pensive_Groogy.cpp" />
+    <ClCompile Include="..\Private\Pensive_Ground_Ball.cpp" />
+    <ClCompile Include="..\Private\Pensive_Hit.cpp" />
+    <ClCompile Include="..\Private\Pensive_Idle.cpp" />
+    <ClCompile Include="..\Private\Pensive_Orb_Attack.cpp" />
+    <ClCompile Include="..\Private\Pensive_Physical_Attack.cpp" />
     <ClCompile Include="..\Private\Player.cpp" />
     <ClCompile Include="..\private\PotionStationCamera.cpp" />
     <ClCompile Include="..\private\Robe1_Item.cpp" />
+    <ClCompile Include="..\Private\StateContext_Enemy.cpp" />
+    <ClCompile Include="..\Private\StateMachine_Enemy.cpp" />
     <ClCompile Include="..\Private\Vault_Gate.cpp" />
     <ClCompile Include="..\Private\UseItemState.cpp" />
     <ClCompile Include="..\Private\UI_Damage.cpp" />
@@ -549,6 +576,8 @@
     <ClCompile Include="..\Private\RigidMove.cpp" />
     <ClCompile Include="..\Private\Weapon_Dragon_Head.cpp" />
     <ClCompile Include="..\Private\Weapon_Goblin_Assasin.cpp" />
+    <ClCompile Include="..\Private\Weapon_Pensive_Flail.cpp" />
+    <ClCompile Include="..\Private\Weapon_Pensive_Sword.cpp" />
     <ClCompile Include="..\private\WiggenweldPotion.cpp" />
     <ClCompile Include="..\Private\Sequence_AirHit.cpp" />
     <ClCompile Include="..\Private\StandingState.cpp" />
@@ -632,7 +661,6 @@
     <ClCompile Include="..\Private\Weapon_Fig_Wand.cpp" />
     <ClCompile Include="..\Private\Weapon_Forest_Troll.cpp" />
     <ClCompile Include="..\Private\Weapon_Golem_Combat.cpp" />
-    <ClCompile Include="..\Private\Weapon_Pensive.cpp" />
     <ClCompile Include="..\Private\Weapon_Player_Wand.cpp" />
     <ClCompile Include="..\private\WiggenweldPotion_Item.cpp" />
     <ClCompile Include="..\Private\Wingardiumleviosa.cpp" />

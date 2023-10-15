@@ -2,6 +2,11 @@
 
 namespace Engine
 {
+	XMFLOAT4 ToColor(float R, float G, float B, float A)
+	{
+		return XMFLOAT4(R / 255.f, G / 255.f, B / 255.f, A / 255.f);
+	}
+
 	void Error_Message_Box(const char* pError)
 	{
 		wchar_t pReturnError[MAX_PATH] = TEXT("");

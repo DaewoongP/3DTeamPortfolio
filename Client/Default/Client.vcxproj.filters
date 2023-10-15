@@ -22,17 +22,11 @@
     <Filter Include="02. GameObject\99. Debug">
       <UniqueIdentifier>{286ee9a6-b9ef-449f-9303-ba3e8913d1f9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="98. Default">
-      <UniqueIdentifier>{cc18812b-2268-4f02-b60b-17a85252121a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\99. Debug\Camera">
       <UniqueIdentifier>{135ca45c-2c5b-460d-a30c-d6f6b96b6d78}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\99. Debug\Player">
       <UniqueIdentifier>{a7856930-1055-4fbe-9f00-de43c99e8340}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="98. Default\ImGui_Defaults">
-      <UniqueIdentifier>{628cd336-ebfe-4860-bfac-014e7bec45d3}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\99. Debug\PhysxRender">
       <UniqueIdentifier>{ffbc88f7-a780-4e66-87b7-7baf68d24ed3}</UniqueIdentifier>
@@ -93,9 +87,6 @@
     </Filter>
     <Filter Include="02. GameObject\01. Player\01. StateMachine\07. Hit">
       <UniqueIdentifier>{8100d76b-abc1-4a05-a149-ea58ea807be8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Player\03. PlayerInformation">
-      <UniqueIdentifier>{32c19ffc-fb69-42ca-ba81-07c40b9b305f}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Levels\01. Cliffside">
       <UniqueIdentifier>{1bc6cbc7-4c2b-4ad9-9e0c-6724a4c369f3}</UniqueIdentifier>
@@ -556,12 +547,6 @@
     <Filter Include="02. GameObject\02. Enemy\03. Golem\00. Combat\Weapon">
       <UniqueIdentifier>{f57875dd-9b97-4974-a4c8-dbc1374da1c3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. Golem\01. Pensive">
-      <UniqueIdentifier>{86967c1b-301e-4843-a160-8603ef017876}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. Golem\01. Pensive\Weapon">
-      <UniqueIdentifier>{fde3512d-c9d7-4f98-baac-ed8650da6e1a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\02. Enemy\05. DarkWizard">
       <UniqueIdentifier>{344e3ca3-42ef-4166-b228-a633658f314b}</UniqueIdentifier>
     </Filter>
@@ -718,6 +703,60 @@
     <Filter Include="04. Effect\BoneDragon\ImpulseSphere">
       <UniqueIdentifier>{a94ba46b-41cb-498e-9f1c-e6bd0ddc924e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive">
+      <UniqueIdentifier>{d35bd40d-1992-4218-aee5-6049585803b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\StateContext">
+      <UniqueIdentifier>{c96c2c86-b707-4530-b33b-e4c3cc4544cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\StateMachine">
+      <UniqueIdentifier>{2c58550c-d9ca-45bc-85d4-de58f091efd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\StateMachine\Appearence">
+      <UniqueIdentifier>{f08b9004-9379-4b3d-a212-e7e9ec3edace}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\StateMachine\Hit">
+      <UniqueIdentifier>{9c22d6b5-7c52-48d6-9d17-0972d8827e55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\StateMachine\Groogy">
+      <UniqueIdentifier>{3095c7ae-842c-4269-bf81-4db5b35ca5b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\StateMachine\Physical_Attack">
+      <UniqueIdentifier>{3f985b3e-8b27-47c2-b15c-812acb01dcb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\StateMachine\Orb_Attack">
+      <UniqueIdentifier>{3f90c188-5e65-4dcd-95e1-2edaedcf861a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\StateMachine\Charge_Attack">
+      <UniqueIdentifier>{338dc065-2ff5-49a7-904c-b3348e1c664c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\StateMachine\Death">
+      <UniqueIdentifier>{dd3cb70a-17ff-4e09-9969-665b3aa819d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\StateMachine\Idle">
+      <UniqueIdentifier>{c20b6f87-c73d-428b-aef9-396ce17c6a5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\Weapon">
+      <UniqueIdentifier>{fde3512d-c9d7-4f98-baac-ed8650da6e1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\Pensive_Ground_Ball">
+      <UniqueIdentifier>{471c54cd-7a5b-4ece-8242-6d120e185254}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. Terrain\03. PlayerInformation">
+      <UniqueIdentifier>{32c19ffc-fb69-42ca-ba81-07c40b9b305f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Effect\Blink_Effect">
+      <UniqueIdentifier>{58d8b344-dfb8-4b48-ab00-f18496e8f003}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="08. GameManager">
+      <UniqueIdentifier>{f7506b35-2a98-4706-aaf0-aacbf2491e33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. Default">
+      <UniqueIdentifier>{cc18812b-2268-4f02-b60b-17a85252121a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. Default\ImGui_Defaults">
+      <UniqueIdentifier>{628cd336-ebfe-4860-bfac-014e7bec45d3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -827,12 +866,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Golem_Combat.h">
       <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Pensive.h">
-      <Filter>02. GameObject\02. Enemy\03. Golem\01. Pensive</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Weapon_Pensive.h">
-      <Filter>02. GameObject\02. Enemy\03. Golem\01. Pensive\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MapObject.h">
       <Filter>02. GameObject\03. MapObject</Filter>
@@ -1407,7 +1440,7 @@
       <Filter>02. GameObject\01. Player</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_Information.h">
-      <Filter>02. GameObject\01. Player\03. PlayerInformation</Filter>
+      <Filter>02. GameObject\05. Terrain\03. PlayerInformation</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Event_Vault_Spawn.h">
       <Filter>07. Events\Vault</Filter>
@@ -1423,6 +1456,54 @@
     </ClInclude>
     <ClInclude Include="..\public\ImpulseSphere_Effect.h">
       <Filter>04. Effect\BoneDragon\ImpulseSphere</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Appearence.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Appearence</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StateMachine_Enemy.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateContext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StateContext_Enemy.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateContext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Physical_Attack.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Physical_Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Orb_Attack.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Orb_Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Idle.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Death.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Death</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Charge_Attack.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Charge_Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Groogy.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Groogy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Hit.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Pensive_Flail.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Pensive_Sword.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Ground_Ball.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Pensive_Ground_Ball</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Blink_Effect.h">
+      <Filter>04. Effect\Blink_Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Game_Manager.h">
+      <Filter>08. GameManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1503,12 +1584,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Golem_Combat.cpp">
       <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Pensive.cpp">
-      <Filter>02. GameObject\02. Enemy\03. Golem\01. Pensive</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Weapon_Pensive.cpp">
-      <Filter>02. GameObject\02. Enemy\03. Golem\01. Pensive\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MapObject.cpp">
       <Filter>02. GameObject\03. MapObject</Filter>
@@ -1715,7 +1790,7 @@
       <Filter>02. GameObject\01. Player\01. StateMachine\07. Hit</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_Information.cpp">
-      <Filter>02. GameObject\01. Player\03. PlayerInformation</Filter>
+      <Filter>02. GameObject\05. Terrain\03. PlayerInformation</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Finisher.cpp">
       <Filter>05. Magic\MagicBall\07. Finisher</Filter>
@@ -2087,6 +2162,54 @@
     </ClCompile>
     <ClCompile Include="..\private\ImpulseSphere_Effect.cpp">
       <Filter>04. Effect\BoneDragon\ImpulseSphere</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Appearence.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Appearence</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StateMachine_Enemy.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateContext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StateContext_Enemy.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateContext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Orb_Attack.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Orb_Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Physical_Attack.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Physical_Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Idle.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Death.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Death</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Charge_Attack.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Charge_Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Groogy.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Groogy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Hit.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Pensive_Flail.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Pensive_Sword.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Ground_Ball.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Pensive_Ground_Ball</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Blink_Effect.cpp">
+      <Filter>04. Effect\Blink_Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Game_Manager.cpp">
+      <Filter>08. GameManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

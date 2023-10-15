@@ -37,7 +37,11 @@ public:
 	_float Get_CoolMultipleTimer(_uint iSlot) { return (m_MagicSlots[iSlot]->Get_CoolMultipleTimer()); }
 	void Set_CoolMultipleTimer(_uint iSlot, _float value) { m_MagicSlots[iSlot]->Set_CoolMultipleTimer(value); }
 
-	_float Get_CoolTimeRatio(_uint iSlot) { return m_MagicSlots[iSlot]->Get_CoolTimeRatio(); }
+	_float Get_CoolTimeRatio(_uint iSlot) { 
+		if (nullptr == m_MagicSlots[iSlot])
+			return 0.f;
+		return m_MagicSlots[iSlot]->Get_CoolTimeRatio(); 
+	}
 
 	//스킬 n초간 n만큼 가속.
 	void Set_SkillCoolMultiple(_float fTime, _float fValue)
