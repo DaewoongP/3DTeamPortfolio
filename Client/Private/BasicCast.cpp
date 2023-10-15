@@ -169,7 +169,7 @@ HRESULT CBasicCast::Reset(MAGICBALLINITDESC& InitDesc)
 	CLight::LIGHTDESC LightDesc;
 	LightDesc.eType = CLight::TYPE_POINT;
 	LightDesc.fRange = 5.f;
-	LightDesc.vDiffuse = _float4(1.f, 0.f, 0.f, 1.f);
+	m_vLightColor = LightDesc.vDiffuse = _float4(1.f, 0.f, 0.f, 1.f);
 	LightDesc.vAmbient = LightDesc.vDiffuse;
 	LightDesc.vSpecular = LightDesc.vDiffuse;
 	LightDesc.vPos = m_pTransform->Get_Position().TransCoord();
@@ -196,7 +196,7 @@ void CBasicCast::Ready_CastMagic()
 
 void CBasicCast::Ready_Dying()
 {
-	ADD_DECREASE_LIGHT(m_vEndPosition, 20.f, 0.3f, _float4(1.f, 0.f, 0.f, 1.f));
+	ADD_DECREASE_LIGHT(m_vEndPosition, 20.f, 0.3f, m_vLightColor);
 	__super::Ready_Dying();
 }
 

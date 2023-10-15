@@ -62,7 +62,7 @@ void CPensive_Idle::OnStateTick(_float fTimeDelta)
 		// 4. Â÷Â¡ << ´Ü¹ß
 		// 5. ¿ø±â¿Á 
 		
-		_uint AttackAction = m_fActionSetTimer / m_fMaxChangeTimer * 4;
+		_uint AttackAction = _uint(m_fActionSetTimer / m_fMaxChangeTimer * 4);
 		cout << AttackAction << endl;
 		*m_StateMachineDesc.pAttackType = AttackAction;
 		switch (AttackAction)
@@ -75,6 +75,7 @@ void CPensive_Idle::OnStateTick(_float fTimeDelta)
 				Set_StateMachine(TEXT("Physical_Attack"));
 				break;
 			}
+			break;
 		case 1: // ¶¥¹â±â
 			cout << "¶¥¹â±â¸¦ ½ÃÀüÇÕ´Ï´Ù." << endl;
 			Change_Animation(TEXT("Attack_Ground"));

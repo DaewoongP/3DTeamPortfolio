@@ -284,7 +284,7 @@ void CCrucio::Tick_CastMagic(_float fTimeDelta)
 		//로테이션은 z축만 랜덤으로 생성.
 		m_pLightningMeshEffect->Get_Transform()->LookAt(m_CurrentTargetMatrix.Translation());
 		_float3 Axis = m_CurrentTargetMatrix.Translation() - m_CurrentWeaponMatrix.Translation();
-		m_pLightningMeshEffect->Get_Transform()->Turn(Axis,XMConvertToRadians(rand()%360));
+		m_pLightningMeshEffect->Get_Transform()->Turn(Axis, XMConvertToRadians(_float(rand() % 360)));
 		m_fLightningTimer = 0.1f;
 	}
 

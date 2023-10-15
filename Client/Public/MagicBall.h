@@ -148,6 +148,9 @@ protected:
 	_float					m_fDyingTimer = 5.f;
 
 protected:
+	_float4					m_vLightColor = {};
+
+protected:
 	//모든 이펙트 비활성화
 	virtual void Ready_Begin();
 	//완드 이펙트 활성화 
