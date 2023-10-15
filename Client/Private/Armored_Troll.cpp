@@ -69,6 +69,12 @@ HRESULT CArmored_Troll::Initialize_Level(_uint iCurrentLevelIndex)
 	if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
 		return E_FAIL;
 
+	m_DarkAuraBoneMatrix[0] = m_pModelCom->Get_Bone_Index(32)->Get_CombinedTransformationMatrixPtr();
+	m_DarkAuraBoneMatrix[1] = m_pModelCom->Get_Bone_Index(36)->Get_CombinedTransformationMatrixPtr();
+	m_DarkAuraBoneMatrix[2] = m_pModelCom->Get_Bone_Index(96)->Get_CombinedTransformationMatrixPtr();
+	m_DarkAuraBoneMatrix[3] = m_pModelCom->Get_Bone_Index(38)->Get_CombinedTransformationMatrixPtr();
+	m_DarkAuraBoneMatrix[4] = m_pModelCom->Get_Bone_Index(97)->Get_CombinedTransformationMatrixPtr();
+
 	return S_OK;
 }
 
@@ -84,6 +90,11 @@ void CArmored_Troll::Tick(_float fTimeDelta)
 
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+
+	for (_uint i = 0; i < m_DarkAura.size(); i++)
+	{
+		m_DarkAura[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position() + m_DarkAuraBoneMatrix[i]->Translation());
+	}
 }
 
 void CArmored_Troll::Late_Tick(_float fTimeDelta)
@@ -94,7 +105,6 @@ void CArmored_Troll::Late_Tick(_float fTimeDelta)
 void CArmored_Troll::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-
 	/* Collision Magic */
 	if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
 	{
@@ -104,6 +114,13 @@ void CArmored_Troll::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 		m_pHealth->Damaged(iDamage);
 
+		_float3 vDir = CollisionEventDesc.pOtherTransform->Get_Position() - m_pTransform->Get_Position();
+		vDir.Normalize();
+		BEGININSTANCE;
+		pGameInstance->Play_Particle(TEXT("Particle_Troll_Stone_Hit"), CollisionEventDesc.pOtherTransform->Get_Position(), vDir);
+		pGameInstance->Play_Particle(TEXT("Particle_Troll_Dust_Hit"), CollisionEventDesc.pOtherTransform->Get_Position(), vDir);
+		ENDINSTANCE;
+		
 		m_iCurrentSpell |= eBuff;
 	}
 }
@@ -235,6 +252,23 @@ HRESULT CArmored_Troll::Add_Components()
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 			throw TEXT("Com_Health");
+
+		/* For.Com_AuraEffect*/
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Monster_DarkFlare_Particle")
+			, TEXT("Com_DarkFlare_Particle01"), (CComponent**)&m_DarkAura[0])))
+			throw TEXT("Com_DarkFlare_Particle01");
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Monster_DarkFlare_Particle")
+			, TEXT("Com_DarkFlare_Particle02"), (CComponent**)&m_DarkAura[1])))
+			throw TEXT("Com_DarkFlare_Particle02");
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Monster_DarkFlare_Particle")
+			, TEXT("Com_DarkFlare_Particle03"), (CComponent**)&m_DarkAura[2])))
+			throw TEXT("Com_DarkFlare_Particle03");
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Monster_DarkFlare_Particle")
+			, TEXT("Com_DarkFlare_Particle04"), (CComponent**)&m_DarkAura[3])))
+			throw TEXT("Com_DarkFlare_Particle04");
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Monster_DarkFlare_Particle")
+			, TEXT("Com_DarkFlare_Particle05"), (CComponent**)&m_DarkAura[4])))
+			throw TEXT("Com_DarkFlare_Particle05");
 
 		/* For.Com_RigidBody */
 		CRigidBody::RIGIDBODYDESC RigidBodyDesc;
@@ -2146,6 +2180,10 @@ void CArmored_Troll::Free()
 
 	if (true == m_isCloned)
 	{
+		for (_uint i = 0; i < m_DarkAura.size(); i++)
+		{
+			Safe_Release(m_DarkAura[i]);
+		}
 		Safe_Release(m_pWeapon);
 	}
 }

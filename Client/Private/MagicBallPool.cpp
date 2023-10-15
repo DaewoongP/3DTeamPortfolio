@@ -48,6 +48,7 @@ HRESULT CMagicBallPool::Initialize()
     Create_InitMagic(Client::STUPEFY, TEXT("Prototype_GameObject_Stupefy"));
     Create_InitMagic(Client::DIFFINDO, TEXT("Prototype_GameObject_Diffindo"));
     Create_InitMagic(Client::BOMBARDA, TEXT("Prototype_GameObject_Bombarda"));
+    Create_InitMagic(Client::PENSIVE_GROUND_BALL, TEXT("Prototype_GameObject_Pensive_Ground_Ball"),3);
     Safe_Release(pGameInstance);
 
     return S_OK;
@@ -175,6 +176,9 @@ CMagicBall* CMagicBallPool::Create_Magic(SPELL eSpell)
         break;
     case Client::PROJECTILE_BLACK:
         pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Bombarda")));
+        break;
+    case Client::PENSIVE_GROUND_BALL:
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Pensive_Ground_Ball")));
         break;
     case Client::SPELL_END:
         MSG_BOX("Invalid Tag Value");

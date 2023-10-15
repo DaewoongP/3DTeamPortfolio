@@ -70,6 +70,10 @@ HRESULT CDugbog::Initialize_Level(_uint iCurrentLevelIndex)
 	if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
 		return E_FAIL;
 
+	m_DarkAuraBoneMatrix[0] = m_pModelCom->Get_Bone_Index(7)->Get_CombinedTransformationMatrixPtr();
+	m_DarkAuraBoneMatrix[1] = m_pModelCom->Get_Bone_Index(21)->Get_CombinedTransformationMatrixPtr();
+	m_DarkAuraBoneMatrix[2] = m_pModelCom->Get_Bone_Index(98)->Get_CombinedTransformationMatrixPtr();
+
 	return S_OK;
 }
 
@@ -88,7 +92,7 @@ void CDugbog::Tick(_float fTimeDelta)
 	
 	for (_uint i = 0; i < m_DarkAura.size(); i++)
 	{
-		m_DarkAura[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+		m_DarkAura[i]->Get_Transform()->Set_Position(m_DarkAuraBoneMatrix[i]->Translation());
 	}
 }
 
