@@ -1006,6 +1006,13 @@ void CGameInstance::Play_Particle(const _tchar* szParticleTag, _float4x4 Positio
 	return m_pParticleSystem_Pool->Play_Particle(szParticleTag, PositionMatrix, ObjectMatrix);
 }
 
+void CGameInstance::Play_Particle(const _tchar* szParticleTag, _float3 vPosition, _float3 vDir)
+{
+	NULL_CHECK_RETURN_MSG(m_pParticleSystem_Pool, , TEXT("ParticleSystem Pool NULL"));
+
+	return m_pParticleSystem_Pool->Play_Particle(szParticleTag, vPosition, vDir);
+}
+
 void CGameInstance::Play_Particle(const _tchar* szParticleTag, _float4x4 OffsetMatrix, const _float4x4* pBindBoneMatrix, _float4x4 PivotMatrix, const _float4x4* pWorldMatrix)
 {
 	NULL_CHECK_RETURN_MSG(m_pParticleSystem_Pool, , TEXT("ParticleSystem Pool NULL"));

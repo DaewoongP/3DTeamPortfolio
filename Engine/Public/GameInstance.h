@@ -256,6 +256,7 @@ public:
 	HRESULT Reserve_Particle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* szParticleTag, const _tchar* szParticleDirectoryPath, _uint iNumReserveParticles = 10);
 	void Play_Particle(const _tchar* szParticleTag, _float3 vWorldPosition);
 	void Play_Particle(const _tchar* szParticleTag, _float4x4 PositionMatrix, _float4x4 ObjectMatrix);
+	void Play_Particle(const _tchar* szParticleTag, _float3 vPosition, _float3 vDir);
 	void Play_Particle(const _tchar* szParticleTag, _float4x4 OffsetMatrix, const _float4x4* pBindBoneMatrix, _float4x4 PivotMatrix,const _float4x4* pWorldMatrix);
 
 private:

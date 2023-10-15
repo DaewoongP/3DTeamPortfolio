@@ -1,31 +1,28 @@
-#include "StateContext.h"
-#include "Client_Defines.h"
+#include "StateContext_Enemy.h"
 #include "StateMachine.h"
-#include "GameInstance.h"
-#include "IdleState.h"
+#include "StateMachine_Enemy.h"
 
-CStateContext::CStateContext(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
+CStateContext_Enemy::CStateContext_Enemy(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	: CComposite(_pDevice, _pContext)
 {
 }
 
-CStateContext::CStateContext(const CStateContext& rhs)
+CStateContext_Enemy::CStateContext_Enemy(const CStateContext_Enemy& rhs)
 	: CComposite(rhs)
 {
 }
 
-HRESULT CStateContext::Initialize_Prototype()
+HRESULT CStateContext_Enemy::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CStateContext::Initialize(void* pArg)
+HRESULT CStateContext_Enemy::Initialize(void* pArg)
 {
-
 	return S_OK;
 }
 
-void CStateContext::Tick(_float fTimeDelta)
+void CStateContext_Enemy::Tick(_float fTimeDelta)
 {
 	if (nullptr != m_pCurrentStateMachine)
 	{
@@ -33,7 +30,7 @@ void CStateContext::Tick(_float fTimeDelta)
 	}
 }
 
-void CStateContext::Late_Tick(_float fTimeDelta)
+void CStateContext_Enemy::Late_Tick(_float fTimeDelta)
 {
 	if (nullptr != m_pCurrentStateMachine)
 	{
@@ -41,36 +38,29 @@ void CStateContext::Late_Tick(_float fTimeDelta)
 	}
 }
 
-HRESULT CStateContext::Set_StateMachine(const _tchar* _pTag, void * _pArg)
+HRESULT CStateContext_Enemy::Set_StateMachine(const _tchar* _pTag, void * _pArg)
 {
 	if (nullptr != m_pCurrentStateMachine)
 	{
 		m_pCurrentStateMachine->OnStateExit();
-
 		lstrcpy(m_wszPreStateKey, (*m_iterCurrentStateMachines).first);
-		
 		Safe_Release(m_pCurrentStateMachine);
 	}
-	
 
 	m_pCurrentStateMachine = Find_StateMachine(_pTag);
-	
 
 	if (nullptr == m_pCurrentStateMachine)
 	{
-		MSG_BOX("Failed Set StateMachine");
-
+		MSG_BOX("Failed Set StateMachine_Enemy");
 		return E_FAIL;
 	}
 	
 	Safe_AddRef(m_pCurrentStateMachine);
-
 	m_pCurrentStateMachine->OnStateEnter(_pArg);
-
 	return S_OK;
 }
 
-_bool CStateContext::Is_Current_State(const _tchar* _pTag)
+_bool CStateContext_Enemy::Is_Current_State(const _tchar* _pTag)
 {
 	auto iter = find_if(
 		m_pStateMachines.begin(),
@@ -90,7 +80,7 @@ _bool CStateContext::Is_Current_State(const _tchar* _pTag)
 	return false;
 }
 
-CStateMachine* CStateContext::Find_StateMachine(const _tchar* _pTag)
+CStateMachine_Enemy* CStateContext_Enemy::Find_StateMachine(const _tchar* _pTag)
 {
 	auto iter = find_if(
 		m_pStateMachines.begin(), 
@@ -106,61 +96,58 @@ CStateMachine* CStateContext::Find_StateMachine(const _tchar* _pTag)
 }
 
 //래밸, 컴포넌트태그, 스테이트키, 프로토태그, 보이드 포인터
-HRESULT CStateContext::Add_StateMachine(LEVELID _eLevelID, const _tchar* _ComponentTag, const _tchar* _StateTag, const _tchar* _ProtoTag, void* _pArg)
+HRESULT CStateContext_Enemy::Add_StateMachine(LEVELID _eLevelID, const _tchar* _ComponentTag, const _tchar* _StateTag, const _tchar* _ProtoTag, void* _pArg)
 {
 	if (nullptr == _pArg)
 	{
-		MSG_BOX("Failed Add StateMachine");
-
+		MSG_BOX("Failed Add StateMachine_Enemy");
 		return E_FAIL;
 	}
 
-	CStateMachine* pStateMachine = { nullptr };
+	CStateMachine_Enemy* pStateMachine = { nullptr };
 
 	if (FAILED(CComposite::Add_Component
 	(_eLevelID,_ProtoTag,_ComponentTag, reinterpret_cast<CComponent**>(&pStateMachine),_pArg)))
 	{
-		MSG_BOX("Failed Add StateMachine");
+		MSG_BOX("Failed Add StateMachine_Enemy");
 		return E_FAIL;
 	}
 
 	pStateMachine->Set_Owner(this);
-
 	pStateMachine->Bind_Notify();
-
 	m_pStateMachines.emplace(_StateTag, pStateMachine);
 
 	return S_OK;
 }
 
 
-CStateContext* CStateContext::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CStateContext_Enemy* CStateContext_Enemy::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CStateContext* pInstance = New CStateContext(pDevice, pContext);
+	CStateContext_Enemy* pInstance = New CStateContext_Enemy(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CStateContext");
+		MSG_BOX("Failed to Created CStateContext_Enemy");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CComposite* CStateContext::Clone(void* pArg)
+CComposite* CStateContext_Enemy::Clone(void* pArg)
 {
-	CStateContext* pInstance = New CStateContext(*this);
+	CStateContext_Enemy* pInstance = New CStateContext_Enemy(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CStateContext");
+		MSG_BOX("Failed to Cloned CStateContext_Enemy");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CStateContext::Free()
+void CStateContext_Enemy::Free()
 {
 	CComposite::Free();
 

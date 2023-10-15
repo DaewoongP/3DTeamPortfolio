@@ -78,6 +78,8 @@
 
 #include "Projectile_Black.h"
 #include "Projectile_White.h"
+
+#include "Pensive_Ground_Ball.h"
 #pragma endregion Magic
 
 #include "Trigger_Vault.h"
@@ -686,6 +688,12 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			CProjectile_White::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Projectile_White");
 
+		/* For.Prototype_GameObject_Pensive_Ground_Ball */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Pensive_Ground_Ball"),
+			CPensive_Ground_Ball::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Pensive_Ground_Ball");
+		
+
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Monster_DarkFlare_Particle"),
 			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Monster_DarkFlare/"), eLevelID))))
 			throw TEXT("Prototype_Monster_DarkFlare_Particle");
@@ -807,6 +815,14 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DogBog_Water_Foot"),
 				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/DogBog_Water_Foot/"), 3)))
 				throw TEXT("Reserve Particle : Particle_DogBog_Water_Foot");
+		
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_Dust_Hit"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Monster_Hit/Troll_Dust/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Troll_Dust_Hit");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_Stone_Hit"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Monster_Hit/Troll_Stone/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Troll_Stone_Hit");
 		}
 #pragma endregion
 
