@@ -155,7 +155,7 @@ HRESULT CLevioso::Initialize(void* pArg)
 		return E_FAIL;
 	}
 	m_CollisionDesc.Action = bind(&CLevioso::TrailAction, this, placeholders::_1);
-	m_ParticleVec[EFFECT_STATE_WAND][0]->Get_MainModuleRef().vStartColor = _float4(0.9629571f, 0.169f, 0.859, 1.f);
+	m_ParticleVec[EFFECT_STATE_WAND][0]->Get_MainModuleRef().vStartColor = _float4(0.9629f, 0.169f, 0.859, 1.f);
 	return S_OK;
 }
 

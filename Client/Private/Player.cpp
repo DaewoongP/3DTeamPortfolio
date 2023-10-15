@@ -1458,8 +1458,8 @@ HRESULT CPlayer::Ready_MeshParts()
 	vColor = _float4(0.f, 1.f, 0.f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Robe01"),
-		CCustomModel::ROBE, vColor, TEXT("../../Resources/GameData/ClothData/Test.cloth"))))
+		TEXT("Prototype_Component_MeshPart_Robe_MysticCape"),
+		CCustomModel::ROBE, vColor)))
 	{
 		MSG_BOX("Failed Add MeshPart Robe");
 
@@ -1479,7 +1479,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	}
 
 	//Pants
-	vColor = _float4(0.2f, 0.2f, 0.3, 1.f);
+	vColor = _float4(0.2f, 0.2f, 0.3f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Pants"),
@@ -2355,7 +2355,7 @@ void CPlayer::Update_Cloth(_float fTimeDelta)
 	vVelocity.y *= -1.f;
 	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(m_fClothPower * vVelocity,
 		XMMatrixInverse(nullptr, XMMatrixRotationQuaternion(m_pTransform->Get_Quaternion()))));
-
+	
 	m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
 }
 
