@@ -109,6 +109,7 @@ HRESULT CPensive_Ground_Ball::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
+	m_vLightColor = _float4(1, 0, 0, 1);
 	m_pTransform->Set_Speed(100);
 	return S_OK;
 }
@@ -146,6 +147,7 @@ HRESULT CPensive_Ground_Ball::Reset(MAGICBALLINITDESC& InitDesc)
 
 void CPensive_Ground_Ball::Ready_Begin()
 {
+	ADD_DECREASE_LIGHT(m_vStartPosition, 60.f, 0.6f, m_vLightColor);
 	__super::Ready_Begin();
 }
 

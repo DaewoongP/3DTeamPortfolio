@@ -748,6 +748,9 @@
     <Filter Include="98. Default\ImGui_Defaults">
       <UniqueIdentifier>{628cd336-ebfe-4860-bfac-014e7bec45d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\Pensive_Fail_Ball">
+      <UniqueIdentifier>{004bb4c7-ceb5-4b1b-a29b-5f61f3bd54e1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1490,6 +1493,9 @@
     <ClInclude Include="..\public\Game_Manager.h">
       <Filter>08. GameManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Fail_Ball.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Pensive_Fail_Ball</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2189,6 +2195,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Game_Manager.cpp">
       <Filter>08. GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Fail_Ball.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Pensive_Fail_Ball</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

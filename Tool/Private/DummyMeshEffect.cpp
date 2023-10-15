@@ -311,7 +311,7 @@ HRESULT CDummyMeshEffect::Load_FileDialog()
 				m_pScaleEaseCombo->Update_Current_Item(m_eSizeEase);
 				m_pRotEaseCombo->Update_Current_Item(m_eRotEase);
 				m_pPosEaseCombo->Update_Current_Item(m_ePosEase);
-
+				m_pPassComboBox->Update_Current_Item(m_strPassName);
 				MSG_BOX("The file has been loaded successfully");
 			}
 		}

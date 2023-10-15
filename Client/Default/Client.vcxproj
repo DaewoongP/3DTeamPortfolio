@@ -202,6 +202,7 @@
     <ClInclude Include="..\Public\Pensive_Appearence.h" />
     <ClInclude Include="..\Public\Pensive_Charge_Attack.h" />
     <ClInclude Include="..\Public\Pensive_Death.h" />
+    <ClInclude Include="..\Public\Pensive_Fail_Ball.h" />
     <ClInclude Include="..\Public\Pensive_Groogy.h" />
     <ClInclude Include="..\Public\Pensive_Ground_Ball.h" />
     <ClInclude Include="..\Public\Pensive_Hit.h" />
@@ -472,6 +473,7 @@
     <ClCompile Include="..\Private\Pensive_Appearence.cpp" />
     <ClCompile Include="..\Private\Pensive_Charge_Attack.cpp" />
     <ClCompile Include="..\Private\Pensive_Death.cpp" />
+    <ClCompile Include="..\Private\Pensive_Fail_Ball.cpp" />
     <ClCompile Include="..\Private\Pensive_Groogy.cpp" />
     <ClCompile Include="..\Private\Pensive_Ground_Ball.cpp" />
     <ClCompile Include="..\Private\Pensive_Hit.cpp" />

@@ -80,6 +80,7 @@
 #include "Projectile_Black.h"
 #include "Projectile_White.h"
 
+#include "Pensive_Fail_Ball.h"
 #include "Pensive_Ground_Ball.h"
 #pragma endregion Magic
 
@@ -702,6 +703,10 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			CPensive_Ground_Ball::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Pensive_Ground_Ball");
 		
+		/* For.Prototype_GameObject_Pensive_Fail_Ball */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Pensive_Fail_Ball"),
+			CPensive_Fail_Ball::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Pensive_Fail_Ball");
 
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Monster_DarkFlare_Particle"),
 			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Monster_DarkFlare/"), eLevelID))))

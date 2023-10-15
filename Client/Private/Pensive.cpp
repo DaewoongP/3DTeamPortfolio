@@ -5,6 +5,7 @@
 #include "UI_Group_Enemy_HP.h"
 #include "MagicSlot.h"
 #include "Weapon_Dragon_Head.h"
+#include "MagicBall.h"
 
 CPensive::CPensive(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEnemy(pDevice, pContext)
@@ -84,6 +85,18 @@ HRESULT CPensive::Render()
 	}
 
 	return S_OK;
+}
+
+void CPensive::Set_Protego_Collision(CTransform* pTransform, ATTACKTYPE eType) const
+{
+	if (eType == ATTACK_BREAK ||
+		eType == ATTACK_SUPERBREAK)
+	{
+		m_pStateContext->Set_StateMachine(TEXT("Groogy"));
+		m_pModelCom->Change_Animation(TEXT("Stun_Start"));
+		//손에 있던 마법 터뜨려주기
+		m_pMagicBall_Fail->Set_MagicBallState(CMagicBall::MAGICBALL_STATE_DYING);
+	}
 }
 
 HRESULT CPensive::Ready_StateMachine(_uint iCurrentLevelIndex)
@@ -192,6 +205,14 @@ HRESULT CPensive::Make_Notifies()
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Ground_Crack"), Func)))
 		return E_FAIL;
 
+	Func = [&] {(*this).Attack_Orb(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("OrbCreate"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Next_Orb(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("ShootOrb"), Func)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -209,13 +230,86 @@ HRESULT CPensive::Add_Magic()
 		magicInitDesc.fLifeTime = 0.2f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
+	{
+		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
+		magicInitDesc.eMagicType = CMagic::MT_ALL;
+		magicInitDesc.eMagicTag = PENSIVE_FAIL_BALL;
+		magicInitDesc.fInitCoolTime = 1.f;
+		magicInitDesc.iDamage = 50;
+		magicInitDesc.isChase = false;
+		magicInitDesc.fLifeTime = 0.6f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+	{
+		m_ProtegoInitDesc[0].eBuffType = BUFF_NONE;
+		m_ProtegoInitDesc[0].eMagicGroup = CMagic::MG_POWER;
+		m_ProtegoInitDesc[0].eMagicType = CMagic::MT_RED;
+		m_ProtegoInitDesc[0].eMagicTag = PROTEGO;
+		m_ProtegoInitDesc[0].fInitCoolTime = 0.f;
+		m_ProtegoInitDesc[0].iDamage = 0;
+		m_ProtegoInitDesc[0].isChase = false;
+		m_ProtegoInitDesc[0].fLifeTime = 4.f;
+	}
+	{
+		m_ProtegoInitDesc[1].eBuffType = BUFF_NONE;
+		m_ProtegoInitDesc[1].eMagicGroup = CMagic::MG_POWER;
+		m_ProtegoInitDesc[1].eMagicType = CMagic::MT_YELLOW;
+		m_ProtegoInitDesc[1].eMagicTag = PROTEGO;
+		m_ProtegoInitDesc[1].fInitCoolTime = 0.f;
+		m_ProtegoInitDesc[1].iDamage = 0;
+		m_ProtegoInitDesc[1].isChase = false;
+		m_ProtegoInitDesc[1].fLifeTime = 4.f;
+	}
+	{
+		m_ProtegoInitDesc[2].eBuffType = BUFF_NONE;
+		m_ProtegoInitDesc[2].eMagicGroup = CMagic::MG_POWER;
+		m_ProtegoInitDesc[2].eMagicType = CMagic::MT_PURPLE;
+		m_ProtegoInitDesc[2].eMagicTag = PROTEGO;
+		m_ProtegoInitDesc[2].fInitCoolTime = 0.f;
+		m_ProtegoInitDesc[2].iDamage = 0;
+		m_ProtegoInitDesc[2].isChase = false;
+		m_ProtegoInitDesc[2].fLifeTime = 4.f;
+	}
+
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, PENSIVE_GROUND_BALL);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, PENSIVE_FAIL_BALL);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(2, PROTEGO);
 	return S_OK;
 }
 
 void CPensive::Attack_Ground()
 {
-	m_pMagicSlot->Action_Magic_Skill(0, m_pPlayer, m_pDragonHead, COLLISIONFLAG(COL_PLAYER | COL_SHIELD));
+	m_pMagicSlot->Action_Magic_Skill(0, m_pPlayer, m_pDragonHead[0], COLLISIONFLAG(COL_PLAYER | COL_SHIELD));
+	_float3 vAxis = _float3(1, 1, 1);
+
+	vAxis.Normalize();
+	BEGININSTANCE;
+	pGameInstance->Set_Shake(
+		(CCamera_Manager::SHAKE_TYPE)0,
+		(CCamera_Manager::SHAKE_AXIS)3,
+		(CEase::EASE)0,
+		20,
+		0.6f,
+		0.2f,
+		(CCamera_Manager::SHAKE_POWER)1,
+		vAxis);
+	ENDINSTANCE;
+}
+
+void CPensive::Attack_Orb()
+{
+	m_pMagicBall_Fail = m_pMagicSlot->Action_Magic_Skill(1, m_pPlayer, m_pDragonHead[1], COLLISIONFLAG(COL_PLAYER | COL_SHIELD | COL_STATIC));
+	m_pMagicSlot->Add_Magics(m_ProtegoInitDesc[rand()%3]);
+	m_pMagicBall_Protego = m_pMagicSlot->Action_Magic_Skill(2, m_pDragonHead[1], m_pDragonHead[1], COLLISIONFLAG(COL_MAGIC));
+}
+
+void CPensive::Next_Orb()
+{
+	if (m_pMagicBall_Fail != nullptr)
+	{
+		m_pMagicBall_Fail->Do_MagicBallState_To_Next();
+	}
 }
 
 HRESULT CPensive::Add_Components()
@@ -297,17 +391,8 @@ HRESULT CPensive::Add_Components_Level(_uint iCurrentLevelIndex)
 		__debugbreak();
 		return E_FAIL;
 	}
-	const CBone* pBone = m_pModelCom->Get_Bone(TEXT("SKT_RightHand"));
-	if (nullptr == pBone)
-		throw TEXT("pBone is nullptr");
-
-	CWeapon_Pensive::PARENTMATRIXDESC ParentMatrixDesc;
-	ParentMatrixDesc.OffsetMatrix = pBone->Get_OffsetMatrix();
-	ParentMatrixDesc.PivotMatrix = m_pModelCom->Get_PivotFloat4x4();
-	ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
-	ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
-
-	if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, TEXT("Prototype_Component_Weapon_Pensive_Flail"),
+	
+	/*if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, TEXT("Prototype_Component_Weapon_Pensive_Flail"),
 		TEXT("Com_Mace"), reinterpret_cast<CComponent**>(&m_pWeapon[0]), &ParentMatrixDesc)))
 	{
 		wstring wstrErrorMSG = TEXT("[CPensive] Failed Add_Components_Level : ");
@@ -325,7 +410,7 @@ HRESULT CPensive::Add_Components_Level(_uint iCurrentLevelIndex)
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
 		return E_FAIL;
-	}
+	}*/
 
 	/* For.Com_StateContext */
 	if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, TEXT("Prototype_Component_StateContext_Enemy"),
@@ -338,31 +423,94 @@ HRESULT CPensive::Add_Components_Level(_uint iCurrentLevelIndex)
 		return E_FAIL;
 	}
 	/* For.Com_DragonHead */
-	pBone = m_pModelCom->Get_Bone_Index(113);
-	if (nullptr == pBone)
 	{
-		wstring wstrErrorMSG = TEXT("pBone is nullptr");
-		MSG_BOX(wstrErrorMSG.c_str());
-		__debugbreak();
-		return E_FAIL;
+		const CBone* pBone = m_pModelCom->Get_Bone_Index(113);
+		if (nullptr == pBone)
+			throw TEXT("pBone is nullptr");
+
+		CWeapon_Dragon_Head::PARENTMATRIXDESC ParentMatrixDesc;
+		ParentMatrixDesc.OffsetMatrix = pBone->Get_OffsetMatrix();
+		ParentMatrixDesc.PivotMatrix = m_pModelCom->Get_PivotFloat4x4();
+		ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
+		ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+
+		if (nullptr == pBone)
+		{
+			wstring wstrErrorMSG = TEXT("pBone is nullptr");
+			MSG_BOX(wstrErrorMSG.c_str());
+			__debugbreak();
+			return E_FAIL;
+		}
+
+		if (FAILED(Add_Component(iCurrentLevelIndex, TEXT("Prototype_GameObject_Dragon_Head"),
+			TEXT("Com_DragonHead01"), reinterpret_cast<CComponent**>(&m_pDragonHead[0]), &ParentMatrixDesc)))
+		{
+			wstring wstrErrorMSG = TEXT("[CPensive] Failed Add_Components_Level : ");
+			wstrErrorMSG += TEXT("Com_DragonHead01");
+			MSG_BOX(wstrErrorMSG.c_str());
+			__debugbreak();
+			return E_FAIL;
+		}
 	}
-
-	memset(&ParentMatrixDesc,0,sizeof(CWeapon_Pensive::PARENTMATRIXDESC));
-	ParentMatrixDesc.OffsetMatrix = pBone->Get_OffsetMatrix();
-	ParentMatrixDesc.PivotMatrix = m_pModelCom->Get_PivotFloat4x4();
-	ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
-	ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
-
-	if (FAILED(Add_Component(iCurrentLevelIndex, TEXT("Prototype_GameObject_Dragon_Head"),
-		TEXT("Com_DragonHead"), reinterpret_cast<CComponent**>(&m_pDragonHead), &ParentMatrixDesc)))
 	{
-		wstring wstrErrorMSG = TEXT("[CPensive] Failed Add_Components_Level : ");
-		wstrErrorMSG += TEXT("Com_DragonHead");
-		MSG_BOX(wstrErrorMSG.c_str());
-		__debugbreak();
-		return E_FAIL;
-	}
+		const CBone* pBone = m_pModelCom->Get_Bone(TEXT("SKT_RightHand"));
+		if (nullptr == pBone)
+			throw TEXT("pBone is nullptr");
 
+		CWeapon_Dragon_Head::PARENTMATRIXDESC ParentMatrixDesc;
+		ParentMatrixDesc.OffsetMatrix = pBone->Get_OffsetMatrix();
+		ParentMatrixDesc.PivotMatrix = m_pModelCom->Get_PivotFloat4x4();
+		ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
+		ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+
+		if (nullptr == pBone)
+		{
+			wstring wstrErrorMSG = TEXT("pBone is nullptr");
+			MSG_BOX(wstrErrorMSG.c_str());
+			__debugbreak();
+			return E_FAIL;
+		}
+
+		if (FAILED(Add_Component(iCurrentLevelIndex, TEXT("Prototype_GameObject_Dragon_Head"),
+			TEXT("Com_DragonHead02"), reinterpret_cast<CComponent**>(&m_pDragonHead[1]), &ParentMatrixDesc)))
+		{
+			wstring wstrErrorMSG = TEXT("[CPensive] Failed Add_Components_Level : ");
+			wstrErrorMSG += TEXT("Com_DragonHead02");
+			MSG_BOX(wstrErrorMSG.c_str());
+			__debugbreak();
+			return E_FAIL;
+		}
+	}
+	{
+		const CBone* pBone = m_pModelCom->Get_Bone(TEXT("SKT_RightHand"));
+		if (nullptr == pBone)
+			throw TEXT("pBone is nullptr");
+
+		CWeapon_Dragon_Head::PARENTMATRIXDESC ParentMatrixDesc;
+		ParentMatrixDesc.OffsetMatrix = pBone->Get_OffsetMatrix();
+		ParentMatrixDesc.PivotMatrix = m_pModelCom->Get_PivotFloat4x4();
+		ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
+		ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+
+		if (nullptr == pBone)
+		{
+			wstring wstrErrorMSG = TEXT("pBone is nullptr");
+			MSG_BOX(wstrErrorMSG.c_str());
+			__debugbreak();
+			return E_FAIL;
+		}
+
+		if (FAILED(Add_Component(iCurrentLevelIndex, TEXT("Prototype_GameObject_Dragon_Head"),
+			TEXT("Com_DragonHead03"), reinterpret_cast<CComponent**>(&m_pDragonHead[2]), &ParentMatrixDesc)))
+		{
+			wstring wstrErrorMSG = TEXT("[CPensive] Failed Add_Components_Level : ");
+			wstrErrorMSG += TEXT("Com_DragonHead03");
+			MSG_BOX(wstrErrorMSG.c_str());
+			__debugbreak();
+			return E_FAIL;
+		}
+	}
+	
 	return S_OK;
 }
 
@@ -398,9 +546,9 @@ void CPensive::Free()
 
 	if (true == m_isCloned)
 	{
-		Safe_Release(m_pWeapon[0]);
-		Safe_Release(m_pWeapon[1]);
-		Safe_Release(m_pDragonHead);
+		Safe_Release(m_pDragonHead[0]);
+		Safe_Release(m_pDragonHead[1]);
+		Safe_Release(m_pDragonHead[2]);
 
 		Safe_Release(m_pStateContext);
 		Safe_Release(m_pMagicSlot);

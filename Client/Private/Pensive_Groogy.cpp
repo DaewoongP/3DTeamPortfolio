@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "Client_Defines.h"
 #include "StateContext_Enemy.h"
+#include "Pensive.h"
 
 CPensive_Groogy::CPensive_Groogy(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	:CStateMachine_Enemy(_pDevice,_pContext)
@@ -22,6 +23,9 @@ HRESULT CPensive_Groogy::Initialize(void* pArg)
 		__debugbreak();
 		return E_FAIL;
 	}
+	lstrcpy(m_wszAnimationTag[0], TEXT("Stun_Start"));
+	lstrcpy(m_wszAnimationTag[1], TEXT("Stun_Loop"));
+	lstrcpy(m_wszAnimationTag[2], TEXT("Attack_Beast"));
 	return S_OK;
 }
 
@@ -36,27 +40,27 @@ void CPensive_Groogy::Late_Tick(_float fTimeDelta)
 
 void CPensive_Groogy::OnStateEnter(void* _pArg)
 {
-	//첫 실행시 등장 애니메이션을 재생합니다.
-	Change_Animation(TEXT("Spawn"));
-	
 }
 
 void CPensive_Groogy::OnStateTick()
 {
+	//애니메이션 끝났으면?
+	if (true == m_StateMachineDesc.pOwnerModel->Is_Finish_Animation())
+	{
+		m_iMotionIndex++;
+		Change_Animation(m_wszAnimationTag[m_iMotionIndex]);
+		if (m_iMotionIndex > 1)
+		{
+			cout << "기지개를 실행합니다." << endl;
+			*m_StateMachineDesc.pAttackType = CPensive::ATTACK_SCREAM;
+			Change_Animation(m_wszAnimationTag[m_iMotionIndex]);
+			Set_StateMachine(TEXT("Physical_Attack"));
+		}
+	}
 }
 
 void CPensive_Groogy::OnStateExit()
 {
-}
-
-void CPensive_Groogy::Action_None_Tick()
-{
-	//애니메이션 끝났으면?
-	if (true == m_StateMachineDesc.pOwnerModel->Is_Finish_Animation())
-	{
-		//랜덤으로 다음 상태 갱신
-		Set_StateMachine(TEXT("Idle"));
-	}
 }
 
 void CPensive_Groogy::Bind_Notify()
