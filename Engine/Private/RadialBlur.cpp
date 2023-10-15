@@ -18,7 +18,13 @@ HRESULT CRadialBlur::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
+
+	NULL_CHECK_RETURN(pArg, E_FAIL);
 	
+	RADIALDESC RadialDesc = *static_cast<RADIALDESC*>(pArg);
+	
+	m_pTransform->Set_Scale(_float3(RadialDesc.vSize.x, RadialDesc.vSize.y, 0.f));
+	m_pTransform->Set_Position(RadialDesc.vPos);
 	FAILED_CHECK(Add_Components());
 
 	return S_OK;

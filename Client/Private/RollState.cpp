@@ -132,7 +132,7 @@ void CRollState::OnStateEnter(void* _pArg)
 	{
 		Change_Animation(TEXT("Blink_Start"));
 		m_eBlink = BLINK_START;
-		m_pRenderer->Set_ScreenRadial(true, 0.03f);
+		m_pRenderer->Set_ScreenRadial(true, 0.5f, 0.05f);
 		
 		pGameInstance->Set_Shake(
 			CCamera_Manager::SHAKE_TYPE_ROTATION, 
@@ -163,7 +163,6 @@ void CRollState::OnStateTick()
 		{
 			if (m_eBlink == BLINK_START)
 			{
-				m_pRenderer->Set_ScreenRadial(false, 0.05f);
 				Change_Animation(TEXT("Blink_End"));
 				*m_StateMachineDesc.pisFinishAnimation = false;
 				m_eBlink = BLINK_END;

@@ -300,7 +300,7 @@
     <ClCompile Include="..\private\VIBuffer_Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_AfterShade.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Fog.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Bloom.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Blur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
@@ -322,7 +322,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Trail.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Type.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VelocityMapInst.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointColInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstance.hlsl" />

@@ -62,6 +62,8 @@ HRESULT CUI_DamageFont::Initialize(void* pArg)
 
 void CUI_DamageFont::Tick(_float fTimeDelta)
 {
+	Play_DamageFont(fTimeDelta);
+
 	__super::Tick(fTimeDelta);
 }
 
@@ -71,8 +73,6 @@ void CUI_DamageFont::Late_Tick(_float fTimeDelta)
 
 	Set_vPos(m_vPos);
 	Set_vScale(m_vScale);
-
-	Play_DamageFont(fTimeDelta);
 
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);

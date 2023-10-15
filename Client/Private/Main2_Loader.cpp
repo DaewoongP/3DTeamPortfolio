@@ -374,13 +374,6 @@ HRESULT CMain2_Loader::Loading_For_Static(LEVELID eLevelID)
 {
 	try 
 	{
-		_float4x4 PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
-		/* For.Prototype_Component_Model_Weapon_Player_Wand */
-		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weapon_Player_Wand"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/gaechul/gaechul.dat"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Weapon_Player_Wand");
-
 	}
 	catch (const _tchar* pErrorTag)
 	{

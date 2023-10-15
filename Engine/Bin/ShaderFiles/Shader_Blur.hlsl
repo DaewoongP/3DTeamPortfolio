@@ -18,6 +18,17 @@ float g_fBlurWeights[19] =
     0.278f, 0.1353f, 0.0561f, 
 };
 
+float g_fLowBlurWeights[19] =
+{
+    0.0361f, 0.0553f, 0.1280f,
+    0.1721f, 0.2268f, 0.2881f,
+    0.3361f, 0.3576f, 0.4031f,
+    0.459f,
+    0.4031f, 0.3576f, 0.3361f,
+    0.2881f, 0.2268f, 0.1721f,
+    0.1280f, 0.0553f, 0.0361f,
+};
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -69,9 +80,7 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
     for (int i = -iValue; i < iValue; ++i)
     {
         vNewUV = In.vTexUV + float2(fDeltaX * i, 0.f);
-        vector vTargetColor = g_TargetTexture.Sample(LinearSampler, vNewUV);
-        if (0.f != vTargetColor.a)
-            Out.vColor += g_fBlurWeights[iValue + i] * vTargetColor;
+        Out.vColor += g_fBlurWeights[iValue + i] * g_TargetTexture.Sample(LinearSampler, vNewUV);
         fTotal += g_fBlurWeights[iValue + i];
     }
 
@@ -93,9 +102,7 @@ PS_OUT PS_MAIN_BLURY(PS_IN In)
     for (int i = -iValue; i < iValue; ++i)
     {
         vNewUV = In.vTexUV + float2(0, fDeltaY * i);
-        vector vTargetColor = g_TargetTexture.Sample(LinearSampler, vNewUV);
-        if (0.f != vTargetColor.a)
-            Out.vColor += g_fBlurWeights[iValue + i] * vTargetColor;
+        Out.vColor += g_fBlurWeights[iValue + i] * g_TargetTexture.Sample(LinearSampler, vNewUV);
         fTotal += g_fBlurWeights[iValue + i];
     }
 

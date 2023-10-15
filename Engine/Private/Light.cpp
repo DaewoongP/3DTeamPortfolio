@@ -24,6 +24,31 @@ HRESULT CLight::Initialize(const LIGHTDESC& LightDesc)
 	return S_OK;
 }
 
+_bool CLight::Tick_Increase(_float fTimeDelta)
+{
+	m_fTimeAcc += fTimeDelta;
+
+	if (m_fTimeAcc > m_LightDesc.fTime)
+		return false;
+	
+	m_LightDesc.fRange += m_LightDesc.fIncreasePower * fTimeDelta;
+
+	return true;
+}
+
+_bool CLight::Tick_Decrease(_float fTimeDelta)
+{
+	m_fTimeAcc += fTimeDelta;
+
+	if (m_fTimeAcc > m_LightDesc.fTime)
+		return false;
+
+	// Delta Range / Total Time - ∫Ò¿≤
+	m_LightDesc.fRange -= m_LightDesc.fDecreaseStartRange * fTimeDelta / m_LightDesc.fTime;
+
+	return true;
+}
+
 HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 {
 	_char szPassName[MAX_STR] = "";

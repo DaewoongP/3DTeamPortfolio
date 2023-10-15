@@ -12,7 +12,7 @@ private:
 	virtual ~CLight_Manager() = default;
 
 public:
-	/* 그림자 처리용 함수들입니다. */
+	/* 다중 그림자 처리용 함수들입니다. */
 	_uint Get_CurrentLightShadowNum();
 	const _bool* Get_IsShadowRender() const { return m_isShadowRender; }
 	_float4x4* Get_LightViewMatrix(_uint iIndex) { return &m_LightViewMatrix[iIndex]; }
@@ -23,6 +23,8 @@ public:
 
 public:
 	HRESULT Add_Light(const CLight::LIGHTDESC& LightDesc, _Inout_ class CLight** ppLight = nullptr, _bool isShadow = false, _uint iLightViewIndex = 0, _float fAspect = 1280.f / 720.f);
+	// PointLight only
+	HRESULT Add_InstanceLight(_float3 vPos, _float fStartRange, _float fTime, _float4 vColor, _bool isIncrease = false, _float fIncreasePower = 0.f);
 	HRESULT Clear_Lights();
 
 public:
@@ -31,6 +33,9 @@ public:
 
 public: /* 그림자 */
 	HRESULT Update_ShadowMatrix(_uint iShadowIndex, CLight::LIGHTDESC LightDesc);
+
+public:
+	void Tick(_float fTimeDelta);
 
 public: /* Deferred */
 	HRESULT Render_Lights(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
@@ -41,6 +46,9 @@ private:
 private:
 	list<class CLight*>			m_Lights;
 	queue<class CLight*>		m_LightPool;
+
+private:
+	list<class CLight*>			m_InstanceLights;
 
 private: /* 그림자 처리 변수 */
 	_float4x4					m_LightViewMatrix[MAX_SHADOW];

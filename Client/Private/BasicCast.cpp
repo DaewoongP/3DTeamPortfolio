@@ -196,6 +196,7 @@ void CBasicCast::Ready_CastMagic()
 
 void CBasicCast::Ready_Dying()
 {
+	ADD_DECREASE_LIGHT(m_vEndPosition, 20.f, 0.3f, _float4(1.f, 0.f, 0.f, 1.f));
 	__super::Ready_Dying();
 }
 
