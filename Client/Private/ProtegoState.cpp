@@ -111,6 +111,8 @@ void CProtegoState::OnStateEnter(void* _pArg)
 				break;
 			}
 
+			// maintimer를 0.2배속으로 0.3초동안 처리하겠다
+			pGameInstance->Set_SlowTime(TEXT("MainTimer"), 0.2f, 0.3f);
 			pGameInstance->Set_Shake(
 				CCamera_Manager::SHAKE_TYPE_TRANSLATION,
 				CCamera_Manager::SHAKE_AXIS_SET,
