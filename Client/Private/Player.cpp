@@ -173,7 +173,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	Bind_Notify();
 
-	m_fClothPower = 3.0f;
+	m_fClothPower = 20.0f;
 	m_fClothPowerPlus = 1.0f;
 
 	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FIRST, CONFRINGO);
@@ -513,20 +513,6 @@ HRESULT CPlayer::Render()
 				m_pCustomModel->Render(iPartsIndex, i);
 			}
 		}
-		else if (CCustomModel::ROBE == iPartsIndex)
-		{
-			for (_uint i = 0; i < iNumMeshes; ++i)
-			{
-				m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
-				m_pCustomModel->Bind_Color(m_pShader, "g_vColor", iPartsIndex);
-				m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
-				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
-
-				m_pShader->Begin("AnimMeshNonCull");
-
-				m_pCustomModel->Render(iPartsIndex, i);
-			}
-		}
 		else if (CCustomModel::HEAD == iPartsIndex ||
 			CCustomModel::ARM == iPartsIndex)
 		{
@@ -538,6 +524,20 @@ HRESULT CPlayer::Render()
 				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
 
 				m_pShader->Begin("AnimMesh");
+
+				m_pCustomModel->Render(iPartsIndex, i);
+			}
+		}
+		else if (CCustomModel::ROBE == iPartsIndex)
+		{
+			for (_uint i = 0; i < iNumMeshes; ++i)
+			{
+				m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
+
+				m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
+				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
+
+				m_pShader->Begin("AnimMeshNonCull");
 
 				m_pCustomModel->Render(iPartsIndex, i);
 			}
@@ -1458,8 +1458,8 @@ HRESULT CPlayer::Ready_MeshParts()
 	vColor = _float4(0.f, 1.f, 0.f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Robe_MysticCape"),
-		CCustomModel::ROBE, vColor)))
+		TEXT("Prototype_Component_MeshPart_Robe01"),
+		CCustomModel::ROBE, vColor, TEXT("../../Resources/GameData/ClothData/Test1.cloth"))))
 	{
 		MSG_BOX("Failed Add MeshPart Robe");
 
