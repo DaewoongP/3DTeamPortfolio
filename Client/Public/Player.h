@@ -9,6 +9,8 @@
 #include "ProtegoState.h"
 #include"Blink_Effect.h"
 
+#include "Ease.h"
+
 BEGIN(Engine)
 class CShader;
 class CRenderer;
@@ -205,6 +207,20 @@ private:
 	_float m_fx = { 1.0f };
 	_float m_fy = { 1.0f };
 	_float m_fz = { 1.0f };
+
+	const char* m_pEases[CEase::EASE_END] = {
+		"InQuad", "OutQuad", "InOutQuad"
+		, "InSine", "OutSine", "InOutSine"
+		, "InQuint", "OutQuint", "InOutQuint"
+		, "InQuart", "OutQuart", "InOutQuart"
+		, "NoneLinear", "InLinear", "OutLinear", "InOut_Linear"
+		, "InExpo", "OutExpo", "InOutExpo"
+		, "InElastic", "OutElastic", "InOutElastic"
+		, "InCubic", "OutCubic", "InOutCubic"
+		, "InCirc", "OutCirc", "InOutCirc"
+		, "InBounce", "OutBounce", "InOutBounce"
+		, "InBack", "OutBack", "InOutBack"
+	};
 
 #pragma endregion
 

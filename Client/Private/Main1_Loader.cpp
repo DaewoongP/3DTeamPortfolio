@@ -259,124 +259,132 @@ HRESULT CMain1_Loader::Loading_For_Static(LEVELID eLevelID)
 	try
 	{
 #pragma region Load BackGround
-		/* For.Prototype_GameObject_Trigger */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Trigger"),
-			CTrigger::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Trigger");
+		{
+			std::lock_guard<std::mutex> lock(mtx);
 
-		/* For.Prototype_GameObject_Sky */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Sky"),
-			CSky::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Sky");
+			/* For.Prototype_GameObject_Trigger */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Trigger"),
+				CTrigger::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_Trigger");
 
-		/* For.Prototype_Component_Model_Sky */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Model_Sky"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/SkySphere/SkySphere.dat")))))
-			throw TEXT("Prototype_Component_Model_Sky");
+			/* For.Prototype_GameObject_Sky */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Sky"),
+				CSky::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_Sky");
 
-		/* For.Prototype_GameObject_Terrain */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Terrain"),
-			CTerrain::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Terrain");
+			/* For.Prototype_Component_Model_Sky */
+			if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Model_Sky"),
+				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/SkySphere/SkySphere.dat")))))
+				throw TEXT("Prototype_Component_Model_Sky");
+
+			/* For.Prototype_GameObject_Terrain */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Terrain"),
+				CTerrain::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_Terrain");
+		}
 #pragma endregion
 
+		{
+			std::lock_guard<std::mutex> lock(mtx);
+
 #pragma region Load Main Behavior Com
-		/* For.Prototype_Component_RootBehavior */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RootBehavior"),
-			CRootBehavior::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_RootBehavior");
+			/* For.Prototype_Component_RootBehavior */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RootBehavior"),
+				CRootBehavior::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_RootBehavior");
 
-		/* For.Prototype_Component_Action */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Action"),
-			CAction::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Action");
+			/* For.Prototype_Component_Action */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Action"),
+				CAction::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_Action");
 
-		/* For.Prototype_Component_RandomChoose */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RandomChoose"),
-			CRandomChoose::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_RandomChoose");
+			/* For.Prototype_Component_RandomChoose */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RandomChoose"),
+				CRandomChoose::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_RandomChoose");
 #pragma endregion
 
 #pragma region Behavior_Selectors
-		/* For.Prototype_Component_Selector */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Selector"),
-			CSelector::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Selector");
+			/* For.Prototype_Component_Selector */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Selector"),
+				CSelector::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_Selector");
 
-		/* For.Prototype_Component_Selector_Degree */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Selector_Degree"),
-			CSelector_Degree::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Selector_Degree");
+			/* For.Prototype_Component_Selector_Degree */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Selector_Degree"),
+				CSelector_Degree::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_Selector_Degree");
 #pragma endregion Behavior_Selectors
 
 #pragma region Behavior_Sequences
-		/* For.Prototype_Component_Sequence */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Sequence"),
-			CSequence::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Sequence");
+			/* For.Prototype_Component_Sequence */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Sequence"),
+				CSequence::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_Sequence");
 
-		/* For.Prototype_Component_Sequence_Groggy */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Sequence_Groggy"),
-			CSequence_Groggy::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Sequence_Groggy");
+			/* For.Prototype_Component_Sequence_Groggy */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Sequence_Groggy"),
+				CSequence_Groggy::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_Sequence_Groggy");
 
-		/* For.Prototype_Component_Sequence_Descendo */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Sequence_Descendo"),
-			CSequence_Descendo::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Sequence_Descendo");
+			/* For.Prototype_Component_Sequence_Descendo */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Sequence_Descendo"),
+				CSequence_Descendo::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_Sequence_Descendo");
 
-		/* For.Prototype_Component_Sequence_Levitate */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Sequence_Levitate"),
-			CSequence_Levitate::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Sequence_Levitate");
+			/* For.Prototype_Component_Sequence_Levitate */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Sequence_Levitate"),
+				CSequence_Levitate::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_Sequence_Levitate");
 
-		/* For.Prototype_Component_Sequence_Attack */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Sequence_Attack"),
-			CSequence_Attack::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Sequence_Attack");
+			/* For.Prototype_Component_Sequence_Attack */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Sequence_Attack"),
+				CSequence_Attack::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_Sequence_Attack");
 
-		/* For.Prototype_Component_Sequence_MoveTarget */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Sequence_MoveTarget"),
-			CSequence_MoveTarget::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Sequence_MoveTarget");
+			/* For.Prototype_Component_Sequence_MoveTarget */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Sequence_MoveTarget"),
+				CSequence_MoveTarget::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_Sequence_MoveTarget");
 #pragma endregion Behavior_Sequences
 
 #pragma region Behavior_Movements
-		/* For.Prototype_Component_RigidMove */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RigidMove"),
-			CRigidMove::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_RigidMove");
+			/* For.Prototype_Component_RigidMove */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RigidMove"),
+				CRigidMove::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_RigidMove");
 
-		/* For.Prototype_Component_Wait */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Wait"),
-			CWait::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Wait");
+			/* For.Prototype_Component_Wait */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Wait"),
+				CWait::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_Wait");
 
-		/* For.Prototype_Component_Turn */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Turn"),
-			CTurn::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Turn");
+			/* For.Prototype_Component_Turn */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Turn"),
+				CTurn::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_Turn");
 
-		/* For.Prototype_Component_LookAt */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_LookAt"),
-			CLookAt::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_LookAt");
+			/* For.Prototype_Component_LookAt */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_LookAt"),
+				CLookAt::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_LookAt");
 
-		/* For.Prototype_Component_Check_Degree */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Check_Degree"),
-			CCheck_Degree::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Check_Degree");
+			/* For.Prototype_Component_Check_Degree */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Check_Degree"),
+				CCheck_Degree::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_Check_Degree");
 
-		/* For.Prototype_Component_Check_Distance */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Check_Distance"),
-			CCheck_Distance::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Check_Distance");
+			/* For.Prototype_Component_Check_Distance */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Check_Distance"),
+				CCheck_Distance::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_Check_Distance");
 
-		/* For.Prototype_Component_Death */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Death"),
-			CDeath::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Death");
+			/* For.Prototype_Component_Death */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Death"),
+				CDeath::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_Death");
 #pragma endregion Behavior_Movements
+		}
 	}
 	catch (const _tchar* pErrorTag)
 	{

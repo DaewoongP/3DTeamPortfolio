@@ -6,6 +6,14 @@ IMPLEMENT_SINGLETON(CCamera_Manager);
 
 void CCamera_Manager::Set_Shake(SHAKE_TYPE _eType, SHAKE_AXIS _eAxis, CEase::EASE _eEase, _float _fSpeed, _float _Duration, _float _fPower, SHAKE_POWER _ePower, _float3 _vAxisSet)
 {
+	//작은 진동에 큰 진동이 멈추지 않게 하기 위함
+
+	//기존 파워 보다 작다면
+	if (m_fShakePower > _fPower)
+	{
+		return;
+	}
+
 	m_fShakeTimeAcc = 0.0f;
 
 	m_fShakeDuration = _Duration;
@@ -697,6 +705,7 @@ void CCamera_Manager::Shake_Update(_float _TimeDelta)
 	//누적 시간 >= 총 시간
 	if (m_fShakeTimeAcc >= m_fShakeDuration)
 	{
+		m_fShakePower = 0.0f;
 		return;
 	}
 
@@ -744,8 +753,8 @@ void CCamera_Manager::Shake_Update(_float _TimeDelta)
 	}
 
 
-
-	_float fSin = sinf(m_fShakeTimeAcc * m_fShakeDuration * XMConvertToRadians(360.0f) * m_fShakeSpeed);
+	
+	_float fSin = sinf(m_fShakeTimeAcc/* * m_fShakeDuration*/ * XMConvertToRadians(360.0f) * m_fShakeSpeed);
 
 	_float fShakeResult = fSin * fShakePower;
 

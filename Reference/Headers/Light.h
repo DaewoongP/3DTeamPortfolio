@@ -21,7 +21,11 @@ public:
 		_float4	vAmbient;
 		_float4	vSpecular;
 
-		_bool	isLerp;
+		// Instance Light 
+		_bool isIncrease;
+		_float fIncreasePower;
+		_float fDecreaseStartRange;
+		_float fTime;
 	}LIGHTDESC;
 
 private:
@@ -34,12 +38,19 @@ public:
 	void Set_Position(_float4 vPosition);
 	void Set_Range(_float fRange);
 
+	_bool Is_Increase() { return m_LightDesc.isIncrease; }
+
 public:
 	HRESULT Initialize(const LIGHTDESC& LightDesc);
+	_bool Tick_Increase(_float fTimeDelta);
+	_bool Tick_Decrease(_float fTimeDelta);
 	HRESULT Render(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
 
 private:
 	LIGHTDESC					m_LightDesc;
+	
+private:
+	_float						m_fTimeAcc = { 0.f };
 
 public:
 	static CLight* Create(const LIGHTDESC& LightDesc);

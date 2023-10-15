@@ -48,7 +48,6 @@ struct PS_OUT
     float4 vColor : SV_TARGET0;
 };
 
-/* 픽셀을 받고 픽셀의 색을 결정하여 리턴한다. */
 PS_OUT PS_MAIN_DEBUG(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
@@ -72,7 +71,7 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     vSpecular *= 0.5f;
     vector vShadow = g_ShadowTexture.Sample(LinearSampler, In.vTexUV);
 
-    if (vShadow.r < 0.9f)
+    if (vShadow.r < 0.8f)
     {
         vShade *= vShadow.r;
         vSpecular = float4(0.f, 0.f, 0.f, 0.f);

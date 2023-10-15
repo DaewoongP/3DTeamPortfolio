@@ -61,3 +61,14 @@ using namespace Client;
         result; \
     }
 
+#define ADD_INCREASE_LIGHT(_vPos, _fStartRange, fTime, vColor, isIncrease, fIncreasePower) \
+    CGameInstance* pGameInstance = CGameInstance::GetInstance(); \
+    Safe_AddRef(pGameInstance); \
+    pGameInstance->Add_InstanceLight(_vPos, _fStartRange, fTime, vColor, isIncrease, fIncreasePower); \
+    Safe_Release(pGameInstance); \
+
+#define ADD_DECREASE_LIGHT(_vPos, _fStartRange, fTime, vColor) \
+    CGameInstance* pGameInstance = CGameInstance::GetInstance(); \
+    Safe_AddRef(pGameInstance); \
+    pGameInstance->Add_InstanceLight(_vPos, _fStartRange, fTime, vColor); \
+    Safe_Release(pGameInstance); \

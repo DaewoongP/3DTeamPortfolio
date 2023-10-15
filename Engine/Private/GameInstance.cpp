@@ -123,6 +123,8 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 
 	m_pCollision_Manager->Tick();
 
+	m_pLight_Manager->Tick(fTimeDelta);
+
 	m_pLevel_Manager->Tick(fTimeDelta);
 }
 
@@ -255,6 +257,13 @@ _float CGameInstance::Get_QueryTimeDelta(const _tchar* pTimerTag)
 	NULL_CHECK_RETURN_MSG(m_pTimer_Manager, 0.f, TEXT("Timer_Manager NULL"));
 
 	return m_pTimer_Manager->Get_QueryTimeDelta(pTimerTag);
+}
+
+void CGameInstance::Set_SlowTime(const _tchar* pTimerTag, _float fSlowPower, _float fTime)
+{
+	NULL_CHECK_RETURN_MSG(m_pTimer_Manager, , TEXT("Timer_Manager NULL"));
+
+	return m_pTimer_Manager->Set_SlowTime(pTimerTag, fSlowPower, fTime);
 }
 
 HRESULT CGameInstance::Open_Level(_uint iLevelIndex, CLevel* pNewLevel)
@@ -549,6 +558,13 @@ HRESULT CGameInstance::Update_ShadowMatrix(_uint iShadowIndex, CLight::LIGHTDESC
 	NULL_CHECK_RETURN_MSG(m_pLight_Manager, E_FAIL, TEXT("Light NULL"));
 
 	return m_pLight_Manager->Update_ShadowMatrix(iShadowIndex, LightDesc);
+}
+
+HRESULT CGameInstance::Add_InstanceLight(_float3 vPos, _float fStartRange, _float fTime, _float4 vColor, _bool isIncrease, _float fIncreasePower)
+{
+	NULL_CHECK_RETURN_MSG(m_pLight_Manager, E_FAIL, TEXT("Light NULL"));
+
+	return m_pLight_Manager->Add_InstanceLight(vPos, fStartRange, fTime, vColor, isIncrease, fIncreasePower);
 }
 
 HRESULT CGameInstance::Add_Sounds(const _tchar* szSoundFilePath)

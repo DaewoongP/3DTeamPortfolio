@@ -58,6 +58,32 @@ HRESULT CLight_Manager::Add_Light(const CLight::LIGHTDESC& LightDesc, _Inout_ cl
 	return S_OK;
 }
 
+HRESULT CLight_Manager::Add_InstanceLight(_float3 vPos, _float fStartRange, _float fTime, _float4 vColor, _bool isIncrease, _float fIncreasePower)
+{
+	CLight::LIGHTDESC LightDesc;
+	LightDesc.eType = CLight::TYPE_POINT;
+	LightDesc.fRange = fStartRange;
+	LightDesc.fDecreaseStartRange = LightDesc.fRange;
+	LightDesc.vDiffuse = vColor;
+	LightDesc.vAmbient = vColor;
+	LightDesc.vSpecular = vColor;
+	LightDesc.vPos = vPos.TransCoord();
+	LightDesc.isIncrease = isIncrease;
+	LightDesc.fIncreasePower = fIncreasePower;
+	LightDesc.fTime = fTime;
+
+	CLight* pLight = Create_Light(LightDesc);
+
+	if (nullptr == pLight)
+		return E_FAIL;
+
+	m_Lights.push_back(pLight);
+	m_InstanceLights.push_back(pLight);
+	Safe_AddRef(pLight);
+
+	return S_OK;
+}
+
 HRESULT CLight_Manager::Clear_Lights()
 {
 	for (_uint i = 0; i < MAX_SHADOW; ++i)
@@ -70,8 +96,43 @@ HRESULT CLight_Manager::Clear_Lights()
 		Safe_Release(pLight);
 
 	m_Lights.clear();
+	
+	for (auto& pLight : m_InstanceLights)
+		Safe_Release(pLight);
+
+	m_InstanceLights.clear();
 
 	return S_OK;
+}
+
+void CLight_Manager::Tick(_float fTimeDelta)
+{
+	for (auto iter = m_InstanceLights.begin(); iter != m_InstanceLights.end();)
+	{
+		if (nullptr != (*iter))
+		{
+			if (true == (*iter)->Is_Increase())
+			{
+				if (false == (*iter)->Tick_Increase(fTimeDelta))
+				{
+					Return_Light(*iter);
+					iter = m_InstanceLights.erase(iter);
+					continue;
+				}
+			}
+			else
+			{
+				if (false == (*iter)->Tick_Decrease(fTimeDelta))
+				{
+					Return_Light(*iter);
+					iter = m_InstanceLights.erase(iter);
+					continue;
+				}
+			}
+
+			++iter;
+		}
+	}
 }
 
 HRESULT CLight_Manager::Render_Lights(CShader* pShader, CVIBuffer_Rect* pVIBuffer)

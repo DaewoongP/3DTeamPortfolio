@@ -7,6 +7,16 @@ CTimer_Manager::CTimer_Manager()
 {
 }
 
+void CTimer_Manager::Set_SlowTime(const _tchar* pTimerTag, _float fSlowPower, _float fTime)
+{
+	CTimer* pTimer = Find_Timer(pTimerTag);
+
+	if (nullptr == pTimer)
+		return;
+
+	pTimer->Set_SlowedTime(fSlowPower, fTime);
+}
+
 _float CTimer_Manager::Get_TimeAcc(const wstring& wstrTimerTag) const
 {
 	auto iter = m_Timers.find(wstrTimerTag);

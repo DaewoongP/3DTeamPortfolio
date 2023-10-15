@@ -232,7 +232,7 @@ HRESULT CConjuredDragon::Render()
 	{
 		if (0 == i || 2 == i)
 			continue;
-
+		//3 wing 4 body
 		try /* Failed Render */
 		{
 			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", i)))

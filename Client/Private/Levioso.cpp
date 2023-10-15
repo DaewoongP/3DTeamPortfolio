@@ -195,11 +195,25 @@ HRESULT CLevioso::Reset(MAGICBALLINITDESC& InitDesc)
 	__super::Reset(InitDesc);
 	m_fWingardiumEffectDeadTimer = 0.3f;
 	m_pWingardiumEffect->Disable();
+	
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	CLight::LIGHTDESC LightDesc;
+	LightDesc.eType = CLight::TYPE_POINT;
+	LightDesc.fRange = 5.f;
+	LightDesc.vDiffuse = _float4(0.91f, 0.269f, 0.899f, 1.f);
+	LightDesc.vAmbient = LightDesc.vDiffuse;
+	LightDesc.vSpecular = LightDesc.vDiffuse;
+	LightDesc.vPos = m_pTransform->Get_Position().TransCoord();
+	pGameInstance->Add_Light(LightDesc, &m_pLight);
+	Safe_Release(pGameInstance);
+
 	return S_OK;
 }
 
 void CLevioso::Ready_Begin()
 {
+	ADD_DECREASE_LIGHT(m_vStartPosition, 10.f, 0.2f, _float4(0.91f, 0.169f, 0.859f, 1.f));
 	__super::Ready_Begin();
 }
 
@@ -243,6 +257,7 @@ void CLevioso::Tick_CastMagic(_float fTimeDelta)
 		m_TrailVec[EFFECT_STATE_MAIN].data()[0]->Spin_Move(m_vEndPosition, m_vStartPosition,m_vSpinWeight,m_fSpinSpeed, m_fLerpAcc);
 		m_pTransform->Set_Position(XMVectorLerp(m_vStartPosition, m_vEndPosition, m_fLerpAcc));
 		m_ParticleVec[EFFECT_STATE_MAIN].data()[0]->Get_Transform()->Set_Position(m_TrailVec[EFFECT_STATE_MAIN].data()[0]->Get_Transform()->Get_Position());
+		m_pLight->Set_Position(m_TrailVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Get_Position().TransCoord());
 	}
 	else
 	{

@@ -1,9 +1,15 @@
 #include "Shader_EngineHeader.hlsli"
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-texture2D g_Texture;
+matrix g_ViewMatrixInv, g_ProjMatrixInv;
+matrix g_PreCamViewMatrix, g_PreCamProjMatrix;
+texture2D g_TargetTexture;
+texture2D g_DepthTexture;
+
+float g_fCamFar;
 
 uint g_iSampleCnt = 16;
+float g_fMotionBlurStrength = 1.f;
 
 struct VS_IN
 {
@@ -47,25 +53,44 @@ PS_OUT PS_MAIN_MOTIONBLUR(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
-    float2 velocity = float2(10.f, 10.f);
-    
-    float2 vTexUV = In.vTexUV;
+    vector vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
+		   
+    float fViewZ = vDepthDesc.y * g_fCamFar;
+		    
+    vector vPixelWorldPos, vPixelPos;
 
-    float4 vColor = g_Texture.Sample(LinearSampler, vTexUV);
-    
-    vTexUV += velocity;
-    
-    for (uint i = 1; i < g_iSampleCnt; ++i)
+    vPixelWorldPos.x = In.vTexUV.x * 2.f - 1.f;
+    vPixelWorldPos.y = In.vTexUV.y * -2.f + 1.f;
+    vPixelWorldPos.z = vDepthDesc.x;
+    vPixelWorldPos.w = 1.0f;
+
+    vPixelPos = vPixelWorldPos;
+	    
+    vPixelWorldPos *= fViewZ;
+
+    vPixelWorldPos = mul(vPixelWorldPos, g_ProjMatrixInv);
+
+    vPixelWorldPos = mul(vPixelWorldPos, g_ViewMatrixInv);
+	
+    matrix matVP = mul(g_PreCamViewMatrix, g_PreCamProjMatrix);
+
+    vector vPrePixelPos = mul(vPixelWorldPos, matVP);
+    vPrePixelPos /= vPrePixelPos.w;
+
+    float2 vPixelVelocity = ((vPixelPos - vPrePixelPos) * 0.5f).xy;
+    float2 texCoord = In.vTexUV;
+
+    vector vColor = vector(0.f, 0.f, 0.f, 0.f);
+
+    for (int i = -10; i < 10; ++i)
     {
-        float4 vNewColor = g_Texture.Sample(LinearSampler, vTexUV);
-   
-        vColor += vNewColor;
-        
-        vTexUV += velocity;
+        texCoord += vPixelVelocity * (0.005f + g_fMotionBlurStrength) * i;
+        float4 currentColor = g_TargetTexture.Sample(LinearSampler_Clamp, texCoord);
+        vColor += currentColor;
     }
-    
-    Out.vColor = vColor / g_iSampleCnt;
-    
+
+    Out.vColor = vColor / 20.f;
+	
     return Out;
 }
 

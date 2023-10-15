@@ -149,6 +149,13 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
+	
+	if (FAILED(Ready_Camera()))
+	{
+		MSG_BOX("Failed Ready Player Camera");
+
+		return E_FAIL;
+	}
 
 	if (FAILED(Ready_StateMachine()))
 	{
@@ -157,12 +164,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	if (FAILED(Ready_Camera()))
-	{
-		MSG_BOX("Failed Ready Player Camera");
-
-		return E_FAIL;
-	}
+	
 
 	m_pTransform->Set_Speed(1.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(180.f));
@@ -465,7 +467,8 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			CHitState::HITSTATEDESC HitStateDesc;
 
 			HitStateDesc.iHitType = CHitState::HIT_LIGHT;
-			if (nullptr == pDesc->pTransform)
+			if (nullptr == pDesc ||
+				nullptr == pDesc->pTransform)
 				return;
 
 			HitStateDesc.pTransform = pDesc->pTransform;
@@ -1043,7 +1046,7 @@ HRESULT CPlayer::Add_Magic()
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(4, STUPEFY);
 
 	Set_Spell_Botton(0, BOMBARDA);
-	Set_Spell_Botton(1, DIFFINDO);
+	Set_Spell_Botton(1, LEVIOSO);
 	Set_Spell_Botton(2, DESCENDO);
 	Set_Spell_Botton(3, CRUCIO);
 
@@ -1630,6 +1633,7 @@ HRESULT CPlayer::Ready_StateMachine()
 	m_StateMachineDesc.pLumosOn = &m_isLumosOn;
 	m_StateMachineDesc.ppTarget = &m_pTarget;
 	m_StateMachineDesc.pIsFlying = &m_isFlying;
+	m_StateMachineDesc.pCameraTransform = m_pPlayer_Camera->Get_TransformPtr();
 
 	Safe_AddRef(m_StateMachineDesc.pOwnerModel);
 	Safe_AddRef(m_StateMachineDesc.pPlayerTransform);
@@ -2622,8 +2626,9 @@ void CPlayer::Tick_TestShake()
 	ImGui::RadioButton("DECRECENDO", &m_iShakePower, CCamera_Manager::SHAKE_POWER_DECRECENDO);
 	ImGui::RadioButton("CRECENDO_DECRECENDO", &m_iShakePower, CCamera_Manager::SHAKE_POWER_CRECENDO_DECRECENDO);
 
+	ImGui::Combo("EASE", &m_iEase, m_pEases, CEase::EASE_END);
 
-	ImGui::DragFloat("SHAKE_SPEED", &m_fShakeSpeed, 0.1f, 1.0f, 60.0f);
+	ImGui::DragFloat("SHAKE_SPEED", &m_fShakeSpeed, 0.5f, 0.0f, 60.0f);
 	ImGui::DragFloat("SHAKE_DURATION", &m_fShakeDuration, 0.001f, 0.001f, 100.0f);
 	ImGui::DragFloat("SHAKE_POWER", &m_fShakePower, 0.001f, 0.001f, 1.0f);
 
@@ -2895,7 +2900,7 @@ void CPlayer::Go_Protego(void* _pArg)
 
 		m_pStateContext->Set_StateMachine(TEXT("Protego"), _pArg);
 
-		m_isCollisionEnterProtego = false;
+		m_isCollisionEnterProtego = false;	
 	}
 }
 

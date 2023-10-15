@@ -64,6 +64,7 @@ struct PS_OUT
     vector vNormal : SV_TARGET1;
     vector vDepth : SV_TARGET2;
     float4 vEmissive : SV_TARGET3;
+    float4 vMRO : SV_TARGET4;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
