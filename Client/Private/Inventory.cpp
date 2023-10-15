@@ -213,6 +213,8 @@ _bool CInventory::Add_Item(const _tchar* pPrototypeTag, _uint iLevel, void* pArg
 		Safe_Release(pItem);
 		return false;
 	}
+
+	return true;
 }
 
 _bool CInventory::Add_Item(ITEM_ID eItemID, _uint iLevel, void* pArg)

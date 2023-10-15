@@ -54,7 +54,7 @@ _bool CRobe1_Item::Buy()
 void CRobe1_Item::Equipment()
 {
 	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Player_Top_test")
-		, CCustomModel::MESHTYPE::ROBE, nullptr);
+		, CCustomModel::MESHTYPE::ROBE);
 }
 
 CRobe1_Item* CRobe1_Item::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)
