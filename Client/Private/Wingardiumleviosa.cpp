@@ -16,7 +16,7 @@ HRESULT CWingardiumleviosa::Initialize_Prototype(_uint iLevel)
 {
 	if (FAILED(__super::Initialize_Prototype(iLevel)))
 		return E_FAIL;
-
+	
 	return S_OK;
 }
 
@@ -69,6 +69,7 @@ HRESULT CWingardiumleviosa::Add_Components()
 		return E_FAIL;
 	}
 
+
 	m_pEffectTrans = m_pEffect->Get_Transform();
 	Safe_AddRef(m_pEffectTrans);
 	return S_OK;
@@ -106,6 +107,7 @@ void CWingardiumleviosa::Free()
 	{
 		Safe_Release(m_pEffectTrans);
 		Safe_Release(m_pEffect);
+
 	}
 	
 }

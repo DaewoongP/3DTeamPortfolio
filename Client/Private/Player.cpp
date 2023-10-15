@@ -243,8 +243,6 @@ HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 void CPlayer::Tick(_float fTimeDelta)
 {
 	BEGININSTANCE;
-	m_pBlink->Enable();
-	m_pBlink->Set_Position(m_pTransform->Get_Position());
 	//�÷��̾� ī�޶� �ƴ϶��?
 	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
 	{
@@ -746,12 +744,12 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 	/* Com_Blink_Effect */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_Trail"),
+	/*if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_Trail"),
 		TEXT("Com_Blink_Trail"), reinterpret_cast<CComponent**>(&m_pBlink))))
 	{
 		__debugbreak();
 		return E_FAIL;
-	}
+	}*/
 
 	//_int DefValue = 15;
 	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_EndurusPotion"),
@@ -1045,7 +1043,7 @@ HRESULT CPlayer::Add_Magic()
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(4, STUPEFY);
 
 	Set_Spell_Botton(0, BOMBARDA);
-	Set_Spell_Botton(1, CONFRINGO);
+	Set_Spell_Botton(1, DIFFINDO);
 	Set_Spell_Botton(2, DESCENDO);
 	Set_Spell_Botton(3, CRUCIO);
 
@@ -3128,7 +3126,8 @@ void CPlayer::Free()
 		Safe_Release(m_UI_Group_SkillTap);
 		Safe_Release(m_pCooltime);
 		Safe_Release(m_pDefence);
-		Safe_Release(m_pBlink);
+		
+		//Safe_Release(m_pBlink);
 
 		if (nullptr != m_pTargetTransform)
 		{
