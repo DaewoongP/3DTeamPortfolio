@@ -1,4 +1,4 @@
-﻿#include "..\Public\Player.h"
+#include "..\Public\Player.h"
 #include "GameInstance.h"
 #include "Player_Camera.h"
 #include "MagicSlot.h"
@@ -191,9 +191,9 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(25.f, 3.f, 22.5f);
 	m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
-	m_vLevelInitPosition[LEVEL_SMITH] = _float3(30.f, 3.f, 15.f); // 占썩본 占쏙옙치
-	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(94.5f, 7.2f, 78.f); // 占쏙옙占쏙옙 占쏙옙占쏙옙占싱쇽옙 占쌕뤄옙 占쏙옙
-	m_vLevelInitPosition[LEVEL_SKY] = _float3(88.8f, 12.5f, 69.8f); // 占쏙옙占쏙옙 占쏙옙占쏙옙占싱쇽옙 占쌕뤄옙 占쏙옙
+	m_vLevelInitPosition[LEVEL_SMITH] = _float3(30.f, 3.f, 15.f); // �⺻ ��ġ
+	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(94.5f, 7.2f, 78.f); // ���� �����̼� �ٷ� ��
+	m_vLevelInitPosition[LEVEL_SKY] = _float3(88.8f, 12.5f, 69.8f); // ���� �����̼� �ٷ� ��
 
 	m_fTargetViewRange = 1.0f;
 
@@ -245,7 +245,7 @@ void CPlayer::Tick(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
-	//占시뤄옙占싱억옙 카占쌨띰옙 占싣니띰옙占?
+	//�÷��̾� ī�޶� �ƴ϶��?
 	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
 	{
 		ENDINSTANCE;
@@ -260,16 +260,16 @@ void CPlayer::Tick(_float fTimeDelta)
 		m_isUseProtego = false;
 	}
 
-	//스킬 쿨 갱신용도
+	//��ų �� ���ſ뵵
 	Update_Skill_CoolTime();
 
-	//타겟을 초기화시키는 용도
+	//Ÿ���� �ʱ�ȭ��Ű�� �뵵
 	if (nullptr != m_pTarget && m_pTarget->isDead())
 	{
 		Clear_Target();
 	}
 
-	//타겟을 잡는 용도
+	//Ÿ���� ��� �뵵
 	Update_Target_Angle();
 
 	__super::Tick(fTimeDelta);
@@ -290,7 +290,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::OTHERBODY);
 
 
-	//占쏙옙占?占쏙옙占쏙옙占쏙옙트
+	//���?������Ʈ
 	if (nullptr != m_pFrncSpellToggle)
 	{
 		m_pFrncSpellToggle(nullptr);
@@ -317,7 +317,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
-	//占시뤄옙占싱억옙 카占쌨띰옙 占싣니띰옙占?
+	//�÷��̾� ī�޶� �ƴ϶��?
 	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
 	{
 		ENDINSTANCE;
@@ -376,15 +376,15 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		if (m_pStateContext->Is_Current_State(TEXT("Protego")))
 		{
 		}
-		//회피시 무시
+		//ȸ�ǽ� ����
 		else if (m_pStateContext->Is_Current_State(TEXT("Roll")))
 		{
 		}
-		//피격중인 상태일 경우 무시
+		//�ǰ����� ������ ��� ����
 		else if (m_pStateContext->Is_Current_State(TEXT("Hit")))
 		{
 		}
-		//에두루스 마법약 상태일때 슈퍼아머 혹은 무적
+		//���η罺 ������ �����϶� ���۾Ƹ� Ȥ�� ����
 		else if (m_isDefUp)
 		{
 		}
@@ -427,7 +427,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 			Go_Hit(&HitStateDesc);
 
-			//체占쏙옙 占쏙옙占쏙옙
+			//ü�� ����
 			m_pPlayer_Information->fix_HP((pDesc->iDamage) * -1);
 		}
 	}
@@ -439,15 +439,15 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		if (m_pStateContext->Is_Current_State(TEXT("Protego")))
 		{
 		}
-		//회피시 무시
+		//ȸ�ǽ� ����
 		else if (m_pStateContext->Is_Current_State(TEXT("Roll")))
 		{
 		}
-		//피격중인 상태일 경우 무시
+		//�ǰ����� ������ ��� ����
 		//else if (m_pStateContext->Is_Current_State(TEXT("Hit")))
 		//{
 		//}
-		//에두루스 마법약 상태일때 슈퍼아머 혹은 무적
+		//���η罺 ������ �����϶� ���۾Ƹ� Ȥ�� ����
 		else if (m_isDefUp)
 		{
 		}
@@ -465,7 +465,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 			Go_Hit(&HitStateDesc);
 
-			//체력 수정
+			//ü�� ����
 			m_pPlayer_Information->fix_HP((pDesc->iDamage) * -1);
 		}
 	}
@@ -547,7 +547,7 @@ HRESULT CPlayer::Render()
 		}
 	}
 
-	//if(m_isInvisible) 占쏙옙占쏙옙占쏙옙占쏙옙 占쏙옙占쏙옙 ShaderPass 占쌕뀐옙占쌍몌옙 占심것곤옙占쏙옙.
+	//if(m_isInvisible) �������� ���� ShaderPass �ٲ��ָ� �ɰͰ���.
 
 	return S_OK;
 }
@@ -813,7 +813,7 @@ HRESULT CPlayer::Add_Magic()
 {
 	CMagic::MAGICDESC magicInitDesc;
 
-	// 占쏙옙占쏙옙占쏙옙占?
+	// �������?
 	{
 		magicInitDesc.eBuffType = BUFF_LEVIOSO;
 		magicInitDesc.eMagicGroup = CMagic::MG_CONTROL;
@@ -826,7 +826,7 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// 占쏙옙占쏙옙占쏙옙占쏙옙
+	// ��������
 	{
 		magicInitDesc.eBuffType = BUFF_CONFRINGO;
 		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
@@ -839,7 +839,7 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// 占실니쇽옙
+	// �Ǵϼ�
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
@@ -852,7 +852,7 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// 占싸쇽옙占쏙옙占?
+	// �μ����?
 	{
 		magicInitDesc.eBuffType = BUFF_NCENDIO;
 		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
@@ -865,7 +865,7 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// 占쏙옙占?
+	// ���?
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
@@ -878,9 +878,9 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// 占싣몌옙占쏙옙占쏙옙占쏙옙占쏙옙
-	// 占쌈듸옙 占쏙옙占쏙옙 占쏙옙占쏙옙占쌉니댐옙.
-	// 占쏙옙占쏙옙 占쏙옙占쏙옙占싹댐옙.
+	// �Ƹ���������
+	// �ӵ� ���� �����Դϴ�.
+	// ���� �����ϴ�.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_CONTROL;
@@ -893,9 +893,9 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// 占싣억옙占쏙옙
-	// 占쏙옙占쌩울옙 占쏙옙占시?占쏙옙占쏙옙占쏙옙占?占쏙옙占쏙옙占쌉니댐옙.
-	// 占쏙옙占쏙옙 占쏙옙占쏙옙占싹댐옙.
+	// �ƾ���
+	// ���߿� ����?�������?�����Դϴ�.
+	// ���� �����ϴ�.
 	{
 		magicInitDesc.eBuffType = BUFF_ACCIO;
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
@@ -908,9 +908,9 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// 占쏜센듸옙
-	// 占쏙옙占쏙옙 占쏙옙占쏙옙占쏙옙 占싹댐옙 占쏙옙占쏙옙占쌉니댐옙.
-	// 占쏙옙占쏙옙 占쏙옙占쌌니댐옙.
+	// �𼾵�
+	// ���� ������ �ϴ� �����Դϴ�.
+	// ���� ���մϴ�.
 	{
 		magicInitDesc.eBuffType = BUFF_DESCENDO;
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
@@ -923,9 +923,9 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// 占시몌옙占썸도
-	// 占쏙옙占쌩울옙 占쏙옙占?占싼뱄옙占쏙옙 x占쏙옙占쏙옙占쏙옙 회占쏙옙占쏙옙키占쏙옙 占쏙옙占쏙옙占쌉니댐옙.
-	// 占쏙옙占쏙옙 占쏙옙占쏙옙占싹댐옙.
+	// �ø��浵
+	// ���߿� ���?�ѹ��� x������ ȸ����Ű�� �����Դϴ�.
+	// ���� �����ϴ�.
 	{
 		magicInitDesc.eBuffType = BUFF_FLIPENDO;
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
@@ -938,9 +938,9 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// 占쏙옙占쏙옙占썹리占싣몌옙占쏙옙占쏙옙
-	// 占쏙옙占썩를 占쏙옙占쏙옙占쏙옙占쏙옙占쏙옙 占쏙옙占쏙옙占쌉니댐옙.
-	// 占쏙옙占쏙옙 占쌩곤옙占쌉니댐옙.
+	// �����縮�Ƹ�����
+	// ���⸦ ���������� �����Դϴ�.
+	// ���� �߰��Դϴ�.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
@@ -953,9 +953,9 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// 占쏙옙占썰리占쏙옙
-	// 占쏙옙占쏙옙占쏙옙 占쏙옙占쌍몌옙 占심억옙 占쌕몌옙 占쏙옙占쏙옙 占싸울옙占?占쏙옙占쏙옙占?占쏙옙占쏙옙占쌉니댐옙.
-	// 占쏙옙占쏙옙 占쌩곤옙占쌉니댐옙.
+	// ���丮��
+	// ������ ���ָ� �ɾ� �ٸ� ���� �ο��?�����?�����Դϴ�.
+	// ���� �߰��Դϴ�.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_CURSE;
@@ -968,8 +968,8 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// 크占쏙옙첼占?
-	// 占쏙옙占쏙옙占쏙옙 占쏙옙占쏙옙 占쏙옙占쏙옙 占쌕몌옙 占쏙옙占쏙옙 占쏙옙占쏙옙 占쏙옙탄占실댐옙 占쏙옙占쏙옙체占쏙옙 占쌩삼옙占쌌니댐옙.
+	// ũ��ÿ�?
+	// ������ ���� ���� �ٸ� ���� ���� ��ź�Ǵ� ����ü�� �߻��մϴ�.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_CURSE;
@@ -982,7 +982,7 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	//占쏙옙占쏙옙占쏙옙占쏙옙占쏙옙
+	//����������
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
@@ -995,7 +995,7 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	//占쏙옙占심듸옙
+	//���ɵ�
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
@@ -1008,7 +1008,7 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	//占쏙옙占쌕몌옙占쏙옙
+	//���ٸ���
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
@@ -1038,7 +1038,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
-#pragma region 카占쌨띰옙 占쏙옙占쏙옙 占쌓쏙옙트
+#pragma region ī�޶� ���� �׽�Ʈ
 	//	if (pGameInstance->Get_DIKeyState(DIK_J, CInput_Device::KEY_DOWN))
 	//{
 	//	pGameInstance->Set_Camera(TEXT("Player_Camera"),2.0f);
@@ -1053,7 +1053,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 
 #ifdef _DEBUG
-	//카占쌨띰옙 占쏙옙占쏙옙크 占쌓쏙옙트
+	//ī�޶� ����ũ �׽�Ʈ
 	if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))
 	{
 		_float3 vAxis = _float3(m_fx, m_fy, m_fz);
@@ -1072,13 +1072,13 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	}
 #endif // _DEBUG
 
-	//占쏙옙占쏙옙
+	//����
 	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_RBUTTON, CInput_Device::KEY_PRESSING))
 	{
 		Find_Target_For_ViewSpace();
 	}
 
-	//눌렀을 때
+	//������ ��
 	if (pGameInstance->Get_DIKeyState(DIK_TAB, CInput_Device::KEY_DOWN))
 	{
 		Go_Use_Item();
@@ -1106,7 +1106,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	//case Client::ITEM_ID_WIGGENWELD_POTION:
 
-#pragma region 占쏙옙占쏙옙占쏙옙트 占쏙옙占쏙옙 키 占쌉뤄옙
+#pragma region ������Ʈ ���� Ű �Է�
 
 	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_DOWN))
 	{
@@ -1136,7 +1136,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_BASIC;
 
-		// 占쏙옙타 : 타占쌉곤옙 占쏙옙占쏙옙 占쏙옙占쏙옙占쏙옙 占싼곤옙占쌔댐옙.
+		// ��Ÿ : Ÿ�԰� ���� ������ �Ѱ��ش�.
 		if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
 		{
 			Go_MagicCast(&MagicCastingStateDesc);
@@ -1144,7 +1144,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_NORMAL;
 
-		//占썩본 占쏙옙占쏙옙
+		//�⺻ ����
 		/*if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN) && m_pMagicSlot->IsCoolOn_Skill(SKILLINPUT_1))
 		{
 			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Magic_Spell_Button_1(); };
@@ -1174,10 +1174,10 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		{
 			if (pGameInstance->Get_DIKeyState(DIK_1 + i, CInput_Device::KEY_DOWN) && m_pMagicSlot->IsCoolOn_Skill(i))
 			{
-				//占쌓쇽옙
+				//�׼�
 				MagicCastingStateDesc.iSpecialAction = Special_Action(i);
 
-				//占쌉쇽옙 占쏙옙占쏙옙占쏙옙
+				//�Լ� ������
 				switch (i)
 				{
 				case Client::CPlayer::SKILLINPUT_1:
@@ -1229,7 +1229,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_FINISHER;
 
-		//占쏙옙占쏙옙 占쌩곤옙占쏙옙
+		//���� �߰���
 		if (pGameInstance->Get_DIKeyState(DIK_X, CInput_Device::KEY_DOWN) && m_pPlayer_Information->Is_Use_Fnisher() && nullptr != m_pTarget)
 		{
 			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Finisher(); };
@@ -1251,7 +1251,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	}
 #pragma endregion
 
-	//루모스
+	//���
 	if (pGameInstance->Get_DIKeyState(DIK_Z, CInput_Device::KEY_DOWN) &&
 		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
 			m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
@@ -1259,13 +1259,13 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			m_pStateContext->Is_Current_State(TEXT("Jump")) ||
 			m_pStateContext->Is_Current_State(TEXT("Move Loop"))))
 	{
-		//켜기
+		//�ѱ�
 		if (false == m_isLumosOn)
 		{
 			m_pCustomModel->Change_Animation(TEXT("Lumos_Start"), CModel::OTHERBODY);
 			m_isLumosOn = true;
 		}
-		//끄기
+		//����
 		else if (true == m_isLumosOn)
 		{
 			m_pCustomModel->Change_Animation(TEXT("Lumos_Stop"), CModel::OTHERBODY);
@@ -1282,7 +1282,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			m_isFixMouse = true;
 	}
 
-	//스킬탭
+	//��ų��
 	if (pGameInstance->Get_DIKeyState(DIK_T, CInput_Device::KEY_DOWN))
 	{
 		m_isOpenSkillTap = !m_isOpenSkillTap;
@@ -1593,7 +1593,7 @@ void CPlayer::UpdateLookAngle()
 
 HRESULT CPlayer::Ready_StateMachine()
 {
-	//채占쏙옙占쏙옙 占쌍다몌옙 占싫되니깍옙 E_Fail
+	//ä���� �ִٸ� �ȵǴϱ� E_Fail
 	if (true == m_StateMachineDesc.IsValid())
 	{
 		MSG_BOX("Failed Ready_StateMachine");
@@ -1767,7 +1767,7 @@ HRESULT CPlayer::Ready_StateMachine()
 
 	//try
 	//{
-	//	//지팡이 탑승 스테이트
+	//	//������ ž�� ������Ʈ
 	//	if (FAILED(m_pStateContext->Add_StateMachine(
 	//		LEVEL_STATIC,
 	//		TEXT("Com_Player_Broom_Begin"),
@@ -1776,7 +1776,7 @@ HRESULT CPlayer::Ready_StateMachine()
 	//		&m_StateMachineDesc)))
 	//		throw("Failed Add Broom_Begin State");
 
-	//	//호버 idle
+	//	//ȣ�� idle
 	//	if (FAILED(m_pStateContext->Add_StateMachine(
 	//		LEVEL_STATIC,
 	//		TEXT("Com_Player_Hover_Idle"),
@@ -1785,7 +1785,7 @@ HRESULT CPlayer::Ready_StateMachine()
 	//		&m_StateMachineDesc)))
 	//		throw("Failed Add Hover_Idle State");
 
-	//	//호버 move
+	//	//ȣ�� move
 	//	if (FAILED(m_pStateContext->Add_StateMachine(
 	//		LEVEL_STATIC,
 	//		TEXT("Com_Player_Hover_Move"),
@@ -1794,7 +1794,7 @@ HRESULT CPlayer::Ready_StateMachine()
 	//		&m_StateMachineDesc)))
 	//		throw("Failed Add Hover_Move State");
 
-	//	//호버 turn
+	//	//ȣ�� turn
 	//	if (FAILED(m_pStateContext->Add_StateMachine(
 	//		LEVEL_STATIC,
 	//		TEXT("Com_Player_Hover_Turn"),
@@ -1821,7 +1821,7 @@ HRESULT CPlayer::Ready_StateMachine()
 	//		&m_StateMachineDesc)))
 	//		throw("Failed Add Broom_Break State");
 
-	//	//지팡이 착지 스테이트
+	//	//������ ���� ������Ʈ
 	//	if (FAILED(m_pStateContext->Add_StateMachine(
 	//		LEVEL_STATIC,
 	//		TEXT("Com_Player_Broom_End"),
@@ -1847,7 +1847,7 @@ HRESULT CPlayer::Ready_StateMachine()
 
 void CPlayer::Update_Target_Angle()
 {
-	//占쏙옙占쏙옙占쏙옙 타占쏙옙占쏙옙 占쏙옙占쏙옙 占쏙옙占쏙옙
+	//������ Ÿ���� ���� ����
 	_float3 vDirTarget{};
 
 	if (nullptr == m_pTargetTransform)
@@ -1863,7 +1863,7 @@ void CPlayer::Update_Target_Angle()
 		vDirTarget.Normalize();
 	}
 
-	//占쏙옙 占쏙옙 占쏙옙占쏙옙
+	//�� �� ����
 	_float3 vLook{};
 
 	vLook = m_pTransform->Get_Look();
@@ -2296,7 +2296,7 @@ HRESULT CPlayer::Bind_Notify()
 
 void CPlayer::Update_Cloth(_float fTimeDelta)
 {
-	// 占쏙옙占쏙옙 y占쏙옙占쏙옙 占쌥댐옙占쏙옙
+	// ���� y���� �ݴ���
 	_float3 vVelocity = m_pTransform->Get_Velocity();
 	vVelocity.y *= -1.f;
 	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(m_fClothPower * vVelocity,
@@ -2326,7 +2326,7 @@ void CPlayer::Find_Target_For_Distance()
 	_float fMinDistance = { 50.0f };
 
 
-	//占신몌옙占쏙옙 占쏙옙占쏙옙 占쏙옙占쏙옙 占쏙옙占쏙옙
+	//�Ÿ��� ���� ���� ����
 	CGameObject* pTarget = { nullptr };
 
 	for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
@@ -2334,63 +2334,63 @@ void CPlayer::Find_Target_For_Distance()
 		if (true == static_cast<CGameObject*>(iter->second)->isDead())
 			continue;
 
-		//占시뤄옙占싱억옙占?
+		//�÷��̾��?
 		_float3 vPlayerPos = m_pTransform->Get_Position();
 
-		//占쏙옙占쏙옙占쏙옙 
+		//������ 
 		_float3 vMonsterPos = dynamic_cast<CGameObject*>(iter->second)->Get_Transform()->Get_Position();
 
-		//占신몌옙占쏙옙 占쏙옙占싹곤옙
+		//�Ÿ��� ���ϰ�
 		_float fDistance = XMVectorGetX(XMVector3Length(vPlayerPos - vMonsterPos));
 
-		//占쏙옙占쏙옙 占쏙옙占쏙옙占쏙옙 占쌜다몌옙
+		//���� ������ �۴ٸ�
 		if (fMinDistance > fDistance)
 		{
-			//占신몌옙占쏙옙 占쏙옙占쏙옙占싹곤옙
+			//�Ÿ��� �����ϰ�
 			fMinDistance = fDistance;
-			//占쏙옙체占쏙옙 占쏙옙占쏙옙占싼댐옙.
+			//��ü�� �����Ѵ�.
 			pTarget = dynamic_cast<CGameObject*>(iter->second);
 		}
 	}
 
-	// 占쏙옙체占쏙옙 占쌍다몌옙
+	// ��ü�� �ִٸ�
 	if (nullptr != pTarget)
 	{
-		//占쏙옙占쏙옙 占쏙옙체占쏙옙 占쏙옙占쏙옙占쌍곤옙
+		//���� ��ü�� �����ְ�
 		if (nullptr != m_pTargetTransform)
 		{
 			Safe_Release(m_pTargetTransform);
 		}
 
-		//타占쏙옙占쏙옙占쏙옙 占싼댐옙.
+		//Ÿ������ �Ѵ�.
 		m_pTargetTransform = pTarget->Get_Transform();
 
 		Safe_AddRef(m_pTargetTransform);
 
 
-		//占쏙옙占쏙옙 占쏙옙체占쏙옙 占쏙옙占쏙옙占쌍곤옙
+		//���� ��ü�� �����ְ�
 		if (nullptr != m_pTarget)
 		{
 			Safe_Release(m_pTarget);
 		}
 
-		//타占쏙옙占쏙옙占쏙옙 占싼댐옙.
+		//Ÿ������ �Ѵ�.
 		m_pTarget = pTarget;
 
 		Safe_AddRef(m_pTarget);
 	}
 
-	//占쏙옙체占쏙옙 占쏙옙占쌕몌옙 
+	//��ü�� ���ٸ� 
 	else if (nullptr == pTarget)
 	{
-		//占쏙옙占쏙옙 占쏙옙체占쏙옙 占쏙옙占쏙옙占쌍곤옙
+		//���� ��ü�� �����ְ�
 		if (nullptr != m_pTargetTransform)
 		{
 			Safe_Release(m_pTargetTransform);
 			m_pTargetTransform = nullptr;
 		}
 
-		//占쏙옙占쏙옙 占쏙옙체占쏙옙 占쏙옙占쏙옙占쌍곤옙
+		//���� ��ü�� �����ְ�
 		if (nullptr != m_pTarget)
 		{
 			Safe_Release(m_pTarget);
@@ -2402,7 +2402,7 @@ void CPlayer::Find_Target_For_Distance()
 
 void CPlayer::Find_Target_For_ViewSpace()
 {
-	//占쌍는곤옙 占쏙옙占쏙옙占?
+	//�ִ°� �����?
 	if (nullptr != m_pTarget)
 	{
 		Clear_Target();
@@ -2420,30 +2420,30 @@ void CPlayer::Find_Target_For_ViewSpace()
 
 	_float fMinDistance = { 50.0f };
 
-	//占신몌옙占쏙옙 占쏙옙占쏙옙 占쏙옙占쏙옙 占쏙옙占쏙옙
+	//�Ÿ��� ���� ���� ����
 	CGameObject* pTarget = { nullptr };
 
-	//占쏙옙占싶울옙占썲를 占썰스占쏙옙占싱쏙옙占쏙옙 占시몌옙占쏙옙.
-	//x, y占쏙옙占쏙옙占쏙옙占쏙옙 +,- 占쏙옙占쏙옙占쏙옙 占쏙옙占쏙옙占쌔쇽옙 占싫울옙 占쌍댐옙占쏙옙 확占쏙옙占싼댐옙.
+	//���Ϳ��带 �佺���̽��� �ø���.
+	//x, y�������� +,- ������ �����ؼ� �ȿ� �ִ��� Ȯ���Ѵ�.
 
 	_float4x4 viewMatrix = *pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW);
 
-	//占쌈쏙옙 占쏙옙占쏙옙 占쏙옙占쏙옙占싱놂옙
+	//�ӽ� ���� �����̳�
 	list<pair<CEnemy*, _float>> EnemyList;
 
-	//占쏙옙占쏙옙 占싫울옙 占쌍는것들만 占쏙옙占쏙옙
+	//���� �ȿ� �ִ°͵鸸 ����
 	for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
 	{
 		CEnemy* pEnemy = static_cast<CEnemy*>((*iter).second);
 
-		//占썰스占쏙옙占싱쏙옙占쏙옙 占시몌옙占쏙옙
+		//�佺���̽��� �ø���
 		_float4x4 TargetWorldMatrix = pEnemy->Get_Transform()->Get_WorldMatrix();
 
 		_float4x4 TargetViewMatrix = TargetWorldMatrix * viewMatrix;
 
 		_float3 vTargetViewPosition = TargetViewMatrix.Translation();
 
-		//-1 ~ 1 占쏙옙占싱울옙 占쌍댐옙 占싶듸옙占쏙옙 占쌩울옙 카占쌨라보댐옙 占쌌울옙 占쌍는곤옙
+		//-1 ~ 1 ���̿� �ִ� �͵��� �߿� ī�޶󺸴� �տ� �ִ°�
 		if (-m_fTargetViewRange < vTargetViewPosition.x &&
 			m_fTargetViewRange > vTargetViewPosition.x &&
 			-m_fTargetViewRange < vTargetViewPosition.y &&
@@ -2454,7 +2454,7 @@ void CPlayer::Find_Target_For_ViewSpace()
 		}
 	}
 
-	//占쏙옙占쏙옙摸占?
+	//����ٸ�?
 	if (true == EnemyList.empty())
 	{
 		ENDINSTANCE;
@@ -2477,25 +2477,25 @@ void CPlayer::Find_Target_For_ViewSpace()
 		return;
 	}
 
-	//占쏙옙占쏙옙 占쏙옙체占쏙옙 占쏙옙占쏙옙占쌍곤옙
+	//���� ��ü�� �����ְ�
 	if (nullptr != m_pTargetTransform)
 	{
 		Safe_Release(m_pTargetTransform);
 	}
 
-	//타占쏙옙占쏙옙占쏙옙 占싼댐옙.
+	//Ÿ������ �Ѵ�.
 	m_pTargetTransform = pTarget->Get_Transform();
 
 	Safe_AddRef(m_pTargetTransform);
 
 
-	//占쏙옙占쏙옙 占쏙옙체占쏙옙 占쏙옙占쏙옙占쌍곤옙
+	//���� ��ü�� �����ְ�
 	if (nullptr != m_pTarget)
 	{
 		Safe_Release(m_pTarget);
 	}
 
-	//타占쏙옙占쏙옙占쏙옙 占싼댐옙.
+	//Ÿ������ �Ѵ�.
 	m_pTarget = pTarget;
 
 	Safe_AddRef(m_pTarget);
@@ -2621,13 +2621,13 @@ void CPlayer::Tick_TestShake()
 void CPlayer::Key_input_Flying(_float fTimeDelta)
 {
 	BEGININSTANCE;
-	//조준
+	//����
 	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_RBUTTON, CInput_Device::KEY_PRESSING))
 	{
 		Find_Target_For_ViewSpace();
 	}
 
-#pragma region 스테이트 변경 키 입력
+#pragma region ������Ʈ ���� Ű �Է�
 
 	//if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
 	//{
@@ -2642,7 +2642,7 @@ void CPlayer::Key_input_Flying(_float fTimeDelta)
 
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_BASIC;
 
-		// 평타 : 타입과 레디 변수만 넘겨준다.
+		// ��Ÿ : Ÿ�԰� ���� ������ �Ѱ��ش�.
 		if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
 		{
 			Go_MagicCast(&MagicCastingStateDesc);
@@ -2654,10 +2654,10 @@ void CPlayer::Key_input_Flying(_float fTimeDelta)
 		{
 			if (pGameInstance->Get_DIKeyState(DIK_1 + i, CInput_Device::KEY_DOWN) && m_pMagicSlot->IsCoolOn_Skill(i))
 			{
-				//액션
+				//�׼�
 				MagicCastingStateDesc.iSpecialAction = Special_Action(i);
 
-				//함수 포인터
+				//�Լ� ������
 				switch (i)
 				{
 				case Client::CPlayer::SKILLINPUT_1:
@@ -2691,7 +2691,7 @@ void CPlayer::Key_input_Flying(_float fTimeDelta)
 
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_FINISHER;
 
-		//조건 추가함
+		//���� �߰���
 		if (pGameInstance->Get_DIKeyState(DIK_X, CInput_Device::KEY_DOWN) && m_pPlayer_Information->Is_Use_Fnisher() && nullptr != m_pTarget)
 		{
 			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Finisher(); };
@@ -2712,7 +2712,7 @@ void CPlayer::Key_input_Flying(_float fTimeDelta)
 	}
 #pragma endregion
 
-	//루모스
+	//���
 	if (false == m_isLumosOn &&
 		pGameInstance->Get_DIKeyState(DIK_Z, CInput_Device::KEY_DOWN) &&
 		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
