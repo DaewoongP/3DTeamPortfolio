@@ -47,20 +47,6 @@ HRESULT CGatherer::Initialize(void* pArg)
 	Safe_AddRef(m_pPlayer);
 	m_pPlayerInformation = m_pPlayer->Get_Player_Information();
 	Safe_AddRef(m_pPlayerInformation);
-
-	// 자체 발광 추가
-	CLight::LIGHTDESC		LightDescHork;
-	ZeroMemory(&LightDescHork, sizeof LightDescHork);
-
-	LightDescHork.eType = CLight::TYPE_POINT;
-	LightDescHork.vPos = m_pTransform->Get_Position().TransCoord();
-	LightDescHork.fRange = 3.f;
-
-	LightDescHork.vDiffuse = _float4(90.f / 255.f, 109.f / 255.f, 231.f / 255.f, 1.f);
-	LightDescHork.vAmbient = WHITEDEFAULT;
-	LightDescHork.vSpecular =  LightDescHork.vDiffuse;
-
-	pGameInstance->Add_Light(LightDescHork, nullptr);
 	ENDINSTANCE;
 
 	return S_OK;
@@ -98,6 +84,22 @@ HRESULT CGatherer::Initialize_Level(_uint iCurrentLevelIndex)
 	else if (0 == lstrcmp(wsModelName.c_str(), wsHorklump.c_str()))
 	{
 		m_GatheringType = CGatherer::HORKLUMP;
+
+		// 자체 발광 추가
+		CLight::LIGHTDESC		LightDescHork;
+		ZeroMemory(&LightDescHork, sizeof LightDescHork);
+
+		LightDescHork.eType = CLight::TYPE_POINT;
+		LightDescHork.vPos = m_pTransform->Get_Position().TransCoord();
+		LightDescHork.fRange = 3.f;
+
+		LightDescHork.vDiffuse = _float4(90.f / 255.f, 109.f / 255.f, 231.f / 255.f, 1.f);
+		LightDescHork.vAmbient = WHITEDEFAULT;
+		LightDescHork.vSpecular = LightDescHork.vDiffuse;
+
+		BEGININSTANCE;
+		pGameInstance->Add_Light(LightDescHork, &m_pLight_Horklump);
+		ENDINSTANCE;
 	}
 	else if (0 == lstrcmp(wsModelName.c_str(), wsLeapingToadStools.c_str()))
 	{
@@ -188,6 +190,10 @@ void CGatherer::Tick(_float fTimeDelta)
 		if (0 == m_pModel->Get_CurrentAnimIndex() && true == m_pModel->Is_Finish_Animation())
 		{
 			Set_ObjEvent(OBJ_DEAD);
+
+			BEGININSTANCE;
+			pGameInstance->Return_Light(m_pLight_Horklump);
+			ENDINSTANCE;
 #ifdef _DEBUG
 			cout << "채집물 죽음" << '\n';
 #endif // _DEBUG
@@ -406,6 +412,9 @@ CGameObject* CGatherer::Clone(void* pArg)
 void CGatherer::Free()
 {
 	__super::Free();
+
+	if (m_GatheringType == CGatherer::HORKLUMP)
+		Safe_Release(m_pLight_Horklump);
 
 	Safe_Release(m_pPlayer);
 	Safe_Release(m_pPlayerInformation);

@@ -55,6 +55,8 @@ private:
 	CPlayer*			 m_pPlayer = { nullptr };			 // 플레이어 주소
 	CPlayer_Information* m_pPlayerInformation = { nullptr }; // 플레이어 인벤토리와 상호작용하기 위한 주소
 
+	CLight* m_pLight_Horklump = { nullptr };				 // 호클럼프 버섯 빛
+
 private:
 	// 절두체 컬링을 위해 Bounding Box를 생성 하기위한 최소, 최대 정점
 	_float3			m_vMinPoint, m_vMaxPoint, m_vCenterPoint;
