@@ -14,6 +14,7 @@
 #include "Glow.h"
 #include "Shadow.h"
 #include "DOF.h"
+#include "Flowmap.h"
 
 #ifdef _DEBUG
 #include "Input_Device.h"
@@ -175,19 +176,13 @@ HRESULT CRenderer::Initialize_Prototype()
 #ifdef _DEBUG 
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Diffuse"), 80.f, 80.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shade"), 80.f, 240.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Flowmap"), 80.f, 240.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow_Depth"), 80.f, 400.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Flowmap_Reflection"), 80.f, 400.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow_Depth1"), 80.f, 560.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Flowmap_Refraction"), 80.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Deferred"), 240.f, 80.f, 160.f, 160.f)))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO_Blured"), 240.f, 240.f, 160.f, 160.f)))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Fog"), 240.f, 400.f, 160.f, 160.f)))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_PostProcessing"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
 
 	m_isDebugRender = false;
@@ -253,13 +248,15 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_Deferred()))
 		return E_FAIL;
+	if (FAILED(m_pFlowmap->Render()))
+		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Deferred"))))
 		return E_FAIL;
 #pragma endregion
 
 #pragma region Render Targets
-	/*if (FAILED(m_pDOF->Render(TEXT("Target_Deferred"))))
-		return E_FAIL;*/
+	if (FAILED(m_pDOF->Render(TEXT("Target_Deferred"))))
+		return E_FAIL;
 	if (FAILED(Render_HDR()))
 		return E_FAIL;
 
@@ -1042,6 +1039,10 @@ HRESULT CRenderer::Add_Components()
 	if (nullptr == m_pDOF)
 		return E_FAIL;
 	
+	m_pFlowmap = CFlowmap::Create(m_pDevice, m_pContext, m_pRectBuffer);
+	if (nullptr == m_pFlowmap)
+		return E_FAIL;
+	
 	return S_OK;
 }
 #ifdef _DEBUG
@@ -1168,6 +1169,7 @@ void CRenderer::Free()
 	Safe_Release(m_pShadow);
 	Safe_Release(m_pGlow);
 	Safe_Release(m_pDOF);
+	Safe_Release(m_pFlowmap);
 
 	Safe_Release(m_pRectBuffer);
 }

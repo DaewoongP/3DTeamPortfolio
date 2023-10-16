@@ -742,9 +742,6 @@
     <Filter Include="02. GameObject\02. Enemy\07. Pensive\Pensive_Ground_Ball">
       <UniqueIdentifier>{471c54cd-7a5b-4ece-8242-6d120e185254}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\05. Terrain\03. PlayerInformation">
-      <UniqueIdentifier>{32c19ffc-fb69-42ca-ba81-07c40b9b305f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="04. Effect\Blink_Effect">
       <UniqueIdentifier>{58d8b344-dfb8-4b48-ab00-f18496e8f003}</UniqueIdentifier>
     </Filter>
@@ -756,6 +753,9 @@
     </Filter>
     <Filter Include="98. Default\ImGui_Defaults">
       <UniqueIdentifier>{628cd336-ebfe-4860-bfac-014e7bec45d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. PlayerInformation">
+      <UniqueIdentifier>{32c19ffc-fb69-42ca-ba81-07c40b9b305f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1440,7 +1440,7 @@
       <Filter>02. GameObject\01. Player</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_Information.h">
-      <Filter>02. GameObject\05. Terrain\03. PlayerInformation</Filter>
+      <Filter>02. GameObject\03. PlayerInformation</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Event_Vault_Spawn.h">
       <Filter>07. Events\Vault</Filter>
@@ -1790,7 +1790,7 @@
       <Filter>02. GameObject\01. Player\01. StateMachine\07. Hit</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_Information.cpp">
-      <Filter>02. GameObject\05. Terrain\03. PlayerInformation</Filter>
+      <Filter>02. GameObject\03. PlayerInformation</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Finisher.cpp">
       <Filter>05. Magic\MagicBall\07. Finisher</Filter>
