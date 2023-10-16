@@ -51,7 +51,7 @@ HRESULT CMagicBallPool::Initialize()
     Create_InitMagic(Client::PENSIVE_GROUND_BALL, TEXT("Prototype_GameObject_Pensive_Ground_Ball"),3);
     Create_InitMagic(Client::PENSIVE_FAIL_BALL, TEXT("Prototype_GameObject_Pensive_Fail_Ball"),2);
     Create_InitMagic(Client::PENSIVE_SHOUTING, TEXT("Prototype_GameObject_Pensive_Shouting"), 2);
-    Create_InitMagic(Client::PENSIVE_SWORD_THROW, TEXT("Prototype_GameObject_Pensive_Sword_Throw"), 6);
+    Create_InitMagic(Client::PENSIVE_SWORD_THROW, TEXT("Prototype_GameObject_Pensive_Sword_Throw"));
     Safe_Release(pGameInstance);
 
     return S_OK;

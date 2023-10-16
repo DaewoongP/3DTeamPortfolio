@@ -175,13 +175,13 @@ void CPensive_Sword_Throw::Ready_Begin()
 void CPensive_Sword_Throw::Ready_DrawMagic()
 {
 	__super::Ready_DrawMagic();
-	m_pMeshEffect->Play(m_CurrentWeaponMatrix.Translation());
+	m_pMeshEffect->Play(m_vStartPosition);
 }
 
 void CPensive_Sword_Throw::Ready_CastMagic()
 {
 	m_vEndPosition = m_CurrentTargetMatrix.Translation();
-	m_pTransform->Set_Position(m_CurrentWeaponMatrix.Translation());
+	m_pTransform->Set_Position(m_vStartPosition);
 	m_fTimeScalePerDitance = 100 / _float3(m_vEndPosition - m_vStartPosition).Length();
 	__super::Ready_CastMagic();
 }
@@ -213,6 +213,7 @@ void CPensive_Sword_Throw::Ready_Dying()
 		(CCamera_Manager::SHAKE_POWER)1,
 		vAxis);
 	pGameInstance->Add_InstanceLight(m_CurrentWeaponMatrix.Translation(), 60.f, 0.6f, m_vLightColor);
+	ENDINSTANCE;
 }
 
 void CPensive_Sword_Throw::Tick_Begin(_float fTimeDelta)
@@ -223,7 +224,7 @@ void CPensive_Sword_Throw::Tick_Begin(_float fTimeDelta)
 void CPensive_Sword_Throw::Tick_DrawMagic(_float fTimeDelta)
 {
 	_float4x4 DirMatrix = {};
-	m_pTransform->Set_Position(m_CurrentWeaponMatrix.Translation());
+	m_pTransform->Set_Position(m_vStartPosition);
 	_float3 vDir = m_pTargetWorldMatrix->Translation() - m_pTransform->Get_Position();
 	vDir.Normalize();
 	DirMatrix.Look(vDir);

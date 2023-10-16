@@ -57,9 +57,9 @@ HRESULT CPensive::Initialize_Level(_uint iCurrentLevelIndex)
 	if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
 		return E_FAIL;
 
-	m_SwordOffsetMatrix[0] = _float4x4().MatrixTranslation(_float3(5, 0, 0));
-	m_SwordOffsetMatrix[1] = _float4x4().MatrixTranslation(_float3(-5, 0, 0));
-	m_SwordOffsetMatrix[2] = _float4x4().MatrixTranslation(_float3(0, 0, 0));
+	m_SwordOffsetMatrix[0] = _float4x4().MatrixTranslation(_float3(1, 5, 0));
+	m_SwordOffsetMatrix[1] = _float4x4().MatrixTranslation(_float3(1, -5, 0));
+	m_SwordOffsetMatrix[2] = _float4x4().MatrixTranslation(_float3(3, 0, 0));
 	return S_OK;
 }
 
@@ -292,7 +292,7 @@ HRESULT CPensive::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = PENSIVE_SWORD_THROW;
-		magicInitDesc.fInitCoolTime = 1.f;
+		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 50;
 		magicInitDesc.isChase = false;
 		magicInitDesc.fLifeTime = 0.6f;
@@ -371,10 +371,8 @@ void CPensive::Attack_Shouting()
 
 void CPensive::Attack_Throw_Sword()
 {
-	m_pDragonHead[1]->Set_Offset_Matrix(m_SwordOffsetMatrix[m_iSwordIndex]);
-	m_pMagicBall_Sword[m_iSwordIndex++] = m_pMagicSlot->Action_Magic_Basic((_uint)0, m_pPlayer, m_pDragonHead[1], COLLISIONFLAG(COL_PLAYER | COL_SHIELD | COL_STATIC));
-	m_pDragonHead[1]->Set_Offset_Matrix(m_SwordOffsetMatrix[2]);
-	cout << m_iSwordIndex << "»ý¼º" << endl;
+	m_pDragonHead[2]->Set_Offset_Matrix(m_SwordOffsetMatrix[m_iSwordIndex]);
+	m_pMagicBall_Sword[m_iSwordIndex++] = m_pMagicSlot->Action_Magic_Basic((_uint)0, m_pPlayer, m_pDragonHead[2], COLLISIONFLAG(COL_PLAYER | COL_SHIELD | COL_STATIC));
 }
 
 void CPensive::Next_Attack()
@@ -390,7 +388,6 @@ void CPensive::Next_SwordAttack()
 	if (m_pMagicBall_Sword[--m_iSwordIndex] != nullptr)
 	{
 		m_pMagicBall_Sword[m_iSwordIndex]->Do_MagicBallState_To_Next();
-		cout << m_iSwordIndex  <<"´ã" << endl;
 	}
 }
 
@@ -564,7 +561,7 @@ HRESULT CPensive::Add_Components_Level(_uint iCurrentLevelIndex)
 		}
 	}
 	{
-		const CBone* pBone = m_pModelCom->Get_Bone(TEXT("SKT_RightHand"));
+		const CBone* pBone = m_pModelCom->Get_Bone_Index(29);
 		if (nullptr == pBone)
 			throw TEXT("pBone is nullptr");
 
