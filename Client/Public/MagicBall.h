@@ -97,6 +97,7 @@ protected:
 protected:
 	vector<CTrail*>						m_TrailVec[EFFECT_STATE_END];
 	vector<CParticleSystem*>			m_ParticleVec[EFFECT_STATE_END];
+	vector<CMeshEffect*>				m_MeshEffectVec[EFFECT_STATE_END];
 
 //발사에 관한 로직
 protected:

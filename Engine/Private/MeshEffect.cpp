@@ -46,6 +46,8 @@ CMeshEffect::CMeshEffect(const CMeshEffect& _rhs)
 	, m_isClipTexture(_rhs.m_isClipTexture)
 	, m_PivotMatrix(_rhs.m_PivotMatrix)
 	, m_strCurAnim(_rhs.m_strCurAnim)
+	,m_isGlow(_rhs.m_isGlow)
+	,m_isDistortion(_rhs.m_isDistortion)
 {
 	for (_uint i = 0; i < PATH_END; ++i)
 		m_Path[i] = _rhs.m_Path[i];
