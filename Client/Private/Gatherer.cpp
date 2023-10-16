@@ -147,6 +147,16 @@ void CGatherer::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	BEGININSTANCE;  // 버튼을 누르면 동작(한번만)
+	if (pGameInstance->Get_DIKeyState(DIK_P, CInput_Device::KEY_DOWN))
+	{
+		m_isDis = true;
+	}
+	ENDINSTANCE;
+
+	if(true == m_isDis)
+		m_fDissolveAmount += fTimeDelta / 5.f; // 디졸브 값 증가
+
 	// 플레이어와 충돌했을 때
 	if (true == m_isCol_with_Player && nullptr != m_pModel)
 	{
@@ -192,13 +202,14 @@ void CGatherer::Tick(_float fTimeDelta)
 			Set_ObjEvent(OBJ_DEAD);
 
 			BEGININSTANCE;
-			pGameInstance->Return_Light(m_pLight_Horklump);
+			if(nullptr != m_pLight_Horklump)
+				pGameInstance->Return_Light(m_pLight_Horklump);
 			ENDINSTANCE;
 #ifdef _DEBUG
 			cout << "채집물 죽음" << '\n';
 #endif // _DEBUG
 		}
-	}	
+	}
 }
 
 void CGatherer::Late_Tick(_float fTimeDelta)
@@ -265,11 +276,21 @@ HRESULT CGatherer::Render()
 		if(m_GatheringType == CGatherer::HORKLUMP && (_uint)m_iCurrentLevel == LEVEL_VAULT)
 			m_pModel->Bind_Material(m_pShader, "g_EmissiveTexture", iMeshCount, EMISSIVE);
 
-		// 후클럼프(발광 버섯) 모델이 회랑에서 불린 경우, 다른 패스로 그려준다.
-		if (m_GatheringType == CGatherer::HORKLUMP && (_uint)m_iCurrentLevel == LEVEL_VAULT)
-			m_pShader->Begin("AnimMesh_E");
+
+		if (true == m_isDis)
+		{
+			if (FAILED(m_pShader->Begin("AnimMesh_Dissolve")))
+				return E_FAIL;
+		}
+
 		else
-			m_pShader->Begin("AnimMesh");
+		{
+			// 후클럼프(발광 버섯) 모델이 회랑에서 불린 경우, 다른 패스로 그려준다.
+			if (m_GatheringType == CGatherer::HORKLUMP && (_uint)m_iCurrentLevel == LEVEL_VAULT)
+				m_pShader->Begin("AnimMesh_E");
+			else
+				m_pShader->Begin("AnimMesh");
+		}
 
 		if (FAILED(m_pModel->Render(iMeshCount)))
 			return E_FAIL;
@@ -328,6 +349,14 @@ HRESULT CGatherer::Add_Components()
 		return E_FAIL;
 	}
 
+	m_pDissolveTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/VFX/Textures/Noises/VFX_T_NoiseGreypack02_D.png"));
+	if (nullptr == m_pDissolveTexture)
+	{
+		MSG_BOX("Failed CGatherer Add_Texture : (m_pDissolveTexture)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -343,6 +372,14 @@ HRESULT CGatherer::SetUp_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
+
+	if (nullptr != m_pDissolveTexture && true == m_isDis)
+	{
+		if (FAILED(m_pDissolveTexture->Bind_ShaderResources(m_pShader, "g_DissolveTexture")))
+			return E_FAIL;
+		if (FAILED(m_pShader->Bind_RawValue("g_fDissolveAmount", &m_fDissolveAmount, sizeof(_float))))
+			return E_FAIL;
+	}
 
 	ENDINSTANCE;
 
@@ -419,6 +456,7 @@ void CGatherer::Free()
 	Safe_Release(m_pPlayer);
 	Safe_Release(m_pPlayerInformation);
 
+	Safe_Release(m_pDissolveTexture);
 	Safe_Release(m_pRigidBody);
 	Safe_Release(m_pShadowShader);
 	Safe_Release(m_pShader);

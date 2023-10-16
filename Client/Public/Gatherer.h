@@ -6,8 +6,10 @@ BEGIN(Engine)
 class CMesh;
 class CModel;
 class CShader;
+class CTexture;
 class CRenderer;
 class CRigidBody;
+
 END
 
 BEGIN(Client)
@@ -51,6 +53,7 @@ private:
 	CRenderer* m_pRenderer = { nullptr };
 	CModel* m_pModel = { nullptr };
 	CRigidBody* m_pRigidBody = { nullptr };
+	CTexture* m_pDissolveTexture = { nullptr };				 // 디졸브용 노이즈 텍스처
 
 	CPlayer*			 m_pPlayer = { nullptr };			 // 플레이어 주소
 	CPlayer_Information* m_pPlayerInformation = { nullptr }; // 플레이어 인벤토리와 상호작용하기 위한 주소
@@ -61,9 +64,11 @@ private:
 	// 절두체 컬링을 위해 Bounding Box를 생성 하기위한 최소, 최대 정점
 	_float3			m_vMinPoint, m_vMaxPoint, m_vCenterPoint;
 	_float			m_fRadius = { 0.f };
+	_float			m_fDissolveAmount = { 0.f }; // 디졸브 값
 
 	_bool			m_isGetItem = { true }; // 아이템 획득 가능 여부
 	_bool			m_isCol_with_Player = { false }; // 플레이어와 충돌 여부
+	_bool m_isDis = { false }; // 디졸브 테스트
 
 	_uint			m_iCurrentLevel = { LEVEL_END };
 
