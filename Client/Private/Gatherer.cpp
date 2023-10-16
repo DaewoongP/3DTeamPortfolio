@@ -54,6 +54,8 @@ HRESULT CGatherer::Initialize(void* pArg)
 
 HRESULT CGatherer::Initialize_Level(_uint iCurrentLevelIndex)
 {
+	m_iCurrentLevel = iCurrentLevelIndex;
+
 	/* Com_Model */
 	if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, m_ObjectDesc.wszTag,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
@@ -187,10 +189,10 @@ void CGatherer::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRenderer)
 	{
-		// 후클럼프(발광 버섯) 모델일 경우 다른 Renderer에 넣어준다.
-		if (m_GatheringType == CGatherer::HORKLUMP)
-			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
-		else
+		//// 후클럼프(발광 버섯) 모델이 회랑에서 불린 경우, 다른 Renderer에 넣어준다.
+		//if (m_GatheringType == CGatherer::HORKLUMP)// && (_uint)m_iCurrentLevel == LEVEL_VAULT)
+		//	m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
+		//else
 			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
 
@@ -239,12 +241,12 @@ HRESULT CGatherer::Render()
 		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 		m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
 
-		// 후클럼프 모델일 경우 Emissive 텍스처를 추가로 넣어준다.
-		if(m_GatheringType == CGatherer::HORKLUMP)
+		// 후클럼프(발광 버섯) 모델이 회랑에서 불린 경우, Emissive 텍스처를 추가로 넣어준다.
+		if(m_GatheringType == CGatherer::HORKLUMP)// && (_uint)m_iCurrentLevel == LEVEL_VAULT)
 			m_pModel->Bind_Material(m_pShader, "g_EmissiveTexture", iMeshCount, EMISSIVE);
 
-		// 후클럼프 모델일 경우 다른 패스로 그려준다.
-		if (m_GatheringType == CGatherer::HORKLUMP)
+		// 후클럼프(발광 버섯) 모델이 회랑에서 불린 경우, 다른 패스로 그려준다.
+		if (m_GatheringType == CGatherer::HORKLUMP)// && (_uint)m_iCurrentLevel == LEVEL_VAULT)
 			m_pShader->Begin("AnimMesh_E");
 		else
 			m_pShader->Begin("AnimMesh");
