@@ -68,7 +68,7 @@ private:
 
 	_bool			m_isGetItem = { true }; // 아이템 획득 가능 여부
 	_bool			m_isCol_with_Player = { false }; // 플레이어와 충돌 여부
-	_bool m_isDis = { false }; // 디졸브 테스트
+	_bool			m_isDissolveStart = { false };
 
 	_uint			m_iCurrentLevel = { LEVEL_END };
 
@@ -77,10 +77,14 @@ private:
 	GATHERING		m_GatheringType = { CGatherer::GATHERING_END }; // 채집물 종류
 
 private:
+	HRESULT Make_Notifies();
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix);
 	void	Check_MinMaxPoint(_float3 vPoint);
+
+private:
+	void Gatherer_Dead(); // 채집물 사망, Notify
 
 public:
 	static CGatherer* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

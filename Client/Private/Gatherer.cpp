@@ -140,6 +140,9 @@ HRESULT CGatherer::Initialize_Level(_uint iCurrentLevelIndex)
 		return E_FAIL;
 	}
 
+	if (FAILED(Make_Notifies()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -147,15 +150,8 @@ void CGatherer::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	BEGININSTANCE;  // 버튼을 누르면 동작(한번만)
-	if (pGameInstance->Get_DIKeyState(DIK_P, CInput_Device::KEY_DOWN))
-	{
-		m_isDis = true;
-	}
-	ENDINSTANCE;
-
-	if(true == m_isDis)
-		m_fDissolveAmount += fTimeDelta / 5.f; // 디졸브 값 증가
+	if(true == m_isDissolveStart)
+		m_fDissolveAmount += fTimeDelta / 2.f; // 디졸브 값 증가
 
 	// 플레이어와 충돌했을 때
 	if (true == m_isCol_with_Player && nullptr != m_pModel)
@@ -191,13 +187,16 @@ void CGatherer::Tick(_float fTimeDelta)
 		ENDINSTANCE;
 	}
 
-	if (nullptr != m_pModel)
+	if (nullptr != m_pModel && false == m_isDissolveStart)
 		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+	else
+		m_pModel->Play_Animation(0.f, CModel::UPPERBODY, m_pTransform);
 
 	// 채집물 뽑히는 애니메이션이 끝나고 나면 사망처리
 	if (nullptr != m_pModel) 
 	{
-		if (0 == m_pModel->Get_CurrentAnimIndex() && true == m_pModel->Is_Finish_Animation())
+		// 디졸브 연출이 끝나면 사망 처리
+		if (0 == m_pModel->Get_CurrentAnimIndex() && m_fDissolveAmount >= 1.f)
 		{
 			Set_ObjEvent(OBJ_DEAD);
 
@@ -273,11 +272,10 @@ HRESULT CGatherer::Render()
 		m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
 
 		// 후클럼프(발광 버섯) 모델이 회랑에서 불린 경우, Emissive 텍스처를 추가로 넣어준다.
-		if(m_GatheringType == CGatherer::HORKLUMP && (_uint)m_iCurrentLevel == LEVEL_VAULT)
+		if (m_GatheringType == CGatherer::HORKLUMP && (_uint)m_iCurrentLevel == LEVEL_VAULT)
 			m_pModel->Bind_Material(m_pShader, "g_EmissiveTexture", iMeshCount, EMISSIVE);
 
-
-		if (true == m_isDis)
+		if (true == m_isDissolveStart)
 		{
 			if (FAILED(m_pShader->Begin("AnimMesh_Dissolve")))
 				return E_FAIL;
@@ -290,7 +288,7 @@ HRESULT CGatherer::Render()
 				m_pShader->Begin("AnimMesh_E");
 			else
 				m_pShader->Begin("AnimMesh");
-		}
+		}	
 
 		if (FAILED(m_pModel->Render(iMeshCount)))
 			return E_FAIL;
@@ -316,6 +314,15 @@ HRESULT CGatherer::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMa
 		if (FAILED(m_pModel->Render(iMeshCount)))
 			return E_FAIL;
 	}
+
+	return S_OK;
+}
+
+HRESULT CGatherer::Make_Notifies()
+{
+	function<void()> Func = [&] { this->Gatherer_Dead(); };
+	if (FAILED(m_pModel->Bind_Notifies(TEXT("Gatherer_Dead"), Func)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -373,7 +380,7 @@ HRESULT CGatherer::SetUp_ShaderResources()
 	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
 
-	if (nullptr != m_pDissolveTexture && true == m_isDis)
+	if (nullptr != m_pDissolveTexture)
 	{
 		if (FAILED(m_pDissolveTexture->Bind_ShaderResources(m_pShader, "g_DissolveTexture")))
 			return E_FAIL;
@@ -419,6 +426,11 @@ void CGatherer::Check_MinMaxPoint(_float3 vPoint)
 		m_vMaxPoint.y = vPoint.y;
 	if (m_vMaxPoint.z < vPoint.z)
 		m_vMaxPoint.z = vPoint.z;
+}
+
+void CGatherer::Gatherer_Dead()
+{
+	m_isDissolveStart = true;
 }
 
 CGatherer* CGatherer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
