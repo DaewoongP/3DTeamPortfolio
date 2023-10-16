@@ -63,6 +63,8 @@ private:
 	_bool			m_isGetItem = { true }; // 아이템 획득 가능 여부
 	_bool			m_isCol_with_Player = { false }; // 플레이어와 충돌 여부
 
+	_uint			m_iCurrentLevel = { LEVEL_END };
+
 private:
 	MAPOBJECTDESC	m_ObjectDesc;
 	GATHERING		m_GatheringType = { CGatherer::GATHERING_END }; // 채집물 종류

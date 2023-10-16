@@ -1077,24 +1077,24 @@ void CObject_Window::Delete_Picking_Object()
 
 void CObject_Window::Delete_Picking_Object_Ins()
 {
-	//if (0 < m_vecSaveInsObject.size())
-	//{
-	//	if (FAILED(m_pGameInstance->Delete_Component(LEVEL_TOOL,
-	//		TEXT("Layer_MapObject"), m_vecMapObjectTag.at(iNum).c_str())))
-	//	{
-	//		MSG_BOX("Failed to delete Picking MapObject_Ins");
-	//		return;
-	//	}
+	/*if (0 < m_vecSaveInsObject.size())
+	{
+		if (FAILED(m_pGameInstance->Delete_Component(LEVEL_TOOL,
+			TEXT("Layer_MapObject"), m_vecMapObjectTag.at(iNum).c_str())))
+		{
+			MSG_BOX("Failed to delete Picking MapObject_Ins");
+			return;
+		}
 
-	//	if (0 < m_iMapObjectIndex)
-	//	{
-	//		--m_iMapObjectIndex;
-	//	}
+		if (0 < m_iMapObjectIndex)
+		{
+			--m_iMapObjectIndex;
+		}
 
-	//	m_vecMapObjectTag.erase(m_vecMapObjectTag.begin() + iNum);
-	//	m_vecInsObjectTag.erase(m_vecInsObjectTag.begin() + iNum);
-	//	m_vecSaveInsObject.erase(m_vecSaveInsObject.begin() + iNum);
-	//}
+		m_vecMapObjectTag.erase(m_vecMapObjectTag.begin() + iNum);
+		m_vecInsObjectTag.erase(m_vecInsObjectTag.begin() + iNum);
+		m_vecSaveInsObject.erase(m_vecSaveInsObject.begin() + iNum);
+	}*/
 }
 
 void CObject_Window::Map_Brushing_Menu()
