@@ -151,7 +151,7 @@ void CGatherer::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	if(true == m_isDissolveStart)
-		m_fDissolveAmount += fTimeDelta / 2.f; // 디졸브 값 증가
+		m_fDissolveAmount += fTimeDelta / 1.5f; // 디졸브 값 증가
 
 	// 플레이어와 충돌했을 때
 	if (true == m_isCol_with_Player && nullptr != m_pModel)
@@ -187,10 +187,8 @@ void CGatherer::Tick(_float fTimeDelta)
 		ENDINSTANCE;
 	}
 
-	if (nullptr != m_pModel && false == m_isDissolveStart)
+	if (nullptr != m_pModel)
 		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
-	else
-		m_pModel->Play_Animation(0.f, CModel::UPPERBODY, m_pTransform);
 
 	// 채집물 뽑히는 애니메이션이 끝나고 나면 사망처리
 	if (nullptr != m_pModel) 
