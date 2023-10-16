@@ -71,11 +71,11 @@ void CUI_Store::Tick(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
 	{
-		m_isOpen = (true == m_isOpen) ? false : true;	
+		m_isOpen = (true == m_isOpen) ? false : true;
 	}
 
 	Safe_Release(pGameInstance);
-	
+
 	if (false == m_isOpen)
 		return;
 
@@ -275,11 +275,24 @@ HRESULT CUI_Store::Set_Item()
 		}
 	}
 	m_pItems.resize(m_pSlots.size());
-	for (_uint i = 0; i < m_pSlots.size(); ++i)
-	{
-		m_pItems[i] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_ROBE1, LEVEL_STATIC, nullptr);
-	}
-	
+
+	m_pItems[0] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_HAT_ARCANE, LEVEL_STATIC, nullptr);
+	m_pItems[1] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_HAT_DARTARTS_DELUX, LEVEL_STATIC, nullptr);
+	m_pItems[2] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_HAT_FEDORA, LEVEL_STATIC, nullptr);
+	m_pItems[3] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_MASK_DEMIGUISE, LEVEL_STATIC, nullptr);
+	m_pItems[4] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_MASK_GUARDIAN, LEVEL_STATIC, nullptr);
+	m_pItems[5] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_MASK_NIFFLER, LEVEL_STATIC, nullptr);
+	m_pItems[6] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_ROBE_ARCANE, LEVEL_STATIC, nullptr);
+	m_pItems[7] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_ROBE_DARKARTS, LEVEL_STATIC, nullptr);
+	m_pItems[8] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_ROBE_DARKARTS_DELUX, LEVEL_STATIC, nullptr);
+	m_pItems[9] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_ROBE_QUDDITCH, LEVEL_STATIC, nullptr);
+	m_pItems[10] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_JACKET_ARCANE, LEVEL_STATIC, nullptr);
+	m_pItems[11] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_JACKET_CELTIC, LEVEL_STATIC, nullptr);
+	m_pItems[12] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_JACKET_DARKARTS_DELUX, LEVEL_STATIC, nullptr);
+
+	for (_uint i = 13; i < 20; ++i)
+		m_pItems[i] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_ROBE_ARCANE, LEVEL_STATIC, nullptr);
+
 	_uint iSize = m_pItems.size();
 	_uint iIndex = 0;
 	for (auto& pItem : m_pItems)
@@ -400,7 +413,7 @@ HRESULT CUI_Store::Add_Compoents()
 	//		, pComTag[i], reinterpret_cast<CComponent**>(&m_pSlots[i]))))
 	//		return E_FAIL;
 	//}
-	
+
 	return S_OK;
 }
 
