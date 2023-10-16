@@ -58,6 +58,8 @@ HRESULT CImGui_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 HRESULT CImGui_Manager::Render()
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();

@@ -238,8 +238,6 @@ HRESULT CMain0_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 
 HRESULT CMain0_Loader::Loading_For_Vault(LEVELID eLevelID)
 {
-	std::lock_guard<std::mutex> lock(mtx);
-
 	/* For.Prototype_GameObject_MeshEffect*/
 	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Cloister_MeshEffect"),
 		CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Cloister/Cloister.ME")))))
@@ -332,8 +330,6 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 	{
 #pragma region Load UI
 		{
-			std::lock_guard<std::mutex> lock(mtx);
-
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_HP"),
 				CUI_Group_HP::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_GameObject_UI_Group_HP");
@@ -544,8 +540,6 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 #pragma region Load ETC
 
 		{
-			std::lock_guard<std::mutex> lock(mtx);
-
 			/* --------------ETC-------------- */
 		/* For.Prototype_Component_Health*/
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Health"),
@@ -581,8 +575,6 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 
 #pragma region Load Magic
 		{
-			std::lock_guard<std::mutex> lock(mtx);
-
 			/* --------------Magic-------------- */
 		/* For. Prototype_Component_Magic*/
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Magic"),
@@ -714,8 +706,6 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			throw TEXT("Prototype_Monster_DarkFlare_Particle");
 		
 		{
-			std::lock_guard<std::mutex> lock(mtx);
-
 			CMagicBallPool* pMagicBallPool = CMagicBallPool::GetInstance();
 			Safe_AddRef(pMagicBallPool);
 			if (FAILED(pMagicBallPool->Initialize()))
@@ -731,8 +721,6 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 
 #pragma region Load Particle
 		{
-			std::lock_guard<std::mutex> lock(mtx);
-						
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Dust01"),
 				TEXT("../../Resources/GameData/ParticleData/Misc/Dust01/"), 3)))
 				throw TEXT("Reserve Particle : Particle_Dust01");

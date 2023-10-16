@@ -25,6 +25,8 @@ IMPLEMENT_SINGLETON(CMagicBallPool)
 
 HRESULT CMagicBallPool::Initialize()
 {
+    std::lock_guard<std::mutex> lock(mtx);
+
     CGameInstance* pGameInstance = CGameInstance::GetInstance();
     Safe_AddRef(pGameInstance);
 

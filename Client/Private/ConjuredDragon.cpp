@@ -643,10 +643,6 @@ HRESULT CConjuredDragon::Add_Components()
 		if (FAILED(__super::Add_Components()))
 			throw TEXT("Failed Enemy Add_Components");
 
-		if (FAILED(Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle"),
-			TEXT("Com_Particle_BlackSmokeIdle"), reinterpret_cast<CComponent**>(&m_pEffect_BlackSmokeIdle))))
-			throw TEXT("Com_Particle_BlackSmokeIdle");
-
 		/* For.Com_Health */
 		CHealth::HEALTHDESC HealthDesc;
 		HealthDesc.iMaxHP = 500;
@@ -2416,19 +2412,16 @@ void CConjuredDragon::Free()
 {
 	__super::Free();
 
-	if (true == m_isCloned)
-	{
-		Safe_Release(m_pBreath);
-		Safe_Release(m_pEnergyBall);
-		Safe_Release(m_pPulse);
+	Safe_Release(m_pBreath);
+	Safe_Release(m_pEnergyBall);
+	Safe_Release(m_pPulse);
 
-		Safe_Release(m_pMagicSlot);
-		Safe_Release(m_pWeapon);
+	Safe_Release(m_pMagicSlot);
+	Safe_Release(m_pWeapon);
 
-		Safe_Release(m_pEffect_BlackSmokeIdle);
-		Safe_Release(m_pEffect_Pulse_Charge);
-		Safe_Release(m_pEffect_Pulse_CircleEmit);
-		Safe_Release(m_pEffect_Pulse_Rock);
-		Safe_Release(m_pEffect_Pulse_SplashWater);
-	}
+	Safe_Release(m_pEffect_BlackSmokeIdle);
+	Safe_Release(m_pEffect_Pulse_Charge);
+	Safe_Release(m_pEffect_Pulse_CircleEmit);
+	Safe_Release(m_pEffect_Pulse_Rock);
+	Safe_Release(m_pEffect_Pulse_SplashWater);
 }

@@ -73,7 +73,7 @@ void CWolf::Tick(_float fTimeDelta)
 
 	// 공격 사거리 증가
 	if (WF_ATTACK == m_eCurrentAnim)
-		m_pTransform->Go_Straight(fTimeDelta * 1.5);
+		m_pTransform->Go_Straight(fTimeDelta * 1.5f);
 
 	Tick_Spells();
 

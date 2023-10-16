@@ -230,8 +230,6 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 {
 	try
 	{
-		std::lock_guard<std::mutex> lock(mtx);
-
 #pragma region Player
 
 		/* For.Prototype_GameObject_Player*/
