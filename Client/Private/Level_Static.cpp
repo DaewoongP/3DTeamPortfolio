@@ -175,11 +175,11 @@ HRESULT CLevel_Static::Ready_Layer_Debug(const _tchar* pLayerTag)
 	FAILED_CHECK_RETURN(m_pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC,
 		TEXT("Prototype_GameObject_Camera_Debug"), pLayerTag, TEXT("GameObject_Camera_Debug")), E_FAIL);
 
-	if (FAILED(m_pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_Impulse_Effect"), pLayerTag, TEXT("GameObject_Impulse_Sphere"))))
+	/*if (FAILED(m_pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_Impulse_Effect"), pLayerTag, TEXT("GameObject_Impulse_Sphere"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Impulse_Sphere)");
 		return E_FAIL;
-	}
+	}*/
 
 	return S_OK;
 }
