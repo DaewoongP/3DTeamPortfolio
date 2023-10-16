@@ -84,6 +84,22 @@ HRESULT CGatherer::Initialize_Level(_uint iCurrentLevelIndex)
 	else if (0 == lstrcmp(wsModelName.c_str(), wsHorklump.c_str()))
 	{
 		m_GatheringType = CGatherer::HORKLUMP;
+
+		// 자체 발광 추가
+		CLight::LIGHTDESC		LightDescHork;
+		ZeroMemory(&LightDescHork, sizeof LightDescHork);
+
+		LightDescHork.eType = CLight::TYPE_POINT;
+		LightDescHork.vPos = m_pTransform->Get_Position().TransCoord();
+		LightDescHork.fRange = 3.f;
+
+		LightDescHork.vDiffuse = _float4(90.f / 255.f, 109.f / 255.f, 231.f / 255.f, 1.f);
+		LightDescHork.vAmbient = WHITEDEFAULT;
+		LightDescHork.vSpecular = LightDescHork.vDiffuse;
+
+		BEGININSTANCE;
+		pGameInstance->Add_Light(LightDescHork, &m_pLight_Horklump);
+		ENDINSTANCE;
 	}
 	else if (0 == lstrcmp(wsModelName.c_str(), wsLeapingToadStools.c_str()))
 	{
@@ -124,12 +140,18 @@ HRESULT CGatherer::Initialize_Level(_uint iCurrentLevelIndex)
 		return E_FAIL;
 	}
 
+	if (FAILED(Make_Notifies()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
 void CGatherer::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if(true == m_isDissolveStart)
+		m_fDissolveAmount += fTimeDelta / 1.5f; // 디졸브 값 증가
 
 	// 플레이어와 충돌했을 때
 	if (true == m_isCol_with_Player && nullptr != m_pModel)
@@ -171,14 +193,20 @@ void CGatherer::Tick(_float fTimeDelta)
 	// 채집물 뽑히는 애니메이션이 끝나고 나면 사망처리
 	if (nullptr != m_pModel) 
 	{
-		if (0 == m_pModel->Get_CurrentAnimIndex() && true == m_pModel->Is_Finish_Animation())
+		// 디졸브 연출이 끝나면 사망 처리
+		if (0 == m_pModel->Get_CurrentAnimIndex() && m_fDissolveAmount >= 1.f)
 		{
 			Set_ObjEvent(OBJ_DEAD);
+
+			BEGININSTANCE;
+			if(nullptr != m_pLight_Horklump)
+				pGameInstance->Return_Light(m_pLight_Horklump);
+			ENDINSTANCE;
 #ifdef _DEBUG
 			cout << "채집물 죽음" << '\n';
 #endif // _DEBUG
 		}
-	}	
+	}
 }
 
 void CGatherer::Late_Tick(_float fTimeDelta)
@@ -189,10 +217,10 @@ void CGatherer::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRenderer)
 	{
-		//// 후클럼프(발광 버섯) 모델이 회랑에서 불린 경우, 다른 Renderer에 넣어준다.
-		//if (m_GatheringType == CGatherer::HORKLUMP)// && (_uint)m_iCurrentLevel == LEVEL_VAULT)
-		//	m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
-		//else
+		// 후클럼프(발광 버섯) 모델이 회랑에서 불린 경우, 다른 Renderer에 넣어준다.
+		if (m_GatheringType == CGatherer::HORKLUMP && (_uint)m_iCurrentLevel == LEVEL_VAULT)
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
+		else
 			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
 
@@ -242,14 +270,23 @@ HRESULT CGatherer::Render()
 		m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
 
 		// 후클럼프(발광 버섯) 모델이 회랑에서 불린 경우, Emissive 텍스처를 추가로 넣어준다.
-		if(m_GatheringType == CGatherer::HORKLUMP)// && (_uint)m_iCurrentLevel == LEVEL_VAULT)
+		if (m_GatheringType == CGatherer::HORKLUMP && (_uint)m_iCurrentLevel == LEVEL_VAULT)
 			m_pModel->Bind_Material(m_pShader, "g_EmissiveTexture", iMeshCount, EMISSIVE);
 
-		// 후클럼프(발광 버섯) 모델이 회랑에서 불린 경우, 다른 패스로 그려준다.
-		if (m_GatheringType == CGatherer::HORKLUMP)// && (_uint)m_iCurrentLevel == LEVEL_VAULT)
-			m_pShader->Begin("AnimMesh_E");
+		if (true == m_isDissolveStart)
+		{
+			if (FAILED(m_pShader->Begin("AnimMesh_Dissolve")))
+				return E_FAIL;
+		}
+
 		else
-			m_pShader->Begin("AnimMesh");
+		{
+			// 후클럼프(발광 버섯) 모델이 회랑에서 불린 경우, 다른 패스로 그려준다.
+			if (m_GatheringType == CGatherer::HORKLUMP && (_uint)m_iCurrentLevel == LEVEL_VAULT)
+				m_pShader->Begin("AnimMesh_E");
+			else
+				m_pShader->Begin("AnimMesh");
+		}	
 
 		if (FAILED(m_pModel->Render(iMeshCount)))
 			return E_FAIL;
@@ -275,6 +312,15 @@ HRESULT CGatherer::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMa
 		if (FAILED(m_pModel->Render(iMeshCount)))
 			return E_FAIL;
 	}
+
+	return S_OK;
+}
+
+HRESULT CGatherer::Make_Notifies()
+{
+	function<void()> Func = [&] { this->Gatherer_Dead(); };
+	if (FAILED(m_pModel->Bind_Notifies(TEXT("Gatherer_Dead"), Func)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -308,6 +354,14 @@ HRESULT CGatherer::Add_Components()
 		return E_FAIL;
 	}
 
+	m_pDissolveTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/VFX/Textures/Noises/VFX_T_NoiseGreypack02_D.png"));
+	if (nullptr == m_pDissolveTexture)
+	{
+		MSG_BOX("Failed CGatherer Add_Texture : (m_pDissolveTexture)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -323,6 +377,14 @@ HRESULT CGatherer::SetUp_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
+
+	if (nullptr != m_pDissolveTexture)
+	{
+		if (FAILED(m_pDissolveTexture->Bind_ShaderResources(m_pShader, "g_DissolveTexture")))
+			return E_FAIL;
+		if (FAILED(m_pShader->Bind_RawValue("g_fDissolveAmount", &m_fDissolveAmount, sizeof(_float))))
+			return E_FAIL;
+	}
 
 	ENDINSTANCE;
 
@@ -364,6 +426,11 @@ void CGatherer::Check_MinMaxPoint(_float3 vPoint)
 		m_vMaxPoint.z = vPoint.z;
 }
 
+void CGatherer::Gatherer_Dead()
+{
+	m_isDissolveStart = true;
+}
+
 CGatherer* CGatherer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CGatherer* pInstance = New CGatherer(pDevice, pContext);
@@ -393,9 +460,13 @@ void CGatherer::Free()
 {
 	__super::Free();
 
+	if (m_GatheringType == CGatherer::HORKLUMP)
+		Safe_Release(m_pLight_Horklump);
+
 	Safe_Release(m_pPlayer);
 	Safe_Release(m_pPlayerInformation);
 
+	Safe_Release(m_pDissolveTexture);
 	Safe_Release(m_pRigidBody);
 	Safe_Release(m_pShadowShader);
 	Safe_Release(m_pShader);

@@ -15,10 +15,10 @@ HRESULT CLevel_Smith::Initialize()
 {
 	std::lock_guard<std::mutex> lock(mtx);
 	FAILED_CHECK_RETURN(Ready_Lights(), E_FAIL);
-	FAILED_CHECK_RETURN(Ready_Layer_Monsters(TEXT("Layer_Monster")), E_FAIL);
+	//FAILED_CHECK_RETURN(Ready_Layer_Monsters(TEXT("Layer_Monster")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_UI(TEXT("Layer_UI")), E_FAIL);
-	FAILED_CHECK_RETURN(Ready_Event(TEXT("Layer_Event")), E_FAIL);
+	//FAILED_CHECK_RETURN(Ready_Event(TEXT("Layer_Event")), E_FAIL);
 
 	BEGININSTANCE;
 	pGameInstance->Reset_World_TimeAcc();
