@@ -620,10 +620,10 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Mask_Gardian/Mask_Gardian.dat"), TEXT("Mask_Gardian")))))
 			throw TEXT("Prototype_Component_MeshPart_Mask_Gardian");
 
-		/* For.Prototype_Component_MeshPart_Robe_MysticCape */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Robe_MysticCape"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Robe_MysticCape/Robe_MysticCape.dat"), TEXT("Robe_MysticCape")))))
-			throw TEXT("Prototype_Component_MeshPart_Robe_MysticCape");
+		///* For.Prototype_Component_MeshPart_Robe_MysticCape */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Robe_MysticCape"),
+		//	CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Robe_MysticCape/Robe_MysticCape.dat"), TEXT("Robe_MysticCape")))))
+		//	throw TEXT("Prototype_Component_MeshPart_Robe_MysticCape");
 #pragma endregion
 
 	}
