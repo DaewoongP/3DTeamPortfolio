@@ -221,6 +221,35 @@ PS_OUT PS_MAIN_DISSOLVE(PS_IN In)
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
 
     return Out;
+    
+    
+    //PS_OUT Out = (PS_OUT) 0;
+    
+    //vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+    //vector maskColor = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
+    //vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+    //float3 vNormal = vNormalDesc.xyz * 2.f - 1.f; // 0 ~ 1 -> -1 ~ 1
+    
+    //float3x3 WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal.xyz, In.vNormal.xyz);
+    //float fProgress = saturate(1.f - g_fDissolveTimeAcc);
+    //float fDissolveFactor = (maskColor.r - fProgress) / g_fThickness;
+    
+    //if (maskColor.r > fProgress + g_fThickness)
+    //{
+    //    discard;
+    //}
+    //else if (maskColor.r > fProgress)
+    //{
+    //    vDiffuse = lerp(vDiffuse, float4(1.0, 0.1, 0.1, 1.0), fDissolveFactor);
+    //}
+    
+    //vNormal = mul(vNormal, WorldMatrix);
+    
+    //Out.vDiffuse = vDiffuse;
+    //Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+    //Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
+
+    //return Out;
 }
 
 technique11 DefaultTechnique
