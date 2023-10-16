@@ -57,6 +57,9 @@ HRESULT CPensive::Initialize_Level(_uint iCurrentLevelIndex)
 	if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
 		return E_FAIL;
 
+	m_SwordOffsetMatrix[0] = _float4x4().MatrixTranslation(_float3(5, 0, 0));
+	m_SwordOffsetMatrix[1] = _float4x4().MatrixTranslation(_float3(-5, 0, 0));
+	m_SwordOffsetMatrix[2] = _float4x4().MatrixTranslation(_float3(0, 0, 0));
 	return S_OK;
 }
 
@@ -95,7 +98,7 @@ void CPensive::Set_Protego_Collision(CTransform* pTransform, ATTACKTYPE eType) c
 		m_pStateContext->Set_StateMachine(TEXT("Groogy"));
 		m_pModelCom->Change_Animation(TEXT("Stun_Start"));
 		//손에 있던 마법 터뜨려주기
-		m_pMagicBall_Fail->Set_MagicBallState(CMagicBall::MAGICBALL_STATE_DYING);
+		m_pMagicBall_Attack->Set_MagicBallState(CMagicBall::MAGICBALL_STATE_DYING);
 	}
 }
 
@@ -209,8 +212,40 @@ HRESULT CPensive::Make_Notifies()
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("OrbCreate"), Func)))
 		return E_FAIL;
 
-	Func = [&] {(*this).Next_Orb(); };
+	Func = [&] {(*this).Next_Attack(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("ShootOrb"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Attack_Shouting(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Shouting_Cast"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Next_Attack(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Explosion"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Attack_Throw_Sword(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Weapon_Sword_Create"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Attack_Throw_Sword(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Weapon_Sword_Create2"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Attack_Throw_Sword(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Weapon_Sword_Create3"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Next_SwordAttack(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Weapon_Sword_Throw"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Next_SwordAttack(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Weapon_Sword_Throw2"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Next_SwordAttack(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Weapon_Sword_Throw3"), Func)))
 		return E_FAIL;
 
 	return S_OK;
@@ -235,6 +270,28 @@ HRESULT CPensive::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = PENSIVE_FAIL_BALL;
+		magicInitDesc.fInitCoolTime = 1.f;
+		magicInitDesc.iDamage = 50;
+		magicInitDesc.isChase = false;
+		magicInitDesc.fLifeTime = 0.6f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+	{
+		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
+		magicInitDesc.eMagicType = CMagic::MT_ALL;
+		magicInitDesc.eMagicTag = PENSIVE_SHOUTING;
+		magicInitDesc.fInitCoolTime = 1.f;
+		magicInitDesc.iDamage = 50;
+		magicInitDesc.isChase = false;
+		magicInitDesc.fLifeTime = 0.6f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+	{
+		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
+		magicInitDesc.eMagicType = CMagic::MT_ALL;
+		magicInitDesc.eMagicTag = PENSIVE_SWORD_THROW;
 		magicInitDesc.fInitCoolTime = 1.f;
 		magicInitDesc.iDamage = 50;
 		magicInitDesc.isChase = false;
@@ -275,17 +332,20 @@ HRESULT CPensive::Add_Magic()
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, PENSIVE_GROUND_BALL);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, PENSIVE_FAIL_BALL);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(2, PROTEGO);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, PENSIVE_SHOUTING); 
+	m_pMagicSlot->Add_Magic_To_Basic_Slot(0, PENSIVE_SWORD_THROW);
 	return S_OK;
 }
 
 void CPensive::Attack_Ground()
 {
-	m_pMagicSlot->Action_Magic_Skill(0, m_pPlayer, m_pDragonHead[0], COLLISIONFLAG(COL_PLAYER | COL_SHIELD));
+	m_pMagicSlot->Action_Magic_Skill((_uint)0, m_pPlayer, m_pDragonHead[0], COLLISIONFLAG(COL_PLAYER | COL_SHIELD));
 	_float3 vAxis = _float3(1, 1, 1);
 
 	vAxis.Normalize();
 	BEGININSTANCE;
 	pGameInstance->Set_Shake(
+		(CCamera_Manager::SHAKE_PRIORITY)0,
 		(CCamera_Manager::SHAKE_TYPE)0,
 		(CCamera_Manager::SHAKE_AXIS)3,
 		(CEase::EASE)0,
@@ -299,16 +359,38 @@ void CPensive::Attack_Ground()
 
 void CPensive::Attack_Orb()
 {
-	m_pMagicBall_Fail = m_pMagicSlot->Action_Magic_Skill(1, m_pPlayer, m_pDragonHead[1], COLLISIONFLAG(COL_PLAYER | COL_SHIELD | COL_STATIC));
+	m_pMagicBall_Attack = m_pMagicSlot->Action_Magic_Skill((_uint)1, m_pPlayer, m_pDragonHead[1], COLLISIONFLAG(COL_PLAYER | COL_SHIELD | COL_STATIC));
 	m_pMagicSlot->Add_Magics(m_ProtegoInitDesc[rand()%3]);
-	m_pMagicBall_Protego = m_pMagicSlot->Action_Magic_Skill(2, m_pDragonHead[1], m_pDragonHead[1], COLLISIONFLAG(COL_MAGIC));
+	m_pMagicBall_Protego = m_pMagicSlot->Action_Magic_Skill((_uint)2, m_pDragonHead[1], m_pDragonHead[1], COLLISIONFLAG(COL_MAGIC));
 }
 
-void CPensive::Next_Orb()
+void CPensive::Attack_Shouting()
 {
-	if (m_pMagicBall_Fail != nullptr)
+	m_pMagicBall_Attack = m_pMagicSlot->Action_Magic_Skill((_uint)3, m_pPlayer, m_pDragonHead[0], COLLISIONFLAG(COL_PLAYER | COL_SHIELD | COL_STATIC));
+}
+
+void CPensive::Attack_Throw_Sword()
+{
+	m_pDragonHead[1]->Set_Offset_Matrix(m_SwordOffsetMatrix[m_iSwordIndex]);
+	m_pMagicBall_Sword[m_iSwordIndex++] = m_pMagicSlot->Action_Magic_Basic((_uint)0, m_pPlayer, m_pDragonHead[1], COLLISIONFLAG(COL_PLAYER | COL_SHIELD | COL_STATIC));
+	m_pDragonHead[1]->Set_Offset_Matrix(m_SwordOffsetMatrix[2]);
+	cout << m_iSwordIndex << "생성" << endl;
+}
+
+void CPensive::Next_Attack()
+{
+	if (m_pMagicBall_Attack != nullptr)
 	{
-		m_pMagicBall_Fail->Do_MagicBallState_To_Next();
+		m_pMagicBall_Attack->Do_MagicBallState_To_Next();
+	}
+}
+
+void CPensive::Next_SwordAttack()
+{
+	if (m_pMagicBall_Sword[--m_iSwordIndex] != nullptr)
+	{
+		m_pMagicBall_Sword[m_iSwordIndex]->Do_MagicBallState_To_Next();
+		cout << m_iSwordIndex  <<"담" << endl;
 	}
 }
 

@@ -68,33 +68,38 @@ void CPensive_Idle::OnStateTick(_float fTimeDelta)
 		switch (AttackAction)
 		{
 		case 0: //해머
-			if (*m_StateMachineDesc.pPhase == 2)
-			{
-				cout << "해머를 시전합니다" << endl;
-				Change_Animation(TEXT("Idle"));
-				Set_StateMachine(TEXT("Physical_Attack"));
-				break;
-			}
-			break;
-		case 1: // 땅밟기
-			cout << "땅밟기를 시전합니다." << endl;
-			Change_Animation(TEXT("Attack_Ground"));
+		//	if (*m_StateMachineDesc.pPhase == 2)
+		//	{
+		//		cout << "해머를 시전합니다" << endl;
+		//		Change_Animation(TEXT("Idle"));
+		//		Set_StateMachine(TEXT("Physical_Attack"));
+		//		break;
+		//	}
+		//	break;
+		//case 1: // 땅밟기
+		//	cout << "땅밟기를 시전합니다." << endl;
+		//	Change_Animation(TEXT("Attack_Ground"));
+		//	Set_StateMachine(TEXT("Physical_Attack"));
+		//	break;
+		//case 2: // 소드
+		//	if (*m_StateMachineDesc.pPhase == 2)
+		//	{
+		//		cout << "칼 공격을 실행합니다" << endl;
+		//		Change_Animation(TEXT("Idle"));
+		//		Set_StateMachine(TEXT("Physical_Attack"));
+		//		break;
+		//	}
+		//case 3: // 원기옥
+		//	cout << "원기옥을 실행합니다." << endl;
+		//	Change_Animation(TEXT("Attack_Orb_Start"));
+		//	Set_StateMachine(TEXT("Orb_Attack"));
+		//	break;
+		default:
+			cout << "칼 공격을 실행합니다" << endl;
+			Change_Animation(TEXT("Attack_Meteor"));
 			Set_StateMachine(TEXT("Physical_Attack"));
 			break;
-		case 2: // 소드
-			if (*m_StateMachineDesc.pPhase == 2)
-			{
-				cout << "칼 공격을 실행합니다" << endl;
-				Change_Animation(TEXT("Idle"));
-				Set_StateMachine(TEXT("Physical_Attack"));
-				break;
-			}
-		case 3: // 원기옥
-			cout << "원기옥을 실행합니다." << endl;
-			Change_Animation(TEXT("Attack_Orb_Start"));
-			Set_StateMachine(TEXT("Orb_Attack"));
-			break;
-		default:
+
 			cout << "안할건데?." << endl;
 			break;
 		}

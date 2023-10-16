@@ -730,9 +730,6 @@
     <Filter Include="02. GameObject\02. Enemy\07. Pensive\Weapon">
       <UniqueIdentifier>{fde3512d-c9d7-4f98-baac-ed8650da6e1a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\02. Enemy\07. Pensive\Pensive_Ground_Ball">
-      <UniqueIdentifier>{471c54cd-7a5b-4ece-8242-6d120e185254}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\05. Terrain\03. PlayerInformation">
       <UniqueIdentifier>{32c19ffc-fb69-42ca-ba81-07c40b9b305f}</UniqueIdentifier>
     </Filter>
@@ -748,8 +745,20 @@
     <Filter Include="98. Default\ImGui_Defaults">
       <UniqueIdentifier>{628cd336-ebfe-4860-bfac-014e7bec45d3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\02. Enemy\07. Pensive\Pensive_Fail_Ball">
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\Magic">
+      <UniqueIdentifier>{8a48c72f-dd17-4083-a311-ce1ed55419dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Ground_Ball">
+      <UniqueIdentifier>{471c54cd-7a5b-4ece-8242-6d120e185254}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Fail_Ball">
       <UniqueIdentifier>{004bb4c7-ceb5-4b1b-a29b-5f61f3bd54e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Shouting">
+      <UniqueIdentifier>{48067e46-a2b2-46de-a78c-45570d3e579b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\Magic\Pesnvie_Sword_Throw">
+      <UniqueIdentifier>{27da13f9-42b9-4e80-9179-08a514172efd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1485,7 +1494,7 @@
       <Filter>02. GameObject\02. Enemy\07. Pensive\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Pensive_Ground_Ball.h">
-      <Filter>02. GameObject\02. Enemy\07. Pensive\Pensive_Ground_Ball</Filter>
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Ground_Ball</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Blink_Effect.h">
       <Filter>04. Effect\Blink_Effect</Filter>
@@ -1494,7 +1503,13 @@
       <Filter>08. GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Pensive_Fail_Ball.h">
-      <Filter>02. GameObject\02. Enemy\07. Pensive\Pensive_Fail_Ball</Filter>
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Fail_Ball</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Shouting.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Shouting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Sword_Throw.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pesnvie_Sword_Throw</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2188,7 +2203,7 @@
       <Filter>02. GameObject\02. Enemy\07. Pensive\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Pensive_Ground_Ball.cpp">
-      <Filter>02. GameObject\02. Enemy\07. Pensive\Pensive_Ground_Ball</Filter>
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Ground_Ball</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Blink_Effect.cpp">
       <Filter>04. Effect\Blink_Effect</Filter>
@@ -2197,7 +2212,13 @@
       <Filter>08. GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Pensive_Fail_Ball.cpp">
-      <Filter>02. GameObject\02. Enemy\07. Pensive\Pensive_Fail_Ball</Filter>
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Fail_Ball</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Shouting.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Shouting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Sword_Throw.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pesnvie_Sword_Throw</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

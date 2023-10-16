@@ -48,6 +48,7 @@ CMeshEffect::CMeshEffect(const CMeshEffect& _rhs)
 	, m_strCurAnim(_rhs.m_strCurAnim)
 	, m_isGlow(_rhs.m_isGlow)
 	, m_isDistortion(_rhs.m_isDistortion)
+	, m_isDiffuse(_rhs.m_isDiffuse)
 {
 	for (_uint i = 0; i < PATH_END; ++i)
 		m_Path[i] = _rhs.m_Path[i];
@@ -213,10 +214,13 @@ void CMeshEffect::Late_Tick(_float _fTimeDelta)
 
 	if (nullptr != m_pRenderer)
 	{
-		if (true == m_isAlphaBlend)
-			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
-		else
-			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		if (m_isDiffuse)
+		{
+			if (true == m_isAlphaBlend)
+				m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
+			else
+				m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		}
 
 		if (m_isGlow)
 		{
@@ -405,6 +409,7 @@ HRESULT CMeshEffect::Save(const _tchar* pFilePath)
 	WriteFile(hFile, &m_fClipThreshold, sizeof(m_fClipThreshold), &dwByte, nullptr);
 	WriteFile(hFile, &m_isGlow, sizeof(m_isGlow), &dwByte, nullptr);
 	WriteFile(hFile, &m_isDistortion, sizeof(m_isDistortion), &dwByte, nullptr);
+	WriteFile(hFile, &m_isDiffuse, sizeof(m_isDiffuse), &dwByte, nullptr);
 	CloseHandle(hFile);
 
 	return S_OK;
@@ -465,6 +470,7 @@ HRESULT CMeshEffect::Load(const _tchar* pFilePath)
 	ReadFile(hFile, &m_fClipThreshold, sizeof(m_fClipThreshold), &dwByte, nullptr);
 	ReadFile(hFile, &m_isGlow, sizeof(m_isGlow), &dwByte, nullptr);
 	ReadFile(hFile, &m_isDistortion, sizeof(m_isDistortion), &dwByte, nullptr);
+	ReadFile(hFile, &m_isDiffuse, sizeof(m_isDiffuse), &dwByte, nullptr);
 	CloseHandle(hFile);
 
 	return S_OK;

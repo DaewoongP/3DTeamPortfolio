@@ -162,6 +162,7 @@ void CPensive_Fail_Ball::Ready_DrawMagic()
 
 void CPensive_Fail_Ball::Ready_CastMagic()
 {
+	m_vEndPosition = m_CurrentTargetMatrix.Translation();
 	m_ParticleVec[EFFECT_STATE_WAND][0]->Disable();
 	m_pTransform->Set_Position(m_vStartPosition);
 	m_fTimeScalePerDitance = 100 / _float3(m_vEndPosition - m_vStartPosition).Length();
@@ -202,6 +203,7 @@ void CPensive_Fail_Ball::Ready_Dying()
 	vAxis.Normalize();
 	BEGININSTANCE;
 	pGameInstance->Set_Shake(
+		(CCamera_Manager::SHAKE_PRIORITY)0,
 		(CCamera_Manager::SHAKE_TYPE)0,
 		(CCamera_Manager::SHAKE_AXIS)3,
 		(CEase::EASE)0,

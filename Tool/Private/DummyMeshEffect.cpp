@@ -130,6 +130,7 @@ void CDummyMeshEffect::Tick_Imgui(_float _fTimeDelta)
 		pEffectWindow->Table_ColorEdit4("End Color", "sfgnyn45634fg", &m_vEndColor);
 		pEffectWindow->Table_CheckBox("Glow", "dkvijies", &m_isGlow);
 		pEffectWindow->Table_CheckBox("Distortion", "ciceicjoeijdsfs", &m_isDistortion);
+		pEffectWindow->Table_CheckBox("Diffuse", "dkssudgktpdyqksrkqtmtqslek", &m_isDiffuse);
 		ImGui::Separator();
 
 		ImGui::EndTable();

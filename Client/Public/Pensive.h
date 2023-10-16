@@ -47,21 +47,26 @@ private:
 	CMagicSlot*				m_pMagicSlot = { nullptr };
 	CWeapon_Dragon_Head*	m_pDragonHead[3] = { nullptr };
 
-	CMagic::MAGICDESC		m_ProtegoInitDesc[3] = {};
-
-	CMagicBall*				m_pMagicBall_Fail = { nullptr };
+	CMagicBall*				m_pMagicBall_Attack = { nullptr };
 	CMagicBall*				m_pMagicBall_Protego = { nullptr };
+	CMagicBall*				m_pMagicBall_Sword[3] = { nullptr };
 
 private:
 	CStateMachine_Enemy::STATEMACHINEDESC m_StateMachineDesc = { CStateMachine_Enemy::STATEMACHINEDESC() };
 
 	_uint m_iPhase = { 1 };
+	_uint m_iSwordIndex = { 0 };
 	_uint m_iAttackType = { ATTACK_END };
+	CMagic::MAGICDESC		m_ProtegoInitDesc[3] = {};
+	_float4x4 m_SwordOffsetMatrix[3] = {};
 
 private:
 	void	Attack_Ground();
 	void	Attack_Orb();
-	void	Next_Orb();
+	void	Attack_Shouting();
+	void	Attack_Throw_Sword();
+	void	Next_Attack();
+	void	Next_SwordAttack();
 
 private:
 	HRESULT Add_Components();

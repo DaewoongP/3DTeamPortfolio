@@ -40,6 +40,7 @@ void CPensive_Groogy::Late_Tick(_float fTimeDelta)
 
 void CPensive_Groogy::OnStateEnter(void* _pArg)
 {
+	m_iMotionIndex = 0;
 }
 
 void CPensive_Groogy::OnStateTick()
@@ -53,7 +54,7 @@ void CPensive_Groogy::OnStateTick()
 		{
 			cout << "기지개를 실행합니다." << endl;
 			*m_StateMachineDesc.pAttackType = CPensive::ATTACK_SCREAM;
-			Change_Animation(m_wszAnimationTag[m_iMotionIndex]);
+			Change_Animation((m_wszAnimationTag[m_iMotionIndex]));
 			Set_StateMachine(TEXT("Physical_Attack"));
 		}
 	}
