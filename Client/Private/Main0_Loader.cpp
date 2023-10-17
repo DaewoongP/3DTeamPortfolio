@@ -87,6 +87,7 @@
 #include "Trigger_Vault.h"
 #include "Phase.h"
 #include "Cylinder.h"
+#include "Water.h"
 
 #include "Event_Vault_Spawn.h"
 #include "Event_Smeade.h"
@@ -223,6 +224,10 @@ HRESULT CMain0_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 		return E_FAIL;
 	try /* Failed Check Add_Prototype*/
 	{
+		/* For.Prototype_GameObject_Water */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Water"),
+			CWater::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Water");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -525,10 +530,15 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 				CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Terrain.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
 				throw TEXT("Prototype_Component_Shader_Terrain");
 
-			/* For.Prototype_Component_Shader_Terrain */
+			/* For.Prototype_Component_Shader_Debug */
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_Debug"),
 				CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Debug.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
 				throw TEXT("Prototype_Component_Shader_Debug");
+			
+			/* For.Prototype_Component_Shader_Water */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_Water"),
+				CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Water.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements))))
+				throw TEXT("Prototype_Component_Shader_Water");
 
 			/* Prototype_Component_Shader_DefaultEffect */
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_DefaultEffect"),
@@ -539,24 +549,22 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 
 #pragma region Load ETC
 
-		{
-			/* --------------ETC-------------- */
+		/* --------------ETC-------------- */
 		/* For.Prototype_Component_Health*/
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Health"),
-				CHealth::Create(m_pDevice, m_pContext))))
-				throw TEXT("Prototype_Component_Health");
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Health"),
+			CHealth::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Health");
 
-			/* For.Prototype_Component_RigidBody */
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RigidBody"),
-				CRigidBody::Create(m_pDevice, m_pContext))))
-				throw TEXT("Prototype_Component_RigidBody");
+		/* For.Prototype_Component_RigidBody */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RigidBody"),
+			CRigidBody::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_RigidBody");
 
-			/* For.Prototype_Component_RadialBlur */
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RadialBlur"),
-				CRadialBlur::Create(m_pDevice, m_pContext))))
-				throw TEXT("Prototype_Component_RadialBlur");
-		}
-
+		/* For.Prototype_Component_RadialBlur */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RadialBlur"),
+			CRadialBlur::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_RadialBlur");
+		
 		/* Prototype_Component_Model_Shpere */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Shpere"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat")))))

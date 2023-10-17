@@ -83,6 +83,9 @@ HRESULT CLevel_Cliffside::Ready_Layer_BackGround(const _tchar* pLayerTag)
 
 	FAILED_CHECK_RETURN(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, 
 		TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky")), E_FAIL)
+		
+	FAILED_CHECK_RETURN(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE,
+		TEXT("Prototype_GameObject_Water"), pLayerTag, TEXT("GameObject_Water")), E_FAIL)
 
 	FAILED_CHECK_RETURN(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData0.ddd")), E_FAIL);
 	FAILED_CHECK_RETURN(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins0.ddd")), E_FAIL);

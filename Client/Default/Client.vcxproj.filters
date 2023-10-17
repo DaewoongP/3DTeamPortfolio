@@ -757,6 +757,9 @@
     <Filter Include="02. GameObject\03. PlayerInformation">
       <UniqueIdentifier>{32c19ffc-fb69-42ca-ba81-07c40b9b305f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\11. Water">
+      <UniqueIdentifier>{1b33b363-0555-47c0-bfe6-21b18984e66b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1505,6 +1508,9 @@
     <ClInclude Include="..\public\Game_Manager.h">
       <Filter>08. GameManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Water.h">
+      <Filter>02. GameObject\11. Water</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2211,6 +2217,9 @@
     <ClCompile Include="..\private\Game_Manager.cpp">
       <Filter>08. GameManager</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Water.cpp">
+      <Filter>02. GameObject\11. Water</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2272,6 +2281,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ImpulseSphere.hlsl">
       <Filter>04. Effect\BoneDragon\ImpulseSphere</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Water.hlsl">
+      <Filter>97. ShaderFiles\Textures</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

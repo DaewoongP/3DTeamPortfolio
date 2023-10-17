@@ -8,7 +8,6 @@
 /* =============================================== */
 
 #include "PipeLine.h"
-#include "Time_Manager.h"
 #include "Input_Device.h"
 #include "Light_Manager.h"
 #include "PhysX_Manager.h"
