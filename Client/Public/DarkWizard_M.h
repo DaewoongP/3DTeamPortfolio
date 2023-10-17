@@ -9,6 +9,7 @@ BEGIN(Engine)
 class CSequence;
 class CSelector;
 class CRandomChoose;
+class CCamera_Shake;
 END
 
 BEGIN(Client)
@@ -47,6 +48,13 @@ private:
 	CMagicBall* m_CastingMagic = { nullptr };
 
 	mutable _float m_fProtegoCoolTime = { 0.f };
+
+	//카메라 쉐이크 노티파이에 함수를 넣기 위한 클래스
+	CCamera_Shake* m_pDescendo_Shake = { nullptr };
+
+private:
+	virtual HRESULT Add_Components_for_Shake();
+	virtual HRESULT Make_Notifies_for_Shake();
 
 private:
 	HRESULT Make_AI();

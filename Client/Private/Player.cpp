@@ -341,6 +341,8 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	{
 		if (true == m_pTarget->isDead())
 		{
+			pGameInstance->Set_SlowTime(TEXT("MainTimer"), 0.2f, 0.2f);
+
 			Safe_Release(m_pTargetTransform);
 			Safe_Release(m_pTarget);
 			m_pTargetTransform = nullptr;
@@ -2589,8 +2591,7 @@ void CPlayer::Finish_Animation()
 
 void CPlayer::Go_Roll(void* _pArg)
 {
-	if (true == m_isBlink ||
-		(true == m_pPlayer_Camera->Is_Finish_Animation() &&
+	if ((true == m_pPlayer_Camera->Is_Finish_Animation() &&
 			(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
 				m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
 				m_pStateContext->Is_Current_State(TEXT("Move Start")) ||

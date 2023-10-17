@@ -78,12 +78,12 @@ void CProtegoState::OnStateEnter(void* _pArg)
 			//쉐이크를 위한 변수
 
 			//타겟을 향한 방향
-			_float3 vAxisForTarget = m_StateMachineDesc.pPlayerTransform->Get_Look();
+			_float3 vAxisForTarget = *pGameInstance->Get_CamLook();
 
 			vAxisForTarget.Normalize();
 
 			//맞은 타입에 따른 파워
-			_float fPower = 0.025f;
+			_float fPower = 0.1f;
 
 
 			//강하게 맞았냐 약하게 맞았냐
@@ -95,7 +95,19 @@ void CProtegoState::OnStateEnter(void* _pArg)
 				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_anm"));
 				Change_Animation(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_anm"), false);
 
-				fPower *= 2.0f;
+				// maintimer를 0.2배속으로 0.4초동안 처리하겠다
+				pGameInstance->Set_SlowTime(TEXT("MainTimer"), 0.2f, 0.4f);
+
+				pGameInstance->Set_Shake(
+					CCamera_Manager::SHAKE_PRIORITY_2,
+					CCamera_Manager::SHAKE_TYPE_TRANSLATION,
+					CCamera_Manager::SHAKE_AXIS_SET,
+					CEase::IN_EXPO,
+					12.5f,
+					0.08f,
+					fPower,
+					CCamera_Manager::SHAKE_POWER_DECRECENDO,
+					-vAxisForTarget);
 			}
 			break;
 			case HIT_HEABY:
@@ -105,23 +117,27 @@ void CProtegoState::OnStateEnter(void* _pArg)
 				Change_Animation(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_Slide_anm"), false);
 				
 				fPower *= 5.0f;
+
+				// maintimer를 0.2배속으로 0.4초동안 처리하겠다
+				pGameInstance->Set_SlowTime(TEXT("MainTimer"), 0.2f, 1.0f);
+
+				pGameInstance->Set_Shake(
+					CCamera_Manager::SHAKE_PRIORITY_2,
+					CCamera_Manager::SHAKE_TYPE_TRANSLATION,
+					CCamera_Manager::SHAKE_AXIS_SET,
+					CEase::IN_EXPO,
+					5.0f,
+					0.2f,
+					fPower,
+					CCamera_Manager::SHAKE_POWER_DECRECENDO,
+					-vAxisForTarget);
 			}
 			break;
 			default:
 				break;
 			}
 
-			// maintimer를 0.2배속으로 0.3초동안 처리하겠다
-			pGameInstance->Set_SlowTime(TEXT("MainTimer"), 0.2f, 0.3f);
-			pGameInstance->Set_Shake(
-				CCamera_Manager::SHAKE_TYPE_TRANSLATION,
-				CCamera_Manager::SHAKE_AXIS_SET,
-				CEase::IN_EXPO,
-				2.5f,
-				0.4f,
-				fPower,
-				CCamera_Manager::SHAKE_POWER_DECRECENDO,
-				-vAxisForTarget);
+			
 
 			ENDINSTANCE;
 		}

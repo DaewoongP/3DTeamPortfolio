@@ -883,7 +883,6 @@ void CCamera_Manager::Shake_Update(_float _TimeDelta)
 	_float3 vAt = vEye + Cam_Matrix.Look();
 	_float3 vUp = Cam_Matrix.Up();
 	vUp.Normalize();
-
 	m_pPipeLine->Set_Transform(CPipeLine::D3DTS_VIEW, XMMatrixLookAtLH(vEye, vAt, vUp));
 }
 

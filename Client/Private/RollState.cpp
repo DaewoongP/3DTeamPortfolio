@@ -135,6 +135,7 @@ void CRollState::OnStateEnter(void* _pArg)
 		m_pRenderer->Set_ScreenRadial(true, 0.5f, 0.05f);
 		
 		pGameInstance->Set_Shake(
+			CCamera_Manager::SHAKE_PRIORITY_2,
 			CCamera_Manager::SHAKE_TYPE_ROTATION, 
 			CCamera_Manager::SHAKE_AXIS_LOOK,
 			CEase::IN_EXPO,
@@ -202,6 +203,7 @@ void CRollState::OnStateTick()
 			Change_Animation(TEXT("Blink_Start"));
 
 			pGameInstance->Set_Shake(
+				CCamera_Manager::SHAKE_PRIORITY_2,
 				CCamera_Manager::SHAKE_TYPE_ROTATION,
 				CCamera_Manager::SHAKE_AXIS_LOOK,
 				CEase::IN_EXPO,

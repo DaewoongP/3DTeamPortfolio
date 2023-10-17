@@ -521,6 +521,42 @@ void CMagicBall::Set_StartPosition()
 	m_vStartPosition = m_CurrentWeaponMatrix.Translation();
 }
 
+void CMagicBall::Ready_Shake(_float _fMax, _float _fMin, _float _fPower)
+{
+	m_fMaxCameraShakeDistance = _fMax;
+	m_fMinCameraShakeDistance = _fMin;
+	m_fShakePower = _fPower;
+}
+
+_float CMagicBall::Shake_Power(_float3 _vPosition)
+{
+	BEGININSTANCE;
+
+	_float fDistance = XMVectorGetX(XMVector3Length(pGameInstance->Get_CamPosition()->xyz() - _vPosition));
+
+	if (m_fMinCameraShakeDistance >= fDistance)
+	{
+		m_fDistanceRatio = 1.0f;
+	}
+	else if (m_fMaxCameraShakeDistance <= fDistance)
+	{
+		m_fDistanceRatio = 0.0f;
+	}
+	else
+	{
+		fDistance -= m_fMinCameraShakeDistance;
+		_float fRatioDistance = m_fMaxCameraShakeDistance - m_fMinCameraShakeDistance;
+
+		m_fDistanceRatio = 1.0f - fDistance / fRatioDistance;
+	}
+
+	ENDINSTANCE;
+
+	return m_fDistanceRatio * m_fShakePower;
+}
+
+
+
 void CMagicBall::Re_Set_StartEndLerpAcc(_float3 vStart, _float3 vDir)
 {
 	m_vStartPosition = vStart;

@@ -153,6 +153,14 @@ protected:
 protected:
 	_float4					m_vLightColor = {};
 
+
+//쉐이크 파워 계산(장현우)
+protected:
+	_float					m_fMaxCameraShakeDistance = { 0.0f };
+	_float					m_fMinCameraShakeDistance = { 0.0f };
+	_float					m_fDistanceRatio = { 0.0f };
+	_float					m_fShakePower = { 0.0f };
+
 protected:
 	//모든 이펙트 비활성화
 	virtual void Ready_Begin();
@@ -174,6 +182,14 @@ protected:
 
 	void Tick_MagicBall_State(_float fTimeDelta);
 	void Set_StartPosition();
+
+//쉐이크 파워 계산(장현우)
+protected:
+	//Min, Max, Power
+	void Ready_Shake(_float _fMax, _float _fMin, _float _fPower);
+	//Power
+	_float Shake_Power(_float3 _vPosition);
+
 	
 protected:
 	HRESULT Add_Components();

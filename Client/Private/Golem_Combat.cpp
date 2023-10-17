@@ -4,6 +4,8 @@
 
 #include "Weapon_Golem_Combat.h"
 
+#include "Camera_Shake.h"
+
 #include "Wait.h"
 #include "Death.h"
 #include "Action.h"
@@ -47,6 +49,9 @@ HRESULT CGolem_Combat::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	if (FAILED(Add_Components_for_Shake()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -67,6 +72,9 @@ HRESULT CGolem_Combat::Initialize_Level(_uint iCurrentLevelIndex)
 		return E_FAIL;
 
 	if (FAILED(Make_Notifies()))
+		return E_FAIL;
+
+	if (FAILED(Make_Notifies_for_Shake()))
 		return E_FAIL;
 
 	if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
@@ -195,6 +203,62 @@ HRESULT CGolem_Combat::Render()
 		MSG_BOX("[CGolem_Combat] Failed Render");
 		return E_FAIL;
 	}
+
+	return S_OK;
+}
+
+HRESULT CGolem_Combat::Add_Components_for_Shake()
+{
+	try
+	{
+		CCamera_Shake::CAMERA_SHAKE_DESC Camera_Shake_Desc = { CCamera_Shake::CAMERA_SHAKE_DESC() };
+
+		_float fMaxDistance = { 15.0f };
+		_float fMinDistance = { 2.0f };
+
+
+		Camera_Shake_Desc.eShake_Priority = CCamera_Manager::SHAKE_PRIORITY_1;
+		Camera_Shake_Desc.isDistanceOption = true;
+		Camera_Shake_Desc.pTransform = m_pTransform;
+		Camera_Shake_Desc.Shake_Info_Desc.eEase = CEase::INOUT_EXPO;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Axis = CCamera_Manager::SHAKE_AXIS_UP;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Power = CCamera_Manager::SHAKE_POWER_DECRECENDO;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Type = CCamera_Manager::SHAKE_TYPE_TRANSLATION;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakeDuration = 1.0f;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakePower = 0.1f;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakeSpeed = 15.0f;
+		Camera_Shake_Desc.Shake_Info_Desc.vShake_Axis_Set = _float3();
+
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Enemy_Camera_Shake"),
+			TEXT("Com_Step_Shake"), reinterpret_cast<CComponent**>(&m_pDescendo_Shake), &Camera_Shake_Desc)))
+			throw TEXT("Com_Step_Shake");
+
+		m_pDescendo_Shake->Ready_Shake(fMaxDistance, fMinDistance, Camera_Shake_Desc.Shake_Info_Desc.fShakePower);
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Add_Components : ");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
+
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CGolem_Combat::Make_Notifies_for_Shake()
+{
+	if (nullptr == m_pDescendo_Shake)
+	{
+		MSG_BOX("Failed Make_Notifies_for_Shake");
+		return E_FAIL;
+	}
+
+	function<void()> func = [&] {m_pDescendo_Shake->RandomUpAxisShake(); };
+
+	m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Descendo"), func);
 
 	return S_OK;
 }
@@ -1553,5 +1617,6 @@ void CGolem_Combat::Free()
 	{
 		Safe_Release(m_pWeapon);
 		Safe_Release(m_pUI_Damage);
+		Safe_Release(m_pDescendo_Shake);
 	}
 }

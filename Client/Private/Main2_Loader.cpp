@@ -23,6 +23,8 @@
 #include "Weapon_Player_Wand.h"
 #pragma endregion Weapon
 
+#include "Camera_Shake.h"
+
 
 #pragma region Weapon
 #include "Pensive.h"
@@ -473,8 +475,13 @@ HRESULT CMain2_Loader::Loading_For_Sky(LEVELID eLevelID)
 
 HRESULT CMain2_Loader::Loading_For_Static(LEVELID eLevelID)
 {
+
 	try 
 	{
+		/* For.Prototype_Component_Enemy_Camera_Shake*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Enemy_Camera_Shake"),
+			CCamera_Shake::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Enemy_Camera_Shake");
 	}
 	catch (const _tchar* pErrorTag)
 	{
