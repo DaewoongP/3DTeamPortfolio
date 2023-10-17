@@ -172,6 +172,7 @@
     <ClInclude Include="..\public\AshwinderEggs_Item.h" />
     <ClInclude Include="..\Public\Blink_Effect.h" />
     <ClInclude Include="..\Public\Bombarda.h" />
+    <ClInclude Include="..\public\Breath_Effect.h" />
     <ClInclude Include="..\Public\Broom_Begin.h" />
     <ClInclude Include="..\Public\Broom_Break.h" />
     <ClInclude Include="..\Public\Broom_End.h" />
@@ -446,6 +447,7 @@
     <ClCompile Include="..\Private\AshwinderEggs_Item.cpp" />
     <ClCompile Include="..\Private\Blink_Effect.cpp" />
     <ClCompile Include="..\Private\Bombarda.cpp" />
+    <ClCompile Include="..\private\Breath_Effect.cpp" />
     <ClCompile Include="..\Private\Broom_Begin.cpp" />
     <ClCompile Include="..\Private\Broom_Break.cpp" />
     <ClCompile Include="..\Private\Broom_End.cpp" />

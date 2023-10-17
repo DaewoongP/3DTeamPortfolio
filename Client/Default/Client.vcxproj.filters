@@ -757,6 +757,9 @@
     <Filter Include="98. Default\ImGui_Defaults">
       <UniqueIdentifier>{628cd336-ebfe-4860-bfac-014e7bec45d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04. Effect\BoneDragon\Breath_Effect">
+      <UniqueIdentifier>{c87cb9f8-370f-4fca-be76-5dda19a43cb1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1505,6 +1508,9 @@
     <ClInclude Include="..\public\Game_Manager.h">
       <Filter>08. GameManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Breath_Effect.h">
+      <Filter>04. Effect\BoneDragon\Breath_Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2210,6 +2216,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Game_Manager.cpp">
       <Filter>08. GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Breath_Effect.cpp">
+      <Filter>04. Effect\BoneDragon\Breath_Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

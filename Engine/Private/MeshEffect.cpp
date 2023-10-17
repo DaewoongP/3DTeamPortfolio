@@ -46,6 +46,8 @@ CMeshEffect::CMeshEffect(const CMeshEffect& _rhs)
 	, m_isClipTexture(_rhs.m_isClipTexture)
 	, m_PivotMatrix(_rhs.m_PivotMatrix)
 	, m_strCurAnim(_rhs.m_strCurAnim)
+	, m_isGlow(_rhs.m_isGlow)
+	, m_isDistortion(_rhs.m_isDistortion)
 {
 	for (_uint i = 0; i < PATH_END; ++i)
 		m_Path[i] = _rhs.m_Path[i];
@@ -58,7 +60,7 @@ CMeshEffect::~CMeshEffect()
 
 }
 
-HRESULT CMeshEffect::Initialize_Prototype(const _tchar* pFilePath, _uint _iLevel)
+HRESULT CMeshEffect::Initialize_Prototype(const _tchar* pFilePath, _uint _iLevel, _float4x4 PivotMatrix)
 {
 	__super::Initialize_Prototype();
 	// 여기서 m_Path로드해주기.
@@ -71,6 +73,7 @@ HRESULT CMeshEffect::Initialize_Prototype(const _tchar* pFilePath, _uint _iLevel
 		}
 	}
 
+	m_PivotMatrix = PivotMatrix;
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
@@ -146,7 +149,7 @@ void CMeshEffect::Tick(_float _fTimeDelta)
 	m_vOffset.x += m_vDeltaOffset.x * _fTimeDelta;
 	m_vOffset.y += m_vDeltaOffset.y * _fTimeDelta;
 	m_vTililing.x += m_vDeltaTiling.x * _fTimeDelta;
-	m_vTililing.x += m_vDeltaTiling.y * _fTimeDelta;
+	m_vTililing.y += m_vDeltaTiling.y * _fTimeDelta;
 
 	_float fRatio = m_fAge / m_fLifeTime;
 
@@ -466,11 +469,11 @@ HRESULT CMeshEffect::Load(const _tchar* pFilePath)
 
 	return S_OK;
 }
-CMeshEffect* CMeshEffect::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* pFilePath, _uint _iLevel)
+CMeshEffect* CMeshEffect::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* pFilePath, _uint _iLevel, _float4x4 PivotMatrix)
 {
 	CMeshEffect* pInstance = New CMeshEffect(_pDevice, _pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(pFilePath, _iLevel)))
+	if (FAILED(pInstance->Initialize_Prototype(pFilePath, _iLevel, PivotMatrix)))
 	{
 		MSG_BOX("Failed to Created CMeshEffect");
 		Safe_Release(pInstance);

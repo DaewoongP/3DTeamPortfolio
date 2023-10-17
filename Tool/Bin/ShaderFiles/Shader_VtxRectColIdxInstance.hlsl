@@ -98,7 +98,7 @@ VS_OUT VS_MAIN(VS_IN In)
 	VS_OUT			Out = (VS_OUT)0;
 
 	VS_Module(In, Out);
-
+	
 	return Out;
 }
 VS_OUT VS_TS_MAIN(VS_IN In)
@@ -295,15 +295,13 @@ technique11		DefaultTechnique
 
 
 
-
-
-
-
 void VS_Module(VS_IN In, inout VS_OUT Out)
 {
 	VS_MainModule(In, Out);
 	VS_TextureSheetAnimationModule(In, Out);
 	//VS_NoiseModule(In, Out);
+
+	TilingAndOffset_float(Out.vTexUV, g_vTililing, g_vOffset, Out.vTexUV);
 
 }
 void PS_Module(PS_IN In, inout PS_OUT Out)

@@ -23,6 +23,7 @@ class CBreath;
 class CMagicSlot;
 class CEnergyBall;
 class CWeapon_Dragon_Head;
+class CImpulseSphere_Effect;
 END
 
 BEGIN(Client)
@@ -97,13 +98,17 @@ private:
 	CMagicSlot* m_pMagicSlot = { nullptr };
 	CWeapon_Dragon_Head* m_pWeapon = { nullptr };
 
-private:
-	_float3 vOffsetPos = { _float3() };
+private: // For. Effect
+	_float3 m_vOffsetPos = { _float3() }; 
+	_float3 m_vHeadPosition = { _float3() };
+	CImpulseSphere_Effect* m_pEffect_ImpulseSphere = { nullptr };
+	CBreath_Effect* m_pEffect_Breath = { nullptr };
 	CParticleSystem* m_pEffect_BlackSmokeIdle = { nullptr };
 	CParticleSystem* m_pEffect_Pulse_Charge = { nullptr };
 	CParticleSystem* m_pEffect_Pulse_CircleEmit = { nullptr };
 	CParticleSystem* m_pEffect_Pulse_Rock = { nullptr };
 	CParticleSystem* m_pEffect_Pulse_SplashWater= { nullptr };
+	CParticleSystem* m_pEffect_Pulse_BoomWispy = { nullptr };
 
 private:
 	HRESULT Make_AI();
@@ -150,6 +155,8 @@ private: /* Notify Func */
 	void Off_Breath();
 	void Action_Pulse();
 	void Pulse_Charge();
+	void Pulse_StopCharge();
+
 public:
 	static CConjuredDragon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CConjuredDragon* Clone(void* pArg) override;

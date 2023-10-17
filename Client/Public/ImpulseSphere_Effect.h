@@ -8,8 +8,11 @@ class CRenderer;
 class CTexture;
 class CShader;
 class CVIBuffer;
+class CParticleSystem;
 END
 BEGIN(Client)
+
+
 class CImpulseSphere_Effect : public CGameObject
 {
 private:
@@ -25,7 +28,7 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	void Play(_float3 vPos);
+	void Play(_float3 vPos, _float fTerrainYPos = -34.f);
 	void Stop();
 	void Reset();
 
@@ -39,12 +42,27 @@ public:
 	CShader* m_pShader = { nullptr };
 	CVIBuffer* m_pVIBuffer = { nullptr };
 	CCoolTime* m_pCoolTime = { nullptr };
+	CTexture* m_pNoiseTexture = { nullptr };
+	
+private:
+	CParticleSystem* m_pPulse_Rock_Particle = { nullptr };
+	CParticleSystem* m_pPulse_SplashWater_Particle = { nullptr };
+	CParticleSystem* m_pPulse_SplashWater2_Particle = { nullptr };
+	CParticleSystem* m_pPulse_GlowSphere_Particle = { nullptr };
 
 private:
-	_float4 m_vColor = { 1.f, 0.6f, 0.6f, 1.f };
+	_float m_fCircleOffset = { 2.f };
+	_float4 m_vColor = { 1.f, 0.376f, 0.376f, 1.f };
 	_bool m_isEnable = { false };
 	_float m_fScale = { 0.f };
-	_float m_fRimPower = { 0.34f };
+	_float m_fFresnelPower = { 0.84f };
+	_float m_fEmissivePower = { 0.6f };
+	_float m_fRatio = { 11.1f };
+	_float m_fTerrainYPos;
+	_float m_fHeight = { 0.f };
+	_float m_fCircleRadius = { 0.f };
+	_bool m_isTouchGround = { false };
+	_bool m_isStart = { false };
 
 private:
 	_uint m_iLevel = { 0 };

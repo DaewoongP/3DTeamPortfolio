@@ -36,7 +36,6 @@
 #include "UI_Dynamic_Back.h"
 #include "UI_Damage.h"
 #include "UI_Store.h"
-
 #pragma endregion UI
 
 #pragma region Effects
@@ -50,7 +49,6 @@
 #include "Breath.h"
 #include "Pulse.h"
 #include "RadialBlur.h"
-#include "ImpulseSphere_Effect.h"
 #pragma endregion Effects
 
 #pragma region Magic
@@ -306,11 +304,6 @@ HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Pulse"),
 			CPulse::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Pulse");
-
-		/* Prototype_GameObject_Pulse */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Impulse_Effect"),
-			CImpulseSphere_Effect::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_Impulse_Effect");
 	}
 	catch (const _tchar* pErrorTag)
 	{

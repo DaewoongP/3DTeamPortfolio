@@ -28,7 +28,7 @@ public:
 	void Set_Path(wstring wstrPath, PATH ePath);
 
 public:
-	virtual HRESULT Initialize_Prototype(const _tchar* pFilePath, _uint _iLevel);
+	virtual HRESULT Initialize_Prototype(const _tchar* pFilePath, _uint _iLevel, _float4x4 PivotMatrix = _float4x4());
 	virtual HRESULT Initialize(void* _pArg) override;
 	void Tick(_float _fTimeDelta) override;
 	void Late_Tick(_float _fTimeDelta) override;
@@ -37,7 +37,6 @@ public:
 	
 	void Play(_float3 vPos);
 	void Stop();
-
 private:
 	void Reset();
 
@@ -112,7 +111,7 @@ protected:
 	CRenderer* m_pRenderer = { nullptr };
 
 public:
-	static CMeshEffect* Create(ID3D11Device * _pDevice, ID3D11DeviceContext * _pContext, const _tchar* pFilePath, _uint _iLevel = 0);
+	static CMeshEffect* Create(ID3D11Device * _pDevice, ID3D11DeviceContext * _pContext, const _tchar* pFilePath, _uint _iLevel = 0, _float4x4 PivotMatrix = _float4x4());
 	virtual CGameObject* Clone(void* _pArg) override;
 	virtual void Free() override;
 };
