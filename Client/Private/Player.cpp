@@ -192,7 +192,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(94.5f, 7.2f, 78.f); // ���� �����̼� �ٷ� ��
 	m_vLevelInitPosition[LEVEL_SKY] = _float3(88.8f, 12.5f, 69.8f); // ���� �����̼� �ٷ� ��
 
-	m_fTargetViewRange = 1.0f;
+	m_fTargetViewRange = 2.0f;
 
 
 	//m_vecEaseList.resize(CEase::EASE_END);
