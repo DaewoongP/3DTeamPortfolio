@@ -84,7 +84,7 @@ HRESULT CGull::Initialize_Level(_uint iCurrentLevelIndex)
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 	{
-		MSG_BOX("Failed CDoor Add_Component : (Com_RigidBody)");
+		MSG_BOX("Failed CGull Add_Component : (Com_RigidBody)");
 		__debugbreak();
 		return E_FAIL;
 	}

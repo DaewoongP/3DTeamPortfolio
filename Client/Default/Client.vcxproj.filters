@@ -757,6 +757,9 @@
     <Filter Include="02. GameObject\03. PlayerInformation">
       <UniqueIdentifier>{32c19ffc-fb69-42ca-ba81-07c40b9b305f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Anim_Obj\Cat">
+      <UniqueIdentifier>{b02c580a-c572-4721-bee8-44c0daa7f30e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1505,6 +1508,9 @@
     <ClInclude Include="..\public\Game_Manager.h">
       <Filter>08. GameManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Cat.h">
+      <Filter>02. GameObject\03. MapObject\Anim_Obj\Cat</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2210,6 +2216,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Game_Manager.cpp">
       <Filter>08. GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cat.cpp">
+      <Filter>02. GameObject\03. MapObject\Anim_Obj\Cat</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
