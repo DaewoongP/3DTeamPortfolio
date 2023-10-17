@@ -110,7 +110,7 @@ HRESULT CPensive_Fail_Ball::Initialize(void* pArg)
 		return E_FAIL;
 	}
 	m_pTransform->Set_Speed(100);
-	m_vLightColor = _float4(1, 0, 0, 1);
+	m_vLightColor = _float4(1, 1, 1, 1);
 	return S_OK;
 }
 
@@ -146,6 +146,7 @@ HRESULT CPensive_Fail_Ball::Reset(MAGICBALLINITDESC& InitDesc)
 	m_ParticleVec[EFFECT_STATE_HIT][2]->Get_ShapeModuleRef().vLength.y = 0;
 	m_ParticleVec[EFFECT_STATE_HIT][2]->Get_VelocityOverLifetimeModuleRef().vLinearMin.y = 5.f;
 	m_ParticleVec[EFFECT_STATE_HIT][2]->Get_VelocityOverLifetimeModuleRef().vLinearMax.y = 5.f;
+	ADD_INCREASE_LIGHT(m_vStartPosition, 5.f, 4.f, m_vLightColor,true,3.f);
 	return S_OK;
 }
 
@@ -212,7 +213,7 @@ void CPensive_Fail_Ball::Ready_Dying()
 		0.2f,
 		(CCamera_Manager::SHAKE_POWER)1,
 		vAxis);
-	pGameInstance->Add_InstanceLight(m_pMeshEffect->Get_Transform()->Get_Position(), 60.f, 0.6f, m_vLightColor);
+	pGameInstance->Add_InstanceLight(m_pMeshEffect->Get_Transform()->Get_Position(), 60.f, 2.f, m_vLightColor);
 	ENDINSTANCE;
 }
 

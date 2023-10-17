@@ -106,14 +106,6 @@ HRESULT CLevel_Smith::Ready_Layer_Monsters(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}
-
-	Matrix = XMMatrixTranslation(30.f, 3.f, 25.f);
-	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Pensive"), pLayerTag, TEXT("GameObject_Pensive"), &Matrix)))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Pensive)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
 	
 	Safe_Release(pGameInstance);
 

@@ -128,7 +128,7 @@ HRESULT CPensive_Sword_Throw::Initialize(void* pArg)
 		return E_FAIL;
 	}
 	m_pTransform->Set_Speed(100);
-	m_vLightColor = _float4(1, 0, 0, 1);
+	m_vLightColor = _float4(1, 1, 1, 1);
 	return S_OK;
 }
 
@@ -176,6 +176,7 @@ void CPensive_Sword_Throw::Ready_DrawMagic()
 {
 	__super::Ready_DrawMagic();
 	m_pMeshEffect->Play(m_vStartPosition);
+	ADD_INCREASE_LIGHT(m_vStartPosition, 3.f, 3.f, m_vLightColor, true, 3.f);
 }
 
 void CPensive_Sword_Throw::Ready_CastMagic()
@@ -212,7 +213,7 @@ void CPensive_Sword_Throw::Ready_Dying()
 		0.2f,
 		(CCamera_Manager::SHAKE_POWER)1,
 		vAxis);
-	pGameInstance->Add_InstanceLight(m_CurrentWeaponMatrix.Translation(), 60.f, 0.6f, m_vLightColor);
+	pGameInstance->Add_InstanceLight(m_CurrentWeaponMatrix.Translation(), 60.f, 1.5f, m_vLightColor);
 	ENDINSTANCE;
 }
 

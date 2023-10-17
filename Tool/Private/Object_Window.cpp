@@ -1630,7 +1630,7 @@ void CObject_Window::Deep_Copy_Tag(const _tchar* wszTag)
 	// 깊은 복사는 안하고 변환만 해줌
 	size_t length = wcslen(wszTag);
 
-	char c[MAX_PATH] = "";;
+	char c[MAX_PATH] = "";
 	WCharToChar(wszTag, c);
 
 	string s(c);

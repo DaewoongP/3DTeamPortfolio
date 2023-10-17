@@ -109,7 +109,7 @@ HRESULT CPensive_Ground_Ball::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
-	m_vLightColor = _float4(1, 0, 0, 1);
+	m_vLightColor = _float4(1, 1, 1, 1);
 	m_pTransform->Set_Speed(100);
 	return S_OK;
 }
@@ -142,12 +142,23 @@ void CPensive_Ground_Ball::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 HRESULT CPensive_Ground_Ball::Reset(MAGICBALLINITDESC& InitDesc)
 {
 	__super::Reset(InitDesc);
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	CLight::LIGHTDESC LightDesc;
+	LightDesc.eType = CLight::TYPE_POINT;
+	LightDesc.fRange = 5.f;
+	m_vLightColor = LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vAmbient = LightDesc.vDiffuse;
+	LightDesc.vSpecular = LightDesc.vDiffuse;
+	LightDesc.vPos = m_pTransform->Get_Position().TransCoord();
+	pGameInstance->Add_Light(LightDesc, &m_pLight);
+	Safe_Release(pGameInstance);
 	return S_OK;
 }
 
 void CPensive_Ground_Ball::Ready_Begin()
 {
-	ADD_DECREASE_LIGHT(m_vStartPosition, 60.f, 0.6f, m_vLightColor);
+	ADD_DECREASE_LIGHT(m_vStartPosition, 100.f, 0.6f, m_vLightColor);
 	__super::Ready_Begin();
 }
 
@@ -172,6 +183,7 @@ void CPensive_Ground_Ball::Ready_CastMagic()
 
 void CPensive_Ground_Ball::Ready_Dying()
 {
+	ADD_DECREASE_LIGHT(m_pTransform->Get_Position(), 50.f, 2.f, m_vLightColor);
 	__super::Ready_Dying();
 }
 
@@ -202,10 +214,22 @@ void CPensive_Ground_Ball::Tick_CastMagic(_float fTimeDelta)
 	{
 		m_ParticleVec[EFFECT_STATE_MAIN][i]->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
 	}
+	m_pLight->Set_Position(m_pTransform->Get_Position().TransCoord());
 	
 	_float distance =m_pTransform->Get_Speed()* m_fLerpAcc;
 	if (distance>100)
 	{
+		for (_int i = 0; i < 5; i++)
+		{
+			m_ParticleVec[EFFECT_STATE_MAIN][i]->Stop();
+		}
+
+		for (_int i = 5; i < m_ParticleVec[EFFECT_STATE_MAIN].size(); i++)
+		{
+			m_ParticleVec[EFFECT_STATE_MAIN][i]->Stop();
+		}
+		Safe_Release(m_pLight);
+		m_pLight = nullptr;
 		Do_MagicBallState_To_Next();
 	}
 }

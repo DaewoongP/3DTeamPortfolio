@@ -65,6 +65,8 @@ HRESULT CPensive::Initialize_Level(_uint iCurrentLevelIndex)
 
 void CPensive::Tick(_float fTimeDelta)
 {
+	if (!m_isSpawn)
+		return;
 	__super::Tick(fTimeDelta);
 
 	if (m_isTurnAble)

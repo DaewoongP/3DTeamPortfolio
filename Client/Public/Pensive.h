@@ -50,7 +50,11 @@ public:
 		m_pHealth->Damaged(iDmg); 
 		if (m_isAttackAble)
 		{
-			if (iDmg > 500)
+			if (m_pHealth->Get_MaxHP() * 0.5f > m_pHealth->Get_Current_HP())
+			{
+				m_iPhase = 2;
+			}
+			if (iDmg > 300)
 			{
 				m_pStateContext->Set_StateMachine(TEXT("Groogy"));
 				m_pModelCom->Change_Animation(TEXT("Stun_Start"));
