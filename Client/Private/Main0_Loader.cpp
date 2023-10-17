@@ -50,6 +50,7 @@
 #include "Breath.h"
 #include "Pulse.h"
 #include "RadialBlur.h"
+#include "ImpulseSphere_Effect.h"
 #pragma endregion Effects
 
 #pragma region Magic
@@ -90,6 +91,7 @@
 #include "Trigger_Vault.h"
 #include "Phase.h"
 #include "Cylinder.h"
+#include "Water.h"
 
 #include "Event_Vault_Spawn.h"
 #include "Event_Smeade.h"
@@ -226,6 +228,10 @@ HRESULT CMain0_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 		return E_FAIL;
 	try /* Failed Check Add_Prototype*/
 	{
+		/* For.Prototype_GameObject_Water */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Water"),
+			CWater::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Water");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -241,8 +247,6 @@ HRESULT CMain0_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 
 HRESULT CMain0_Loader::Loading_For_Vault(LEVELID eLevelID)
 {
-	std::lock_guard<std::mutex> lock(mtx);
-
 	/* For.Prototype_GameObject_MeshEffect*/
 	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Cloister_MeshEffect"),
 		CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Cloister/Cloister.ME")))))
@@ -309,6 +313,11 @@ HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Pulse"),
 			CPulse::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Pulse");
+
+		/* Prototype_GameObject_Pulse */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Impulse_Effect"),
+			CImpulseSphere_Effect::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Impulse_Effect");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -330,8 +339,6 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 	{
 #pragma region Load UI
 		{
-			std::lock_guard<std::mutex> lock(mtx);
-
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_HP"),
 				CUI_Group_HP::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_GameObject_UI_Group_HP");
@@ -527,10 +534,15 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 				CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Terrain.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
 				throw TEXT("Prototype_Component_Shader_Terrain");
 
-			/* For.Prototype_Component_Shader_Terrain */
+			/* For.Prototype_Component_Shader_Debug */
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_Debug"),
 				CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Debug.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
 				throw TEXT("Prototype_Component_Shader_Debug");
+			
+			/* For.Prototype_Component_Shader_Water */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_Water"),
+				CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Water.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements))))
+				throw TEXT("Prototype_Component_Shader_Water");
 
 			/* Prototype_Component_Shader_DefaultEffect */
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_DefaultEffect"),
@@ -541,26 +553,22 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 
 #pragma region Load ETC
 
-		{
-			std::lock_guard<std::mutex> lock(mtx);
-
-			/* --------------ETC-------------- */
+		/* --------------ETC-------------- */
 		/* For.Prototype_Component_Health*/
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Health"),
-				CHealth::Create(m_pDevice, m_pContext))))
-				throw TEXT("Prototype_Component_Health");
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Health"),
+			CHealth::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Health");
 
-			/* For.Prototype_Component_RigidBody */
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RigidBody"),
-				CRigidBody::Create(m_pDevice, m_pContext))))
-				throw TEXT("Prototype_Component_RigidBody");
+		/* For.Prototype_Component_RigidBody */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RigidBody"),
+			CRigidBody::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_RigidBody");
 
-			///* For.Prototype_Component_RadialBlur */
-			//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RadialBlur"),
-			//	CRadialBlur::Create(m_pDevice, m_pContext))))
-			//	throw TEXT("Prototype_Component_RadialBlur");
-		}
-
+		/* For.Prototype_Component_RadialBlur */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RadialBlur"),
+			CRadialBlur::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_RadialBlur");
+		
 		/* Prototype_Component_Model_Shpere */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Shpere"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat")))))
@@ -579,8 +587,6 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 
 #pragma region Load Magic
 		{
-			std::lock_guard<std::mutex> lock(mtx);
-
 			/* --------------Magic-------------- */
 		/* For. Prototype_Component_Magic*/
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Magic"),
@@ -731,8 +737,6 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			throw TEXT("Prototype_Monster_DarkFlare_Particle");
 		
 		{
-			std::lock_guard<std::mutex> lock(mtx);
-
 			CMagicBallPool* pMagicBallPool = CMagicBallPool::GetInstance();
 			Safe_AddRef(pMagicBallPool);
 			if (FAILED(pMagicBallPool->Initialize()))
@@ -748,8 +752,6 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 
 #pragma region Load Particle
 		{
-			std::lock_guard<std::mutex> lock(mtx);
-						
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Dust01"),
 				TEXT("../../Resources/GameData/ParticleData/Misc/Dust01/"), 3)))
 				throw TEXT("Reserve Particle : Particle_Dust01");

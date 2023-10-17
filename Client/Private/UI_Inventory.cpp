@@ -5,7 +5,7 @@
 #include "UI_Slot.h"
 #include "Inventory.h"
 #include "Item.h"
-
+#include "Gear_Item.h"
 CUI_Inventory::CUI_Inventory(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -66,7 +66,7 @@ void CUI_Inventory::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	//Swap_InventoryItem();
+	Swap_InventoryItem();
 }
 
 void CUI_Inventory::Late_Tick(_float fTimeDelta)
@@ -308,7 +308,7 @@ HRESULT CUI_Inventory::Swap_InventoryItem()
 	_uint iIndex = 0;
 	for (auto& pSlot : m_pSlots)
 	{
-		if (pSlot->Get_Clicked())
+		if (nullptr != pSlot && pSlot->Get_Clicked())
 		{
 			static_cast<CInventory*>(m_pOwner)->Swap_Item(iIndex, m_eItemtype);
 		}

@@ -173,7 +173,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	Bind_Notify();
 
-	m_fClothPower = 3.0f;
+	m_fClothPower = 20.0f;
 	m_fClothPowerPlus = 1.0f;
 
 	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FIRST, CONFRINGO);
@@ -514,20 +514,6 @@ HRESULT CPlayer::Render()
 				m_pCustomModel->Render(iPartsIndex, i);
 			}
 		}
-		else if (CCustomModel::ROBE == iPartsIndex)
-		{
-			for (_uint i = 0; i < iNumMeshes; ++i)
-			{
-				m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
-				m_pCustomModel->Bind_Color(m_pShader, "g_vColor", iPartsIndex);
-				m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
-				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
-
-				m_pShader->Begin("AnimMeshNonCull");
-
-				m_pCustomModel->Render(iPartsIndex, i);
-			}
-		}
 		else if (CCustomModel::HEAD == iPartsIndex ||
 			CCustomModel::ARM == iPartsIndex)
 		{
@@ -539,6 +525,20 @@ HRESULT CPlayer::Render()
 				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
 
 				m_pShader->Begin("AnimMesh");
+
+				m_pCustomModel->Render(iPartsIndex, i);
+			}
+		}
+		else if (CCustomModel::ROBE == iPartsIndex)
+		{
+			for (_uint i = 0; i < iNumMeshes; ++i)
+			{
+				m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
+
+				m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
+				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
+
+				m_pShader->Begin("AnimMeshNonCull");
 
 				m_pCustomModel->Render(iPartsIndex, i);
 			}
@@ -1047,9 +1047,9 @@ HRESULT CPlayer::Add_Magic()
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(3, FINISHER);
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(4, STUPEFY);
 
-	Set_Spell_Botton(0, BOMBARDA);
-	Set_Spell_Botton(1, LEVIOSO);
-	Set_Spell_Botton(2, DESCENDO);
+	Set_Spell_Botton(0, ACCIO);
+	Set_Spell_Botton(1, FLIPENDO);
+	Set_Spell_Botton(2, DIFFINDO);
 	Set_Spell_Botton(3, CRUCIO);
 
 	return S_OK;
@@ -1460,7 +1460,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Robe01"),
-		CCustomModel::ROBE, vColor, TEXT("../../Resources/GameData/ClothData/Test.cloth"))))
+		CCustomModel::ROBE, vColor, TEXT("../../Resources/GameData/ClothData/Test1.cloth"))))
 	{
 		MSG_BOX("Failed Add MeshPart Robe");
 
@@ -1480,7 +1480,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	}
 
 	//Pants
-	vColor = _float4(0.2f, 0.2f, 0.3, 1.f);
+	vColor = _float4(0.2f, 0.2f, 0.3f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Pants"),
@@ -2356,7 +2356,7 @@ void CPlayer::Update_Cloth(_float fTimeDelta)
 	vVelocity.y *= -1.f;
 	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(m_fClothPower * vVelocity,
 		XMMatrixInverse(nullptr, XMMatrixRotationQuaternion(m_pTransform->Get_Quaternion()))));
-
+	
 	m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
 }
 

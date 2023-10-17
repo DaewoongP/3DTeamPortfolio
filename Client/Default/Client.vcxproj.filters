@@ -694,6 +694,15 @@
     <Filter Include="07. Events\Smeade">
       <UniqueIdentifier>{2ed55d9c-62e6-455a-a77e-621148ea10a5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\09. Item\03. Gear\Robe_Item">
+      <UniqueIdentifier>{70bd1214-7e78-4b8b-beeb-d7fa5c144a62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Effect\BoneDragon">
+      <UniqueIdentifier>{41a12515-ec23-459a-bdc0-6707bacb4e6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Effect\BoneDragon\ImpulseSphere">
+      <UniqueIdentifier>{a94ba46b-41cb-498e-9f1c-e6bd0ddc924e}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\02. Enemy\07. Pensive">
       <UniqueIdentifier>{d35bd40d-1992-4218-aee5-6049585803b9}</UniqueIdentifier>
     </Filter>
@@ -733,6 +742,9 @@
     <Filter Include="02. GameObject\05. Terrain\03. PlayerInformation">
       <UniqueIdentifier>{32c19ffc-fb69-42ca-ba81-07c40b9b305f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\Pensive_Ground_Ball">
+      <UniqueIdentifier>{471c54cd-7a5b-4ece-8242-6d120e185254}</UniqueIdentifier>
+    </Filter>
     <Filter Include="04. Effect\Blink_Effect">
       <UniqueIdentifier>{58d8b344-dfb8-4b48-ab00-f18496e8f003}</UniqueIdentifier>
     </Filter>
@@ -762,6 +774,12 @@
     </Filter>
     <Filter Include="02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Mace_Attack">
       <UniqueIdentifier>{7b950a00-70b3-4a01-a959-d6802fab4f56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. PlayerInformation">
+      <UniqueIdentifier>{32c19ffc-fb69-42ca-ba81-07c40b9b305f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\11. Water">
+      <UniqueIdentifier>{1b33b363-0555-47c0-bfe6-21b18984e66b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1446,7 +1464,7 @@
       <Filter>02. GameObject\01. Player</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_Information.h">
-      <Filter>02. GameObject\05. Terrain\03. PlayerInformation</Filter>
+      <Filter>02. GameObject\03. PlayerInformation</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Event_Vault_Spawn.h">
       <Filter>07. Events\Vault</Filter>
@@ -1456,6 +1474,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\Event_Smeade.h">
       <Filter>07. Events\Smeade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Robe1_Item.h">
+      <Filter>02. GameObject\09. Item\03. Gear\Robe_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImpulseSphere_Effect.h">
+      <Filter>04. Effect\BoneDragon\ImpulseSphere</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Pensive_Appearence.h">
       <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Appearence</Filter>
@@ -1516,6 +1540,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Pensive_Mace_Attack.h">
       <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Mace_Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Water.h">
+      <Filter>02. GameObject\11. Water</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1802,7 +1829,7 @@
       <Filter>02. GameObject\01. Player\01. StateMachine\07. Hit</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_Information.cpp">
-      <Filter>02. GameObject\05. Terrain\03. PlayerInformation</Filter>
+      <Filter>02. GameObject\03. PlayerInformation</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Finisher.cpp">
       <Filter>05. Magic\MagicBall\07. Finisher</Filter>
@@ -2169,6 +2196,12 @@
     <ClCompile Include="..\Private\Event_Smeade.cpp">
       <Filter>07. Events\Smeade</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Robe1_Item.cpp">
+      <Filter>02. GameObject\09. Item\03. Gear\Robe_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ImpulseSphere_Effect.cpp">
+      <Filter>04. Effect\BoneDragon\ImpulseSphere</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Pensive_Appearence.cpp">
       <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Appearence</Filter>
     </ClCompile>
@@ -2229,6 +2262,9 @@
     <ClCompile Include="..\Private\Pensive_Mace_Attack.cpp">
       <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Mace_Attack</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Water.cpp">
+      <Filter>02. GameObject\11. Water</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2287,6 +2323,12 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMeshInstance.hlsl">
       <Filter>97. ShaderFiles\Meshes</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_ImpulseSphere.hlsl">
+      <Filter>04. Effect\BoneDragon\ImpulseSphere</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Water.hlsl">
+      <Filter>97. ShaderFiles\Textures</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

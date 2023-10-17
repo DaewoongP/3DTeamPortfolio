@@ -193,6 +193,19 @@ HRESULT CAccio::Reset(MAGICBALLINITDESC& InitDesc)
 	__super::Reset(InitDesc);
 	m_fWingardiumEffectDeadTimer = 0.3f;
 	m_pWingardiumEffect->Disable();
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	CLight::LIGHTDESC LightDesc;
+	LightDesc.eType = CLight::TYPE_POINT;
+	LightDesc.fRange = 5.f;
+	m_vLightColor = LightDesc.vDiffuse = ToColor(253.f, 252.f, 209.f, 200.f);
+	LightDesc.vAmbient = LightDesc.vDiffuse;
+	LightDesc.vSpecular = LightDesc.vDiffuse;
+	LightDesc.vPos = m_pTransform->Get_Position().TransCoord();
+	pGameInstance->Add_Light(LightDesc, &m_pLight);
+	Safe_Release(pGameInstance);
+	
 	return S_OK;
 }
 
@@ -209,11 +222,13 @@ void CAccio::Ready_DrawMagic()
 void CAccio::Ready_CastMagic()
 {
 	Ready_SpinMove(m_TrailVec[EFFECT_STATE_MAIN].data()[0],_float2(1.f,0.f),0.5f);
+	ADD_DECREASE_LIGHT(m_vStartPosition, 50.f, 0.1f, m_vLightColor);
 	__super::Ready_CastMagic();
 }
 
 void CAccio::Ready_Dying()
 {
+	ADD_DECREASE_LIGHT(m_vEndPosition, 30.f, 0.3f, m_vLightColor);
 	m_pWingardiumEffect->SetActionTrigger(true);
 	m_pWingardiumEffect->Enable();
 	__super::Ready_Dying();
@@ -240,6 +255,7 @@ void CAccio::Tick_CastMagic(_float fTimeDelta)
 			m_fLerpAcc = 1;
 		m_TrailVec[EFFECT_STATE_MAIN].data()[0]->Spin_Move(m_vEndPosition, m_vStartPosition,m_vSpinWeight,m_fSpinSpeed, m_fLerpAcc);
 		m_pTransform->Set_Position(XMVectorLerp(m_vStartPosition, m_vEndPosition, m_fLerpAcc));
+		m_pLight->Set_Position(m_TrailVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Get_Position().TransCoord());
 	}
 	else
 	{

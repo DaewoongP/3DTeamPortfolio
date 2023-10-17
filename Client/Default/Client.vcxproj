@@ -194,6 +194,7 @@
     <ClInclude Include="..\Public\Hover_Idle.h" />
     <ClInclude Include="..\Public\Hover_Move.h" />
     <ClInclude Include="..\Public\Hover_Turn.h" />
+    <ClInclude Include="..\public\ImpulseSphere_Effect.h" />
     <ClInclude Include="..\Public\Level_Sky.h" />
     <ClInclude Include="..\public\Level_Static.h" />
     <ClInclude Include="..\public\Mongrel_Fur_Item.h" />
@@ -214,6 +215,7 @@
     <ClInclude Include="..\Public\Pensive_Sword_Throw.h" />
     <ClInclude Include="..\Public\Player.h" />
     <ClInclude Include="..\public\PotionStationCamera.h" />
+    <ClInclude Include="..\public\Robe1_Item.h" />
     <ClInclude Include="..\Public\StateContext_Enemy.h" />
     <ClInclude Include="..\Public\StateMachine_Enemy.h" />
     <ClInclude Include="..\Public\Vault_Gate.h" />
@@ -228,6 +230,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\public\Trigger.h" />
+    <ClInclude Include="..\public\Water.h" />
     <ClInclude Include="..\Public\Weapon_DarkWizard_Wand.h" />
     <ClInclude Include="..\Public\Diffindo.h" />
     <ClInclude Include="..\public\Dittany_Leaves_Item.h" />
@@ -468,6 +471,7 @@
     <ClCompile Include="..\Private\Hover_Idle.cpp" />
     <ClCompile Include="..\Private\Hover_Move.cpp" />
     <ClCompile Include="..\Private\Hover_Turn.cpp" />
+    <ClCompile Include="..\private\ImpulseSphere_Effect.cpp" />
     <ClCompile Include="..\Private\Level_Sky.cpp" />
     <ClCompile Include="..\private\Level_Static.cpp" />
     <ClCompile Include="..\private\Mongrel_Fur_Item.cpp" />
@@ -488,6 +492,7 @@
     <ClCompile Include="..\Private\Pensive_Sword_Throw.cpp" />
     <ClCompile Include="..\Private\Player.cpp" />
     <ClCompile Include="..\private\PotionStationCamera.cpp" />
+    <ClCompile Include="..\private\Robe1_Item.cpp" />
     <ClCompile Include="..\Private\StateContext_Enemy.cpp" />
     <ClCompile Include="..\Private\StateMachine_Enemy.cpp" />
     <ClCompile Include="..\Private\Vault_Gate.cpp" />
@@ -502,6 +507,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\private\Trigger.cpp" />
+    <ClCompile Include="..\private\Water.cpp" />
     <ClCompile Include="..\Private\Weapon_DarkWizard_Wand.cpp" />
     <ClCompile Include="..\Private\Diffindo.cpp" />
     <ClCompile Include="..\private\Dittany_Leaves_Item.cpp" />
@@ -721,6 +727,7 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_ImpulseSphere.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Protego.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowAnimMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMesh.hlsl" />
@@ -732,6 +739,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMeshInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTexRotation.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Water.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Shader_Client_Defines.hlsli" />

@@ -133,6 +133,8 @@ void CDummyMeshEffect::Tick_Imgui(_float _fTimeDelta)
 		pEffectWindow->Table_CheckBox("Diffuse", "dkssudgktpdyqksrkqtmtqslek", &m_isDiffuse);
 		ImGui::Separator();
 
+		//pEffectWindow->Table_DragFloat("RimPower", "iv893jdjxxcv", &m_fRimPower);
+
 		ImGui::EndTable();
 	}
 
@@ -305,6 +307,7 @@ HRESULT CDummyMeshEffect::Load_FileDialog()
 			}
 			else
 			{
+				// LoadAfter
 				ChangeTexture(&m_pTexture, m_Path[TEXTURE_PATH], m_Path[TEXTURE_PATH].c_str());
 				ChangeModel(&m_pModel, m_Path[MODEL_PATH], m_Path[MODEL_PATH].c_str());
 				m_pTextureIFD->ChangeTexture(wstrToStr(m_Path[TEXTURE_PATH]).c_str());

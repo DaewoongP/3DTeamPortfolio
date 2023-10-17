@@ -74,6 +74,7 @@
 #include "Troll_Bogeys_Item.h"
 #include "Shrivelfig_Item.h"
 #include "Mongrel_Fur_Item.h"
+#include "Robe1_Item.h"
 #pragma endregion
 
 
@@ -229,8 +230,6 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 {
 	try
 	{
-		std::lock_guard<std::mutex> lock(mtx);
-
 #pragma region Player
 
 		/* For.Prototype_GameObject_Player*/
@@ -592,10 +591,15 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 			CShrivelfig_Item::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Shrivelfig_Item");
 
-		/* For.Prototype_GameObject_Mongrel_Fur*/
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Mongrel_Fur"),
+		/* For.Prototype_GameObject_Mongrel_Fur_Item*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Mongrel_Fur_Item"),
 			CMongrel_Fur_Item::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_Mongrel_Fur");
+			throw TEXT("Prototype_GameObject_Mongrel_Fur_Item");
+
+		/* For.Prototype_GameObject_Robe1_Item*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Robe1_Item"),
+			CRobe1_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Robe1_Item");
 #pragma endregion
 
 #pragma region MeshParts
@@ -613,6 +617,11 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Mask_Gardian"),
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Mask_Gardian/Mask_Gardian.dat"), TEXT("Mask_Gardian")))))
 			throw TEXT("Prototype_Component_MeshPart_Mask_Gardian");
+
+		///* For.Prototype_Component_MeshPart_Robe_MysticCape */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Robe_MysticCape"),
+		//	CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Robe_MysticCape/Robe_MysticCape.dat"), TEXT("Robe_MysticCape")))))
+		//	throw TEXT("Prototype_Component_MeshPart_Robe_MysticCape");
 #pragma endregion
 
 	}

@@ -46,10 +46,41 @@ HRESULT CConjuredDragon::Initialize_Prototype()
 		}
 	}
 
-	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeTrace")))
+	// Pulse
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Charge")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeTrace")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/BlackSmokeTrace/"), LEVEL_SANCTUM))))
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Charge")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/Charge/"), LEVEL_SANCTUM))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/CircleEmit/"), LEVEL_SANCTUM))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Rock")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Rock")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/Rock/"), LEVEL_SANCTUM))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_SplashWater")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_SplashWater")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/SplashWater/"), LEVEL_SANCTUM))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
@@ -72,7 +103,11 @@ HRESULT CConjuredDragon::Initialize(void* pArg)
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
+	if (FAILED(Add_Effects()))
+		return E_FAIL;
+	
 	m_pEffect_BlackSmokeIdle->Play(m_pTransform->Get_Position());
+
 	return S_OK;
 }
 
@@ -137,7 +172,7 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 	EnergyBall_PhaseFinal(fTimeDelta);
 	Update_Breath(fTimeDelta);
 
-	_float3 vOffsetPos = m_pTransform->Get_Position();
+	vOffsetPos = m_pTransform->Get_Position();
 	vOffsetPos.y += 10.f;
 	m_pEffect_BlackSmokeIdle->Get_Transform()->Set_Position(vOffsetPos);
 
@@ -593,6 +628,10 @@ HRESULT CConjuredDragon::Make_Notifies()
 	Func = [&] { this->Shot_Fireball_Black(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Shot_Fireball_Black"), Func)))
 		return E_FAIL;
+	
+	Func = [&] { this->Pulse_Charge(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Charge"), Func)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -603,10 +642,6 @@ HRESULT CConjuredDragon::Add_Components()
 	{
 		if (FAILED(__super::Add_Components()))
 			throw TEXT("Failed Enemy Add_Components");
-
-		if (FAILED(Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle"),
-			TEXT("Com_Particle_BlackSmokeIdle"), reinterpret_cast<CComponent**>(&m_pEffect_BlackSmokeIdle))))
-			throw TEXT("Com_Particle_BlackSmokeIdle");
 
 		/* For.Com_Health */
 		CHealth::HEALTHDESC HealthDesc;
@@ -778,10 +813,26 @@ HRESULT CConjuredDragon::Add_Effects()
 			TEXT("Com_BlackSmokeIdle"), reinterpret_cast<CComponent**>(&m_pEffect_BlackSmokeIdle))))
 			throw TEXT("Com_BlackSmokeIdle");
 
-		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeTrace"),
-			TEXT("Com_BlackSmokeIdle"), reinterpret_cast<CComponent**>(&m_pEffect_BlackSmokeTrace))))
-			throw TEXT("Com_BlackSmokeIdle");
+		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Charge"),
+			TEXT("Com_Pulse_Charge"), reinterpret_cast<CComponent**>(&m_pEffect_Pulse_Charge))))
+			throw TEXT("Com_Pulse_Charge");
 
+		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_SplashWater"),
+			TEXT("Com_Pulse_SplashWater"), reinterpret_cast<CComponent**>(&m_pEffect_Pulse_SplashWater))))
+			throw TEXT("Com_Pulse_SplashWater");
+		
+		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Rock"),
+			TEXT("Com_Pulse_Rock"), reinterpret_cast<CComponent**>(&m_pEffect_Pulse_Rock))))
+			throw TEXT("Com_Pulse_Rock");
+
+		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit"),
+			TEXT("Com_Pulse_CircleEmit"), reinterpret_cast<CComponent**>(&m_pEffect_Pulse_CircleEmit))))
+			throw TEXT("Com_Pulse_CircleEmit");
+
+		m_pEffect_Pulse_Charge->Disable();
+		m_pEffect_Pulse_SplashWater->Disable();
+		m_pEffect_Pulse_Rock->Disable();
+		m_pEffect_Pulse_CircleEmit->Disable();
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -2326,6 +2377,11 @@ void CConjuredDragon::Action_Pulse()
 	m_pPulse->Reset(PulseInitDesc);
 }
 
+void CConjuredDragon::Pulse_Charge()
+{
+	m_pEffect_Pulse_Charge->Play(vOffsetPos);
+}
+
 CConjuredDragon* CConjuredDragon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CConjuredDragon* pInstance = New CConjuredDragon(pDevice, pContext);
@@ -2356,14 +2412,16 @@ void CConjuredDragon::Free()
 {
 	__super::Free();
 
-	if (true == m_isCloned)
-	{
-		Safe_Release(m_pBreath);
-		Safe_Release(m_pEnergyBall);
-		Safe_Release(m_pPulse);
+	Safe_Release(m_pBreath);
+	Safe_Release(m_pEnergyBall);
+	Safe_Release(m_pPulse);
 
-		Safe_Release(m_pMagicSlot);
-		Safe_Release(m_pWeapon);
-		Safe_Release(m_pEffect_BlackSmokeIdle);
-	}
+	Safe_Release(m_pMagicSlot);
+	Safe_Release(m_pWeapon);
+
+	Safe_Release(m_pEffect_BlackSmokeIdle);
+	Safe_Release(m_pEffect_Pulse_Charge);
+	Safe_Release(m_pEffect_Pulse_CircleEmit);
+	Safe_Release(m_pEffect_Pulse_Rock);
+	Safe_Release(m_pEffect_Pulse_SplashWater);
 }

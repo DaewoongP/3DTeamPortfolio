@@ -1,6 +1,5 @@
 #pragma once
 #include "Item.h"
-
 BEGIN(Client)
 
 class CGear_Item abstract : public CItem
@@ -19,6 +18,9 @@ protected:
 public:
 	virtual HRESULT Initialize_Prototype(_uint iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
+
+public:
+	virtual void Equipment() PURE;
 
 protected:
 	GEAR_ITEM_CRATE_DESC m_Gear_ItemCreateDesc;
