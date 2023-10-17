@@ -358,7 +358,7 @@ HRESULT CLevioso::Add_Components()
 	}
 
 
-	//MeshEffect
+	//MeshEffects
 	m_MeshEffectVec[EFFECT_STATE_HIT].resize(3);
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Levioso1_MeshEffect"),

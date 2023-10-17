@@ -361,7 +361,10 @@ void CMagicBall::Ready_Dying()
 		}
 		for (int i = 0; i < m_MeshEffectVec[EFFECT_STATE_HIT].size(); i++)
 		{
+			
 			m_MeshEffectVec[EFFECT_STATE_HIT].data()[i]->Play(m_CurrentTargetMatrix.Translation());
+			//m_MeshEffectVec[EFFECT_STATE_HIT].data()[i]->Get_Transform()->Set_Position(m_MeshEffectVec[EFFECT_STATE_HIT].data()[i]->Get_Transform()->Get_Position() * m_pTargetWorldMatrix->Translation());
+
 		}
 	}
 }
@@ -417,6 +420,7 @@ void CMagicBall::Tick_CastMagic(_float fTimeDelta)
 	for (int i = 0; i < m_MeshEffectVec[EFFECT_STATE_WAND].size(); i++)
 	{
 		m_MeshEffectVec[EFFECT_STATE_WAND].data()[i]->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
+
 	}
 }
 
