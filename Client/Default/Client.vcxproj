@@ -246,7 +246,6 @@
     <ClInclude Include="..\Public\UI_DamageFont.h" />
     <ClInclude Include="..\Public\UI_Interaction.h" />
     <ClInclude Include="..\Public\UI_Script.h" />
-    <ClInclude Include="..\public\Robe1_Item.h" />
     <ClInclude Include="..\Public\StateContext_Enemy.h" />
     <ClInclude Include="..\Public\StateMachine_Enemy.h" />
     <ClInclude Include="..\Public\Vault_Gate.h" />
@@ -554,7 +553,6 @@
     <ClCompile Include="..\Private\UI_DamageFont.cpp" />
     <ClCompile Include="..\Private\UI_Interaction.cpp" />
     <ClCompile Include="..\Private\UI_Script.cpp" />
-    <ClCompile Include="..\private\Robe1_Item.cpp" />
     <ClCompile Include="..\Private\StateContext_Enemy.cpp" />
     <ClCompile Include="..\Private\StateMachine_Enemy.cpp" />
     <ClCompile Include="..\Private\Vault_Gate.cpp" />

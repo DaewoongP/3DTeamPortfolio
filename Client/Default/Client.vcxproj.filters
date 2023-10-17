@@ -694,9 +694,6 @@
     <Filter Include="02. GameObject\04. UI\UI\UI_Script">
       <UniqueIdentifier>{473ca6be-871b-4f7c-9069-df1ceb227470}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\09. Item\03. Gear\Robe_Item">
-      <UniqueIdentifier>{70bd1214-7e78-4b8b-beeb-d7fa5c144a62}</UniqueIdentifier>
-    </Filter>
     <Filter Include="04. Effect\BoneDragon">
       <UniqueIdentifier>{41a12515-ec23-459a-bdc0-6707bacb4e6d}</UniqueIdentifier>
     </Filter>
@@ -1571,9 +1568,6 @@
     <ClInclude Include="..\Public\UI_Script.h">
       <Filter>02. GameObject\04. UI\UI\UI_Script</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Robe1_Item.h">
-      <Filter>02. GameObject\09. Item\03. Gear\Robe_Item</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\ImpulseSphere_Effect.h">
       <Filter>04. Effect\BoneDragon\ImpulseSphere</Filter>
     </ClInclude>
@@ -2384,9 +2378,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_Script.cpp">
       <Filter>02. GameObject\04. UI\UI\UI_Script</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Robe1_Item.cpp">
-      <Filter>02. GameObject\09. Item\03. Gear\Robe_Item</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ImpulseSphere_Effect.cpp">
       <Filter>04. Effect\BoneDragon\ImpulseSphere</Filter>
