@@ -196,6 +196,7 @@
     <ClInclude Include="..\Public\Fly_Turn.h" />
     <ClInclude Include="..\public\Game_Manager.h" />
     <ClInclude Include="..\public\Gear_Item.h" />
+    <ClInclude Include="..\Public\Guide_Book.h" />
     <ClInclude Include="..\Public\Gull.h" />
     <ClInclude Include="..\Public\Hat_Arcane.h" />
     <ClInclude Include="..\Public\Hat_DarkArts_Delux.h" />
@@ -505,6 +506,7 @@
     <ClCompile Include="..\Private\Fly_Turn.cpp" />
     <ClCompile Include="..\private\Game_Manager.cpp" />
     <ClCompile Include="..\private\Gear_Item.cpp" />
+    <ClCompile Include="..\Private\Guide_Book.cpp" />
     <ClCompile Include="..\Private\Gull.cpp" />
     <ClCompile Include="..\Private\Hat_Arcane.cpp" />
     <ClCompile Include="..\Private\Hat_DarkArts_Delux.cpp" />

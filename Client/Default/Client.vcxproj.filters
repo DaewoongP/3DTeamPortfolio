@@ -874,6 +874,9 @@
     <Filter Include="02. GameObject\11. Water">
       <UniqueIdentifier>{1b33b363-0555-47c0-bfe6-21b18984e66b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. Scene\Main_Menu\Guide_Book">
+      <UniqueIdentifier>{9ea80fb5-bafc-42e2-bc97-7d00918990a1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1733,6 +1736,9 @@
     <ClInclude Include="..\public\Water.h">
       <Filter>02. GameObject\11. Water</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Guide_Book.h">
+      <Filter>06. Scene\Main_Menu\Guide_Book</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2549,6 +2555,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Water.cpp">
       <Filter>02. GameObject\11. Water</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Guide_Book.cpp">
+      <Filter>06. Scene\Main_Menu\Guide_Book</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
