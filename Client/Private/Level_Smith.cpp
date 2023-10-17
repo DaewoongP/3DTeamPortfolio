@@ -5,6 +5,7 @@
 #include "MapObject_Ins.h"
 #include "Level_Loading.h"
 #include "Trigger.h"
+#include "Dummy_NPC.h"
 
 CLevel_Smith::CLevel_Smith(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
@@ -15,7 +16,8 @@ HRESULT CLevel_Smith::Initialize()
 {
 	std::lock_guard<std::mutex> lock(mtx);
 	FAILED_CHECK_RETURN(Ready_Lights(), E_FAIL);
-	//FAILED_CHECK_RETURN(Ready_Layer_Monsters(TEXT("Layer_Monster")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Layer_Monsters(TEXT("Layer_Monster")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Layer_NPC(TEXT("Layer_NPC")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_UI(TEXT("Layer_UI")), E_FAIL);
 	//FAILED_CHECK_RETURN(Ready_Event(TEXT("Layer_Event")), E_FAIL);
@@ -108,6 +110,51 @@ HRESULT CLevel_Smith::Ready_Layer_Monsters(const _tchar* pLayerTag)
 	}
 	
 	Safe_Release(pGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CLevel_Smith::Ready_Layer_NPC(const _tchar* pLayerTag)
+{
+	BEGININSTANCE;
+
+	_float4x4 Matrix = XMMatrixTranslation(93.4f, 6.25f, 80.7f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Vendor"), pLayerTag, TEXT("GameObject_Vendor"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Vendor)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	Matrix = XMMatrixTranslation(97.4f, 6.3f, 80.7f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Oakes"), pLayerTag, TEXT("GameObject_Oakes"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Oakes)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	Matrix = XMMatrixTranslation(93.4f, 6.3f, 82.7f);
+	CDummy_NPC::NPCINITDESC InitDesc;
+	InitDesc.WorldMatrix = Matrix;
+	InitDesc.wstrAnimationTag = TEXT("Idle");
+	InitDesc.MeshPartsTags[0] = TEXT("Prototype_Component_MeshPart_Hat_Arcane");
+	InitDesc.MeshPartsTags[1] = TEXT("Prototype_Component_MeshPart_Hair_M_D");
+	InitDesc.MeshPartsTags[2] = TEXT("Prototype_Component_MeshPart_Head_NPC_M");
+	InitDesc.MeshPartsTags[4] = TEXT("Prototype_Component_MeshPart_Player_Arm");
+	InitDesc.MeshPartsTags[5] = TEXT("Prototype_Component_MeshPart_Robe_DarkArts");
+	InitDesc.MeshPartsTags[6] = TEXT("Prototype_Component_MeshPart_Jacket_Arcane_A");
+	InitDesc.MeshPartsTags[7] = TEXT("Prototype_Component_MeshPart_Pants_Arcane");
+	InitDesc.MeshPartsTags[9] = TEXT("Prototype_Component_MeshPart_Boots_Arcane");
+	InitDesc.wstrCustomModelTag = TEXT("Prototype_Component_Model_CustomModel_NPC_M");
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Dummy_NPC"), pLayerTag, TEXT("GameObject_Dummy_NPC"), &InitDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Dummy_NPC)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
 
 	return S_OK;
 }

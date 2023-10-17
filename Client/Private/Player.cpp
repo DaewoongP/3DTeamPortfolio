@@ -494,8 +494,7 @@ HRESULT CPlayer::Render()
 	{
 		_uint		iNumMeshes = m_pCustomModel->Get_NumMeshes(iPartsIndex);
 
-		if (CCustomModel::HAIR == iPartsIndex || 
-			CCustomModel::HAT == iPartsIndex)
+		if (CCustomModel::HAIR == iPartsIndex)
 		{
 			for (_uint i = 0; i < iNumMeshes; ++i)
 			{
@@ -1389,13 +1388,13 @@ void CPlayer::Fix_Mouse()
 
 HRESULT CPlayer::Ready_MeshParts()
 {
-	_float4 vColor = _float4(0.2f, 0.2f, 0.2f, 1.f);
+	_float4 vColor = _float4();
 
 	//Hat
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Fedora"),
-		CCustomModel::HAT, vColor)))
+		TEXT("Prototype_Component_MeshPart_Hat_Arcane"),
+		CCustomModel::HAT)))
 	{
 		MSG_BOX("Failed Add MeshPart Hat");
 
@@ -1403,11 +1402,10 @@ HRESULT CPlayer::Ready_MeshParts()
 	}
 
 	//Hair
-	vColor = _float4(0.2f, 0.2f, 0.2f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Hair"),
-		CCustomModel::HAIR, vColor)))
+		CCustomModel::HAIR)))
 	{
 		MSG_BOX("Failed Add MeshPart Hair");
 
@@ -1415,11 +1413,10 @@ HRESULT CPlayer::Ready_MeshParts()
 	}
 
 	//Head
-	vColor = _float4(0.f, 0.f, 0.f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Head"),
-		CCustomModel::HEAD, vColor)))
+		CCustomModel::HEAD)))
 	{
 		MSG_BOX("Failed Add MeshPart Head");
 
@@ -1427,11 +1424,10 @@ HRESULT CPlayer::Ready_MeshParts()
 	}
 
 	//Mask
-	vColor = _float4(1.f, 1.f, 1.f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Mask_Gardian"),
-		CCustomModel::MASK, vColor)))
+		TEXT("Prototype_Component_MeshPart_Mask_Guardian"),
+		CCustomModel::MASK)))
 	{
 		MSG_BOX("Failed Add MeshPart Mask");
 
@@ -1439,11 +1435,10 @@ HRESULT CPlayer::Ready_MeshParts()
 	}
 
 	//Arm
-	vColor = _float4(0.f, 0.f, 0.f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Arm"),
-		CCustomModel::ARM, vColor)))
+		CCustomModel::ARM)))
 	{
 		MSG_BOX("Failed Add MeshPart Arm");
 
@@ -1451,11 +1446,10 @@ HRESULT CPlayer::Ready_MeshParts()
 	}
 
 	//Robe
-	vColor = _float4(0.f, 1.f, 0.f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Robe01"),
-		CCustomModel::ROBE, vColor, TEXT("../../Resources/GameData/ClothData/Test1.cloth"))))
+		TEXT("Prototype_Component_MeshPart_Robe_Arcane"),
+		CCustomModel::ROBE)))
 	{
 		MSG_BOX("Failed Add MeshPart Robe");
 
@@ -1463,11 +1457,10 @@ HRESULT CPlayer::Ready_MeshParts()
 	}
 
 	//Top
-	vColor = _float4(0.2f, 0.2f, 0.2f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Player_Top"),
-		CCustomModel::TOP, vColor)))
+		TEXT("Prototype_Component_MeshPart_Jacket_Arcane_A"),
+		CCustomModel::TOP)))
 	{
 		MSG_BOX("Failed Add MeshPart Top");
 
@@ -1475,11 +1468,10 @@ HRESULT CPlayer::Ready_MeshParts()
 	}
 
 	//Pants
-	vColor = _float4(0.2f, 0.2f, 0.3f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Player_Pants"),
-		CCustomModel::PANTS, vColor)))
+		TEXT("Prototype_Component_MeshPart_Pants_Arcane"),
+		CCustomModel::PANTS)))
 	{
 		MSG_BOX("Failed Add MeshPart Pants");
 
@@ -1487,11 +1479,10 @@ HRESULT CPlayer::Ready_MeshParts()
 	}
 
 	//Socks
-	vColor = _float4(0.f, 0.f, 0.f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Socks"),
-		CCustomModel::SOCKS, vColor)))
+		CCustomModel::SOCKS)))
 	{
 		MSG_BOX("Failed Add MeshPart Socks");
 
@@ -1499,11 +1490,10 @@ HRESULT CPlayer::Ready_MeshParts()
 	}
 
 	//Shoes
-	vColor = _float4(0.3f, 0.2f, 0.3f, 1.f);
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Player_Shoes"),
-		CCustomModel::SHOES, vColor)))
+		TEXT("Prototype_Component_MeshPart_Boots_Arcane"),
+		CCustomModel::SHOES)))
 	{
 		MSG_BOX("Failed Add MeshPart Shoes");
 
@@ -2352,7 +2342,7 @@ void CPlayer::Update_Cloth(_float fTimeDelta)
 	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(m_fClothPower * vVelocity,
 		XMMatrixInverse(nullptr, XMMatrixRotationQuaternion(m_pTransform->Get_Quaternion()))));
 	
-	m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
+	//m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
 }
 
 void CPlayer::Find_Target_For_Distance()
