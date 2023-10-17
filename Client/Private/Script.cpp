@@ -50,6 +50,8 @@ HRESULT CMyScript::Add_Prototype()
 	}
 
 	Safe_Release(pGameInstance);
+
+	return S_OK;
 }
 
 HRESULT CMyScript::Add_Components()
