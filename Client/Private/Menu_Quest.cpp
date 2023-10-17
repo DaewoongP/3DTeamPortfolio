@@ -58,22 +58,22 @@ void CMenu_Quest::Tick(_float fTimeDelta)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (pGameInstance->Get_DIKeyState(DIK_P, CInput_Device::KEY_DOWN))
-	{
-		//Set_FontState(FIG, UNLOCK);
-		Set_FontState(POTION, UNLOCK);
-		//Set_FontState(TOWN, UNLOCK);
-		//Set_FontState(SECRET, UNLOCK);
-		//Set_FontState(BONE, UNLOCK);
-	}
-	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
-	{
-		//Set_FontState(FIG, CLEAR);
-		Set_FontState(POTION, CLEAR);
-		//Set_FontState(TOWN, CLEAR);
-		//Set_FontState(SECRET, CLEAR);
-		//Set_FontState(BONE, CLEAR);
-	}
+	//if (pGameInstance->Get_DIKeyState(DIK_P, CInput_Device::KEY_DOWN))
+	//{
+	//	//Set_FontState(FIG, UNLOCK);
+	//	Set_FontState(POTION, UNLOCK);
+	//	//Set_FontState(TOWN, UNLOCK);
+	//	//Set_FontState(SECRET, UNLOCK);
+	//	//Set_FontState(BONE, UNLOCK);
+	//}
+	//if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
+	//{
+	//	//Set_FontState(FIG, CLEAR);
+	//	Set_FontState(POTION, CLEAR);
+	//	//Set_FontState(TOWN, CLEAR);
+	//	//Set_FontState(SECRET, CLEAR);
+	//	//Set_FontState(BONE, CLEAR);
+	//}
 
 	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
 	{

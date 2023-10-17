@@ -26,6 +26,7 @@
 #include "Menu_Gear.h"
 #include "Menu_Quest.h"
 #include "Menu_Invectory.h"
+#include "Menu_Setting.h"
 #include "UI_Inventory.h"
 #include "Inventory.h"
 #include "UI_Potion_Tap.h"
@@ -379,6 +380,9 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Menu_Quest"),
 				CMenu_Quest::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_GameObject_Menu_Quest");
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Menu_Setting"),
+				CMenu_Setting::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_Menu_Setting");
 
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Inventory"),
 				CUI_Inventory::Create(m_pDevice, m_pContext))))
