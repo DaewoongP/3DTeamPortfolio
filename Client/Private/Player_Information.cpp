@@ -25,7 +25,6 @@ CPlayer_Information::CPlayer_Information(const CPlayer_Information& rhs)
 void CPlayer_Information::Add_Potion()
 {
 	m_vecTool.push_back(static_cast<CTool*>(CItem::SimpleFactory(ITEM_ID::ITEM_ID_WIGGENWELD_POTION, LEVEL_STATIC, nullptr)));
-	int a = 0;
 }
 
 CTool* CPlayer_Information::Get_Healpotion()
@@ -72,21 +71,6 @@ void CPlayer_Information::Tick(_float fTimeDelta)
 
 		Safe_Release(pGameInstance);
 	}
-
-	if (nullptr == m_pPotionTap)
-	{
-		CGameInstance* pGameInstance = CGameInstance::GetInstance();
-		Safe_AddRef(pGameInstance);
-		m_pPotionTap = static_cast<CPotionTap*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_UI"), TEXT("GameObject_Potion_Tap")));
-		Safe_AddRef(m_pPotionTap);
-
-		Safe_Release(pGameInstance);
-	}
-
-	/*for (size_t i = 0; i < m_vecTool.size(); i++)
-	{
-		m_vecTool[i]->Tick(fTimeDelta);m_vecTool[i]->Late_Tick(fTimeDelta);
-	}*/
 }
 
 void CPlayer_Information::Late_Tick(_float fTimeDelta)

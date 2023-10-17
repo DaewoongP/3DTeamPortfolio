@@ -47,34 +47,36 @@ HRESULT CMagicBall::Initialize(void* pArg)
 
 void CMagicBall::Tick(_float fTimeDelta)
 {
-	//실시간으로 갱신해줍니다.
-	m_fDyingTimer -= fTimeDelta;
-	if (m_fDyingTimer < 0&& (m_eMagicBallState < MAGICBALL_STATE_DYING))
-	{
-		Set_MagicBallState(MAGICBALL_STATE_DYING);
-	}
-
-	if(m_pTargetWorldMatrix != nullptr)
-		m_CurrentTargetMatrix = (*m_pTargetOffsetMatrix) * (*m_pTargetWorldMatrix);
 	
-	if(m_pWeaponWorldMatrix != nullptr)
-		m_CurrentWeaponMatrix = (*m_pWeaponOffsetMatrix) * (*m_pWeaponWorldMatrix);
-		
-	//방향 알려줍니다.
-	if (!XMVector3Equal(m_vPostPosition, m_pTransform->Get_Position()))
-	{
-		m_vDir = m_pTransform->Get_Position() - m_vPostPosition;
-		m_vPostPosition = m_pTransform->Get_Position();
-	}
-	
-	//여기서 위치를 갱신해줍니다.
-	Tick_MagicBall_State(fTimeDelta);
 	__super::Tick(fTimeDelta);
 }
 
 void CMagicBall::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	//실시간으로 갱신해줍니다.
+	m_fDyingTimer -= fTimeDelta;
+	if (m_fDyingTimer < 0 && (m_eMagicBallState < MAGICBALL_STATE_DYING))
+	{
+		Set_MagicBallState(MAGICBALL_STATE_DYING);
+	}
+
+	if (m_pTargetWorldMatrix != nullptr)
+		m_CurrentTargetMatrix = (*m_pTargetOffsetMatrix) * (*m_pTargetWorldMatrix);
+
+	if (m_pWeaponWorldMatrix != nullptr)
+		m_CurrentWeaponMatrix = (*m_pWeaponOffsetMatrix) * (*m_pWeaponWorldMatrix);
+
+	//방향 알려줍니다.
+	if (!XMVector3Equal(m_vPostPosition, m_pTransform->Get_Position()))
+	{
+		m_vDir = m_pTransform->Get_Position() - m_vPostPosition;
+		m_vPostPosition = m_pTransform->Get_Position();
+	}
+
+	//여기서 위치를 갱신해줍니다.
+	Tick_MagicBall_State(fTimeDelta);
 
 #ifdef _DEBUG
 	if (m_pRigidBody != nullptr)

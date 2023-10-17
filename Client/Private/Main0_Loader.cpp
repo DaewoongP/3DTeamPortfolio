@@ -334,6 +334,8 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 	{
 #pragma region Load UI
 		{
+			std::lock_guard<std::mutex> lock(mtx);
+
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_HP"),
 				CUI_Group_HP::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_GameObject_UI_Group_HP");
@@ -445,112 +447,111 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_Terrain"),
 				CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Tile%d.dds"), 2))))
 				throw TEXT("Prototype_Component_Texture_Terrain");
-
 #pragma endregion
+		}
 
-			/* Prototype_Component_Texture_Default_Particle*/
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Phase"),
-				CPhase::Create(m_pDevice, m_pContext))))
-				throw TEXT("Prototype_Component_Phase");
+		/* Prototype_Component_Texture_Default_Particle*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Phase"),
+			CPhase::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Phase");
 
 #pragma region Load Buffer
-			/* --------------Buffer-------------- */
-			/* For.Prototype_Component_VIBuffer_Cube */
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_VIBuffer_Cube"),
-				CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
-				throw TEXT("Prototype_Component_VIBuffer_Cube");
+		/* --------------Buffer-------------- */
+		/* For.Prototype_Component_VIBuffer_Cube */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_VIBuffer_Cube"),
+			CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_VIBuffer_Cube");
 
-			/* Prototype_Component_VIBuffer_Terrain */
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_VIBuffer_Terrain"),
-				CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/DT.bmp")))))
-				throw TEXT("Prototype_Component_VIBuffer_Terrain");
+		/* Prototype_Component_VIBuffer_Terrain */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_VIBuffer_Terrain"),
+			CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/DT.bmp")))))
+			throw TEXT("Prototype_Component_VIBuffer_Terrain");
 
-			/* For.Prototype_Component_VIBuffer_Cloth */
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_VIBuffer_Cloth"),
-				CVIBuffer_Cloth::Create(m_pDevice, m_pContext))))
-				throw TEXT("Prototype_Component_VIBuffer_Cloth");
+		/* For.Prototype_Component_VIBuffer_Cloth */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_VIBuffer_Cloth"),
+			CVIBuffer_Cloth::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_VIBuffer_Cloth");
 
-			/* For.Prototype_Component_VIBuffer_Point_Instance */
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_VIBuffer_Point_Instance"),
-				CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext))))
-				throw TEXT("Prototype_Component_VIBuffer_Point_Instance");
+		/* For.Prototype_Component_VIBuffer_Point_Instance */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_VIBuffer_Point_Instance"),
+			CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_VIBuffer_Point_Instance");
 
-			/* For.Prototype_GameObject_ConvexMesh*/
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_ConvexMesh"),
-				CConvexMesh::Create(m_pDevice, m_pContext))))
-				throw TEXT("Prototype_GameObject_ConvexMesh");
+		/* For.Prototype_GameObject_ConvexMesh*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_ConvexMesh"),
+			CConvexMesh::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_ConvexMesh");
 
-			/* For.Prototype_GameObject_ConvexMesh*/
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_TriangleMesh"),
-				CTriangleMesh::Create(m_pDevice, m_pContext))))
-				throw TEXT("Prototype_GameObject_TriangleMesh");
+		/* For.Prototype_GameObject_ConvexMesh*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_TriangleMesh"),
+			CTriangleMesh::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_TriangleMesh");
 #pragma endregion
 
 #pragma region Load Shader
-			/* --------------Shader-------------- */
-			/* For.Prototype_Component_Shader_VtxCube */
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_VtxCube"),
-				CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxCube.hlsl"), VTXPOSCUBE_DECL::Elements, VTXPOSCUBE_DECL::iNumElements))))
-				throw TEXT("Prototype_Component_Texture_SkyBox");
+		/* --------------Shader-------------- */
+		/* For.Prototype_Component_Shader_VtxCube */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_VtxCube"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxCube.hlsl"), VTXPOSCUBE_DECL::Elements, VTXPOSCUBE_DECL::iNumElements))))
+			throw TEXT("Prototype_Component_Texture_SkyBox");
 
-			/* For.Prototype_Component_Shader_VtxAnimMesh */
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
-				CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAnimMesh.hlsl"), VTXANIMMESH_DECL::Elements, VTXANIMMESH_DECL::iNumElements))))
-				throw TEXT("Prototype_Component_Shader_VtxAnimMesh");
+		/* For.Prototype_Component_Shader_VtxAnimMesh */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAnimMesh.hlsl"), VTXANIMMESH_DECL::Elements, VTXANIMMESH_DECL::iNumElements))))
+			throw TEXT("Prototype_Component_Shader_VtxAnimMesh");
 
-			/* For.Prototype_Component_Shader_VtxMesh */
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_VtxMesh"),
-				CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMesh.hlsl"), VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
-				throw TEXT("Prototype_Component_Shader_VtxMesh");
+		/* For.Prototype_Component_Shader_VtxMesh */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_VtxMesh"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMesh.hlsl"), VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
+			throw TEXT("Prototype_Component_Shader_VtxMesh");
 
-			/* For.Prototype_Component_Shader_ShadowAnimMesh */
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_ShadowAnimMesh"),
-				CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_ShadowAnimMesh.hlsl"), VTXANIMMESH_DECL::Elements, VTXANIMMESH_DECL::iNumElements))))
-				throw TEXT("Prototype_Component_Shader_ShadowAnimMesh");
+		/* For.Prototype_Component_Shader_ShadowAnimMesh */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_ShadowAnimMesh"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_ShadowAnimMesh.hlsl"), VTXANIMMESH_DECL::Elements, VTXANIMMESH_DECL::iNumElements))))
+			throw TEXT("Prototype_Component_Shader_ShadowAnimMesh");
 
-			/* For.Prototype_Component_Shader_ShadowMesh */
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_ShadowMesh"),
-				CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_ShadowMesh.hlsl"), VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
-				throw TEXT("Prototype_Component_Shader_ShadowMesh");
+		/* For.Prototype_Component_Shader_ShadowMesh */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_ShadowMesh"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_ShadowMesh.hlsl"), VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
+			throw TEXT("Prototype_Component_Shader_ShadowMesh");
 
-			/* For.Prototype_Component_Shader_VtxPointInstance */
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_VtxPointInstance"),
-				CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointInstance.hlsl"),
-					VTXPOINTINSTANCE_DECL::Elements, VTXPOINTINSTANCE_DECL::iNumElements))))
-				return E_FAIL;
+		/* For.Prototype_Component_Shader_VtxPointInstance */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_VtxPointInstance"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointInstance.hlsl"),
+				VTXPOINTINSTANCE_DECL::Elements, VTXPOINTINSTANCE_DECL::iNumElements))))
+			return E_FAIL;
 
-			/* For.Prototype_Component_Shader_MeshInstance */
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_VtxMeshInstance"),
-				CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshInstance.hlsl"),
-					VTXMESHINSTANCE_DECL::Elements, VTXMESHINSTANCE_DECL::iNumElements))))
-				return E_FAIL;
+		/* For.Prototype_Component_Shader_MeshInstance */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_VtxMeshInstance"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshInstance.hlsl"),
+				VTXMESHINSTANCE_DECL::Elements, VTXMESHINSTANCE_DECL::iNumElements))))
+			return E_FAIL;
 
-			/* For.Prototype_Component_Shader_ShadowMeshInstance */
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_ShadowMeshInstance"),
-				CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_ShadowMeshInstance.hlsl"),
-					VTXMESHINSTANCE_DECL::Elements, VTXMESHINSTANCE_DECL::iNumElements))))
-				return E_FAIL;
+		/* For.Prototype_Component_Shader_ShadowMeshInstance */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_ShadowMeshInstance"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_ShadowMeshInstance.hlsl"),
+				VTXMESHINSTANCE_DECL::Elements, VTXMESHINSTANCE_DECL::iNumElements))))
+			return E_FAIL;
 
-			/* For.Prototype_Component_Shader_Terrain */
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_Terrain"),
-				CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Terrain.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
-				throw TEXT("Prototype_Component_Shader_Terrain");
+		/* For.Prototype_Component_Shader_Terrain */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_Terrain"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Terrain.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
+			throw TEXT("Prototype_Component_Shader_Terrain");
 
-			/* For.Prototype_Component_Shader_Debug */
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_Debug"),
-				CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Debug.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
-				throw TEXT("Prototype_Component_Shader_Debug");
+		/* For.Prototype_Component_Shader_Debug */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_Debug"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Debug.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
+			throw TEXT("Prototype_Component_Shader_Debug");
 			
-			/* For.Prototype_Component_Shader_Water */
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_Water"),
-				CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Water.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements))))
-				throw TEXT("Prototype_Component_Shader_Water");
+		/* For.Prototype_Component_Shader_Water */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_Water"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Water.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements))))
+			throw TEXT("Prototype_Component_Shader_Water");
 
-			/* Prototype_Component_Shader_DefaultEffect */
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_DefaultEffect"),
-				CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_DefaultEffect.hlsl"), VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
-				throw TEXT("Prototype_Component_Shader_DefaultEffect");
-		}
+		/* Prototype_Component_Shader_DefaultEffect */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_DefaultEffect"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_DefaultEffect.hlsl"), VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
+			throw TEXT("Prototype_Component_Shader_DefaultEffect");
 #pragma endregion
 
 #pragma region Load ETC

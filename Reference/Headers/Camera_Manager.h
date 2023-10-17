@@ -99,7 +99,6 @@ public:
 		_float _fPower = 1.0f,
 		SHAKE_POWER _ePower = SHAKE_POWER_CRECENDO_DECRECENDO,
 		_float3 _vAxisSet = _float3());
-
 #ifdef _DEBUG
 public:
 	void Set_DebugCam(_bool isCam) { m_isDebugCam = isCam; }

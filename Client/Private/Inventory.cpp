@@ -181,7 +181,7 @@ _bool CInventory::Add_Item(CItem* pItem, ITEMTYPE eType)
 			return false;
 		pFarming->Play(pItem);
 		m_pItems[eType].push_back(pItem);
-		m_pUI_Inventory[eType]->Set_ResourceInventoryItem(m_pItems[eType]);
+		m_pUI_Inventory[eType]->Set_ResourceInventoryItem(m_pItems[eType], &m_ResourcesCount);
 	}
 
 	CIngredient* pIngredient = dynamic_cast<CIngredient*>(pItem);
