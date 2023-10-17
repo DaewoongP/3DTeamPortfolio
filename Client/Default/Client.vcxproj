@@ -181,6 +181,7 @@
     <ClInclude Include="..\Public\Broom_End.h" />
     <ClInclude Include="..\Public\Breath.h" />
     <ClInclude Include="..\Public\Camera_Includes.h" />
+    <ClInclude Include="..\Public\Cat.h" />
     <ClInclude Include="..\public\ChineseChompingCabbageItem.h" />
     <ClInclude Include="..\Public\Cliff_Gate.h" />
     <ClInclude Include="..\Public\Client_Enum.h" />
@@ -490,6 +491,7 @@
     <ClCompile Include="..\Private\Broom_Break.cpp" />
     <ClCompile Include="..\Private\Broom_End.cpp" />
     <ClCompile Include="..\Private\Breath.cpp" />
+    <ClCompile Include="..\Private\Cat.cpp" />
     <ClCompile Include="..\private\ChineseChompingCabbageItem.cpp" />
     <ClCompile Include="..\Private\Cliff_Gate.cpp" />
     <ClCompile Include="..\Private\ConjuredDragon.cpp" />

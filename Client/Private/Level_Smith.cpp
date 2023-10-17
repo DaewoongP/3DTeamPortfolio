@@ -271,6 +271,7 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 		wstring wsLeapingToadStools(TEXT("Anim_LeapingToadStools"));
 		wstring wsHorklump(TEXT("Anim_Horklump"));
 		wstring wsLeech(TEXT("Anim_Leech"));
+		wstring wsGreyCat(TEXT("Anim_GreyCat"));
 		wstring wsPotionStation(TEXT("SM_HM_Potion_Table"));
 		wstring wsShopDoor(TEXT("SM_HM_Shop_Door"));
 
@@ -336,6 +337,22 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 				wszobjName, &MapObjectDesc)))
 			{
 				MSG_BOX("Failed to Clone Door in Level_Smith");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}
+
+		// °í¾çÀÌ
+		else if (0 == lstrcmp(modelName.c_str(), wsGreyCat.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_Cat_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH,
+				TEXT("Prototype_GameObject_Cat"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone Cat in Level_Smith");
 				ENDINSTANCE;
 				return E_FAIL;
 			}
