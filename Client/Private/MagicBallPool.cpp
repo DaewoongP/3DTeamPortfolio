@@ -51,6 +51,10 @@ HRESULT CMagicBallPool::Initialize()
     Create_InitMagic(Client::DIFFINDO, TEXT("Prototype_GameObject_Diffindo"));
     Create_InitMagic(Client::BOMBARDA, TEXT("Prototype_GameObject_Bombarda"));
     Create_InitMagic(Client::PENSIVE_GROUND_BALL, TEXT("Prototype_GameObject_Pensive_Ground_Ball"),3);
+    Create_InitMagic(Client::PENSIVE_FAIL_BALL, TEXT("Prototype_GameObject_Pensive_Fail_Ball"),2);
+    Create_InitMagic(Client::PENSIVE_SHOUTING, TEXT("Prototype_GameObject_Pensive_Shouting"), 2);
+    Create_InitMagic(Client::PENSIVE_SWORD_THROW, TEXT("Prototype_GameObject_Pensive_Sword_Throw")); 
+    Create_InitMagic(Client::PENSIVE_MACE_ATTACK, TEXT("Prototype_GameObject_Pensive_Mace_Attack"));
     Safe_Release(pGameInstance);
 
     return S_OK;
@@ -181,6 +185,18 @@ CMagicBall* CMagicBallPool::Create_Magic(SPELL eSpell)
         break;
     case Client::PENSIVE_GROUND_BALL:
         pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Pensive_Ground_Ball")));
+        break; 
+    case Client::PENSIVE_FAIL_BALL:
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Pensive_Fail_Ball")));
+        break;
+    case Client::PENSIVE_SHOUTING:
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Pensive_Shouting")));
+        break;
+    case Client::PENSIVE_SWORD_THROW:
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Pensive_Sword_Throw")));
+        break; 
+    case Client::PENSIVE_MACE_ATTACK:
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Pensive_Mace_Attack")));
         break;
     case Client::SPELL_END:
         MSG_BOX("Invalid Tag Value");

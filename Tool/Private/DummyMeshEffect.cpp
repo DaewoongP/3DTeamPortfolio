@@ -130,6 +130,7 @@ void CDummyMeshEffect::Tick_Imgui(_float _fTimeDelta)
 		pEffectWindow->Table_ColorEdit4("End Color", "sfgnyn45634fg", &m_vEndColor);
 		pEffectWindow->Table_CheckBox("Glow", "dkvijies", &m_isGlow);
 		pEffectWindow->Table_CheckBox("Distortion", "ciceicjoeijdsfs", &m_isDistortion);
+		pEffectWindow->Table_CheckBox("Diffuse", "dkssudgktpdyqksrkqtmtqslek", &m_isDiffuse);
 		ImGui::Separator();
 
 		//pEffectWindow->Table_DragFloat("RimPower", "iv893jdjxxcv", &m_fRimPower);
@@ -315,7 +316,6 @@ HRESULT CDummyMeshEffect::Load_FileDialog()
 				m_pRotEaseCombo->Update_Current_Item(m_eRotEase);
 				m_pPosEaseCombo->Update_Current_Item(m_ePosEase);
 				m_pPassComboBox->Update_Current_Item(m_strPassName);
-
 				MSG_BOX("The file has been loaded successfully");
 			}
 		}

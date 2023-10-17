@@ -481,6 +481,7 @@ HRESULT CLevel_Vault::Ready_Layer_Monster(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Vault.mon"));
+	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Pensive.mon"));
 	ENDINSTANCE;
 
 	return S_OK;
