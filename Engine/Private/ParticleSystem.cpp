@@ -20,7 +20,6 @@ CParticleSystem::CParticleSystem(const CParticleSystem& _rhs)
 	, m_VelocityOverLifeTimeModuleDesc(_rhs.m_VelocityOverLifeTimeModuleDesc)
 	, m_TextureSheetAnimationModuleDesc(_rhs.m_TextureSheetAnimationModuleDesc)
 	, m_RendererModuleDesc(_rhs.m_RendererModuleDesc)
-	, m_VelocityOverLifeTimeModuleDesc(_rhs.m_VelocityOverLifeTimeModuleDesc)
 	, m_StopAction(_rhs.m_StopAction)
 	, m_iLevel(_rhs.m_iLevel)
 {

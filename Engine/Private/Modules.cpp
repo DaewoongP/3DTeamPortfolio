@@ -598,6 +598,8 @@ HRESULT RENDERER_MODULE::Bind_Values(CShader* pShader)
 		return E_FAIL;
 	if (FAILED(pShader->Bind_RawValue("g_vTililing", &vTililing, sizeof(_float2))))
 		return E_FAIL;
+
+	return S_OK;
 }
 
 HRESULT VELOCITY_OVER_LIFETIME::Save(const _tchar* _pDirectoyPath)

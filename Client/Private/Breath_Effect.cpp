@@ -179,11 +179,12 @@ void CBreath_Effect::Tick_Imgui(_float fTimeDelta)
 	ImGui::Begin("Breath_Effect");
 	ImGui::End();
 }
+#endif // _DEBUG
+
 _bool CBreath_Effect::is_Null(const _float3* pStartPos, _float3* pTargetPos)
 {
 	return nullptr == pStartPos || nullptr == pTargetPos;
 }
-#endif // _DEBUG
 
 HRESULT CBreath_Effect::Add_Components()
 {
