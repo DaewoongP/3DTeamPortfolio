@@ -754,6 +754,9 @@
     <Filter Include="98. Default\ImGui_Defaults">
       <UniqueIdentifier>{628cd336-ebfe-4860-bfac-014e7bec45d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04. Effect\BoneDragon\Breath_Effect">
+      <UniqueIdentifier>{c87cb9f8-370f-4fca-be76-5dda19a43cb1}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\09. Item\03. Gear\Robe_Arcane">
       <UniqueIdentifier>{70bd1214-7e78-4b8b-beeb-d7fa5c144a62}</UniqueIdentifier>
     </Filter>
@@ -1619,6 +1622,9 @@
     <ClInclude Include="..\public\Game_Manager.h">
       <Filter>08. GameManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Breath_Effect.h">
+      <Filter>04. Effect\BoneDragon\Breath_Effect</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\Robe_Arcane.h">
       <Filter>02. GameObject\09. Item\03. Gear\Robe_Arcane</Filter>
     </ClInclude>
@@ -2429,6 +2435,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Game_Manager.cpp">
       <Filter>08. GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Breath_Effect.cpp">
+      <Filter>04. Effect\BoneDragon\Breath_Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Robe_Arcane.cpp">
       <Filter>02. GameObject\09. Item\03. Gear\Robe_Arcane</Filter>

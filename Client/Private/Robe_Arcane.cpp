@@ -22,7 +22,6 @@ HRESULT CRobe_Arcane::Initialize_Prototype(_uint iLevel)
 	m_ItemCreateDesc.iCost = 100;
 
 	// 기어 정보
-
 	if (FAILED(__super::Initialize_Prototype(iLevel)))
 		return E_FAIL;
 

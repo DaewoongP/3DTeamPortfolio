@@ -20,6 +20,7 @@ CParticleSystem::CParticleSystem(const CParticleSystem& _rhs)
 	, m_VelocityOverLifeTimeModuleDesc(_rhs.m_VelocityOverLifeTimeModuleDesc)
 	, m_TextureSheetAnimationModuleDesc(_rhs.m_TextureSheetAnimationModuleDesc)
 	, m_RendererModuleDesc(_rhs.m_RendererModuleDesc)
+	, m_VelocityOverLifeTimeModuleDesc(_rhs.m_VelocityOverLifeTimeModuleDesc)
 	, m_StopAction(_rhs.m_StopAction)
 	, m_iLevel(_rhs.m_iLevel)
 {
@@ -75,15 +76,6 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
 			, ProtoTag.data()
 			, CTexture::Create(m_pDevice, m_pContext, m_RendererModuleDesc.wstrGraientTexture.c_str()))))
-			return E_FAIL;
-	}
-
-	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_RendererModuleDesc.wstrDistortionTexture.c_str());
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, ProtoTag.data()))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
-			, ProtoTag.data()
-			, CTexture::Create(m_pDevice, m_pContext, m_RendererModuleDesc.wstrDistortionTexture.c_str()))))
 			return E_FAIL;
 	}
 
@@ -261,6 +253,8 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 		++Particle_iter;
 	}
 
+	m_RendererModuleDesc.Action(_fTimeDelta);
+
 	m_pBuffer->Set_DrawNum(_uint(m_Particles[ALIVE].size()));
 	m_pBuffer->Tick(m_ParticleMatrices.data(), m_pBuffer->Get_DrawNum());
 	m_EmissionModuleDesc.vPrevPos = m_EmissionModuleDesc.vCurPos;
@@ -410,6 +404,9 @@ HRESULT CParticleSystem::Setup_ShaderResources()
 
 		if (FAILED(m_pShader->Bind_RawValue("g_isTextureSheetAnimationActivated", &m_TextureSheetAnimationModuleDesc.isActivate, sizeof(_bool))))
 			throw "g_isTextureSheetAnimationActivated";
+
+		if (FAILED(m_RendererModuleDesc.Bind_Values(m_pShader)))
+			throw "RendererModuleDesc";
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -1013,6 +1010,7 @@ void CParticleSystem::Restart()
 	m_MainModuleDesc.Restart();
 	m_EmissionModuleDesc.Restart();
 	m_ShapeModuleDesc.Restart();
+	m_RendererModuleDesc.Restart();
 }
 CParticleSystem* CParticleSystem::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath, _uint m_iLevel)
 {

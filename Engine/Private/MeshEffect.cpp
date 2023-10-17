@@ -61,7 +61,7 @@ CMeshEffect::~CMeshEffect()
 
 }
 
-HRESULT CMeshEffect::Initialize_Prototype(const _tchar* pFilePath, _uint _iLevel)
+HRESULT CMeshEffect::Initialize_Prototype(const _tchar* pFilePath, _uint _iLevel, _float4x4 PivotMatrix)
 {
 	__super::Initialize_Prototype();
 	// 여기서 m_Path로드해주기.
@@ -74,6 +74,7 @@ HRESULT CMeshEffect::Initialize_Prototype(const _tchar* pFilePath, _uint _iLevel
 		}
 	}
 
+	m_PivotMatrix = PivotMatrix;
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
@@ -477,11 +478,11 @@ HRESULT CMeshEffect::Load(const _tchar* pFilePath)
 
 	return S_OK;
 }
-CMeshEffect* CMeshEffect::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* pFilePath, _uint _iLevel)
+CMeshEffect* CMeshEffect::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* pFilePath, _uint _iLevel, _float4x4 PivotMatrix)
 {
 	CMeshEffect* pInstance = New CMeshEffect(_pDevice, _pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(pFilePath, _iLevel)))
+	if (FAILED(pInstance->Initialize_Prototype(pFilePath, _iLevel, PivotMatrix)))
 	{
 		MSG_BOX("Failed to Created CMeshEffect");
 		Safe_Release(pInstance);

@@ -172,6 +172,7 @@
     <ClInclude Include="..\public\AshwinderEggs_Item.h" />
     <ClInclude Include="..\Public\Blink_Effect.h" />
     <ClInclude Include="..\Public\Bombarda.h" />
+    <ClInclude Include="..\public\Breath_Effect.h" />
     <ClInclude Include="..\Public\Boots_Arcane.h" />
     <ClInclude Include="..\Public\Boots_Default.h" />
     <ClInclude Include="..\Public\Boots_Merlin.h" />
@@ -481,6 +482,7 @@
     <ClCompile Include="..\Private\AshwinderEggs_Item.cpp" />
     <ClCompile Include="..\Private\Blink_Effect.cpp" />
     <ClCompile Include="..\Private\Bombarda.cpp" />
+    <ClCompile Include="..\private\Breath_Effect.cpp" />
     <ClCompile Include="..\Private\Boots_Arcane.cpp" />
     <ClCompile Include="..\Private\Boots_Default.cpp" />
     <ClCompile Include="..\Private\Boots_Merlin.cpp" />
