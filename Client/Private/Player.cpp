@@ -744,12 +744,12 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 	/* Com_Blink_Effect */
-	/*if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_Trail"),
-		TEXT("Com_Blink_Trail"), reinterpret_cast<CComponent**>(&m_pBlink))))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}*/
+	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_Trail"),
+	//	TEXT("Com_Blink_Trail"), reinterpret_cast<CComponent**>(&m_pBlink))))
+	//{
+	//	__debugbreak();
+	//	return E_FAIL;
+	//}
 
 	//_int DefValue = 15;
 	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_EndurusPotion"),
@@ -2970,6 +2970,9 @@ void CPlayer::Blink_End()
 void CPlayer::Healing()
 {
 	m_pPlayer_Information->fix_HP(40);
+
+
+
 }
 
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -3162,7 +3165,7 @@ void CPlayer::Free()
 		Safe_Release(m_pCooltime);
 		Safe_Release(m_pDefence);
 		
-		//Safe_Release(m_pBlink);
+	//	Safe_Release(m_pBlink);
 
 		if (nullptr != m_pTargetTransform)
 		{

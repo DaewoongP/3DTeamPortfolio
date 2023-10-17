@@ -34,7 +34,7 @@ HRESULT CDiffindo::Initialize_Prototype(_uint iLevel)
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Diffindo_Ball_Twinkle")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Diffindo_Ball_Twinkle")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Diffindo/Ball_Twinkle/"), m_iLevel))))
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Diffindo/Ball_Twinkle"), m_iLevel))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
@@ -43,7 +43,7 @@ HRESULT CDiffindo::Initialize_Prototype(_uint iLevel)
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Diffindo_Cast_Twinkle")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Diffindo_Cast_Twinkle")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Diffindo/Cast_Twinkle/"), m_iLevel))))
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Diffindo/Cast_Twinkle"), m_iLevel))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
@@ -52,7 +52,16 @@ HRESULT CDiffindo::Initialize_Prototype(_uint iLevel)
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Diffindo_Dust")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Diffindo_Dust")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Diffindo/Dust/"), m_iLevel))))
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Diffindo/Dust"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Diffindo_Move_Particle")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Diffindo_Move_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Diffindo/Move_Particle"), m_iLevel))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
@@ -217,7 +226,7 @@ HRESULT CDiffindo::Add_Components()
 		return E_FAIL;
 	}
 	
-	m_ParticleVec[EFFECT_STATE_MAIN].resize(3);
+	m_ParticleVec[EFFECT_STATE_MAIN].resize(4);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Diffindo_Ball_Twinkle"),
 		TEXT("Com_Ball_Twinkle"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][0]))))
 	{
@@ -239,7 +248,13 @@ HRESULT CDiffindo::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
-
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Diffindo_Move_Particle"),
+		TEXT("Com_Move_Particle"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][3]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Diffindo_Move_Particle)");
+		__debugbreak();
+		return E_FAIL;
+	}
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Diffindo_MeshEffect"),
 		TEXT("Com_Mesh_Effect"), reinterpret_cast<CComponent**>(&m_pMeshEffect))))

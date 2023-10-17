@@ -149,7 +149,7 @@ void CMeshEffect::Tick(_float _fTimeDelta)
 	m_vOffset.x += m_vDeltaOffset.x * _fTimeDelta;
 	m_vOffset.y += m_vDeltaOffset.y * _fTimeDelta;
 	m_vTililing.x += m_vDeltaTiling.x * _fTimeDelta;
-	m_vTililing.x += m_vDeltaTiling.y * _fTimeDelta;
+	m_vTililing.y += m_vDeltaTiling.y * _fTimeDelta;
 
 	_float fRatio = m_fAge / m_fLifeTime;
 
