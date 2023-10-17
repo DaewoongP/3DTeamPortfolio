@@ -33,7 +33,7 @@ public:
 		SHAKE_TYPE_ROTATION,
 		SHAKE_TYPE_END
 	};
-	enum SHAKE_POWER 
+	enum SHAKE_POWER
 	{
 		SHAKE_POWER_CRECENDO,
 		SHAKE_POWER_DECRECENDO,
@@ -75,7 +75,7 @@ private:
 public:
 	//메인카메라가 돌지 않음을 확인하기위한 함수
 	const _bool Get_MainCameraOff() const { return m_isMainCameraOff; }
-	
+
 	//쉐이크 시작 함수
 
 	//타입, 축, 그래프, 주기, 크기, 지속시간, 특정 축
@@ -99,7 +99,7 @@ public:
 		_float _fPower = 1.0f,
 		SHAKE_POWER _ePower = SHAKE_POWER_CRECENDO_DECRECENDO,
 		_float3 _vAxisSet = _float3());
-	
+
 #ifdef _DEBUG
 public:
 	void Set_DebugCam(_bool isCam) { m_isDebugCam = isCam; }
@@ -143,7 +143,7 @@ public:
 	HRESULT Set_Camera(const _tchar * _CameraTag, _float _fLerpTime = 0.0f);
 
 	//현재 카메라 체크
-	_bool Is_Current_Camera(const _tchar* _CameraTag);
+	_bool Is_Current_Camera(const _tchar * _CameraTag);
 
 	//카메라 찾기
 	class CCamera* Find_Camera(const _tchar * _CameraTag);
@@ -226,7 +226,7 @@ private:
 	_float m_fShakeDuration = { 0.0f };
 	_float m_fShakeTimeAcc = { 0.0f };
 	_float m_fShakePower = { 0.0f };
-	
+
 	_float3 m_vShake_Axis_Set = { _float3() };
 
 	SHAKE_AXIS m_eShake_Axis = { SHAKE_AXIS_END };
@@ -247,10 +247,10 @@ private:
 
 private:
 	//태그로 컷씬을 찾는다.
-	vector<CUTSCENECAMERADESC>* Find_CutScene(const _tchar* _CutSceneTag);
+	vector<CUTSCENECAMERADESC>* Find_CutScene(const _tchar * _CutSceneTag);
 
 	//태그로 오프셋카메라를 찾는다.
-	vector<OFFSETCAMERADESC>* Find_OffSetCamera(const _tchar* _OffSetTag);
+	vector<OFFSETCAMERADESC>* Find_OffSetCamera(const _tchar * _OffSetTag);
 
 	//컷씬 재생
 	void Play_CutScene(_float _TimeDelta);
@@ -268,7 +268,7 @@ private:
 
 	//list의 원소를 벡터에 연결
 	void Connect_List_To_Vector();
-	
+
 	void CutScene_Do_Not_Lerp_Update(CUTSCENECAMERADESC _CutSceneCameraDesc);
 	void CutScene_Lerp_Update(CUTSCENECAMERADESC _CutSceneCameraDescStart, CUTSCENECAMERADESC _CutSceneCameraDescEnd);
 

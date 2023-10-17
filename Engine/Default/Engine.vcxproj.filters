@@ -424,8 +424,8 @@
     <Filter Include="01. Utility\03. Components\02. Renderer\RadialBlur">
       <UniqueIdentifier>{3af40292-80ae-4d8f-bd9d-5e9f97569558}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\02. Renderer\FlowMap">
-      <UniqueIdentifier>{20a09050-3d0a-4aa4-b5d2-56968caca752}</UniqueIdentifier>
+    <Filter Include="01. Utility\03. Components\02. Renderer\Flowmap">
+      <UniqueIdentifier>{f782bc86-56fb-48d6-8ec4-155d1d501e48}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Utility\03. Components\23. Camera_Shake">
       <UniqueIdentifier>{5386847c-b707-4ac0-a343-e84c1e9b7fd8}</UniqueIdentifier>
@@ -858,8 +858,8 @@
     <ClInclude Include="..\public\RadialBlur.h">
       <Filter>01. Utility\03. Components\02. Renderer\RadialBlur</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Flowmap.h">
-      <Filter>01. Utility\03. Components\02. Renderer\FlowMap</Filter>
+    <ClInclude Include="..\Public\Flowmap.h">
+      <Filter>01. Utility\03. Components\02. Renderer\Flowmap</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Camera_Shake.h">
       <Filter>01. Utility\03. Components\23. Camera_Shake</Filter>
@@ -1259,8 +1259,8 @@
     <ClCompile Include="..\private\RadialBlur.cpp">
       <Filter>01. Utility\03. Components\02. Renderer\RadialBlur</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Flowmap.cpp">
-      <Filter>01. Utility\03. Components\02. Renderer\FlowMap</Filter>
+    <ClCompile Include="..\Private\Flowmap.cpp">
+      <Filter>01. Utility\03. Components\02. Renderer\Flowmap</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Camera_Shake.cpp">
       <Filter>01. Utility\03. Components\23. Camera_Shake</Filter>
@@ -1341,6 +1341,12 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_RadialBlur.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\RadialBlur</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Flowmap.hlsl">
+      <Filter>01. Utility\03. Components\02. Renderer\Flowmap</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Noise.hlsl">
+      <Filter>01. Utility\98. ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

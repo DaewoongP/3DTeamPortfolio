@@ -58,8 +58,6 @@ public:
 	void Set_Enable(_bool isEnable) { m_isEnable = isEnable; }
 	void Set_Alpha(_float fAlpha) { m_fAlphaRatio = fAlpha; }
 
-	CItem* Buy();
-
 public:
 	ITEM_ID Get_ItemID() { return m_ItemCreateDesc.eItemId; }
 	CTexture* Get_UITexture() { return m_pUITexture; }
@@ -68,8 +66,9 @@ public:
 		return m_ItemCreateDesc.wstrKoreanName.data();
 	}
 
+	virtual _bool Buy();
 	void ToLayer(_int iLevel = -1, const _tchar* ComTag = ::Generate_HashtagW().data(), const _tchar* LayerTag = TEXT("Layer_Item"));
-	static CItem* SimpleFactory(ITEM_ID eItemID, _uint iLevel, void* pArg);
+	static CItem* SimpleFactory(ITEM_ID eItemID, _uint iLevel = LEVEL_STATIC, void* pArg = nullptr);
 
 protected:
 	_uint		m_iLevel = { 0 };

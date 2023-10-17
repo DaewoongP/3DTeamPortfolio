@@ -40,6 +40,7 @@ public:
 private:
 	_bool m_isAbleLevioso = { false };
 	array<CParticleSystem*, 3> m_DarkAura = { nullptr };
+	array<const _float4x4*, 3> m_DarkAuraBoneMatrix = { nullptr };
 
 	//카메라 쉐이크 노티파이에 함수를 넣기 위한 클래스
 	CCamera_Shake* m_pDescendo_Shake = { nullptr };

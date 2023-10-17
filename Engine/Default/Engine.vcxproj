@@ -23,7 +23,7 @@
     <ClInclude Include="..\Public\Camera_Shake.h" />
     <ClInclude Include="..\public\CoolTime.h" />
     <ClInclude Include="..\Public\DOF.h" />
-    <ClInclude Include="..\public\Flowmap.h" />
+    <ClInclude Include="..\Public\Flowmap.h" />
     <ClInclude Include="..\public\MotionBlurInst.h" />
     <ClInclude Include="..\public\MotionBlur.h" />
     <ClInclude Include="..\public\ParticleSystemPool.h" />
@@ -169,7 +169,7 @@
     <ClCompile Include="..\Private\Camera_Shake.cpp" />
     <ClCompile Include="..\private\CoolTime.cpp" />
     <ClCompile Include="..\Private\DOF.cpp" />
-    <ClCompile Include="..\private\Flowmap.cpp" />
+    <ClCompile Include="..\Private\Flowmap.cpp" />
     <ClCompile Include="..\Private\Model_Instance.cpp" />
     <ClCompile Include="..\private\MotionBlurInst.cpp" />
     <ClCompile Include="..\private\MotionBlur.cpp" />
@@ -302,6 +302,7 @@
     <ClCompile Include="..\private\VIBuffer_Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Flowmap.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Fog.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Bloom.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Blur.hlsl" />
@@ -313,6 +314,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Distortion.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Geometry.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Glow.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Noise.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_RadialBlur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_RenderFunc.hlsli" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Light.hlsl" />

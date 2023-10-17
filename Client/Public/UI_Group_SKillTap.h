@@ -108,6 +108,7 @@ private:
 	vector<CTexture*>					m_SkillTextures;
 
 	CUI_Back* m_pBack;
+	CUI_Back* m_pBG;
 	CUI_Group_Cursor* m_pCursor;
 
 private:

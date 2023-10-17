@@ -118,7 +118,19 @@ HRESULT CCustomModel::Bind_BoneMatrices(CShader* pShader, const char* pConstantN
 	return S_OK;
 }
 
-HRESULT CCustomModel::Add_MeshParts(const _uint& _iLevelIndex, const wstring& _wstrPrototypeTag, MESHTYPE _eMeshPartsType, const _tchar* _szClothDataFilePath)
+HRESULT CCustomModel::Bind_Color(CShader* _pShader, const char* _pConstantName, const _uint& _iMeshPartsIndex)
+{
+	if (nullptr == m_MeshParts[_iMeshPartsIndex])
+		return S_OK;
+
+	_float4 vColor = m_MeshParts[_iMeshPartsIndex]->Get_Parts_Color();
+	_pShader->Bind_RawValue(_pConstantName, &vColor, sizeof(_float4));
+
+	return S_OK;
+}
+
+HRESULT CCustomModel::Add_MeshParts(const _uint& _iLevelIndex, const wstring& _wstrPrototypeTag, 
+	MESHTYPE _eMeshPartsType, const _float4& _vColor, const _tchar* _szClothDataFilePath)
 {
 	if (0 > _eMeshPartsType || MESH_END <= _eMeshPartsType)
 	{
@@ -132,6 +144,7 @@ HRESULT CCustomModel::Add_MeshParts(const _uint& _iLevelIndex, const wstring& _w
 	CMeshParts::MESHPARTSDESC MeshPartsDesc;
 	MeshPartsDesc.pBones = &m_Bones;
 	MeshPartsDesc.szClothDataFilePath = _szClothDataFilePath;
+	MeshPartsDesc.vColor = _vColor;
 	CMeshParts* pMeshParts = static_cast<CMeshParts*>(pGameInstance->Clone_Component(_iLevelIndex, _wstrPrototypeTag.c_str(), &MeshPartsDesc));
 
 	Safe_Release(pGameInstance);

@@ -1,6 +1,6 @@
 
-float2			g_vOffset;
-float2          g_vTililing;
+float2			g_vOffset = float2(0.f, 0.f);;
+float2          g_vTililing = float2(1.f, 1.f);
 
 // ex) SplitUV(In.vTexUV, g_iWidthLength, g_iHeightLength, g_iCurIndex, Out.vTexUV);
 void SplitUV(float2 In, uint iWidthLength, uint iHeightLength, uint iCurIndex, out float2 Out)

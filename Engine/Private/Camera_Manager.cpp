@@ -101,14 +101,14 @@ void CCamera_Manager::Tick(_float _TimeDelta)
 void CCamera_Manager::Late_Tick(_float _TimeDelta)
 {
 #ifdef _DEBUG
-	
+
 	Shake_Update(_TimeDelta);
 
 #endif // _DEBUG
-	
+
 	for (size_t i = 0; i < SHAKE_PRIORITY_END; i++)
 	{
-		Shake_Update((SHAKE_PRIORITY)i,_TimeDelta);
+		Shake_Update((SHAKE_PRIORITY)i, _TimeDelta);
 	}
 }
 
@@ -286,7 +286,7 @@ _bool CCamera_Manager::Is_Current_Camera(const _tchar* _CameraTag)
 	{
 		return false;
 	}
-	
+
 	return !lstrcmp((*m_iterCamera).first, _CameraTag);
 }
 
@@ -459,7 +459,7 @@ void CCamera_Manager::Play_Spline_CutScene(_float _TimeDelta)
 	{
 		//이전 값을 바꾼다.(마지막 보간을 위해)
 		//m_PreviousCutSceneCameraDesc = *m_SplineDataIndexAccess[1];
-		
+
 		//러프
 		if (true == (*m_SplineDataIndexAccess[2]).isLerp)
 		{
@@ -506,7 +506,7 @@ void CCamera_Manager::Play_Spline_CutScene(_float _TimeDelta)
 
 			//첫 원소 삭제 3
 			m_SplineData.erase(m_SplineData.begin());
-			
+
 			//큐가 있다면
 			if (false == m_CutSceneCameraDescs.empty())
 			{
@@ -548,7 +548,7 @@ void CCamera_Manager::Play_Spline_CutScene(_float _TimeDelta)
 
 			//첫 원소 삭제 2
 			m_SplineData.erase(m_SplineData.begin());
-			
+
 			//큐가 있고, 리스트의 사이즈가 4보다 작다면
 			while (false == m_CutSceneCameraDescs.empty() && 4 > m_SplineData.size())
 			{
@@ -558,7 +558,7 @@ void CCamera_Manager::Play_Spline_CutScene(_float _TimeDelta)
 				//맨 앞 원소 삭제
 				m_CutSceneCameraDescs.pop();
 			}
-			
+
 			//큐가 없다면
 			if (true == m_CutSceneCameraDescs.empty())
 			{
@@ -569,7 +569,7 @@ void CCamera_Manager::Play_Spline_CutScene(_float _TimeDelta)
 			Connect_List_To_Vector();
 		}
 	}
-	
+
 	//파이프 라인 값 변경
 	m_pPipeLine->Set_Transform(CPipeLine::D3DTS_VIEW, m_ViewMatrix);
 }
@@ -602,7 +602,7 @@ void CCamera_Manager::Play_OffSetCamera(_float _TimeDelta)
 			);
 
 		_float4 vAt = m_OffSetCameraDescs.front().pTargetMatrix->Translation().TransNorm();
-				
+
 		_float4 vUp = _float4(0.0f, 1.0f, 0.0f, 0.0f);
 
 		//카메라의 역행렬
@@ -740,14 +740,14 @@ void CCamera_Manager::Shake_Update(_float _TimeDelta)
 
 	_float fShakePower = { 0.0f };
 	fShakePower = m_fShakePower - CEase::Ease(m_eEase, m_fShakeTimeAcc, 0.0f, m_fShakePower, m_fShakeDuration);
-	
+
 	switch (m_eShake_Power)
 	{
 	case Engine::CCamera_Manager::SHAKE_POWER_CRECENDO:
 	{
 		fShakePower = CEase::Ease(m_eEase, m_fShakeTimeAcc, 0.0f, m_fShakePower, m_fShakeDuration);
 	}
-		break;
+	break;
 	case Engine::CCamera_Manager::SHAKE_POWER_DECRECENDO:
 	{
 		fShakePower = m_fShakePower - CEase::Ease(m_eEase, m_fShakeTimeAcc, 0.0f, m_fShakePower, m_fShakeDuration);
@@ -765,7 +765,7 @@ void CCamera_Manager::Shake_Update(_float _TimeDelta)
 			fShakePower = CEase::Ease(m_eEase, m_fShakeTimeAcc, 0.0f, m_fShakePower, m_fShakeDuration);
 		}
 	}
-		break;
+	break;
 	case Engine::CCamera_Manager::SHAKE_POWER_END:
 		break;
 	default:
@@ -773,7 +773,7 @@ void CCamera_Manager::Shake_Update(_float _TimeDelta)
 	}
 
 
-	
+
 	_float fSin = sinf(m_fShakeTimeAcc/* * m_fShakeDuration*/ * XMConvertToRadians(360.0f) * m_fShakeSpeed);
 
 	_float fShakeResult = fSin * fShakePower;
@@ -792,7 +792,7 @@ void CCamera_Manager::Shake_Update(_float _TimeDelta)
 			vRight *= fShakeResult;
 			Cam_Matrix = Cam_Matrix * XMMatrixTranslation(vRight.x, vRight.y, vRight.z);
 		}
-			break;
+		break;
 		case Engine::CCamera_Manager::SHAKE_AXIS_UP:
 		{
 			_float3 vUp = Cam_Matrix.Up();
@@ -800,7 +800,7 @@ void CCamera_Manager::Shake_Update(_float _TimeDelta)
 			vUp *= fShakeResult;
 			Cam_Matrix = Cam_Matrix * XMMatrixTranslation(vUp.x, vUp.y, vUp.z);
 		}
-			break;
+		break;
 		case Engine::CCamera_Manager::SHAKE_AXIS_LOOK:
 		{
 			_float3 vLook = Cam_Matrix.Look();
@@ -808,7 +808,7 @@ void CCamera_Manager::Shake_Update(_float _TimeDelta)
 			vLook *= fShakeResult;
 			Cam_Matrix = Cam_Matrix * XMMatrixTranslation(vLook.x, vLook.y, vLook.z);
 		}
-			break;
+		break;
 		case Engine::CCamera_Manager::SHAKE_AXIS_SET:
 		{
 			_float3 vAxis = m_vShake_Axis_Set;
@@ -816,14 +816,14 @@ void CCamera_Manager::Shake_Update(_float _TimeDelta)
 			vAxis *= fShakeResult;
 			Cam_Matrix = Cam_Matrix * XMMatrixTranslation(vAxis.x, vAxis.y, vAxis.z);
 		}
-			break;
+		break;
 		case Engine::CCamera_Manager::SHAKE_AXIS_END:
 			break;
 		default:
 			break;
 		}
 	}
-		break;
+	break;
 	case Engine::CCamera_Manager::SHAKE_TYPE_ROTATION:
 	{
 		_float3 vRight = Cam_Matrix.Right();
@@ -839,25 +839,25 @@ void CCamera_Manager::Shake_Update(_float _TimeDelta)
 			RotationMatrix = XMMatrixRotationQuaternion(
 				XMQuaternionRotationAxis(XMVector3Normalize(vRight), fShakeResult));
 		}
-			break;
+		break;
 		case Engine::CCamera_Manager::SHAKE_AXIS_UP:
 		{
 			RotationMatrix = XMMatrixRotationQuaternion(
 				XMQuaternionRotationAxis(XMVector3Normalize(vUp), fShakeResult));
 		}
-			break;
+		break;
 		case Engine::CCamera_Manager::SHAKE_AXIS_LOOK:
 		{
 			RotationMatrix = XMMatrixRotationQuaternion(
 				XMQuaternionRotationAxis(XMVector3Normalize(vLook), fShakeResult));
 		}
-			break;
+		break;
 		case Engine::CCamera_Manager::SHAKE_AXIS_SET:
 		{
 			RotationMatrix = XMMatrixRotationQuaternion(
 				XMQuaternionRotationAxis(XMVector3Normalize(m_vShake_Axis_Set), fShakeResult));
 		}
-			break;
+		break;
 		case Engine::CCamera_Manager::SHAKE_AXIS_END:
 			break;
 		default:
@@ -872,7 +872,7 @@ void CCamera_Manager::Shake_Update(_float _TimeDelta)
 		memcpy(&Cam_Matrix.m[1][0], &vUp, sizeof(_float3));
 		memcpy(&Cam_Matrix.m[2][0], &vLook, sizeof(_float3));
 	}
-		break;
+	break;
 	case Engine::CCamera_Manager::SHAKE_TYPE_END:
 		break;
 	default:
@@ -883,7 +883,6 @@ void CCamera_Manager::Shake_Update(_float _TimeDelta)
 	_float3 vAt = vEye + Cam_Matrix.Look();
 	_float3 vUp = Cam_Matrix.Up();
 	vUp.Normalize();
-	
 	m_pPipeLine->Set_Transform(CPipeLine::D3DTS_VIEW, XMMatrixLookAtLH(vEye, vAt, vUp));
 }
 
@@ -1078,7 +1077,7 @@ void CCamera_Manager::Lerp_For_Set_Camera(_float _TimeDelta)
 	_float fRatio = m_fSetCameraLerpTimeAcc / m_fSetCameraLerpTime;
 
 	_float3 vEye = m_pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW)->Translation();
-	_float3 vAt  = vEye + m_pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW)->Look();
+	_float3 vAt = vEye + m_pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW)->Look();
 
 	vEye = XMVectorLerp(vEye, m_vPreviousEye, fRatio);
 	vAt = XMVectorLerp(vAt, m_vPreviousAt, fRatio);
@@ -1089,6 +1088,6 @@ void CCamera_Manager::Lerp_For_Set_Camera(_float _TimeDelta)
 void CCamera_Manager::Free()
 {
 	Safe_Release(m_pPipeLine);
-	
+
 	Clear();
 }

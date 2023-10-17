@@ -5,6 +5,7 @@
 #include "Professor_FIg.h"
 #include "EnergyBall.h"
 #include "Player.h"
+#include "Pensive.h"
 
 CProtego::CProtego(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMagicBall(pDevice, pContext)
@@ -359,6 +360,11 @@ void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	{
 		static_cast<const CEnergyBall*>(m_pTarget)->Set_Protego_Collision(pTransform, eAttackType);
 	}
+	else if (wcsstr(m_pTarget->Get_Tag(), TEXT("Com_DragonHead")) != nullptr)
+	{
+		//용머리를 들고있는 펜시브 수호자의 콜리젼을 불러줘야함.
+		static_cast<const CPensive*>(m_pTarget->Get_Owner())->Set_Protego_Collision(pTransform, eAttackType);
+	}
 	else
 	{
 		static_cast<const CEnemy*>(m_pTarget)->Set_Protego_Collision(pTransform/* (마법)충돌체 위치 */, eAttackType);
@@ -381,6 +387,9 @@ HRESULT CProtego::Reset(MAGICBALLINITDESC& InitDesc)
 {
 	//Set InitDesc to MagicBallDesc
 	__super::Reset(InitDesc);
+
+	m_fDyingTimer = 7.f;
+
 	switch (InitDesc.eMagicType)
 	{
 	case Client::CMagic::MT_NOTHING:

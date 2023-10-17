@@ -49,6 +49,7 @@ private: /* For. Cloth */
 
 private:
 	vector<VTXANIMMESH>		m_AnimVertices;
+	vector<VTXANIMMESH>		m_InitAnimVertices;
 	vector<VTXMESH>			m_NonAnimVertices;
 
 private:

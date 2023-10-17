@@ -2,30 +2,30 @@
 /* =============================================== */
 //	[CPensive]
 // 
-//	Á¤ : ÁÖ¼ºÈ¯
+//	Á¤ : ¾ÈÃ¶¹Î
 //	ºÎ :
 //
 /* =============================================== */
 
-#include "GameObject.h"
-#include "Client_Defines.h"
+#include "Enemy.h"
+#include "StateMachine_Enemy.h"
 
-BEGIN(Engine)
-class CModel;
-class CShader;
-class CRenderer;
-class CRigidBody;
-class CRootBehavior;
-END
 
 BEGIN(Client)
 class CWeapon_Pensive;
+class CStateContext_Enemy;
+class CMagicSlot;
+class CWeapon_Dragon_Head;
+class CMagicBall;
 END
 
 BEGIN(Client)
 
-class CPensive final : public CGameObject
+class CPensive final : public CEnemy
 {
+public:
+	enum PENSIVE_ATTACKTYPE { ATTACK_HAMMER, ATTACK_GROUND, ATTACK_SWORD, ATTACK_ORB, ATTACK_SCREAM, ATTACK_END };
+
 private:
 	explicit CPensive(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CPensive(const CPensive& rhs);
@@ -34,24 +34,70 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
+	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
 
-private:
-	CModel* m_pModelCom = { nullptr };
-	CShader* m_pShaderCom = { nullptr };
-	CRenderer* m_pRenderer = { nullptr };
-	CRigidBody* m_pRigidBody = { nullptr };
-	CRootBehavior* m_pRootBehavior = { nullptr };
+public:
+	virtual void Set_Protego_Collision(CTransform* pTransform, ATTACKTYPE eType) const;
+	void		 Set_AttackAble_True() { m_isAttackAble = true; }
+	void		 Set_AttackAble_False() { m_isAttackAble = false; }
+	void		 Set_Turnable_True() { m_isTurnAble = true; }
+	void		 Set_Turnable_False() { m_isTurnAble = false; }
+	void		 Do_Damage(_int iDmg) { 
+		m_pHealth->Damaged(iDmg); 
+		if (m_isAttackAble)
+		{
+			if (m_pHealth->Get_MaxHP() * 0.5f > m_pHealth->Get_Current_HP())
+			{
+				m_iPhase = 2;
+			}
+			if (iDmg > 300)
+			{
+				m_pStateContext->Set_StateMachine(TEXT("Groogy"));
+				m_pModelCom->Change_Animation(TEXT("Stun_Start"));
+			}
+		}
+	}
 
 private:
-	CWeapon_Pensive* m_pWeapon = { nullptr };
+	CStateContext_Enemy*	m_pStateContext = { nullptr };
+	CMagicSlot*				m_pMagicSlot = { nullptr };
+	CWeapon_Dragon_Head*	m_pDragonHead[3] = { nullptr };
+
+	CMagicBall*				m_pMagicBall_Attack = { nullptr };
+	CMagicBall*				m_pMagicBall_Protego = { nullptr };
+	CMagicBall*				m_pMagicBall_Sword[3] = { nullptr };
 
 private:
-	HRESULT Make_AI();
+	CStateMachine_Enemy::STATEMACHINEDESC m_StateMachineDesc = { CStateMachine_Enemy::STATEMACHINEDESC() };
+
+	_uint m_iPhase = { 1 };
+	_uint m_iSwordIndex = { 0 };
+	_uint m_iAttackType = { ATTACK_END };
+	_bool m_isAttackAble = { false };
+	_bool m_isTurnAble = { false };
+	CMagic::MAGICDESC		m_ProtegoInitDesc[3] = {};
+	_float4x4 m_SwordOffsetMatrix[3] = {};
+
+private:
+	void	Attack_Ground();
+	void	Attack_Orb();
+	void	Attack_Shouting();
+	void	Attack_Throw_Sword();
+	void	Attack_Mace();
+
+	void	Next_Attack();
+	void	Next_SwordAttack();
+
+private:
 	HRESULT Add_Components();
-	HRESULT SetUp_ShaderResources();
+	HRESULT Add_Components_Level(_uint iCurrentLevelIndex);
+	HRESULT Ready_StateMachine(_uint iCurrentLevelIndex);
+	HRESULT Make_Notifies();
+	HRESULT Add_Magic();
 
 public:
 	static CPensive* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

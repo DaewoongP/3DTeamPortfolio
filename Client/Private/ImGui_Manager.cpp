@@ -58,6 +58,8 @@ HRESULT CImGui_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 HRESULT CImGui_Manager::Render()
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
@@ -115,7 +117,6 @@ void CImGui_Manager::MatrixImgui(_float4x4& pMatrix, const _char* pNodeName)
 	if (nullptr == pNodeName)
 		return;
 
-	ImGui::Begin(pNodeName);
 	// 인자를 통해서 고유한 태그를 만들어줌.
 	string strPositionTag = "Position";
 	string strRotationTag = "Rotation";
@@ -170,8 +171,6 @@ void CImGui_Manager::MatrixImgui(_float4x4& pMatrix, const _char* pNodeName)
 
 	// 새로운 월드행렬 만듬.
 	pMatrix = ScaleMatrix * RotMatrix * TransMatrix;
-
-	ImGui::End();
 }
 
 void CImGui_Manager::Free()

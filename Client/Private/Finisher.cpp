@@ -244,7 +244,7 @@ void CFinisher::Ready_Dying()
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-	pGameInstance->Add_InstanceLight(m_vEndPosition, 50.f, 1.f, _float4(1.f, 1.f, 1.f, 1.f));
+	pGameInstance->Add_InstanceLight(m_vEndPosition, 70.f, 1.f, _float4(1.f, 1.f, 1.f, 1.f));
 	Safe_Release(pGameInstance);
 }
 

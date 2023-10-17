@@ -65,6 +65,7 @@ public:
 		{
 			m_eMagicBallState = static_cast<MAGICBALL_STATE>(m_eMagicBallState + 1);
 			m_isFirstFrameInState = true;
+			m_isHeavyChange = true;
 		}
 	}
 	void Re_Set_StartEndLerpAcc(_float3 vStart, _float3 vDir);
@@ -97,6 +98,7 @@ protected:
 protected:
 	vector<CTrail*>						m_TrailVec[EFFECT_STATE_END];
 	vector<CParticleSystem*>			m_ParticleVec[EFFECT_STATE_END];
+	vector<CMeshEffect*>				m_MeshEffectVec[EFFECT_STATE_END];
 
 //발사에 관한 로직
 protected:
@@ -146,6 +148,10 @@ protected:
 
 	_float					m_fWandParticleDelayTimer = 0.1f;
 	_float					m_fDyingTimer = 5.f;
+	_bool					m_isHeavyChange = { false };
+
+protected:
+	_float4					m_vLightColor = {};
 
 
 //쉐이크 파워 계산(장현우)

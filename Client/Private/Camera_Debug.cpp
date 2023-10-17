@@ -49,6 +49,9 @@ void CCamera_Debug::Tick(_float fTimeDelta)
 {
 	Key_Input(fTimeDelta);
 
+	if (false == m_isDebug)
+		return;
+
 	if (m_isFixMouse)
 	{
 		Fix_Mouse();

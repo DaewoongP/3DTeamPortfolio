@@ -21,7 +21,7 @@ void CMesh::Get_Matrices(CModel::BONES Bones, _Inout_ _float4x4* pMatrices, _flo
 
 	for (auto iBoneIndex : m_BoneIndices)
 	{
-		_float4x4 OffsetMatrix = Bones[iBoneIndex]->Get_OffsetMatrix();
+		_float4x4 OffsetMatrix = m_OffsetMatrices[iIndex];
 		_float4x4 CombinedMatrix = Bones[iBoneIndex]->Get_CombinedTransformationMatrix();
 		pMatrices[iIndex++] = OffsetMatrix * CombinedMatrix * PivotMatrix;
 	}
@@ -185,8 +185,13 @@ HRESULT CMesh::Ready_VertexBuffer_Anim(const Engine::MESH Mesh, const CModel::BO
 			}
 		});
 		
-		_float4x4		OffsetMatrix;
+		_float4x4 OffsetMatrix;
 		memcpy(&OffsetMatrix, &Bone.OffsetMatrix, sizeof(_float4x4));
+
+		m_OffsetMatrices.push_back(OffsetMatrix);
+
+		if (iIndex == Bones.size())
+			continue;
 
 		Bones[iIndex]->Set_OffsetMatrix(OffsetMatrix);
 

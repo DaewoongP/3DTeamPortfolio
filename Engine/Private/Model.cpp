@@ -1063,6 +1063,7 @@ HRESULT CModel::Convert_Animations_GCM()
 HRESULT CModel::Ready_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 {
 	std::lock_guard<std::mutex> lock(mtx);
+
 	HANDLE hFile = CreateFile(pModelFilePath,
 		GENERIC_READ,
 		0,

@@ -162,7 +162,6 @@ HRESULT CLight_Manager::Return_Light(CLight* pLight)
 	if (m_Lights.end() != iter)
 	{
 		m_Lights.erase(iter);
-
 		m_LightPool.push(pLight);
 	}
 

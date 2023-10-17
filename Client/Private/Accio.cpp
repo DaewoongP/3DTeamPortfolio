@@ -41,7 +41,7 @@ HRESULT CAccio::Initialize_Prototype(_uint iLevel)
 	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_MagicTrail_Winga_Effect")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_MagicTrail_Winga_Effect"),
-			CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Wingardium/Wingardium.trail"), iLevel))))
+			CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Accio/Accio.trail"), iLevel))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
@@ -87,6 +87,16 @@ HRESULT CAccio::Initialize_Prototype(_uint iLevel)
 	{
 		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_Defatul_WandFlare_WandGlowLarge")
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Default/Default_WandFlare/WandGlow_Large/"), iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_Accio_Move_Particle")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_Accio_Move_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Accio/Move_Particle/"), iLevel))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
@@ -212,6 +222,19 @@ HRESULT CAccio::Reset(MAGICBALLINITDESC& InitDesc)
 	__super::Reset(InitDesc);
 	m_fWingardiumEffectDeadTimer = 0.3f;
 	m_pWingardiumEffect->Disable();
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	CLight::LIGHTDESC LightDesc;
+	LightDesc.eType = CLight::TYPE_POINT;
+	LightDesc.fRange = 5.f;
+	m_vLightColor = LightDesc.vDiffuse = ToColor(253.f, 252.f, 209.f, 200.f);
+	LightDesc.vAmbient = LightDesc.vDiffuse;
+	LightDesc.vSpecular = LightDesc.vDiffuse;
+	LightDesc.vPos = m_pTransform->Get_Position().TransCoord();
+	pGameInstance->Add_Light(LightDesc, &m_pLight);
+	Safe_Release(pGameInstance);
+	
 	return S_OK;
 }
 
@@ -228,11 +251,13 @@ void CAccio::Ready_DrawMagic()
 void CAccio::Ready_CastMagic()
 {
 	Ready_SpinMove(m_TrailVec[EFFECT_STATE_MAIN].data()[0],_float2(1.f,0.f),0.5f);
+	ADD_DECREASE_LIGHT(m_vStartPosition, 50.f, 0.1f, m_vLightColor);
 	__super::Ready_CastMagic();
 }
 
 void CAccio::Ready_Dying()
 {
+	ADD_DECREASE_LIGHT(m_vEndPosition, 30.f, 0.3f, m_vLightColor);
 	m_pWingardiumEffect->SetActionTrigger(true);
 	m_pWingardiumEffect->Enable();
 	__super::Ready_Dying();
@@ -259,6 +284,7 @@ void CAccio::Tick_CastMagic(_float fTimeDelta)
 			m_fLerpAcc = 1;
 		m_TrailVec[EFFECT_STATE_MAIN].data()[0]->Spin_Move(m_vEndPosition, m_vStartPosition,m_vSpinWeight,m_fSpinSpeed, m_fLerpAcc);
 		m_pTransform->Set_Position(XMVectorLerp(m_vStartPosition, m_vEndPosition, m_fLerpAcc));
+		m_pLight->Set_Position(m_TrailVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Get_Position().TransCoord());
 	}
 	else
 	{
@@ -304,7 +330,7 @@ HRESULT CAccio::Add_Components()
 	}
 
 	m_TrailVec[EFFECT_STATE_MAIN].resize(1);
-	m_ParticleVec[EFFECT_STATE_MAIN].resize(4);
+	m_ParticleVec[EFFECT_STATE_MAIN].resize(5);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_MagicTrail_Winga_Effect"),
 		TEXT("Com_Effect"), reinterpret_cast<CComponent**>(&m_TrailVec[EFFECT_STATE_MAIN][0]))))
 	{
@@ -340,6 +366,14 @@ HRESULT CAccio::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+	
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Accio_Move_Particle"),
+			TEXT("Com_Move_Particle"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][4]))))
+		{
+			MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Accio_Move_Particle)");
+			__debugbreak();
+			return E_FAIL;
+		}
 
 	m_ParticleVec[EFFECT_STATE_HIT].resize(3);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Accio_HitMain"),

@@ -107,7 +107,6 @@ HRESULT CPlayer::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -174,13 +173,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	Bind_Notify();
 
-	m_fClothPower = 3.0f;
+	m_fClothPower = 20.0f;
 	m_fClothPowerPlus = 1.0f;
-
-	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FIRST, CONFRINGO);
-	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::SECOND, LEVIOSO);
-	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::THIRD, NCENDIO);
-	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FOURTH, DIFFINDO);
 
 	m_fRotationSpeed = 2.0f;
 
@@ -192,7 +186,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_pCustomModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"), CModel::OTHERBODY);
 
 	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(25.f, 3.f, 22.5f);
-	m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
+	//m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
+	m_vLevelInitPosition[LEVEL_VAULT] = _float3(161, 2 ,93);
 	m_vLevelInitPosition[LEVEL_SMITH] = _float3(30.f, 3.f, 15.f); // �⺻ ��ġ
 	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(94.5f, 7.2f, 78.f); // ���� �����̼� �ٷ� ��
 	m_vLevelInitPosition[LEVEL_SKY] = _float3(88.8f, 12.5f, 69.8f); // ���� �����̼� �ٷ� ��
@@ -246,7 +241,6 @@ HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 void CPlayer::Tick(_float fTimeDelta)
 {
 	BEGININSTANCE;
-
 	//�÷��̾� ī�޶� �ƴ϶��?
 	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
 	{
@@ -368,6 +362,11 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 	if (wstring::npos != wstrCollisionTag.find(TEXT("Attack")))
 	{
+		if (nullptr == CollisionEventDesc.pArg)
+		{
+			return;
+		}
+
 		CEnemy::COLLISIONREQUESTDESC* pDesc = static_cast<CEnemy::COLLISIONREQUESTDESC*>(CollisionEventDesc.pArg);
 
 		if (nullptr == pDesc ||
@@ -437,6 +436,11 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	}
 	else if (wstring::npos != wstrCollisionTag.find(TEXT("Magic_Ball")))
 	{
+		if (nullptr == CollisionEventDesc.pArg)
+		{
+			return;
+		}
+
 		CMagicBall::COLLSIONREQUESTDESC* pDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
 
 		//Protego
@@ -497,25 +501,11 @@ HRESULT CPlayer::Render()
 			for (_uint i = 0; i < iNumMeshes; ++i)
 			{
 				m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
-
+				m_pCustomModel->Bind_Color(m_pShader, "g_vHairColor", iPartsIndex);
 				m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
 				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
 
 				m_pShader->Begin("HairMesh");
-
-				m_pCustomModel->Render(iPartsIndex, i);
-			}
-		}
-		else if (CCustomModel::ROBE == iPartsIndex)
-		{
-			for (_uint i = 0; i < iNumMeshes; ++i)
-			{
-				m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
-
-				m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
-				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
-
-				m_pShader->Begin("AnimMeshNonCull");
 
 				m_pCustomModel->Render(iPartsIndex, i);
 			}
@@ -535,12 +525,26 @@ HRESULT CPlayer::Render()
 				m_pCustomModel->Render(iPartsIndex, i);
 			}
 		}
-		else
+		else if (CCustomModel::ROBE == iPartsIndex)
 		{
 			for (_uint i = 0; i < iNumMeshes; ++i)
 			{
 				m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
 
+				m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
+				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
+
+				m_pShader->Begin("AnimMeshNonCull");
+
+				m_pCustomModel->Render(iPartsIndex, i);
+			}
+		}
+		else
+		{
+			for (_uint i = 0; i < iNumMeshes; ++i)
+			{
+				m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
+				m_pCustomModel->Bind_Color(m_pShader, "g_vColor", iPartsIndex);
 				m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
 				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
 
@@ -740,7 +744,13 @@ HRESULT CPlayer::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
-
+	/* Com_Blink_Effect */
+	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_Trail"),
+	//	TEXT("Com_Blink_Trail"), reinterpret_cast<CComponent**>(&m_pBlink))))
+	//{
+	//	__debugbreak();
+	//	return E_FAIL;
+	//}
 
 	//_int DefValue = 15;
 	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_EndurusPotion"),
@@ -765,6 +775,9 @@ HRESULT CPlayer::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+
+
+
 
 	return S_OK;
 }
@@ -1030,10 +1043,10 @@ HRESULT CPlayer::Add_Magic()
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(3, FINISHER);
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(4, STUPEFY);
 
-	Set_Spell_Botton(0, ARRESTOMOMENTUM);
-	Set_Spell_Botton(1, LEVIOSO);
-	Set_Spell_Botton(2, CONFRINGO);
-	Set_Spell_Botton(3, NCENDIO);
+	Set_Spell_Botton(0, ACCIO);
+	Set_Spell_Botton(1, FLIPENDO);
+	Set_Spell_Botton(2, DIFFINDO);
+	Set_Spell_Botton(3, CRUCIO);
 
 	return S_OK;
 }
@@ -1377,6 +1390,19 @@ void CPlayer::Fix_Mouse()
 
 HRESULT CPlayer::Ready_MeshParts()
 {
+	_float4 vColor = _float4();
+
+	//Hat
+	if (FAILED(m_pCustomModel->Add_MeshParts(
+		LEVEL_STATIC,
+		TEXT("Prototype_Component_MeshPart_Hat_Arcane"),
+		CCustomModel::HAT)))
+	{
+		MSG_BOX("Failed Add MeshPart Hat");
+
+		return E_FAIL;
+	}
+
 	//Hair
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
@@ -1399,6 +1425,17 @@ HRESULT CPlayer::Ready_MeshParts()
 		return E_FAIL;
 	}
 
+	//Mask
+	if (FAILED(m_pCustomModel->Add_MeshParts(
+		LEVEL_STATIC,
+		TEXT("Prototype_Component_MeshPart_Mask_Guardian"),
+		CCustomModel::MASK)))
+	{
+		MSG_BOX("Failed Add MeshPart Mask");
+
+		return E_FAIL;
+	}
+
 	//Arm
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
@@ -1413,8 +1450,8 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Robe
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Robe01"),
-		CCustomModel::ROBE, TEXT("../../Resources/GameData/ClothData/Test.cloth"))))
+		TEXT("Prototype_Component_MeshPart_Robe_Arcane"),
+		CCustomModel::ROBE)))
 	{
 		MSG_BOX("Failed Add MeshPart Robe");
 
@@ -1424,7 +1461,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Top
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Player_Top"),
+		TEXT("Prototype_Component_MeshPart_Jacket_Arcane_A"),
 		CCustomModel::TOP)))
 	{
 		MSG_BOX("Failed Add MeshPart Top");
@@ -1435,7 +1472,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Pants
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Player_Pants"),
+		TEXT("Prototype_Component_MeshPart_Pants_Arcane"),
 		CCustomModel::PANTS)))
 	{
 		MSG_BOX("Failed Add MeshPart Pants");
@@ -1457,7 +1494,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Shoes
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Player_Shoes"),
+		TEXT("Prototype_Component_MeshPart_Boots_Arcane"),
 		CCustomModel::SHOES)))
 	{
 		MSG_BOX("Failed Add MeshPart Shoes");
@@ -2306,8 +2343,8 @@ void CPlayer::Update_Cloth(_float fTimeDelta)
 	vVelocity.y *= -1.f;
 	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(m_fClothPower * vVelocity,
 		XMMatrixInverse(nullptr, XMMatrixRotationQuaternion(m_pTransform->Get_Quaternion()))));
-
-	m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
+	
+	//m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
 }
 
 void CPlayer::Find_Target_For_Distance()
@@ -2924,6 +2961,9 @@ void CPlayer::Blink_End()
 void CPlayer::Healing()
 {
 	m_pPlayer_Information->fix_HP(40);
+
+
+
 }
 
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -3115,6 +3155,8 @@ void CPlayer::Free()
 		Safe_Release(m_UI_Group_SkillTap);
 		Safe_Release(m_pCooltime);
 		Safe_Release(m_pDefence);
+		
+	//	Safe_Release(m_pBlink);
 
 		if (nullptr != m_pTargetTransform)
 		{

@@ -41,8 +41,11 @@ _bool CLight::Tick_Decrease(_float fTimeDelta)
 	m_fTimeAcc += fTimeDelta;
 
 	if (m_fTimeAcc > m_LightDesc.fTime)
+	{
+		m_fTimeAcc = 0.f;
 		return false;
-
+	}
+	
 	// Delta Range / Total Time - ∫Ò¿≤
 	m_LightDesc.fRange -= m_LightDesc.fDecreaseStartRange * fTimeDelta / m_LightDesc.fTime;
 

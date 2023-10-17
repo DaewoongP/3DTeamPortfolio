@@ -381,7 +381,6 @@ void CDummyParticle::ShapeModule_TreeNode(CEffect_Window* pEffectWindow)
 			}
 
 			///////
-
 			if (strShape == "Cone")
 			{
 				pEffectWindow->Table_DragFloat("Angle", "dkkv994mc", &m_ShapeModuleDesc.fAngle, 0.1f, 0.f, 90.f);
@@ -458,6 +457,7 @@ void CDummyParticle::ShapeModule_TreeNode(CEffect_Window* pEffectWindow)
 				_float4x4 ScaleMatrix = _float4x4::MatrixScale(vShapeScale);
 				m_ShapeModuleDesc.ShapeMatrix = ScaleMatrix * RotationMatrix * TranslationMatrix;
 			}
+
 			if (pEffectWindow->Table_DragXYZ("Scale", "xciv8348kd", &vShapeScale))
 			{
 				_float4x4 TranslationMatrix = _float4x4::MatrixTranslation(vShapePosition);
@@ -625,6 +625,11 @@ void CDummyParticle::RendererModule_TreeNode(CEffect_Window* pEffectWindow)
 				}
 			}
 			
+			pEffectWindow->Table_DragFloat2("StartOffset", "eri3idkkds", &m_RendererModuleDesc.vStartOffset, 0.1f, -FLT_MAX);
+			pEffectWindow->Table_DragFloat2("Delta Offset", "ckksdi23480ksdl", &m_RendererModuleDesc.vDeltaOffset, 0.1f, -FLT_MAX);
+			pEffectWindow->Table_Void();
+			pEffectWindow->Table_DragFloat2("Start Tiling", "c9k123scws", &m_RendererModuleDesc.vStartTiling, 0.1f, -FLT_MAX);
+			pEffectWindow->Table_DragFloat2("Delta Tiling", "kje83kdkdsd", &m_RendererModuleDesc.vDeltaTiling, 0.1f, -FLT_MAX);
 			ImGui::EndTable();
 		}
 		ImGui::TreePop();

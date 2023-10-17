@@ -1,5 +1,6 @@
 #include "..\Public\Modules.h"
 #include "ParticleSystem.h"
+#include "GameInstance.h"
 void MODULE::Save(HANDLE hFile, _ulong& dwByte)
 {
 	WriteFile(hFile, &isActivate, sizeof isActivate, &dwByte, nullptr);
@@ -522,6 +523,10 @@ HRESULT RENDERER_MODULE::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &isDiffuse, sizeof(isDiffuse), &dwByte, nullptr);
 	WriteFile(hFile, wstrDistortionTexture.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 
+	WriteFile(hFile, &vStartOffset, sizeof(vStartOffset), &dwByte, nullptr);
+	WriteFile(hFile, &vDeltaOffset, sizeof(vDeltaOffset), &dwByte, nullptr);
+	WriteFile(hFile, &vStartTiling, sizeof(vStartTiling), &dwByte, nullptr);
+	WriteFile(hFile, &vDeltaTiling, sizeof(vDeltaTiling), &dwByte, nullptr);
 	CloseHandle(hFile);
 	return S_OK;
 }
@@ -563,9 +568,37 @@ HRESULT RENDERER_MODULE::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &isGlow, sizeof(isGlow), &dwByte, nullptr);
 	ReadFile(hFile, &isDistortion, sizeof(isDistortion), &dwByte, nullptr);
 	ReadFile(hFile, &isDiffuse, sizeof(isDiffuse), &dwByte, nullptr);
-	WriteFile(hFile, wszBuffer, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	ReadFile(hFile, wszBuffer, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 	wstrDistortionTexture = wszBuffer;
+	ReadFile(hFile, &vStartOffset, sizeof(vStartOffset), &dwByte, nullptr);
+	ReadFile(hFile, &vDeltaOffset, sizeof(vDeltaOffset), &dwByte, nullptr);
+	ReadFile(hFile, &vStartTiling, sizeof(vStartTiling), &dwByte, nullptr);
+	ReadFile(hFile, &vDeltaTiling, sizeof(vDeltaTiling), &dwByte, nullptr);
 	CloseHandle(hFile);
+	return S_OK;
+}
+
+void RENDERER_MODULE::Action(_float fTimeDelta)
+{
+	vOffset.x += vDeltaOffset.x * fTimeDelta;
+	vOffset.y += vDeltaOffset.y * fTimeDelta;
+	vTililing.x += vDeltaTiling.x * fTimeDelta;
+	vTililing.y += vDeltaTiling.y * fTimeDelta;
+}
+
+void RENDERER_MODULE::Restart()
+{
+	vOffset = vStartOffset;
+	vTililing = vStartTiling;
+}
+
+HRESULT RENDERER_MODULE::Bind_Values(CShader* pShader)
+{
+	if (FAILED(pShader->Bind_RawValue("g_vOffset", &vOffset, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(pShader->Bind_RawValue("g_vTililing", &vTililing, sizeof(_float2))))
+		return E_FAIL;
+
 	return S_OK;
 }
 

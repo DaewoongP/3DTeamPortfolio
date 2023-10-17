@@ -78,6 +78,47 @@ void CParticleSystemPool::Play_Particle(const _tchar* szParticleTag, _float3 vWo
 	Safe_Release(pComponent_Manager);
 }
 
+void CParticleSystemPool::Play_Particle(const _tchar* szParticleTag, _float3 vPosition, _float3 vDir)
+{
+	CComponent_Manager* pComponent_Manager = CComponent_Manager::GetInstance();
+	Safe_AddRef(pComponent_Manager);
+	// Particle_Rock
+	CParticleSystemQueue* pParticleQueue = Find_ParticleQueue(szParticleTag);
+	if (nullptr == pParticleQueue)
+	{
+		Safe_Release(pComponent_Manager);
+		return;
+	}
+
+	_tchar szComponentTag[MAX_PATH] = TEXT("GameObject_");
+	CString_Manager* pString_Manager = CString_Manager::GetInstance();
+	Safe_AddRef(pString_Manager);
+
+	lstrcat(szComponentTag, szParticleTag);
+	lstrcat(szComponentTag, Generate_HashtagW().c_str());
+
+	// 현재 실행중인 레이어에 할당.
+	CParticleSystem* pParticle = pParticleQueue->Pop_Front();
+	if (nullptr == pParticle)
+	{
+		_tchar szPrototypeTag[MAX_PATH] = TEXT("Prototype_GameObject_");
+		lstrcat(szPrototypeTag, szParticleTag);
+		pParticle = dynamic_cast<CParticleSystem*>(pComponent_Manager->Clone_Component(0, szPrototypeTag, nullptr));
+		pParticle->Set_ParticleTag(szParticleTag);
+	}
+	pParticle->Get_ShapeModuleRef().Set_ShapeLook(vPosition, vDir + vPosition);
+	pParticle->Get_ShapeModuleRef().ShapeMatrix = pParticle->Get_ShapeModuleRef().ShapeMatrixInit * pParticle->Get_ShapeModuleRef().ShapeMatrix;
+
+	pParticle->Play(vPosition);
+	pParticle->Set_ObjEvent(CGameObject::OBJ_NONE);
+	pComponent_Manager->Add_Component(pParticle, 0, TEXT("Layer_Particle"), pString_Manager->Make_WChar(szComponentTag));
+	pComponent_Manager->Set_CurrentScene(TEXT("Scene_Main"), true);
+
+	Safe_Release(pString_Manager);
+	Safe_Release(pComponent_Manager);
+}
+
+
 void CParticleSystemPool::Play_Particle(const _tchar* szParticleTag, _float4x4 PositionMatrix,_float4x4 ObjectMatrix)
 {
 	CComponent_Manager* pComponent_Manager = CComponent_Manager::GetInstance();
