@@ -39,8 +39,8 @@ VS_OUT VS_MAIN(VS_IN In)
 
 	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
 	Out.vTexUV = In.vTexUV;
-	Out.vWorldPos = mul(In.vPosition, g_WorldMatrix);
-	Out.vWorldNormal = mul(In.vNormal, g_WorldMatrix);
+    Out.vWorldPos = mul(float4(In.vPosition, 1.f), g_WorldMatrix).xyz;
+    Out.vWorldNormal = mul(float4(In.vNormal, 1.f), g_WorldMatrix).xyz;
 
 	return Out;
 }

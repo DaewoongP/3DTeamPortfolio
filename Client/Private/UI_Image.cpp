@@ -63,7 +63,11 @@ void CUI_Image::Tick(_float fTimeDelta)
 
 void CUI_Image::Late_Tick(_float fTimeDelta)
 {
-	if (m_pParent != nullptr)
+	if (m_eShadertype == CLICK && !m_isShow)
+	{
+		return;
+	}
+	else
 	{
 		int a = 0;
 	}
@@ -80,11 +84,6 @@ void CUI_Image::Late_Tick(_float fTimeDelta)
 
 HRESULT CUI_Image::Render()
 {
-	if (m_pParent != nullptr)
-	{
-		int a = 0;
-	}
-
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
@@ -95,6 +94,9 @@ HRESULT CUI_Image::Render()
 		break;
 	case Client::CUI_Image::SKILL:
 		m_pShaderCom->Begin("GrayCool");
+		break;
+	case Client::CUI_Image::CLICK:
+		m_pShaderCom->Begin("UI");
 		break;
 	case Client::CUI_Image::SHADERTYPE_END:
 		m_pShaderCom->Begin("UI");

@@ -43,6 +43,7 @@ void CPensive_Idle::OnStateEnter(void* _pArg)
 {
 	//첫 실행시 등장 애니메이션을 재생합니다.
 	Change_Animation(TEXT("Idle"));
+	*m_StateMachineDesc.pisAttackable = true;
 	m_fActionSetTimer = Random_Generator(m_fMinChangeTimer, m_fMaxChangeTimer);
 	m_fActionTimer = m_fActionSetTimer;
 }
@@ -54,48 +55,42 @@ void CPensive_Idle::OnStateTick(_float fTimeDelta)
 	_bool result = (m_fActionTimer < 0);
 	
 	if (result)
-	{
-		/*패턴*/
-		// 1. 땅밟기 << 단발
-		// 2. 해머 << 단발
-		// 3. 소드 << 단발
-		// 4. 차징 << 단발
-		// 5. 원기옥 
-		
-		_uint AttackAction = _uint(m_fActionSetTimer / m_fMaxChangeTimer * 4);
+	{	
+		_uint AttackAction = _uint(m_fActionSetTimer / m_fMaxChangeTimer * 10);
 		cout << AttackAction << endl;
 		*m_StateMachineDesc.pAttackType = AttackAction;
 		switch (AttackAction)
 		{
-		case 0: //해머
+		case 0:
+		case 1:
+		case 2:
+		case 3: //해머
 			if (*m_StateMachineDesc.pPhase == 2)
 			{
-				cout << "해머를 시전합니다" << endl;
-				Change_Animation(TEXT("Idle"));
+				Change_Animation(TEXT("Attack_Mace"));
 				Set_StateMachine(TEXT("Physical_Attack"));
 				break;
 			}
 			break;
-		case 1: // 땅밟기
-			cout << "땅밟기를 시전합니다." << endl;
+		case 4: // 땅밟기
 			Change_Animation(TEXT("Attack_Ground"));
 			Set_StateMachine(TEXT("Physical_Attack"));
 			break;
-		case 2: // 소드
+		case 5:
+		case 6:
+		case 7:
+		case 8: // 소드
 			if (*m_StateMachineDesc.pPhase == 2)
 			{
-				cout << "칼 공격을 실행합니다" << endl;
-				Change_Animation(TEXT("Idle"));
+				Change_Animation(TEXT("Attack_Meteor"));
 				Set_StateMachine(TEXT("Physical_Attack"));
 				break;
 			}
-		case 3: // 원기옥
-			cout << "원기옥을 실행합니다." << endl;
+		case 9: // 원기옥
 			Change_Animation(TEXT("Attack_Orb_Start"));
 			Set_StateMachine(TEXT("Orb_Attack"));
 			break;
 		default:
-			cout << "안할건데?." << endl;
 			break;
 		}
 		m_fActionSetTimer = Random_Generator(m_fMinChangeTimer, m_fMaxChangeTimer);

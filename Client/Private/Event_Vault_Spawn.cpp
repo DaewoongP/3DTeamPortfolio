@@ -25,7 +25,8 @@ HRESULT CEvent_Vault_Spawn::Initialize(void* pArg)
 	{
 		wstring wstrObjTag = Pair.first;
 		// 나는 스폰 관련 데이터만 가져와서 처리할거야.
-		if (wstring::npos != wstrObjTag.find(TEXT("Round")))
+		if (wstring::npos != wstrObjTag.find(TEXT("Round"))||
+			wstring::npos != wstrObjTag.find(TEXT("Pensiv")))
 		{
 			m_pMonsters.emplace(wstrObjTag, static_cast<CEnemy*>(Pair.second));
 			Safe_AddRef(Pair.second);
@@ -41,6 +42,7 @@ void CEvent_Vault_Spawn::Tick(_float fTimeDelta)
 
 	Check_Event_Spawn_1();
 	Check_Event_Spawn_2();
+	Check_Event_Spawn_3();
 }
 
 void CEvent_Vault_Spawn::Late_Tick(_float fTimeDelta)
@@ -98,6 +100,31 @@ void CEvent_Vault_Spawn::Check_Event_Spawn_2()
 	}
 }
 
+void CEvent_Vault_Spawn::Check_Event_Spawn_3()
+{
+	if (true == m_isSpawned_3)
+		return;
+
+	if (true == m_pSpawn_Stage_3->Is_Collision())
+	{
+		for (auto iter = m_pMonsters.begin(); iter != m_pMonsters.end(); )
+		{
+			wstring wstrObjectTag = iter->first;
+			if (wstring::npos != wstrObjectTag.find(TEXT("Pensiv")))
+			{
+				iter->second->Spawn();
+				Safe_Release(iter->second);
+				iter = m_pMonsters.erase(iter);
+			}
+			else
+				++iter;
+		}
+
+		if (m_pSpawn_Stage_3->isDead())
+			m_isSpawned_3 = true;
+	}
+}
+
 HRESULT CEvent_Vault_Spawn::Add_Components()
 {
 	/* For.Trigger_Spawn_1 */
@@ -126,6 +153,20 @@ HRESULT CEvent_Vault_Spawn::Add_Components()
 		TEXT("Trigger_Spawn_2"), reinterpret_cast<CComponent**>(&m_pSpawn_Stage_2), &TriggerDesc)))
 	{
 		MSG_BOX("CEvent_Vault_Spawn Failed Add_Components : Trigger_Spawn_2");
+		return E_FAIL;
+	}
+
+	/* For.Trigger_Spawn_3 */
+	TriggerDesc.isCollisionToDead = true;
+	strcpy_s(TriggerDesc.szCollisionTag, "Trigger_Spawn_3");
+	lstrcpy(TriggerDesc.szOtherTag, TEXT("Player_Default"));
+	TriggerDesc.vTriggerSize = _float3(6.f, 6.f, 6.f);
+	TriggerDesc.vTriggerWorldPos = _float3(153, -3.f, 93);
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Trigger"),
+		TEXT("Trigger_Spawn_3"), reinterpret_cast<CComponent**>(&m_pSpawn_Stage_3), &TriggerDesc)))
+	{
+		MSG_BOX("CEvent_Vault_Spawn Failed Add_Components : Trigger_Spawn_3");
 		return E_FAIL;
 	}
 
@@ -164,7 +205,7 @@ void CEvent_Vault_Spawn::Free()
 
 	Safe_Release(m_pSpawn_Stage_1);
 	Safe_Release(m_pSpawn_Stage_2);
-
+	Safe_Release(m_pSpawn_Stage_3);
 	for (auto& Pair : m_pMonsters)
 		Safe_Release(Pair.second);
 }

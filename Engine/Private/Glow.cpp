@@ -5,7 +5,8 @@
 #include "Shader.h"
 #include "VIBuffer_Rect.h"
 
-CGlow::CGlow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :CComponent(pDevice,pContext)
+CGlow::CGlow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) 
+	: CComponent(pDevice, pContext)
 {
 }
 

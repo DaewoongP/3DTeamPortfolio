@@ -46,6 +46,9 @@ CMeshEffect::CMeshEffect(const CMeshEffect& _rhs)
 	, m_isClipTexture(_rhs.m_isClipTexture)
 	, m_PivotMatrix(_rhs.m_PivotMatrix)
 	, m_strCurAnim(_rhs.m_strCurAnim)
+	, m_isGlow(_rhs.m_isGlow)
+	, m_isDistortion(_rhs.m_isDistortion)
+	, m_isDiffuse(_rhs.m_isDiffuse)
 {
 	for (_uint i = 0; i < PATH_END; ++i)
 		m_Path[i] = _rhs.m_Path[i];
@@ -146,51 +149,53 @@ void CMeshEffect::Tick(_float _fTimeDelta)
 	m_vOffset.x += m_vDeltaOffset.x * _fTimeDelta;
 	m_vOffset.y += m_vDeltaOffset.y * _fTimeDelta;
 	m_vTililing.x += m_vDeltaTiling.x * _fTimeDelta;
-	m_vTililing.x += m_vDeltaTiling.y * _fTimeDelta;
+	m_vTililing.y += m_vDeltaTiling.y * _fTimeDelta;
 
 	_float fRatio = m_fAge / m_fLifeTime;
 
 	//m_vColor = _float4::Lerp(m_vStartColor, m_vEndColor, fRatio);
 	//m_vSize = _float3::Lerp(m_vStartSize, m_vEndSize, fRatio);
 	//m_vRot = _float3::Lerp(m_vStartRot, m_vEndRot, fRatio);
-
-	{ // Color
-		_float fChangeAmount;
-		fChangeAmount = m_vEndColor.x - m_vStartColor.x; // R
-		m_vColor.x = CEase::Ease(m_eColorEase, m_fAge, m_vStartColor.x, fChangeAmount, m_fLifeTime);
-		fChangeAmount = m_vEndColor.y - m_vStartColor.y; // G
-		m_vColor.y = CEase::Ease(m_eColorEase, m_fAge, m_vStartColor.y, fChangeAmount, m_fLifeTime);
-		fChangeAmount = m_vEndColor.z - m_vStartColor.z; // B
-		m_vColor.z = CEase::Ease(m_eColorEase, m_fAge, m_vStartColor.z, fChangeAmount, m_fLifeTime);
-		fChangeAmount = m_vEndColor.w - m_vStartColor.w; // A
-		m_vColor.w = CEase::Ease(m_eColorEase, m_fAge, m_vStartColor.w, fChangeAmount, m_fLifeTime);
-	}
-	{ // Size
-		_float fChangeAmount;
-		fChangeAmount = m_vEndSize.x - m_vStartSize.x; // X
-		m_vSize.x = CEase::Ease(m_eSizeEase, m_fAge, m_vStartSize.x, fChangeAmount, m_fLifeTime);
-		fChangeAmount = m_vEndSize.y - m_vStartSize.y; // Y
-		m_vSize.y = CEase::Ease(m_eSizeEase, m_fAge, m_vStartSize.y, fChangeAmount, m_fLifeTime);
-		fChangeAmount = m_vEndSize.z - m_vStartSize.z; // Z
-		m_vSize.z = CEase::Ease(m_eSizeEase, m_fAge, m_vStartSize.z, fChangeAmount, m_fLifeTime);
-	}
-	{ // Rot
-		_float fChangeAmount;
-		fChangeAmount = m_vEndRot.x - m_vStartRot.x; // X
-		m_vRot.x = CEase::Ease(m_eRotEase, m_fAge, m_vStartRot.x, fChangeAmount, m_fLifeTime);
-		fChangeAmount = m_vEndRot.y - m_vStartRot.y; // Y
-		m_vRot.y = CEase::Ease(m_eRotEase, m_fAge, m_vStartRot.y, fChangeAmount, m_fLifeTime);
-		fChangeAmount = m_vEndRot.z - m_vStartRot.z; // Z
-		m_vRot.z = CEase::Ease(m_eRotEase, m_fAge, m_vStartRot.z, fChangeAmount, m_fLifeTime);
-	}
-	{ // Pos
-		_float fChangeAmount;
-		fChangeAmount = m_vEndPos.x - m_vStartPos.x; // X
-		m_vPos.x = CEase::Ease(m_ePosEase, m_fAge, m_vStartPos.x, fChangeAmount, m_fLifeTime);
-		fChangeAmount = m_vEndPos.y - m_vStartPos.y; // Y
-		m_vPos.y = CEase::Ease(m_ePosEase, m_fAge, m_vStartPos.y, fChangeAmount, m_fLifeTime);
-		fChangeAmount = m_vEndPos.z - m_vStartPos.z; // Z
-		m_vPos.z = CEase::Ease(m_ePosEase, m_fAge, m_vStartPos.z, fChangeAmount, m_fLifeTime);
+	if (!m_isJustActionStop)
+	{
+		{ // Color
+			_float fChangeAmount;
+			fChangeAmount = m_vEndColor.x - m_vStartColor.x; // R
+			m_vColor.x = CEase::Ease(m_eColorEase, m_fAge, m_vStartColor.x, fChangeAmount, m_fLifeTime);
+			fChangeAmount = m_vEndColor.y - m_vStartColor.y; // G
+			m_vColor.y = CEase::Ease(m_eColorEase, m_fAge, m_vStartColor.y, fChangeAmount, m_fLifeTime);
+			fChangeAmount = m_vEndColor.z - m_vStartColor.z; // B
+			m_vColor.z = CEase::Ease(m_eColorEase, m_fAge, m_vStartColor.z, fChangeAmount, m_fLifeTime);
+			fChangeAmount = m_vEndColor.w - m_vStartColor.w; // A
+			m_vColor.w = CEase::Ease(m_eColorEase, m_fAge, m_vStartColor.w, fChangeAmount, m_fLifeTime);
+		}
+		{ // Size
+			_float fChangeAmount;
+			fChangeAmount = m_vEndSize.x - m_vStartSize.x; // X
+			m_vSize.x = CEase::Ease(m_eSizeEase, m_fAge, m_vStartSize.x, fChangeAmount, m_fLifeTime);
+			fChangeAmount = m_vEndSize.y - m_vStartSize.y; // Y
+			m_vSize.y = CEase::Ease(m_eSizeEase, m_fAge, m_vStartSize.y, fChangeAmount, m_fLifeTime);
+			fChangeAmount = m_vEndSize.z - m_vStartSize.z; // Z
+			m_vSize.z = CEase::Ease(m_eSizeEase, m_fAge, m_vStartSize.z, fChangeAmount, m_fLifeTime);
+		}
+		{ // Rot
+			_float fChangeAmount;
+			fChangeAmount = m_vEndRot.x - m_vStartRot.x; // X
+			m_vRot.x = CEase::Ease(m_eRotEase, m_fAge, m_vStartRot.x, fChangeAmount, m_fLifeTime);
+			fChangeAmount = m_vEndRot.y - m_vStartRot.y; // Y
+			m_vRot.y = CEase::Ease(m_eRotEase, m_fAge, m_vStartRot.y, fChangeAmount, m_fLifeTime);
+			fChangeAmount = m_vEndRot.z - m_vStartRot.z; // Z
+			m_vRot.z = CEase::Ease(m_eRotEase, m_fAge, m_vStartRot.z, fChangeAmount, m_fLifeTime);
+		}
+		{ // Pos
+			_float fChangeAmount;
+			fChangeAmount = m_vEndPos.x - m_vStartPos.x; // X
+			m_vPos.x = CEase::Ease(m_ePosEase, m_fAge, m_vStartPos.x, fChangeAmount, m_fLifeTime);
+			fChangeAmount = m_vEndPos.y - m_vStartPos.y; // Y
+			m_vPos.y = CEase::Ease(m_ePosEase, m_fAge, m_vStartPos.y, fChangeAmount, m_fLifeTime);
+			fChangeAmount = m_vEndPos.z - m_vStartPos.z; // Z
+			m_vPos.z = CEase::Ease(m_ePosEase, m_fAge, m_vStartPos.z, fChangeAmount, m_fLifeTime);
+		}
 	}
 
 	_float4x4 ScaleMatrix = _float4x4::MatrixScale(m_vSize);
@@ -212,10 +217,13 @@ void CMeshEffect::Late_Tick(_float _fTimeDelta)
 
 	if (nullptr != m_pRenderer)
 	{
-		if (true == m_isAlphaBlend)
-			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
-		else
-			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		if (m_isDiffuse)
+		{
+			if (true == m_isAlphaBlend)
+				m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
+			else
+				m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		}
 
 		if (m_isGlow)
 		{
@@ -250,6 +258,7 @@ HRESULT CMeshEffect::Render()
 
 void CMeshEffect::Play(_float3 vPos)
 {
+	SetJustActionStop(false);
 	m_pTransform->Set_Position(vPos);
 	m_isEnble = true;
 	Reset();
@@ -402,6 +411,7 @@ HRESULT CMeshEffect::Save(const _tchar* pFilePath)
 	WriteFile(hFile, &m_fClipThreshold, sizeof(m_fClipThreshold), &dwByte, nullptr);
 	WriteFile(hFile, &m_isGlow, sizeof(m_isGlow), &dwByte, nullptr);
 	WriteFile(hFile, &m_isDistortion, sizeof(m_isDistortion), &dwByte, nullptr);
+	WriteFile(hFile, &m_isDiffuse, sizeof(m_isDiffuse), &dwByte, nullptr);
 	CloseHandle(hFile);
 
 	return S_OK;
@@ -462,6 +472,7 @@ HRESULT CMeshEffect::Load(const _tchar* pFilePath)
 	ReadFile(hFile, &m_fClipThreshold, sizeof(m_fClipThreshold), &dwByte, nullptr);
 	ReadFile(hFile, &m_isGlow, sizeof(m_isGlow), &dwByte, nullptr);
 	ReadFile(hFile, &m_isDistortion, sizeof(m_isDistortion), &dwByte, nullptr);
+	ReadFile(hFile, &m_isDiffuse, sizeof(m_isDiffuse), &dwByte, nullptr);
 	CloseHandle(hFile);
 
 	return S_OK;

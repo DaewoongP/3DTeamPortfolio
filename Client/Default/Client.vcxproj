@@ -226,25 +226,33 @@
     <ClInclude Include="..\Public\Pensive_Appearence.h" />
     <ClInclude Include="..\Public\Pensive_Charge_Attack.h" />
     <ClInclude Include="..\Public\Pensive_Death.h" />
+    <ClInclude Include="..\Public\Pensive_Fail_Ball.h" />
     <ClInclude Include="..\Public\Pensive_Groogy.h" />
     <ClInclude Include="..\Public\Pensive_Ground_Ball.h" />
     <ClInclude Include="..\Public\Pensive_Hit.h" />
     <ClInclude Include="..\Public\Pensive_Idle.h" />
+    <ClInclude Include="..\Public\Pensive_Mace_Attack.h" />
     <ClInclude Include="..\Public\Pensive_Orb_Attack.h" />
     <ClInclude Include="..\Public\Pensive_Physical_Attack.h" />
+    <ClInclude Include="..\Public\Pensive_Shouting.h" />
+    <ClInclude Include="..\Public\Pensive_Sword_Throw.h" />
     <ClInclude Include="..\Public\Player.h" />
     <ClInclude Include="..\public\PotionStationCamera.h" />
     <ClInclude Include="..\public\Robe_Arcane.h" />
     <ClInclude Include="..\Public\Robe_DarkArts.h" />
     <ClInclude Include="..\Public\Robe_DarkArts_Delux.h" />
     <ClInclude Include="..\Public\Robe_Quidditch.h" />
+    <ClInclude Include="..\Public\Script.h" />
+    <ClInclude Include="..\Public\UI_DamageFont.h" />
+    <ClInclude Include="..\Public\UI_Interaction.h" />
+    <ClInclude Include="..\Public\UI_Script.h" />
+    <ClInclude Include="..\public\Robe1_Item.h" />
     <ClInclude Include="..\Public\StateContext_Enemy.h" />
     <ClInclude Include="..\Public\StateMachine_Enemy.h" />
     <ClInclude Include="..\Public\Vault_Gate.h" />
     <ClInclude Include="..\Public\UseItemState.h" />
     <ClInclude Include="..\Public\UI_Damage.h" />
     <ClInclude Include="..\Public\UI_Store.h" />
-    <ClInclude Include="..\Public\UI_DamageFont.h" />
     <ClInclude Include="..\Public\Projectile_Black.h" />
     <ClInclude Include="..\Public\Projectile_White.h" />
     <ClInclude Include="..\Public\Pulse.h">
@@ -253,6 +261,7 @@
     </ClInclude>
     <ClInclude Include="..\public\Trigger.h" />
     <ClInclude Include="..\Public\Vendor.h" />
+    <ClInclude Include="..\public\Water.h" />
     <ClInclude Include="..\Public\Weapon_DarkWizard_Wand.h" />
     <ClInclude Include="..\Public\Diffindo.h" />
     <ClInclude Include="..\public\Dittany_Leaves_Item.h" />
@@ -525,25 +534,33 @@
     <ClCompile Include="..\Private\Pensive_Appearence.cpp" />
     <ClCompile Include="..\Private\Pensive_Charge_Attack.cpp" />
     <ClCompile Include="..\Private\Pensive_Death.cpp" />
+    <ClCompile Include="..\Private\Pensive_Fail_Ball.cpp" />
     <ClCompile Include="..\Private\Pensive_Groogy.cpp" />
     <ClCompile Include="..\Private\Pensive_Ground_Ball.cpp" />
     <ClCompile Include="..\Private\Pensive_Hit.cpp" />
     <ClCompile Include="..\Private\Pensive_Idle.cpp" />
+    <ClCompile Include="..\Private\Pensive_Mace_Attack.cpp" />
     <ClCompile Include="..\Private\Pensive_Orb_Attack.cpp" />
     <ClCompile Include="..\Private\Pensive_Physical_Attack.cpp" />
+    <ClCompile Include="..\Private\Pensive_Shouting.cpp" />
+    <ClCompile Include="..\Private\Pensive_Sword_Throw.cpp" />
     <ClCompile Include="..\Private\Player.cpp" />
     <ClCompile Include="..\private\PotionStationCamera.cpp" />
     <ClCompile Include="..\private\Robe_Arcane.cpp" />
     <ClCompile Include="..\Private\Robe_DarkArts.cpp" />
     <ClCompile Include="..\Private\Robe_DarkArts_Delux.cpp" />
     <ClCompile Include="..\Private\Robe_Quidditch.cpp" />
+    <ClCompile Include="..\Private\Script.cpp" />
+    <ClCompile Include="..\Private\UI_DamageFont.cpp" />
+    <ClCompile Include="..\Private\UI_Interaction.cpp" />
+    <ClCompile Include="..\Private\UI_Script.cpp" />
+    <ClCompile Include="..\private\Robe1_Item.cpp" />
     <ClCompile Include="..\Private\StateContext_Enemy.cpp" />
     <ClCompile Include="..\Private\StateMachine_Enemy.cpp" />
     <ClCompile Include="..\Private\Vault_Gate.cpp" />
     <ClCompile Include="..\Private\UseItemState.cpp" />
     <ClCompile Include="..\Private\UI_Damage.cpp" />
     <ClCompile Include="..\Private\UI_Store.cpp" />
-    <ClCompile Include="..\Private\UI_DamageFont.cpp" />
     <ClCompile Include="..\Private\Projectile_Black.cpp" />
     <ClCompile Include="..\Private\Projectile_White.cpp" />
     <ClCompile Include="..\Private\Pulse.cpp">
@@ -552,6 +569,7 @@
     </ClCompile>
     <ClCompile Include="..\private\Trigger.cpp" />
     <ClCompile Include="..\Private\Vendor.cpp" />
+    <ClCompile Include="..\private\Water.cpp" />
     <ClCompile Include="..\Private\Weapon_DarkWizard_Wand.cpp" />
     <ClCompile Include="..\Private\Diffindo.cpp" />
     <ClCompile Include="..\private\Dittany_Leaves_Item.cpp" />
@@ -783,6 +801,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMeshInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTexRotation.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Water.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Shader_Client_Defines.hlsli" />

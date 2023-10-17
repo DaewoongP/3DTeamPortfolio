@@ -304,8 +304,6 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 {
 	try
 	{
-		std::lock_guard<std::mutex> lock(mtx);
-
 #pragma region Player
 
 		/* For.Prototype_GameObject_Player*/
@@ -1043,6 +1041,10 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Boots_Arcane_F"),
 			CMeshParts::Create(m_pDevice, m_pContext, L"../../Resources/Models/Anims/Boots_Arcane_F/Boots_Arcane_F.dat", TEXT("Boots_Arcane_F")))))
 			throw TEXT("Prototype_Component_MeshPart_Boots_Arcane_F");
+		///* For.Prototype_Component_MeshPart_Robe_MysticCape */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Robe_MysticCape"),
+		//	CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Robe_MysticCape/Robe_MysticCape.dat"), TEXT("Robe_MysticCape")))))
+		//	throw TEXT("Prototype_Component_MeshPart_Robe_MysticCape");
 #pragma endregion
 	}
 	catch (const _tchar* pErrorTag)

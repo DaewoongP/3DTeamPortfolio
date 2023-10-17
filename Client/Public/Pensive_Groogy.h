@@ -23,6 +23,8 @@ public:
 
 private:
     _float m_fAction_Change_Duration{ 0.0f };
+    _uint   m_iMotionIndex = { 0 };
+    _tchar  m_wszAnimationTag[3][MAX_PATH];
 
 private:
     void Action_None_Tick();

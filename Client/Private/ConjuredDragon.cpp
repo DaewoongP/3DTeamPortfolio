@@ -2412,19 +2412,16 @@ void CConjuredDragon::Free()
 {
 	__super::Free();
 
-	if (true == m_isCloned)
-	{
-		Safe_Release(m_pBreath);
-		Safe_Release(m_pEnergyBall);
-		Safe_Release(m_pPulse);
+	Safe_Release(m_pBreath);
+	Safe_Release(m_pEnergyBall);
+	Safe_Release(m_pPulse);
 
-		Safe_Release(m_pMagicSlot);
-		Safe_Release(m_pWeapon);
+	Safe_Release(m_pMagicSlot);
+	Safe_Release(m_pWeapon);
 
-		Safe_Release(m_pEffect_BlackSmokeIdle);
-		Safe_Release(m_pEffect_Pulse_Charge);
-		Safe_Release(m_pEffect_Pulse_CircleEmit);
-		Safe_Release(m_pEffect_Pulse_Rock);
-		Safe_Release(m_pEffect_Pulse_SplashWater);
-	}
+	Safe_Release(m_pEffect_BlackSmokeIdle);
+	Safe_Release(m_pEffect_Pulse_Charge);
+	Safe_Release(m_pEffect_Pulse_CircleEmit);
+	Safe_Release(m_pEffect_Pulse_Rock);
+	Safe_Release(m_pEffect_Pulse_SplashWater);
 }

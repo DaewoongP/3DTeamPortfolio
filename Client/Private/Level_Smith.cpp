@@ -20,7 +20,7 @@ HRESULT CLevel_Smith::Initialize()
 	FAILED_CHECK_RETURN(Ready_Layer_NPC(TEXT("Layer_NPC")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_UI(TEXT("Layer_UI")), E_FAIL);
-	FAILED_CHECK_RETURN(Ready_Event(TEXT("Layer_Event")), E_FAIL);
+	//FAILED_CHECK_RETURN(Ready_Event(TEXT("Layer_Event")), E_FAIL);
 
 	BEGININSTANCE;
 	pGameInstance->Reset_World_TimeAcc();
@@ -46,7 +46,7 @@ void CLevel_Smith::Tick(_float fTimeDelta)
 		}
 	}
 
-	if (pGameInstance->Get_DIKeyState(DIK_F9, CInput_Device::KEY_DOWN))
+	if (pGameInstance->Get_DIKeyState(DIK_F12, CInput_Device::KEY_DOWN))
 	{
 		pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE));
 	}
@@ -105,14 +105,6 @@ HRESULT CLevel_Smith::Ready_Layer_Monsters(const _tchar* pLayerTag)
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Armored_Troll)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-
-	Matrix = XMMatrixTranslation(30.f, 3.f, 25.f);
-	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Pensive"), pLayerTag, TEXT("GameObject_Pensive"), &Matrix)))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Pensive)");
 		ENDINSTANCE;
 		return E_FAIL;
 	}
@@ -275,6 +267,10 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 
 		// 비교해야되는 문자열
 		wstring wsTreasureChestName(TEXT("Anim_TreasureChest"));
+		wstring wsAshwinderEggs(TEXT("Anim_AshwinderEggs"));
+		wstring wsLeapingToadStools(TEXT("Anim_LeapingToadStools"));
+		wstring wsHorklump(TEXT("Anim_Horklump"));
+		wstring wsLeech(TEXT("Anim_Leech"));
 		wstring wsPotionStation(TEXT("SM_HM_Potion_Table"));
 		wstring wsShopDoor(TEXT("SM_HM_Shop_Door"));
 
@@ -305,6 +301,25 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 				wszobjName, &MapObjectDesc)))
 			{
 				MSG_BOX("Failed to Clone Potion_Station in Level_Smith");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}
+
+		// 채집물
+		else if (0 == lstrcmp(modelName.c_str(), wsHorklump.c_str()) ||
+				 0 == lstrcmp(modelName.c_str(), wsLeech.c_str()) || 
+				 0 == lstrcmp(modelName.c_str(), wsAshwinderEggs.c_str()) ||
+				 0 == lstrcmp(modelName.c_str(), wsLeapingToadStools.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_Gatherer_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH,
+				TEXT("Prototype_GameObject_Gatherer"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone Gatherer");
 				ENDINSTANCE;
 				return E_FAIL;
 			}

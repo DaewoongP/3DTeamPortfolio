@@ -176,11 +176,6 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_fClothPower = 20.0f;
 	m_fClothPowerPlus = 1.0f;
 
-	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FIRST, CONFRINGO);
-	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::SECOND, LEVIOSO);
-	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::THIRD, NCENDIO);
-	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FOURTH, DIFFINDO);
-
 	m_fRotationSpeed = 2.0f;
 
 	m_iMoveType = (_uint)MOVETYPE_NONE;
@@ -191,7 +186,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_pCustomModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"), CModel::OTHERBODY);
 
 	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(25.f, 3.f, 22.5f);
-	m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
+	//m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
+	m_vLevelInitPosition[LEVEL_VAULT] = _float3(161, 2 ,93);
 	m_vLevelInitPosition[LEVEL_SMITH] = _float3(30.f, 3.f, 15.f); // �⺻ ��ġ
 	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(94.5f, 7.2f, 78.f); // ���� �����̼� �ٷ� ��
 	m_vLevelInitPosition[LEVEL_SKY] = _float3(88.8f, 12.5f, 69.8f); // ���� �����̼� �ٷ� ��
@@ -747,12 +743,12 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 	/* Com_Blink_Effect */
-	/*if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_Trail"),
-		TEXT("Com_Blink_Trail"), reinterpret_cast<CComponent**>(&m_pBlink))))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}*/
+	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_Trail"),
+	//	TEXT("Com_Blink_Trail"), reinterpret_cast<CComponent**>(&m_pBlink))))
+	//{
+	//	__debugbreak();
+	//	return E_FAIL;
+	//}
 
 	//_int DefValue = 15;
 	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_EndurusPotion"),
@@ -2964,6 +2960,9 @@ void CPlayer::Blink_End()
 void CPlayer::Healing()
 {
 	m_pPlayer_Information->fix_HP(40);
+
+
+
 }
 
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -3156,7 +3155,7 @@ void CPlayer::Free()
 		Safe_Release(m_pCooltime);
 		Safe_Release(m_pDefence);
 		
-		//Safe_Release(m_pBlink);
+	//	Safe_Release(m_pBlink);
 
 		if (nullptr != m_pTargetTransform)
 		{
