@@ -67,6 +67,11 @@ void CPensive::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	if (m_isTurnAble)
+	{
+		m_pTransform->LookAt_Lerp((m_pPlayer)->Get_Transform()->Get_Position(), fTimeDelta * 2.f, true);
+	}
+
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta);
 }
@@ -74,6 +79,23 @@ void CPensive::Tick(_float fTimeDelta)
 void CPensive::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+}
+
+void CPensive::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
+{
+	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
+	/* Collision Magic */
+	if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
+	{
+		CMagicBall::COLLSIONREQUESTDESC* pCollisionMagicBallDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
+		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
+		_int iDamage = pCollisionMagicBallDesc->iDamage;
+
+		Do_Damage(iDamage);
+		_float3 vDir = CollisionEventDesc.pOtherTransform->Get_Position() - m_pTransform->Get_Position();
+		vDir.Normalize();
+		m_iCurrentSpell |= eBuff;
+	}
 }
 
 HRESULT CPensive::Render()
@@ -95,9 +117,8 @@ void CPensive::Set_Protego_Collision(CTransform* pTransform, ATTACKTYPE eType) c
 	if (eType == ATTACK_BREAK ||
 		eType == ATTACK_SUPERBREAK)
 	{
-		m_pStateContext->Set_StateMachine(TEXT("Groogy"));
-		m_pModelCom->Change_Animation(TEXT("Stun_Start"));
-		//손에 있던 마법 터뜨려주기
+		m_pStateContext->Set_StateMachine(TEXT("Hit"));
+		m_pModelCom->Change_Animation(TEXT("Attack_Orb_Hit"));
 		m_pMagicBall_Attack->Set_MagicBallState(CMagicBall::MAGICBALL_STATE_DYING);
 	}
 }
@@ -107,6 +128,9 @@ HRESULT CPensive::Ready_StateMachine(_uint iCurrentLevelIndex)
 	m_StateMachineDesc.pOwnerModel = m_pModelCom;
 	m_StateMachineDesc.pPhase = &m_iPhase;
 	m_StateMachineDesc.pAttackType = &m_iAttackType;
+	m_StateMachineDesc.pisAttackable = &m_isAttackAble;
+	m_StateMachineDesc.pisTurnable = &m_isTurnAble;
+
 	BEGININSTANCE;
 	CComponent* pPlayer = pGameInstance->Find_Component_In_Layer(0, TEXT("Layer_Player"), TEXT("GameObject_Player"));
 	if (pPlayer != nullptr)
@@ -248,6 +272,29 @@ HRESULT CPensive::Make_Notifies()
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Weapon_Sword_Throw3"), Func)))
 		return E_FAIL;
 
+	Func = [&] {(*this).Attack_Mace(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Cast_Mace"), Func)))
+		return E_FAIL;
+	Func = [&] {(*this).Next_Attack(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Next_Mace"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Set_Turnable_True(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("TurnAble"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Set_Turnable_False(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("TurnDisable"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Set_AttackAble_True(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("AttackAble"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Set_AttackAble_False(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("AttackDisable"), Func)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -299,6 +346,17 @@ HRESULT CPensive::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 	{
+		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
+		magicInitDesc.eMagicType = CMagic::MT_ALL;
+		magicInitDesc.eMagicTag = PENSIVE_MACE_ATTACK;
+		magicInitDesc.fInitCoolTime = 0.f;
+		magicInitDesc.iDamage = 50;
+		magicInitDesc.isChase = false;
+		magicInitDesc.fLifeTime = 0.6f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+	{
 		m_ProtegoInitDesc[0].eBuffType = BUFF_NONE;
 		m_ProtegoInitDesc[0].eMagicGroup = CMagic::MG_POWER;
 		m_ProtegoInitDesc[0].eMagicType = CMagic::MT_RED;
@@ -333,7 +391,9 @@ HRESULT CPensive::Add_Magic()
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, PENSIVE_FAIL_BALL);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(2, PROTEGO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, PENSIVE_SHOUTING); 
-	m_pMagicSlot->Add_Magic_To_Basic_Slot(0, PENSIVE_SWORD_THROW);
+
+	m_pMagicSlot->Add_Magic_To_Basic_Slot(0, PENSIVE_SWORD_THROW); 
+	m_pMagicSlot->Add_Magic_To_Basic_Slot(1, PENSIVE_MACE_ATTACK);
 	return S_OK;
 }
 
@@ -373,6 +433,11 @@ void CPensive::Attack_Throw_Sword()
 {
 	m_pDragonHead[2]->Set_Offset_Matrix(m_SwordOffsetMatrix[m_iSwordIndex]);
 	m_pMagicBall_Sword[m_iSwordIndex++] = m_pMagicSlot->Action_Magic_Basic((_uint)0, m_pPlayer, m_pDragonHead[2], COLLISIONFLAG(COL_PLAYER | COL_SHIELD | COL_STATIC));
+}
+
+void CPensive::Attack_Mace()
+{
+	m_pMagicBall_Attack = m_pMagicSlot->Action_Magic_Basic((_uint)1, m_pPlayer, m_pDragonHead[1], COLLISIONFLAG(COL_PLAYER | COL_SHIELD | COL_STATIC));
 }
 
 void CPensive::Next_Attack()

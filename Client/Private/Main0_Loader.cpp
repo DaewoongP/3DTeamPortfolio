@@ -84,6 +84,7 @@
 #include "Pensive_Ground_Ball.h"
 #include "Pensive_Shouting.h"
 #include "Pensive_Sword_Throw.h"
+#include "Pensive_Mace_Attack.h"
 #pragma endregion Magic
 
 #include "Trigger_Vault.h"
@@ -716,9 +717,14 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			throw TEXT("Prototype_GameObject_Pensive_Shouting");
 
 		/* For.Prototype_GameObject_Pensive_Sword_Throw */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Pensive_Sword_Throw"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Pensive_Sword_Throw"), 
 			CPensive_Sword_Throw::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Pensive_Sword_Throw");
+
+		/* For.Prototype_GameObject_Pensive_Mace_Attack */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Pensive_Mace_Attack"),
+			CPensive_Mace_Attack::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Pensive_Mace_Attack");
 
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Monster_DarkFlare_Particle"),
 			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Monster_DarkFlare/"), eLevelID))))

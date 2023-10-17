@@ -207,6 +207,7 @@
     <ClInclude Include="..\Public\Pensive_Ground_Ball.h" />
     <ClInclude Include="..\Public\Pensive_Hit.h" />
     <ClInclude Include="..\Public\Pensive_Idle.h" />
+    <ClInclude Include="..\Public\Pensive_Mace_Attack.h" />
     <ClInclude Include="..\Public\Pensive_Orb_Attack.h" />
     <ClInclude Include="..\Public\Pensive_Physical_Attack.h" />
     <ClInclude Include="..\Public\Pensive_Shouting.h" />
@@ -480,6 +481,7 @@
     <ClCompile Include="..\Private\Pensive_Ground_Ball.cpp" />
     <ClCompile Include="..\Private\Pensive_Hit.cpp" />
     <ClCompile Include="..\Private\Pensive_Idle.cpp" />
+    <ClCompile Include="..\Private\Pensive_Mace_Attack.cpp" />
     <ClCompile Include="..\Private\Pensive_Orb_Attack.cpp" />
     <ClCompile Include="..\Private\Pensive_Physical_Attack.cpp" />
     <ClCompile Include="..\Private\Pensive_Shouting.cpp" />

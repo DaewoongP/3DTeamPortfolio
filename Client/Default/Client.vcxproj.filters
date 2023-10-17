@@ -757,8 +757,11 @@
     <Filter Include="02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Shouting">
       <UniqueIdentifier>{48067e46-a2b2-46de-a78c-45570d3e579b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\02. Enemy\07. Pensive\Magic\Pesnvie_Sword_Throw">
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\Magic\Pensvie_Sword_Throw">
       <UniqueIdentifier>{27da13f9-42b9-4e80-9179-08a514172efd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Mace_Attack">
+      <UniqueIdentifier>{7b950a00-70b3-4a01-a959-d6802fab4f56}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1509,7 +1512,10 @@
       <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Shouting</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Pensive_Sword_Throw.h">
-      <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pesnvie_Sword_Throw</Filter>
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pensvie_Sword_Throw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Mace_Attack.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Mace_Attack</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2218,7 +2224,10 @@
       <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Shouting</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Pensive_Sword_Throw.cpp">
-      <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pesnvie_Sword_Throw</Filter>
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pensvie_Sword_Throw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Mace_Attack.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Mace_Attack</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

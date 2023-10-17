@@ -40,6 +40,7 @@ void CPensive_Hit::OnStateEnter(void* _pArg)
 
 void CPensive_Hit::OnStateTick()
 {
+	Action_None_Tick();
 }
 
 void CPensive_Hit::OnStateExit()

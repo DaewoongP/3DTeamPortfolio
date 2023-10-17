@@ -43,6 +43,7 @@ void CPensive_Idle::OnStateEnter(void* _pArg)
 {
 	//첫 실행시 등장 애니메이션을 재생합니다.
 	Change_Animation(TEXT("Idle"));
+	*m_StateMachineDesc.pisAttackable = true;
 	m_fActionSetTimer = Random_Generator(m_fMinChangeTimer, m_fMaxChangeTimer);
 	m_fActionTimer = m_fActionSetTimer;
 }
@@ -67,11 +68,11 @@ void CPensive_Idle::OnStateTick(_float fTimeDelta)
 		*m_StateMachineDesc.pAttackType = AttackAction;
 		switch (AttackAction)
 		{
-		case 0: //해머
+		//case 0: //해머
 		//	if (*m_StateMachineDesc.pPhase == 2)
 		//	{
 		//		cout << "해머를 시전합니다" << endl;
-		//		Change_Animation(TEXT("Idle"));
+		//		Change_Animation(TEXT("Attack_Mace"));
 		//		Set_StateMachine(TEXT("Physical_Attack"));
 		//		break;
 		//	}
@@ -85,7 +86,7 @@ void CPensive_Idle::OnStateTick(_float fTimeDelta)
 		//	if (*m_StateMachineDesc.pPhase == 2)
 		//	{
 		//		cout << "칼 공격을 실행합니다" << endl;
-		//		Change_Animation(TEXT("Idle"));
+		//		Change_Animation(TEXT("Attack_Meteor"));
 		//		Set_StateMachine(TEXT("Physical_Attack"));
 		//		break;
 		//	}
