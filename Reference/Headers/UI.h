@@ -17,13 +17,15 @@ public:
 		_tchar szTexturePath[MAX_PATH] = TEXT("");
 		_tchar szAlphaTexturePath[MAX_PATH] = TEXT("");
 		_float4 vColor;
+
+		_bool	isInFont = { false };
+		_tchar	szFont[MAX_PATH] = TEXT("");
 	}UIDESC;
 
 protected:
 	explicit CUI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CUI(const CUI& rhs);
 	virtual ~CUI() = default;
-
 
 public:
 	void	Set_XY(_float2 vXY)
@@ -33,6 +35,11 @@ public:
 	}
 	void	Set_Z(_float fZ) { m_fZ = fZ; }
 	void	Set_Parent(CUI* pUIParent);
+	void	Set_Size(_float2 vSize) {
+		m_fSizeX = vSize.x;
+		m_fSizeY = vSize.y;
+		Change_Scale(m_fSizeX, m_fSizeY);
+	}
 
 public:
 	void Set_Texture(_uint iIndex) { m_iTextureIndex = iIndex; }
@@ -46,6 +53,7 @@ public:
 	HRESULT Change_Position(_float fX, _float fY, _float fZ, _uint iWinSizeX = 1280.f, _uint iWinSizeY = 720.f);
 	HRESULT Change_Scale(_float fX, _float fY);
 	HRESULT Load(UIDESC UIDesc);
+	HRESULT Add_Texture(const _tchar* pFilePath);
 
 public:
 	_float2 Get_CombinedXY()	{ return m_vCombinedXY; }

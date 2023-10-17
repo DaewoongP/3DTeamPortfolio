@@ -12,12 +12,10 @@ CUI_Store::CUI_Store(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
 }
-
 CUI_Store::CUI_Store(const CUI_Store& rhs)
 	: CGameObject(rhs)
 {
 }
-
 HRESULT CUI_Store::Initialize_Prototype(_uint iLevel)
 {
 	if (FAILED(__super::Initialize_Prototype()))
@@ -45,7 +43,6 @@ HRESULT CUI_Store::Initialize_Prototype(_uint iLevel)
 
 	return S_OK;
 }
-
 HRESULT CUI_Store::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
@@ -67,7 +64,6 @@ HRESULT CUI_Store::Initialize(void* pArg)
 	m_isOpen = false;
 	return S_OK;
 }
-
 void CUI_Store::Tick(_float fTimeDelta)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -75,7 +71,7 @@ void CUI_Store::Tick(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
 	{
-		(true == m_isOpen) ? m_isOpen = false : m_isOpen = true;	
+		m_isOpen = (true == m_isOpen) ? false : true;	
 	}
 
 	Safe_Release(pGameInstance);
@@ -89,12 +85,12 @@ void CUI_Store::Tick(_float fTimeDelta)
 	{
 		if (m_pSlots[i]->Get_Clicked())
 		{
-			cout << i << "번째 아이템이 클릭되었습니다" << '\n';
-			cout << i << "번째 아이템이 인벤토리로 들어옵니다" << '\n';
+			if (false == m_pItems[i]->Buy())
+				cout << "아이템 구입 실패" << '\n';
+			cout << "구입 성공" << '\n';
 		}
 	}
 }
-
 void CUI_Store::Late_Tick(_float fTimeDelta)
 {
 	if (false == m_isOpen)
@@ -102,17 +98,14 @@ void CUI_Store::Late_Tick(_float fTimeDelta)
 
 	__super::Late_Tick(fTimeDelta);
 }
-
 void CUI_Store::Open()
 {
 	m_isOpen = true;
 }
-
 void CUI_Store::Close()
 {
 	m_isOpen = false;
 }
-
 HRESULT CUI_Store::Store_Sell_Read_File(const _tchar* pFilePath)
 {
 	_ulong dwByte = 0;
@@ -168,7 +161,6 @@ HRESULT CUI_Store::Store_Sell_Read_File(const _tchar* pFilePath)
 
 	return S_OK;
 }
-
 HRESULT CUI_Store::Store_Buy_Read_File(const _tchar* pFilePath)
 {
 	/*if (nullptr == m_pIcons[iIndex] || nullptr == m_pFrames[iIndex] || nullptr == m_pCountBacks[iIndex]
@@ -232,7 +224,6 @@ HRESULT CUI_Store::Store_Buy_Read_File(const _tchar* pFilePath)
 
 	return S_OK;
 }
-
 CUI::UIDESC CUI_Store::Load_File(const HANDLE hFile, _bool isDDS)
 {
 	CUI::UIDESC UIDesc;
@@ -274,7 +265,6 @@ CUI::UIDESC CUI_Store::Load_File(const HANDLE hFile, _bool isDDS)
 
 	return UIDesc;
 }
-
 HRESULT CUI_Store::Set_Item()
 {
 	for (auto& pSlot : m_pSlots)
@@ -287,7 +277,7 @@ HRESULT CUI_Store::Set_Item()
 	m_pItems.resize(m_pSlots.size());
 	for (_uint i = 0; i < m_pSlots.size(); ++i)
 	{
-		m_pItems[i] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_DITTANY_LEAVES, LEVEL_STATIC, nullptr);
+		m_pItems[i] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_ROBE1, LEVEL_STATIC, nullptr);
 	}
 	
 	_uint iSize = m_pItems.size();
@@ -327,7 +317,6 @@ HRESULT CUI_Store::Set_Item()
 
 	return S_OK;
 }
-
 HRESULT CUI_Store::Ready_Offset()
 {
 	_float2 fOffSet = m_fOffset;

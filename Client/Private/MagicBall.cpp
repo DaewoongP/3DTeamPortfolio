@@ -167,7 +167,7 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 		}
 		
 	}
-
+	m_isHeavyChange = false;
 	m_fWandParticleDelayTimer = 0.1f;
 	m_fDyingTimer = 5.f;
 	return S_OK;

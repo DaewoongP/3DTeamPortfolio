@@ -146,6 +146,9 @@ PS_OUT PS_MAIN(PS_IN In)
 	FresnelEffect_float(In.vWorldNormal, vViewDir, g_fRimPower, fFresnel);
 	Out.vColor.a = fFresnel;
 
+	if (Out.vColor.a <= 0.1f)
+		discard;
+
 	// ÀÏ··ÀÓ È¿°ú
 	TilingAndOffset_float(In.vTexUV, 1.f, vOffsetNoiseUV, vOffsetWispUV);
 	vWisps2 = g_Wisps_2_Texture.Sample(PointSampler, vOffsetWispUV);
@@ -158,7 +161,7 @@ technique11 DefaultTechnique
 {
 	pass Protego
 	{
-		SetRasterizerState(RS_Cull_None);
+		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DSS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 

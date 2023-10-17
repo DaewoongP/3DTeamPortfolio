@@ -65,6 +65,7 @@ public:
 		{
 			m_eMagicBallState = static_cast<MAGICBALL_STATE>(m_eMagicBallState + 1);
 			m_isFirstFrameInState = true;
+			m_isHeavyChange = true;
 		}
 	}
 	void Re_Set_StartEndLerpAcc(_float3 vStart, _float3 vDir);
@@ -147,6 +148,7 @@ protected:
 
 	_float					m_fWandParticleDelayTimer = 0.1f;
 	_float					m_fDyingTimer = 5.f;
+	_bool					m_isHeavyChange = { false };
 
 protected:
 	_float4					m_vLightColor = {};

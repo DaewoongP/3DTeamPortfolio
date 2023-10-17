@@ -20,6 +20,8 @@ public:
         CTransform* pTarget = { nullptr };
         _uint* pPhase = { nullptr };
         _uint* pAttackType = { nullptr };
+        _bool* pisAttackable = { nullptr };
+        _bool* pisTurnable = { nullptr };
         
         _bool IsValid()
         {
@@ -27,6 +29,8 @@ public:
             if (nullptr == pTarget) { return false; }
             if (nullptr == pPhase) { return false; }
             if (nullptr == pAttackType) { return false; }
+            if (nullptr == pisAttackable) { return false; }
+            if (nullptr == pisTurnable) { return false; }
             return true;
         };
     }STATEMACHINEDESC;

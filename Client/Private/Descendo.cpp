@@ -185,6 +185,19 @@ void CDescendo::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 HRESULT CDescendo::Reset(MAGICBALLINITDESC& InitDesc)
 {
 	__super::Reset(InitDesc);
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	CLight::LIGHTDESC LightDesc;
+	LightDesc.eType = CLight::TYPE_POINT;
+	LightDesc.fRange = 5.f;
+	m_vLightColor = LightDesc.vDiffuse = ToColor(250.f, 48.f, 48.f, 192.f);
+	LightDesc.vAmbient = LightDesc.vDiffuse;
+	LightDesc.vSpecular = LightDesc.vDiffuse;
+	LightDesc.vPos = m_pTransform->Get_Position().TransCoord();
+	pGameInstance->Add_Light(LightDesc, &m_pLight);
+	Safe_Release(pGameInstance);
+
 	return S_OK;
 }
 
@@ -201,7 +214,7 @@ void CDescendo::Ready_DrawMagic()
 void CDescendo::Ready_CastMagic()
 {
 	Ready_SplineMove_Accio(m_TrailVec[EFFECT_STATE_MAIN][0],_float3(0,1,0));
-
+	ADD_DECREASE_LIGHT(m_vStartPosition, 50.f, 0.1f, m_vLightColor);
 	__super::Ready_CastMagic();
 }
 
@@ -232,6 +245,7 @@ void CDescendo::Tick_CastMagic(_float fTimeDelta)
 		m_TrailVec[EFFECT_STATE_MAIN][0]->Spline_Move(m_vSplineLerp[0], m_vStartPosition, m_vEndPosition, m_vSplineLerp[1], m_fLerpAcc);
 		m_pTransform->Set_Position(XMVectorLerp(m_vStartPosition, m_vEndPosition, m_fLerpAcc));
 		m_ParticleVec[EFFECT_STATE_MAIN][4]->Get_Transform()->Set_Position(m_TrailVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Get_Position());
+		m_pLight->Set_Position(m_TrailVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Get_Position().TransCoord());
 	}
 	else
 	{
