@@ -215,6 +215,10 @@
     <ClInclude Include="..\Public\Pensive_Sword_Throw.h" />
     <ClInclude Include="..\Public\Player.h" />
     <ClInclude Include="..\public\PotionStationCamera.h" />
+    <ClInclude Include="..\Public\Script.h" />
+    <ClInclude Include="..\Public\UI_DamageFont.h" />
+    <ClInclude Include="..\Public\UI_Interaction.h" />
+    <ClInclude Include="..\Public\UI_Script.h" />
     <ClInclude Include="..\public\Robe1_Item.h" />
     <ClInclude Include="..\Public\StateContext_Enemy.h" />
     <ClInclude Include="..\Public\StateMachine_Enemy.h" />
@@ -222,7 +226,6 @@
     <ClInclude Include="..\Public\UseItemState.h" />
     <ClInclude Include="..\Public\UI_Damage.h" />
     <ClInclude Include="..\Public\UI_Store.h" />
-    <ClInclude Include="..\Public\UI_DamageFont.h" />
     <ClInclude Include="..\Public\Projectile_Black.h" />
     <ClInclude Include="..\Public\Projectile_White.h" />
     <ClInclude Include="..\Public\Pulse.h">
@@ -492,6 +495,10 @@
     <ClCompile Include="..\Private\Pensive_Sword_Throw.cpp" />
     <ClCompile Include="..\Private\Player.cpp" />
     <ClCompile Include="..\private\PotionStationCamera.cpp" />
+    <ClCompile Include="..\Private\Script.cpp" />
+    <ClCompile Include="..\Private\UI_DamageFont.cpp" />
+    <ClCompile Include="..\Private\UI_Interaction.cpp" />
+    <ClCompile Include="..\Private\UI_Script.cpp" />
     <ClCompile Include="..\private\Robe1_Item.cpp" />
     <ClCompile Include="..\Private\StateContext_Enemy.cpp" />
     <ClCompile Include="..\Private\StateMachine_Enemy.cpp" />
@@ -499,7 +506,6 @@
     <ClCompile Include="..\Private\UseItemState.cpp" />
     <ClCompile Include="..\Private\UI_Damage.cpp" />
     <ClCompile Include="..\Private\UI_Store.cpp" />
-    <ClCompile Include="..\Private\UI_DamageFont.cpp" />
     <ClCompile Include="..\Private\Projectile_Black.cpp" />
     <ClCompile Include="..\Private\Projectile_White.cpp" />
     <ClCompile Include="..\Private\Pulse.cpp">

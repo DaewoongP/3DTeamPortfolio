@@ -381,6 +381,26 @@ HRESULT CUI_Group_SkillTap::Ready_DefaultTexture()
 	m_pBack->Load(UIDesc);
 
 
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
+		TEXT("Com_UI_BG"), reinterpret_cast<CComponent**>(&m_pBG))))
+	{
+		MSG_BOX("Com_CUI_SkillTap : Failed Clone Component (Com_UI_BG)");
+		Safe_Release(pGameInstance);
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	UIDesc.vCombinedXY = { 0.f, 0.f };
+	UIDesc.fX = { 640.f };
+	UIDesc.fY = { 360.f };
+	UIDesc.fZ = { 0.9f };
+	UIDesc.fSizeX = { 1280.f };
+	UIDesc.fSizeY = { 720.f };
+	_tchar szTexturePathBG[MAX_PATH] = TEXT("../../Resources/UI/Game/UI_Edit/SkillTap_BG.png");
+	lstrcpy(UIDesc.szTexturePath, szTexturePathBG);
+
+	m_pBG->Load(UIDesc);
+
 	_tchar szFilePath[MAX_PATH] = TEXT("");
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Cursor.uidata"));
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Cursor"),
@@ -730,7 +750,7 @@ void CUI_Group_SkillTap::Free()
 	if (m_isCloned)
 	{
 		Safe_Release(m_pBack);
+		Safe_Release(m_pBG);
 		Safe_Release(m_pCursor);
 	}
-
 }

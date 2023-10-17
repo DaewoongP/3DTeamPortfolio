@@ -60,6 +60,9 @@ private:
 	CUI_Group_Cursor* m_pCursor = { nullptr };
 
 private:
+	CInventory* m_pPlayerInventory = { nullptr };
+
+private:
 	MENU	m_eMenu = { MENU_END };
 
 private:

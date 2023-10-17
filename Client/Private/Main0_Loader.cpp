@@ -26,6 +26,7 @@
 #include "Menu_Gear.h"
 #include "Menu_Quest.h"
 #include "Menu_Invectory.h"
+#include "Menu_Setting.h"
 #include "UI_Inventory.h"
 #include "Inventory.h"
 #include "UI_Potion_Tap.h"
@@ -36,7 +37,7 @@
 #include "UI_Dynamic_Back.h"
 #include "UI_Damage.h"
 #include "UI_Store.h"
-
+#include "UI_Interaction.h"
 #pragma endregion UI
 
 #pragma region Effects
@@ -393,6 +394,9 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Menu_Quest"),
 				CMenu_Quest::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_GameObject_Menu_Quest");
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Menu_Setting"),
+				CMenu_Setting::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_Menu_Setting");
 
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Inventory"),
 				CUI_Inventory::Create(m_pDevice, m_pContext))))
@@ -430,6 +434,10 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Store"),
 				CUI_Store::Create(m_pDevice, m_pContext, eLevelID))))
 				throw TEXT("Prototype_GameObject_UI_Store");
+
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Interaction"),
+				CUI_Interaction::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_UI_Interaction");
 #pragma endregion
 
 #pragma region Load Texture

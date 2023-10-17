@@ -490,9 +490,6 @@
     <Filter Include="01. Levels\08. Sanctum%28Dragon%29">
       <UniqueIdentifier>{a3441117-6109-46b1-8071-26b05cc98d52}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\04. UI\UI\UI_Interact">
-      <UniqueIdentifier>{06c934f6-bf3f-4fee-8a89-9fb722ad475e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\PotionStation\Camera">
       <UniqueIdentifier>{47ad6082-1c46-48ca-91b9-645d66ca436a}</UniqueIdentifier>
     </Filter>
@@ -625,9 +622,6 @@
     <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Break">
       <UniqueIdentifier>{efc4ee26-398a-4d26-a05a-41a298491857}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\04. UI\Font\Damage">
-      <UniqueIdentifier>{33a1a9e3-3ae3-47e4-9a5d-84571b868dfd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\04. UI\Font\Normal">
       <UniqueIdentifier>{a6ce031a-ee39-48b9-aa3c-287c539e6515}</UniqueIdentifier>
     </Filter>
@@ -693,6 +687,15 @@
     </Filter>
     <Filter Include="07. Events\Smeade">
       <UniqueIdentifier>{2ed55d9c-62e6-455a-a77e-621148ea10a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\04. UI\UI_Composite\UI_Interaction">
+      <UniqueIdentifier>{06c934f6-bf3f-4fee-8a89-9fb722ad475e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="08 Script">
+      <UniqueIdentifier>{8259d964-e72a-469b-b6fd-a3ced577ab4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\04. UI\UI\UI_Script">
+      <UniqueIdentifier>{473ca6be-871b-4f7c-9069-df1ceb227470}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\09. Item\03. Gear\Robe_Item">
       <UniqueIdentifier>{70bd1214-7e78-4b8b-beeb-d7fa5c144a62}</UniqueIdentifier>
@@ -1379,9 +1382,6 @@
     <ClInclude Include="..\Public\UseItemState.h">
       <Filter>02. GameObject\01. Player\01. StateMachine\09. UseItem</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_DamageFont.h">
-      <Filter>02. GameObject\04. UI\Font\Damage</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_Font.h">
       <Filter>02. GameObject\04. UI\Font\Normal</Filter>
     </ClInclude>
@@ -1474,6 +1474,18 @@
     </ClInclude>
     <ClInclude Include="..\Public\Event_Smeade.h">
       <Filter>07. Events\Smeade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Interaction.h">
+      <Filter>02. GameObject\04. UI\UI_Composite\UI_Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_DamageFont.h">
+      <Filter>02. GameObject\04. UI\Font\DamageFont</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Script.h">
+      <Filter>08 Script</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Script.h">
+      <Filter>02. GameObject\04. UI\UI\UI_Script</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Robe1_Item.h">
       <Filter>02. GameObject\09. Item\03. Gear\Robe_Item</Filter>
@@ -2121,9 +2133,6 @@
     <ClCompile Include="..\Private\UI_Damage.cpp">
       <Filter>02. GameObject\04. UI\UI_Composite\UI_Damage</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_DamageFont.cpp">
-      <Filter>02. GameObject\04. UI\Font\Damage</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UI_Store.cpp">
       <Filter>02. GameObject\04. UI\UI_Group\UI_Store</Filter>
     </ClCompile>
@@ -2195,6 +2204,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\Event_Smeade.cpp">
       <Filter>07. Events\Smeade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Interaction.cpp">
+      <Filter>02. GameObject\04. UI\UI_Composite\UI_Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_DamageFont.cpp">
+      <Filter>02. GameObject\04. UI\Font\DamageFont</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Script.cpp">
+      <Filter>08 Script</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Script.cpp">
+      <Filter>02. GameObject\04. UI\UI\UI_Script</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Robe1_Item.cpp">
       <Filter>02. GameObject\09. Item\03. Gear\Robe_Item</Filter>

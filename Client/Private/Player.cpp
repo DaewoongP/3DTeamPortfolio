@@ -176,11 +176,6 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_fClothPower = 20.0f;
 	m_fClothPowerPlus = 1.0f;
 
-	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FIRST, CONFRINGO);
-	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::SECOND, LEVIOSO);
-	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::THIRD, NCENDIO);
-	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FOURTH, DIFFINDO);
-
 	m_fRotationSpeed = 2.0f;
 
 	m_iMoveType = (_uint)MOVETYPE_NONE;
