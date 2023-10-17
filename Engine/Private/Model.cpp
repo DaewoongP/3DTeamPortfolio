@@ -538,6 +538,8 @@ HRESULT CModel::Bind_BoneMatrices(CShader* pShader, const char* pConstantName, _
 
 HRESULT CModel::Ready_File(TYPE eType, const _tchar* pModelFilePath)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	HANDLE hFile = CreateFile(pModelFilePath,
 		GENERIC_READ,
 		0,
@@ -1060,6 +1062,8 @@ HRESULT CModel::Convert_Animations_GCM()
 //gcm ������ �д� ģ��
 HRESULT CModel::Ready_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	HANDLE hFile = CreateFile(pModelFilePath,
 		GENERIC_READ,
 		0,

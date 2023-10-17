@@ -21,9 +21,25 @@
 #include "Weapon_Forest_Troll.h"
 #include "Weapon_Golem_Combat.h"
 #include "Weapon_Player_Wand.h"
-#include "Weapon_Dragon_Head.h"
 #pragma endregion Weapon
 
+
+#pragma region Weapon
+#include "Pensive.h"
+#include "Weapon_Pensive_Sword.h"
+#include "Weapon_Pensive_Flail.h"
+#include "Weapon_Dragon_Head.h"
+
+#include "StateContext_Enemy.h"
+#include "Pensive_Appearence.h"
+#include "Pensive_Groogy.h"
+#include "Pensive_Charge_Attack.h"
+#include "Pensive_Hit.h"
+#include "Pensive_Death.h"
+#include "Pensive_Idle.h"
+#include "Pensive_Physical_Attack.h"
+#include "Pensive_Orb_Attack.h"
+#pragma endregion Weapon
 
 CMain2_Loader::CMain2_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -195,16 +211,16 @@ HRESULT CMain2_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 			CDarkWizard_M::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_DarkWizard_M");
 
-		//PivotMatrix = XMMatrixScaling(0.25f, 0.25f, 0.25f);
-		///* For.Prototype_Component_Model_Wolf */
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Wolf"),
-		//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Wolf/Wolf.gcm"), PivotMatrix))))
-		//	throw TEXT("Prototype_Component_Model_Wolf");
+		PivotMatrix = XMMatrixScaling(0.45f, 0.45f, 0.45f);
+		/* For.Prototype_Component_Model_Wolf */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Wolf"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Wolf/Wolf.gcm"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Wolf");
 
-		///* For.Prototype_GameObject_Wolf */
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Wolf"),
-		//	CWolf::Create(m_pDevice, m_pContext))))
-		//	throw TEXT("Prototype_GameObject_Wolf");
+		/* For.Prototype_GameObject_Wolf */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Wolf"),
+			CWolf::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Wolf");
 
 		/* =========================================================== */
 	}
@@ -259,6 +275,91 @@ HRESULT CMain2_Loader::Loading_For_Vault(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Golem_CombatGrunt"),
 			CGolem_Combat::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Golem_CombatGrunt");
+
+#pragma region Pensive
+		/* For.Prototype_GameObject_Dragon_Head */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Dragon_Head"),
+			CWeapon_Dragon_Head::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Dragon_Head");
+
+		/* ============ Enemy State Partten ============ */
+		/* For.Prototype_Component_StateContext_Enemy */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_StateContext_Enemy"),
+			CStateContext_Enemy::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_StateContext_Enemy");
+
+		/* For.Prototype_Component_Pensive_Physical_Attack */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Pensive_Physical_Attack"),
+			CPensive_Physical_Attack::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Pensive_Physical_Attack");
+
+		/* For.Prototype_Component_Pensive_Orb_Attack */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Pensive_Orb_Attack"),
+			CPensive_Orb_Attack::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Pensive_Orb_Attack");
+
+		/* For.Prototype_Component_Pensive_Appearence */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Pensive_Appearence"),
+			CPensive_Appearence::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Pensive_Appearence");
+
+		/* For.Prototype_Component_Pensive_Death */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Pensive_Death"),
+			CPensive_Death::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Pensive_Death");
+
+		/* For.Prototype_Component_Pensive_Charge_Attack */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Pensive_Charge_Attack"),
+			CPensive_Charge_Attack::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Pensive_Charge_Attack");
+
+		/* For.Prototype_Component_Pensive_Groogy */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Pensive_Groogy"),
+			CPensive_Groogy::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Pensive_Groogy");
+
+		/* For.Prototype_Component_Pensive_Hit */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Pensive_Hit"),
+			CPensive_Hit::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Pensive_Hit");
+
+		/* For.Prototype_Component_Pensive_Idle */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Pensive_Idle"),
+			CPensive_Idle::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Pensive_Idle");
+
+		/* ============ Enemy Weapon Models ============ */
+		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weopon_Pensive_Flail"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Pensive_Flail/Pensive_Flail.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Weopon_Pensive_Flail");
+
+		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weopon_Pensive_Sword"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Pensive_Sword/Pensive_Sword.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Weopon_Pensive_Sword");
+
+		/* ============ Enemy Weapons ============ */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Weapon_Pensive_Flail"),
+			CWeapon_Pensive_Flail::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Weapon_Pensive_Flail");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Weapon_Pensive_Sword"),
+			CWeapon_Pensive_Sword::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Weapon_Pensive_Sword");
+
+		/* ============ Enemy Models ============ */
+		PivotMatrix = XMMatrixScaling(3.5f, 3.5f, 3.5f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Pensive"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/PensivePaladin/PensivePaladin.gcm"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Pensive");
+
+		/* ============ Enemies ============ */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_PensivePaladin"),
+			CPensive::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_PensivePaladin");
+
+#pragma endregion
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -374,13 +475,6 @@ HRESULT CMain2_Loader::Loading_For_Static(LEVELID eLevelID)
 {
 	try 
 	{
-		_float4x4 PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
-		/* For.Prototype_Component_Model_Weapon_Player_Wand */
-		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weapon_Player_Wand"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/gaechul/gaechul.dat"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Weapon_Player_Wand");
-
 	}
 	catch (const _tchar* pErrorTag)
 	{

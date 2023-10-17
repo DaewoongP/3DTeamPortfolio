@@ -36,7 +36,7 @@ HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID, _bool isStaticLoaded)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 	
-	pGameInstance->Set_CurrentScene(TEXT("Scene_Loading"), true);
+	pGameInstance->Set_CurrentScene(TEXT("Scene_Loading"), false);
 	Safe_Release(pGameInstance);
 
 	m_eNextLevelID = eNextLevelID;

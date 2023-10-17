@@ -31,6 +31,9 @@ private:
 	virtual ~CTimer_Manager() = default;
 
 public:
+	/* 시간값을 변경시킴 */
+	// 1. tag 2. 느려지게 할 배율 (1.5), 1이면 정상속도 3. 몇초동안 처리할지.
+	void		Set_SlowTime(const _tchar* pTimerTag, _float fSlowPower, _float fTime);
 	/* 현재 월드 누적시간을 반환*/
 	const _float& Get_World_TimeAcc() const { return m_fWorldTimeAcc; }
 	/* 현재 월드 틱을 반환 */

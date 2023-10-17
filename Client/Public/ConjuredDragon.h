@@ -49,18 +49,26 @@ private:
 	_float m_fInvincibleGauge = { 0.f };
 	_bool m_isInvincible = { false };
 	_bool m_isBreakInvincible = { false };
+
 	void Update_Invincible(const _float& fTimeDelta);
 
 private: /* 구체 패턴 관련 데이터 */
-	CEnergyBall* m_pEnergyBall;
+	CEnergyBall* m_pEnergyBall = { nullptr };
 	_float m_fSpawnBallTimeAcc = { 0.f };
-	void Spawn_EnergyBall(const _float& fTimeDelta);
+
+	void EnergyBall_PhaseOne(const _float& fTimeDelta);
 	_bool Break_Invincible(const _float& fTimeDelta);
+
+	/* 마지막 불사상태의 구체 패턴 */
+	_uint m_iDeathCount = { 0 };
+	void EnergyBall_PhaseFinal(const _float& fTimeDelta);
+	_bool UnSeal(const _float& fTimeDelta);
 
 private: /* 브레스 관련 데이터 */
 	CBreath* m_pBreath = { nullptr };
 	const _float4x4* m_pHeadMatrix = { nullptr };
 	_float3 m_vTargetPosition;
+
 	void Update_Breath(const _float& fTimeDelta);
 
 private: /* 펄스 패턴 관련 데이터 */
@@ -68,17 +76,21 @@ private: /* 펄스 패턴 관련 데이터 */
 
 private: /* 사망처리 전용 데이터 */
 	_float m_fDeadTimeAcc = { 0.f };
+	/* 사망 시 돌아가는 함수 */
 	void DeathBehavior(const _float& fTimeDelta);
 
 private:
-	/* 무중력 상태에서 특정 방향으로 이동하지 못하게 만드는 함수 */
 	_bool m_isSettingBalance = { false };
 	_bool m_isMoveLeft = { false };
+	/* 무중력 상태에서 특정 방향으로 이동하지 못하게 만드는 함수 */
 	void Check_Air_Balance(const _float& fTimeDelta);
 
 private: /* 페이즈 관련 함수 */
 	_bool m_isPhaseOne = { true };
 	_bool m_isPhaseTwo = { false };
+	_bool m_isPhaseFinal = { false };
+	_bool m_isFinish = { false };
+
 	void Check_Phase();
 
 private:
@@ -86,8 +98,12 @@ private:
 	CWeapon_Dragon_Head* m_pWeapon = { nullptr };
 
 private:
+	_float3 vOffsetPos = { _float3() };
 	CParticleSystem* m_pEffect_BlackSmokeIdle = { nullptr };
-	CParticleSystem* m_pEffect_BlackSmokeTrace = { nullptr };
+	CParticleSystem* m_pEffect_Pulse_Charge = { nullptr };
+	CParticleSystem* m_pEffect_Pulse_CircleEmit = { nullptr };
+	CParticleSystem* m_pEffect_Pulse_Rock = { nullptr };
+	CParticleSystem* m_pEffect_Pulse_SplashWater= { nullptr };
 
 private:
 	HRESULT Make_AI();
@@ -101,11 +117,13 @@ private:
 private: /* 행동 묶음들 */
 	HRESULT Make_Death(_Inout_ CSequence* pSequence);
 	HRESULT Make_Alive(_Inout_ CSelector* pSelector);
+	HRESULT Make_Final(_Inout_ CSelector* pSelector);
 
 	HRESULT Make_Next_Phase(_Inout_ CSequence* pSequence);
 	HRESULT Make_Start_Phase_Two(_Inout_ CSequence* pSequence);
 	HRESULT Make_Ground_Pattern(_Inout_ CSelector* pSelector);
 	HRESULT Make_Air_Pattern(_Inout_ CSelector* pSelector);
+	HRESULT Make_Enter_Final(_Inout_ CSequence* pSequence);
 
 	/* Ground Patterns */
 	HRESULT Make_Ground_Turns(_Inout_ CSequence* pSequence);
@@ -131,7 +149,7 @@ private: /* Notify Func */
 	void On_Breath();
 	void Off_Breath();
 	void Action_Pulse();
-
+	void Pulse_Charge();
 public:
 	static CConjuredDragon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CConjuredDragon* Clone(void* pArg) override;

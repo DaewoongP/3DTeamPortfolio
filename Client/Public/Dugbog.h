@@ -39,6 +39,7 @@ public:
 private:
 	_bool m_isAbleLevioso = { false };
 	array<CParticleSystem*, 3> m_DarkAura = { nullptr };
+	array<const _float4x4*, 3> m_DarkAuraBoneMatrix = { nullptr };
 
 private:
 	HRESULT Make_AI();

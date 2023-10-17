@@ -95,7 +95,7 @@ void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameI
 		}
 	}
 
-	while (fTimeAcc >= Find_Frame((*pCurrentKeyFrameIndex))->fTime)
+	while (fTimeAcc > Find_Frame((*pCurrentKeyFrameIndex))->fTime)
 	{
 		if (m_iNumKeyFrames < (*pCurrentKeyFrameIndex) + 1)
 			break;

@@ -38,7 +38,7 @@ HRESULT CLevel_Static::Ready_Layer_Player(const _tchar* pLayerTag)
 	FAILED_CHECK_RETURN(m_pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC,
 		TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player")), E_FAIL)
 
-	return S_OK;
+		return S_OK;
 }
 
 HRESULT CLevel_Static::Ready_Layer_Inventory(const _tchar* pLayerTag)
@@ -46,7 +46,7 @@ HRESULT CLevel_Static::Ready_Layer_Inventory(const _tchar* pLayerTag)
 	FAILED_CHECK_RETURN(m_pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC
 		, TEXT("Prototype_GameObject_Inventory"), pLayerTag, TEXT("GameObject_Inventory")), E_FAIL)
 
-	return S_OK;
+		return S_OK;
 }
 
 HRESULT CLevel_Static::Ready_Layer_UI(const _tchar* pLayerTag)
@@ -64,10 +64,10 @@ HRESULT CLevel_Static::Ready_Layer_UI(const _tchar* pLayerTag)
 	FAILED_CHECK_RETURN(m_pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC,
 		TEXT("Prototype_GameObject_UI_Back"), pLayerTag, TEXT("GameObject_UI_Aim"), &UIDesc), E_FAIL)
 
-	FAILED_CHECK_RETURN(m_pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC,
-		TEXT("Prototype_GameObject_UI_Farming"), pLayerTag, TEXT("GameObject_UI_Farming")), E_FAIL)
+		FAILED_CHECK_RETURN(m_pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC,
+			TEXT("Prototype_GameObject_UI_Farming"), pLayerTag, TEXT("GameObject_UI_Farming")), E_FAIL)
 
-	return S_OK;
+		return S_OK;
 }
 
 HRESULT CLevel_Static::Ready_Layer_FieldGuide_UI(const _tchar* pLayerTag)
@@ -76,7 +76,7 @@ HRESULT CLevel_Static::Ready_Layer_FieldGuide_UI(const _tchar* pLayerTag)
 	FAILED_CHECK_RETURN(m_pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC,
 		TEXT("Prototype_GameObject_Field_Guide"), pLayerTag, TEXT("GameObject_UI_Field_Guide"), szDataPath), E_FAIL)
 
-	return S_OK;
+		return S_OK;
 }
 
 HRESULT CLevel_Static::Ready_Layer_Menu_UI(const _tchar* pLayerTag)
@@ -85,7 +85,7 @@ HRESULT CLevel_Static::Ready_Layer_Menu_UI(const _tchar* pLayerTag)
 	FAILED_CHECK_RETURN(m_pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC,
 		TEXT("Prototype_GameObject_Main_Menu"), pLayerTag, TEXT("GameObject_UI_Main_Menu"), szDataPath), E_FAIL)
 
-	return S_OK;
+		return S_OK;
 }
 
 HRESULT CLevel_Static::Add_Scene()
@@ -163,7 +163,7 @@ HRESULT CLevel_Static::Add_Cameras(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	Potionstation_Camera_Desc.vAt = { 98.124f, 8.180f, 77.079f };
 	Potionstation_Camera_Desc.pSuperDesc = CameraDesc;
 
-	m_pGameInstance->Add_Camera(TEXT("Potion_Station_Camera"), 
+	m_pGameInstance->Add_Camera(TEXT("Potion_Station_Camera"),
 		CPotionStationCamera::Create(pDevice, pContext, &Potionstation_Camera_Desc));
 
 	return S_OK;
@@ -173,9 +173,15 @@ HRESULT CLevel_Static::Add_Cameras(ID3D11Device* pDevice, ID3D11DeviceContext* p
 HRESULT CLevel_Static::Ready_Layer_Debug(const _tchar* pLayerTag)
 {
 	FAILED_CHECK_RETURN(m_pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC,
-		TEXT("Prototype_GameObject_Camera_Debug"), pLayerTag, TEXT("GameObject_Camera_Debug")), E_FAIL)
+		TEXT("Prototype_GameObject_Camera_Debug"), pLayerTag, TEXT("GameObject_Camera_Debug")), E_FAIL);
 
-		return S_OK;
+	/*if (FAILED(m_pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_Impulse_Effect"), pLayerTag, TEXT("GameObject_Impulse_Sphere"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Impulse_Sphere)");
+		return E_FAIL;
+	}*/
+
+	return S_OK;
 }
 
 #endif // _DEBUG

@@ -22,7 +22,7 @@
     <ClInclude Include="..\Public\Animation.h" />
     <ClInclude Include="..\public\CoolTime.h" />
     <ClInclude Include="..\Public\DOF.h" />
-    <ClInclude Include="..\public\Flowmap.h" />
+    <ClInclude Include="..\Public\Flowmap.h" />
     <ClInclude Include="..\public\MotionBlurInst.h" />
     <ClInclude Include="..\public\MotionBlur.h" />
     <ClInclude Include="..\public\ParticleSystemPool.h" />
@@ -167,7 +167,7 @@
     <ClCompile Include="..\Private\Animation.cpp" />
     <ClCompile Include="..\private\CoolTime.cpp" />
     <ClCompile Include="..\Private\DOF.cpp" />
-    <ClCompile Include="..\private\Flowmap.cpp" />
+    <ClCompile Include="..\Private\Flowmap.cpp" />
     <ClCompile Include="..\Private\Model_Instance.cpp" />
     <ClCompile Include="..\private\MotionBlurInst.cpp" />
     <ClCompile Include="..\private\MotionBlur.cpp" />
@@ -300,7 +300,8 @@
     <ClCompile Include="..\private\VIBuffer_Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_AfterShade.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Flowmap.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Fog.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Bloom.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Blur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
@@ -322,7 +323,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Trail.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Type.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VelocityMapInst.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointColInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstance.hlsl" />

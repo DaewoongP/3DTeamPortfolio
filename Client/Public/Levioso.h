@@ -37,7 +37,8 @@ public:
 private:
 	// 몹 피격 트레일
 	CWingardium_Effect* m_pWingardiumEffect = { nullptr };
-
+	//몹 피격 메쉬이펙트
+	CMeshEffect* m_pMeshEffect;
 private:
 	_float				m_fWingardiumEffectDeadTimer = { 0.3f };
 

@@ -26,6 +26,7 @@ public:
 		const CModel::BONES*	pBones = { nullptr };
 		// 옷 처리용 데이터 파일 경로
 		const _tchar*			szClothDataFilePath = { nullptr };
+		_float4					vColor;
 	}MESHPARTSDESC;
 
 private:
@@ -43,10 +44,16 @@ public:
 	const vector<class CMesh*> Get_Meshes() const { return m_Meshes; }
 	void Get_Matrices(const _uint& _iMeshIndex, CModel::BONES _Bones, 
 		_Inout_ _float4x4* _pMatrices, _float4x4 _PivotMatrix);
+	const _float4& Get_Parts_Color() const {
+		return m_vPartsColor;
+	}
 	void Set_MeshType(CCustomModel::MESHTYPE _eType) {
 		m_eMeshType = _eType;
 	}
 	void Set_WindVelocity(_float3 vWindVelocity);
+	void Set_Parts_Color(const _float4& vColor) {
+		m_vPartsColor = vColor;
+	}
 
 public:
 	virtual HRESULT Initialize_Prototype(const wstring& _wstrMeshPartsFilePath, const wstring& _wstrMeshPartsTag);
@@ -62,6 +69,7 @@ public:
 private:
 	CCustomModel::MESHTYPE		m_eMeshType = { CCustomModel::MESH_END };
 	wstring						m_wstrMeshPartsTag = { TEXT("") };
+	_float4						m_vPartsColor;
 
 private: // Files
 	MODEL						m_Model;

@@ -7,6 +7,7 @@
 #include "Item.h"
 #include "Ingredient.h"
 
+#include "Gear_Item.h"
 CUI_Inventory::CUI_Inventory(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -420,7 +421,7 @@ HRESULT CUI_Inventory::Swap_InventoryItem()
 	_uint iIndex = 0;
 	for (auto& pSlot : m_pSlots)
 	{
-		if (pSlot->Get_Clicked() && nullptr != pSlot)
+		if (nullptr != pSlot && pSlot->Get_Clicked())
 		{
 			static_cast<CInventory*>(m_pOwner)->Swap_Item(iIndex, m_eItemtype);
 		}

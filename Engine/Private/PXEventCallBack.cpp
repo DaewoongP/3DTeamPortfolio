@@ -122,7 +122,7 @@ void CPXEventCallBack::onTrigger(PxTriggerPair* pairs, PxU32 count)
 		COLLEVENTDESC SourDesc, DestDesc;
 		CGameObject* pSourObject = SourCollisionDesc.pOwnerObject;
 		CGameObject* pDestObject = DestCollisionDesc.pOwnerObject;
-		
+
 		if (nullptr == pSourObject ||
 			nullptr == pDestObject)
 			continue;

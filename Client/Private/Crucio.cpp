@@ -237,11 +237,13 @@ void CCrucio::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 HRESULT CCrucio::Reset(MAGICBALLINITDESC& InitDesc)
 {
 	__super::Reset(InitDesc);
+	
 	return S_OK;
 }
 
 void CCrucio::Ready_Begin()
 {
+	ADD_DECREASE_LIGHT(m_vStartPosition, 50.f, 0.8f, _float4(1.f, 0.f, 0.f, 1.f));
 	__super::Ready_Begin();
 }
 
@@ -257,6 +259,7 @@ void CCrucio::Ready_CastMagic()
 
 void CCrucio::Ready_Dying()
 {
+	ADD_DECREASE_LIGHT(m_vEndPosition, 50.f, 1.f, ToColor(128.f, 0.f, 25.f, 255.f));
 	__super::Ready_Dying();
 }
 
@@ -280,11 +283,14 @@ void CCrucio::Tick_CastMagic(_float fTimeDelta)
 		m_pLightningMeshEffect->Play(m_CurrentWeaponMatrix.Translation());
 		//스케일은 distance /3;
 		_float fDistance = Vector3::Distance(m_CurrentWeaponMatrix.Translation(), m_CurrentTargetMatrix.Translation());
-		m_pLightningMeshEffect->Get_Transform()->Set_Scale(_float3(1.f, 1.f, fDistance / 3.f));
+		m_pLightningMeshEffect->Get_Transform()->Set_Scale(_float3(3.f, 3.f, fDistance / 3.f));
 		//로테이션은 z축만 랜덤으로 생성.
 		m_pLightningMeshEffect->Get_Transform()->LookAt(m_CurrentTargetMatrix.Translation());
-		//m_pLightningMeshEffect[iIndex]->Get_Transform()->Turn(_float3(0,0,1),XMConvertToRadians(rand()%360));
+		_float3 Axis = m_CurrentTargetMatrix.Translation() - m_CurrentWeaponMatrix.Translation();
+		m_pLightningMeshEffect->Get_Transform()->Turn(Axis, XMConvertToRadians(_float(rand() % 360)));
 		m_fLightningTimer = 0.1f;
+
+		ADD_DECREASE_LIGHT(m_vStartPosition, 50.f, 0.2f, ToColor(128.f, 0.f, 25.f, 255.f));
 	}
 
 	_bool isAlive = { false };
@@ -319,7 +325,6 @@ void CCrucio::Tick_Dying(_float fTimeDelta)
 {
 	__super::Tick_Dying(fTimeDelta);
 }
-
 
 HRESULT CCrucio::Add_Components()
 {

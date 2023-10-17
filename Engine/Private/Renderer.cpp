@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "GameObject.h"
 #include "RenderTarget_Manager.h"
+#include "Timer_Manager.h"
 #include "Light_Manager.h"
 #include "PipeLine.h"
 #include "Shader.h"
@@ -12,8 +13,8 @@
 #include "Bloom.h"
 #include "Glow.h"
 #include "Shadow.h"
-#include "MotionBlur.h"
 #include "DOF.h"
+#include "Flowmap.h"
 
 #ifdef _DEBUG
 #include "Input_Device.h"
@@ -99,7 +100,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		TEXT("Target_Final"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 0.f))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_Rain"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		TEXT("Target_Fog"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -151,7 +152,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Final"), TEXT("Target_Final"))))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Rain"), TEXT("Target_Rain"))))
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Fog"), TEXT("Target_Fog"))))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -175,29 +176,20 @@ HRESULT CRenderer::Initialize_Prototype()
 #ifdef _DEBUG 
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Diffuse"), 80.f, 80.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Depth"), 80.f, 240.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Flowmap"), 80.f, 240.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow_Depth"), 80.f, 400.f, 160.f, 160.f)))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow_Depth1"), 80.f, 560.f, 160.f, 160.f)))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Deferred"), 240.f, 80.f, 160.f, 160.f)))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO_Blured"), 240.f, 240.f, 160.f, 160.f)))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_DOF"), 240.f, 400.f, 160.f, 160.f)))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_DOF_Blured"), 240.f, 560.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Fog"), 240.f, 80.f, 160.f, 160.f)))
 		return E_FAIL;
 
 	m_isDebugRender = false;
 	m_isMRTRender = false;	
 #endif // _DEBUG
 	m_isSSAO = true;
-	m_fGlowPower = 4.f;
+	m_fGlowPower = 7.5f;
 	m_fHDR = 0.5f;
-	m_fRadialBlurWidth = 0.05f;
+	m_fRadialBlurWidth = 0.0f;
 	m_isScreenRadial = false;
+	m_fRadialTimeAcc = 1.f;
 
 	return S_OK;
 }
@@ -252,6 +244,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_Deferred()))
 		return E_FAIL;
+	if (FAILED(m_pFlowmap->Render()))
+		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Deferred"))))
 		return E_FAIL;
 #pragma endregion
@@ -268,7 +262,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_SSAO()))
 		return E_FAIL;
-
+	if (FAILED(Render_Fog()))
+		return E_FAIL;
 	
 #pragma endregion
 
@@ -687,6 +682,33 @@ HRESULT CRenderer::Render_HDR()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_Fog()
+{
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Fog"))))
+		return E_FAIL;
+
+	if (FAILED(m_pNoiseTexture->Bind_ShaderResource(m_pFogShader, "g_NoiseTexture")))
+		return E_FAIL;
+
+	if (FAILED(m_pFogShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pFogShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pFogShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	if (FAILED(m_pFogShader->Begin("Fog")))
+		return E_FAIL;
+
+	if (FAILED(m_pRectBuffer->Render()))
+		return E_FAIL;
+
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Fog"))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_PostProcessing()
 {
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_HDR"), m_pPostProcessingShader, "g_HDRTexture")))
@@ -694,6 +716,8 @@ HRESULT CRenderer::Render_PostProcessing()
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Glowed"), m_pPostProcessingShader, "g_GlowTexture")))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_SSAO_Blured"), m_pPostProcessingShader, "g_SSAOTexture")))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Fog"), m_pPostProcessingShader, "g_FogTexture")))
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
@@ -823,12 +847,6 @@ HRESULT CRenderer::Render_Screen()
 	return S_OK;
 }
 
-HRESULT CRenderer::Render_Rain()
-{
-
-	return S_OK;
-}
-
 HRESULT CRenderer::Render_ScreenRadial()
 {
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Final"), m_pRadialBlurShader, "g_TargetTexture")))
@@ -840,9 +858,28 @@ HRESULT CRenderer::Render_ScreenRadial()
 	if (FAILED(m_pRadialBlurShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
+	if (0.f < m_fRadialTime)
+	{
+		CTimer_Manager* pTimer_Manager = CTimer_Manager::GetInstance();
+		Safe_AddRef(pTimer_Manager);
+		m_fRadialTimeAcc += pTimer_Manager->Get_World_Tick();
+		Safe_Release(pTimer_Manager);
+	}
+
+	_float fRadialBlurWidth = 0.f;
+	if (m_fRadialTimeAcc > m_fRadialTime)
+	{
+		m_isScreenRadial = false;
+	}
+	else
+	{
+		fRadialBlurWidth = Lerp(m_fRadialBlurWidth, 0.f, m_fRadialTimeAcc / m_fRadialTime);
+		m_isScreenRadial = true;
+	}
+
 	if (FAILED(m_pRadialBlurShader->Bind_RawValue("g_isScreenRadial", &m_isScreenRadial, sizeof(_bool))))
 		return E_FAIL;
-	if (FAILED(m_pRadialBlurShader->Bind_RawValue("g_fBlurWidth", &m_fRadialBlurWidth, sizeof(_float))))
+	if (FAILED(m_pRadialBlurShader->Bind_RawValue("g_fBlurWidth", &fRadialBlurWidth, sizeof(_float))))
 		return E_FAIL;
 
 	if (FAILED(m_pRadialBlurShader->Begin("RadialScreen")))
@@ -963,6 +1000,14 @@ HRESULT CRenderer::Add_Components()
 	m_pRadialBlurShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_RadialBlur.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
 	if (nullptr == m_pRadialBlurShader)
 		return E_FAIL;
+	
+	m_pFogShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Fog.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
+	if (nullptr == m_pFogShader)
+		return E_FAIL;
+
+	m_pNoiseTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Noises/VFX_T_Cloud_Noise_Tile_D.png"));
+	if (nullptr == m_pNoiseTexture)
+		return E_FAIL;
 
 	m_pShadow = CShadow::Create(m_pDevice, m_pContext, m_pRectBuffer);
 	if (nullptr == m_pShadow)
@@ -982,6 +1027,10 @@ HRESULT CRenderer::Add_Components()
 	
 	m_pDOF = CDOF::Create(m_pDevice, m_pContext, m_pRectBuffer);
 	if (nullptr == m_pDOF)
+		return E_FAIL;
+	
+	m_pFlowmap = CFlowmap::Create(m_pDevice, m_pContext, m_pRectBuffer);
+	if (nullptr == m_pFlowmap)
 		return E_FAIL;
 	
 	return S_OK;
@@ -1100,18 +1149,18 @@ void CRenderer::Free()
 	Safe_Release(m_pDeferredShader);
 	Safe_Release(m_pLightShader);
 	Safe_Release(m_pPostProcessingShader);
-	Safe_Release(m_pShadeTypeShader);
 	Safe_Release(m_pSSAOShader);
 	Safe_Release(m_pDistortionShader);
 	Safe_Release(m_pRadialBlurShader);
+	Safe_Release(m_pFogShader);
+	Safe_Release(m_pNoiseTexture);
 
 	Safe_Release(m_pBlur);
 	Safe_Release(m_pBloom);
 	Safe_Release(m_pShadow);
 	Safe_Release(m_pGlow);
-	Safe_Release(m_pMotionBlurInstance);
-	Safe_Release(m_pMotionBlur);
 	Safe_Release(m_pDOF);
+	Safe_Release(m_pFlowmap);
 
 	Safe_Release(m_pRectBuffer);
 }

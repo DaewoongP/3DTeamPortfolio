@@ -4,7 +4,7 @@
 #include "Item.h"
 #include "Ingredient.h"
 #include "UI_Farming.h"
-
+#include "Gear_Item.h"
 CInventory::CInventory(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -70,6 +70,23 @@ void CInventory::Late_Tick(_float fTimeDelta)
 	}
 }
 
+_bool CInventory::Can_Purchase(_uint iCost)
+{
+	return (m_iGold >= iCost) ? true : false;
+}
+
+void CInventory::Pay_Money(_uint iCost)
+{
+	m_iGold -= iCost;
+	cout << "남은 골드 : " << m_iGold << '\n';
+}
+
+void CInventory::Earn_Money(_uint iCost)
+{
+	m_iGold += iCost;
+	cout << "남은 골드 : " << m_iGold << '\n';
+}
+
 HRESULT CInventory::Add_Components()
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -101,7 +118,7 @@ HRESULT CInventory::Add_Components()
 		else
 		{
 			wstring TexturePath = TEXT("../../Resources/UI/Game/UI_Edit/Inventory_Default_Edit.png");
-			lstrcpy( pDesc.UIDesc.szTexturePath, TexturePath.c_str());
+			lstrcpy(pDesc.UIDesc.szTexturePath, TexturePath.c_str());
 			pDesc.fOffset = _float2(280.f, 270.f);
 			pDesc.fWidth = 80.f;
 			pDesc.fHeight = 80.f;
@@ -126,14 +143,16 @@ HRESULT CInventory::Add_Components()
 	return S_OK;
 }
 
-
-
-void CInventory::Add_Item(CItem* pItem, ITEMTYPE eType)
+_bool CInventory::Add_Item(CItem* pItem, ITEMTYPE eType)
 {
 	if (eType >= ITEMTYPE_END || eType < 0)
-		return;
+	{
+		// 아이템 타입 검사하기.
+		__debugbreak();
+		return false;
+	}
 
-	// 템 얻었다는 UI띄우는거 가져오기..
+	// 파밍UI 가져오기.
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 	CUI_Farming* pFarming = static_cast<CUI_Farming*>(pGameInstance->Find_Component_In_Layer(
@@ -142,61 +161,94 @@ void CInventory::Add_Item(CItem* pItem, ITEMTYPE eType)
 		, TEXT("GameObject_UI_Farming")));
 	if (nullptr == pFarming)
 	{
-		Safe_Release(pItem);
 		Safe_Release(pGameInstance);
-		return;
+		return false;
 	}
 
 	Safe_Release(pGameInstance);
 
-	CIngredient* pIngredient = dynamic_cast<CIngredient*>(pItem);
-	if (nullptr != pIngredient)
-	{
-		cout << pIngredient->Get_Ingredient() << endl;
-		m_ResourcesCount[pIngredient->Get_Ingredient()]++;
-	}
-
 	if (eType < RESOURCE)
 	{
 		if (m_pItems[eType].size() >= iGearMax)
-			return;
+			return false;
 		pFarming->Play(pItem);
 		m_pItems[eType].push_back(pItem);
-		m_pUI_Inventory[eType]->Set_GearInventoryItem(m_pItems[eType]);
+		m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
 	}
 	else if (RESOURCE == eType)
 	{
+		if (m_pItems[eType].size() >= iResourceMax)
+			return false;
 		pFarming->Play(pItem);
 		m_pItems[eType].push_back(pItem);
-		m_pUI_Inventory[eType]->Set_ResourceInventoryItem(m_pItems[eType], &m_ResourcesCount);
+		m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
 	}
-	
+
+	CIngredient* pIngredient = dynamic_cast<CIngredient*>(pItem);
+	if (nullptr != pIngredient)
+	{
+		cout << pIngredient->Get_Ingredient() << '\n';
+		m_ResourcesCount[pIngredient->Get_Ingredient()]++;
+	}
+
+	return true;
 }
 
-void CInventory::Add_Item(const _tchar* pPrototypeTag, _uint iLevel, void* pArg)
+_bool CInventory::Add_Item(const _tchar* pPrototypeTag, _uint iLevel, void* pArg)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 	CItem* pItem = dynamic_cast<CItem*>(pGameInstance->Clone_Component(iLevel, pPrototypeTag, pArg));
 	Safe_Release(pGameInstance);
-
+	
 	// 잘못된 아이템을 넣은 경우 디버그 브레이크
 	if (nullptr == pItem)
 	{
 		__debugbreak();
-		return;
+		return false;
 	}
 
-	Add_Item(pItem, pItem->Get_Type());
+	if (false == Add_Item(pItem, pItem->Get_Type()))
+	{
+		Safe_Release(pItem);
+		return false;
+	}
+
+	return true;
 }
 
-void CInventory::Add_Item(ITEM_ID eItemID, _uint iLevel, void* pArg)
+_bool CInventory::Add_Item(ITEM_ID eItemID, _uint iLevel, void* pArg)
 {
+
 	CItem* pItem = CItem::SimpleFactory(eItemID, iLevel, pArg);
 	if (nullptr == pItem)
-		return;
+		return false;
 
-	Add_Item(pItem, pItem->Get_Type());
+	ITEMTYPE eCurType = m_pUI_Inventory[pItem->Get_Type()]->Get_CurType();
+
+	if (eCurType > OUTFIT)
+	{
+		if (m_pItems[eCurType].size() / iResourceMax >= 1.f)
+		{
+			Safe_Release(pItem);
+			return false;
+		}
+	}
+	else
+	{
+		if (m_pItems[eCurType].size() / iGearMax >= 1.f)
+		{
+			Safe_Release(pItem);
+			return false;
+		}
+	}
+
+	if (false == Add_Item(pItem, pItem->Get_Type()))
+	{
+		Safe_Release(pItem);
+		return false;
+	}
+	return true;
 }
 
 void CInventory::Delete_Item(ITEM_ID eTargetItemID)
@@ -269,12 +321,19 @@ void CInventory::Swap_Item(_uint Index, ITEMTYPE eType)
 		m_pItems[eType][Index] = nullptr;
 		m_pItems[eType].erase(m_pItems[eType].begin() + Index);
 	}
+	else
+	{
+		CItem* SourItem = m_pItems[eType][Index];
+		m_pItems[eType][Index] = m_pPlayerCurItems[eType];
+		m_pPlayerCurItems[eType] = SourItem;
+	}
+	
+	m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
 
-	CItem* SourItem = m_pItems[eType][Index];
-	m_pItems[eType][Index] = m_pPlayerCurItems[eType];
-	m_pPlayerCurItems[eType] = SourItem;
+	CGear_Item* pGearItem = dynamic_cast<CGear_Item*>(m_pPlayerCurItems[eType]);
+	if (nullptr != pGearItem)
+		pGearItem->Equipment();
 
-	m_pUI_Inventory[eType]->Set_GearInventoryItem(m_pItems[eType]);
 }
 
 CInventory* CInventory::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -331,5 +390,5 @@ void CInventory::Free()
 			Safe_Release(pCurItem);
 		}
 		m_pPlayerCurItems.clear();
-	}	
+	}
 }

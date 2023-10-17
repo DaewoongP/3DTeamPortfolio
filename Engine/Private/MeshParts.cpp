@@ -78,6 +78,7 @@ HRESULT CMeshParts::Initialize(void* _pArg)
 		MSG_BOX("[CMeshParts] pMeshPartsDesc's m_pBones is nullptr");
 		return E_FAIL;
 	}
+	m_vPartsColor = pMeshPartsDesc->vColor;
 
 	if (nullptr == pMeshPartsDesc->szClothDataFilePath)
 	{

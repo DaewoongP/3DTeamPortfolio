@@ -9,6 +9,7 @@ CDynamic_Mesh::CDynamic_Mesh(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 
 CDynamic_Mesh::CDynamic_Mesh(const CDynamic_Mesh& rhs)
 	: CMesh(rhs)
+	, m_InitAnimVertices(rhs.m_InitAnimVertices)
 {
 }
 
@@ -102,6 +103,8 @@ HRESULT CDynamic_Mesh::Initialize_Prototype(CModel::TYPE eType, const CModel::BO
 			return E_FAIL;
 	}
 
+	m_InitAnimVertices = m_AnimVertices;
+
 	return S_OK;
 }
 
@@ -193,7 +196,7 @@ void CDynamic_Mesh::Reset_Position()
 
 		VTXANIMMESH* pVertices = static_cast<VTXANIMMESH*>(MappedSubResource.pData);
 
-		memcpy(pVertices, m_AnimVertices.data(), sizeof(VTXANIMMESH) * m_iNumVertices);
+		memcpy(pVertices, m_InitAnimVertices.data(), sizeof(VTXANIMMESH) * m_iNumVertices);
 
 		m_pContext->Unmap(m_pVB, 0);
 	}
@@ -306,8 +309,13 @@ HRESULT CDynamic_Mesh::Ready_VertexBuffer_Anim(const Engine::MESH Mesh, const CM
 			}
 			});
 
-		_float4x4		OffsetMatrix;
+		_float4x4 OffsetMatrix;
 		memcpy(&OffsetMatrix, &Bone.OffsetMatrix, sizeof(_float4x4));
+
+		m_OffsetMatrices.push_back(OffsetMatrix);
+
+		if (iIndex == Bones.size())
+			continue;
 
 		Bones[iIndex]->Set_OffsetMatrix(OffsetMatrix);
 

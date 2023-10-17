@@ -120,9 +120,9 @@ HRESULT CLevel_Vault::Ready_Lights()
 	LightDesc.vLookAt = _float4(51.7f, 0.f, 52.4f, 1.f);
 	LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
 
-	LightDesc.vDiffuse = WHITEDEFAULT;
-	LightDesc.vAmbient = WHITEDEFAULT;
-	LightDesc.vSpecular = WHITEDEFAULT;
+	LightDesc.vDiffuse = BLACKDEFAULT;
+	LightDesc.vAmbient = BLACKDEFAULT;
+	LightDesc.vSpecular = BLACKDEFAULT;
 
 	if (FAILED(pGameInstance->Add_Light(LightDesc, nullptr, true, 0, _float(g_iWinSizeX) / g_iWinSizeY)))
 		return E_FAIL;
@@ -481,6 +481,7 @@ HRESULT CLevel_Vault::Ready_Layer_Monster(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Vault.mon"));
+	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Pensive.mon"));
 	ENDINSTANCE;
 
 	return S_OK;

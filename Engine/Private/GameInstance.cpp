@@ -123,6 +123,8 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 
 	m_pCollision_Manager->Tick();
 
+	m_pLight_Manager->Tick(fTimeDelta);
+
 	m_pLevel_Manager->Tick(fTimeDelta);
 }
 
@@ -255,6 +257,13 @@ _float CGameInstance::Get_QueryTimeDelta(const _tchar* pTimerTag)
 	NULL_CHECK_RETURN_MSG(m_pTimer_Manager, 0.f, TEXT("Timer_Manager NULL"));
 
 	return m_pTimer_Manager->Get_QueryTimeDelta(pTimerTag);
+}
+
+void CGameInstance::Set_SlowTime(const _tchar* pTimerTag, _float fSlowPower, _float fTime)
+{
+	NULL_CHECK_RETURN_MSG(m_pTimer_Manager, , TEXT("Timer_Manager NULL"));
+
+	return m_pTimer_Manager->Set_SlowTime(pTimerTag, fSlowPower, fTime);
 }
 
 HRESULT CGameInstance::Open_Level(_uint iLevelIndex, CLevel* pNewLevel)
@@ -551,6 +560,13 @@ HRESULT CGameInstance::Update_ShadowMatrix(_uint iShadowIndex, CLight::LIGHTDESC
 	return m_pLight_Manager->Update_ShadowMatrix(iShadowIndex, LightDesc);
 }
 
+HRESULT CGameInstance::Add_InstanceLight(_float3 vPos, _float fStartRange, _float fTime, _float4 vColor, _bool isIncrease, _float fIncreasePower)
+{
+	NULL_CHECK_RETURN_MSG(m_pLight_Manager, E_FAIL, TEXT("Light NULL"));
+
+	return m_pLight_Manager->Add_InstanceLight(vPos, fStartRange, fTime, vColor, isIncrease, fIncreasePower);
+}
+
 HRESULT CGameInstance::Add_Sounds(const _tchar* szSoundFilePath)
 {
 	NULL_CHECK_RETURN_MSG(m_pSound_Manager, E_FAIL, TEXT("Sound NULL"));
@@ -810,6 +826,13 @@ void CGameInstance::Set_Shake(CCamera_Manager::SHAKE_TYPE _eType, CCamera_Manage
 	return m_pCamera_Manager->Set_Shake(_eType, _eAxis, _eEase, _fSpeed, _Duration, _fPower, _ePower, _vAxisSet);
 }
 
+void CGameInstance::Set_Shake(CCamera_Manager::SHAKE_PRIORITY _ePriority, CCamera_Manager::SHAKE_TYPE _eType, CCamera_Manager::SHAKE_AXIS _eAxis, CEase::EASE _eEase, _float _fSpeed, _float _Duration, _float _fPower, CCamera_Manager::SHAKE_POWER _ePower, _float3 _vAxisSet)
+{
+	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, , TEXT("Camera NULL"));
+
+	return m_pCamera_Manager->Set_Shake(_ePriority, _eType, _eAxis, _eEase, _fSpeed, _Duration, _fPower, _ePower, _vAxisSet);
+}
+
 _bool CGameInstance::Is_Current_Camera(const _tchar* _CameraTag)
 {
 	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, false, TEXT("Camera NULL"));
@@ -1004,6 +1027,13 @@ void CGameInstance::Play_Particle(const _tchar* szParticleTag, _float4x4 Positio
 	NULL_CHECK_RETURN_MSG(m_pParticleSystem_Pool, , TEXT("ParticleSystem Pool NULL"));
 
 	return m_pParticleSystem_Pool->Play_Particle(szParticleTag, PositionMatrix, ObjectMatrix);
+}
+
+void CGameInstance::Play_Particle(const _tchar* szParticleTag, _float3 vPosition, _float3 vDir)
+{
+	NULL_CHECK_RETURN_MSG(m_pParticleSystem_Pool, , TEXT("ParticleSystem Pool NULL"));
+
+	return m_pParticleSystem_Pool->Play_Particle(szParticleTag, vPosition, vDir);
 }
 
 void CGameInstance::Play_Particle(const _tchar* szParticleTag, _float4x4 OffsetMatrix, const _float4x4* pBindBoneMatrix, _float4x4 PivotMatrix, const _float4x4* pWorldMatrix)

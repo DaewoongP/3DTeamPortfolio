@@ -27,12 +27,18 @@ public:
 	_uint Get_Resource(INGREDIENT eType) {
 		return m_ResourcesCount[eType];
 	}
-
+	
+	_uint Get_Gold() { return m_iGold; }
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
+
+public: // 아이템 구입 로직
+	_bool Can_Purchase(_uint iCost);
+	void Pay_Money(_uint iCost);
+	void Earn_Money(_uint iCost);
 
 private:
 	_bool			m_isOpen = { false };
@@ -52,14 +58,15 @@ private: // For Resources
 private:
 	_uint iGearMax = { 20 };
 	_uint iResourceMax = { 30 };
+	_uint m_iGold = { 5000 };
 
 private:
 	HRESULT Add_Components();
 
 public:
-	void	Add_Item(CItem* pItem, ITEMTYPE eType);
-	void	Add_Item(const _tchar* pPrototypeTag, _uint iLevel = LEVEL_STATIC, void* pArg = nullptr);
-	void	Add_Item(ITEM_ID eItemID, _uint iLevel = LEVEL_STATIC, void* pArg = nullptr);
+	_bool	Add_Item(CItem* pItem, ITEMTYPE eType);
+	_bool	Add_Item(const _tchar* pPrototypeTag, _uint iLevel = LEVEL_STATIC, void* pArg = nullptr);
+	_bool	Add_Item(ITEM_ID eItemID, _uint iLevel = LEVEL_STATIC, void* pArg = nullptr);
 
 	void	Delete_Item(ITEM_ID eTargetItemID);
 	_bool	Delete_Item(ITEMTYPE eType, CItem* pItem);

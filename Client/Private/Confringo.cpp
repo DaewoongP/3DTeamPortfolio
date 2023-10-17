@@ -107,7 +107,15 @@ HRESULT CConfringo::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
-
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Confringo_Distortion_Effect")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Confringo_Distortion_Effect")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Confringo/Distortion"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
 	ENDINSTANCE;
 	return S_OK;
 }
@@ -163,6 +171,19 @@ void CConfringo::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 HRESULT CConfringo::Reset(MAGICBALLINITDESC& InitDesc)
 {
 	__super::Reset(InitDesc);
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	CLight::LIGHTDESC LightDesc;
+	LightDesc.eType = CLight::TYPE_POINT;
+	LightDesc.fRange = 5.f;
+	m_vLightColor = LightDesc.vDiffuse = ToColor(0xff, 0x7a, 0x5b, 0xff);
+	LightDesc.vAmbient = LightDesc.vDiffuse;
+	LightDesc.vSpecular = LightDesc.vDiffuse;
+	LightDesc.vPos = m_pTransform->Get_Position().TransCoord();
+	pGameInstance->Add_Light(LightDesc, &m_pLight);
+	Safe_Release(pGameInstance);
+
 	return S_OK;
 }
 
@@ -184,6 +205,7 @@ void CConfringo::Ready_CastMagic()
 
 void CConfringo::Ready_Dying()
 {
+	ADD_DECREASE_LIGHT(m_vEndPosition, 20.f, 0.3f, m_vLightColor);
 	__super::Ready_Dying();
 }
 
@@ -208,6 +230,7 @@ void CConfringo::Tick_CastMagic(_float fTimeDelta)
 		m_TrailVec[EFFECT_STATE_MAIN].data()[0]->Spline_Spin_Move(m_vSplineLerp[0], m_vStartPosition, m_vEndPosition, m_vSplineLerp[1], m_vSpinWeight, m_fSpinSpeed, m_fLerpAcc);
 		m_ParticleVec[EFFECT_STATE_MAIN].data()[0]->Get_Transform()->Set_Position(m_TrailVec[EFFECT_STATE_MAIN].data()[0]->Get_Transform()->Get_Position());
 		m_pTransform->Set_Position(XMVectorLerp(m_vStartPosition, m_vEndPosition, m_fLerpAcc));
+		m_pLight->Set_Position(m_TrailVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Get_Position().TransCoord());
 	}
 	else 
 	{
@@ -219,7 +242,6 @@ void CConfringo::Tick_Dying(_float fTimeDelta)
 {
 	__super::Tick_Dying(fTimeDelta);
 }
-
 
 HRESULT CConfringo::Add_Components()
 {
@@ -266,7 +288,7 @@ HRESULT CConfringo::Add_Components()
 		return E_FAIL;
 	}
 
-	m_ParticleVec[EFFECT_STATE_HIT].resize(4);
+	m_ParticleVec[EFFECT_STATE_HIT].resize(5);
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_FireBallDir_Effect")
 		, TEXT("Com_Explosive_Particle01"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_HIT][0]))))
 	{
@@ -291,7 +313,12 @@ HRESULT CConfringo::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
-
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Confringo_Distortion_Effect")
+		, TEXT("Com_Distortion_Expread"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_HIT][4]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
 	return S_OK;
 }
 

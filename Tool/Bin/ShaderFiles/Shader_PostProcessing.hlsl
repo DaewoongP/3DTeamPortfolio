@@ -1,11 +1,11 @@
 #include "Shader_EngineHeader.hlsli"
 #include "Shader_RenderFunc.hlsli"
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-float3 g_vLuminancekey = float3(0.2126f, 0.7152f, 0.0722f);
 // PostProcessing
 texture2D g_HDRTexture;
 texture2D g_GlowTexture;
 texture2D g_SSAOTexture;
+texture2D g_FogTexture;
 bool g_isSSAO;
 
 // HDR

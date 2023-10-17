@@ -46,10 +46,41 @@ HRESULT CConjuredDragon::Initialize_Prototype()
 		}
 	}
 
-	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeTrace")))
+	// Pulse
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Charge")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeTrace")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/BlackSmokeTrace/"), LEVEL_SANCTUM))))
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Charge")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/Charge/"), LEVEL_SANCTUM))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/CircleEmit/"), LEVEL_SANCTUM))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Rock")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Rock")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/Rock/"), LEVEL_SANCTUM))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_SplashWater")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_SplashWater")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/SplashWater/"), LEVEL_SANCTUM))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
@@ -72,7 +103,11 @@ HRESULT CConjuredDragon::Initialize(void* pArg)
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
+	if (FAILED(Add_Effects()))
+		return E_FAIL;
+	
 	m_pEffect_BlackSmokeIdle->Play(m_pTransform->Get_Position());
+
 	return S_OK;
 }
 
@@ -111,8 +146,8 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 	{
 		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
 			m_isSpawn = true;
-		if (pGameInstance->Get_DIKeyState(DIK_5, CInput_Device::KEY_DOWN))
-			m_isBreakInvincible = true;
+		if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
+			m_isFinish = true;
 	}
 	ENDINSTANCE;
 	/* ========================= */
@@ -126,16 +161,18 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 		return;
 	}
 
+	Check_Phase();
+
 	__super::Tick(fTimeDelta);
 
 	m_pHitMatrix = m_HitMatrices[rand() % 3];
 	Update_Invincible(fTimeDelta);
 	Check_Air_Balance(fTimeDelta);
-	Check_Phase();
-	Spawn_EnergyBall(fTimeDelta);
+	EnergyBall_PhaseOne(fTimeDelta);
+	EnergyBall_PhaseFinal(fTimeDelta);
 	Update_Breath(fTimeDelta);
 
-	_float3 vOffsetPos = m_pTransform->Get_Position();
+	vOffsetPos = m_pTransform->Get_Position();
 	vOffsetPos.y += 10.f;
 	m_pEffect_BlackSmokeIdle->Get_Transform()->Set_Position(vOffsetPos);
 
@@ -232,7 +269,7 @@ HRESULT CConjuredDragon::Render()
 	{
 		if (0 == i || 2 == i)
 			continue;
-
+		//3 wing 4 body
 		try /* Failed Render */
 		{
 			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", i)))
@@ -269,7 +306,7 @@ void CConjuredDragon::Update_Invincible(const _float& fTimeDelta)
 	m_fInvincibleGauge = (m_fInvincibleGauge > 100.f) ? 100.f : m_fInvincibleGauge;
 }
 
-void CConjuredDragon::Spawn_EnergyBall(const _float& fTimeDelta)
+void CConjuredDragon::EnergyBall_PhaseOne(const _float& fTimeDelta)
 {
 	if (false == m_isPhaseOne ||
 		false == m_isInvincible ||
@@ -290,7 +327,7 @@ void CConjuredDragon::Spawn_EnergyBall(const _float& fTimeDelta)
 
 	CEnergyBall::ENERGYBALLINITDESC InitDesc;
 	InitDesc.vPosition = vPosition;
-	InitDesc.fActionProtegoTime = 2.f;
+	InitDesc.fActionProtegoTime = 2.5f;
 	InitDesc.DeathFunction = [&](const _float& fTimeDelta)->_bool { return this->Break_Invincible(fTimeDelta); };
 
 	m_pEnergyBall->Reset(InitDesc);
@@ -300,6 +337,50 @@ void CConjuredDragon::Spawn_EnergyBall(const _float& fTimeDelta)
 _bool CConjuredDragon::Break_Invincible(const _float& fTimeDelta)
 {
 	m_isBreakInvincible = true;
+
+	return true;
+}
+
+void CConjuredDragon::EnergyBall_PhaseFinal(const _float& fTimeDelta)
+{
+	if (false == m_isPhaseFinal ||
+		true == m_isFinish ||
+		true == m_pEnergyBall->isEnable())
+		return;
+
+	m_fSpawnBallTimeAcc += fTimeDelta;
+	if (3.f > m_fSpawnBallTimeAcc)
+		return;
+
+	_float3 vPosition = m_pTransform->Get_Position();
+	_float3 vLook = m_pTransform->Get_Look();
+	_float3 vRight = m_pTransform->Get_Right();
+
+	_float fDirection = _float(rand() % 2 - 1);
+	_float fData = 5.f * fDirection;
+	vPosition += vLook * fData + vLook * GetRandomFloat(0.f, 2.f) * fData;
+
+	fDirection = _float(rand() % 2 - 1);
+	fData = 5.f * fDirection;
+	vPosition += vRight * fData + vRight * GetRandomFloat(0.f, 2.f) * fData;
+
+	vPosition.y += 5.f;
+
+	CEnergyBall::ENERGYBALLINITDESC InitDesc;
+	InitDesc.vPosition = vPosition;
+	InitDesc.fActionProtegoTime = 2.f;
+	InitDesc.DeathFunction = [&](const _float& fTimeDelta)->_bool { return this->UnSeal(fTimeDelta); };
+
+	m_pEnergyBall->Reset(InitDesc);
+	m_fSpawnBallTimeAcc = 0.f;
+}
+
+_bool CConjuredDragon::UnSeal(const _float& fTimeDelta)
+{
+	m_iDeathCount += 1;
+
+	if (3 == m_iDeathCount)
+		m_isFinish = true;
 
 	return true;
 }
@@ -383,6 +464,13 @@ void CConjuredDragon::Check_Phase()
 			Off_Breath();
 		}
 	}
+
+	if (true == m_isPhaseTwo &&
+		true == m_pHealth->isDead())
+	{
+		m_isPhaseTwo = false;
+		m_isPhaseFinal = true;
+	}
 }
 
 HRESULT CConjuredDragon::Make_AI()
@@ -412,6 +500,10 @@ HRESULT CConjuredDragon::Make_AI()
 			throw TEXT("Failed Add_Type isPhaseOne");
 		if (FAILED(m_pRootBehavior->Add_Type("isPhaseTwo", &m_isPhaseTwo)))
 			throw TEXT("Failed Add_Type isPhaseTwo");
+		if (FAILED(m_pRootBehavior->Add_Type("isPhaseFinal", &m_isPhaseFinal)))
+			throw TEXT("Failed Add_Type isPhaseFinal");
+		if (FAILED(m_pRootBehavior->Add_Type("isFinish", &m_isFinish)))
+			throw TEXT("Failed Add_Type isFinish");
 
 		/* Make Child Behaviors */
 		CSelector* pSelector = nullptr;
@@ -424,6 +516,9 @@ HRESULT CConjuredDragon::Make_AI()
 		CSelector* pSelector_Alive = nullptr;
 		if (FAILED(Create_Behavior(pSelector_Alive)))
 			throw TEXT("Failed Create_Behavior pSelector_Alive");
+		CSelector* pSelector_Final = { nullptr };
+		if (FAILED(Create_Behavior(pSelector_Final)))
+			throw TEXT("Failed Create_Behavior pSelector_Final");
 
 		/* Set Decorations */
 		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -445,11 +540,15 @@ HRESULT CConjuredDragon::Make_AI()
 			throw TEXT("Failed Assemble_Behavior Sequence_Death");
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_Alive"), pSelector_Alive)))
 			throw TEXT("Failed Assemble_Behavior Selector_Alive");
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_Final"), pSelector_Final)))
+			throw TEXT("Failed Assemble_Behavior Selector_Final");
 
 		if (FAILED(Make_Death(pSequence_Death)))
 			throw TEXT("Failed Make_Death");
 		if (FAILED(Make_Alive(pSelector_Alive)))
 			throw TEXT("FAiled Make_Alive");
+		if (FAILED(Make_Final(pSelector_Final)))
+			throw TEXT("FAiled Make_Final");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -529,6 +628,10 @@ HRESULT CConjuredDragon::Make_Notifies()
 	Func = [&] { this->Shot_Fireball_Black(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Shot_Fireball_Black"), Func)))
 		return E_FAIL;
+	
+	Func = [&] { this->Pulse_Charge(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Charge"), Func)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -539,10 +642,6 @@ HRESULT CConjuredDragon::Add_Components()
 	{
 		if (FAILED(__super::Add_Components()))
 			throw TEXT("Failed Enemy Add_Components");
-
-		if (FAILED(Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle"),
-			TEXT("Com_Particle_BlackSmokeIdle"), reinterpret_cast<CComponent**>(&m_pEffect_BlackSmokeIdle))))
-			throw TEXT("Com_Particle_BlackSmokeIdle");
 
 		/* For.Com_Health */
 		CHealth::HEALTHDESC HealthDesc;
@@ -714,10 +813,26 @@ HRESULT CConjuredDragon::Add_Effects()
 			TEXT("Com_BlackSmokeIdle"), reinterpret_cast<CComponent**>(&m_pEffect_BlackSmokeIdle))))
 			throw TEXT("Com_BlackSmokeIdle");
 
-		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeTrace"),
-			TEXT("Com_BlackSmokeIdle"), reinterpret_cast<CComponent**>(&m_pEffect_BlackSmokeTrace))))
-			throw TEXT("Com_BlackSmokeIdle");
+		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Charge"),
+			TEXT("Com_Pulse_Charge"), reinterpret_cast<CComponent**>(&m_pEffect_Pulse_Charge))))
+			throw TEXT("Com_Pulse_Charge");
 
+		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_SplashWater"),
+			TEXT("Com_Pulse_SplashWater"), reinterpret_cast<CComponent**>(&m_pEffect_Pulse_SplashWater))))
+			throw TEXT("Com_Pulse_SplashWater");
+		
+		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Rock"),
+			TEXT("Com_Pulse_Rock"), reinterpret_cast<CComponent**>(&m_pEffect_Pulse_Rock))))
+			throw TEXT("Com_Pulse_Rock");
+
+		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit"),
+			TEXT("Com_Pulse_CircleEmit"), reinterpret_cast<CComponent**>(&m_pEffect_Pulse_CircleEmit))))
+			throw TEXT("Com_Pulse_CircleEmit");
+
+		m_pEffect_Pulse_Charge->Disable();
+		m_pEffect_Pulse_SplashWater->Disable();
+		m_pEffect_Pulse_Rock->Disable();
+		m_pEffect_Pulse_CircleEmit->Disable();
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -751,11 +866,11 @@ HRESULT CConjuredDragon::Make_Death(_Inout_ CSequence* pSequence)
 		// Set Decorators
 		pSequence->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
-				CHealth* pHealth = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("pHealth", pHealth)))
+				_bool* pIsFinish = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isFinish", pIsFinish)))
 					return false;
 
-				return pHealth->isDead();
+				return *pIsFinish;
 			});
 
 		// Set Options 
@@ -792,6 +907,9 @@ HRESULT CConjuredDragon::Make_Alive(_Inout_ CSelector* pSelector)
 
 	try
 	{
+		if (nullptr == pSelector)
+			throw TEXT("Parameter pSelector is nullptr");
+
 		/* Create Child Behavior */
 		CSequence* pSequence_Next_Phase = { nullptr };
 		if (FAILED(Create_Behavior(pSequence_Next_Phase)))
@@ -840,6 +958,66 @@ HRESULT CConjuredDragon::Make_Alive(_Inout_ CSelector* pSelector)
 	catch (const _tchar* pErrorTag)
 	{
 		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Make_Death : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CConjuredDragon::Make_Final(_Inout_ CSelector* pSelector)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pSelector)
+			throw TEXT("Parameter pSelector is nullptr");
+
+		/* Create Child Behavior */
+		CSequence* pSequence_Enter_Final = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Enter_Final)))
+			throw TEXT("Failed Create_Behavior pSequence_Enter_Final");
+		CSelector* pSelector_Ground_Pattern = { nullptr };
+		if (FAILED(Create_Behavior(pSelector_Ground_Pattern)))
+			throw TEXT("Failed Create_Behavior pSelector_Ground_Pattern");
+
+		/* Set Decorators */
+		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsPhaseFinal = { nullptr };
+				_bool* pIsFinish = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isPhaseFinal", pIsPhaseFinal)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("isFinish", pIsFinish)))
+					return false;
+
+				return false == *pIsFinish && true == *pIsPhaseFinal;
+			});
+
+		/* Set Options */
+
+		/* Assemble Behaviors */
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Enter_Final"), pSequence_Enter_Final)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Enter_Final");
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_Ground_Pattern"), pSelector_Ground_Pattern)))
+			throw TEXT("Failed Assemble_Behavior Selector_Ground_Pattern");
+
+		if (FAILED(Make_Enter_Final(pSequence_Enter_Final)))
+			throw TEXT("Failed Make_Enter_Final");
+		if (FAILED(Make_Ground_Pattern(pSelector_Ground_Pattern)))
+			throw TEXT("Failed Make_Ground_Pattern");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Make_Final : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -1172,6 +1350,54 @@ HRESULT CConjuredDragon::Make_Air_Pattern(_Inout_ CSelector* pSelector)
 	catch (const _tchar* pErrorTag)
 	{
 		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Make_Air_Pattern : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CConjuredDragon::Make_Enter_Final(_Inout_ CSequence* pSequence)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		/* Create Child Behaviors */
+		CAction* pAction_Ground_To_Fly = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Ground_To_Fly)))
+			throw TEXT("Failed Create_Behavior pAction_Ground_To_Fly");
+		CSequence* pSequence_Change_Invincible = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Change_Invincible)))
+			throw TEXT("Failed Create_Behavior pSequence_Change_Invincible");
+
+		/* Set Decorators */
+
+		/* Set Options */
+		pAction_Ground_To_Fly->Set_Options(TEXT("Ground_To_Fly"), m_pModelCom, false, 0.f, true);
+
+		/* Assemble Behaviors */
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Ground_To_Fly"), pAction_Ground_To_Fly)))
+			throw TEXT("Failed Assemble_Behavior Action_Ground_To_Fly");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Sequence_Change_Invincible"), pSequence_Change_Invincible)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Change_Invincible");
+
+		if (FAILED(Make_Air_Change_Invincible(pSequence_Change_Invincible)))
+			throw TEXT("Failed Assemble_Behavior Make_Air_Change_Invincible");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Make_Enter_Final : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -1721,9 +1947,9 @@ HRESULT CConjuredDragon::Make_Air_Change_Invincible(_Inout_ CSequence* pSequence
 		CAction* pAction_Change_Invinclble = { nullptr };
 		if (FAILED(Create_Behavior(pAction_Change_Invinclble)))
 			throw TEXT("Failed Create_Behavior pAction_Change_Invinclble");
-		CAction* pAction_Hover_Loop = { nullptr };
-		if (FAILED(Create_Behavior(pAction_Hover_Loop)))
-			throw TEXT("Failed Create_Behavior pAction_Hover_Loop");
+		CAction* pAction_Hover = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Hover)))
+			throw TEXT("Failed Create_Behavior pAction_Hover");
 
 		CLookAt* pTsk_LookAt = { nullptr };
 		if (FAILED(Create_Behavior(pTsk_LookAt)))
@@ -1757,19 +1983,18 @@ HRESULT CConjuredDragon::Make_Air_Change_Invincible(_Inout_ CSequence* pSequence
 			});
 
 		/* Set Options */
-		pAction_Change_Invinclble->Set_Options(TEXT("Fire_Burst_Recovery"), m_pModelCom);
+		pAction_Change_Invinclble->Set_Options(TEXT("Fire_Burst_Recovery_1"), m_pModelCom);
+		pAction_Hover->Set_Options(TEXT("Fire_Burst_Recovery_2"), m_pModelCom);
 		pTsk_LookAt->Set_Option(m_pTransform);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Change_Invinclble"), pAction_Change_Invinclble)))
 			throw TEXT("Failed Assemble_Behavior Action_Change_Invinclble");
-		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Hover_Loop"), pAction_Hover_Loop)))
-			throw TEXT("Failed Assemble_Behavior Action_Hover_Loop");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Hover"), pAction_Hover)))
+			throw TEXT("Failed Assemble_Behavior Action_Hover");
 
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Tsk_LookAt"), pTsk_LookAt)))
 			throw TEXT("Failed Assemble_Behavior Tsk_LookAt");
-		if (FAILED(Make_Air_Hover(pAction_Hover_Loop)))
-			throw TEXT("Failed Make_Air_Hover");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -2152,6 +2377,11 @@ void CConjuredDragon::Action_Pulse()
 	m_pPulse->Reset(PulseInitDesc);
 }
 
+void CConjuredDragon::Pulse_Charge()
+{
+	m_pEffect_Pulse_Charge->Play(vOffsetPos);
+}
+
 CConjuredDragon* CConjuredDragon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CConjuredDragon* pInstance = New CConjuredDragon(pDevice, pContext);
@@ -2182,14 +2412,16 @@ void CConjuredDragon::Free()
 {
 	__super::Free();
 
-	if (true == m_isCloned)
-	{
-		Safe_Release(m_pBreath);
-		Safe_Release(m_pEnergyBall);
-		Safe_Release(m_pPulse);
+	Safe_Release(m_pBreath);
+	Safe_Release(m_pEnergyBall);
+	Safe_Release(m_pPulse);
 
-		Safe_Release(m_pMagicSlot);
-		Safe_Release(m_pWeapon);
-		Safe_Release(m_pEffect_BlackSmokeIdle);
-	}
+	Safe_Release(m_pMagicSlot);
+	Safe_Release(m_pWeapon);
+
+	Safe_Release(m_pEffect_BlackSmokeIdle);
+	Safe_Release(m_pEffect_Pulse_Charge);
+	Safe_Release(m_pEffect_Pulse_CircleEmit);
+	Safe_Release(m_pEffect_Pulse_Rock);
+	Safe_Release(m_pEffect_Pulse_SplashWater);
 }

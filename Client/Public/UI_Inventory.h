@@ -13,6 +13,7 @@ BEGIN(Client)
 class CUI_Slot;
 class CUI_Back;
 class CInventory;
+class CItem;
 
 class CUI_Inventory final : public CGameObject
 {
@@ -39,6 +40,9 @@ private:
 	explicit CUI_Inventory(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CUI_Inventory(const CUI_Inventory& rhs);
 	virtual ~CUI_Inventory() = default;
+
+public:
+	ITEMTYPE Get_CurType() { return m_eItemtype; }
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -80,6 +84,7 @@ private:
 private:
 	vector<_float2>					m_fPosition;
 	vector<class CTexture*>			m_ItemTextures;
+
 	vector<CUI_Slot*>					m_pSlots;
 
 	CUI_Back*							m_pBack;
