@@ -173,7 +173,7 @@ _bool CInventory::Add_Item(CItem* pItem, ITEMTYPE eType)
 			return false;
 		pFarming->Play(pItem);
 		m_pItems[eType].push_back(pItem);
-		m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
+		m_pUI_Inventory[eType]->Set_GearInventoryItem(m_pItems[eType]);
 	}
 	else if (RESOURCE == eType)
 	{
@@ -181,7 +181,7 @@ _bool CInventory::Add_Item(CItem* pItem, ITEMTYPE eType)
 			return false;
 		pFarming->Play(pItem);
 		m_pItems[eType].push_back(pItem);
-		m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
+		m_pUI_Inventory[eType]->Set_ResourceInventoryItem(m_pItems[eType]);
 	}
 
 	CIngredient* pIngredient = dynamic_cast<CIngredient*>(pItem);
@@ -264,10 +264,16 @@ void CInventory::Delete_Item(ITEM_ID eTargetItemID)
 				{
 					CIngredient* pIngredient = dynamic_cast<CIngredient*>(*iter);
 					m_ResourcesCount[pIngredient->Get_Ingredient()]--;
+					Safe_Release(*iter);
+					m_pItems[eType].erase(iter);
+					m_pUI_Inventory[eType]->Set_ResourceInventoryItem(m_pItems[eType], &m_ResourcesCount);
 				}
-				Safe_Release(*iter);
-				m_pItems[eType].erase(iter);
-				m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
+				else
+				{
+					Safe_Release(*iter);
+					m_pItems[eType].erase(iter);
+					m_pUI_Inventory[eType]->Set_GearInventoryItem(m_pItems[eType]);
+				}
 				return;
 			}
 			else
@@ -291,7 +297,14 @@ _bool CInventory::Delete_Item(ITEMTYPE eType, _uint iIndex)
 		{
 			Safe_Release(*iter);
 			iter = m_pItems[eType].erase(iter);
-			m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
+			if (eType == RESOURCE)
+			{
+				m_pUI_Inventory[eType]->Set_ResourceInventoryItem(m_pItems[eType], &m_ResourcesCount);
+			}
+			else
+			{
+				m_pUI_Inventory[eType]->Set_GearInventoryItem(m_pItems[eType]);
+			}
 			return true;
 		}
 		++Index;
@@ -315,8 +328,7 @@ void CInventory::Swap_Item(_uint Index, ITEMTYPE eType)
 		m_pPlayerCurItems[eType] = SourItem;
 	}
 	
-
-	m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
+	m_pUI_Inventory[eType]->Set_GearInventoryItem(m_pItems[eType]);
 
 	CGear_Item* pGearItem = dynamic_cast<CGear_Item*>(m_pPlayerCurItems[eType]);
 	if (nullptr != pGearItem)

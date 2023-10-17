@@ -54,7 +54,7 @@ private:
 	void Update_Invincible(const _float& fTimeDelta);
 
 private: /* 구체 패턴 관련 데이터 */
-	CEnergyBall* m_pEnergyBall;
+	CEnergyBall* m_pEnergyBall = { nullptr };
 	_float m_fSpawnBallTimeAcc = { 0.f };
 
 	void EnergyBall_PhaseOne(const _float& fTimeDelta);

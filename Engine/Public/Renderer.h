@@ -121,6 +121,7 @@ private:
 	class CShader*					m_pDistortionShader = { nullptr };
 	class CShader*					m_pRadialBlurShader = { nullptr };
 	class CShader*					m_pFogShader = { nullptr };
+	class CTexture*					m_pNoiseTexture = { nullptr };
 
 private:
 	_bool							m_isSSAO = { false };
@@ -138,6 +139,7 @@ private:
 	_float							m_fGlowPower = { 0.f };
 	_float							m_fHDR = { 0.f };
 	class CDOF*						m_pDOF = { nullptr };
+	class CFlowmap*					m_pFlowmap = { nullptr };
 
 public:
 	static CRenderer* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

@@ -483,6 +483,16 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 		}
 		BEGININSTANCE;
 
+		// 비교해야되는 문자열
+		wstring wsTreasureChestName(TEXT("Anim_TreasureChest"));
+		wstring wsAshwinderEggs(TEXT("Anim_AshwinderEggs"));
+		wstring wsHorklump(TEXT("Anim_Horklump"));
+		wstring wsLeapingToadStools(TEXT("Anim_LeapingToadStools"));
+		wstring wsLeech(TEXT("Anim_Leech"));
+		wstring wsGull(TEXT("Anim_Gull"));
+		wstring wsCliffGate(TEXT("Anim_Gate_Reparo"));
+		wstring wsVaultGate(TEXT("Anim_Gate_Vault"));
+
 		wstring ws(LoadDesc.wszTag);
 		size_t findIndex = ws.find(TEXT("Model_")) + 6;
 
@@ -495,20 +505,14 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 		wstring szDirectoryPath = modelPath;
 		modelPath += modelName;
 
-		if(0 == lstrcmp(modelName.c_str(), TEXT("Anim_Gull")))
+		if(	0 == lstrcmp(modelName.c_str(), wsAshwinderEggs.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsHorklump.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsLeapingToadStools.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsLeech.c_str()) || 
+			0 == lstrcmp(modelName.c_str(), wsGull.c_str()))
 			modelPath += TEXT(".gcm");
 		else
 			modelPath += TEXT(".dat");
-
-		// 비교해야되는 문자열
-		wstring wsTreasureChestName(TEXT("Anim_TreasureChest"));
-		wstring wsAshwinderEggs(TEXT("Anim_AshwinderEggs"));
-		wstring wsHorklump(TEXT("Anim_Horklump"));
-		wstring wsLeapingToadStools(TEXT("Anim_LeapingToadStools"));
-		wstring wsLeech(TEXT("Anim_Leech"));
-		wstring wsGull(TEXT("Anim_Gull"));
-		wstring wsCliffGate(TEXT("Anim_Gate_Reparo"));
-		wstring wsVaultGate(TEXT("Anim_Gate_Vault"));
 
 		// Anim이 있는 맵 오브젝트
 		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()) ||

@@ -189,9 +189,6 @@ HRESULT CUI_Potion_Tap::Ready_DefaultTexture()
 		return E_FAIL;
 	}
 
-
-
-
 	Safe_Release(pGameInstance);
 
 	return S_OK;

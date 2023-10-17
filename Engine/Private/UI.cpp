@@ -79,6 +79,14 @@ HRESULT CUI::Load(UIDESC UIDesc)
 	return S_OK;
 }
 
+HRESULT CUI::Add_Texture(const _tchar* pFilePath)
+{
+	if (lstrcmp(TEXT(""), pFilePath))
+		m_Textures.push_back(CTexture::Create(m_pDevice, m_pContext, pFilePath));
+
+	return S_OK;
+}
+
 void CUI::Go_Up(_float fSpeed, _float fTimeDelta)
 {
 	m_fY += fSpeed * fTimeDelta;

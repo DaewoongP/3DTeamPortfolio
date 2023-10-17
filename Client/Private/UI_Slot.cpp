@@ -1,5 +1,6 @@
 #include "UI_Slot.h"
 #include "GameInstance.h"
+#include "UI_Font.h"
 
 CUI_Slot::CUI_Slot(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUI(pDevice, pContext)
@@ -29,7 +30,12 @@ HRESULT CUI_Slot::Initialize(void* pArg)
 		m_fZ = pDesc->fZ;
 		m_fSizeX = pDesc->fSizeX;
 		m_fSizeY = pDesc->fSizeY;
+		m_isInFont = pDesc->isInFont;
 		lstrcpy(m_wszTexturePath, pDesc->szTexturePath);
+
+		if (m_isInFont)
+			lstrcpy(m_wszFont, pDesc->szFont);
+
 		m_Textures[BACK] = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/MenuAssets/UI_T_ButtonBack.png"));
 		m_Textures[FRAME] = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/FX/UI_T_Goldleaf_Large.png"));
 
@@ -158,10 +164,31 @@ HRESULT CUI_Slot::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_UI_Button"),
 		TEXT("Com_Button"), reinterpret_cast<CComponent**>(&m_pButtonCom))))
 	{
-		MSG_BOX("Failed CUI_Effect_Back Add_Component : (Com_Button)");
+		MSG_BOX("Failed CUI_Slot Add_Component : (Com_Button)");
 		__debugbreak();
 		return E_FAIL;
 	}
+
+	if (m_isInFont)
+	{
+		CUI_Font::FONTDESC Desc;
+		Desc.m_vColor = _float4(0.f, 1.f, 0.f, 1.f);
+		Desc.m_fRotation = { 0.f };
+		Desc.m_vOrigin = { 0.f, 0.f };
+		Desc.m_vScale = { 0.4f, 0.4f };
+		Desc.m_vPos = _float2(m_fX + 23.f, m_fY + 15.f);
+		wstring wstrNCount = to_wstring(0);
+		lstrcpy(Desc.m_pText, wstrNCount.c_str());
+		/* Com_Font */
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Font"),
+			TEXT("Com_Font"), reinterpret_cast<CComponent**>(&m_pFont), &Desc)))
+		{
+			MSG_BOX("Failed CUI_Slot Add_Component : (Com_Font)");
+			__debugbreak();
+			return E_FAIL;
+		}
+	}
+
 	return S_OK;
 }
 
@@ -198,7 +225,6 @@ HRESULT CUI_Slot::SetUp_ShaderResources(_uint iIndex)
 			return E_FAIL;
 	}
 	
-
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_isClicked", &m_isClicked, sizeof(_bool))))
 		return E_FAIL;
 
@@ -219,6 +245,12 @@ void CUI_Slot::Set_Clicked(_bool isClicked)
 void CUI_Slot::Set_IconTexture(CTexture* pTexture)
 {
 	m_Textures[ICON] = pTexture;
+}
+
+void CUI_Slot::Set_Font(wstring wstrText)
+{
+	if (nullptr != m_pFont)
+		m_pFont->Set_Text(wstrText);
 }
 
 CUI_Slot* CUI_Slot::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -254,4 +286,5 @@ void CUI_Slot::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pButtonCom);
+	Safe_Release(m_pFont);
 }

@@ -26,6 +26,7 @@
 #include "Menu_Gear.h"
 #include "Menu_Quest.h"
 #include "Menu_Invectory.h"
+#include "Menu_Setting.h"
 #include "UI_Inventory.h"
 #include "Inventory.h"
 #include "UI_Potion_Tap.h"
@@ -36,6 +37,7 @@
 #include "UI_Dynamic_Back.h"
 #include "UI_Damage.h"
 #include "UI_Store.h"
+#include "UI_Interaction.h"
 #pragma endregion UI
 
 #pragma region Effects
@@ -79,12 +81,17 @@
 #include "Projectile_Black.h"
 #include "Projectile_White.h"
 
+#include "Pensive_Fail_Ball.h"
 #include "Pensive_Ground_Ball.h"
+#include "Pensive_Shouting.h"
+#include "Pensive_Sword_Throw.h"
+#include "Pensive_Mace_Attack.h"
 #pragma endregion Magic
 
 #include "Trigger_Vault.h"
 #include "Phase.h"
 #include "Cylinder.h"
+#include "Water.h"
 
 #include "Event_Vault_Spawn.h"
 #include "Event_Smeade.h"
@@ -221,6 +228,10 @@ HRESULT CMain0_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 		return E_FAIL;
 	try /* Failed Check Add_Prototype*/
 	{
+		/* For.Prototype_GameObject_Water */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Water"),
+			CWater::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Water");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -236,8 +247,6 @@ HRESULT CMain0_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 
 HRESULT CMain0_Loader::Loading_For_Vault(LEVELID eLevelID)
 {
-	std::lock_guard<std::mutex> lock(mtx);
-
 	/* For.Prototype_GameObject_MeshEffect*/
 	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Cloister_MeshEffect"),
 		CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Cloister/Cloister.ME")))))
@@ -325,8 +334,6 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 	{
 #pragma region Load UI
 		{
-			std::lock_guard<std::mutex> lock(mtx);
-
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_HP"),
 				CUI_Group_HP::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_GameObject_UI_Group_HP");
@@ -381,6 +388,9 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Menu_Quest"),
 				CMenu_Quest::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_GameObject_Menu_Quest");
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Menu_Setting"),
+				CMenu_Setting::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_Menu_Setting");
 
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Inventory"),
 				CUI_Inventory::Create(m_pDevice, m_pContext))))
@@ -418,6 +428,10 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Store"),
 				CUI_Store::Create(m_pDevice, m_pContext, eLevelID))))
 				throw TEXT("Prototype_GameObject_UI_Store");
+
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Interaction"),
+				CUI_Interaction::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_UI_Interaction");
 #pragma endregion
 
 #pragma region Load Texture
@@ -522,10 +536,15 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 				CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Terrain.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
 				throw TEXT("Prototype_Component_Shader_Terrain");
 
-			/* For.Prototype_Component_Shader_Terrain */
+			/* For.Prototype_Component_Shader_Debug */
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_Debug"),
 				CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Debug.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
 				throw TEXT("Prototype_Component_Shader_Debug");
+			
+			/* For.Prototype_Component_Shader_Water */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_Water"),
+				CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Water.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements))))
+				throw TEXT("Prototype_Component_Shader_Water");
 
 			/* Prototype_Component_Shader_DefaultEffect */
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_DefaultEffect"),
@@ -536,26 +555,22 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 
 #pragma region Load ETC
 
-		{
-			std::lock_guard<std::mutex> lock(mtx);
-
-			/* --------------ETC-------------- */
+		/* --------------ETC-------------- */
 		/* For.Prototype_Component_Health*/
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Health"),
-				CHealth::Create(m_pDevice, m_pContext))))
-				throw TEXT("Prototype_Component_Health");
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Health"),
+			CHealth::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Health");
 
-			/* For.Prototype_Component_RigidBody */
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RigidBody"),
-				CRigidBody::Create(m_pDevice, m_pContext))))
-				throw TEXT("Prototype_Component_RigidBody");
+		/* For.Prototype_Component_RigidBody */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RigidBody"),
+			CRigidBody::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_RigidBody");
 
-			/* For.Prototype_Component_RadialBlur */
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RadialBlur"),
-				CRadialBlur::Create(m_pDevice, m_pContext))))
-				throw TEXT("Prototype_Component_RadialBlur");
-		}
-
+		/* For.Prototype_Component_RadialBlur */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RadialBlur"),
+			CRadialBlur::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_RadialBlur");
+		
 		/* Prototype_Component_Model_Shpere */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Shpere"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat")))))
@@ -574,8 +589,6 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 
 #pragma region Load Magic
 		{
-			std::lock_guard<std::mutex> lock(mtx);
-
 			/* --------------Magic-------------- */
 		/* For. Prototype_Component_Magic*/
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Magic"),
@@ -701,14 +714,31 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			CPensive_Ground_Ball::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Pensive_Ground_Ball");
 		
+		/* For.Prototype_GameObject_Pensive_Fail_Ball */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Pensive_Fail_Ball"),
+			CPensive_Fail_Ball::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Pensive_Fail_Ball");
+
+		/* For.Prototype_GameObject_CPensive_Shouting */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Pensive_Shouting"),
+			CPensive_Shouting::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Pensive_Shouting");
+
+		/* For.Prototype_GameObject_Pensive_Sword_Throw */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Pensive_Sword_Throw"), 
+			CPensive_Sword_Throw::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Pensive_Sword_Throw");
+
+		/* For.Prototype_GameObject_Pensive_Mace_Attack */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Pensive_Mace_Attack"),
+			CPensive_Mace_Attack::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Pensive_Mace_Attack");
 
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Monster_DarkFlare_Particle"),
 			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Monster_DarkFlare/"), eLevelID))))
 			throw TEXT("Prototype_Monster_DarkFlare_Particle");
 		
 		{
-			std::lock_guard<std::mutex> lock(mtx);
-
 			CMagicBallPool* pMagicBallPool = CMagicBallPool::GetInstance();
 			Safe_AddRef(pMagicBallPool);
 			if (FAILED(pMagicBallPool->Initialize()))
@@ -724,8 +754,6 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 
 #pragma region Load Particle
 		{
-			std::lock_guard<std::mutex> lock(mtx);
-						
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Dust01"),
 				TEXT("../../Resources/GameData/ParticleData/Misc/Dust01/"), 3)))
 				throw TEXT("Reserve Particle : Particle_Dust01");

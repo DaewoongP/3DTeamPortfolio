@@ -12,18 +12,41 @@ END
 
 BEGIN(Client)
 class CUI_Back;
-class CUI_Group_Quest;
-
+class CUI_Effect_Back;
 
 class CMenu_Quest final : public CGameObject
 {
 private:
+	struct OFFSETDEST
+	{
+		_float2 vSize = { 0.f, 0.f };
+		_float2 vPos = { 0.f, 0.f };
+	};
+
+public:
+	enum QUESTLIST
+	{
+		FIG,
+		POTION,
+		TOWN,
+		SECRET,
+		BONE,
+		QUESTLIST_END
+	};
+
+private:
+	enum QUESTTEXT
+	{
+		QUESTIONMARK,
+		UNLOCK,
+		CLEAR,
+		QUESTTEXT_END
+	};
+
+private:
 	explicit CMenu_Quest(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CMenu_Quest(const CMenu_Quest& rhs);
 	virtual ~CMenu_Quest() = default;
-
-public:
-	void		Set_Open(_bool isOpen);
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -33,13 +56,16 @@ public:
 	virtual HRESULT Render() override;
 
 public:
+	void		Set_Open(_bool isOpen);
+	void		Set_FontState(QUESTLIST eQuest, QUESTTEXT eState);
+
+private:
 	HRESULT Add_Prototype();
-
-private:
-	CUI::UIDESC Load_File(const HANDLE hFile);
-
-private:
+	HRESULT Ready_DefaultTexture();
 	HRESULT Ready_Offset();
+
+private:
+	HRESULT Add_Components(wstring wszTag, QUESTLIST eType);
 
 private:
 	CShader* m_pShaderCom = { nullptr };
@@ -47,10 +73,13 @@ private:
 	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 
 private:
-	vector<CUI_Back*>			m_pFonts;
-	vector<_float2>			m_fOffset;
+	vector<CUI_Back*>			m_pTexts;
+	vector<OFFSETDEST>			m_fOffset;
 	vector<CUI*>				m_pUIs;
+	vector<CUI_Effect_Back*>	m_pExplainBack;
+	_bool						m_isCurrentQuest[QUESTLIST_END] = { false };
 
+	vector<CTexture*>			m_pTextures;
 private:
 	_bool		m_isOpen = { false };
 

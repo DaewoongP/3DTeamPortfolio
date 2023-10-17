@@ -83,6 +83,9 @@ HRESULT CLevel_Cliffside::Ready_Layer_BackGround(const _tchar* pLayerTag)
 
 	FAILED_CHECK_RETURN(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, 
 		TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky")), E_FAIL)
+		
+	FAILED_CHECK_RETURN(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE,
+		TEXT("Prototype_GameObject_Water"), pLayerTag, TEXT("GameObject_Water")), E_FAIL)
 
 	FAILED_CHECK_RETURN(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData0.ddd")), E_FAIL);
 	FAILED_CHECK_RETURN(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins0.ddd")), E_FAIL);
@@ -100,12 +103,6 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 	///////////////	테스트용 몬스터 배치 코드 입니다. /////////////////////
 	///////////////	실전 배치시 해당 코드는 지워주세요.////////////////////
 	///////////////////////////////////////////////////////////////////////
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Wolf"), pLayerTag, TEXT("GameObject_Wolf"), &Matrix)))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Wolf)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}*/
 	_float4x4 Matrix = XMMatrixTranslation(40.f, 10.f, 60.f);
 	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Golem_CombatGrunt"), pLayerTag, TEXT("GameObject_Golem_Combat"), &Matrix)))
 	{
@@ -113,13 +110,19 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}*/
-	Matrix = XMMatrixTranslation(40.f, 10.f, 65.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Wolf"), pLayerTag, TEXT("GameObject_Wolf"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Wolf)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+	/*Matrix = XMMatrixTranslation(40.f, 10.f, 65.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Dugbog"), pLayerTag, TEXT("GameObject_Dugbog"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Dugbog)");
 		ENDINSTANCE;
 		return E_FAIL;
-	}
+	}*/
 	/*Matrix = XMMatrixTranslation(35.f, 10.f, 60.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Golem_CombatGrunt"), pLayerTag, TEXT("GameObject_Golem_Combat1"), &Matrix)))
 	{

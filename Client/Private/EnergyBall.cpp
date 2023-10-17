@@ -271,11 +271,8 @@ void CEnergyBall::Free()
 {
 	__super::Free();
 
-	if (true == m_isCloned)
-	{
-		Safe_Release(m_pMagicSlot);
-		Safe_Release(m_pShader);
-		Safe_Release(m_pModel);
-		Safe_Release(m_pRenderer);
-	}
+	Safe_Release(m_pMagicSlot);
+	Safe_Release(m_pRenderer);
+	Safe_Release(m_pShader);
+	Safe_Release(m_pModel);
 }
