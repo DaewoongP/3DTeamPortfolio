@@ -289,9 +289,6 @@
     <Filter Include="02. GameObject\06. NPC">
       <UniqueIdentifier>{1048769e-752f-4d43-a082-e0d3163efe97}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\06. NPC\Weapons">
-      <UniqueIdentifier>{469a34a9-d8a0-49f7-8077-04a0e0c53e16}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\07. Trigger">
       <UniqueIdentifier>{b738306a-5e9e-4d2f-91bd-31bb6708ef2c}</UniqueIdentifier>
     </Filter>
@@ -835,6 +832,21 @@
     <Filter Include="02. GameObject\09. Item\03. Gear\Mask_Demiguise">
       <UniqueIdentifier>{fc9ede64-43ef-4cec-940a-6065fdc3e62c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\06. NPC\Vendor">
+      <UniqueIdentifier>{d1bedd6c-b93e-498b-92c0-a4f87c373550}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\06. NPC\Oakes">
+      <UniqueIdentifier>{764aed44-be6d-4fba-b2df-e9dfbee0dbb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\06. NPC\Fig">
+      <UniqueIdentifier>{f57312ad-47ea-49f5-928a-bbbe0da4e59a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\06. NPC\Fig\Weapons">
+      <UniqueIdentifier>{469a34a9-d8a0-49f7-8077-04a0e0c53e16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\06. NPC\Dummy">
+      <UniqueIdentifier>{dfc55a73-3047-4bbc-b36c-564040baf9e1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -978,9 +990,6 @@
     <ClInclude Include="..\Public\BasicCast.h">
       <Filter>05. Magic\MagicBall\00. BasicCast</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Professor_Fig.h">
-      <Filter>02. GameObject\06. NPC</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Player.h">
       <Filter>02. GameObject\01. Player</Filter>
     </ClInclude>
@@ -1120,7 +1129,7 @@
       <Filter>02. GameObject\01. Player\01. StateMachine\05. MagicCastingState</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Weapon_Fig_Wand.h">
-      <Filter>02. GameObject\06. NPC\Weapons</Filter>
+      <Filter>02. GameObject\06. NPC\Fig\Weapons</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Seamless_Loader.h">
       <Filter>02. GameObject\99. Debug\SeamLess</Filter>
@@ -1661,6 +1670,18 @@
     <ClInclude Include="..\Public\Mask_Niffler.h">
       <Filter>02. GameObject\09. Item\03. Gear\Mask_Niffler</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Vendor.h">
+      <Filter>02. GameObject\06. NPC\Vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Oakes.h">
+      <Filter>02. GameObject\06. NPC\Oakes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Professor_Fig.h">
+      <Filter>02. GameObject\06. NPC\Fig</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Dummy_NPC.h">
+      <Filter>02. GameObject\06. NPC\Dummy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1770,9 +1791,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\BasicCast.cpp">
       <Filter>05. Magic\MagicBall\00. BasicCast</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Professor_Fig.cpp">
-      <Filter>02. GameObject\06. NPC</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player.cpp">
       <Filter>02. GameObject\01. Player</Filter>
@@ -1922,7 +1940,7 @@
       <Filter>02. GameObject\01. Player\01. StateMachine\05. MagicCastingState</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Weapon_Fig_Wand.cpp">
-      <Filter>02. GameObject\06. NPC\Weapons</Filter>
+      <Filter>02. GameObject\06. NPC\Fig\Weapons</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Seamless_Loader.cpp">
       <Filter>02. GameObject\99. Debug\SeamLess</Filter>
@@ -2444,6 +2462,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\Mask_Niffler.cpp">
       <Filter>02. GameObject\09. Item\03. Gear\Mask_Niffler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Vendor.cpp">
+      <Filter>02. GameObject\06. NPC\Vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Oakes.cpp">
+      <Filter>02. GameObject\06. NPC\Oakes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Professor_Fig.cpp">
+      <Filter>02. GameObject\06. NPC\Fig</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Dummy_NPC.cpp">
+      <Filter>02. GameObject\06. NPC\Dummy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

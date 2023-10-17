@@ -42,6 +42,9 @@
 #include "CoolTime.h"
 #include "Animation_Camera_Model.h"
 #include "Defence.h"
+#include "Vendor.h"
+#include "Oakes.h"
+#include "Dummy_NPC.h"
 
 #pragma region Items
 
@@ -240,6 +243,45 @@ HRESULT CMain3_Loader::Loading_For_GreatHall(LEVELID eLevelID)
 
 HRESULT CMain3_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 {
+	if (nullptr == m_pGameInstance)
+		return E_FAIL;
+
+	try /* Failed Check Add_Prototype*/
+	{
+		/* For.Prototype_Component_Model_Vendor */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Vendor"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM,TEXT("../../Resources/Models/Anims/Vendor/Vendor.gcm")))))
+			throw TEXT("Prototype_Component_Model_Vendor");
+
+		/* For.Prototype_GameObject_Vendor */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Vendor"),
+			CVendor::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Vendor");
+
+		/* For.Prototype_Component_Model_Oakes */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Oakes"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Oakes/Oakes.gcm")))))
+			throw TEXT("Prototype_Component_Model_Oakes");
+
+		/* For.Prototype_GameObject_Oakes */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Oakes"),
+			COakes::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Oakes");
+
+		/* For.Prototype_GameObject_Dummy_NPC */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Dummy_NPC"),
+			CDummy_NPC::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Dummy_NPC");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("Failed Add_Prototype Loading_For_Hogsmeade : ");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
