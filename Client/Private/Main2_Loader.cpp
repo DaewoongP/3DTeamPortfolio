@@ -23,6 +23,8 @@
 #include "Weapon_Player_Wand.h"
 #pragma endregion Weapon
 
+#include "Camera_Shake.h"
+
 
 #pragma region Weapon
 #include "Pensive.h"
@@ -275,64 +277,7 @@ HRESULT CMain2_Loader::Loading_For_Vault(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Golem_CombatGrunt"),
 			CGolem_Combat::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Golem_CombatGrunt");
-	}
-	catch (const _tchar* pErrorTag)
-	{
-		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
-		wstrErrorMSG += pErrorTag;
-		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
-		__debugbreak();
-		return E_FAIL;
-	}
 
-	return S_OK;
-}
-
-HRESULT CMain2_Loader::Loading_For_GreatHall(LEVELID eLevelID)
-{
-	return S_OK;
-}
-
-HRESULT CMain2_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
-{
-	if (nullptr == m_pGameInstance)
-		return E_FAIL;
-
-	try
-	{
-		std::lock_guard<std::mutex> lock(mtx);
-
-		/* ============ Enemy Weapon Models ============ */
-
-		_float4x4 PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
-
-		/* For.Prototype_Component_Model_Weopon_Armored_Troll */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weopon_Armored_Troll"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Troll_Armored_Club/Troll_Armored_Club.dat"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Weopon_Armored_Troll");
-
-		/* ============ Enemy Weapons ============ */
-
-		/* For.Prototype_Component_Weapon_Armored_Troll */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Weapon_Armored_Troll"),
-			CWeapon_Armored_Troll::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Weapon_Armored_Troll");
-
-		/* ============ Enemy Models ============ */
-
-		PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
-
-		/* For.Prototype_Component_Model_Armored_Troll */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Armored_Troll"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Armored_Troll/Armored_Troll.gcm"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Armored_Troll");
-
-		/* ============ Enemies ============ */
-
-		/* For.Prototype_GameObject_Armored_Troll */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Armored_Troll"),
-			CArmored_Troll::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Armored_Troll");
 #pragma region Pensive
 		/* For.Prototype_GameObject_Dragon_Head */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Dragon_Head"),
@@ -406,18 +351,75 @@ HRESULT CMain2_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 			throw TEXT("Prototype_Component_Weapon_Pensive_Sword");
 
 		/* ============ Enemy Models ============ */
-		PivotMatrix = XMMatrixScaling(4.f,4.f,4.f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+		PivotMatrix = XMMatrixScaling(3.5f, 3.5f, 3.5f) * XMMatrixRotationY(XMConvertToRadians(180.f));
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Pensive"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/PensivePaladin/PensivePaladin.gcm"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Pensive");
 
 		/* ============ Enemies ============ */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Pensive"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_PensivePaladin"),
 			CPensive::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Pensive");
+			throw TEXT("Prototype_GameObject_PensivePaladin");
 
 #pragma endregion
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
+		return E_FAIL;
+	}
 
+	return S_OK;
+}
+
+HRESULT CMain2_Loader::Loading_For_GreatHall(LEVELID eLevelID)
+{
+	return S_OK;
+}
+
+HRESULT CMain2_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
+{
+	if (nullptr == m_pGameInstance)
+		return E_FAIL;
+
+	try
+	{
+		std::lock_guard<std::mutex> lock(mtx);
+
+		/* ============ Enemy Weapon Models ============ */
+
+		_float4x4 PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
+
+		/* For.Prototype_Component_Model_Weopon_Armored_Troll */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weopon_Armored_Troll"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Troll_Armored_Club/Troll_Armored_Club.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Weopon_Armored_Troll");
+
+		/* ============ Enemy Weapons ============ */
+
+		/* For.Prototype_Component_Weapon_Armored_Troll */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Weapon_Armored_Troll"),
+			CWeapon_Armored_Troll::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Weapon_Armored_Troll");
+
+		/* ============ Enemy Models ============ */
+
+		PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
+
+		/* For.Prototype_Component_Model_Armored_Troll */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Armored_Troll"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Armored_Troll/Armored_Troll.gcm"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Armored_Troll");
+
+		/* ============ Enemies ============ */
+
+		/* For.Prototype_GameObject_Armored_Troll */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Armored_Troll"),
+			CArmored_Troll::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Armored_Troll");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -473,8 +475,13 @@ HRESULT CMain2_Loader::Loading_For_Sky(LEVELID eLevelID)
 
 HRESULT CMain2_Loader::Loading_For_Static(LEVELID eLevelID)
 {
+
 	try 
 	{
+		/* For.Prototype_Component_Enemy_Camera_Shake*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Enemy_Camera_Shake"),
+			CCamera_Shake::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Enemy_Camera_Shake");
 	}
 	catch (const _tchar* pErrorTag)
 	{

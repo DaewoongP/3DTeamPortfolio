@@ -49,7 +49,7 @@ private:
 	vector<CUI_Effect_Back*>		m_pItemBacks;
 	vector<CUI_Font*>				m_pFonts;
 
-	CUI_Back*					m_pBack;
+	CUI_Back*						m_pBack;
 	CUI_Group_Cursor*				m_pCursor;
 
 private:

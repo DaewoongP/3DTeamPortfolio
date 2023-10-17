@@ -39,7 +39,7 @@ void CCylinder::Tick(_float fTimeDelta)
 void CCylinder::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
+	return;
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 

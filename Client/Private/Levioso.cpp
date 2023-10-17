@@ -103,7 +103,16 @@ HRESULT CLevioso::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
-
+	
+	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_Levioso_HitEffect")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_Levioso_HitEffect")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Levioso/HitEffect"), iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Levioso1_MeshEffect")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Levioso1_MeshEffect")
@@ -154,8 +163,13 @@ HRESULT CLevioso::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
+
 	m_CollisionDesc.Action = bind(&CLevioso::TrailAction, this, placeholders::_1);
+	
+	Ready_Shake(30.0f, 2.0f, 0.04f);
+
 	m_ParticleVec[EFFECT_STATE_WAND][0]->Get_MainModuleRef().vStartColor = _float4(0.9629f, 0.169f, 0.859f, 1.f);
+	
 	return S_OK;
 }
 
@@ -175,6 +189,22 @@ void CLevioso::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	if (wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Enemy_Body")) != nullptr)
 	{
 		Set_MagicBallState(MAGICBALL_STATE_DYING);
+
+#pragma region 카메라 쉐이크
+		BEGININSTANCE;
+
+		pGameInstance->Set_Shake(
+			CCamera_Manager::SHAKE_PRIORITY_2,
+			CCamera_Manager::SHAKE_TYPE_TRANSLATION,
+			CCamera_Manager::SHAKE_AXIS_LOOK,
+			CEase::IN_EXPO,
+			5.0f,
+			0.2f,
+			-Shake_Power(CollisionEventDesc.pOtherTransform->Get_Position()),
+			CCamera_Manager::SHAKE_POWER_DECRECENDO);
+
+		ENDINSTANCE;
+#pragma endregion
 	}
 
 	__super::OnCollisionEnter(CollisionEventDesc);
@@ -311,7 +341,7 @@ HRESULT CLevioso::Add_Components()
 		return E_FAIL;
 	}
 
-	m_ParticleVec[EFFECT_STATE_HIT].resize(3);
+	m_ParticleVec[EFFECT_STATE_HIT].resize(4);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Levioso_HitDust_Effect"),
 		TEXT("Com_HitDust_Effect"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_HIT][0]))))
 	{
@@ -333,6 +363,13 @@ HRESULT CLevioso::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Levioso_HitEffect"),
+		TEXT("Com_Hit_Effect"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_HIT][3]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Levioso_Distortion_Effect)");
+		__debugbreak();
+		return E_FAIL;
+	}
 	//별도
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Wingardium_Effect"),
 		TEXT("Com_WingradiumEffect"), reinterpret_cast<CComponent**>(&m_pWingardiumEffect))))
@@ -342,29 +379,33 @@ HRESULT CLevioso::Add_Components()
 		return E_FAIL;
 	}
 
+
+	//MeshEffects
+	m_MeshEffectVec[EFFECT_STATE_HIT].resize(3);
+
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Levioso1_MeshEffect"),
-		TEXT("Com_Mesh_Effect1"), reinterpret_cast<CComponent**>(&m_pMeshEffect))))
+		TEXT("Com_Mesh_Effect1"), reinterpret_cast<CComponent**>(&m_MeshEffectVec[EFFECT_STATE_HIT][0]))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Levioso1_MeshEffect)");
 		__debugbreak();
 		return E_FAIL;
 	}
 
-//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Levioso2_MeshEffect"),
-//	TEXT("Com_Mesh_Effect2"), reinterpret_cast<CComponent**>(&m_pMeshEffect[1]))))
-//{
-//	MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Levioso2_MeshEffect)");
-//	__debugbreak();
-//	return E_FAIL;
-//}
-//
-//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Levioso3_MeshEffect"),
-//	TEXT("Com_Mesh_Effect3"), reinterpret_cast<CComponent**>(&m_pMeshEffect[2]))))
-//{
-//	MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Levioso3_MeshEffect)");
-//	__debugbreak();
-//	return E_FAIL;
-//}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Levioso2_MeshEffect"),
+		TEXT("Com_Mesh_Effect2"), reinterpret_cast<CComponent**>(&m_MeshEffectVec[EFFECT_STATE_HIT][1]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Levioso2_MeshEffect)");
+		__debugbreak();
+		return E_FAIL;
+	}
+	
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Levioso3_MeshEffect"),
+		TEXT("Com_Mesh_Effect3"), reinterpret_cast<CComponent**>(&m_MeshEffectVec[EFFECT_STATE_HIT][2]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Levioso3_MeshEffect)");
+		__debugbreak();
+		return E_FAIL;
+	}
 	return S_OK;
 }
 
@@ -400,7 +441,6 @@ void CLevioso::Free()
 	if (true == m_isCloned)
 	{
 		Safe_Release(m_pWingardiumEffect);
-		Safe_Release(m_pMeshEffect);
 
 	}
 }

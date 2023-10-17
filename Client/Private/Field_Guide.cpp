@@ -3,6 +3,7 @@
 #include "UI_Effect_Back.h"
 #include "UI_Back.h"
 #include "Main_Menu.h"
+#include "Inventory.h"
 
 CField_Guide::CField_Guide(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -72,6 +73,16 @@ void CField_Guide::Tick(_float fTimeDelta)
 		Safe_AddRef(m_pMenu);
 
 		Safe_Release(pGameInstance);
+		if (nullptr == m_pPlayerInventory)
+		{
+			CGameInstance* pGameInstacne = CGameInstance::GetInstance();
+			Safe_AddRef(pGameInstacne);
+
+			m_pPlayerInventory = static_cast<CInventory*>(pGameInstacne->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Inventory"), TEXT("GameObject_Inventory")));
+			Safe_AddRef(m_pPlayerInventory);
+
+			Safe_Release(pGameInstacne);
+		}
 	}
 	else
 	{
@@ -375,6 +386,11 @@ void CField_Guide::Set_SelectedText()
 		if (pFrame->Get_Clicked())
 		{
 			FieldGuide_To_Menu(iIndex);
+			if (iIndex == 1)
+			{
+				m_pPlayerInventory->Set_Open(true);
+				m_pPlayerInventory->Set_CurItemtype(ITEMTYPE::RESOURCE);
+			}
 		}
 		iIndex++;
 	}
@@ -388,6 +404,12 @@ void CField_Guide::FieldGuide_To_Menu(_uint iIndex)
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Menu"), false);
 	m_pMenu->Set_Menu(iIndex);
 
+	if (iIndex == 1)
+	{
+		m_pPlayerInventory->Set_Open(true);
+		m_pPlayerInventory->Set_CurItemtype(ITEMTYPE::RESOURCE);
+	}
+	
 	Safe_Release(pGameInstance);
 }
 
@@ -451,5 +473,9 @@ void CField_Guide::Free()
 	Safe_Release(m_pTexture);
 	Safe_Release(m_pMenu);
 	Safe_Release(m_pCursor);
+	if (m_isCloned)
+	{
+		Safe_Release(m_pPlayerInventory);
+	}
 
 }

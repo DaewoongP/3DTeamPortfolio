@@ -111,6 +111,10 @@ protected:
 	unordered_map<wstring, const CGameObject*> m_RangeInEnemies;
 
 protected:
+	virtual HRESULT Add_Components_for_Shake() { return S_OK; }
+	virtual HRESULT Make_Notifies_for_Shake() { return S_OK; }
+
+protected:
 	HRESULT Make_AI();
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();

@@ -119,7 +119,7 @@ HRESULT CMapObject_Ins::Add_Model_Component(const _tchar* wszModelTag)
 		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{
 		MSG_BOX("Failed CMapObject Add_Component : (Com_Buffer)");
-		__debugbreak(); 
+ 		__debugbreak(); 
 		return E_FAIL;
 	}
 	return S_OK;

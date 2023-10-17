@@ -65,6 +65,7 @@ public:
 		{
 			m_eMagicBallState = static_cast<MAGICBALL_STATE>(m_eMagicBallState + 1);
 			m_isFirstFrameInState = true;
+			m_isHeavyChange = true;
 		}
 	}
 	void Re_Set_StartEndLerpAcc(_float3 vStart, _float3 vDir);
@@ -97,6 +98,7 @@ protected:
 protected:
 	vector<CTrail*>						m_TrailVec[EFFECT_STATE_END];
 	vector<CParticleSystem*>			m_ParticleVec[EFFECT_STATE_END];
+	vector<CMeshEffect*>				m_MeshEffectVec[EFFECT_STATE_END];
 
 //발사에 관한 로직
 protected:
@@ -146,9 +148,18 @@ protected:
 
 	_float					m_fWandParticleDelayTimer = 0.1f;
 	_float					m_fDyingTimer = 5.f;
+	_bool					m_isHeavyChange = { false };
 
 protected:
 	_float4					m_vLightColor = {};
+
+
+//쉐이크 파워 계산(장현우)
+protected:
+	_float					m_fMaxCameraShakeDistance = { 0.0f };
+	_float					m_fMinCameraShakeDistance = { 0.0f };
+	_float					m_fDistanceRatio = { 0.0f };
+	_float					m_fShakePower = { 0.0f };
 
 protected:
 	//모든 이펙트 비활성화
@@ -171,6 +182,14 @@ protected:
 
 	void Tick_MagicBall_State(_float fTimeDelta);
 	void Set_StartPosition();
+
+//쉐이크 파워 계산(장현우)
+protected:
+	//Min, Max, Power
+	void Ready_Shake(_float _fMax, _float _fMin, _float _fPower);
+	//Power
+	_float Shake_Power(_float3 _vPosition);
+
 	
 protected:
 	HRESULT Add_Components();

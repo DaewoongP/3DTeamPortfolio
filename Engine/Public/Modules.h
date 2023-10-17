@@ -396,7 +396,9 @@ struct ENGINE_DLL RENDERER_MODULE : public MODULE
 
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
-
+	void Restart();
+	void Action(_float fTimeDelta);
+	HRESULT Bind_Values(class CShader* pShader);
 
 	wstring wstrShaderTag = { TEXT("Shader_VtxRectColInstance") };
 	wstring wstrMaterialPath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
@@ -408,6 +410,14 @@ struct ENGINE_DLL RENDERER_MODULE : public MODULE
 	_bool isDistortion = { false };
 	_bool isDiffuse = { true };
 	wstring wstrDistortionTexture = { TEXT("../../Resources/Effects/Textures/T_FX_Distortion_Ring_N.png") };
+
+	_float2 vStartOffset = { 0.f, 0.f };
+	_float2 vOffset = { 0.f, 0.f, }; 
+	_float2 vDeltaOffset = { 0.f, 0.f };
+
+	_float2 vStartTiling = { 1.f, 1.f };
+	_float2 vTililing = { 1.f, 1.f };
+	_float2 vDeltaTiling = { 0.f, 0.f };
 };
 
 END

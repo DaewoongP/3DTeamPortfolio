@@ -1,13 +1,8 @@
 #include "Shader_EngineHeader.hlsli"
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-matrix g_ViewMatrixInv, g_ProjMatrixInv;
 
-texture2D g_DepthTexture;
-float g_fCamFar;
-
-//Fog
-float4 g_vFogColor;
+texture2D g_NoiseTexture;
 
 struct VS_IN
 {
@@ -51,29 +46,6 @@ PS_OUT PS_MAIN_FOG(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
-    vector vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
-    float fViewZ = vDepthDesc.y * g_fCamFar;
-    vector vPosition;
-    
-    vPosition.x = In.vTexUV.x * 2.f - 1.f;
-    vPosition.y = In.vTexUV.y * -2.f + 1.f;
-    vPosition.z = vDepthDesc.x;
-    vPosition.w = 1.f;
-    
-    vPosition = vPosition * fViewZ;
-    vPosition = mul(vPosition, g_ProjMatrixInv);
-    vPosition = mul(vPosition, g_ViewMatrixInv);
-
-    float fFogPower = 0.f;
-    
-    // Fog Logic
-    if (vPosition.y >= 2.f)
-        fFogPower = 0.f;
-    else
-        fFogPower = 1.f;
-    
-    Out.vColor = fFogPower * g_vFogColor;
-    
     return Out;
 }
 

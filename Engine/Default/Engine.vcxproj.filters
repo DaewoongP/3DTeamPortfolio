@@ -427,6 +427,9 @@
     <Filter Include="01. Utility\03. Components\02. Renderer\Flowmap">
       <UniqueIdentifier>{f782bc86-56fb-48d6-8ec4-155d1d501e48}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\23. Camera_Shake">
+      <UniqueIdentifier>{5386847c-b707-4ac0-a343-e84c1e9b7fd8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -858,6 +861,9 @@
     <ClInclude Include="..\Public\Flowmap.h">
       <Filter>01. Utility\03. Components\02. Renderer\Flowmap</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Camera_Shake.h">
+      <Filter>01. Utility\03. Components\23. Camera_Shake</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1256,6 +1262,9 @@
     <ClCompile Include="..\Private\Flowmap.cpp">
       <Filter>01. Utility\03. Components\02. Renderer\Flowmap</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Camera_Shake.cpp">
+      <Filter>01. Utility\03. Components\23. Camera_Shake</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl">
@@ -1335,6 +1344,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Flowmap.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\Flowmap</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Noise.hlsl">
+      <Filter>01. Utility\98. ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

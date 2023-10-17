@@ -17,6 +17,8 @@ BEGIN(Client)
 class CPlayer;
 class CPlayer_Information;
 
+class CUI_Interaction;
+
 class CGatherer final : public CGameObject
 {
 public: 
@@ -58,6 +60,7 @@ private:
 	CPlayer*			 m_pPlayer = { nullptr };			 // 플레이어 주소
 	CPlayer_Information* m_pPlayerInformation = { nullptr }; // 플레이어 인벤토리와 상호작용하기 위한 주소
 
+	CUI_Interaction*	m_pUI_Interaction = { nullptr };
 	CLight* m_pLight_Horklump = { nullptr };				 // 호클럼프 버섯 빛
 
 private:

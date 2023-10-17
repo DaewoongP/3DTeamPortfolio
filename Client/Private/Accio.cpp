@@ -41,7 +41,7 @@ HRESULT CAccio::Initialize_Prototype(_uint iLevel)
 	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_MagicTrail_Winga_Effect")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_MagicTrail_Winga_Effect"),
-			CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Wingardium/Wingardium.trail"), iLevel))))
+			CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Accio/Accio.trail"), iLevel))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
@@ -87,6 +87,16 @@ HRESULT CAccio::Initialize_Prototype(_uint iLevel)
 	{
 		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_Defatul_WandFlare_WandGlowLarge")
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Default/Default_WandFlare/WandGlow_Large/"), iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_Accio_Move_Particle")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_Accio_Move_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Accio/Move_Particle/"), iLevel))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
@@ -154,6 +164,9 @@ HRESULT CAccio::Initialize(void* pArg)
 		}
 		
 	}
+
+	Ready_Shake(30.0f, 2.0f, 0.1f);
+
 	return S_OK;
 }
 
@@ -173,6 +186,22 @@ void CAccio::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	if (wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Enemy_Body")) != nullptr)
 	{
 		Set_MagicBallState(MAGICBALL_STATE_DYING);
+
+#pragma region 카메라 쉐이크
+		BEGININSTANCE;
+
+		pGameInstance->Set_Shake(
+			CCamera_Manager::SHAKE_PRIORITY_2,
+			CCamera_Manager::SHAKE_TYPE_TRANSLATION,
+			CCamera_Manager::SHAKE_AXIS_LOOK,
+			CEase::IN_EXPO,
+			5.0f,
+			0.2f,
+			-Shake_Power(CollisionEventDesc.pOtherTransform->Get_Position()),
+			CCamera_Manager::SHAKE_POWER_DECRECENDO);
+
+		ENDINSTANCE;
+#pragma endregion
 	}
 
 	__super::OnCollisionEnter(CollisionEventDesc);
@@ -301,7 +330,7 @@ HRESULT CAccio::Add_Components()
 	}
 
 	m_TrailVec[EFFECT_STATE_MAIN].resize(1);
-	m_ParticleVec[EFFECT_STATE_MAIN].resize(4);
+	m_ParticleVec[EFFECT_STATE_MAIN].resize(5);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_MagicTrail_Winga_Effect"),
 		TEXT("Com_Effect"), reinterpret_cast<CComponent**>(&m_TrailVec[EFFECT_STATE_MAIN][0]))))
 	{
@@ -337,6 +366,14 @@ HRESULT CAccio::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+	
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Accio_Move_Particle"),
+			TEXT("Com_Move_Particle"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][4]))))
+		{
+			MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Accio_Move_Particle)");
+			__debugbreak();
+			return E_FAIL;
+		}
 
 	m_ParticleVec[EFFECT_STATE_HIT].resize(3);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Accio_HitMain"),

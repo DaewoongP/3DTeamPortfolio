@@ -14,6 +14,7 @@ BEGIN(Engine)
 class CSequence;
 class CSelector;
 class CRandomChoose;
+class CCamera_Shake;
 class CParticleSystem;
 END
 
@@ -41,6 +42,15 @@ public:
 
 private:
 	CWeapon_Armored_Troll* m_pWeapon = { nullptr };
+
+	//카메라 쉐이크 노티파이에 함수를 넣기 위한 클래스
+	CCamera_Shake* m_pStep_Shake = { nullptr };
+	CCamera_Shake* m_pHit_Shake = { nullptr };
+	CCamera_Shake* m_pDeath_Shake = { nullptr };
+
+private:
+	virtual HRESULT Add_Components_for_Shake();
+	virtual HRESULT Make_Notifies_for_Shake();
 
 private:
 	HRESULT Make_AI();

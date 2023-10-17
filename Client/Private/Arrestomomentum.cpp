@@ -66,6 +66,36 @@ HRESULT CArrestomomentum::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Arres_Wand_Distortion")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Arres_Wand_Distortion")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Arrestomomentum/Wand_Distortion"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Arres_Distortion")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Arres_Distortion")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Arrestomomentum/Distortion"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Arres_HitParticle")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Arres_HitParticle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Arrestomomentum/Hit_Particle"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	
+
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect")
@@ -95,6 +125,9 @@ HRESULT CArrestomomentum::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
+
+	Ready_Shake(30.0f, 2.0f, 0.1f);
+
 	return S_OK;
 }
 
@@ -110,6 +143,28 @@ void CArrestomomentum::Late_Tick(_float fTimeDelta)
 
 void CArrestomomentum::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
+	//¸÷ÀÌ¶û Ãæµ¹ÇßÀ¸¸é?
+	if (wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Enemy_Body")) != nullptr)
+	{
+		Set_MagicBallState(MAGICBALL_STATE_DYING);
+
+#pragma region Ä«¸Þ¶ó ½¦ÀÌÅ©
+		BEGININSTANCE;
+
+		pGameInstance->Set_Shake(
+			CCamera_Manager::SHAKE_PRIORITY_2,
+			CCamera_Manager::SHAKE_TYPE_TRANSLATION,
+			CCamera_Manager::SHAKE_AXIS_LOOK,
+			CEase::IN_EXPO,
+			5.0f,
+			0.2f,
+			Shake_Power(CollisionEventDesc.pOtherTransform->Get_Position()),
+			CCamera_Manager::SHAKE_POWER_DECRECENDO);
+
+		ENDINSTANCE;
+#pragma endregion
+	}
+
 	__super::OnCollisionEnter(CollisionEventDesc);
 }
 
@@ -207,26 +262,27 @@ HRESULT CArrestomomentum::Add_Components()
 	}
 
 	m_ParticleVec[EFFECT_STATE_MAIN].resize(3);
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Arres_Wand_Flare_Center")
-		, TEXT("Com_Wand_CenterFlare"), (CComponent**)&m_ParticleVec[EFFECT_STATE_MAIN][0])))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
+	
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Arres_Wand_Flare_Horizontal")
-		, TEXT("Com_Wand_HorizontalFlare"), (CComponent**)&m_ParticleVec[EFFECT_STATE_MAIN][1])))
+		, TEXT("Com_Wand_HorizontalFlare"), (CComponent**)&m_ParticleVec[EFFECT_STATE_MAIN][0])))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Arres_Wand_Spark")
-		, TEXT("Com_Wand_Spark"), (CComponent**)&m_ParticleVec[EFFECT_STATE_MAIN][2])))
+		, TEXT("Com_Wand_Spark"), (CComponent**)&m_ParticleVec[EFFECT_STATE_MAIN][1])))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Arres_Wand_Distortion")
+		, TEXT("Com_Wand_Distortion"), (CComponent**)&m_ParticleVec[EFFECT_STATE_MAIN][2])))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
 
-	m_ParticleVec[EFFECT_STATE_HIT].resize(2);
+	m_ParticleVec[EFFECT_STATE_HIT].resize(5);
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Arres_Hit_Center")
 		, TEXT("Com_Hit_Center"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][0])))
 	{
@@ -235,6 +291,24 @@ HRESULT CArrestomomentum::Add_Components()
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Arres_Hit_Flare")
 		, TEXT("Com_Hit_Flare"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][1])))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Arres_Distortion")
+		, TEXT("Com_Distortion"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][2])))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Arres_Wand_Flare_Center")
+		, TEXT("Com_Wand_CenterFlare"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][3])))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Arres_HitParticle")
+		, TEXT("Com_HitParticle"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][4])))
 	{
 		__debugbreak();
 		return E_FAIL;

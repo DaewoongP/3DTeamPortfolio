@@ -15,6 +15,7 @@ class CSequence;
 class CSelector;
 class CRandomChoose;
 class CParticleSystem;
+class CCamera_Shake;
 END
 
 BEGIN(Client)
@@ -40,6 +41,13 @@ private:
 	_bool m_isAbleLevioso = { false };
 	array<CParticleSystem*, 3> m_DarkAura = { nullptr };
 	array<const _float4x4*, 3> m_DarkAuraBoneMatrix = { nullptr };
+
+	//카메라 쉐이크 노티파이에 함수를 넣기 위한 클래스
+	CCamera_Shake* m_pDescendo_Shake = { nullptr };
+
+private:
+	virtual HRESULT Add_Components_for_Shake();
+	virtual HRESULT Make_Notifies_for_Shake();
 
 private:
 	HRESULT Make_AI();

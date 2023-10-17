@@ -82,6 +82,8 @@ void CMain_Menu::Tick(_float fTimeDelta)
 			m_pQuest->Tick(fTimeDelta);
 		break;
 	case SETTING:
+		if (nullptr != m_pSetting)
+			m_pSetting->Tick(fTimeDelta);
 		break;
 	case MENU_END:
 		break;
@@ -109,6 +111,8 @@ void CMain_Menu::Late_Tick(_float fTimeDelta)
 			m_pQuest->Late_Tick(fTimeDelta);
 		break;
 	case SETTING:
+		if (nullptr != m_pQuest)
+			m_pSetting->Late_Tick(fTimeDelta);
 		break;
 	case MENU_END:
 		break;
@@ -407,6 +411,9 @@ HRESULT CMain_Menu::Ready_Menus()
 	m_pQuest = static_cast<CMenu_Quest*>(pGameInstance->Clone_Component(LEVEL_STATIC,
 		TEXT("Prototype_GameObject_Menu_Quest")));
 
+	m_pSetting = static_cast<CMenu_Setting*>(pGameInstance->Clone_Component(LEVEL_STATIC,
+		TEXT("Prototype_GameObject_Menu_Setting")));
+
 	Safe_Release(pGameInstance);
 
 	return S_OK;
@@ -455,10 +462,10 @@ void CMain_Menu::Free()
 	Safe_Release(m_pTexture);
 
 	Safe_Release(m_pGear);	
-	if (true == m_isCloned)
-		Safe_Release(m_pInventory);
+	Safe_Release(m_pInventory);
 	Safe_Release(m_pQuest);
 	Safe_Release(m_pCursor);
+	Safe_Release(m_pSetting);
 	if (m_isCloned)
 	{
 		Safe_Release(m_pPlayerInventory);

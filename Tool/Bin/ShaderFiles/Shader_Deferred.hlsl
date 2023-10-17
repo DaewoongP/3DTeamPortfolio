@@ -74,7 +74,6 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     if (vShadow.r < 0.8f)
     {
         vShade *= vShadow.r;
-        vSpecular = float4(0.f, 0.f, 0.f, 0.f);
     }
     
     Out.vColor = vDiffuse * vShade + vSpecular;
