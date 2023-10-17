@@ -6,6 +6,7 @@
 #include "Tool.h"
 #include "Item.h"
 #include "FocusPotion.h"
+#include "UI_Font.h"
 
 CPotionTap::CPotionTap(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -40,6 +41,11 @@ HRESULT CPotionTap::Initialize(void* pArg)
 void CPotionTap::Tick(_float fTimeDelta)
 {
 	m_pUI_Main_Tap->Tick(fTimeDelta);
+	if (m_eCurPotion != POTIONTAP_END && m_eCurPotion != -1)
+	{
+		m_pUI_Main_Count->Tick(fTimeDelta);
+		m_pUI_Main_Count->Set_Text(to_wstring(m_pPotions[m_eCurPotion].size()).c_str());
+	}
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -55,6 +61,7 @@ void CPotionTap::Late_Tick(_float fTimeDelta)
 	//__super::Late_Tick(fTimeDelta);
 
 	m_pUI_Main_Tap->Late_Tick(fTimeDelta);
+	m_pUI_Main_Count-> Late_Tick(fTimeDelta);
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -105,8 +112,26 @@ HRESULT CPotionTap::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Effect_Back"),
 		TEXT("Com_UI_Main_Tap"), reinterpret_cast<CComponent**>(&m_pUI_Main_Tap))))
 	{
-		MSG_BOX("Com__Potion_Tap : Failed Clone Component (Com_UI_Main_Tap)");
+		MSG_BOX("Com_Potion_Tap : Failed Clone Component (Com_UI_Main_Tap)");
 		Safe_Release(pGameInstance);
+		__debugbreak();
+		return E_FAIL;
+	}
+	
+	CUI_Font::FONTDESC Desc;
+	Desc.m_vColor = _float4(0.f, 1.f, 0.f, 1.f);
+	Desc.m_fRotation = { 0.f };
+	Desc.m_vOrigin = { 0.f, 0.f };
+	Desc.m_vScale = { 0.4f, 0.4f };
+	Desc.m_vPos = { 321.5f, 619.f };
+	wstring wstrNCount = to_wstring(0);
+	lstrcpy(Desc.m_pText, wstrNCount.c_str());
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Font"),
+		TEXT("Com_UI_Count"), reinterpret_cast<CComponent**>(&m_pUI_Main_Count), &Desc)))
+	{
+		MSG_BOX("Com_Potion_Tap : Failed Clone Component (Com_UI_Count)");
+		ENDINSTANCE;
 		__debugbreak();
 		return E_FAIL;
 	}

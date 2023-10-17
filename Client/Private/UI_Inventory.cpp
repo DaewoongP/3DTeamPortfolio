@@ -5,6 +5,7 @@
 #include "UI_Slot.h"
 #include "Inventory.h"
 #include "Item.h"
+#include "Ingredient.h"
 
 CUI_Inventory::CUI_Inventory(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -66,7 +67,7 @@ void CUI_Inventory::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	//Swap_InventoryItem();
+	Swap_InventoryItem();
 }
 
 void CUI_Inventory::Late_Tick(_float fTimeDelta)
@@ -242,7 +243,7 @@ HRESULT CUI_Inventory::Add_ItemTexture()
 	return S_OK;
 }
 
-HRESULT CUI_Inventory::Set_InventoryItem(vector<CItem*>& pItems)
+HRESULT CUI_Inventory::Set_GearInventoryItem(vector<CItem*>& pItems)
 {
 	for (auto& pSlot : m_pSlots)
 	{
@@ -251,7 +252,7 @@ HRESULT CUI_Inventory::Set_InventoryItem(vector<CItem*>& pItems)
 			pSlot->Set_IconTexture(nullptr);
 		}
 	}
-	
+
 	_uint iSize = pItems.size();
 	_uint iIndex = 0;
 	for (auto& pItem : pItems)
@@ -262,7 +263,7 @@ HRESULT CUI_Inventory::Set_InventoryItem(vector<CItem*>& pItems)
 			wszTag += std::to_wstring(iIndex);
 			CUI::UIDESC Desc;
 			ZEROMEM(&Desc);
-			Desc.vCombinedXY = _float2(0.f,0.f);
+			Desc.vCombinedXY = _float2(0.f, 0.f);
 			Desc.fX = m_fPosition[iIndex].x;
 			Desc.fY = m_fPosition[iIndex].y;
 			Desc.fZ = 0.1f;
@@ -278,13 +279,124 @@ HRESULT CUI_Inventory::Set_InventoryItem(vector<CItem*>& pItems)
 				__debugbreak();
 				return E_FAIL;
 			}
-				m_pSlots[iIndex]->Set_IconTexture(pItem->Get_UITexture());
+			m_pSlots[iIndex]->Set_IconTexture(pItem->Get_UITexture());
 		}
-		else if (nullptr == m_pSlots[iIndex]->Get_IconTexture() && nullptr!= m_pSlots[iIndex])
+		else if (nullptr == m_pSlots[iIndex]->Get_IconTexture() && nullptr != m_pSlots[iIndex])
 		{
-				m_pSlots[iIndex]->Set_IconTexture(pItem->Get_UITexture());
+			m_pSlots[iIndex]->Set_IconTexture(pItem->Get_UITexture());
 		}
 		++iIndex;
+	}
+
+	return S_OK;
+}
+HRESULT CUI_Inventory::Set_ResourceInventoryItem(vector<CItem*>& pItems, vector<_uint>* ResourceCount)
+{
+	for (auto& pSlot : m_pSlots)
+	{
+		if (pSlot)
+			pSlot->Set_IconTexture(nullptr);
+	}
+
+	PLURAL isPlural[INGREDIENT_END];
+	_uint iPluralIndex = 0;
+	for (size_t i = 0; i < pItems.size(); ++i)
+	{
+		auto& pItem = pItems[i];
+		for (size_t j = i + 1; j < pItems.size(); ++j)
+		{
+			auto& pCheck = pItems[j];
+			if (static_cast<CIngredient*>(pItem)->Get_Ingredient() == static_cast<CIngredient*>(pCheck)->Get_Ingredient())
+			{
+				isPlural[static_cast<CIngredient*>(pItem)->Get_Ingredient()].isPlural = true;
+			}
+		}
+	}
+
+	_uint iIndex = 0;
+	for (auto& pItem : pItems)
+	{
+		if (isPlural[static_cast<CIngredient*>(pItem)->Get_Ingredient()].isPlural && isPlural[static_cast<CIngredient*>(pItem)->Get_Ingredient()].isCreate)
+		{
+			if (!m_pSlots[iIndex])
+			{
+				wstring wszTag = TEXT("Com_UI_Slot") + to_wstring(iIndex);
+
+				CUI::UIDESC Desc;
+				ZEROMEM(&Desc);
+				Desc.vCombinedXY = _float2(0.f, 0.f);
+				Desc.fX = m_fPosition[iIndex].x;
+				Desc.fY = m_fPosition[iIndex].y;
+				Desc.fZ = 0.1f;
+				Desc.fSizeX = 70.f;
+				Desc.fSizeY = 70.f;
+				Desc.isInFont = true;
+
+				_uint ingredientIndex = static_cast<CIngredient*>(pItem)->Get_Ingredient();
+				wstring Count = to_wstring((*ResourceCount)[ingredientIndex]);
+				lstrcpy(Desc.szFont, Count.c_str());
+
+				if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Slot"),
+					wszTag.c_str(), reinterpret_cast<CComponent**>(&m_pSlots[iIndex]), &Desc)))
+				{
+					MSG_BOX("Com_Inventory : Failed Clone Component (Com_UI_Slot)");
+					__debugbreak();
+					return E_FAIL;
+				}
+				m_pSlots[iIndex]->Set_IconTexture(pItem->Get_UITexture());
+			}
+			else if (m_pSlots[iIndex] && !m_pSlots[iIndex]->Get_IconTexture())
+			{
+				m_pSlots[iIndex]->Set_IconTexture(pItem->Get_UITexture());
+				m_pSlots[iIndex]->Set_Font(to_wstring((*ResourceCount)[static_cast<CIngredient*>(pItem)->Get_Ingredient()]));
+			}
+			isPlural[static_cast<CIngredient*>(pItem)->Get_Ingredient()].isCreate = false;
+			++iIndex;
+		}
+		else
+		{
+			if (isPlural[static_cast<CIngredient*>(pItem)->Get_Ingredient()].isPlural && !isPlural[static_cast<CIngredient*>(pItem)->Get_Ingredient()].isCreate)
+			{
+				continue;
+			}
+
+			if (!isPlural[static_cast<CIngredient*>(pItem)->Get_Ingredient()].isPlural)
+			{
+				if (!m_pSlots[iIndex])
+				{
+					wstring wszTag = TEXT("Com_UI_Slot") + to_wstring(iIndex);
+
+					CUI::UIDESC Desc;
+					ZEROMEM(&Desc);
+					Desc.vCombinedXY = _float2(0.f, 0.f);
+					Desc.fX = m_fPosition[iIndex].x;
+					Desc.fY = m_fPosition[iIndex].y;
+					Desc.fZ = 0.1f;
+					Desc.fSizeX = 70.f;
+					Desc.fSizeY = 70.f;
+					Desc.isInFont = true;
+
+					_uint ingredientIndex = static_cast<CIngredient*>(pItem)->Get_Ingredient();
+					lstrcpy(Desc.szFont, TEXT(""));
+
+ 					if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Slot"),
+						wszTag.c_str(), reinterpret_cast<CComponent**>(&m_pSlots[iIndex]), &Desc)))
+					{
+						MSG_BOX("Com_Inventory : Failed Clone Component (Com_UI_Slot)");
+						__debugbreak();
+						return E_FAIL;
+					}
+					m_pSlots[iIndex]->Set_IconTexture(pItem->Get_UITexture());
+				}
+				else if (m_pSlots[iIndex] && !m_pSlots[iIndex]->Get_IconTexture())
+				{
+					m_pSlots[iIndex]->Set_IconTexture(pItem->Get_UITexture());
+					m_pSlots[iIndex]->Set_Font(to_wstring((*ResourceCount)[static_cast<CIngredient*>(pItem)->Get_Ingredient()]));
+				}
+				++iIndex;
+			}
+		}
+
 	}
 
 	return S_OK;
@@ -308,7 +420,7 @@ HRESULT CUI_Inventory::Swap_InventoryItem()
 	_uint iIndex = 0;
 	for (auto& pSlot : m_pSlots)
 	{
-		if (pSlot->Get_Clicked())
+		if (pSlot->Get_Clicked() && nullptr != pSlot)
 		{
 			static_cast<CInventory*>(m_pOwner)->Swap_Item(iIndex, m_eItemtype);
 		}

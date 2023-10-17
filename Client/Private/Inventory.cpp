@@ -149,29 +149,28 @@ void CInventory::Add_Item(CItem* pItem, ITEMTYPE eType)
 
 	Safe_Release(pGameInstance);
 
-	if (eType < RESOURCE)
-	{
-		if (m_pItems[eType].size() >= iGearMax)
-			return;
-		pFarming->Play(pItem);
-		m_pItems[eType].push_back(pItem);
-		m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
-	}
-	else if (RESOURCE == eType)
-	{
-		if (m_pItems[eType].size() >= iResourceMax)
-			return;
-		pFarming->Play(pItem);
-		m_pItems[eType].push_back(pItem);
-		m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
-	}
-
 	CIngredient* pIngredient = dynamic_cast<CIngredient*>(pItem);
 	if (nullptr != pIngredient)
 	{
 		cout << pIngredient->Get_Ingredient() << endl;
 		m_ResourcesCount[pIngredient->Get_Ingredient()]++;
 	}
+
+	if (eType < RESOURCE)
+	{
+		if (m_pItems[eType].size() >= iGearMax)
+			return;
+		pFarming->Play(pItem);
+		m_pItems[eType].push_back(pItem);
+		m_pUI_Inventory[eType]->Set_GearInventoryItem(m_pItems[eType]);
+	}
+	else if (RESOURCE == eType)
+	{
+		pFarming->Play(pItem);
+		m_pItems[eType].push_back(pItem);
+		m_pUI_Inventory[eType]->Set_ResourceInventoryItem(m_pItems[eType], &m_ResourcesCount);
+	}
+	
 }
 
 void CInventory::Add_Item(const _tchar* pPrototypeTag, _uint iLevel, void* pArg)
@@ -213,10 +212,16 @@ void CInventory::Delete_Item(ITEM_ID eTargetItemID)
 				{
 					CIngredient* pIngredient = dynamic_cast<CIngredient*>(*iter);
 					m_ResourcesCount[pIngredient->Get_Ingredient()]--;
+					Safe_Release(*iter);
+					m_pItems[eType].erase(iter);
+					m_pUI_Inventory[eType]->Set_ResourceInventoryItem(m_pItems[eType], &m_ResourcesCount);
 				}
-				Safe_Release(*iter);
-				m_pItems[eType].erase(iter);
-				m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
+				else
+				{
+					Safe_Release(*iter);
+					m_pItems[eType].erase(iter);
+					m_pUI_Inventory[eType]->Set_GearInventoryItem(m_pItems[eType]);
+				}
 				return;
 			}
 			else
@@ -240,7 +245,14 @@ _bool CInventory::Delete_Item(ITEMTYPE eType, _uint iIndex)
 		{
 			Safe_Release(*iter);
 			iter = m_pItems[eType].erase(iter);
-			m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
+			if (eType == RESOURCE)
+			{
+				m_pUI_Inventory[eType]->Set_ResourceInventoryItem(m_pItems[eType], &m_ResourcesCount);
+			}
+			else
+			{
+				m_pUI_Inventory[eType]->Set_GearInventoryItem(m_pItems[eType]);
+			}
 			return true;
 		}
 		++Index;
@@ -262,7 +274,7 @@ void CInventory::Swap_Item(_uint Index, ITEMTYPE eType)
 	m_pItems[eType][Index] = m_pPlayerCurItems[eType];
 	m_pPlayerCurItems[eType] = SourItem;
 
-	m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
+	m_pUI_Inventory[eType]->Set_GearInventoryItem(m_pItems[eType]);
 }
 
 CInventory* CInventory::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

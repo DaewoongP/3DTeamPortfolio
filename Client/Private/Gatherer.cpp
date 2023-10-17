@@ -5,6 +5,8 @@
 #include "Player_Information.h"
 #include "Inventory.h"
 
+#include "UI_Interaction.h"
+
 CGatherer::CGatherer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -133,6 +135,7 @@ void CGatherer::Tick(_float fTimeDelta)
 	if (true == m_isCol_with_Player && nullptr != m_pModel)
 	{
 		// 여기서 버튼 UI가 나타나면 될듯
+		m_pUI_Interaction->Tick(fTimeDelta);
 
 		BEGININSTANCE;  // 버튼을 누르면 동작(한번만)
 		if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN) && true == m_isGetItem)
@@ -184,6 +187,9 @@ void CGatherer::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	BEGININSTANCE;
+
+	if (true == m_isCol_with_Player && nullptr != m_pModel)
+		m_pUI_Interaction->Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRenderer)
 	{
@@ -306,6 +312,20 @@ HRESULT CGatherer::Add_Components()
 		return E_FAIL;
 	}
 
+	/* Com_UI_Interaction */
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	
+	CUI_Interaction::INTERACTIONDESC pDesc;
+	lstrcpy(pDesc.m_wszName, TEXT("안녕하세요부자정환입니다"));
+	lstrcpy(pDesc.m_wszFunc, TEXT("돈뿌리는걸좋아하는정환"));
+	pDesc.m_WorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+
+	m_pUI_Interaction = static_cast<CUI_Interaction*>(pGameInstance->Clone_Component(LEVEL_STATIC,
+		TEXT("Prototype_GameObject_UI_Interaction"), &pDesc));
+
+	Safe_Release(pGameInstance);
+
 	return S_OK;
 }
 
@@ -399,4 +419,5 @@ void CGatherer::Free()
 	Safe_Release(m_pShader);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pRenderer);
+	Safe_Release(m_pUI_Interaction);
 }

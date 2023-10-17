@@ -36,7 +36,7 @@
 #include "UI_Dynamic_Back.h"
 #include "UI_Damage.h"
 #include "UI_Store.h"
-
+#include "UI_Interaction.h"
 #pragma endregion UI
 
 #pragma region Effects
@@ -416,6 +416,10 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Store"),
 				CUI_Store::Create(m_pDevice, m_pContext, eLevelID))))
 				throw TEXT("Prototype_GameObject_UI_Store");
+
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Interaction"),
+				CUI_Interaction::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_UI_Interaction");
 #pragma endregion
 
 #pragma region Load Texture

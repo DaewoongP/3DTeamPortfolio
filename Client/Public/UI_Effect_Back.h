@@ -38,6 +38,9 @@ public:
 	void Set_Clicked(_bool isClicked = false);
 	void Set_Texture(CTexture* pTexture);
 	void Set_ImageCom(CUI_Image::IMAGEDESC desc, _bool isChild = false);
+	_bool Switch_ImageShow() {
+		return m_pImageCom->SwitchShow();
+	}
 	void Set_Rotation(_float3 vAxis, _float fRadian);
 	void	 Set_CoolTime(_float* pCool);
 	void	 Set_isCool(_bool isCool) {
@@ -87,6 +90,7 @@ private:
 private:
 	_bool			m_isClicked = { false };
 	_bool			m_isInteract = { false };
+	_bool			m_isShowImageCom = { false };
 private:
 	_float* m_fCoolTime = { 0 };
 	_bool			m_isCool = { false };

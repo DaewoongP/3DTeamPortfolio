@@ -19,6 +19,7 @@ public:
 	{
 		MINIMAP,
 		SKILL,
+		CLICK,
 		SHADERTYPE_END
 	};
 
@@ -53,6 +54,10 @@ public:
 	}
 	void		Set_ShaderType(SHADERTYPE eType) {
 		m_eShadertype = eType;
+	}
+	_bool		SwitchShow() {
+		m_isShow = !m_isShow;
+		return m_isShow;
 	}
 
 public:
@@ -104,6 +109,10 @@ private:
 private: // for skill
 	_float* m_pCoolTime = { nullptr };
 	_bool	m_isCool = { false };
+	
+	
+private:
+	_bool m_isShow = { false };
 
 
 public:

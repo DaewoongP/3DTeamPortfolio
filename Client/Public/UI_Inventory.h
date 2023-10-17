@@ -29,6 +29,12 @@ public:
 		ITEMTYPE				eItemtype;
 	};
 
+	struct PLURAL
+	{
+		_bool	 isPlural = { false };
+		_bool	 isCreate = { true };
+	};
+
 private:
 	explicit CUI_Inventory(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CUI_Inventory(const CUI_Inventory& rhs);
@@ -53,7 +59,8 @@ private:
 	HRESULT	Add_ItemTexture();
 
 public:
-	HRESULT	Set_InventoryItem(vector<CItem*>& pItems);
+	HRESULT	Set_GearInventoryItem(vector<CItem*>& pItems);
+	HRESULT	Set_ResourceInventoryItem(vector<CItem*>& pItems, vector<_uint>* ResourceCount = nullptr);
 	HRESULT	Delete_InventoryItem(_uint iIndex);
 	HRESULT	Swap_InventoryItem();
 

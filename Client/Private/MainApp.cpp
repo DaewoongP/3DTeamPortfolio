@@ -235,7 +235,7 @@ void CMainApp::Tick_FPS(_float fTimeDelta)
 		m_fFpsTime = 0.f;
 	}
 
-	//SetWindowText(g_hWnd, m_szFPS);
+	SetWindowText(g_hWnd, m_szFPS);
 }
 
 #ifdef _DEBUG
