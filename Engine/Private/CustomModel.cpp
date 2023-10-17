@@ -91,10 +91,6 @@ HRESULT CCustomModel::Render(const _uint& _iMeshPartsIndex, const _uint& _iMeshI
 	if (nullptr == m_MeshParts[_iMeshPartsIndex])
 		return S_OK;
 
-	if (HAIR == _iMeshPartsIndex &&
-		nullptr != m_MeshParts[HAT])
-		return S_OK;
-
 	return m_MeshParts[_iMeshPartsIndex]->Render(_iMeshIndex);
 }
 

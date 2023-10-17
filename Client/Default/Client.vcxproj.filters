@@ -769,14 +769,8 @@
     <Filter Include="02. GameObject\09. Item\03. Gear\Hat_Wizard">
       <UniqueIdentifier>{b3f977ca-80cc-4f4f-a762-74eb0e2a969d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\09. Item\03. Gear\Hat_Fedora">
-      <UniqueIdentifier>{8cf93f87-1867-4909-a67f-5558a174aad2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\09. Item\03. Gear\Hat_DarkArts_Delux">
       <UniqueIdentifier>{6e722ae1-b8a7-4d50-acbd-707842a7a6dc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\03. Gear\Hat_Lodgok">
-      <UniqueIdentifier>{6057c77f-831c-4a20-8ec7-c28e253c8643}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\09. Item\03. Gear\Jacket_Arcane">
       <UniqueIdentifier>{754235f9-e76d-4699-bd54-16cb4a5c3344}</UniqueIdentifier>
@@ -1607,14 +1601,8 @@
     <ClInclude Include="..\Public\Hat_Wizard.h">
       <Filter>02. GameObject\09. Item\03. Gear\Hat_Wizard</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Hat_Fedora.h">
-      <Filter>02. GameObject\09. Item\03. Gear\Hat_Fedora</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Hat_DarkArts_Delux.h">
       <Filter>02. GameObject\09. Item\03. Gear\Hat_DarkArts_Delux</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Hat_Lodgok.h">
-      <Filter>02. GameObject\09. Item\03. Gear\Hat_Lodgok</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Jacket_Arcane.h">
       <Filter>02. GameObject\09. Item\03. Gear\Jacket_Arcane</Filter>
@@ -2400,14 +2388,8 @@
     <ClCompile Include="..\Private\Hat_Wizard.cpp">
       <Filter>02. GameObject\09. Item\03. Gear\Hat_Wizard</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Hat_Fedora.cpp">
-      <Filter>02. GameObject\09. Item\03. Gear\Hat_Fedora</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Hat_DarkArts_Delux.cpp">
       <Filter>02. GameObject\09. Item\03. Gear\Hat_DarkArts_Delux</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Hat_Lodgok.cpp">
-      <Filter>02. GameObject\09. Item\03. Gear\Hat_Lodgok</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Jacket_Arcane.cpp">
       <Filter>02. GameObject\09. Item\03. Gear\Jacket_Arcane</Filter>

@@ -80,8 +80,6 @@
 
 #include "Hat_Arcane.h"
 #include "Hat_DarkArts_Delux.h"
-#include "Hat_Fedora.h"
-#include "Hat_Lodgok.h"
 #include "Hat_Wizard.h"
 #include "Robe_Arcane.h"
 #include "Robe_DarkArts.h"
@@ -267,6 +265,13 @@ HRESULT CMain3_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Oakes"),
 			COakes::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Oakes");
+
+		_float4x4 PivotMatrix;
+		PivotMatrix = XMMatrixRotationQuaternion(XMQuaternionRotationRollPitchYaw(0.f, XMConvertToRadians(180.f), 0.f));
+		/* For.Prototype_Component_Model_CustomModel_NPC_M */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_CustomModel_NPC_M"),
+			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/NPC_M/NPC_M.dat", PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_CustomModel_NPC_M");
 
 		/* For.Prototype_GameObject_Dummy_NPC */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Dummy_NPC"),
@@ -772,16 +777,6 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 			CHat_DarkArts_Delux::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Hat_DarkArts_Delux");
 
-		/* For.Prototype_GameObject_Hat_Fedora */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Hat_Fedora"),
-			CHat_Fedora::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_Hat_Fedora");
-
-		/* For.Prototype_GameObject_Hat_Lodgok */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Hat_Lodgok"),
-			CHat_Lodgok::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_Hat_Lodgok");
-
 		/* For.Prototype_GameObject_Hat_Wizard */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Hat_Wizard"),
 			CHat_Wizard::Create(m_pDevice, m_pContext, eLevelID))))
@@ -813,16 +808,6 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Hat_DarkArtsDelux"),
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Hat_DarkArtsDelux/Hat_DarkArtsDelux.dat"), TEXT("Hat_DarkArtsDelux")))))
 			throw TEXT("Prototype_Component_MeshPart_Hat_DarkArtsDelux");
-
-		/* For.Prototype_Component_MeshPart_Hat_Fedora */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Hat_Fedora"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Hat_Fedora/Hat_Fedora.dat"), TEXT("Hat_Fedora")))))
-			throw TEXT("Prototype_Component_MeshPart_Hat_Fedora");
-
-		/* For.Prototype_Component_MeshPart_Hat_Lodgok */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Hat_Lodgok"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Hat_L/Hat_Lodgok.dat"), TEXT("Hat_Lodgok")))))
-			throw TEXT("Prototype_Component_MeshPart_Hat_Lodgok");
 
 		/* For.Prototype_Component_MeshPart_Hat_Wizard */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Hat_Wizard"),
@@ -948,6 +933,116 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Boots_Merlin"),
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Boots_Merlin/Boots_Merlin.dat"), TEXT("Boots_Merlin")))))
 			throw TEXT("Prototype_Component_MeshPart_Boots_Merlin");
+
+		/* For.Prototype_Component_MeshPart_Head_NPC_M */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Head_NPC_M"),
+			CMeshParts::Create(m_pDevice, m_pContext, L"../../Resources/Models/Anims/Head_NPC_M/Head_NPC_M.dat", TEXT("Head_NPC_M")))))
+			throw TEXT("Prototype_Component_MeshPart_Head_NPC_M");
+
+		/* For.Prototype_Component_MeshPart_Hair_M_C */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Hair_M_C"),
+			CMeshParts::Create(m_pDevice, m_pContext, L"../../Resources/Models/Anims/Hair_M_C/Hair_M_C.dat", TEXT("Hair_M_C")))))
+			throw TEXT("Prototype_Component_MeshPart_Hair_M_C");
+
+		/* For.Prototype_Component_MeshPart_Head_NPC_F */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Head_NPC_F"),
+			CMeshParts::Create(m_pDevice, m_pContext, L"../../Resources/Models/Anims/Head_NPC_F/Head_NPC_F.dat", TEXT("Head_NPC_F")))))
+			throw TEXT("Prototype_Component_MeshPart_Head_NPC_F");
+
+		/* For.Prototype_Component_MeshPart_Hat_Witch_F */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Hat_Witch_F"),
+			CMeshParts::Create(m_pDevice, m_pContext, L"../../Resources/Models/Anims/Hat_Witch_F/Hat_Witch_F.dat", TEXT("Hat_Witch_F")))))
+			throw TEXT("Prototype_Component_MeshPart_Hat_Witch_F");
+
+		/* For.Prototype_Component_MeshPart_Hat_Wizard_F */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Hat_Wizard_F"),
+			CMeshParts::Create(m_pDevice, m_pContext, L"../../Resources/Models/Anims/Hat_Wizard_F/Hat_Wizard_F.dat", TEXT("Hat_Wizard_F")))))
+			throw TEXT("Prototype_Component_MeshPart_Hat_Wizard_F");
+
+		/* For.Prototype_Component_MeshPart_Hair_Long_F */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Hair_Long_F"),
+			CMeshParts::Create(m_pDevice, m_pContext, L"../../Resources/Models/Anims/Hair_Long_F/Hair_Long_F.dat", TEXT("Hair_Long_F")))))
+			throw TEXT("Prototype_Component_MeshPart_Hair_Long_F");
+
+		/* For.Prototype_Component_MeshPart_Hair_Pony */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Hair_Pony"),
+			CMeshParts::Create(m_pDevice, m_pContext, L"../../Resources/Models/Anims/Hair_Pony/Hair_Pony.dat", TEXT("Hair_Pony")))))
+			throw TEXT("Prototype_Component_MeshPart_Hair_Pony");
+
+		/* For.Prototype_Component_MeshPart_Hair_Short_F */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Hair_Short_F"),
+			CMeshParts::Create(m_pDevice, m_pContext, L"../../Resources/Models/Anims/Hair_Short_F/Hair_Short_F.dat", TEXT("Hair_Short_F")))))
+			throw TEXT("Prototype_Component_MeshPart_Hair_Short_F");
+
+		/* For.Prototype_Component_MeshPart_Robe_Herbology_F */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Robe_Herbology_F"),
+			CMeshParts::Create(m_pDevice, m_pContext, L"../../Resources/Models/Anims/Robe_Herbology_F/Robe_Herbology_F.dat", TEXT("Robe_Herbology_F")))))
+			throw TEXT("Prototype_Component_MeshPart_Robe_Herbology_F");
+
+		/* For.Prototype_Component_MeshPart_Robe_DarkArts_F */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Robe_DarkArts_F"),
+			CMeshParts::Create(m_pDevice, m_pContext, L"../../Resources/Models/Anims/Robe_DarkArts_F/Robe_DarkArts_F.dat", TEXT("Robe_DarkArts_F")))))
+			throw TEXT("Prototype_Component_MeshPart_Robe_DarkArts_F");
+
+		/* For.Prototype_Component_MeshPart_Robe_DruidCape_F */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Robe_DruidCape_F"),
+			CMeshParts::Create(m_pDevice, m_pContext, L"../../Resources/Models/Anims/Robe_DruidCape_F/Robe_DruidCape_F.dat", TEXT("Robe_DruidCape_F")))))
+			throw TEXT("Prototype_Component_MeshPart_Robe_DruidCape_F");
+
+		/* For.Prototype_Component_MeshPart_Robe_Herbology_1_F */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Robe_Herbology_1_F"),
+			CMeshParts::Create(m_pDevice, m_pContext, L"../../Resources/Models/Anims/Robe_Herbology_1_F/Robe_Herbology_1_F.dat", TEXT("Robe_Herbology_1_F")))))
+			throw TEXT("Prototype_Component_MeshPart_Robe_Herbology_1_F");
+
+		/* For.Prototype_Component_MeshPart_Robe_Beast_F */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Robe_Beast_F"),
+			CMeshParts::Create(m_pDevice, m_pContext, L"../../Resources/Models/Anims/Robe_Beast/Robe_Beast.dat", TEXT("Robe_Beast_F")))))
+			throw TEXT("Prototype_Component_MeshPart_Robe_Beast_F");
+
+		/* For.Prototype_Component_MeshPart_Jacker_Celtic_F */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Jacker_Celtic_F"),
+			CMeshParts::Create(m_pDevice, m_pContext, L"../../Resources/Models/Anims/Jacker_Celtic_F/Jacker_Celtic_F.dat", TEXT("Jacker_Celtic_F")))))
+			throw TEXT("Prototype_Component_MeshPart_Jacker_Celtic_F");
+
+		/* For.Prototype_Component_MeshPart_Jacker_Celtic_A_F */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Jacker_Celtic_A_F"),
+			CMeshParts::Create(m_pDevice, m_pContext, L"../../Resources/Models/Anims/Jacker_Celtic_A_F/Jacker_Celtic_A_F.dat", TEXT("Jacker_Celtic_A_F")))))
+			throw TEXT("Prototype_Component_MeshPart_Jacker_Celtic_A_F");
+
+		/* For.Prototype_Component_MeshPart_Jacket_BeastTunic_F */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Jacket_BeastTunic_F"),
+			CMeshParts::Create(m_pDevice, m_pContext, L"../../Resources/Models/Anims/Jacket_BeastTunic_F/Jacket_BeastTunic_F.dat", TEXT("Jacket_BeastTunic_F")))))
+			throw TEXT("Prototype_Component_MeshPart_Jacket_BeastTunic_F");
+
+		/* For.Prototype_Component_MeshPart_Jacket_BeastTunic_A_F */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Jacket_BeastTunic_A_F"),
+			CMeshParts::Create(m_pDevice, m_pContext, L"../../Resources/Models/Anims/Jacket_BeastTunic_A_F/Jacket_BeastTunic_A_F.dat", TEXT("Jacket_BeastTunic_A_F")))))
+			throw TEXT("Prototype_Component_MeshPart_Jacket_BeastTunic_A_F");
+
+		/* For.Prototype_Component_MeshPart_Arm_F */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Arm_F"),
+			CMeshParts::Create(m_pDevice, m_pContext, L"../../Resources/Models/Anims/Arm_F/Arm_F.dat", TEXT("Arm_F")))))
+			throw TEXT("Prototype_Component_MeshPart_Arm_F");
+
+		/* For.Prototype_Component_MeshPart_Pants_Arcane_F */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Pants_Arcane_F"),
+			CMeshParts::Create(m_pDevice, m_pContext, L"../../Resources/Models/Anims/Pants_Arcane_F/Pants_Arcane_F.dat", TEXT("Pants_Arcane_F")))))
+			throw TEXT("Prototype_Component_MeshPart_Pants_Arcane_F");
+
+		/* For.Prototype_Component_MeshPart_Pants_DarkArtsDelux_F */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Pants_DarkArtsDelux_F"),
+			CMeshParts::Create(m_pDevice, m_pContext, L"../../Resources/Models/Anims/Pants_DarkArtsDelux_F/Pants_DarkArtsDelux_F.dat", TEXT("Pants_DarkArtsDelux_F")))))
+			throw TEXT("Prototype_Component_MeshPart_Pants_DarkArtsDelux_F");
+
+		/* For.Prototype_Component_MeshPart_Pants_Merlin_F */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Pants_Merlin_F"),
+			CMeshParts::Create(m_pDevice, m_pContext, L"../../Resources/Models/Anims/Pants_Merlin_F/Pants_Merlin_F.dat", TEXT("Pants_Merlin_F")))))
+			throw TEXT("Prototype_Component_MeshPart_Pants_Merlin_F");
+
+		/* For.Prototype_Component_MeshPart_Boots_Arcane_F */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Boots_Arcane_F"),
+			CMeshParts::Create(m_pDevice, m_pContext, L"../../Resources/Models/Anims/Boots_Arcane_F/Boots_Arcane_F.dat", TEXT("Boots_Arcane_F")))))
+			throw TEXT("Prototype_Component_MeshPart_Boots_Arcane_F");
 #pragma endregion
 	}
 	catch (const _tchar* pErrorTag)

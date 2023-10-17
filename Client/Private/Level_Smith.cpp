@@ -146,8 +146,15 @@ HRESULT CLevel_Smith::Ready_Layer_NPC(const _tchar* pLayerTag)
 	CDummy_NPC::NPCINITDESC InitDesc;
 	InitDesc.WorldMatrix = Matrix;
 	InitDesc.wstrAnimationTag = TEXT("Idle");
-	InitDesc.MeshPartsTags[5] = TEXT("Prototype_Component_MeshPart_Robe_Arcane");
-	InitDesc.wstrCustomModelTag = TEXT("Prototype_Component_Model_CustomModel_Player");
+	InitDesc.MeshPartsTags[0] = TEXT("Prototype_Component_MeshPart_Hat_Arcane");
+	InitDesc.MeshPartsTags[1] = TEXT("Prototype_Component_MeshPart_Hair_M_D");
+	InitDesc.MeshPartsTags[2] = TEXT("Prototype_Component_MeshPart_Head_NPC_M");
+	InitDesc.MeshPartsTags[4] = TEXT("Prototype_Component_MeshPart_Player_Arm");
+	InitDesc.MeshPartsTags[5] = TEXT("Prototype_Component_MeshPart_Robe_DarkArts");
+	InitDesc.MeshPartsTags[6] = TEXT("Prototype_Component_MeshPart_Jacket_Arcane_A");
+	InitDesc.MeshPartsTags[7] = TEXT("Prototype_Component_MeshPart_Pants_Arcane");
+	InitDesc.MeshPartsTags[9] = TEXT("Prototype_Component_MeshPart_Boots_Arcane");
+	InitDesc.wstrCustomModelTag = TEXT("Prototype_Component_Model_CustomModel_NPC_M");
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Dummy_NPC"), pLayerTag, TEXT("GameObject_Dummy_NPC"), &InitDesc)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Dummy_NPC)");

@@ -197,8 +197,6 @@
     <ClInclude Include="..\Public\Gull.h" />
     <ClInclude Include="..\Public\Hat_Arcane.h" />
     <ClInclude Include="..\Public\Hat_DarkArts_Delux.h" />
-    <ClInclude Include="..\Public\Hat_Fedora.h" />
-    <ClInclude Include="..\Public\Hat_Lodgok.h" />
     <ClInclude Include="..\Public\Hat_Wizard.h" />
     <ClInclude Include="..\Public\Hover_Idle.h" />
     <ClInclude Include="..\Public\Hover_Move.h" />
@@ -498,8 +496,6 @@
     <ClCompile Include="..\Private\Gull.cpp" />
     <ClCompile Include="..\Private\Hat_Arcane.cpp" />
     <ClCompile Include="..\Private\Hat_DarkArts_Delux.cpp" />
-    <ClCompile Include="..\Private\Hat_Fedora.cpp" />
-    <ClCompile Include="..\Private\Hat_Lodgok.cpp" />
     <ClCompile Include="..\Private\Hat_Wizard.cpp" />
     <ClCompile Include="..\Private\Hover_Idle.cpp" />
     <ClCompile Include="..\Private\Hover_Move.cpp" />

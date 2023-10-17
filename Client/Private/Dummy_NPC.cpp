@@ -167,7 +167,7 @@ HRESULT CDummy_NPC::Add_Components(const NPCINITDESC& Desc)
 			throw TEXT("Com_Renderer");
 
 		/* For.Com_Model */
-		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, Desc.wstrCustomModelTag.c_str(),
+		if (FAILED(CComposite::Add_Component(LEVEL_SMITH, Desc.wstrCustomModelTag.c_str(),
 			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pCustomModel))))
 			throw TEXT("Com_Model");
 
@@ -207,7 +207,7 @@ HRESULT CDummy_NPC::Ready_MeshParts(const NPCINITDESC& Desc)
 			continue;
 		}
 
-		if (FAILED(m_pCustomModel->Add_MeshParts(LEVEL_STATIC, wstrPartTag, CCustomModel::MESHTYPE(++iIndex))))
+		if (FAILED(m_pCustomModel->Add_MeshParts(LEVEL_STATIC, wstrPartTag, CCustomModel::MESHTYPE(iIndex++))))
 		{
 			wstring wstrErrorTag = TEXT("Failed Add MeshPart : ");
 			wstrErrorTag += wstrPartTag;
