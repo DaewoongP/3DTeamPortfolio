@@ -99,6 +99,7 @@ void CProtegoState::OnStateEnter(void* _pArg)
 				pGameInstance->Set_SlowTime(TEXT("MainTimer"), 0.2f, 0.4f);
 
 				pGameInstance->Set_Shake(
+					CCamera_Manager::SHAKE_PRIORITY_2,
 					CCamera_Manager::SHAKE_TYPE_TRANSLATION,
 					CCamera_Manager::SHAKE_AXIS_SET,
 					CEase::IN_EXPO,
@@ -121,6 +122,7 @@ void CProtegoState::OnStateEnter(void* _pArg)
 				pGameInstance->Set_SlowTime(TEXT("MainTimer"), 0.2f, 1.0f);
 
 				pGameInstance->Set_Shake(
+					CCamera_Manager::SHAKE_PRIORITY_2,
 					CCamera_Manager::SHAKE_TYPE_TRANSLATION,
 					CCamera_Manager::SHAKE_AXIS_SET,
 					CEase::IN_EXPO,

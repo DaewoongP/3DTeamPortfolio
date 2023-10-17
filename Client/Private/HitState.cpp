@@ -76,6 +76,8 @@ void CHitState::OnStateTick()
 void CHitState::OnStateExit()
 {
 	Safe_Release(m_pTargetTransform);
+
+	m_pTargetTransform = nullptr;
 }
 
 void CHitState::Bind_Notify()

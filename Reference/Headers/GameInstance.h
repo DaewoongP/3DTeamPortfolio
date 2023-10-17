@@ -232,6 +232,17 @@ public:	/* For.Camera_Manager */
 		CCamera_Manager::SHAKE_POWER _ePower = CCamera_Manager::SHAKE_POWER_DECRECENDO,
 		_float3 _vAxisSet = _float3());
 
+	void Set_Shake(
+		CCamera_Manager::SHAKE_PRIORITY _ePriority = CCamera_Manager::SHAKE_PRIORITY_1,
+		CCamera_Manager::SHAKE_TYPE _eType = CCamera_Manager::SHAKE_TYPE_ROTATION,
+		CCamera_Manager::SHAKE_AXIS _eAxis = CCamera_Manager::SHAKE_AXIS_SET,
+		CEase::EASE _eEase = CEase::IN_SINE,
+		_float _fSpeed = 5.0f,
+		_float _Duration = 5.0f,
+		_float _fPower = 0.02f,
+		CCamera_Manager::SHAKE_POWER _ePower = CCamera_Manager::SHAKE_POWER_DECRECENDO,
+		_float3 _vAxisSet = _float3());
+
 	//현제 카메라가 뭔지 확인용
 	_bool Is_Current_Camera(const _tchar* _CameraTag);
 

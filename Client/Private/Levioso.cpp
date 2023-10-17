@@ -143,6 +143,7 @@ void CLevioso::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		BEGININSTANCE;
 
 		pGameInstance->Set_Shake(
+			CCamera_Manager::SHAKE_PRIORITY_2,
 			CCamera_Manager::SHAKE_TYPE_TRANSLATION,
 			CCamera_Manager::SHAKE_AXIS_LOOK,
 			CEase::IN_EXPO,

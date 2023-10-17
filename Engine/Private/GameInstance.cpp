@@ -826,6 +826,13 @@ void CGameInstance::Set_Shake(CCamera_Manager::SHAKE_TYPE _eType, CCamera_Manage
 	return m_pCamera_Manager->Set_Shake(_eType, _eAxis, _eEase, _fSpeed, _Duration, _fPower, _ePower, _vAxisSet);
 }
 
+void CGameInstance::Set_Shake(CCamera_Manager::SHAKE_PRIORITY _ePriority, CCamera_Manager::SHAKE_TYPE _eType, CCamera_Manager::SHAKE_AXIS _eAxis, CEase::EASE _eEase, _float _fSpeed, _float _Duration, _float _fPower, CCamera_Manager::SHAKE_POWER _ePower, _float3 _vAxisSet)
+{
+	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, , TEXT("Camera NULL"));
+
+	return m_pCamera_Manager->Set_Shake(_ePriority, _eType, _eAxis, _eEase, _fSpeed, _Duration, _fPower, _ePower, _vAxisSet);
+}
+
 _bool CGameInstance::Is_Current_Camera(const _tchar* _CameraTag)
 {
 	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, false, TEXT("Camera NULL"));

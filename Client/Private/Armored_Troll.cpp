@@ -3,6 +3,8 @@
 #include "Client_GameInstance_Functions.h"
 #include "Weapon_Armored_Troll.h"
 
+#include "Camera_Shake.h"
+
 #include "Turn.h"
 #include "Wait.h"
 #include "Death.h"
@@ -44,7 +46,10 @@ HRESULT CArmored_Troll::Initialize(void* pArg)
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
-
+	
+	if (FAILED(Add_Components_for_Shake()))
+		return E_FAIL;
+	
 	return S_OK;
 }
 
@@ -64,6 +69,9 @@ HRESULT CArmored_Troll::Initialize_Level(_uint iCurrentLevelIndex)
 		return E_FAIL;
 
 	if (FAILED(Make_Notifies()))
+		return E_FAIL;	
+	
+	if (FAILED(Make_Notifies_for_Shake()))
 		return E_FAIL;
 
 	if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
@@ -118,6 +126,107 @@ HRESULT CArmored_Troll::Render()
 		MSG_BOX("[CArmored_Troll] Failed Render");
 		return E_FAIL;
 	}
+
+	return S_OK;
+}
+
+HRESULT CArmored_Troll::Add_Components_for_Shake()
+{
+	try
+	{
+		CCamera_Shake::CAMERA_SHAKE_DESC Camera_Shake_Desc = { CCamera_Shake::CAMERA_SHAKE_DESC() };
+
+		_float fMaxDistance = {30.0f};
+		_float fMinDistance = {2.0f};
+
+
+		Camera_Shake_Desc.eShake_Priority = CCamera_Manager::SHAKE_PRIORITY_1;
+		Camera_Shake_Desc.isDistanceOption = true;
+		Camera_Shake_Desc.pTransform = m_pTransform;
+		Camera_Shake_Desc.Shake_Info_Desc.eEase = CEase::IN_EXPO;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Axis = CCamera_Manager::SHAKE_AXIS_UP;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Power = CCamera_Manager::SHAKE_POWER_DECRECENDO;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Type = CCamera_Manager::SHAKE_TYPE_TRANSLATION;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakeDuration = 0.2f;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakePower = 0.05f;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakeSpeed = 10.0f;
+		Camera_Shake_Desc.Shake_Info_Desc.vShake_Axis_Set = _float3();
+
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Enemy_Camera_Shake"),
+			TEXT("Com_Step_Shake"), reinterpret_cast<CComponent**>(&m_pStep_Shake), &Camera_Shake_Desc)))
+			throw TEXT("Com_Step_Shake");
+
+		m_pStep_Shake->Ready_Shake(fMaxDistance, fMinDistance, Camera_Shake_Desc.Shake_Info_Desc.fShakePower);
+
+		Camera_Shake_Desc.eShake_Priority = CCamera_Manager::SHAKE_PRIORITY_1;
+		Camera_Shake_Desc.isDistanceOption = true;
+		Camera_Shake_Desc.pTransform = m_pTransform;
+		Camera_Shake_Desc.Shake_Info_Desc.eEase = CEase::OUT_SINE;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Axis = CCamera_Manager::SHAKE_AXIS_UP;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Power = CCamera_Manager::SHAKE_POWER_DECRECENDO;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Type = CCamera_Manager::SHAKE_TYPE_TRANSLATION;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakeDuration = 1.5f;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakePower = 0.1f;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakeSpeed = 10.0f;
+		Camera_Shake_Desc.Shake_Info_Desc.vShake_Axis_Set = _float3();
+
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Enemy_Camera_Shake"),
+			TEXT("Com_Hit_Shake"), reinterpret_cast<CComponent**>(&m_pHit_Shake), &Camera_Shake_Desc)))
+			throw TEXT("Com_Hit_Shake");
+
+		m_pHit_Shake->Ready_Shake(fMaxDistance, fMinDistance, Camera_Shake_Desc.Shake_Info_Desc.fShakePower);
+
+		Camera_Shake_Desc.eShake_Priority = CCamera_Manager::SHAKE_PRIORITY_1;
+		Camera_Shake_Desc.isDistanceOption = false;
+		Camera_Shake_Desc.pTransform = m_pTransform;
+		Camera_Shake_Desc.Shake_Info_Desc.eEase = CEase::OUT_SINE;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Axis = CCamera_Manager::SHAKE_AXIS_UP;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Power = CCamera_Manager::SHAKE_POWER_DECRECENDO;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Type = CCamera_Manager::SHAKE_TYPE_TRANSLATION;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakeDuration = 2.0f;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakePower = 0.1f;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakeSpeed = 8.0f;
+		Camera_Shake_Desc.Shake_Info_Desc.vShake_Axis_Set = _float3();
+
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Enemy_Camera_Shake"),
+			TEXT("Com_Hit_Shake"), reinterpret_cast<CComponent**>(&m_pDeath_Shake), &Camera_Shake_Desc)))
+			throw TEXT("Com_Hit_Shake");
+
+		m_pDeath_Shake->Ready_Shake(fMaxDistance, fMinDistance, Camera_Shake_Desc.Shake_Info_Desc.fShakePower);
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Add_Components : ");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
+
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CArmored_Troll::Make_Notifies_for_Shake()
+{
+	if (nullptr == m_pStep_Shake || nullptr == m_pHit_Shake || nullptr == m_pDeath_Shake)
+	{
+		MSG_BOX("Failed Make_Notifies_for_Shake");
+		return E_FAIL;
+	}
+
+	function<void()> func = [&] {m_pStep_Shake->RandomUpAxisShake(); };
+
+	m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Step_1"), func);
+	m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Step_2"), func);
+	m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Step_3"), func);
+	m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Step_4"), func);
+
+	func = [&] {m_pHit_Shake->RandomUpAxisShake(); };
+	m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Hit"), func);
+
+	func = [&] {m_pDeath_Shake->RandomUpAxisShake(); };
+	m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Death_Land"), func);
 
 	return S_OK;
 }
@@ -2147,5 +2256,8 @@ void CArmored_Troll::Free()
 	if (true == m_isCloned)
 	{
 		Safe_Release(m_pWeapon);
+		Safe_Release(m_pStep_Shake);
+		Safe_Release(m_pHit_Shake);
+		Safe_Release(m_pDeath_Shake);
 	}
 }

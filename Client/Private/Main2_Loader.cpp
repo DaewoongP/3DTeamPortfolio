@@ -24,6 +24,8 @@
 #include "Weapon_Dragon_Head.h"
 #pragma endregion Weapon
 
+#include "Camera_Shake.h"
+
 
 CMain2_Loader::CMain2_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -372,8 +374,13 @@ HRESULT CMain2_Loader::Loading_For_Sky(LEVELID eLevelID)
 
 HRESULT CMain2_Loader::Loading_For_Static(LEVELID eLevelID)
 {
+
 	try 
 	{
+		/* For.Prototype_Component_Enemy_Camera_Shake*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Enemy_Camera_Shake"),
+			CCamera_Shake::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Enemy_Camera_Shake");
 	}
 	catch (const _tchar* pErrorTag)
 	{

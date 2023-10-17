@@ -41,6 +41,32 @@ public:
 		SHAKE_POWER_END
 	};
 
+public:
+	enum SHAKE_PRIORITY
+	{
+		SHAKE_PRIORITY_1,
+		SHAKE_PRIORITY_2,
+		SHAKE_PRIORITY_END
+	};
+
+	struct SHAKE_INFO_DESC
+	{
+		_float fShakeDuration = { 0.0f };
+		_float fShakeTimeAcc = { 0.0f };
+		_float fShakePower = { 0.0f };
+
+		_float3 vShake_Axis_Set = { _float3() };
+
+		SHAKE_AXIS eShake_Axis = { SHAKE_AXIS_END };
+		SHAKE_TYPE eShake_Type = { SHAKE_TYPE_END };
+		SHAKE_POWER eShake_Power = { SHAKE_POWER_END };
+
+		CEase::EASE eEase = { CEase::EASE_END };
+
+		//진동 주기
+		_float fShakeSpeed = { 0.0f };
+	};
+
 private:
 	explicit CCamera_Manager() = default;
 	virtual ~CCamera_Manager() = default;
@@ -54,6 +80,17 @@ public:
 
 	//타입, 축, 그래프, 주기, 크기, 지속시간, 특정 축
 	void Set_Shake(
+		SHAKE_TYPE _eType = SHAKE_TYPE_TRANSLATION,
+		SHAKE_AXIS _eAxis = SHAKE_AXIS_LOOK,
+		CEase::EASE _eEase = CEase::IN_SINE,
+		_float _fSpeed = 1.0f,
+		_float _Duration = 1.0f,
+		_float _fPower = 1.0f,
+		SHAKE_POWER _ePower = SHAKE_POWER_CRECENDO_DECRECENDO,
+		_float3 _vAxisSet = _float3());
+
+	void Set_Shake(
+		SHAKE_PRIORITY _eShake_Priority = SHAKE_PRIORITY_1,
 		SHAKE_TYPE _eType = SHAKE_TYPE_TRANSLATION,
 		SHAKE_AXIS _eAxis = SHAKE_AXIS_LOOK,
 		CEase::EASE _eEase = CEase::IN_SINE,
@@ -201,6 +238,7 @@ private:
 	//진동 주기
 	_float m_fShakeSpeed = { 0.0f };
 
+	SHAKE_INFO_DESC m_Shake_Info_Desc[SHAKE_PRIORITY_END];
 private:
 	_float3 m_vPreviousEye = { _float3() };
 	_float3 m_vPreviousAt = { _float3() };
@@ -237,6 +275,7 @@ private:
 
 	//쉐이크
 	void Shake_Update(_float _TimeDelta);
+	void Shake_Update(SHAKE_PRIORITY _eShake_Priority, _float _TimeDelta);
 
 
 	//카메라 변경시 러프

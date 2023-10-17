@@ -168,6 +168,7 @@ void CBasicCast::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		vRandomAxis = XMVector3TransformNormal(vRandomAxis, XMMatrixRotationAxis(vLook, XMConvertToRadians(fRandomRadian)));
 
 		pGameInstance->Set_Shake(
+			CCamera_Manager::SHAKE_PRIORITY_2,
 			CCamera_Manager::SHAKE_TYPE_TRANSLATION,
 			CCamera_Manager::SHAKE_AXIS_SET,
 			CEase::IN_EXPO,

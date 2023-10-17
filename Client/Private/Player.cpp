@@ -2554,8 +2554,7 @@ void CPlayer::Finish_Animation()
 
 void CPlayer::Go_Roll(void* _pArg)
 {
-	if (true == m_isBlink ||
-		(true == m_pPlayer_Camera->Is_Finish_Animation() &&
+	if ((true == m_pPlayer_Camera->Is_Finish_Animation() &&
 			(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
 				m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
 				m_pStateContext->Is_Current_State(TEXT("Move Start")) ||

@@ -23,6 +23,25 @@ void CCamera_Manager::Set_Shake(SHAKE_TYPE _eType, SHAKE_AXIS _eAxis, CEase::EAS
 	m_fShakeSpeed = _fSpeed;
 }
 
+void CCamera_Manager::Set_Shake(SHAKE_PRIORITY _eShake_Priority, SHAKE_TYPE _eType, SHAKE_AXIS _eAxis, CEase::EASE _eEase, _float _fSpeed, _float _Duration, _float _fPower, SHAKE_POWER _ePower, _float3 _vAxisSet)
+{
+	if (SHAKE_PRIORITY_1 > _eShake_Priority || SHAKE_PRIORITY_END <= _eShake_Priority)
+	{
+		return;
+	}
+
+	m_Shake_Info_Desc[_eShake_Priority].fShakeTimeAcc = 0.0f;
+
+	m_Shake_Info_Desc[_eShake_Priority].eShake_Type = _eType;
+	m_Shake_Info_Desc[_eShake_Priority].eShake_Axis = _eAxis;
+	m_Shake_Info_Desc[_eShake_Priority].eEase = _eEase;
+	m_Shake_Info_Desc[_eShake_Priority].fShakeSpeed = _fSpeed;
+	m_Shake_Info_Desc[_eShake_Priority].fShakeDuration = _Duration;
+	m_Shake_Info_Desc[_eShake_Priority].fShakePower = _fPower;
+	m_Shake_Info_Desc[_eShake_Priority].eShake_Power = _ePower;
+	m_Shake_Info_Desc[_eShake_Priority].vShake_Axis_Set = _vAxisSet;
+}
+
 const _float4 CCamera_Manager::Get_OffSetEye(OFFSETCAMERADESC& _OffSetCameraDesc)
 {
 	//포지션에
@@ -81,7 +100,16 @@ void CCamera_Manager::Tick(_float _TimeDelta)
 
 void CCamera_Manager::Late_Tick(_float _TimeDelta)
 {
+#ifdef _DEBUG
+	
 	Shake_Update(_TimeDelta);
+
+#endif // _DEBUG
+	
+	for (size_t i = 0; i < SHAKE_PRIORITY_END; i++)
+	{
+		Shake_Update((SHAKE_PRIORITY)i,_TimeDelta);
+	}
 }
 
 HRESULT CCamera_Manager::Initialize_CameraManager()
@@ -856,6 +884,174 @@ void CCamera_Manager::Shake_Update(_float _TimeDelta)
 	_float3 vUp = Cam_Matrix.Up();
 	vUp.Normalize();
 	
+	m_pPipeLine->Set_Transform(CPipeLine::D3DTS_VIEW, XMMatrixLookAtLH(vEye, vAt, vUp));
+}
+
+void CCamera_Manager::Shake_Update(SHAKE_PRIORITY _eShake_Priority, _float _TimeDelta)
+{
+	//예외 조건
+	//누적 시간 >= 총 시간
+	if (m_Shake_Info_Desc[_eShake_Priority].fShakeTimeAcc >= m_Shake_Info_Desc[_eShake_Priority].fShakeDuration)
+	{
+		m_Shake_Info_Desc[_eShake_Priority].fShakePower = 0.0f;
+		return;
+	}
+
+	m_Shake_Info_Desc[_eShake_Priority].fShakeTimeAcc += _TimeDelta;
+
+	if (m_Shake_Info_Desc[_eShake_Priority].fShakeTimeAcc >= m_Shake_Info_Desc[_eShake_Priority].fShakeDuration)
+	{
+		m_Shake_Info_Desc[_eShake_Priority].fShakeTimeAcc = m_Shake_Info_Desc[_eShake_Priority].fShakeDuration;
+	}
+
+	_float4x4 Cam_Matrix = XMMatrixInverse(nullptr, *m_pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_VIEW));
+
+	_float fShakePower = { 0.0f };
+	fShakePower = m_Shake_Info_Desc[_eShake_Priority].fShakePower - CEase::Ease(m_Shake_Info_Desc[_eShake_Priority].eEase, m_Shake_Info_Desc[_eShake_Priority].fShakeTimeAcc, 0.0f, m_Shake_Info_Desc[_eShake_Priority].fShakePower, m_Shake_Info_Desc[_eShake_Priority].fShakeDuration);
+
+	switch (m_Shake_Info_Desc[_eShake_Priority].eShake_Power)
+	{
+	case Engine::CCamera_Manager::SHAKE_POWER_CRECENDO:
+	{
+		fShakePower = CEase::Ease(m_Shake_Info_Desc[_eShake_Priority].eEase, m_Shake_Info_Desc[_eShake_Priority].fShakeTimeAcc, 0.0f, m_Shake_Info_Desc[_eShake_Priority].fShakePower, m_Shake_Info_Desc[_eShake_Priority].fShakeDuration);
+	}
+	break;
+	case Engine::CCamera_Manager::SHAKE_POWER_DECRECENDO:
+	{
+		fShakePower = m_Shake_Info_Desc[_eShake_Priority].fShakePower - CEase::Ease(m_Shake_Info_Desc[_eShake_Priority].eEase, m_Shake_Info_Desc[_eShake_Priority].fShakeTimeAcc, 0.0f, m_Shake_Info_Desc[_eShake_Priority].fShakePower, m_Shake_Info_Desc[_eShake_Priority].fShakeDuration);
+	}
+	break;
+	case Engine::CCamera_Manager::SHAKE_POWER_CRECENDO_DECRECENDO:
+	{
+		//지속시간의 반을 넘어갔다면, 점점 약해진다.
+		if (m_Shake_Info_Desc[_eShake_Priority].fShakeTimeAcc >= m_Shake_Info_Desc[_eShake_Priority].fShakeDuration * 0.5f)
+		{
+			fShakePower = m_Shake_Info_Desc[_eShake_Priority].fShakePower - CEase::Ease(m_Shake_Info_Desc[_eShake_Priority].eEase, m_Shake_Info_Desc[_eShake_Priority].fShakeTimeAcc, 0.0f, m_Shake_Info_Desc[_eShake_Priority].fShakePower, m_Shake_Info_Desc[_eShake_Priority].fShakeDuration);
+		}
+		else
+		{
+			fShakePower = CEase::Ease(m_Shake_Info_Desc[_eShake_Priority].eEase, m_Shake_Info_Desc[_eShake_Priority].fShakeTimeAcc, 0.0f, m_Shake_Info_Desc[_eShake_Priority].fShakePower, m_Shake_Info_Desc[_eShake_Priority].fShakeDuration);
+		}
+	}
+	break;
+	case Engine::CCamera_Manager::SHAKE_POWER_END:
+		break;
+	default:
+		break;
+	}
+
+
+
+	_float fSin = sinf(m_Shake_Info_Desc[_eShake_Priority].fShakeTimeAcc/* * m_fShakeDuration*/ * XMConvertToRadians(360.0f) * m_Shake_Info_Desc[_eShake_Priority].fShakeSpeed);
+
+	_float fShakeResult = fSin * fShakePower;
+
+	//쉐이크
+	switch (m_Shake_Info_Desc[_eShake_Priority].eShake_Type)
+	{
+	case Engine::CCamera_Manager::SHAKE_TYPE_TRANSLATION:
+	{
+		switch (m_Shake_Info_Desc[_eShake_Priority].eShake_Axis)
+		{
+		case Engine::CCamera_Manager::SHAKE_AXIS_RIGHT:
+		{
+			_float3 vRight = Cam_Matrix.Right();
+			vRight.Normalize();
+			vRight *= fShakeResult;
+			Cam_Matrix = Cam_Matrix * XMMatrixTranslation(vRight.x, vRight.y, vRight.z);
+		}
+		break;
+		case Engine::CCamera_Manager::SHAKE_AXIS_UP:
+		{
+			_float3 vUp = Cam_Matrix.Up();
+			vUp.Normalize();
+			vUp *= fShakeResult;
+			Cam_Matrix = Cam_Matrix * XMMatrixTranslation(vUp.x, vUp.y, vUp.z);
+		}
+		break;
+		case Engine::CCamera_Manager::SHAKE_AXIS_LOOK:
+		{
+			_float3 vLook = Cam_Matrix.Look();
+			vLook.Normalize();
+			vLook *= fShakeResult;
+			Cam_Matrix = Cam_Matrix * XMMatrixTranslation(vLook.x, vLook.y, vLook.z);
+		}
+		break;
+		case Engine::CCamera_Manager::SHAKE_AXIS_SET:
+		{
+			_float3 vAxis = m_Shake_Info_Desc[_eShake_Priority].vShake_Axis_Set;
+			vAxis.Normalize();
+			vAxis *= fShakeResult;
+			Cam_Matrix = Cam_Matrix * XMMatrixTranslation(vAxis.x, vAxis.y, vAxis.z);
+		}
+		break;
+		case Engine::CCamera_Manager::SHAKE_AXIS_END:
+			break;
+		default:
+			break;
+		}
+	}
+	break;
+	case Engine::CCamera_Manager::SHAKE_TYPE_ROTATION:
+	{
+		_float3 vRight = Cam_Matrix.Right();
+		_float3 vUp = Cam_Matrix.Up();
+		_float3 vLook = Cam_Matrix.Look();
+
+		_float4x4 RotationMatrix = _float4x4();
+
+		switch (m_Shake_Info_Desc[_eShake_Priority].eShake_Axis)
+		{
+		case Engine::CCamera_Manager::SHAKE_AXIS_RIGHT:
+		{
+			RotationMatrix = XMMatrixRotationQuaternion(
+				XMQuaternionRotationAxis(XMVector3Normalize(vRight), fShakeResult));
+		}
+		break;
+		case Engine::CCamera_Manager::SHAKE_AXIS_UP:
+		{
+			RotationMatrix = XMMatrixRotationQuaternion(
+				XMQuaternionRotationAxis(XMVector3Normalize(vUp), fShakeResult));
+		}
+		break;
+		case Engine::CCamera_Manager::SHAKE_AXIS_LOOK:
+		{
+			RotationMatrix = XMMatrixRotationQuaternion(
+				XMQuaternionRotationAxis(XMVector3Normalize(vLook), fShakeResult));
+		}
+		break;
+		case Engine::CCamera_Manager::SHAKE_AXIS_SET:
+		{
+			RotationMatrix = XMMatrixRotationQuaternion(
+				XMQuaternionRotationAxis(XMVector3Normalize(m_Shake_Info_Desc[_eShake_Priority].vShake_Axis_Set), fShakeResult));
+		}
+		break;
+		case Engine::CCamera_Manager::SHAKE_AXIS_END:
+			break;
+		default:
+			break;
+		}
+
+		vRight = XMVector3TransformNormal(vRight, RotationMatrix);
+		vUp = XMVector3TransformNormal(vUp, RotationMatrix);
+		vLook = XMVector3TransformNormal(vLook, RotationMatrix);
+
+		memcpy(&Cam_Matrix.m[0][0], &vRight, sizeof(_float3));
+		memcpy(&Cam_Matrix.m[1][0], &vUp, sizeof(_float3));
+		memcpy(&Cam_Matrix.m[2][0], &vLook, sizeof(_float3));
+	}
+	break;
+	case Engine::CCamera_Manager::SHAKE_TYPE_END:
+		break;
+	default:
+		break;
+	}
+
+	_float3 vEye = Cam_Matrix.Translation();
+	_float3 vAt = vEye + Cam_Matrix.Look();
+	_float3 vUp = Cam_Matrix.Up();
+	vUp.Normalize();
+
 	m_pPipeLine->Set_Transform(CPipeLine::D3DTS_VIEW, XMMatrixLookAtLH(vEye, vAt, vUp));
 }
 
