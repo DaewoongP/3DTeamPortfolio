@@ -19,6 +19,12 @@ public:
 	_float Get_HDR() { return m_fHDR; }
 	void Set_HDR(_float fPower) { m_fHDR = fPower; }
 	class CDOF* Get_Dof() { return m_pDOF; }
+	void Set_Fog(_bool isFog, _float4 vFogColor, _float3 vFogCenterPos, _float fFogRadius) {
+		m_isCircleFog = isFog;
+		m_vFogColor = vFogColor;
+		m_vFogCenterPos = vFogCenterPos;
+		m_fFogRadius = fFogRadius;
+	}
 
 public:
 	// radial on / off , sample 최대개수 = 10
