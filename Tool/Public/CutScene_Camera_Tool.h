@@ -27,6 +27,7 @@ public:
 	{
 		CUTSCENE_AT,
 		CUTSCENE_EYE,
+		CUTSCENE_LOOK,
 		CUTSCENE_END
 	};
 
@@ -130,6 +131,9 @@ private:
 	//중간 삽입 할거임?
 	_bool m_isInsertBefore{ false };
 
+	//녹화 할지 말지
+	_bool m_isRecording = { false };
+
 private:
 	//마우스로 위치 수정 기능
 	void Fix_Point();
@@ -156,6 +160,8 @@ private:
 	void Create_CameraInfo(_In_ _float4 _vRayPos, _In_ _float4 _vRayDir);
 
 	void Create_OriginAt(_In_ _float4 _vRayPos, _In_ _float4 _vRayDir);
+
+	void Create_LookPoint();
 
 private:
 	//전체 순회 선택
@@ -233,6 +239,10 @@ private:
 
 	//컷씬 중지
 	void Stop_CutScene();
+
+	//녹화
+	void Recording_Camera_Move();
+	
 public:
 	static CCutScene_Camera_Tool* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, void * pArg = nullptr);
 	virtual void Free() override;

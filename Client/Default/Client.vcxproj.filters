@@ -877,6 +877,15 @@
     <Filter Include="09. Quest_Manager">
       <UniqueIdentifier>{019794e9-d13f-4ec9-a419-4c2b5ea04f05}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. Scene\Main_Menu\Guide_Book">
+      <UniqueIdentifier>{9ea80fb5-bafc-42e2-bc97-7d00918990a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Env">
+      <UniqueIdentifier>{397b10fb-04a8-4524-96cf-1c1ccba12d43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Cliffside">
+      <UniqueIdentifier>{db76acf0-1434-4a65-8c6d-2a7074254ab7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1739,6 +1748,15 @@
     <ClInclude Include="..\public\Quest_Manager.h">
       <Filter>09. Quest_Manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Guide_Book.h">
+      <Filter>06. Scene\Main_Menu\Guide_Book</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Vault_Torch.h">
+      <Filter>02. GameObject\03. MapObject\Env</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Cliffside.h">
+      <Filter>07. Events\Cliffside</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1818,9 +1836,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Golem_Combat.cpp">
       <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\MapObject.cpp">
-      <Filter>02. GameObject\03. MapObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Action.cpp">
       <Filter>03. Behaviors\00. Action</Filter>
@@ -2558,6 +2573,18 @@
     </ClCompile>
     <ClCompile Include="..\private\Quest_Manager.cpp">
       <Filter>09. Quest_Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Guide_Book.cpp">
+      <Filter>06. Scene\Main_Menu\Guide_Book</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MapObject.cpp">
+      <Filter>02. GameObject\03. MapObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Vault_Torch.cpp">
+      <Filter>02. GameObject\03. MapObject\Env</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Cliffside.cpp">
+      <Filter>07. Events\Cliffside</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -382,6 +382,8 @@ void CMain_Menu::Set_SelectedText()
 				return;
 			}
 
+			// 가이드북 페이지 넘기기 처리 (z : 0.89 , --)
+
 			m_pTexts[m_iSelectedText]->Set_Clicked(false);
 			m_iSelectedText = iIndex;
 			m_eCurMenu = (MENU)m_iSelectedText;

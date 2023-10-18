@@ -96,6 +96,9 @@
 
 #include "Event_Vault_Spawn.h"
 #include "Event_Smeade.h"
+#include "Event_Cliffside.h"
+
+#include "Guide_Book.h"
 
 #ifdef _DEBUG
 #include "Test_Player.h"
@@ -233,6 +236,11 @@ HRESULT CMain0_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Water"),
 			CWater::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Water");
+
+		/* For.Prototype_GameObject_Event_Cliffside */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Cliffside"),
+			CEvent_Cliffside::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Event_Cliffside");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -439,6 +447,17 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Script"),
 				CScript::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_GameObject_Script");
+#pragma endregion
+
+#pragma region Guide_Book
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Guide_Book"),
+				CGuide_Book::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_Guide_Book");
+
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Guide_Book"),
+				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM,
+				TEXT("../../Resources/Models/Anims/Anim_GuideBook/Anim_GuideBook.dat")))))
+				throw TEXT("Prototype_Component_Model_Guide_Book");
 #pragma endregion
 
 #pragma region Load Texture

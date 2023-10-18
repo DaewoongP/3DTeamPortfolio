@@ -338,42 +338,44 @@ HRESULT CAccio::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Accio_Move_Particle"),
+		TEXT("Com_Move_Particle"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][0]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Accio_Move_Particle)");
+		__debugbreak();
+		return E_FAIL;
+	}
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Defatul_WandFlare_RainBow"),
-		TEXT("Com_RainBow"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][0]))))
+		TEXT("Com_RainBow"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][1]))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Defatul_WandFlare_RainBow)");
 		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Defatul_WandFlare_Spread"),
-		TEXT("Com_Spread"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][1]))))
+		TEXT("Com_Spread"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][2]))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Defatul_WandFlare_Spread)");
 		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Defatul_WandFlare_WandGlow"),
-		TEXT("Com_WandGlow"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][2]))))
+		TEXT("Com_WandGlow"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][3]))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Defatul_WandFlare_WandGlow)");
 		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Defatul_WandFlare_WandGlowLarge"),
-		TEXT("Com_WandGlowLarge"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][3]))))
+		TEXT("Com_WandGlowLarge"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][4]))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Defatul_WandFlare_WandGlowLarge)");
 		__debugbreak();
 		return E_FAIL;
 	}
 	
-		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Accio_Move_Particle"),
-			TEXT("Com_Move_Particle"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][4]))))
-		{
-			MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Accio_Move_Particle)");
-			__debugbreak();
-			return E_FAIL;
-		}
+	
 
 	m_ParticleVec[EFFECT_STATE_HIT].resize(3);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Accio_HitMain"),

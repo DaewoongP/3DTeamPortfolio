@@ -174,11 +174,13 @@ HRESULT CRenderer::Initialize_Prototype()
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(ViewportDesc.Width, ViewportDesc.Height, 0.f, 1.f));
 
 #ifdef _DEBUG 
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Diffuse"), 80.f, 80.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Deferred"), 80.f, 80.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Flowmap"), 80.f, 240.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_DOF"), 80.f, 240.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Fog"), 240.f, 80.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Glowed"), 80.f, 400.f, 160.f, 160.f)))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), 240.f, 80.f, 160.f, 160.f)))
 		return E_FAIL;
 
 	m_isDebugRender = false;
@@ -244,15 +246,13 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_Deferred()))
 		return E_FAIL;
-	if (FAILED(m_pFlowmap->Render()))
-		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Deferred"))))
 		return E_FAIL;
 #pragma endregion
 
 #pragma region Render Targets
-	if (FAILED(m_pDOF->Render(TEXT("Target_Deferred"))))
-		return E_FAIL;
+	/*if (FAILED(m_pDOF->Render(TEXT("Target_Deferred"))))
+		return E_FAIL;*/
 	if (FAILED(Render_HDR()))
 		return E_FAIL;
 
@@ -291,6 +291,10 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Render_Screen()))
 		return E_FAIL;
 	if (FAILED(Render_ScreenRadial()))
+		return E_FAIL;
+
+	// final
+	if (FAILED(Render_Fade()))
 		return E_FAIL;
 
 	// UI 렌더링
@@ -717,13 +721,33 @@ HRESULT CRenderer::Render_PostProcessing()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_SSAO_Blured"), m_pPostProcessingShader, "g_SSAOTexture")))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Fog"), m_pPostProcessingShader, "g_FogTexture")))
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Depth"), m_pPostProcessingShader, "g_DepthTexture")))
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	CPipeLine* pPipeLine = CPipeLine::GetInstance();
+	Safe_AddRef(pPipeLine);
+	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ViewMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ProjMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
+		return E_FAIL;
+	Safe_Release(pPipeLine);
+
+	// fog
+	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_vFogColor", &m_vFogColor, sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_vCircleFogCenter", &m_vFogCenterPos, sizeof(_float3))))
+		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_fCircleFogRadius", &m_fFogRadius, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_isCircleFog", &m_isCircleFog, sizeof(_bool))))
 		return E_FAIL;
 
 	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_isSSAO", &m_isSSAO, sizeof(_bool))))
@@ -891,6 +915,36 @@ HRESULT CRenderer::Render_ScreenRadial()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_Fade()
+{
+	if (false == m_isFadeIn)
+		return S_OK;
+
+	// 화면 마지막에 그냥 띄워버리면 편함.
+	if (FAILED(m_pFadeShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pFadeShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pFadeShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	CTimer_Manager* pTimer_Manager = CTimer_Manager::GetInstance();
+	Safe_AddRef(pTimer_Manager);
+	m_fFadeTime += pTimer_Manager->Get_World_Tick();
+	Safe_Release(pTimer_Manager);
+
+	if (FAILED(m_pFadeShader->Bind_RawValue("g_fRadius", &m_fFadeTime, sizeof(_float))))
+		return E_FAIL;
+
+	if (FAILED(m_pFadeShader->Begin("Fade")))
+		return E_FAIL;
+
+	if (FAILED(m_pRectBuffer->Render()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_UI()
 {
 	if (FAILED(Sort_Z(RENDER_UI)))
@@ -1003,6 +1057,10 @@ HRESULT CRenderer::Add_Components()
 	
 	m_pFogShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Fog.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
 	if (nullptr == m_pFogShader)
+		return E_FAIL;
+	
+	m_pFadeShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Fade.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
+	if (nullptr == m_pFadeShader)
 		return E_FAIL;
 
 	m_pNoiseTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Noises/VFX_T_Cloud_Noise_Tile_D.png"));
@@ -1153,6 +1211,7 @@ void CRenderer::Free()
 	Safe_Release(m_pDistortionShader);
 	Safe_Release(m_pRadialBlurShader);
 	Safe_Release(m_pFogShader);
+	Safe_Release(m_pFadeShader);
 	Safe_Release(m_pNoiseTexture);
 
 	Safe_Release(m_pBlur);
