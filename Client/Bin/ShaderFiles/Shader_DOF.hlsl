@@ -2,9 +2,6 @@
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
 
-int g_iTest;
-
-
 float4  g_vCamPosition;
 float   g_fCamFar;
 

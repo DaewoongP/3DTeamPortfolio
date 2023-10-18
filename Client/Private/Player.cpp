@@ -1450,8 +1450,8 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Robe
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Robe_Arcane"),
-		CCustomModel::ROBE)))
+		TEXT("Prototype_Component_MeshPart_Robe_Quidditch"),
+		CCustomModel::ROBE, _float4(1.f, 1.f, 1.f, 1.f), TEXT("../../Resources/GameData/ClothData/Robe_Quidditch.cloth"))))
 	{
 		MSG_BOX("Failed Add MeshPart Robe");
 
@@ -2344,7 +2344,7 @@ void CPlayer::Update_Cloth(_float fTimeDelta)
 	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(m_fClothPower * vVelocity,
 		XMMatrixInverse(nullptr, XMMatrixRotationQuaternion(m_pTransform->Get_Quaternion()))));
 	
-	//m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
+	m_pCustomModel->Tick(CCustomModel::ROBE, 0, fTimeDelta);
 }
 
 void CPlayer::Find_Target_For_Distance()
