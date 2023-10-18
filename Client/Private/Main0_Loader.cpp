@@ -38,6 +38,7 @@
 #include "UI_Damage.h"
 #include "UI_Store.h"
 #include "UI_Interaction.h"
+#include "Script.h"
 #pragma endregion UI
 
 #pragma region Effects
@@ -442,6 +443,10 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Interaction"),
 				CUI_Interaction::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_GameObject_UI_Interaction");
+
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Script"),
+				CScript::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_Script");
 #pragma endregion
 
 #pragma region Guide_Book

@@ -703,7 +703,7 @@ HRESULT CPlayer::Add_Components()
 	RigidBodyDesc.vDebugColor = _float4(1.f, 105 / 255.f, 180 / 255.f, 1.f); // hot pink
 	RigidBodyDesc.pOwnerObject = this;
 	RigidBodyDesc.eThisCollsion = COL_PLAYER;
-	RigidBodyDesc.eCollisionFlag = COL_ENEMY_RANGE | COL_ENEMY_ATTACK | COL_TRIGGER | COL_STATIC | COL_MAGIC;
+	RigidBodyDesc.eCollisionFlag = COL_ENEMY_RANGE | COL_NPC_RANGE  | COL_ENEMY_ATTACK | COL_TRIGGER | COL_STATIC | COL_MAGIC;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Player_Default");
 
 	/* Com_RigidBody */
@@ -1087,15 +1087,15 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	}
 
 
-	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
-	{
-		CRollState::tagRollStateDesc RollStateDesc;
+	//if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
+	//{
+	//	CRollState::tagRollStateDesc RollStateDesc;
 
-		RollStateDesc.IsBlink = true;
+	//	RollStateDesc.IsBlink = true;
 
-		Go_Roll(&RollStateDesc);
-		//Go_Jump();
-	}
+	//	Go_Roll(&RollStateDesc);
+	//	//Go_Jump();
+	//}
 
 	if (true == m_isReadySpell)
 	{
