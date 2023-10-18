@@ -120,6 +120,11 @@ protected:
 	// For. SpinMove
 	_float m_fRotationAcc = { 0.f };
 
+	//RenderOption
+	_bool m_isAlphaBlend = { true }; // Save
+	_bool m_isDiffuse = { true };
+	_bool m_isGlow = { false };
+	_bool m_isDistortion = { false };
 protected:
 	CRenderer* m_pRenderer = { nullptr };
 	CVIBuffer_Rect_Trail* m_pBuffer = { nullptr };
