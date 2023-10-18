@@ -251,8 +251,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 #pragma endregion
 
 #pragma region Render Targets
-	if (FAILED(m_pDOF->Render(TEXT("Target_Deferred"))))
-		return E_FAIL;
+	/*if (FAILED(m_pDOF->Render(TEXT("Target_Deferred"))))
+		return E_FAIL;*/
 	if (FAILED(Render_HDR()))
 		return E_FAIL;
 

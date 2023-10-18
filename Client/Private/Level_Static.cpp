@@ -85,7 +85,11 @@ HRESULT CLevel_Static::Ready_Layer_Menu_UI(const _tchar* pLayerTag)
 	FAILED_CHECK_RETURN(m_pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC,
 		TEXT("Prototype_GameObject_Main_Menu"), pLayerTag, TEXT("GameObject_UI_Main_Menu"), szDataPath), E_FAIL)
 
-		return S_OK;
+	// °¡ÀÌµå ºÏ
+	FAILED_CHECK_RETURN(m_pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC,
+		TEXT("Prototype_GameObject_Guide_Book"), pLayerTag, TEXT("GameObject_Guide_Book")), E_FAIL)
+
+	return S_OK;
 }
 
 HRESULT CLevel_Static::Add_Scene()

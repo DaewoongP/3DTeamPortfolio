@@ -7,6 +7,8 @@
 #include "Trigger.h"
 #include "Dummy_NPC.h"
 
+#include "Cat.h"
+
 CLevel_Smith::CLevel_Smith(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
 {
@@ -230,6 +232,7 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 	}
 
 	_uint iObjectNum = 0;
+	_uint iCatNum = 0;
 
 	DWORD    dwByte = 0;
 
@@ -345,17 +348,25 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 		// 고양이
 		else if (0 == lstrcmp(modelName.c_str(), wsGreyCat.c_str()))
 		{
+			CCat::CATDESC CatDesc;
+			CatDesc.iTagLen = MapObjectDesc.iTagLen;
+			CatDesc.WorldMatrix = MapObjectDesc.WorldMatrix;
+			lstrcpy(CatDesc.wszTag, MapObjectDesc.wszTag);
+			CatDesc.iAnimIndex = iCatNum;
+
 			_tchar wszobjName[MAX_PATH] = { 0 };
-			_stprintf_s(wszobjName, TEXT("GameObject_Cat_%d"), (iObjectNum));
+			_stprintf_s(wszobjName, TEXT("GameObject_Cat_%d"), (iCatNum));
 
 			if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH,
 				TEXT("Prototype_GameObject_Cat"), TEXT("Layer_BackGround"),
-				wszobjName, &MapObjectDesc)))
+				wszobjName, &CatDesc)))
 			{
 				MSG_BOX("Failed to Clone Cat in Level_Smith");
 				ENDINSTANCE;
 				return E_FAIL;
 			}
+
+			++iCatNum;
 		}
 
 		// 일반 맵오브젝트
