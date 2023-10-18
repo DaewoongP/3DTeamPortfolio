@@ -1087,15 +1087,15 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	}
 
 
-	//if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
-	//{
-	//	CRollState::tagRollStateDesc RollStateDesc;
+	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
+	{
+		CRollState::tagRollStateDesc RollStateDesc;
 
-	//	RollStateDesc.IsBlink = true;
+		RollStateDesc.IsBlink = true;
 
-	//	Go_Roll(&RollStateDesc);
-	//	//Go_Jump();
-	//}
+		Go_Roll(&RollStateDesc);
+		//Go_Jump();
+	}
 
 	if (true == m_isReadySpell)
 	{
