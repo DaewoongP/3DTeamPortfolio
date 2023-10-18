@@ -877,6 +877,9 @@
     <Filter Include="06. Scene\Main_Menu\Guide_Book">
       <UniqueIdentifier>{9ea80fb5-bafc-42e2-bc97-7d00918990a1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Env">
+      <UniqueIdentifier>{397b10fb-04a8-4524-96cf-1c1ccba12d43}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1739,6 +1742,9 @@
     <ClInclude Include="..\Public\Guide_Book.h">
       <Filter>06. Scene\Main_Menu\Guide_Book</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Vault_Torch.h">
+      <Filter>02. GameObject\03. MapObject\Env</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1818,9 +1824,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Golem_Combat.cpp">
       <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\MapObject.cpp">
-      <Filter>02. GameObject\03. MapObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Action.cpp">
       <Filter>03. Behaviors\00. Action</Filter>
@@ -2558,6 +2561,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Guide_Book.cpp">
       <Filter>06. Scene\Main_Menu\Guide_Book</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MapObject.cpp">
+      <Filter>02. GameObject\03. MapObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Vault_Torch.cpp">
+      <Filter>02. GameObject\03. MapObject\Env</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

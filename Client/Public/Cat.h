@@ -20,12 +20,13 @@ class CCat final : public CGameObject
 	};
 
 public:
-	typedef struct tagMapObjectDesc
+	typedef struct tagCatDesc
 	{
 		_float4x4 WorldMatrix; // 상태 행렬
 		_uint iTagLen = { 0 }; // 문자열 길이
 		_tchar wszTag[MAX_PATH] = TEXT(""); // 오브젝트 종류(모델 컴포넌트 이름)
-	}MAPOBJECTDESC;
+		_uint iAnimIndex = { 0 }; // 어떤 애니메이션으로 동작할건지
+	}CATDESC;
 
 private:
 	explicit CCat(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -37,8 +38,6 @@ private:
 	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
-	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
-	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix) override;
 
@@ -55,10 +54,8 @@ private:
 	_float			m_fRadius = { 0.f };
 	_float			m_fWalkTime = { 0.f }; // 걷는 시간
 
-	static _uint	m_iCatAction;		   // 고양이마다 액션
-
 private:
-	MAPOBJECTDESC	m_ObjectDesc;
+	CATDESC	m_ObjectDesc;
 	CAT_ANIMATION  m_eCatAnimIndex = { CAT_END };
 	CAT_ANIMATION  m_ePreCatAnimIndex = m_eCatAnimIndex;
 

@@ -1,8 +1,6 @@
 #include "..\Public\Cat.h"
 #include "GameInstance.h"
 
-_uint CCat::m_iCatAction = 0;
-
 CCat::CCat(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -35,9 +33,8 @@ HRESULT CCat::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_ObjectDesc = *reinterpret_cast<MAPOBJECTDESC*>(pArg);
+	m_ObjectDesc = *reinterpret_cast<CATDESC*>(pArg);
 	m_pTransform->Set_WorldMatrix(m_ObjectDesc.WorldMatrix);
-	//m_pTransform->Set_RigidBody(m_pRigidBody);
 
 	return S_OK;
 }
@@ -53,13 +50,11 @@ HRESULT CCat::Initialize_Level(_uint iCurrentLevelIndex)
 		return E_FAIL;
 	}
 
-	m_eCatAnimIndex = (CAT_ANIMATION)m_iCatAction;
+	m_eCatAnimIndex = (CAT_ANIMATION)m_ObjectDesc.iAnimIndex;
 	m_pModel->Change_Animation((_uint)m_eCatAnimIndex);
 
 	if (CAT_TURN == m_eCatAnimIndex)
 		m_pModel->Get_Animation(m_eCatAnimIndex)->Set_Loop(false);
-
-	++m_iCatAction;
 
 	return S_OK;
 }
@@ -98,16 +93,6 @@ void CCat::Late_Tick(_float fTimeDelta)
 	}
 
 	ENDINSTANCE;
-}
-
-void CCat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
-{
-	
-}
-
-void CCat::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
-{
-	
 }
 
 HRESULT CCat::Render()
@@ -298,8 +283,6 @@ CGameObject* CCat::Clone(void* pArg)
 void CCat::Free()
 {
 	__super::Free();
-
-	m_iCatAction = 0;
 
 	Safe_Release(m_pRigidBody);
 	Safe_Release(m_pShadowShader);

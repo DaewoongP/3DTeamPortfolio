@@ -262,6 +262,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\public\Trigger.h" />
+    <ClInclude Include="..\Public\Vault_Torch.h" />
     <ClInclude Include="..\Public\Vendor.h" />
     <ClInclude Include="..\public\Water.h" />
     <ClInclude Include="..\Public\Weapon_DarkWizard_Wand.h" />
@@ -572,6 +573,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\private\Trigger.cpp" />
+    <ClCompile Include="..\Private\Vault_Torch.cpp" />
     <ClCompile Include="..\Private\Vendor.cpp" />
     <ClCompile Include="..\private\Water.cpp" />
     <ClCompile Include="..\Private\Weapon_DarkWizard_Wand.cpp" />
