@@ -192,7 +192,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(94.5f, 7.2f, 78.f); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì¼ï¿½ ï¿½Ù·ï¿½ ï¿½ï¿½
 	m_vLevelInitPosition[LEVEL_SKY] = _float3(88.8f, 12.5f, 69.8f); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì¼ï¿½ ï¿½Ù·ï¿½ ï¿½ï¿½
 
-	m_fTargetViewRange = 1.0f;
+	m_fTargetViewRange = 2.0f;
 
 
 	//m_vecEaseList.resize(CEase::EASE_END);
@@ -1096,7 +1096,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	}
 
 	//´­·¶À» ¶§
-	if (pGameInstance->Get_DIKeyState(DIK_TAB, CInput_Device::KEY_DOWN))
+	if (pGameInstance->Get_DIKeyState(DIK_G, CInput_Device::KEY_DOWN))
 	{
 		Go_Use_Item();
 		/*switch (m_pPlayer_Information->Get_PotionTap()->Get_CurTool()->Get_ItemID())

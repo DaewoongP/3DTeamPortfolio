@@ -95,6 +95,7 @@
 
 #include "Event_Vault_Spawn.h"
 #include "Event_Smeade.h"
+#include "Event_Cliffside.h"
 
 #ifdef _DEBUG
 #include "Test_Player.h"
@@ -232,6 +233,11 @@ HRESULT CMain0_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Water"),
 			CWater::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Water");
+
+		/* For.Prototype_GameObject_Event_Cliffside */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Cliffside"),
+			CEvent_Cliffside::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Event_Cliffside");
 	}
 	catch (const _tchar* pErrorTag)
 	{
