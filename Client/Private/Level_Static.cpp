@@ -15,7 +15,7 @@ HRESULT CLevel_Static::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pC
 	FAILED_CHECK_RETURN(Ready_Layer_UI(TEXT("Layer_UI")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_FieldGuide_UI(TEXT("Layer_FieldGuide_UI")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_Menu_UI(TEXT("Layer_Menu_UI")), E_FAIL);
-
+	
 #ifdef _DEBUG
 	FAILED_CHECK_RETURN(Ready_Layer_Debug(TEXT("Layer_Debug")), E_FAIL);
 #endif // _DEBUG

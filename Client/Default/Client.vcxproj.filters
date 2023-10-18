@@ -874,6 +874,9 @@
     <Filter Include="02. GameObject\11. Water">
       <UniqueIdentifier>{1b33b363-0555-47c0-bfe6-21b18984e66b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="09. Quest_Manager">
+      <UniqueIdentifier>{019794e9-d13f-4ec9-a419-4c2b5ea04f05}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1733,6 +1736,9 @@
     <ClInclude Include="..\public\Water.h">
       <Filter>02. GameObject\11. Water</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Quest_Manager.h">
+      <Filter>09. Quest_Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2549,6 +2555,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Water.cpp">
       <Filter>02. GameObject\11. Water</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Quest_Manager.cpp">
+      <Filter>09. Quest_Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

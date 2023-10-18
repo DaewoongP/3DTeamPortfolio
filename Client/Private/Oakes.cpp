@@ -1,5 +1,9 @@
 #include "Oakes.h"
 #include "GameInstance.h"
+#include "UI_Interaction.h"
+#include "../../Client/Public/Script.h"
+#include "UI_Script.h"
+
 
 COakes::COakes(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -34,6 +38,7 @@ HRESULT COakes::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pTransform->Set_Speed(10.f);
+	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 	m_pTransform->Rotation(_float3(0.f, XMConvertToRadians(45.f), 0.f));
 
@@ -46,16 +51,73 @@ void COakes::Tick(_float fTimeDelta)
 
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+
+	if (true == m_isColPlayer && nullptr != m_pModelCom)
+	{
+		m_pUI_Interaction->Tick(fTimeDelta);
+
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+
+		if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
+		{
+			m_isPlayScript = true;
+			m_pScripts[m_iScriptIndex]->Reset_Script();
+		}
+		Safe_Release(pGameInstance);
+	}
+
+
+	if (m_isPlayScript)
+		m_pScripts[m_iScriptIndex]->Tick(fTimeDelta);
+		
 }
 
 void COakes::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
+	if (true == m_isColPlayer && nullptr != m_pModelCom)
+	{
+		m_pUI_Interaction->Late_Tick(fTimeDelta);
+
+		if (m_isPlayScript)
+			m_pScripts[m_iScriptIndex]->Late_Tick(fTimeDelta);
+	}
+
+
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
+#ifdef _DEBUG
+		m_pRenderer->Add_DebugGroup(m_pRigidBody);
+#endif // _DEBUG
+	}
+}
+
+void COakes::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
+{
+	// 플레이어가 range콜라이더 안에 진입한경우 "한번 불림"
+	wstring wsCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wsPlayer(TEXT("Player_Default"));
+
+	if (0 == lstrcmp(wsCollisionTag.c_str(), wsPlayer.c_str()))
+		m_isColPlayer = true;
+
+}
+
+void COakes::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
+{
+	// 플레이어가 range콜라이더 밖으로 나간경우 "한번 불림"
+	wstring wsCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wsPlayer(TEXT("Player_Default"));
+
+	if (0 == lstrcmp(wsCollisionTag.c_str(), wsPlayer.c_str()))
+	{
+		m_isColPlayer = false;
+		m_isPlayScript = false;
+		m_pScripts[m_iScriptIndex]->Reset_Script();
 	}
 }
 
@@ -162,6 +224,84 @@ HRESULT COakes::Add_Components()
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowAnimMesh"),
 			TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShaderCom))))
 			throw TEXT("Com_ShadowShader");
+
+		/* Com_RigidBody */
+		CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+		RigidBodyDesc.isStatic = false;
+		RigidBodyDesc.isTrigger = false;
+		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
+		RigidBodyDesc.fDynamicFriction = 1.f;
+		RigidBodyDesc.fRestitution = 0.f;
+		RigidBodyDesc.fStaticFriction = 0.f;
+		RigidBodyDesc.pOwnerObject = this;
+		RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
+		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.85f, 0.f);
+		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
+		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.25f, 0.6f);
+		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
+		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Body");
+		RigidBodyDesc.eThisCollsion = COL_NPC;
+		RigidBodyDesc.eCollisionFlag = COL_STATIC;
+
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+			throw TEXT("Com_RigidBody");
+
+		RigidBodyDesc.isStatic = true;
+		RigidBodyDesc.isTrigger = true;
+		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
+		RigidBodyDesc.fDynamicFriction = 1.f;
+		RigidBodyDesc.fRestitution = 0.f;
+		RigidBodyDesc.fStaticFriction = 0.f;
+		RigidBodyDesc.pOwnerObject = this;
+		RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
+		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.85f, 0.f);
+		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
+		PxSphereGeometry pSphereGeomatry = PxSphereGeometry(2.f); // 범위 설정 
+		RigidBodyDesc.pGeometry = &pSphereGeomatry;
+		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "NPC_Range");
+		RigidBodyDesc.eThisCollsion = COL_NPC_RANGE;
+		RigidBodyDesc.eCollisionFlag = COL_STATIC | COL_PLAYER;
+
+		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
+			return E_FAIL;
+
+		/* Com_UI_Interaction */
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+
+		CUI_Interaction::INTERACTIONDESC pDesc;
+		lstrcpy(pDesc.m_wszName, TEXT("애들레이크 오크스"));
+		lstrcpy(pDesc.m_wszFunc, TEXT("대화하기"));
+		pDesc.m_WorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+
+	
+
+	m_pUI_Interaction = static_cast<CUI_Interaction*>(pGameInstance->Clone_Component(LEVEL_STATIC,
+			TEXT("Prototype_GameObject_UI_Interaction"), &pDesc));
+
+	if (m_pUI_Interaction == nullptr)
+	{
+		Safe_Release(pGameInstance);
+		throw TEXT("Com_UI_Interaction");
+	}
+
+	CScript* pScript = static_cast<CScript*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Script")));
+	pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Oakes/Oakes_1_1.png"));
+	pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Oakes/Oakes_1_2.png"));
+	pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Oakes/Oakes_1_3.png"));
+	pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Oakes/Oakes_1_4.png"));
+	pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Oakes/Oakes_1_5.png"));
+	pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Oakes/Oakes_1_6.png"));
+	m_pScripts.push_back(pScript);
+
+	pScript = static_cast<CScript*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Script")));
+	pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Oakes/Oakes_2_1.png"));
+	m_pScripts.push_back(pScript);
+
+	Safe_Release(pGameInstance);
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -287,5 +427,12 @@ void COakes::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pShadowShaderCom);
+	Safe_Release(m_pRigidBody);
 	Safe_Release(m_pRenderer);
+	Safe_Release(m_pUI_Interaction);
+
+	for (auto& pScript : m_pScripts)
+	{
+		Safe_Release(pScript);
+	}
 }
