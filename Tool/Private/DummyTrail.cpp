@@ -109,11 +109,6 @@ void CDummyTrail::Tick_Imgui(_float _fTimeDelta)
 
 		pEffectWindow->Table_CheckBox("Use Texture Color", "vii389jijvc", &m_isUseTextureColor);
 
-		pEffectWindow->Table_CheckBox("Glow", "dkvijies", &m_isGlow);
-		pEffectWindow->Table_CheckBox("Distortion", "ciceicjoeijdsfs", &m_isDistortion);
-		pEffectWindow->Table_CheckBox("Diffuse", "fwaerawesqrwr2", &m_isDiffuse);
-		pEffectWindow->Table_CheckBox("AlphaBlend", "wroqiewksajqweas", &m_isAlphaBlend);
-
 		ImGui::EndTable();
 	}
 	Save_FileDialog();

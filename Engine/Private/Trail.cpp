@@ -19,10 +19,6 @@ CTrail::CTrail(const CTrail& rhs)
 	, m_vHeadColor(rhs.m_vHeadColor)
 	, m_vTailColor(rhs.m_vTailColor)
 	, m_fWidth(rhs.m_fWidth)
-	, m_isAlphaBlend(rhs.m_isAlphaBlend)
-	, m_isDiffuse(rhs.m_isDiffuse)
-	, m_isGlow(rhs.m_isGlow)
-	, m_isDistortion(rhs.m_isDistortion)
 	, m_fTailDuration(rhs.m_fTailDuration)
 {
 	m_wstrGradientTextureName = rhs.m_wstrGradientTextureName;
@@ -125,10 +121,6 @@ HRESULT CTrail::Save(const _tchar* pFilePath)
 	WriteFile(hFile, &m_vTailColor, sizeof(m_vTailColor), &dwByte, nullptr);
 	WriteFile(hFile, &m_fWidth, sizeof(m_fWidth), &dwByte, nullptr);
 	WriteFile(hFile, &m_fClipThreshold, sizeof(m_fClipThreshold), &dwByte, nullptr);
-	WriteFile(hFile, &m_isAlphaBlend, sizeof( m_isAlphaBlend), &dwByte, nullptr);
-	WriteFile(hFile, &m_isGlow, sizeof(m_isGlow), &dwByte, nullptr);
-	WriteFile(hFile, &m_isDistortion, sizeof(m_isDistortion), &dwByte, nullptr);
-	WriteFile(hFile, &m_isDiffuse, sizeof(m_isDiffuse), &dwByte, nullptr);
 	WriteFile(hFile, m_strClipChannel.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	WriteFile(hFile, &m_isUseTextureColor, sizeof(m_isUseTextureColor), &dwByte, nullptr);
 
@@ -176,12 +168,6 @@ HRESULT CTrail::Load(const _tchar* pFilePath)
 	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	m_strClipChannel = szBuffer;
 	ReadFile(hFile, &m_isUseTextureColor, sizeof(m_isUseTextureColor), &dwByte, nullptr);
-	ReadFile(hFile, &m_isAlphaBlend, sizeof(m_isAlphaBlend), &dwByte, nullptr);
-	ReadFile(hFile, &m_isGlow, sizeof(m_isGlow), &dwByte, nullptr);
-	ReadFile(hFile, &m_isDistortion, sizeof(m_isDistortion), &dwByte, nullptr);
-	ReadFile(hFile, &m_isDiffuse, sizeof(m_isDiffuse), &dwByte, nullptr);
-
-
 
 	Safe_Release(pGameInstance);
 	CloseHandle(hFile);
@@ -295,23 +281,7 @@ void CTrail::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRenderer)
 	{
-		if (m_isDiffuse)
-		{
-			if (true == m_isAlphaBlend)
-				m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
-			else
-				m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-		}
-
-		if (m_isGlow)
-		{
-			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
-		}
-
-		if (m_isDistortion)
-		{
-			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DISTORTION, this);
-		}
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
 	}
 
 }
