@@ -1,12 +1,20 @@
 #include "Shader_EngineHeader.hlsli"
 #include "Shader_RenderFunc.hlsli"
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+matrix g_ViewMatrixInv, g_ProjMatrixInv;
 // PostProcessing
 texture2D g_HDRTexture;
 texture2D g_GlowTexture;
 texture2D g_SSAOTexture;
-texture2D g_FogTexture;
+texture2D g_DepthTexture;
 bool g_isSSAO;
+bool g_isCircleFog;
+float g_fCamFar;
+
+// fog
+float3 g_vCircleFogCenter;
+float4 g_vFogColor;
+float g_fCircleFogRadius;
 
 // HDR
 texture2D g_DeferredTexture;
@@ -64,6 +72,41 @@ PS_OUT PS_MAIN(PS_IN In)
         Out.vColor = vHDR * vSSAO + vGlow;
     else
         Out.vColor = vHDR + vGlow;
+
+    if (true == g_isCircleFog)
+    {
+        float fFogPower = 0.f;
+    
+        vector vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
+        float fViewZ = vDepthDesc.y * g_fCamFar;
+        vector vPosition;
+    
+        vPosition.x = In.vTexUV.x * 2.f - 1.f;
+        vPosition.y = In.vTexUV.y * -2.f + 1.f;
+        vPosition.z = vDepthDesc.x;
+        vPosition.w = 1.f;
+    
+        vPosition = vPosition * fViewZ;
+        vPosition = mul(vPosition, g_ProjMatrixInv);
+        vPosition = mul(vPosition, g_ViewMatrixInv);
+        float fDistance = distance(g_vCircleFogCenter, vPosition.xyz);
+        if (g_fCircleFogRadius > fDistance)
+        {
+            fFogPower = 0.f;
+        }
+        else
+        {
+            fFogPower = saturate((g_fCircleFogRadius - fDistance) / -20.f);
+        }
+        
+        Out.vColor = lerp(Out.vColor, g_vFogColor, fFogPower);
+    }
+        
+    // y값으로 비교
+    //if (vPosition.y >= 10.f)
+    //    fFogPower = 0.f;
+    //else
+    //    fFogPower = saturate((vPosition.y - 10.f) / -10.f);
 
     return Out;
 }

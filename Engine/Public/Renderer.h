@@ -129,7 +129,10 @@ private:
 	_float							m_fRadialBlurWidth = { 0.f };
 	_float							m_fRadialTime = { 0.f };
 	_float							m_fRadialTimeAcc = { 0.f };
+	_bool							m_isCircleFog = { false };
 	_float4							m_vFogColor;
+	_float3							m_vFogCenterPos;
+	_float							m_fFogRadius = { 0.f };
 
 private:
 	class CBlur*					m_pBlur = { nullptr };

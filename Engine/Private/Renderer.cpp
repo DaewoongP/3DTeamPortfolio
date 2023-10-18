@@ -715,13 +715,33 @@ HRESULT CRenderer::Render_PostProcessing()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_SSAO_Blured"), m_pPostProcessingShader, "g_SSAOTexture")))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Fog"), m_pPostProcessingShader, "g_FogTexture")))
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Depth"), m_pPostProcessingShader, "g_DepthTexture")))
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	CPipeLine* pPipeLine = CPipeLine::GetInstance();
+	Safe_AddRef(pPipeLine);
+	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ViewMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ProjMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
+		return E_FAIL;
+	Safe_Release(pPipeLine);
+
+	// fog
+	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_vFogColor", &m_vFogColor, sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_vCircleFogCenter", &m_vFogCenterPos, sizeof(_float3))))
+		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_fCircleFogRadius", &m_fFogRadius, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_isCircleFog", &m_isCircleFog, sizeof(_bool))))
 		return E_FAIL;
 
 	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_isSSAO", &m_isSSAO, sizeof(_bool))))
