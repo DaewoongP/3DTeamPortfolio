@@ -36,8 +36,6 @@ HRESULT CCat::Initialize(void* pArg)
 	m_ObjectDesc = *reinterpret_cast<CATDESC*>(pArg);
 	m_pTransform->Set_WorldMatrix(m_ObjectDesc.WorldMatrix);
 
-	m_iRandCatTexture = rand() % 3;
-
 	return S_OK;
 }
 
@@ -52,7 +50,10 @@ HRESULT CCat::Initialize_Level(_uint iCurrentLevelIndex)
 		return E_FAIL;
 	}
 
-	m_eCatAnimIndex = (CAT_ANIMATION)m_ObjectDesc.iAnimIndex;
+	m_eCatAnimIndex = (CAT_ANIMATION)(m_ObjectDesc.iAnimIndex / 2);
+	if (6 <= m_ObjectDesc.iAnimIndex)
+		m_eCatAnimIndex = CAT_TURN;
+
 	m_pModel->Change_Animation((_uint)m_eCatAnimIndex);
 
 	if (CAT_TURN == m_eCatAnimIndex)
@@ -113,8 +114,8 @@ HRESULT CCat::Render()
 		// 몸통만
 		if (0 == iMeshCount)
 		{
-			m_pCatTexture1->Bind_ShaderResources(m_pShader, "g_DiffuseTexture_Cat1");
-			m_pCatTexture2->Bind_ShaderResources(m_pShader, "g_DiffuseTexture_Cat2");
+			if(0 != m_iRandCatTexture)
+				m_pCatTexture->Bind_ShaderResources(m_pShader, "g_DiffuseTexture_Cat");
 
 			m_pShader->Begin("AnimMesh_Cat");
 		}
@@ -161,6 +162,7 @@ HRESULT CCat::Add_Components()
 		return E_FAIL;
 	}
 
+
 	/* Com_Shader */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
@@ -179,22 +181,55 @@ HRESULT CCat::Add_Components()
 		return E_FAIL;
 	}
 
-	/* Com_Texture1 */
-	if (FAILED(CComposite::Add_Component(LEVEL_SMITH, TEXT("Prototype_Component_Texture_Cat_Turk"),
-		TEXT("Com_Texture1"), reinterpret_cast<CComponent**>(&m_pCatTexture1))))
+	m_iRandCatTexture = rand() % 5;
+
+	// 확률에 따라 랜덤한 색의 고양이 텍스처를 적용한다.
+	if (1 == m_iRandCatTexture)
 	{
-		MSG_BOX("Failed CCat Add_Component : (Com_Texture1)");
-		__debugbreak();
-		return E_FAIL;
+		/* Com_Texture1 */
+		if (FAILED(CComposite::Add_Component(LEVEL_SMITH, TEXT("Prototype_Component_Texture_Cat_Turk"),
+			TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pCatTexture))))
+		{
+			MSG_BOX("Failed CCat Add_Component : (Com_Texture)");
+			__debugbreak();
+			return E_FAIL;
+		}
 	}
 
-	/* Com_Texture2 */
-	if (FAILED(CComposite::Add_Component(LEVEL_SMITH, TEXT("Prototype_Component_Texture_Cat_Spot"),
-		TEXT("Com_Texture2"), reinterpret_cast<CComponent**>(&m_pCatTexture2))))
+	else if (2 == m_iRandCatTexture)
 	{
-		MSG_BOX("Failed CCat Add_Component : (Com_Texture2)");
-		__debugbreak();
-		return E_FAIL;
+		/* Com_Texture */
+		if (FAILED(CComposite::Add_Component(LEVEL_SMITH, TEXT("Prototype_Component_Texture_Cat_Spot"),
+			TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pCatTexture))))
+		{
+			MSG_BOX("Failed CCat Add_Component : (Com_Texture)");
+			__debugbreak();
+			return E_FAIL;
+		}
+	}	
+
+	else if (3 == m_iRandCatTexture)
+	{
+		/* Com_Texture */
+		if (FAILED(CComposite::Add_Component(LEVEL_SMITH, TEXT("Prototype_Component_Texture_Cat_Calico"),
+			TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pCatTexture))))
+		{
+			MSG_BOX("Failed CCat Add_Component : (Com_Texture)");
+			__debugbreak();
+			return E_FAIL;
+		}
+	}
+
+	else if (4 == m_iRandCatTexture)
+	{
+		/* Com_Texture */
+		if (FAILED(CComposite::Add_Component(LEVEL_SMITH, TEXT("Prototype_Component_Texture_Cat_Orange"),
+			TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pCatTexture))))
+		{
+			MSG_BOX("Failed CCat Add_Component : (Com_Texture)");
+			__debugbreak();
+			return E_FAIL;
+		}
 	}
 
 	return S_OK;
@@ -290,7 +325,6 @@ void CCat::Free()
 	Safe_Release(m_pShadowShader);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pModel);
-	Safe_Release(m_pCatTexture1);
-	Safe_Release(m_pCatTexture2);
+	Safe_Release(m_pCatTexture);
 	Safe_Release(m_pRenderer);
 }

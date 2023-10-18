@@ -352,7 +352,7 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 			CatDesc.iTagLen = MapObjectDesc.iTagLen;
 			CatDesc.WorldMatrix = MapObjectDesc.WorldMatrix;
 			lstrcpy(CatDesc.wszTag, MapObjectDesc.wszTag);
-			CatDesc.iAnimIndex = 0;
+			CatDesc.iAnimIndex = iCatNum;
 
 			_tchar wszobjName[MAX_PATH] = { 0 };
 			_stprintf_s(wszobjName, TEXT("GameObject_Cat_%d"), (iCatNum));

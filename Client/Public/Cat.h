@@ -47,8 +47,7 @@ private:
 	CRenderer* m_pRenderer = { nullptr };
 	CModel* m_pModel = { nullptr };
 	
-	CTexture* m_pCatTexture1 = { nullptr }; // 커스텀 고양이 디퓨즈1
-	CTexture* m_pCatTexture2 = { nullptr }; // 커스텀 고양이 디퓨즈2
+	CTexture* m_pCatTexture = { nullptr }; // 커스텀 고양이 디퓨즈
 
 private:
 	// 절두체 컬링을 위해 Bounding Box를 생성 하기위한 최소, 최대 정점

@@ -8,8 +8,7 @@ texture2D g_EmissiveTexture;
 texture2D g_DissolveTexture;
 texture2D g_DistortionTexture;
 
-texture2D g_DiffuseTexture_Cat1;
-texture2D g_DiffuseTexture_Cat2;
+texture2D g_DiffuseTexture_Cat;
 
 float4 g_vHairColor = float4(1.f, 1.f, 1.f, 1.f);
 float4 g_vColor;
@@ -276,8 +275,7 @@ PS_OUT PS_MAIN_CAT(PS_IN In)
     PS_OUT Out = (PS_OUT)0;
 
     vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-    vector vDiffuse1 = g_DiffuseTexture_Cat1.Sample(LinearSampler, In.vTexUV);
-    vector vDiffuse2 = g_DiffuseTexture_Cat2.Sample(LinearSampler, In.vTexUV);
+    vector vDiffuse1 = g_DiffuseTexture_Cat.Sample(LinearSampler, In.vTexUV);
 
     vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
     // 텍스처의 노말값은 -1~1로 출력을 못하기때문에 0~1로 정규화되어 있다. 따라서 강제적으로 변환해줘야함.
@@ -289,10 +287,8 @@ PS_OUT PS_MAIN_CAT(PS_IN In)
     if (vDiffuse.a < 0.1f)
         discard;
         
-    if (1 == g_iCatNum)
+    if (0 != g_iCatNum)
         Out.vDiffuse = vDiffuse1;
-    else if (2 == g_iCatNum)
-        Out.vDiffuse = vDiffuse2;
     else
         Out.vDiffuse = vDiffuse;
 

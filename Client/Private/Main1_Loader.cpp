@@ -464,6 +464,16 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_SMITH, TEXT("Prototype_Component_Texture_Cat_Spot"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Anim_GreyCat/T_Cat_Spotted_D.dds")))))
 		throw TEXT("Prototype_Component_Texture_Cat_Spot");
+
+	/* For.Prototype_Component_Texture_Cat_Orange */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_SMITH, TEXT("Prototype_Component_Texture_Cat_Orange"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Anim_GreyCat/T_Cat_Orange_Body_D.dds")))))
+		throw TEXT("Prototype_Component_Texture_Cat_Orange");
+
+	/* For.Prototype_Component_Texture_Cat_Calico */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_SMITH, TEXT("Prototype_Component_Texture_Cat_Calico"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Anim_GreyCat/T_Cat_Calico_D.dds")))))
+		throw TEXT("Prototype_Component_Texture_Cat_Calico");
 #pragma endregion 
 
 	HANDLE hFile = CreateFile(pMapObjectPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
