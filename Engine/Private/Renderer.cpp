@@ -291,6 +291,10 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Render_ScreenRadial()))
 		return E_FAIL;
 
+	// final
+	if (FAILED(Render_Fade()))
+		return E_FAIL;
+
 	// UI 렌더링
 	if (FAILED(Render_UI()))
 		return E_FAIL;
@@ -909,6 +913,36 @@ HRESULT CRenderer::Render_ScreenRadial()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_Fade()
+{
+	if (false == m_isFadeIn)
+		return S_OK;
+
+	// 화면 마지막에 그냥 띄워버리면 편함.
+	if (FAILED(m_pFadeShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pFadeShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pFadeShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	CTimer_Manager* pTimer_Manager = CTimer_Manager::GetInstance();
+	Safe_AddRef(pTimer_Manager);
+	m_fFadeTime += pTimer_Manager->Get_World_Tick();
+	Safe_Release(pTimer_Manager);
+
+	if (FAILED(m_pFadeShader->Bind_RawValue("g_fRadius", &m_fFadeTime, sizeof(_float))))
+		return E_FAIL;
+
+	if (FAILED(m_pFadeShader->Begin("Fade")))
+		return E_FAIL;
+
+	if (FAILED(m_pRectBuffer->Render()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_UI()
 {
 	if (FAILED(Sort_Z(RENDER_UI)))
@@ -1021,6 +1055,10 @@ HRESULT CRenderer::Add_Components()
 	
 	m_pFogShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Fog.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
 	if (nullptr == m_pFogShader)
+		return E_FAIL;
+	
+	m_pFadeShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Fade.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
+	if (nullptr == m_pFadeShader)
 		return E_FAIL;
 
 	m_pNoiseTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Noises/VFX_T_Cloud_Noise_Tile_D.png"));
@@ -1171,6 +1209,7 @@ void CRenderer::Free()
 	Safe_Release(m_pDistortionShader);
 	Safe_Release(m_pRadialBlurShader);
 	Safe_Release(m_pFogShader);
+	Safe_Release(m_pFadeShader);
 	Safe_Release(m_pNoiseTexture);
 
 	Safe_Release(m_pBlur);
