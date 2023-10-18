@@ -883,8 +883,14 @@
     <Filter Include="09. GameManager">
       <UniqueIdentifier>{f7506b35-2a98-4706-aaf0-aacbf2491e33}</UniqueIdentifier>
     </Filter>
-    <Filter Include="10. Quest_Manager">
+    <Filter Include="10. Quest">
       <UniqueIdentifier>{019794e9-d13f-4ec9-a419-4c2b5ea04f05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10. Quest\Manager">
+      <UniqueIdentifier>{5bfe5cd8-4edc-4bd4-9081-d6bb6fd36925}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10. Quest\Save_Fig">
+      <UniqueIdentifier>{0b6ed71e-efa1-46a6-a1cb-c7dd6e803bbf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1745,9 +1751,6 @@
     <ClInclude Include="..\public\Water.h">
       <Filter>02. GameObject\11. Water</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Quest_Manager.h">
-      <Filter>10. Quest_Manager</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Guide_Book.h">
       <Filter>06. Scene\Main_Menu\Guide_Book</Filter>
     </ClInclude>
@@ -1756,6 +1759,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\Event_Cliffside.h">
       <Filter>07. Events\Cliffside</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Quest.h">
+      <Filter>10. Quest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Quest_Manager.h">
+      <Filter>10. Quest\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Quest_Save_Fig.h">
+      <Filter>10. Quest\Save_Fig</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2571,9 +2583,6 @@
     <ClCompile Include="..\private\Water.cpp">
       <Filter>02. GameObject\11. Water</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Quest_Manager.cpp">
-      <Filter>10. Quest_Manager</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Guide_Book.cpp">
       <Filter>06. Scene\Main_Menu\Guide_Book</Filter>
     </ClCompile>
@@ -2585,6 +2594,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\Event_Cliffside.cpp">
       <Filter>07. Events\Cliffside</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Quest.cpp">
+      <Filter>10. Quest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Quest_Manager.cpp">
+      <Filter>10. Quest\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Quest_Save_Fig.cpp">
+      <Filter>10. Quest\Save_Fig</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

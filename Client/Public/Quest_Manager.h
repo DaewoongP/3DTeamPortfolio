@@ -1,48 +1,32 @@
 #pragma once
 #include "Base.h"
 #include "Client_Defines.h"
+#include "Quest_Save_Fig.h"
 
 BEGIN(Client)
 
 class CQuest_Manager final : public CBase
 {
 	DECLARE_SINGLETON(CQuest_Manager)
-public:
-	enum QUESTSTATE
-	{
-		QUESTIONMARK,
-		UNLOCK,
-		CLEAR,
-		QUESTSTATE_END
-	};
-
-	typedef struct tagQuest
-	{
-		_tchar			szQuestTag[MAX_PATH] = TEXT("");
-		QUESTSTATE		eQuestState = { QUESTSTATE_END };
-		_uint			iRewardMoney = { 0 };
-	}QUESTDESC;
 
 public:
 	explicit CQuest_Manager() = default;
 	virtual ~CQuest_Manager() = default;
+
+public:
+	_bool Is_Quest_Finished(const _tchar* szQuestTag);
 	
 public:
-	_uint Get_QuestReward();
-	QUESTDESC Get_CurrentQuest();
-
-public:
-	HRESULT Add_Quest(QUESTDESC QuestDesc);
-	// 현재 진행할 퀘스트를 바인딩한다.
-	HRESULT Set_Quest(const _tchar* szQuestTag);
-	HRESULT Update_QuestState(QUESTSTATE eState);
+	HRESULT Add_Quest(const _tchar* szQuestTag, class CQuest* pQuest);
+	void Unlock_Quest(const _tchar* szQuestTag);
+	void Clear_Quest(const _tchar* szQuestTag);
 
 private:
-	QUESTDESC		m_CurrentQuest;
-	list<QUESTDESC>	m_Quests;
+	CQuest*							m_pCurrentQuest = { nullptr };
+	_umap<const _tchar*, CQuest*>	m_Quests;
 
 private:
-	QUESTDESC& Find_Quest(const _tchar* pQuestTag);
+	CQuest* Find_Quest(const _tchar* szQuestTag);
 
 public:
 	virtual void Free() override;

@@ -1,6 +1,7 @@
 #include "..\Public\Level_Static.h"
 #include "GameInstance.h"
 #include "Camera_Includes.h"
+#include "Quest_Manager.h"
 #include "UI.h"
 
 IMPLEMENT_SINGLETON(CLevel_Static)
@@ -22,6 +23,7 @@ HRESULT CLevel_Static::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pC
 
 	FAILED_CHECK_RETURN(Add_Scene(), E_FAIL);
 	FAILED_CHECK_RETURN(Add_Cameras(pDevice, pContext), E_FAIL);
+	FAILED_CHECK_RETURN(Add_Quests(pDevice, pContext), E_FAIL);
 
 	m_pGameInstance->Reset_World_TimeAcc();
 	m_pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
@@ -172,6 +174,20 @@ HRESULT CLevel_Static::Add_Cameras(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 	return S_OK;
 }
+
+HRESULT CLevel_Static::Add_Quests(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+	CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
+	Safe_AddRef(pQuest_Manager);
+
+	FAILED_CHECK(pQuest_Manager->Add_Quest(TEXT("Quest_Save_Fig"), 
+		CQuest_Save_Fig::Create(pDevice, pContext)));
+
+	Safe_Release(pQuest_Manager);
+
+	return S_OK;
+}
+
 #ifdef _DEBUG
 
 HRESULT CLevel_Static::Ready_Layer_Debug(const _tchar* pLayerTag)

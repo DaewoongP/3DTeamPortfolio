@@ -1,6 +1,7 @@
 #include "Script.h"
 #include "GameInstance.h"
 #include "UI_Script.h"
+#include "Quest_Manager.h"
 
 CScript::CScript(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComposite(pDevice, pContext)

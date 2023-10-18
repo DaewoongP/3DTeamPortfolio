@@ -21,6 +21,11 @@ public:
     virtual void Late_Tick(_float fTimeDelta) override;
     virtual HRESULT Render() override;
 
+public:
+    void Set_isRender(_bool isrender) {
+        m_isRender = isrender;
+    }
+
 private:
     HRESULT Add_Prototype();
     HRESULT Add_Components();
@@ -42,7 +47,6 @@ private:
     vector<CTexture*>       m_Scripts;
     CUI_Script*             m_pUI_Script;
     _bool                   m_isRender = { false };
-
 
 public:
     static CScript* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

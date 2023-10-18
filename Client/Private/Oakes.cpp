@@ -44,7 +44,6 @@ HRESULT COakes::Initialize(void* pArg)
 
 	return S_OK;
 }
-
 void COakes::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
@@ -63,6 +62,7 @@ void COakes::Tick(_float fTimeDelta)
 		{
 			m_isPlayScript = true;
 			m_pScripts[m_iScriptIndex]->Reset_Script();
+			m_pScripts[m_iScriptIndex]->Set_isRender(true);
 		}
 		Safe_Release(pGameInstance);
 	}
@@ -70,7 +70,7 @@ void COakes::Tick(_float fTimeDelta)
 
 	if (m_isPlayScript)
 		m_pScripts[m_iScriptIndex]->Tick(fTimeDelta);
-		
+
 }
 
 void COakes::Late_Tick(_float fTimeDelta)
@@ -95,7 +95,6 @@ void COakes::Late_Tick(_float fTimeDelta)
 #endif // _DEBUG
 	}
 }
-
 void COakes::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	// 플레이어가 range콜라이더 안에 진입한경우 "한번 불림"

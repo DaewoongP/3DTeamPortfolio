@@ -3,58 +3,58 @@
 
 IMPLEMENT_SINGLETON(CQuest_Manager)
 
-_uint CQuest_Manager::Get_QuestReward()
+_bool CQuest_Manager::Is_Quest_Finished(const _tchar* szQuestTag)
 {
-	return m_CurrentQuest.iRewardMoney;
-}
-
-CQuest_Manager::QUESTDESC CQuest_Manager::Get_CurrentQuest()
-{
-	return m_CurrentQuest;
-}
-
-HRESULT CQuest_Manager::Add_Quest(QUESTDESC QuestDesc)
-{
-	m_Quests.push_back(QuestDesc);
-
-	return S_OK;
-}
-
-HRESULT CQuest_Manager::Set_Quest(const _tchar* szQuestTag)
-{
-	QUESTDESC QuestDesc = Find_Quest(szQuestTag);
-
-	if (QUESTIONMARK != QuestDesc.eQuestState)
-		return E_FAIL;
-
-	lstrcpy(m_CurrentQuest.szQuestTag, QuestDesc.szQuestTag);
-	m_CurrentQuest.iRewardMoney = QuestDesc.iRewardMoney;
-	m_CurrentQuest.eQuestState = UNLOCK;
-
-	return S_OK;
-}
-
-HRESULT CQuest_Manager::Update_QuestState(QUESTSTATE eState)
-{
-	m_CurrentQuest.eQuestState = eState;
-
-	return S_OK;
-}
-
-CQuest_Manager::QUESTDESC& CQuest_Manager::Find_Quest(const _tchar* pQuestTag)
-{
-	auto iter = find_if(m_Quests.begin(), m_Quests.end(), [pQuestTag](QUESTDESC QuestDesc) {
-
-		if (!lstrcmp(QuestDesc.szQuestTag, pQuestTag))
-		{
-			return true;
-		}
+	CQuest* pQuest = Find_Quest(szQuestTag);
+	if (nullptr == pQuest)
 		return false;
-	});
 
-	return (*iter);
+	return pQuest->Is_Finished();
+}
+
+HRESULT CQuest_Manager::Add_Quest(const _tchar* szQuestTag, class CQuest* pQuest)
+{
+	m_Quests.emplace(szQuestTag, pQuest);
+
+	return S_OK;
+}
+
+void CQuest_Manager::Unlock_Quest(const _tchar* szQuestTag)
+{
+	m_pCurrentQuest = Find_Quest(szQuestTag);
+
+	if (nullptr == m_pCurrentQuest)
+		return;
+
+	Safe_AddRef(m_pCurrentQuest);
+
+	m_pCurrentQuest->Set_State(QUESTSTATE::QUESTSTATE_UNLOCK);
+}
+
+void CQuest_Manager::Clear_Quest(const _tchar* szQuestTag)
+{
+	m_pCurrentQuest->Set_State(QUESTSTATE::QUESTSTATE_CLEAR);
+	Safe_Release(m_pCurrentQuest);
+}
+
+CQuest* CQuest_Manager::Find_Quest(const _tchar* szQuestTag)
+{
+	auto Pair = find_if(m_Quests.begin(), m_Quests.end(), CTag_Finder(szQuestTag));
+
+	if (m_Quests.end() == Pair)
+		return nullptr;
+
+	return Pair->second;
 }
 
 void CQuest_Manager::Free()
 {
+	for (auto& Pair : m_Quests)
+	{
+		Safe_Release(Pair.second);
+	}
+
+	m_Quests.clear();
+
+	Safe_Release(m_pCurrentQuest);
 }

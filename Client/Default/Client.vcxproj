@@ -242,7 +242,9 @@
     <ClInclude Include="..\Public\Pensive_Sword_Throw.h" />
     <ClInclude Include="..\Public\Player.h" />
     <ClInclude Include="..\public\PotionStationCamera.h" />
+    <ClInclude Include="..\public\Quest.h" />
     <ClInclude Include="..\public\Quest_Manager.h" />
+    <ClInclude Include="..\public\Quest_Save_Fig.h" />
     <ClInclude Include="..\public\Robe_Arcane.h" />
     <ClInclude Include="..\Public\Robe_DarkArts.h" />
     <ClInclude Include="..\Public\Robe_DarkArts_Delux.h" />
@@ -555,7 +557,9 @@
     <ClCompile Include="..\Private\Pensive_Sword_Throw.cpp" />
     <ClCompile Include="..\Private\Player.cpp" />
     <ClCompile Include="..\private\PotionStationCamera.cpp" />
+    <ClCompile Include="..\private\Quest.cpp" />
     <ClCompile Include="..\private\Quest_Manager.cpp" />
+    <ClCompile Include="..\private\Quest_Save_Fig.cpp" />
     <ClCompile Include="..\private\Robe_Arcane.cpp" />
     <ClCompile Include="..\Private\Robe_DarkArts.cpp" />
     <ClCompile Include="..\Private\Robe_DarkArts_Delux.cpp" />
