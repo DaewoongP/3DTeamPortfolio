@@ -55,6 +55,8 @@ PS_OUT PS_MAIN(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
     
     vector vDepth = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
+    if (0.f == vDepth.r)
+        discard;
     vector vTarget = g_TargetTexture.Sample(LinearSampler, In.vTexUV);
     
     float fViewZ = vDepth.y * g_fCamFar;
