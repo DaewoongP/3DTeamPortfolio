@@ -83,6 +83,9 @@ void CDummyTrail::Tick_Imgui(_float _fTimeDelta)
 		ImGui::Separator();
 		pEffectWindow->Table_ColorEdit3("Head Color", "dpiv92490v", &m_vHeadColor);
 		pEffectWindow->Table_ColorEdit3("Tail Color", "cklvklcvxjoiowe", &m_vTailColor);
+	
+
+
 		ImGui::Separator();
 
 		// 너비 선택
@@ -105,6 +108,11 @@ void CDummyTrail::Tick_Imgui(_float _fTimeDelta)
 			m_strClipChannel = m_pClipChannelCombo->Get_Current_Item();
 
 		pEffectWindow->Table_CheckBox("Use Texture Color", "vii389jijvc", &m_isUseTextureColor);
+
+		pEffectWindow->Table_CheckBox("Glow", "dkvijies", &m_isGlow);
+		pEffectWindow->Table_CheckBox("Distortion", "ciceicjoeijdsfs", &m_isDistortion);
+		pEffectWindow->Table_CheckBox("Diffuse", "fwaerawesqrwr2", &m_isDiffuse);
+		pEffectWindow->Table_CheckBox("AlphaBlend", "wroqiewksajqweas", &m_isAlphaBlend);
 
 		ImGui::EndTable();
 	}
@@ -169,6 +177,7 @@ void CDummyTrail::ChangeTexture(CTexture** _pTexture, wstring& _wstrOriginPath, 
 		return;
 	}
 	ENDINSTANCE;
+
 }
 
 void CDummyTrail::RemakeBuffer()

@@ -286,7 +286,7 @@ void CVIBuffer_Rect_Trail::Tick()
 	m_pContext->Unmap(m_pVB, 0);
 }
 
-void CVIBuffer_Rect_Trail::Tick_Spline()
+void CVIBuffer_Rect_Trail::Tick_Spline(_float DistPer)
 {
 	// Local Position
 	_float3 vHighPos = ((*m_TrailDesc.pHighLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
@@ -323,7 +323,7 @@ void CVIBuffer_Rect_Trail::Tick_Spline()
 	//얼만큼 이동했는지 이동값을 받아옵니다.
 	_float fDist = _float3(m_pVertices[0].vPosition - vLowWorldPos).Length();
 	//거리별 땅겨줄 프레임임.
-	_float fDistPer = 0.1f;
+	_float fDistPer = DistPer;
 	//얼만큼 땅길건지 정하는거임.
 	_uint HeadFallowIdx = _uint(fDist / fDistPer) * 2;
 
