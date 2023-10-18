@@ -19,6 +19,7 @@ private:
 	HRESULT Ready_Layer_BackGround(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Monster(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_NPC(const _tchar* pLayerTag);
+	HRESULT Ready_Events(const _tchar* pLayerTag);
 
 private:
 	HRESULT Load_MapObject(const _tchar* pObjectFilePath);

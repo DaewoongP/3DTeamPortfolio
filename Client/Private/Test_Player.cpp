@@ -186,7 +186,7 @@ HRESULT CTest_Player::Add_Components()
 		return E_FAIL;
 	}
 
-	m_pModelCom->Add_MeshParts(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_MeshPart_Robe01"), CCustomModel::ROBE, _float4(), TEXT("../../Resources/GameData/ClothData/Test.cloth"));
+	m_pModelCom->Add_MeshParts(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_MeshPart_Robe_Beast"), CCustomModel::ROBE, _float4(), TEXT("../../Resources/GameData/ClothData/Robe_Beast.cloth"));
 	
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);

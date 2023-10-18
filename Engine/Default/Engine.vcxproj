@@ -302,6 +302,7 @@
     <ClCompile Include="..\private\VIBuffer_Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Fade.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Flowmap.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Fog.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Bloom.hlsl" />
