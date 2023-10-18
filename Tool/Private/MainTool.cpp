@@ -542,6 +542,22 @@ HRESULT CMainTool::Ready_Prototype_Object()
 		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DogBog_Water_Foot"),
 			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/DogBog_Water_Foot/"), 3)))
 			throw TEXT("Reserve Particle : Particle_DogBog_Water_Foot");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Hit_Circle"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Hit/Circle/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Pensive_Hit_Circle");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Hit_Distotion"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Hit/Distotion/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Pensive_Hit_Distotion");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Hit_Spread"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Hit/Spread/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Pensive_Hit_Spread");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Hit_Stick_Glow"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Hit/Stick_Glow/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Pensive_Hit_Stick_Glow");
 	}
 #pragma endregion
 

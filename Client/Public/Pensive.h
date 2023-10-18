@@ -56,11 +56,20 @@ public:
 			}
 			if (iDmg > 300)
 			{
+				DieMagicBall();
 				m_pStateContext->Set_StateMachine(TEXT("Groogy"));
 				m_pModelCom->Change_Animation(TEXT("Stun_Start"));
 			}
 		}
 	}
+	void ResetMagicBall() { 
+		m_pMagicBall_Attack = nullptr;
+		m_pMagicBall_Protego = nullptr;
+		m_pMagicBall_Sword[0] = nullptr;
+		m_pMagicBall_Sword[1] = nullptr;
+		m_pMagicBall_Sword[2] = nullptr;
+	};
+	void DieMagicBall();
 
 private:
 	CStateContext_Enemy*	m_pStateContext = { nullptr };
@@ -81,7 +90,7 @@ private:
 	_bool m_isTurnAble = { false };
 	CMagic::MAGICDESC		m_ProtegoInitDesc[3] = {};
 	_float4x4 m_SwordOffsetMatrix[3] = {};
-
+	_float4x4 m_AttackPosition = {};
 private:
 	void	Attack_Ground();
 	void	Attack_Orb();

@@ -60,6 +60,13 @@ HRESULT CPensive::Initialize_Level(_uint iCurrentLevelIndex)
 	m_SwordOffsetMatrix[0] = _float4x4().MatrixTranslation(_float3(1, 5, 0));
 	m_SwordOffsetMatrix[1] = _float4x4().MatrixTranslation(_float3(1, -5, 0));
 	m_SwordOffsetMatrix[2] = _float4x4().MatrixTranslation(_float3(3, 0, 0));
+
+	const CBone* pBone = m_pModelCom->Get_Bone_Index(7);
+	if (nullptr == pBone)
+		return E_FAIL;
+	m_HitMatrices[0] = pBone->Get_CombinedTransformationMatrixPtr();
+	m_AttackPosition = *m_HitMatrices[0] * m_pModelCom->Get_PivotFloat4x4();
+	m_pHitMatrix = &m_AttackPosition;
 	return S_OK;
 }
 
@@ -67,6 +74,7 @@ void CPensive::Tick(_float fTimeDelta)
 {
 	if (!m_isSpawn)
 		return;
+	m_AttackPosition = *m_HitMatrices[0] * m_pModelCom->Get_PivotFloat4x4();
 	__super::Tick(fTimeDelta);
 
 	if (m_isTurnAble)
@@ -75,7 +83,7 @@ void CPensive::Tick(_float fTimeDelta)
 	}
 
 	if (nullptr != m_pModelCom)
-		m_pModelCom->Play_Animation(fTimeDelta);
+		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 }
 
 void CPensive::Late_Tick(_float fTimeDelta)
@@ -399,6 +407,20 @@ HRESULT CPensive::Add_Magic()
 	return S_OK;
 }
 
+void CPensive::DieMagicBall()
+{
+	if (m_pMagicBall_Attack != nullptr)
+		m_pMagicBall_Attack->Set_MagicBallState(CMagicBall::MAGICBALL_STATE_END);
+	if (m_pMagicBall_Protego != nullptr)
+		m_pMagicBall_Protego->Set_MagicBallState(CMagicBall::MAGICBALL_STATE_END);
+	if (m_pMagicBall_Sword[0] != nullptr)
+		m_pMagicBall_Sword[0]->Set_MagicBallState(CMagicBall::MAGICBALL_STATE_END);
+	if (m_pMagicBall_Sword[1] != nullptr)
+		m_pMagicBall_Sword[1]->Set_MagicBallState(CMagicBall::MAGICBALL_STATE_END);
+	if (m_pMagicBall_Sword[2] != nullptr)
+		m_pMagicBall_Sword[2]->Set_MagicBallState(CMagicBall::MAGICBALL_STATE_END);
+}
+
 void CPensive::Attack_Ground()
 {
 	m_pMagicSlot->Action_Magic_Skill((_uint)0, m_pPlayer, m_pDragonHead[0], COLLISIONFLAG(COL_PLAYER | COL_SHIELD));
@@ -481,12 +503,12 @@ HRESULT CPensive::Add_Components()
 		RigidBodyDesc.isStatic = false;
 		RigidBodyDesc.isTrigger = false;
 		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
-		RigidBodyDesc.vOffsetPosition = _float3(0.f, 2.2f, 0.f);
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 5.8f, 0.f);
 		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
 		RigidBodyDesc.fStaticFriction = 0.f;
 		RigidBodyDesc.fDynamicFriction = 1.f;
 		RigidBodyDesc.fRestitution = 0.f;
-		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.6f, 1.5f);
+		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(2.f, 4.f);
 		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
 		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
