@@ -40,6 +40,9 @@ private:
 	BOOK_ANIMATION  m_CurAnim = { BK_END };
 	BOOK_ANIMATION  m_PreAnim = { m_CurAnim }; // 이전 애니메이션 인덱스
 
+	_float4x4		m_ViewMatrix;
+	_float4x4		m_ProjMatrix;
+
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();

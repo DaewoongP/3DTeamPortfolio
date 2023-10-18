@@ -24,7 +24,13 @@ HRESULT CGuide_Book::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	m_pTransform->Set_Position(_float3(0.f, 0.f, 0.f));
+	m_pTransform->Set_Scale(_float3(640.f, 320.f, 1.f));
+	m_pTransform->Rotation(_float3(1.f, 0.f, 0.f), XMConvertToRadians(90.f));
+	m_pTransform->Set_Position(
+		XMVectorSet(640.f - g_iWinSizeX * 0.5f, -360.f + g_iWinSizeY * 0.5f, 0.89f, 1.f));
+
+	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(g_iWinSizeX, g_iWinSizeY, 0.f, 100.f));
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -57,7 +63,7 @@ void CGuide_Book::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRenderer)
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_UI, this);
 }
 
 HRESULT CGuide_Book::Render()
@@ -124,9 +130,13 @@ HRESULT CGuide_Book::SetUp_ShaderResources()
 
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 		return E_FAIL;
-	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
+	/*if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;*/
+	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
