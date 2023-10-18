@@ -49,7 +49,7 @@ HRESULT CVault_Torch::Initialize_Level(_uint iCurrentLevelIndex)
 	size_t findIndex = wsTorch.find(TEXT("Torch_")) + 6;
 
 	wstring wsModelIndex = wsTorch.substr(findIndex);
-	m_iTorchIndex = stoi(wsModelIndex);
+	m_iTorchIndex = (stoi(wsModelIndex) % 12) + 1;
 
 	return S_OK;
 }

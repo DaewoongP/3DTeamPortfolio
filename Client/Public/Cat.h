@@ -6,8 +6,8 @@ BEGIN(Engine)
 class CMesh;
 class CModel;
 class CShader;
+class CTexture;
 class CRenderer;
-class CRigidBody;
 END
 
 BEGIN(Client)
@@ -46,13 +46,17 @@ private:
 	CShader* m_pShadowShader = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 	CModel* m_pModel = { nullptr };
-	CRigidBody* m_pRigidBody = { nullptr };
+	
+	CTexture* m_pCatTexture1 = { nullptr }; // 커스텀 고양이 디퓨즈1
+	CTexture* m_pCatTexture2 = { nullptr }; // 커스텀 고양이 디퓨즈2
 
 private:
 	// 절두체 컬링을 위해 Bounding Box를 생성 하기위한 최소, 최대 정점
 	_float3			m_vMinPoint, m_vMaxPoint, m_vCenterPoint;
 	_float			m_fRadius = { 0.f };
 	_float			m_fWalkTime = { 0.f }; // 걷는 시간
+
+	_int			m_iRandCatTexture = { 0 }; // 랜덤한 고양이 텍스처
 
 private:
 	CATDESC	m_ObjectDesc;

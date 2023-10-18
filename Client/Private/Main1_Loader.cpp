@@ -454,6 +454,18 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 		CVault_Torch::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Vault_Torch");
 
+#pragma region Cat_Texture
+	/* For.Prototype_Component_Texture_Cat_Turk */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_SMITH, TEXT("Prototype_Component_Texture_Cat_Turk"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Anim_GreyCat/T_Cat_TurkishVan_D.dds")))))
+		throw TEXT("Prototype_Component_Texture_Cat_Turk");
+
+	/* For.Prototype_Component_Texture_Cat_Spot */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_SMITH, TEXT("Prototype_Component_Texture_Cat_Spot"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Anim_GreyCat/T_Cat_Spotted_D.dds")))))
+		throw TEXT("Prototype_Component_Texture_Cat_Spot");
+#pragma endregion 
+
 	HANDLE hFile = CreateFile(pMapObjectPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 	if (INVALID_HANDLE_VALUE == hFile)

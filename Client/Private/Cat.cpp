@@ -36,6 +36,8 @@ HRESULT CCat::Initialize(void* pArg)
 	m_ObjectDesc = *reinterpret_cast<CATDESC*>(pArg);
 	m_pTransform->Set_WorldMatrix(m_ObjectDesc.WorldMatrix);
 
+	m_iRandCatTexture = rand() % 3;
+
 	return S_OK;
 }
 
@@ -86,10 +88,6 @@ void CCat::Late_Tick(_float fTimeDelta)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
-
-#ifdef _DEBUG
-		m_pRenderer->Add_DebugGroup(m_pRigidBody);
-#endif // _DEBUG
 	}
 
 	ENDINSTANCE;
@@ -112,7 +110,17 @@ HRESULT CCat::Render()
 		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 		m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
 
-		m_pShader->Begin("AnimMesh");
+		// 몸통만
+		if (0 == iMeshCount)
+		{
+			m_pCatTexture1->Bind_ShaderResources(m_pShader, "g_DiffuseTexture_Cat1");
+			m_pCatTexture2->Bind_ShaderResources(m_pShader, "g_DiffuseTexture_Cat2");
+
+			m_pShader->Begin("AnimMesh_Cat");
+		}
+
+		else
+			m_pShader->Begin("AnimMesh");
 
 		if (FAILED(m_pModel->Render(iMeshCount)))
 			return E_FAIL;
@@ -171,30 +179,23 @@ HRESULT CCat::Add_Components()
 		return E_FAIL;
 	}
 
-	//// 리지드 바디 초기화
-	//CRigidBody::RIGIDBODYDESC RigidBodyDesc;
-	//RigidBodyDesc.isStatic = false;
-	//RigidBodyDesc.isTrigger = false;
-	//RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
-	//RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotZ;
-	//RigidBodyDesc.fStaticFriction = 1.f;
-	//RigidBodyDesc.fDynamicFriction = 1.f;
-	//RigidBodyDesc.fRestitution = 0.f;
-	//PxCapsuleGeometry MyGeometry = PxCapsuleGeometry(0.45f, 0.8f);
-	//RigidBodyDesc.pGeometry = &MyGeometry;
-	//RigidBodyDesc.pOwnerObject = this;
-	//RigidBodyDesc.vDebugColor = _float4(0.f, 1.f, 1.f, 1.f);
-	//RigidBodyDesc.eThisCollsion = COL_STATIC;
-	//RigidBodyDesc.eCollisionFlag = COL_PLAYER;
-	//strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "MapObject");
+	/* Com_Texture1 */
+	if (FAILED(CComposite::Add_Component(LEVEL_SMITH, TEXT("Prototype_Component_Texture_Cat_Turk"),
+		TEXT("Com_Texture1"), reinterpret_cast<CComponent**>(&m_pCatTexture1))))
+	{
+		MSG_BOX("Failed CCat Add_Component : (Com_Texture1)");
+		__debugbreak();
+		return E_FAIL;
+	}
 
-	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
-	//	TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
-	//{
-	//	MSG_BOX("Failed CCat Add_Component : (Com_RigidBody)");
-	//	__debugbreak();
-	//	return E_FAIL;
-	//}
+	/* Com_Texture2 */
+	if (FAILED(CComposite::Add_Component(LEVEL_SMITH, TEXT("Prototype_Component_Texture_Cat_Spot"),
+		TEXT("Com_Texture2"), reinterpret_cast<CComponent**>(&m_pCatTexture2))))
+	{
+		MSG_BOX("Failed CCat Add_Component : (Com_Texture2)");
+		__debugbreak();
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -210,6 +211,8 @@ HRESULT CCat::SetUp_ShaderResources()
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_RawValue("g_iCatNum", &m_iRandCatTexture, sizeof(_int))))
 		return E_FAIL;
 
 	ENDINSTANCE;
@@ -284,9 +287,10 @@ void CCat::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pRigidBody);
 	Safe_Release(m_pShadowShader);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pCatTexture1);
+	Safe_Release(m_pCatTexture2);
 	Safe_Release(m_pRenderer);
 }

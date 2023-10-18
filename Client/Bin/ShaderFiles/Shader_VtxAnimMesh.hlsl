@@ -8,9 +8,13 @@ texture2D g_EmissiveTexture;
 texture2D g_DissolveTexture;
 texture2D g_DistortionTexture;
 
+texture2D g_DiffuseTexture_Cat1;
+texture2D g_DiffuseTexture_Cat2;
+
 float4 g_vHairColor = float4(1.f, 1.f, 1.f, 1.f);
 float4 g_vColor;
 float g_fCamFar;
+int g_iCatNum;
 
 float g_fDissolveAmount;
 float g_fTimeAcc;
@@ -106,6 +110,7 @@ PS_OUT PS_MAIN(PS_IN In)
     vNormal = mul(vNormal, WorldMatrix);
     if (vDiffuse.a < 0.1f)
         discard;
+
     Out.vDiffuse = vDiffuse;
     Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
@@ -266,6 +271,37 @@ PS_OUT PS_MAIN_DISTORTION(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_MAIN_CAT(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT)0;
+
+    vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+    vector vDiffuse1 = g_DiffuseTexture_Cat1.Sample(LinearSampler, In.vTexUV);
+    vector vDiffuse2 = g_DiffuseTexture_Cat2.Sample(LinearSampler, In.vTexUV);
+
+    vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+    // 텍스처의 노말값은 -1~1로 출력을 못하기때문에 0~1로 정규화되어 있다. 따라서 강제적으로 변환해줘야함.
+    float3 vNormal = vNormalDesc.xyz * 2.f - 1.f;
+
+    float3x3 WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal.xyz, In.vNormal.xyz);
+
+    vNormal = mul(vNormal, WorldMatrix);
+    if (vDiffuse.a < 0.1f)
+        discard;
+        
+    if (1 == g_iCatNum)
+        Out.vDiffuse = vDiffuse1;
+    else if (2 == g_iCatNum)
+        Out.vDiffuse = vDiffuse2;
+    else
+        Out.vDiffuse = vDiffuse;
+
+    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
+
+    return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass AnimMesh
@@ -352,5 +388,17 @@ technique11 DefaultTechnique
         HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader = compile ps_5_0 PS_MAIN_DISTORTION();
+    }
+    pass AnimMesh_Cat
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_MAIN_CAT();
     }
 }
