@@ -142,7 +142,8 @@ _bool CScript::Next_Script()
 		return true;
 	}
 
-
+	Safe_Release(pGameInstance);
+	return true;
 }
 
 CScript* CScript::Find_Script(const _tchar* swzScriptTag, _umap<const _tchar*, CScript*>& pSript)
