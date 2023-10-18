@@ -184,7 +184,7 @@ void CPlayer_Camera::Mouse_Input(_float _fTimeDelta)
 
 		fAngle = fabsf(acosf(fAngle));
 
-		_float fStandardAngle = XMConvertToRadians(60.0f);
+		_float fStandardAngle = XMConvertToRadians(80.0f);
 
 		//기준 보다 커지면 안됌
 		if (fStandardAngle >= fAngle)

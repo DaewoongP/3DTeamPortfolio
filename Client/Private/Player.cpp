@@ -1096,7 +1096,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	}
 
 	//´­·¶À» ¶§
-	if (pGameInstance->Get_DIKeyState(DIK_TAB, CInput_Device::KEY_DOWN))
+	if (pGameInstance->Get_DIKeyState(DIK_G, CInput_Device::KEY_DOWN))
 	{
 		Go_Use_Item();
 		/*switch (m_pPlayer_Information->Get_PotionTap()->Get_CurTool()->Get_ItemID())

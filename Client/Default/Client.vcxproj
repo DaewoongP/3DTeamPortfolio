@@ -191,6 +191,7 @@
     <ClInclude Include="..\Public\DarkWizard_M.h" />
     <ClInclude Include="..\Public\Door.h" />
     <ClInclude Include="..\Public\Dummy_NPC.h" />
+    <ClInclude Include="..\Public\Event_Cliffside.h" />
     <ClInclude Include="..\Public\Event_Smeade.h" />
     <ClInclude Include="..\Public\Fly_Move.h" />
     <ClInclude Include="..\Public\Fly_Turn.h" />
@@ -500,6 +501,7 @@
     <ClCompile Include="..\Private\DarkWizard_M.cpp" />
     <ClCompile Include="..\Private\Door.cpp" />
     <ClCompile Include="..\Private\Dummy_NPC.cpp" />
+    <ClCompile Include="..\Private\Event_Cliffside.cpp" />
     <ClCompile Include="..\Private\Event_Smeade.cpp" />
     <ClCompile Include="..\Private\Fly_Move.cpp" />
     <ClCompile Include="..\Private\Fly_Turn.cpp" />
