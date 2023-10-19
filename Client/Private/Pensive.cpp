@@ -67,6 +67,19 @@ HRESULT CPensive::Initialize_Level(_uint iCurrentLevelIndex)
 	m_HitMatrices[0] = pBone->Get_CombinedTransformationMatrixPtr();
 	m_AttackPosition = *m_HitMatrices[0] * m_pModelCom->Get_PivotFloat4x4();
 	m_pHitMatrix = &m_AttackPosition;
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	CLight::LIGHTDESC LightDesc;
+	LightDesc.eType = CLight::TYPE_POINT;
+	LightDesc.fRange = 20.f;
+	m_vLightColor = LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vAmbient = LightDesc.vDiffuse;
+	LightDesc.vSpecular = LightDesc.vDiffuse;
+	LightDesc.vPos = m_pTransform->Get_Position().TransCoord();
+	pGameInstance->Add_Light(LightDesc, &m_pLight);
+	Safe_Release(pGameInstance);
+	m_pModelCom->Change_Animation(TEXT("Spawn"));
 	return S_OK;
 }
 
@@ -88,6 +101,8 @@ void CPensive::Tick(_float fTimeDelta)
 
 void CPensive::Late_Tick(_float fTimeDelta)
 {
+	if (!m_isSpawn)
+		return;
 	__super::Late_Tick(fTimeDelta);
 }
 
@@ -127,9 +142,10 @@ void CPensive::Set_Protego_Collision(CTransform* pTransform, ATTACKTYPE eType) c
 	if (eType == ATTACK_BREAK ||
 		eType == ATTACK_SUPERBREAK)
 	{
+		if (m_pMagicBall_Attack != nullptr)
+			m_pMagicBall_Attack->Set_MagicBallState(CMagicBall::MAGICBALL_STATE_DYING);
 		m_pStateContext->Set_StateMachine(TEXT("Hit"));
 		m_pModelCom->Change_Animation(TEXT("Attack_Orb_Hit"));
-		m_pMagicBall_Attack->Set_MagicBallState(CMagicBall::MAGICBALL_STATE_DYING);
 	}
 }
 
@@ -493,7 +509,7 @@ HRESULT CPensive::Add_Components()
 
 		/* For.Com_Health */
 		CHealth::HEALTHDESC HealthDesc;
-		HealthDesc.iMaxHP = 10000;
+		HealthDesc.iMaxHP = 100;
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 			throw TEXT("Com_Health");
@@ -723,5 +739,6 @@ void CPensive::Free()
 
 		Safe_Release(m_StateMachineDesc.pOwnerModel);
 		Safe_Release(m_StateMachineDesc.pTarget);
+		Safe_Release(m_pLight);
 	}
 }

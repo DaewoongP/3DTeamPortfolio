@@ -37,7 +37,7 @@ void CPensive_Hit::Late_Tick(_float fTimeDelta)
 
 void CPensive_Hit::OnStateEnter(void* _pArg)
 {
-	_float4x4 PosMatrix = *dynamic_cast<CEnemy*>(m_pOwner)->Get_HitBoneMatrix(0) * dynamic_cast<CEnemy*>(m_pOwner)->Get_Transform()->Get_WorldMatrix();
+	_float4x4 PosMatrix = *dynamic_cast<CEnemy*>(m_pOwner->Get_Owner())->Get_HitBoneMatrix(0) * dynamic_cast<CEnemy*>(m_pOwner->Get_Owner())->Get_Transform()->Get_WorldMatrix();
 	ADD_DECREASE_LIGHT(PosMatrix.Translation(), 150.f, 1.f, _float4(1,1,1,1));
 }
 
