@@ -24,6 +24,7 @@ HRESULT CLevel_Smith::Initialize()
 	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_UI(TEXT("Layer_UI")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Event(TEXT("Layer_Event")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Shader(), E_FAIL);
 
 	BEGININSTANCE;
 	pGameInstance->Reset_World_TimeAcc();
@@ -207,6 +208,22 @@ HRESULT CLevel_Smith::Ready_Event(const _tchar* pLayerTag)
 		MSG_BOX("Failed Add_GameObject : (Event_Smeade)");
 		return E_FAIL;
 	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CLevel_Smith::Ready_Shader()
+{
+	BEGININSTANCE;
+
+	CRenderer* pRenderer = static_cast<CRenderer*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer")));
+	pRenderer->Defualt_Shading();
+
+
+
+	Safe_Release(pRenderer);
 
 	ENDINSTANCE;
 

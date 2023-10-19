@@ -53,6 +53,9 @@ public:
 	void Play_Rain() { m_isRaining = true; }
 	void Stop_Rain() { m_isRaining = false; }
 
+public:
+	void Defualt_Shading();
+
 private:
 	explicit CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CRenderer() = default;

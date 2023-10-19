@@ -21,6 +21,23 @@
 #include "Font_Manager.h"
 #endif // _DEBUG
 
+void CRenderer::Defualt_Shading()
+{
+	m_isSSAO = true;
+	m_fGlowPower = 7.5f;
+	m_fHDR = 0.5f;
+	m_fRadialBlurWidth = 0.0f;
+	m_isScreenRadial = false;
+	m_isCircleFog = false;
+	m_isFade = false;
+	m_fRadialTimeAcc = 1.f;
+	m_fFadeSpeed = 0.1f;
+	m_fFadeTime = 0.f;
+	m_isRaining = false;
+	if (nullptr != m_pDOF)
+		m_pDOF->Default();
+}
+
 CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 	, m_pRenderTarget_Manager(CRenderTarget_Manager::GetInstance())
@@ -193,14 +210,8 @@ HRESULT CRenderer::Initialize_Prototype()
 	m_isDebugRender = false;
 	m_isMRTRender = false;	
 #endif // _DEBUG
-	m_isSSAO = true;
-	m_fGlowPower = 7.5f;
-	m_fHDR = 0.5f;
-	m_fRadialBlurWidth = 0.0f;
-	m_isScreenRadial = false;
-	m_fRadialTimeAcc = 1.f;
-	m_fFadeSpeed = 0.1f;
-	m_fFadeTime = 0.f;
+	
+	Defualt_Shading();
 
 	return S_OK;
 }
@@ -970,15 +981,6 @@ HRESULT CRenderer::Render_Rain()
 
 HRESULT CRenderer::Render_Fade()
 {
-	if (CGameInstance::GetInstance()->Get_DIKeyState(DIK_F6, CInput_Device::KEY_DOWN))
-	{
-		FadeIn(1.f);
-	}
-	if (CGameInstance::GetInstance()->Get_DIKeyState(DIK_F7, CInput_Device::KEY_DOWN))
-	{
-		FadeOut(1.f);
-	}
-
 	// 화면 마지막에 그냥 띄워버리면 편함.
 	if (FAILED(m_pFadeShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;

@@ -18,6 +18,7 @@ public:
 	_float Get_FocusRange() { return m_fFocusRange; }
 	void Set_FocusDistance(_float fDistance) { m_fFocusDistance = fDistance; }
 	void Set_FocusRange(_float fRange) { m_fFocusRange = fRange; }
+	void Default();
 
 public:
 	HRESULT Initialize(CVIBuffer_Rect* pRectBuffer);

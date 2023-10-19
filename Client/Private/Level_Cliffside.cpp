@@ -17,6 +17,7 @@ HRESULT CLevel_Cliffside::Initialize()
 	FAILED_CHECK_RETURN(Ready_Layer_Monster(TEXT("Layer_Monster")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_NPC(TEXT("Layer_NPC")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Events(TEXT("Layer_Event")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Shader(), E_FAIL);
 
 	BEGININSTANCE;
 	pGameInstance->Reset_World_TimeAcc();
@@ -195,6 +196,22 @@ HRESULT CLevel_Cliffside::Ready_Events(const _tchar* pLayerTag)
 		MSG_BOX("Failed Add_GameObject : (Event_Cliffside)");
 		return E_FAIL;
 	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CLevel_Cliffside::Ready_Shader()
+{
+	BEGININSTANCE;
+
+	CRenderer* pRenderer = static_cast<CRenderer*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer")));
+	pRenderer->Defualt_Shading();
+
+
+
+	Safe_Release(pRenderer);
 
 	ENDINSTANCE;
 

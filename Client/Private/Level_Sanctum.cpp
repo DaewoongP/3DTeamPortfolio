@@ -14,6 +14,7 @@ HRESULT CLevel_Sanctum::Initialize()
 	FAILED_CHECK_RETURN(Ready_Lights(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_Monsters(TEXT("Layer_Monster")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Shader(), E_FAIL);
 	
 	BEGININSTANCE;
 	pGameInstance->Reset_World_TimeAcc();
@@ -111,6 +112,22 @@ HRESULT CLevel_Sanctum::Ready_Lights()
 		return E_FAIL;
 
 	ENDINSTANCE;
+	return S_OK;
+}
+
+HRESULT CLevel_Sanctum::Ready_Shader()
+{
+	BEGININSTANCE;
+
+	CRenderer* pRenderer = static_cast<CRenderer*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer")));
+	pRenderer->Defualt_Shading();
+
+
+
+	Safe_Release(pRenderer);
+
+	ENDINSTANCE;
+
 	return S_OK;
 }
 

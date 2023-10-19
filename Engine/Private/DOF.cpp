@@ -9,6 +9,12 @@ CDOF::CDOF(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) : CComponent(pD
 {
 }
 
+void CDOF::Default()
+{
+	m_fFocusDistance = 25.f;
+	m_fFocusRange = m_fFocusDistance - 1.f;
+}
+
 HRESULT CDOF::Initialize(CVIBuffer_Rect* pRectBuffer)
 {
 	CRenderTarget_Manager* pRenderTarget_Manager = CRenderTarget_Manager::GetInstance();
