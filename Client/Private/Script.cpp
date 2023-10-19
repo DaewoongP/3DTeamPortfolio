@@ -126,7 +126,7 @@ _bool CScript::Next_Script()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
+	if (pGameInstance->Get_DIKeyState(DIK_RETURN, CInput_Device::KEY_DOWN))
 	{
 
 		if (m_Scripts.size() - 1 == m_iCurrentScriptIndex)
