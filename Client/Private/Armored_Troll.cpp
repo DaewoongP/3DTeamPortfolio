@@ -384,7 +384,7 @@ HRESULT CArmored_Troll::Add_Components()
 		RigidBodyDesc.isStatic = false;
 		RigidBodyDesc.isTrigger = false;
 		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
-		RigidBodyDesc.vOffsetPosition = _float3(0.f, 2.5f, 0.f);
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 2.7f, 0.f);
 		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
 		RigidBodyDesc.fStaticFriction = 0.f;
 		RigidBodyDesc.fDynamicFriction = 1.f;
@@ -410,6 +410,26 @@ HRESULT CArmored_Troll::Add_Components()
 		RigidBodyDesc.eThisCollsion = COL_ENEMY_ATTACK;
 		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_SHIELD;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body_Attack");
+		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
+			throw TEXT("Failed Create_Collider");
+
+		/* For.Collider Enemy_Overhead_Attack */
+		RigidBodyDesc.isStatic = true;
+		RigidBodyDesc.isTrigger = true;
+		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.f, 3.5f);
+		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, 0.f);
+		RigidBodyDesc.fStaticFriction = 0.f;
+		RigidBodyDesc.fDynamicFriction = 1.f;
+		RigidBodyDesc.fRestitution = 0.f;
+		PxSphereGeometry pSphereGeometry = PxSphereGeometry(2.4f);
+		RigidBodyDesc.pGeometry = &pSphereGeometry;
+		RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
+		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
+		RigidBodyDesc.pOwnerObject = this;
+		RigidBodyDesc.eThisCollsion = COL_ENEMY_ATTACK;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_SHIELD;
+		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Overhead_Attack");
 		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
 			throw TEXT("Failed Create_Collider");
 
@@ -918,9 +938,9 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_Far(_Inout_ CSequence* pSequence)
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Random_Attack"), pRandom_Attack)))
 			throw TEXT("Failed Assemble_Behavior Random_Attack");
 
-		if (FAILED(pRandom_Attack->Assemble_Behavior(TEXT("Sequence_Attack_Charge"), pSelector_Attack_Charge, 0.6f)))
+		if (FAILED(pRandom_Attack->Assemble_Behavior(TEXT("Sequence_Attack_Charge"), pSelector_Attack_Charge, 0.3f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Charge");
-		if (FAILED(pRandom_Attack->Assemble_Behavior(TEXT("Sequence_Attack_Run"), pSequence_Attack_Run, 0.4f)))
+		if (FAILED(pRandom_Attack->Assemble_Behavior(TEXT("Sequence_Attack_Run"), pSequence_Attack_Run, 0.7f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Run");
 
 		if (FAILED(Make_Pattern_Attack_Run(pSequence_Attack_Run)))
@@ -2241,6 +2261,7 @@ void CArmored_Troll::Enter_Heavy_Attack()
 	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
 	m_CollisionRequestDesc.iDamage = 20;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
+	m_pRigidBody->Enable_Collision("Enemy_Overhead_Attack", this, &m_CollisionRequestDesc);
 	m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
 }
 
@@ -2257,6 +2278,7 @@ void CArmored_Troll::Exit_Attack()
 	m_CollisionRequestDesc.eType = ATTACK_NONE;
 	m_CollisionRequestDesc.iDamage = 0;
 	m_pRigidBody->Disable_Collision("Enemy_Body_Attack");
+	m_pRigidBody->Disable_Collision("Enemy_Overhead_Attack");
 	m_pWeapon->Off_Collider_Attack(&m_CollisionRequestDesc);
 }
 

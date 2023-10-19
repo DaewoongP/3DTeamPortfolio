@@ -44,7 +44,11 @@
 #include "Defence.h"
 #include "Vendor.h"
 #include "Oakes.h"
+#include "House_Elf.h"
+#include "Jammin.h"
 #include "Dummy_NPC.h"
+#include "Smith_FIg.h"
+#include "Card_Fig.h"
 
 #pragma region Items
 
@@ -82,6 +86,7 @@
 #include "Hat_DarkArts_Delux.h"
 #include "Hat_Wizard.h"
 #include "Robe_Arcane.h"
+#include "Robe_Beast.h"
 #include "Robe_DarkArts.h"
 #include "Robe_DarkArts_Delux.h"
 #include "Robe_Quidditch.h"
@@ -266,17 +271,47 @@ HRESULT CMain3_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 			COakes::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Oakes");
 
+		/* For.Prototype_Component_Model_Doby */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Doby"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Doby/Doby.gcm")))))
+			throw TEXT("Prototype_Component_Model_Doby");
+
+		/* For.Prototype_GameObject_Doby */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Doby"),
+			CHouse_Elf::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Doby");
+
+		/* For.Prototype_Component_Model_Jammin */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Jammin"),
+		//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Jammin/Jammin.dat")))))
+		//	throw TEXT("Prototype_Component_Model_Jammin");
+
+		///* For.Prototype_GameObject_Jammin */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Jammin"),
+		//	CJammin::Create(m_pDevice, m_pContext))))
+		//	throw TEXT("Prototype_GameObject_Jammin");
+
 		_float4x4 PivotMatrix;
 		PivotMatrix = XMMatrixRotationQuaternion(XMQuaternionRotationRollPitchYaw(0.f, XMConvertToRadians(180.f), 0.f));
 		/* For.Prototype_Component_Model_CustomModel_NPC_M */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_CustomModel_NPC_M"),
-			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/NPC_M/NPC_M.dat", PivotMatrix))))
+			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/NPC_M/NPC_M.gcm", PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_CustomModel_NPC_M");
+
+		/* For.Prototype_Component_Model_CustomModel_NPC_F */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_CustomModel_NPC_F"),
+			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/NPC_F/NPC_F.gcm", PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_CustomModel_NPC_F");
 
 		/* For.Prototype_GameObject_Dummy_NPC */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Dummy_NPC"),
 			CDummy_NPC::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Dummy_NPC");
+
+		/* For.Prototype_GameObject_Smith_Fig */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Smith_Fig"),
+			CSmith_Fig::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Smith_Fig");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -340,6 +375,10 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/gaechul/gaechul.dat"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Weapon_Player_Wand");
 
+		/* For.Prototype_GameObject_Card_Fig */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Card_Fig"),
+			CCard_Fig::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Card_Fig");
 #pragma endregion
 
 #pragma region Player Parts
@@ -674,6 +713,11 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Robe_Arcane"),
 			CRobe_Arcane::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Robe_Arcane");
+
+		/* For.Prototype_GameObject_Robe_Beast */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Robe_Beast"),
+			CRobe_Beast::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Robe_Beast");
 
 		/* For.Prototype_GameObject_Robe_DarkArts */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Robe_DarkArts"),

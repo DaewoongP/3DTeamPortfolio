@@ -36,6 +36,7 @@ class CInvisibilityPotion;
 class CWiggenweldPotion;
 class CTool;
 class CBlink_Effect;
+class CCard_Fig;
 END
 
 BEGIN(Client)
@@ -116,6 +117,8 @@ private:
 	CDefence*		m_pDefence = { nullptr };
 	CBlink_Effect* m_pBlink = { nullptr };
 
+private: /* Card Fig 전용 데이터 */
+	CCard_Fig* m_pCard_Fig = { nullptr };
 
 private:
 	CPlayer_Camera* m_pPlayer_Camera = { nullptr };

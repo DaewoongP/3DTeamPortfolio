@@ -6,6 +6,7 @@
 #include "Level_Loading.h"
 #include "Trigger.h"
 #include "Dummy_NPC.h"
+#include "House_Elf.h"
 
 #include "Cat.h"
 
@@ -128,7 +129,7 @@ HRESULT CLevel_Smith::Ready_Layer_NPC(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	Matrix = XMMatrixTranslation(97.4f, 6.3f, 80.7f);
+	Matrix = XMMatrixRotationY(XMConvertToRadians(113.5f)) * XMMatrixTranslation(39.15f, 1.55f, 29.3f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Oakes"), pLayerTag, TEXT("GameObject_Oakes"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Oakes)");
@@ -136,25 +137,16 @@ HRESULT CLevel_Smith::Ready_Layer_NPC(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	Matrix = XMMatrixTranslation(93.4f, 6.3f, 82.7f);
-	CDummy_NPC::NPCINITDESC InitDesc;
-	InitDesc.WorldMatrix = Matrix;
-	InitDesc.wstrAnimationTag = TEXT("Idle");
-	InitDesc.MeshPartsTags[0] = TEXT("Prototype_Component_MeshPart_Hat_Arcane");
-	InitDesc.MeshPartsTags[1] = TEXT("Prototype_Component_MeshPart_Hair_M_C");
-	InitDesc.MeshPartsTags[2] = TEXT("Prototype_Component_MeshPart_Head_NPC_M");
-	InitDesc.MeshPartsTags[4] = TEXT("Prototype_Component_MeshPart_Player_Arm");
-	InitDesc.MeshPartsTags[5] = TEXT("Prototype_Component_MeshPart_Robe_DarkArts");
-	InitDesc.MeshPartsTags[6] = TEXT("Prototype_Component_MeshPart_Jacket_Arcane_A");
-	InitDesc.MeshPartsTags[7] = TEXT("Prototype_Component_MeshPart_Pants_Arcane");
-	InitDesc.MeshPartsTags[9] = TEXT("Prototype_Component_MeshPart_Boots_Arcane");
-	InitDesc.wstrCustomModelTag = TEXT("Prototype_Component_Model_CustomModel_NPC_M");
-	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Dummy_NPC"), pLayerTag, TEXT("GameObject_Dummy_NPC"), &InitDesc)))
+	Matrix = XMMatrixRotationY(XMConvertToRadians(145.5f)) * XMMatrixTranslation(52.85f, 6.25f, 81.9f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Smith_Fig"), pLayerTag, TEXT("GameObject_Smith_Fig"), &Matrix)))
 	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Dummy_NPC)");
+		MSG_BOX("Failed Add_GameObject : (GameObject_Smith_Fig)");
 		ENDINSTANCE;
 		return E_FAIL;
 	}
+
+	if (FAILED(Load_Dummy_NPC(pLayerTag)))
+		return E_FAIL;
 
 	ENDINSTANCE;
 
@@ -213,6 +205,286 @@ HRESULT CLevel_Smith::Ready_Event(const _tchar* pLayerTag)
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Event_Smeade"), pLayerTag, TEXT("Event_Smeade"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Event_Smeade)");
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CLevel_Smith::Load_Dummy_NPC(const _tchar* pLayerTag)
+{
+	BEGININSTANCE;
+
+	/* NPC Male */
+	CDummy_NPC::NPCINITDESC InitDesc;
+	InitDesc.WorldMatrix = XMMatrixRotationY(XMConvertToRadians(51.f)) * XMMatrixTranslation(59.9f, 6.9f, 88.95f);
+	InitDesc.wstrAnimationTag = TEXT("Table_Convor_2");
+	InitDesc.MeshPartsTags[0] = TEXT("Prototype_Component_MeshPart_Hat_Arcane");
+	InitDesc.MeshPartsTags[1] = TEXT("Prototype_Component_MeshPart_Hair_M_C");
+	InitDesc.MeshPartsTags[2] = TEXT("Prototype_Component_MeshPart_Head_NPC_M");
+	InitDesc.MeshPartsTags[4] = TEXT("Prototype_Component_MeshPart_Player_Arm");
+	InitDesc.MeshPartsTags[5] = TEXT("Prototype_Component_MeshPart_Robe_DarkArts");
+	InitDesc.MeshPartsTags[6] = TEXT("Prototype_Component_MeshPart_Jacket_Arcane_A");
+	InitDesc.MeshPartsTags[7] = TEXT("Prototype_Component_MeshPart_Pants_Arcane");
+	InitDesc.MeshPartsTags[9] = TEXT("Prototype_Component_MeshPart_Boots_Arcane");
+	InitDesc.wstrCustomModelTag = TEXT("Prototype_Component_Model_CustomModel_NPC_M");
+#ifdef _DEBUG
+	InitDesc.isCheckPosition = false;
+#endif // _DEBUG
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Dummy_NPC"), pLayerTag, TEXT("NPC_M_0"), &InitDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (NPC_M_0)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	InitDesc.WorldMatrix = XMMatrixRotationY(XMConvertToRadians(70.f)) * XMMatrixTranslation(56.05f, 7.05f, 91.85f);
+	InitDesc.wstrAnimationTag = TEXT("Table_Convor_1");
+	InitDesc.MeshPartsTags[0] = TEXT("Prototype_Component_MeshPart_Hat_Wizard");
+	InitDesc.MeshPartsTags[1] = TEXT("Prototype_Component_MeshPart_Hair_M_C");
+	InitDesc.MeshPartsTags[5] = TEXT("Prototype_Component_MeshPart_Robe_HerbologyCoat");
+	InitDesc.MeshPartsTags[6] = TEXT("Prototype_Component_MeshPart_Jacket_Arcane_A");
+	InitDesc.MeshPartsTags[7] = TEXT("Prototype_Component_MeshPart_Pants_Merlin");
+	InitDesc.MeshPartsTags[9] = TEXT("Prototype_Component_MeshPart_Boots_Arcane");
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Dummy_NPC"), pLayerTag, TEXT("NPC_M_1"), &InitDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (NPC_M_1)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	InitDesc.WorldMatrix = XMMatrixRotationY(XMConvertToRadians(91.f)) * XMMatrixTranslation(72.35f, 6.65f, 89.1f);
+	InitDesc.wstrAnimationTag = TEXT("Stand_Convor_1");
+	InitDesc.MeshPartsTags[0] = TEXT("");
+	InitDesc.MeshPartsTags[1] = TEXT("Prototype_Component_MeshPart_Player_Hair");
+	InitDesc.MeshPartsTags[5] = TEXT("Prototype_Component_MeshPart_Robe_DragonGrab");
+	InitDesc.MeshPartsTags[6] = TEXT("Prototype_Component_MeshPart_Jacket_Celtic_A");
+	InitDesc.MeshPartsTags[7] = TEXT("Prototype_Component_MeshPart_Pants_Merlin");
+	InitDesc.MeshPartsTags[9] = TEXT("Prototype_Component_MeshPart_Boots_Arcane");
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Dummy_NPC"), pLayerTag, TEXT("NPC_M_2"), &InitDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (NPC_M_2)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	InitDesc.WorldMatrix = XMMatrixRotationY(XMConvertToRadians(101.5f)) * XMMatrixTranslation(36.6f, 3.8f, 67.6f);
+	InitDesc.wstrAnimationTag = TEXT("Stand_Convor_2");
+	InitDesc.MeshPartsTags[0] = TEXT("Prototype_Component_MeshPart_Hat_Wizard");
+	InitDesc.MeshPartsTags[1] = TEXT("Prototype_Component_MeshPart_Hair_M_C");
+	InitDesc.MeshPartsTags[5] = TEXT("Prototype_Component_MeshPart_Robe_HerbologyCoat");
+	InitDesc.MeshPartsTags[6] = TEXT("Prototype_Component_MeshPart_Jacket_Arcane_A");
+	InitDesc.MeshPartsTags[7] = TEXT("Prototype_Component_MeshPart_Pants_Merlin");
+	InitDesc.MeshPartsTags[9] = TEXT("Prototype_Component_MeshPart_Boots_Arcane");
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Dummy_NPC"), pLayerTag, TEXT("NPC_M_3"), &InitDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (NPC_M_3)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	InitDesc.WorldMatrix = XMMatrixRotationY(XMConvertToRadians(40.5f)) * XMMatrixTranslation(55.45f, 4.65f, 60.95f);
+	InitDesc.wstrAnimationTag = TEXT("Stand_Convor_3");
+	InitDesc.MeshPartsTags[0] = TEXT("Prototype_Component_MeshPart_Hat_Arcane");
+	InitDesc.MeshPartsTags[1] = TEXT("Prototype_Component_MeshPart_Hair_M_C");
+	InitDesc.MeshPartsTags[5] = TEXT("Prototype_Component_MeshPart_Robe_Arcane");
+	InitDesc.MeshPartsTags[6] = TEXT("Prototype_Component_MeshPart_Jacket_Arcane_A");
+	InitDesc.MeshPartsTags[7] = TEXT("Prototype_Component_MeshPart_Pants_Arcane");
+	InitDesc.MeshPartsTags[9] = TEXT("Prototype_Component_MeshPart_Boots_Arcane");
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Dummy_NPC"), pLayerTag, TEXT("NPC_M_4"), &InitDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (NPC_M_4)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	InitDesc.WorldMatrix = XMMatrixTranslation(37.3f, 3.8f, 67.1f);
+	InitDesc.wstrAnimationTag = TEXT("Stand_Convor_4");
+	InitDesc.MeshPartsTags[0] = TEXT("");
+	InitDesc.MeshPartsTags[1] = TEXT("Prototype_Component_MeshPart_Player_Hair");
+	InitDesc.MeshPartsTags[3] = TEXT("Prototype_Component_MeshPart_Mask_Guardian");
+	InitDesc.MeshPartsTags[5] = TEXT("Prototype_Component_MeshPart_Robe_DarkArtsDelux_HoodDown");
+	InitDesc.MeshPartsTags[6] = TEXT("Prototype_Component_MeshPart_Jacket_DarkArtsDelux_A");
+	InitDesc.MeshPartsTags[7] = TEXT("Prototype_Component_MeshPart_Pants_DarkArtsDelux");
+	InitDesc.MeshPartsTags[9] = TEXT("Prototype_Component_MeshPart_Boots_Arcane");
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Dummy_NPC"), pLayerTag, TEXT("NPC_M_5"), &InitDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (NPC_M_5)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	/* NPC Female*/
+	InitDesc.WorldMatrix = XMMatrixRotationY(XMConvertToRadians(-131.f)) * XMMatrixTranslation(57.85f, 7.f, 92.6);
+	InitDesc.wstrAnimationTag = TEXT("Table_Drinking");
+	InitDesc.MeshPartsTags[0] = TEXT("Prototype_Component_MeshPart_Hat_Witch_F");
+	InitDesc.MeshPartsTags[1] = TEXT("Prototype_Component_MeshPart_Hair_Pony");
+	InitDesc.MeshPartsTags[2] = TEXT("Prototype_Component_MeshPart_Head_NPC_F");
+	InitDesc.MeshPartsTags[3] = TEXT("");
+	InitDesc.MeshPartsTags[4] = TEXT("Prototype_Component_MeshPart_Arm_F");
+	InitDesc.MeshPartsTags[5] = TEXT("Prototype_Component_MeshPart_Robe_DruidCape_F");
+	InitDesc.MeshPartsTags[6] = TEXT("Prototype_Component_MeshPart_Jacket_BeastTunic_F");
+	InitDesc.MeshPartsTags[7] = TEXT("Prototype_Component_MeshPart_Pants_Arcane_F");
+	InitDesc.MeshPartsTags[9] = TEXT("Prototype_Component_MeshPart_Boots_Arcane_F");
+	InitDesc.wstrCustomModelTag = TEXT("Prototype_Component_Model_CustomModel_NPC_F");
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Dummy_NPC"), pLayerTag, TEXT("NPC_F_0"), &InitDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (NPC_F_0)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	InitDesc.WorldMatrix = XMMatrixRotationY(XMConvertToRadians(-75.f)) * XMMatrixTranslation(61.6f, 6.9f, 89.15f);
+	InitDesc.wstrAnimationTag = TEXT("Table_Convor");
+	InitDesc.MeshPartsTags[0] = TEXT("Prototype_Component_MeshPart_Hat_Witch_F");
+	InitDesc.MeshPartsTags[1] = TEXT("Prototype_Component_MeshPart_Hair_Long_F");
+	InitDesc.MeshPartsTags[5] = TEXT("Prototype_Component_MeshPart_Robe_DarkArts_F");
+	InitDesc.MeshPartsTags[6] = TEXT("Prototype_Component_MeshPart_Jacket_BeastTunic_A_F");
+	InitDesc.MeshPartsTags[7] = TEXT("Prototype_Component_MeshPart_Pants_Arcane_F");
+	InitDesc.MeshPartsTags[9] = TEXT("Prototype_Component_MeshPart_Boots_Arcane_F");
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Dummy_NPC"), pLayerTag, TEXT("NPC_F_1"), &InitDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (NPC_F_1)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	InitDesc.WorldMatrix = XMMatrixRotationY(XMConvertToRadians(-94.5f)) * XMMatrixTranslation(57.8f, 6.9f, 88.05f);
+	InitDesc.wstrAnimationTag = TEXT("Table_Eating");
+	InitDesc.MeshPartsTags[0] = TEXT("Prototype_Component_MeshPart_Hat_Witch_F");
+	InitDesc.MeshPartsTags[1] = TEXT("Prototype_Component_MeshPart_Hair_Short_F");
+	InitDesc.MeshPartsTags[5] = TEXT("Prototype_Component_MeshPart_Robe_Beast_F");
+	InitDesc.MeshPartsTags[6] = TEXT("Prototype_Component_MeshPart_Jacket_BeastTunic_A_F");
+	InitDesc.MeshPartsTags[7] = TEXT("Prototype_Component_MeshPart_Pants_Arcane_F");
+	InitDesc.MeshPartsTags[9] = TEXT("Prototype_Component_MeshPart_Boots_Arcane_F");
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Dummy_NPC"), pLayerTag, TEXT("NPC_F_2"), &InitDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (NPC_F_2)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	InitDesc.WorldMatrix = XMMatrixRotationY(XMConvertToRadians(-91.5f)) * XMMatrixTranslation(73.55f, 6.6f, 89.3f);
+	InitDesc.wstrAnimationTag = TEXT("Stand_Zonkos");
+	InitDesc.MeshPartsTags[0] = TEXT("Prototype_Component_MeshPart_Hat_Witch_F");
+	InitDesc.MeshPartsTags[1] = TEXT("Prototype_Component_MeshPart_Hair_Pony");
+	InitDesc.MeshPartsTags[5] = TEXT("Prototype_Component_MeshPart_Robe_Herbology_F");
+	InitDesc.MeshPartsTags[6] = TEXT("Prototype_Component_MeshPart_Jacker_Celtic_A_F");
+	InitDesc.MeshPartsTags[7] = TEXT("Prototype_Component_MeshPart_Pants_Arcane_F");
+	InitDesc.MeshPartsTags[9] = TEXT("Prototype_Component_MeshPart_Boots_Arcane_F");
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Dummy_NPC"), pLayerTag, TEXT("NPC_F_3"), &InitDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (NPC_F_3)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	InitDesc.WorldMatrix = XMMatrixRotationY(XMConvertToRadians(-36.5f)) * XMMatrixTranslation(74.55f, 6.3f, 77.4f);
+	InitDesc.wstrAnimationTag = TEXT("Stand_Conversation_NewClothes_1");
+	InitDesc.MeshPartsTags[0] = TEXT("Prototype_Component_MeshPart_Hat_Witch_F");
+	InitDesc.MeshPartsTags[1] = TEXT("Prototype_Component_MeshPart_Hair_Long_F");
+	InitDesc.MeshPartsTags[5] = TEXT("Prototype_Component_MeshPart_Robe_DarkArts_F");
+	InitDesc.MeshPartsTags[6] = TEXT("Prototype_Component_MeshPart_Jacket_BeastTunic_A_F");
+	InitDesc.MeshPartsTags[7] = TEXT("Prototype_Component_MeshPart_Pants_Arcane_F");
+	InitDesc.MeshPartsTags[9] = TEXT("Prototype_Component_MeshPart_Boots_Arcane_F");
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Dummy_NPC"), pLayerTag, TEXT("NPC_F_4"), &InitDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (NPC_F_4)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	InitDesc.WorldMatrix = XMMatrixRotationY(XMConvertToRadians(114.f)) * XMMatrixTranslation(73.3f, 6.35f, 77.75f);
+	InitDesc.wstrAnimationTag = TEXT("Stand_Note");
+	InitDesc.MeshPartsTags[0] = TEXT("Prototype_Component_MeshPart_Hat_Wizard_F");
+	InitDesc.MeshPartsTags[1] = TEXT("Prototype_Component_MeshPart_Hair_Short_F");
+	InitDesc.MeshPartsTags[5] = TEXT("Prototype_Component_MeshPart_Robe_Beast_F");
+	InitDesc.MeshPartsTags[6] = TEXT("Prototype_Component_MeshPart_Jacket_BeastTunic_A_F");
+	InitDesc.MeshPartsTags[7] = TEXT("Prototype_Component_MeshPart_Pants_Arcane_F");
+	InitDesc.MeshPartsTags[9] = TEXT("Prototype_Component_MeshPart_Boots_Arcane_F");
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Dummy_NPC"), pLayerTag, TEXT("NPC_F_5"), &InitDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (NPC_F_5)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	InitDesc.WorldMatrix = XMMatrixRotationY(XMConvertToRadians(-128.5f)) * XMMatrixTranslation(56.2f, 4.8f, 61.75f);
+	InitDesc.wstrAnimationTag = TEXT("Stand_Wand");
+	InitDesc.MeshPartsTags[0] = TEXT("Prototype_Component_MeshPart_Hat_Witch_F");
+	InitDesc.MeshPartsTags[1] = TEXT("Prototype_Component_MeshPart_Hair_Pony");
+	InitDesc.MeshPartsTags[5] = TEXT("Prototype_Component_MeshPart_Robe_Herbology_F");
+	InitDesc.MeshPartsTags[6] = TEXT("Prototype_Component_MeshPart_Jacket_BeastTunic_A_F");
+	InitDesc.MeshPartsTags[7] = TEXT("Prototype_Component_MeshPart_Pants_Arcane_F");
+	InitDesc.MeshPartsTags[9] = TEXT("Prototype_Component_MeshPart_Boots_Arcane_F");
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Dummy_NPC"), pLayerTag, TEXT("NPC_F_6"), &InitDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (NPC_F_6)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	InitDesc.WorldMatrix = XMMatrixTranslation(41.55f, 3.1f, 55.1f);
+	InitDesc.wstrAnimationTag = TEXT("Stand_Flower");
+	InitDesc.MeshPartsTags[0] = TEXT("Prototype_Component_MeshPart_Hat_Wizard_F");
+	InitDesc.MeshPartsTags[1] = TEXT("Prototype_Component_MeshPart_Hair_Short_F");
+	InitDesc.MeshPartsTags[5] = TEXT("Prototype_Component_MeshPart_Robe_Herbology_1_F");
+	InitDesc.MeshPartsTags[6] = TEXT("Prototype_Component_MeshPart_Jacket_BeastTunic_A_F");
+	InitDesc.MeshPartsTags[7] = TEXT("Prototype_Component_MeshPart_Pants_Arcane_F");
+	InitDesc.MeshPartsTags[9] = TEXT("Prototype_Component_MeshPart_Boots_Arcane_F");
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Dummy_NPC"), pLayerTag, TEXT("NPC_F_7"), &InitDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (NPC_F_7)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	InitDesc.WorldMatrix = XMMatrixRotationY(XMConvertToRadians(-186.5f)) * XMMatrixTranslation(60.25f, 6.85f, 90.4f);
+	InitDesc.wstrAnimationTag = TEXT("Table_Nap");
+	InitDesc.MeshPartsTags[0] = TEXT("Prototype_Component_MeshPart_Hat_Wizard_F");
+	InitDesc.MeshPartsTags[1] = TEXT("Prototype_Component_MeshPart_Hair_Pony");
+	InitDesc.MeshPartsTags[5] = TEXT("Prototype_Component_MeshPart_Robe_Herbology_F");
+	InitDesc.MeshPartsTags[6] = TEXT("Prototype_Component_MeshPart_Jacker_Celtic_A_F");
+	InitDesc.MeshPartsTags[7] = TEXT("Prototype_Component_MeshPart_Pants_Arcane_F");
+	InitDesc.MeshPartsTags[9] = TEXT("Prototype_Component_MeshPart_Boots_Arcane_F");
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Dummy_NPC"), pLayerTag, TEXT("NPC_F_8"), &InitDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (NPC_F_8)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	/* Doby*/
+	CHouse_Elf::ELFINITDESC ElfInitDesc;
+	ElfInitDesc.WorldMatrix = XMMatrixRotationY(XMConvertToRadians(234.f)) * XMMatrixTranslation(59.1f, 6.6f, 93.96f);
+	ElfInitDesc.wstrAnimationTag = TEXT("Choose");
+#ifdef _DEBUG
+	ElfInitDesc.isCheckPosition = false;
+#endif // _DEBUG
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Doby"), pLayerTag, TEXT("Doby_0"), &ElfInitDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Doby_0)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	ElfInitDesc.WorldMatrix = XMMatrixRotationY(XMConvertToRadians(200.f)) * XMMatrixTranslation(34.f, 1.8f, 34.f);
+	ElfInitDesc.wstrAnimationTag = TEXT("Walk");
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Doby"), pLayerTag, TEXT("Doby_1"), &ElfInitDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Doby_1)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	ElfInitDesc.WorldMatrix = XMMatrixRotationY(XMConvertToRadians(60.f)) * XMMatrixTranslation(77.f, 6.6f, 90.f);
+	ElfInitDesc.wstrAnimationTag = TEXT("Walk");
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Doby"), pLayerTag, TEXT("Doby_2"), &ElfInitDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Doby_2)");
+		ENDINSTANCE;
 		return E_FAIL;
 	}
 

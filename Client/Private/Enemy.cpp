@@ -214,7 +214,7 @@ HRESULT CEnemy::Make_AI()
 
 		if (FAILED(m_pRootBehavior->Add_Type("fTargetDistance", _float())))
 			throw TEXT("Failed Add_Type fTargetDistance");
-		if (FAILED(m_pRootBehavior->Add_Type("fAttackRange", _float())))
+		if (FAILED(m_pRootBehavior->Add_Type("fAttackRange", 5.f)))
 			throw TEXT("Failed Add_Type fAttackRange");
 		if (FAILED(m_pRootBehavior->Add_Type("fTargetToDegree", _float())))
 			throw TEXT("Failed Add_Type fTargetToDegree");
@@ -441,7 +441,7 @@ void CEnemy::Set_Current_Target()
 		}
 	}
 
-	m_isRangeInEnemy = (0 < m_RangeInEnemies.size()) ? true : false;
+	m_isRangeInEnemy = (nullptr == m_pTarget) ? false : true;
 
 	if (false == m_isRangeInEnemy)
 	{

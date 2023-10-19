@@ -23,6 +23,7 @@ private:
 	HRESULT Ready_Event(const _tchar* pLayerTag);
 
 private:
+	HRESULT Load_Dummy_NPC(const _tchar* pLayerTag);
 	HRESULT Load_MapObject(const _tchar* pObjectFilePath);
 	HRESULT Load_MapObject_Ins(const _tchar* pObjectFilePath);
 
