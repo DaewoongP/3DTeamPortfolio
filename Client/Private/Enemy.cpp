@@ -130,8 +130,16 @@ HRESULT CEnemy::Render()
 			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_NormalTexture", i, NORMALS)))
 				throw TEXT("Bind_Material Normal");
 
-			if (FAILED(m_pShaderCom->Begin("AnimMesh")))
-				throw TEXT("Shader Begin AnimMesh");
+			if (true == m_isDissolve)
+			{
+				if (FAILED(m_pShaderCom->Begin("AnimMesh_Dissolve")))
+					return E_FAIL;
+			}
+			else
+			{
+				if (FAILED(m_pShaderCom->Begin("AnimMesh")))
+					throw TEXT("Shader Begin AnimMesh");
+			}
 
 			if (FAILED(m_pModelCom->Render(i)))
 				throw TEXT("Model Render");
@@ -264,6 +272,10 @@ HRESULT CEnemy::Add_Components()
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RootBehavior"),
 			TEXT("Com_RootBehavior"), reinterpret_cast<CComponent**>(&m_pRootBehavior))))
 			throw TEXT("Com_RootBehavior");
+
+		m_pDissolveTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/VFX/Textures/Noises/VFX_T_NoiseGreypack02_D.png"));
+		if (nullptr == m_pDissolveTexture)
+			throw TEXT("m_pDissolveTexture is nullptr");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -298,6 +310,12 @@ HRESULT CEnemy::SetUp_ShaderResources()
 
 		if (FAILED(m_pShaderCom->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 			throw TEXT("Failed Bind_RawValue : g_fCamFar");
+
+		if (FAILED(m_pDissolveTexture->Bind_ShaderResources(m_pShaderCom, "g_DissolveTexture")))
+			throw TEXT("Failed Bind_RawValue : g_DissolveTexture");
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveAmount", &m_fDissolveAmount, sizeof(_float))))
+			throw TEXT("Failed Bind_RawValue : m_fDissolveAmount");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -495,7 +513,7 @@ _bool CEnemy::IsEnemy(const wstring& wstrObjectTag)
 		return true;
 
 	return false;
-} 
+}
 
 _bool CEnemy::IsDebuff(const _uint& iType)
 {
@@ -543,8 +561,8 @@ _bool CEnemy::isCombo(const _uint& iType)
 
 	if (BUFF_LEVIOSO_TONGUE & m_iCurrentSpell)
 	{
-		if(iType & BUFF_ATTACK_LIGHT || iType & BUFF_ATTACK_HEAVY)
-		return false;
+		if (iType & BUFF_ATTACK_LIGHT || iType & BUFF_ATTACK_HEAVY)
+			return false;
 
 		if (iType & BUFF_DESCENDO)
 		{
@@ -552,7 +570,7 @@ _bool CEnemy::isCombo(const _uint& iType)
 			return false;
 		}
 	}
-		
+
 
 	if (iType & BUFF_ATTACK_LIGHT)
 		ReturnData = m_isHitCombo = true;
@@ -656,12 +674,12 @@ void CEnemy::Free()
 		Safe_Release(m_pShaderCom);
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pShadowShaderCom);
+		Safe_Release(m_pDissolveTexture);
 
 		for (auto iter = m_MagicTickDesc.begin(); iter != m_MagicTickDesc.end(); ++iter)
 		{
-			if(iter->second!=nullptr)
+			if (iter->second != nullptr)
 				Safe_Delete(iter->second);
 		}
-		
 	}
 }

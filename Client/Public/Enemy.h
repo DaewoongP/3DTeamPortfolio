@@ -85,6 +85,7 @@ protected:
 	CRigidBody* m_pRigidBody = { nullptr };
 	CRootBehavior* m_pRootBehavior = { nullptr };
 	CShader* m_pShadowShaderCom = { nullptr };
+	CTexture* m_pDissolveTexture = { nullptr };
 
 protected:
 	const CGameObject* m_pTarget = { nullptr };
@@ -98,10 +99,12 @@ protected:
 	_bool m_isParring = { false };
 	_bool m_isOnGround = { false };
 	_bool m_isHitCombo = { false };
+	_bool m_isDissolve = { false };
 	_bool m_isHitAttack = { false };
 	_bool m_isRangeInEnemy = { false };
 	_bool m_isChangeAnimation = { false };
 
+	_float m_fDissolveAmount = { 0.f };
 	_float3 m_vCurrentPosition = {};
 	array<const _float4x4*, 3> m_HitMatrices;
 
@@ -141,6 +144,7 @@ protected:
 	_bool isControlSpell(const _uint& iType);
 	_bool isPowerSpell(const _uint& iType);
 	_bool isDamageSpell(const _uint& iType);
+
 	void Remove_Fly_Spells();
 
 protected: /* Notify Func */

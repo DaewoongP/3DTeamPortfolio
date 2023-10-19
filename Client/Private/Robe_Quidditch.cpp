@@ -55,7 +55,8 @@ _bool CRobe_Quidditch::Buy()
 void CRobe_Quidditch::Equipment()
 {
 	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Robe_Quidditch")
-		, CCustomModel::MESHTYPE::ROBE);
+		, CCustomModel::MESHTYPE::ROBE, _float4(1.f, 1.f, 1.f, 1.f), TEXT("../../Resources/GameData/ClothData/Robe_Quidditch.cloth"));
+	m_pPlayer->Set_Robe_Mesh_Index(0);
 }
 
 CRobe_Quidditch* CRobe_Quidditch::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)

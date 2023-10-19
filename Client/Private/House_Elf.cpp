@@ -41,10 +41,6 @@ HRESULT CHouse_Elf::Initialize(void* pArg)
 	if (wstring::npos != pDesc->wstrAnimationTag.find(TEXT("Walk")))
 		m_isWalk = true;
 
-#ifdef _DEBUG
-	m_isCheckPosition = pDesc->isCheckPosition;
-#endif // _DEBUG
-
 	return S_OK;
 }
 
@@ -57,10 +53,6 @@ void CHouse_Elf::Tick(_float fTimeDelta)
 
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
-
-#ifdef _DEBUG
-	ADD_IMGUI([&] { this->Tick_TestShake(); });
-#endif // _DEBUG
 }
 
 void CHouse_Elf::Late_Tick(_float fTimeDelta)
@@ -156,37 +148,6 @@ HRESULT CHouse_Elf::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjM
 
 	return S_OK;
 }
-
-#ifdef _DEBUG
-
-void CHouse_Elf::Tick_TestShake()
-{
-	if (false == m_isCheckPosition)
-		return;
-
-	ImGui::Begin("Test");
-
-	wstring wstrTag = m_pTag;
-	string strTag = wstrToStr(wstrTag);
-
-	_float3 vPosition = m_pTransform->Get_Position();
-
-	ImGui::DragFloat3(strTag.c_str(), (_float*)&vPosition, 0.05f, -100.f, 10000.f);
-	strTag += "Degree";
-
-	_float3 vRadians;
-	ImGui::DragFloat3(strTag.c_str(), (_float*)&m_vAngle, 0.5f, -360.f, 360.f);
-	vRadians.x = XMConvertToRadians(m_vAngle.x);
-	vRadians.y = XMConvertToRadians(m_vAngle.y);
-	vRadians.z = XMConvertToRadians(m_vAngle.z);
-
-	m_pTransform->Set_Position(vPosition);
-	m_pTransform->Rotation(vRadians);
-
-	ImGui::End();
-}
-
-#endif
 
 HRESULT CHouse_Elf::Add_Components()
 {
