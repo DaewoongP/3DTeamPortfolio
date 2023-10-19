@@ -25,6 +25,9 @@ public:
     void Set_isRender(_bool isrender) {
         m_isRender = isrender;
     }
+    _bool Is_Finished() {
+        return m_isFinished;
+    }
 
 private:
     HRESULT Add_Prototype();
@@ -47,6 +50,7 @@ private:
     vector<CTexture*>       m_Scripts;
     CUI_Script*             m_pUI_Script;
     _bool                   m_isRender = { false };
+    _bool                   m_isFinished = { false };
 
 public:
     static CScript* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

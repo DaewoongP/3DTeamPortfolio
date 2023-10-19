@@ -10,6 +10,7 @@ private:
 	virtual ~CQuest_Save_Fig() = default;
 
 public:
+	void Set_Saved() { m_isSaved = true; }
 	virtual _bool Is_Finished() override;
 
 public:
@@ -20,10 +21,6 @@ public:
 
 private:
 	_bool		m_isSaved = { false };
-	/*_uint		m_iNumGrass = 0;
-	_uint		m_iNumTest = 0;
-	_uint		m_iNumTest1 = 0;
-	_uint		m_iNumTest2 = 0;*/
 
 public:
 	static CQuest_Save_Fig* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

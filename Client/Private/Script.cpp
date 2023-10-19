@@ -133,6 +133,7 @@ _bool CScript::Next_Script()
 		{
 			Safe_Release(pGameInstance);
 			m_isRender = false;
+			m_isFinished = true;
 			return false;
 		}
 

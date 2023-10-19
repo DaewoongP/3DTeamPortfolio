@@ -1,9 +1,9 @@
-#include "Oakes.h"
+#include "../Public/Script.h"
 #include "GameInstance.h"
+#include "Oakes.h"
 #include "UI_Interaction.h"
-#include "../../Client/Public/Script.h"
 #include "UI_Script.h"
-
+#include "Quest_Manager.h"
 
 COakes::COakes(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -68,7 +68,17 @@ void COakes::Tick(_float fTimeDelta)
 
 
 	if (m_isPlayScript)
+	{
 		m_pScripts[m_iScriptIndex]->Tick(fTimeDelta);
+
+		if (true == m_pScripts[0]->Is_Finished())
+		{
+			CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
+			Safe_AddRef(pQuest_Manager);
+			pQuest_Manager->Unlock_Quest(TEXT("Quest_Save_Fig"));
+			Safe_Release(pQuest_Manager);
+		}
+	}
 }
 
 void COakes::Late_Tick(_float fTimeDelta)
