@@ -1,17 +1,17 @@
-#include "..\Public\Cat.h"
+#include "..\Public\TrollHouse.h"
 #include "GameInstance.h"
 
-CCat::CCat(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CTrollHouse::CTrollHouse(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
 }
 
-CCat::CCat(const CCat& rhs)
+CTrollHouse::CTrollHouse(const CTrollHouse& rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CCat::Initialize_Prototype()
+HRESULT CTrollHouse::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -19,11 +19,11 @@ HRESULT CCat::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CCat::Initialize(void* pArg)
+HRESULT CTrollHouse::Initialize(void* pArg)
 {
 	if (nullptr == pArg)
 	{
-		MSG_BOX("CCat Argument is NULL");
+		MSG_BOX("CTrollHouse Argument is NULL");
 		return E_FAIL;
 	}
 
@@ -33,53 +33,36 @@ HRESULT CCat::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_ObjectDesc = *reinterpret_cast<CATDESC*>(pArg);
+	m_ObjectDesc = *reinterpret_cast<MAPOBJECTDESC*>(pArg);
 	m_pTransform->Set_WorldMatrix(m_ObjectDesc.WorldMatrix);
 
 	return S_OK;
 }
 
-HRESULT CCat::Initialize_Level(_uint iCurrentLevelIndex)
+HRESULT CTrollHouse::Initialize_Level(_uint iCurrentLevelIndex)
 {
 	/* Com_Model */
 	if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, m_ObjectDesc.wszTag,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{
-		MSG_BOX("Failed CCat Add_Component : (Com_Model)");
+		MSG_BOX("Failed CTrollHouse Add_Component : (Com_Model)");
 		__debugbreak();
 		return E_FAIL;
 	}
 
-	m_eCatAnimIndex = (CAT_ANIMATION)(m_ObjectDesc.iAnimIndex / 2);
-	if (6 <= m_ObjectDesc.iAnimIndex)
-		m_eCatAnimIndex = CAT_TURN;
-
-	m_pModel->Change_Animation((_uint)m_eCatAnimIndex);
-
-	if (CAT_TURN == m_eCatAnimIndex)
-		m_pModel->Get_Animation(m_eCatAnimIndex)->Set_Loop(false);
-
 	return S_OK;
 }
 
-void CCat::Tick(_float fTimeDelta)
+void CTrollHouse::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	Cat_Move(fTimeDelta);
-
-	// 애니메이션이 변경되면 그때 애니메이션 삽입
-	if (m_ePreCatAnimIndex != m_eCatAnimIndex)
-	{
-		m_ePreCatAnimIndex = m_eCatAnimIndex;
-		m_pModel->Change_Animation(m_eCatAnimIndex);
-	}
-
 	if (nullptr != m_pModel)
-		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+		//m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+		m_pModel->Play_Animation(0.f, CModel::UPPERBODY, m_pTransform);
 }
 
-void CCat::Late_Tick(_float fTimeDelta)
+void CTrollHouse::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
@@ -90,7 +73,7 @@ void CCat::Late_Tick(_float fTimeDelta)
 	}
 }
 
-HRESULT CCat::Render()
+HRESULT CTrollHouse::Render()
 {
 	if (FAILED(__super::Render()))
 		return E_FAIL;
@@ -107,17 +90,7 @@ HRESULT CCat::Render()
 		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 		m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
 
-		// 몸통만
-		if (0 == iMeshCount)
-		{
-			if(0 != m_iRandCatTexture)
-				m_pCatTexture->Bind_ShaderResources(m_pShader, "g_DiffuseTexture_Cat");
-
-			m_pShader->Begin("AnimMesh_Cat");
-		}
-
-		else
-			m_pShader->Begin("AnimMesh");
+		m_pShader->Begin("AnimMesh");
 
 		if (FAILED(m_pModel->Render(iMeshCount)))
 			return E_FAIL;
@@ -126,7 +99,7 @@ HRESULT CCat::Render()
 	return S_OK;
 }
 
-HRESULT CCat::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
+HRESULT CTrollHouse::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
 	if (FAILED(SetUp_ShadowShaderResources(LightViewMatrix, LightProjMatrix)))
 		return E_FAIL;
@@ -147,7 +120,7 @@ HRESULT CCat::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 	return S_OK;
 }
 
-HRESULT CCat::Add_Components()
+HRESULT CTrollHouse::Add_Components()
 {
 	/* Com_Renderer */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
@@ -177,61 +150,10 @@ HRESULT CCat::Add_Components()
 		return E_FAIL;
 	}
 
-	m_iRandCatTexture = rand() % 5;
-
-	// 확률에 따라 랜덤한 색의 고양이 텍스처를 적용한다.
-	if (1 == m_iRandCatTexture)
-	{
-		/* Com_Texture1 */
-		if (FAILED(CComposite::Add_Component(LEVEL_SMITH, TEXT("Prototype_Component_Texture_Cat_Turk"),
-			TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pCatTexture))))
-		{
-			MSG_BOX("Failed CCat Add_Component : (Com_Texture)");
-			__debugbreak();
-			return E_FAIL;
-		}
-	}
-
-	else if (2 == m_iRandCatTexture)
-	{
-		/* Com_Texture */
-		if (FAILED(CComposite::Add_Component(LEVEL_SMITH, TEXT("Prototype_Component_Texture_Cat_Spot"),
-			TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pCatTexture))))
-		{
-			MSG_BOX("Failed CCat Add_Component : (Com_Texture)");
-			__debugbreak();
-			return E_FAIL;
-		}
-	}	
-
-	else if (3 == m_iRandCatTexture)
-	{
-		/* Com_Texture */
-		if (FAILED(CComposite::Add_Component(LEVEL_SMITH, TEXT("Prototype_Component_Texture_Cat_Calico"),
-			TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pCatTexture))))
-		{
-			MSG_BOX("Failed CCat Add_Component : (Com_Texture)");
-			__debugbreak();
-			return E_FAIL;
-		}
-	}
-
-	else if (4 == m_iRandCatTexture)
-	{
-		/* Com_Texture */
-		if (FAILED(CComposite::Add_Component(LEVEL_SMITH, TEXT("Prototype_Component_Texture_Cat_Orange"),
-			TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pCatTexture))))
-		{
-			MSG_BOX("Failed CCat Add_Component : (Com_Texture)");
-			__debugbreak();
-			return E_FAIL;
-		}
-	}
-
 	return S_OK;
 }
 
-HRESULT CCat::SetUp_ShaderResources()
+HRESULT CTrollHouse::SetUp_ShaderResources()
 {
 	BEGININSTANCE;
 
@@ -243,15 +165,13 @@ HRESULT CCat::SetUp_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Bind_RawValue("g_iCatNum", &m_iRandCatTexture, sizeof(_int))))
-		return E_FAIL;
 
 	ENDINSTANCE;
 
 	return S_OK;
 }
 
-HRESULT CCat::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
+HRESULT CTrollHouse::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
 	BEGININSTANCE;
 
@@ -269,42 +189,22 @@ HRESULT CCat::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 L
 	return S_OK;
 }
 
-void CCat::Cat_Move(_float fTimeDelta)
+CTrollHouse* CTrollHouse::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	// 고양이가 같은 곳을 계속 돌아다니는 부분
-	if (CAT_TURN == m_eCatAnimIndex)
-	{
-		if(m_pModel->Is_Finish_Animation())
-			m_eCatAnimIndex = CAT_WALK;
-	}
-
-	else if (CAT_WALK == m_eCatAnimIndex)
-	{
-		m_fWalkTime += fTimeDelta;
-		if (7.5f <= m_fWalkTime)
-		{
-			m_eCatAnimIndex = CAT_TURN;
-			m_fWalkTime = 0.f;
-		}			
-	}		
-}
-
-CCat* CCat::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-{
-	CCat* pInstance = New CCat(pDevice, pContext);
+	CTrollHouse* pInstance = New CTrollHouse(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CCat");
+		MSG_BOX("Failed to Created CTrollHouse");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CCat::Clone(void* pArg)
+CGameObject* CTrollHouse::Clone(void* pArg)
 {
-	CCat* pInstance = New CCat(*this);
+	CTrollHouse* pInstance = New CTrollHouse(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
@@ -314,13 +214,12 @@ CGameObject* CCat::Clone(void* pArg)
 	return pInstance;
 }
 
-void CCat::Free()
+void CTrollHouse::Free()
 {
 	__super::Free();
 
 	Safe_Release(m_pShadowShader);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pModel);
-	Safe_Release(m_pCatTexture);
 	Safe_Release(m_pRenderer);
 }

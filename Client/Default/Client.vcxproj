@@ -223,6 +223,7 @@
     <ClInclude Include="..\Public\EnergyBall.h" />
     <ClInclude Include="..\Public\Level_Sanctum.h" />
     <ClInclude Include="..\Public\Oakes.h" />
+    <ClInclude Include="..\Public\Owl.h" />
     <ClInclude Include="..\Public\Pants_Arcane.h" />
     <ClInclude Include="..\Public\Pants_DarkArts_Delux.h" />
     <ClInclude Include="..\Public\Pants_Merlin.h" />
@@ -250,6 +251,7 @@
     <ClInclude Include="..\Public\Robe_DarkArts_Delux.h" />
     <ClInclude Include="..\Public\Robe_Quidditch.h" />
     <ClInclude Include="..\Public\Script.h" />
+    <ClInclude Include="..\Public\TrollHouse.h" />
     <ClInclude Include="..\Public\UI_DamageFont.h" />
     <ClInclude Include="..\Public\UI_Interaction.h" />
     <ClInclude Include="..\Public\UI_Script.h" />
@@ -538,6 +540,7 @@
     <ClCompile Include="..\Private\EnergyBall.cpp" />
     <ClCompile Include="..\Private\Level_Sanctum.cpp" />
     <ClCompile Include="..\Private\Oakes.cpp" />
+    <ClCompile Include="..\Private\Owl.cpp" />
     <ClCompile Include="..\Private\Pants_Arcane.cpp" />
     <ClCompile Include="..\Private\Pants_DarkArts_Delux.cpp" />
     <ClCompile Include="..\Private\Pants_Merlin.cpp" />
@@ -565,6 +568,7 @@
     <ClCompile Include="..\Private\Robe_DarkArts_Delux.cpp" />
     <ClCompile Include="..\Private\Robe_Quidditch.cpp" />
     <ClCompile Include="..\Private\Script.cpp" />
+    <ClCompile Include="..\Private\TrollHouse.cpp" />
     <ClCompile Include="..\Private\UI_DamageFont.cpp" />
     <ClCompile Include="..\Private\UI_Interaction.cpp" />
     <ClCompile Include="..\Private\UI_Script.cpp" />
