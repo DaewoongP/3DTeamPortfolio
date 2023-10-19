@@ -664,11 +664,11 @@ HRESULT CConjuredDragon::Make_Notifies()
 		return E_FAIL;
 	
 	Func = [&] { this->Pulse_Charge(); };
-	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Charge"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Pulse_Charge"), Func)))
 		return E_FAIL;
 
-	Func = [&] { this->Pulse_StopCharge(); };
-	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("StopChargeCircle"), Func)))
+	Func = [&] { this->Pulse_Stop_Charge(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Pulse_Stop_Charge"), Func)))
 		return E_FAIL;
 
 	return S_OK;
@@ -2101,20 +2101,20 @@ HRESULT CConjuredDragon::Make_Air_Attacks(_Inout_ CRandomChoose* pRandomChoose)
 		pAttack_Breath->Set_Attack_Option(100.f);
 
 		/* Assemble Behaviors */
-		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Attack_Fireball"), pSequence_Attack_Fireball, 0.45f)))
-			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Fireball");
-		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Attack_Breath"), pSequence_Attack_Breath, 0.35f)))
-			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Breath");
+		//if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Attack_Fireball"), pSequence_Attack_Fireball, 0.45f)))
+		//	throw TEXT("Failed Assemble_Behavior Sequence_Attack_Fireball");
+		//if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Attack_Breath"), pSequence_Attack_Breath, 0.35f)))
+		//	throw TEXT("Failed Assemble_Behavior Sequence_Attack_Breath");
 		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Attack_Purse"), pSequence_Attack_Purse, 0.2f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Purse");
 
-		if (FAILED(pSequence_Attack_Breath->Assemble_Behavior(TEXT("Action_Breath_WindUp"), pAction_Breath_WindUp)))
-			throw TEXT("Failed Assemble_Behavior Action_Breath_WindUp");
-		if (FAILED(pSequence_Attack_Breath->Assemble_Behavior(TEXT("Attack_Breath"), pAttack_Breath)))
-			throw TEXT("Failed Assemble_Behavior Attack_Breath");
+		//if (FAILED(pSequence_Attack_Breath->Assemble_Behavior(TEXT("Action_Breath_WindUp"), pAction_Breath_WindUp)))
+		//	throw TEXT("Failed Assemble_Behavior Action_Breath_WindUp");
+		//if (FAILED(pSequence_Attack_Breath->Assemble_Behavior(TEXT("Attack_Breath"), pAttack_Breath)))
+		//	throw TEXT("Failed Assemble_Behavior Attack_Breath");
 
-		if (FAILED(Make_Attack_Fireball(pSequence_Attack_Fireball)))
-			throw TEXT("Failed Make_Attack_Fireball");
+		//if (FAILED(Make_Attack_Fireball(pSequence_Attack_Fireball)))
+		//	throw TEXT("Failed Make_Attack_Fireball");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -2437,6 +2437,7 @@ void CConjuredDragon::Action_Pulse()
 
 	m_pEffect_ImpulseSphere->Play(m_vOffsetPos);
 	m_pEffect_Pulse_BoomWispy->Play(m_vOffsetPos);
+	
 }
 
 void CConjuredDragon::Pulse_Charge()
@@ -2446,17 +2447,14 @@ void CConjuredDragon::Pulse_Charge()
 	Safe_AddRef(pGameInstance);
 	Safe_Release(pGameInstance);
 #endif // _DEBUG
-
 	m_pEffect_Pulse_Charge->Play(m_vOffsetPos);
-	//m_pEffect_Pulse_CircleEmit->Play(m_vOffsetPos);
 }
 
-void CConjuredDragon::Pulse_StopCharge()
+void CConjuredDragon::Pulse_Stop_Charge()
 {
 	m_pEffect_Pulse_Charge->Stop();
 	m_pEffect_Pulse_CircleEmit->Stop();
 }
-
 
 CConjuredDragon* CConjuredDragon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

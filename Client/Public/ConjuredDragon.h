@@ -155,7 +155,7 @@ private: /* Notify Func */
 	void Off_Breath();
 	void Action_Pulse();
 	void Pulse_Charge();
-	void Pulse_StopCharge();
+	void Pulse_Stop_Charge();
 
 public:
 	static CConjuredDragon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
