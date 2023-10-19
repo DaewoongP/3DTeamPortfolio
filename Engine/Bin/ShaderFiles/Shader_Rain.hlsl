@@ -4,6 +4,7 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 float PI = acos(-1.0);
 float g_fTime;
+float g_fRainSpeed = 3.f;
 float2 g_vViewPort;
 
 float fract(float x)
@@ -56,7 +57,7 @@ float rnd(float t)
 
 float rain(float3 p)
 {
-    p.y -= g_fTime * 4.0;
+    p.y -= g_fTime * g_fRainSpeed;
     p.xy *= 60.0;
   
     p.y += rnd(floor(p.x)) * 80.0;
@@ -71,8 +72,8 @@ PS_OUT PS_MAIN(PS_IN In)
     float2 uv = In.vTexUV;
     uv -= 0.5;
     uv.y *= -1.f;
-    float fSpeed = 1.f;
-    uv /= float2(g_vViewPort.y / g_vViewPort.x, fSpeed);
+    
+    uv /= float2(g_vViewPort.y / g_vViewPort.x, 1.f);
 
     float3 col = float3(0, 0, 0);
     float fr = rain(float3(-uv, 5));
