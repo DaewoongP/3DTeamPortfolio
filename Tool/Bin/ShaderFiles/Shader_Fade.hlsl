@@ -1,8 +1,8 @@
 #include "Shader_EngineHeader.hlsli"
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-
-float g_fRadius;
-float2 g_vViewPort;
+texture2D g_FadeTexture;
+float g_fFade;
+bool g_isFade;
 
 struct VS_IN
 {
@@ -45,19 +45,10 @@ struct PS_OUT
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
-    // 해봤자 최대 2정도
-    float fDistance = distance(float2(0.5f, 0.5f), In.vTexUV / g_vViewPort.x / g_vViewPort.y);
-    
-    if (g_fRadius > fDistance)
-    {
-        discard;
-    }
-    else
-    {
-        float fFade = saturate((g_fRadius - fDistance) * -10.f);
-    }
-    
-    Out.vColor = float4(0.f, 0.f, 0.f, 1.f);
+
+    float4 vColor = g_FadeTexture.Sample(LinearSampler, In.vTexUV);
+
+    Out.vColor = g_fFade * vColor;
     
     return Out;
 }
@@ -68,7 +59,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Depth_Disable, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
         HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;

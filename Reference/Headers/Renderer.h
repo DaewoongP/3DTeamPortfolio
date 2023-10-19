@@ -25,6 +25,14 @@ public:
 		m_vFogCenterPos = vFogCenterPos;
 		m_fFogRadius = fFogRadius;
 	}
+	void FadeIn(_float fFadeSpeed) {
+		m_isFade = true;
+		m_fFadeSpeed = fFadeSpeed;
+	}
+	void FadeOut(_float fFadeSpeed) {
+		m_isFade = true;
+		m_fFadeSpeed = fFadeSpeed * -1.f;
+	}
 
 public:
 	// radial on / off , sample 최대개수 = 10
@@ -134,6 +142,7 @@ private:
 	class CShader*	m_pFadeShader = { nullptr };
 	class CShader*	m_pRainShader = { nullptr };
 	class CTexture*	m_pNoiseTexture = { nullptr };
+	class CTexture* m_pFadeTexture = { nullptr };
 
 private:
 	_bool		m_isSSAO = { false };
@@ -148,9 +157,10 @@ private:
 	_float		m_fFogRadius = { 0.f };
 
 private:
-	_bool		m_isFadeIn = { false };
+	_bool		m_isFade = { false };
+	_float		m_fFadeTime = { 1.f };
+	_float		m_fFadeSpeed = { 0.f };
 	_bool		m_isRaining = { false };
-	_float		m_fFadeTime = { 0.f };
 	_float		m_fGlowPower = { 0.f };
 	_float		m_fHDR = { 0.f };
 

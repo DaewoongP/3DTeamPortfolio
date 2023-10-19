@@ -120,9 +120,9 @@ HRESULT CLevel_Vault::Ready_Lights()
 	LightDesc.vLookAt = _float4(51.7f, 0.f, 52.4f, 1.f);
 	LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
 
-	LightDesc.vDiffuse = BLACKDEFAULT;
-	LightDesc.vAmbient = BLACKDEFAULT;
-	LightDesc.vSpecular = BLACKDEFAULT;
+	LightDesc.vDiffuse = _float4(0.1f, 0.1f, 0.1f, 0.1f);
+	LightDesc.vAmbient = LightDesc.vDiffuse;
+	LightDesc.vSpecular = LightDesc.vDiffuse;
 
 	if (FAILED(pGameInstance->Add_Light(LightDesc, nullptr, true, 0, _float(g_iWinSizeX) / g_iWinSizeY)))
 		return E_FAIL;

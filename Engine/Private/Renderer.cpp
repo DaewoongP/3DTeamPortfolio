@@ -199,6 +199,8 @@ HRESULT CRenderer::Initialize_Prototype()
 	m_fRadialBlurWidth = 0.0f;
 	m_isScreenRadial = false;
 	m_fRadialTimeAcc = 1.f;
+	m_fFadeSpeed = 0.1f;
+	m_fFadeTime = 0.f;
 
 	return S_OK;
 }
@@ -304,13 +306,13 @@ HRESULT CRenderer::Draw_RenderGroup()
 #pragma endregion
 
 	// final
-	if (FAILED(Render_Fade()))
-		return E_FAIL;
+	
 
 	// UI Render
 	if (FAILED(Render_UI()))
 		return E_FAIL;
-
+	if (FAILED(Render_Fade()))
+		return E_FAIL;
 #pragma region Debugs
 #ifdef _DEBUG
 	if (FAILED(Render_Picking()))
@@ -968,8 +970,14 @@ HRESULT CRenderer::Render_Rain()
 
 HRESULT CRenderer::Render_Fade()
 {
-	if (false == m_isFadeIn)
-		return S_OK;
+	if (CGameInstance::GetInstance()->Get_DIKeyState(DIK_F6, CInput_Device::KEY_DOWN))
+	{
+		FadeIn(1.f);
+	}
+	if (CGameInstance::GetInstance()->Get_DIKeyState(DIK_F7, CInput_Device::KEY_DOWN))
+	{
+		FadeOut(1.f);
+	}
 
 	// 화면 마지막에 그냥 띄워버리면 편함.
 	if (FAILED(m_pFadeShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
@@ -978,16 +986,22 @@ HRESULT CRenderer::Render_Fade()
 		return E_FAIL;
 	if (FAILED(m_pFadeShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
-
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-	_float2 vViewPort = pGameInstance->Get_ViewPortSize(m_pContext);
-	m_fFadeTime += pGameInstance->Get_World_Tick();
-	Safe_Release(pGameInstance);
-
-	if (FAILED(m_pFadeShader->Bind_RawValue("g_fRadius", &m_fFadeTime, sizeof(_float))))
+	if (FAILED(m_pFadeTexture->Bind_ShaderResource(m_pFadeShader, "g_FadeTexture")))
 		return E_FAIL;
-	if (FAILED(m_pFadeShader->Bind_RawValue("g_vViewPort", &vViewPort, sizeof(_float2))))
+	if (true == m_isFade)
+	{
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+		_float2 vViewPort = pGameInstance->Get_ViewPortSize(m_pContext);
+		m_fFadeTime += pGameInstance->Get_World_Tick() * m_fFadeSpeed;
+		if (m_fFadeTime > 1.f ||
+			m_fFadeTime < 0.f)
+			m_isFade = false;
+		m_fFadeTime = clamp(m_fFadeTime, 0.f, 1.f);
+		Safe_Release(pGameInstance);
+	}
+	
+	if (FAILED(m_pFadeShader->Bind_RawValue("g_fFade", &m_fFadeTime, sizeof(_float))))
 		return E_FAIL;
 
 	if (FAILED(m_pFadeShader->Begin("Fade")))
@@ -1123,6 +1137,10 @@ HRESULT CRenderer::Add_Components()
 
 	m_pNoiseTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Noises/VFX_T_Cloud_Noise_Tile_D.png"));
 	if (nullptr == m_pNoiseTexture)
+		return E_FAIL;
+	
+	m_pFadeTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/fade.dds"));
+	if (nullptr == m_pFadeTexture)
 		return E_FAIL;
 
 	m_pShadow = CShadow::Create(m_pDevice, m_pContext, m_pRectBuffer);
@@ -1272,6 +1290,7 @@ void CRenderer::Free()
 	Safe_Release(m_pFadeShader);
 	Safe_Release(m_pRainShader);
 	Safe_Release(m_pNoiseTexture);
+	Safe_Release(m_pFadeTexture);
 
 	Safe_Release(m_pBlur);
 	Safe_Release(m_pBloom);
