@@ -1189,15 +1189,10 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			}
 		}
 
-
-
-
-		/*if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
+		if (pGameInstance->Get_DIKeyState(DIK_C, CInput_Device::KEY_DOWN))
 		{
-			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Lumos(); };
-
-			Go_MagicCast(&MagicCastingStateDesc);
-		}*/
+			m_pCard_Fig->Spawn_Fig(m_pTarget);
+		}
 
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_FINISHER;
 
