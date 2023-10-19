@@ -42,6 +42,10 @@ HRESULT CDummy_NPC::Initialize(void* pArg)
 
 	m_pCustomModel->Change_Animation(pDesc->wstrAnimationTag);
 
+#ifdef _DEBUG
+	m_isCheckPosition = pDesc->isCheckPosition;
+#endif // _DEBUG
+
 	return S_OK;
 }
 
@@ -51,6 +55,10 @@ void CDummy_NPC::Tick(_float fTimeDelta)
 
 	if (nullptr != m_pCustomModel)
 		m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+
+#ifdef _DEBUG
+	ADD_IMGUI([&] { this->Tick_TestShake(); });
+#endif // _DEBUG
 }
 
 void CDummy_NPC::Late_Tick(_float fTimeDelta)
@@ -63,6 +71,37 @@ void CDummy_NPC::Late_Tick(_float fTimeDelta)
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
 	}
 }
+
+#ifdef _DEBUG
+
+void CDummy_NPC::Tick_TestShake()
+{
+	if (false == m_isCheckPosition)
+		return;
+
+	ImGui::Begin("TestShake");
+	
+	wstring wstrTag = m_pTag;
+	string strTag = wstrToStr(wstrTag);
+
+	_float3 vPosition = m_pTransform->Get_Position();
+
+	ImGui::DragFloat3(strTag.c_str(), (_float*)&vPosition, 0.05f, -100.f, 10000.f);
+	strTag += "Degree";
+
+	_float3 vRadians;
+	ImGui::DragFloat3(strTag.c_str(), (_float*)&m_vAngle, 0.5f, -360.f, 360.f);
+	vRadians.x = XMConvertToRadians(m_vAngle.x);
+	vRadians.y = XMConvertToRadians(m_vAngle.y);
+	vRadians.z = XMConvertToRadians(m_vAngle.z);
+
+	m_pTransform->Set_Position(vPosition);
+	m_pTransform->Rotation(vRadians);
+
+	ImGui::End();
+}
+
+#endif
 
 HRESULT CDummy_NPC::Render()
 {
@@ -196,7 +235,7 @@ HRESULT CDummy_NPC::Add_Components(const NPCINITDESC& Desc)
 
 HRESULT CDummy_NPC::Ready_MeshParts(const NPCINITDESC& Desc)
 {
-	_float4 vColor = _float4();
+	_float4 vColor = _float4(1.f, 1.f, 1.f, 1.f);
 
 	_uint iIndex = { 0 };
 	for (auto wstrPartTag : Desc.MeshPartsTags)
@@ -206,8 +245,15 @@ HRESULT CDummy_NPC::Ready_MeshParts(const NPCINITDESC& Desc)
 			++iIndex;
 			continue;
 		}
+		
+		if (CCustomModel::HAIR == iIndex)
+		{
+			vColor = _float4(GetRandomFloat(0.1f, 0.4f), GetRandomFloat(0.1f, 0.4f), GetRandomFloat(0.1f, 0.4f), 1.f);
+		}
+		else
+			vColor = _float4(1.f, 1.f, 1.f, 1.f);
 
-		if (FAILED(m_pCustomModel->Add_MeshParts(LEVEL_STATIC, wstrPartTag, CCustomModel::MESHTYPE(iIndex++))))
+		if (FAILED(m_pCustomModel->Add_MeshParts(LEVEL_STATIC, wstrPartTag, CCustomModel::MESHTYPE(iIndex++), vColor)))
 		{
 			wstring wstrErrorTag = TEXT("Failed Add MeshPart : ");
 			wstrErrorTag += wstrPartTag;

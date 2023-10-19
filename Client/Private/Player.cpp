@@ -18,6 +18,7 @@
 #include "Enemy.h"
 #include "UI_Group_Enemy_HP.h"
 
+#include "Card_Fig.h"
 #include "Magic.h"
 
 #include "UI_Group_Skill.h"
@@ -776,8 +777,14 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
-
-
+	CCard_Fig::CARDFIGINITDESC CardFigInitDesc;
+	CardFigInitDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Card_Fig"),
+		TEXT("Card_Fig"), reinterpret_cast<CComponent**>(&m_pCard_Fig), &CardFigInitDesc)))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -1001,7 +1008,7 @@ HRESULT CPlayer::Add_Magic()
 
 	//����������
 	{
-		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eBuffType = BUFF_STUPEFY;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = STUPEFY;
@@ -1056,6 +1063,8 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	BEGININSTANCE;
 
 #pragma region ī�޶� ���� �׽�Ʈ
+	if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
+		m_pCard_Fig->Spawn_Fig(m_pTarget);
 	//	if (pGameInstance->Get_DIKeyState(DIK_J, CInput_Device::KEY_DOWN))
 	//{
 	//	pGameInstance->Set_Camera(TEXT("Player_Camera"),2.0f);
@@ -1406,7 +1415,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Hair
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Player_Hair"),
+		TEXT("Prototype_Component_MeshPart_Hair_M_C"),
 		CCustomModel::HAIR)))
 	{
 		MSG_BOX("Failed Add MeshPart Hair");
@@ -3155,6 +3164,7 @@ void CPlayer::Free()
 		Safe_Release(m_UI_Group_SkillTap);
 		Safe_Release(m_pCooltime);
 		Safe_Release(m_pDefence);
+		Safe_Release(m_pCard_Fig);
 		
 	//	Safe_Release(m_pBlink);
 

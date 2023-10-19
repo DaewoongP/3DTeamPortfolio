@@ -13,6 +13,7 @@
 #include "RigidMove.h"
 #include "Check_Degree.h"
 #include "RandomChoose.h"
+#include "Check_Distance.h"
 #include "Selector_Degree.h"
 #include "Sequence_Groggy.h"
 #include "Sequence_Attack.h"
@@ -80,24 +81,17 @@ HRESULT CGolem_Combat::Initialize_Level(_uint iCurrentLevelIndex)
 	if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
 		return E_FAIL;
 
+	m_pTarget = m_pPlayer;
+
 	return S_OK;
 }
 
 void CGolem_Combat::Tick(_float fTimeDelta)
 {
-	Set_Current_Target();
+	if (false == m_isSpawn)
+		return;
 
 	__super::Tick(fTimeDelta);
-
-	/////////// Test Code///////////
-	BEGININSTANCE;
-	/*if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_PRESSING))
-	{
-		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
-			m_iCurrentSpell |= BUFF_STUPEFY;
-	}*/
-	ENDINSTANCE;
-	////////////////////////////////
 
 	m_pHitMatrix = m_HitMatrices[rand() % 3];
 
@@ -159,18 +153,6 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		m_iCurrentSpell |= eBuff;
 	}
 
-	/* Collision Player Fig */
-	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
-	{
-		if (false == IsEnemy(wstrObjectTag))
-			return;
-
-		m_isSpawn = true;
-		auto iter = m_RangeInEnemies.find(wstrObjectTag);
-		if (iter == m_RangeInEnemies.end())
-			m_RangeInEnemies.emplace(wstrObjectTag, CollisionEventDesc.pOtherOwner);
-	}
-
 	/* Collision Protego */
 	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Attack")) && 
 		wstring::npos != wstrOtherCollisionTag.find(TEXT("Protego")))
@@ -184,13 +166,6 @@ void CGolem_Combat::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 
-	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
-	{
-		if (false == IsEnemy(wstrObjectTag))
-			return;
-
-		Remove_GameObject(wstrObjectTag);
-	}
 }
 
 HRESULT CGolem_Combat::Render()
@@ -400,18 +375,6 @@ HRESULT CGolem_Combat::Add_Components()
 			throw TEXT("Com_RigidBody");
 
 		m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
-
-		/* For.Collider Enemy_Range */
-		RigidBodyDesc.isStatic = true;
-		RigidBodyDesc.isTrigger = true;
-		PxSphereGeometry pSphereGeomatry1 = PxSphereGeometry(7.f);
-		RigidBodyDesc.pGeometry = &pSphereGeomatry1;
-		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Range");
-		RigidBodyDesc.eThisCollsion = COL_ENEMY_RANGE;
-		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
-
-		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
-			throw TEXT("Failed Create_Collider");
 
 		/* For.Collider Enemy_Attack */
 		RigidBodyDesc.vOffsetPosition = _float3(0.f, 2.2f, 1.f);
@@ -795,9 +758,9 @@ HRESULT CGolem_Combat::Make_NormalAttack(_Inout_ CSelector* pSelector)
 		CSequence_MoveTarget* pSequence_MoveBackTarget = nullptr;
 		if (FAILED(Create_Behavior(pSequence_MoveBackTarget)))
 			throw TEXT("Failed Create_Behavior pSequence_MoveBackTarget");
-		CSelector* pSelector_Attacks = nullptr;
-		if (FAILED(Create_Behavior(pSelector_Attacks)))
-			throw TEXT("Failed Create_Behavior pSelector_Attacks");
+		CSequence* pSequence_Attacks = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attacks)))
+			throw TEXT("Failed Create_Behavior pSequence_Attacks");
 		CRandomChoose* pRandom_IdleMove = nullptr;
 		if (FAILED(Create_Behavior(pRandom_IdleMove)))
 			throw TEXT("Failed Create_Behavior pRandom_IdleMove");
@@ -810,6 +773,9 @@ HRESULT CGolem_Combat::Make_NormalAttack(_Inout_ CSelector* pSelector)
 					return false;
 
 				if (true == IsDebuff((BUFF_TYPE)*pICurrentSpell))
+					return false;
+
+				if (BUFF_STUPEFY & *pICurrentSpell)
 					return false;
 
 				return true;
@@ -850,26 +816,9 @@ HRESULT CGolem_Combat::Make_NormalAttack(_Inout_ CSelector* pSelector)
 
 				return (fAttackRange - 1.f) > fTargetDistance;
 			});
-		pSelector_Attacks->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
-			{
-				_float fAttackRange = { 0.f };
-				_float fTargetDistance = { 0.f };
-				if (FAILED(pBlackBoard->Get_Type("fAttackRange", fAttackRange)))
-				{
-					MSG_BOX("Failed Get_Type fAttackRange");
-					return false;
-				}
-
-				if (FAILED(pBlackBoard->Get_Type("fTargetDistance", fTargetDistance)))
-				{
-					MSG_BOX("Failed Get_Type fTargetDistance");
-					return false;
-				}
-
-				return (fAttackRange >= fTargetDistance && (fAttackRange - 1.f) <= fTargetDistance);
-			});
-
+		
 		/* Set Options */
+		pSequence_Attacks->Set_Option(2.f);
 		pSequence_MoveTarget->Set_Action_Options(TEXT("Move_Front"), m_pModelCom);
 		pSequence_MoveBackTarget->Set_Action_Options(TEXT("Move_Back"), m_pModelCom);
 
@@ -879,14 +828,14 @@ HRESULT CGolem_Combat::Make_NormalAttack(_Inout_ CSelector* pSelector)
 			throw TEXT("Failed Assemble_Behavior Sequence_MoveTarget");
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_MoveBackTarget"), pSequence_MoveBackTarget)))
 			throw TEXT("Failed Assemble_Behavior Sequence_MoveBackTarget");
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_Attacks"), pSelector_Attacks)))
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Attacks"), pSequence_Attacks)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attacks");
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Random_Idle_Move"), pRandom_IdleMove)))
 			throw TEXT("Failed Assemble_Behavior Random_Idle_Move");
 
 		if (FAILED(Make_Turns(pSequence_Turns)))
 			throw TEXT("Failed Make_Turns");
-		if (FAILED(Make_Attack(pSelector_Attacks)))
+		if (FAILED(Make_Attack(pSequence_Attacks)))
 			throw TEXT("Failed Make_Attack");
 		if (FAILED(Make_Random_Idle_Move(pRandom_IdleMove)))
 			throw TEXT("Failed Make_Random_Idle_Move");
@@ -1048,20 +997,26 @@ HRESULT CGolem_Combat::Make_Turns(_Inout_ CSequence* pSequence)
 	return S_OK;
 }
 
-HRESULT CGolem_Combat::Make_Attack(_Inout_ CSelector* pSelector)
+HRESULT CGolem_Combat::Make_Attack(_Inout_ CSequence* pSequence)
 {
 	BEGININSTANCE;
 
 	try /* Failed Check Make_Attack */
 	{
 		/* Make Child Behaviors */
-		if (nullptr == pSelector)
-			throw TEXT("Parameter pSelector is nullptr");
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		CCheck_Distance* pCheck_Distance = { nullptr };
+		if (FAILED(Create_Behavior(pCheck_Distance)))
+			throw TEXT("Failed Create_Behavior pCheck_Distance");
+		CSelector* pSelector_Attack = { nullptr };
+		if (FAILED(Create_Behavior(pSelector_Attack)))
+			throw TEXT("Failed Create_Behavior pSelector_Attack");
 
 		CRandomChoose* pRandom_Attack = nullptr;
 		if (FAILED(Create_Behavior(pRandom_Attack)))
 			throw TEXT("Failed Create_Behavior pRandom_Attack");
-
 		CAction* pAction_Protego_Deflect = nullptr;
 		if (FAILED(Create_Behavior(pAction_Protego_Deflect)))
 			throw TEXT("Failed Create_Behavior pAction_Protego_Deflect");
@@ -1080,6 +1035,31 @@ HRESULT CGolem_Combat::Make_Attack(_Inout_ CSelector* pSelector)
 			throw TEXT("Failed Create_Behavior pSequence_Attack_Jab");
 
 		/* Set Decorations */
+		pSelector_Attack->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_float fAttackRange = { 0.f };
+				_float fTargetDistance = { 0.f };
+				if (FAILED(pBlackBoard->Get_Type("fAttackRange", fAttackRange)))
+				{
+					MSG_BOX("Failed Get_Type fAttackRange");
+					return false;
+				}
+
+				if (FAILED(pBlackBoard->Get_Type("fTargetDistance", fTargetDistance)))
+				{
+					MSG_BOX("Failed Get_Type fTargetDistance");
+					return false;
+				}
+
+				return (fAttackRange >= fTargetDistance && (fAttackRange - 1.f) <= fTargetDistance);
+			});
+		pSelector_Attack->Add_Fail_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				if (FAILED(pBlackBoard->Set_Type("fAttackRange", 5.f)))
+					return false;
+
+				return true;
+			});
 		pRandom_Attack->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_bool* pIsParring = { nullptr };
@@ -1092,7 +1072,6 @@ HRESULT CGolem_Combat::Make_Attack(_Inout_ CSelector* pSelector)
 			{
 				return true;
 			});
-
 		pAction_Protego_Deflect->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_bool* pIsParring = { nullptr };
@@ -1113,10 +1092,11 @@ HRESULT CGolem_Combat::Make_Attack(_Inout_ CSelector* pSelector)
 			});
 
 		/* Set Options */
+		pCheck_Distance->Set_Option(m_pTransform);
 		pSequence_Attack_Slash->Set_Attack_Action_Options(TEXT("Attack_Slash_Sword"), m_pModelCom);
 		pSequence_Attack_Slash->Set_Attack_Option(7.f);
 		pSequence_Attack_Shoulder->Set_Attack_Action_Options(TEXT("Attack_Shoulder"), m_pModelCom);
-		pSequence_Attack_Shoulder->Set_Attack_Option(4.f);
+		pSequence_Attack_Shoulder->Set_Attack_Option(4.5f);
 		pSequence_Attack_OverHand->Set_Attack_Action_Options(TEXT("Attack_OverHand_Sword"), m_pModelCom);
 		pSequence_Attack_OverHand->Set_Attack_Option(7.5f);
 		pSequence_Attack_Jab->Set_Attack_Action_Options(TEXT("Attack_Jab"), m_pModelCom);
@@ -1125,18 +1105,23 @@ HRESULT CGolem_Combat::Make_Attack(_Inout_ CSelector* pSelector)
 		pAction_Protego_Deflect->Set_Options(TEXT("Protego_Deflect"), m_pModelCom);
 
 		/* Assemble Behaviors */
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("RandomChoose"), pRandom_Attack)))
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Check_Distance"), pCheck_Distance)))
+			throw TEXT("Failed Assemble_Behavior Check_Distance");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Selector_Attack"), pSelector_Attack)))
+			throw TEXT("Failed Assemble_Behavior Selector_Attack");
+
+		if (FAILED(pSelector_Attack->Assemble_Behavior(TEXT("RandomChoose"), pRandom_Attack)))
 			throw TEXT("Failed Assemble_Behavior RandomChoose");
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Action_Protego_Deflect"), pAction_Protego_Deflect)))
+		if (FAILED(pSelector_Attack->Assemble_Behavior(TEXT("Action_Protego_Deflect"), pAction_Protego_Deflect)))
 			throw TEXT("Failed Assemble_Behavior Action_Protego_Deflect");
 
-		if (FAILED(pRandom_Attack->Assemble_Behavior(TEXT("Action_Attack_Slash"), pSequence_Attack_Slash, 0.3f)))
+		if (FAILED(pRandom_Attack->Assemble_Behavior(TEXT("Action_Attack_Slash"), pSequence_Attack_Slash, 0.35f)))
 			throw TEXT("Failed Assemble_Behavior Action_Attack_Slash");
-		if (FAILED(pRandom_Attack->Assemble_Behavior(TEXT("Action_Attack_Shoulder"), pSequence_Attack_Shoulder, 0.2f)))
+		if (FAILED(pRandom_Attack->Assemble_Behavior(TEXT("Action_Attack_Shoulder"), pSequence_Attack_Shoulder, 0.01f)))
 			throw TEXT("Failed Assemble_Behavior Action_Attack_Shoulder");
-		if (FAILED(pRandom_Attack->Assemble_Behavior(TEXT("Action_Attack_OverHand"), pSequence_Attack_OverHand, 0.3f)))
+		if (FAILED(pRandom_Attack->Assemble_Behavior(TEXT("Action_Attack_OverHand"), pSequence_Attack_OverHand, 0.32f)))
 			throw TEXT("Failed Assemble_Behavior Action_Attack_OverHand");
-		if (FAILED(pRandom_Attack->Assemble_Behavior(TEXT("Action_Attack_Jab"), pSequence_Attack_Jab, 0.2f)))
+		if (FAILED(pRandom_Attack->Assemble_Behavior(TEXT("Action_Attack_Jab"), pSequence_Attack_Jab, 0.32f)))
 			throw TEXT("Failed Assemble_Behavior Action_Attack_Jab");
 	}
 	catch (const _tchar* pErrorTag)
@@ -1193,11 +1178,11 @@ HRESULT CGolem_Combat::Make_Random_Idle_Move(_Inout_ CRandomChoose* pRandomChoos
 		pTsk_Wait->Set_Timer(1.f);
 
 		/* Assemble Behaviors */
-		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Idle"), pAction_Idle, 0.1f)))
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Idle"), pAction_Idle, 0.33f)))
 			throw TEXT("Failed Assemble_Behavior Action_Idle");
-		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Move_1StepLeft"), pSequence_Move_1StepLeft, 0.1f)))
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Move_1StepLeft"), pSequence_Move_1StepLeft, 0.33f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Move_1StepLeft");
-		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Move_1StepRight"), pSequence_Move_1StepRight, 0.1f)))
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Move_1StepRight"), pSequence_Move_1StepRight, 0.34f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Move_1StepRight");
 
 		if (FAILED(pAction_Idle->Assemble_Behavior(TEXT("Tsk_Wait"), pTsk_Wait)))

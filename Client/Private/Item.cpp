@@ -232,6 +232,11 @@ CItem* CItem::SimpleFactory(ITEM_ID eItemID, _uint iLevel, void* pArg)
 			iLevel,
 			TEXT("Prototype_GameObject_Robe_Arcane"), pArg));
 		break;
+	case Client::ITEM_ID_ROBE_BEAST:
+		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+			iLevel,
+			TEXT("Prototype_GameObject_Robe_Beast"), pArg));
+		break;
 	case Client::ITEM_ID_ROBE_DARKARTS:
 		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
 			iLevel,

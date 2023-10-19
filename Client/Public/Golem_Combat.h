@@ -72,7 +72,7 @@ private: /* Çàµ¿ ¹­À½µé */
 
 	HRESULT Make_Fly_Combo(_Inout_ CSelector* pSelector);
 	HRESULT Make_Turns(_Inout_ CSequence* pSequence);
-	HRESULT Make_Attack(_Inout_ CSelector* pSelector);
+	HRESULT Make_Attack(_Inout_ CSequence* pSequence);
 	HRESULT Make_Random_Idle_Move(_Inout_ CRandomChoose* pRandomChoose);
 
 	/* Fly Combo */

@@ -1,17 +1,17 @@
-#include "Oakes.h"
+#include "Smith_Fig.h"
 #include "GameInstance.h"
 
-COakes::COakes(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CSmith_Fig::CSmith_Fig(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
 }
 
-COakes::COakes(const COakes& rhs)
+CSmith_Fig::CSmith_Fig(const CSmith_Fig& rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT COakes::Initialize_Prototype()
+HRESULT CSmith_Fig::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -19,27 +19,28 @@ HRESULT COakes::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT COakes::Initialize(void* pArg)
+HRESULT CSmith_Fig::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (nullptr != pArg)
-	{
-		_float4x4* pWorldMatric = reinterpret_cast<_float4x4*>(pArg);
-		m_pTransform->Set_WorldMatrix(*pWorldMatric);
-	}
-
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	if (nullptr != pArg)
+	{
+		_float4x4* pMatrix = reinterpret_cast<_float4x4*>(pArg);
+		m_pTransform->Set_WorldMatrix(*pMatrix);
+	}
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
+
+	m_pModelCom->Change_Animation(TEXT("Stand_Listen"));
 
 	return S_OK;
 }
 
-void COakes::Tick(_float fTimeDelta)
+void CSmith_Fig::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
@@ -47,7 +48,7 @@ void COakes::Tick(_float fTimeDelta)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 }
 
-void COakes::Late_Tick(_float fTimeDelta)
+void CSmith_Fig::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
@@ -58,7 +59,7 @@ void COakes::Late_Tick(_float fTimeDelta)
 	}
 }
 
-HRESULT COakes::Render()
+HRESULT CSmith_Fig::Render()
 {
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
@@ -69,22 +70,23 @@ HRESULT COakes::Render()
 	{
 		try /* Failed Render */
 		{
+
 			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", i)))
 				throw TEXT("Bind_BoneMatrices");
-			
+
 			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, DIFFUSE)))
 				throw TEXT("Bind_Material Diffuse");
 
-			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_NormalTexture", i, NORMALS)))
-				throw TEXT("Bind_Material Normal");
-
-			if (false)
+			if (0 == i)
 			{
 				if (FAILED(m_pShaderCom->Begin("HairMesh")))
 					throw TEXT("Shader Begin HairMesh");
 			}
 			else
 			{
+				if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_NormalTexture", i, NORMALS)))
+					throw TEXT("Bind_Material Normal");
+
 				if (FAILED(m_pShaderCom->Begin("AnimMesh")))
 					throw TEXT("Shader Begin AnimMesh");
 			}
@@ -94,7 +96,7 @@ HRESULT COakes::Render()
 		}
 		catch (const _tchar* pErrorTag)
 		{
-			wstring wstrErrorMSG = TEXT("[COakes] Failed Render : ");
+			wstring wstrErrorMSG = TEXT("[CSmith_Fig] Failed Render : ");
 			wstrErrorMSG += pErrorTag;
 			MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 
@@ -105,7 +107,7 @@ HRESULT COakes::Render()
 	return S_OK;
 }
 
-HRESULT COakes::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
+HRESULT CSmith_Fig::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
 	if (FAILED(SetUp_ShadowShaderResources(LightViewMatrix, LightProjMatrix)))
 		return E_FAIL;
@@ -127,7 +129,7 @@ HRESULT COakes::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatri
 		}
 		catch (const _tchar* pErrorTag)
 		{
-			wstring wstrErrorMSG = TEXT("[COakes] Failed Render : ");
+			wstring wstrErrorMSG = TEXT("[CSmith_Fig] Failed Render : ");
 			wstrErrorMSG += pErrorTag;
 			MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 
@@ -138,7 +140,7 @@ HRESULT COakes::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatri
 	return S_OK;
 }
 
-HRESULT COakes::Add_Components()
+HRESULT CSmith_Fig::Add_Components()
 {
 	try /* Check Add_Components */
 	{
@@ -148,7 +150,7 @@ HRESULT COakes::Add_Components()
 			throw TEXT("Com_Renderer");
 
 		/* For.Com_Model */
-		if (FAILED(CComposite::Add_Component(LEVEL_SMITH, TEXT("Prototype_Component_Model_Oakes"),
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Model_Professor_Fig"),
 			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 			throw TEXT("Com_Model");
 
@@ -164,7 +166,7 @@ HRESULT COakes::Add_Components()
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[COakes] Failed Add_Components : \n");
+		wstring wstrErrorMSG = TEXT("[CSmith_Fig] Failed Add_Components : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -175,7 +177,7 @@ HRESULT COakes::Add_Components()
 	return S_OK;
 }
 
-HRESULT COakes::SetUp_ShaderResources()
+HRESULT CSmith_Fig::SetUp_ShaderResources()
 {
 	BEGININSTANCE;
 
@@ -196,13 +198,13 @@ HRESULT COakes::SetUp_ShaderResources()
 		if (FAILED(m_pShaderCom->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 			throw TEXT("Failed Bind_RawValue : g_fCamFar");
 
-		_float3 vHairColor = { 0.5f, 0.7f, 0.6f };
+		_float3 vHairColor = { 0.7f, 0.7f, 0.7f };
 		if (FAILED(m_pShaderCom->Bind_RawValue("g_vHairColor", &vHairColor, sizeof(_float3))))
 			throw TEXT("Failed Bind_RawValue : g_vHairColor");
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[COakes] Failed SetUp_ShaderResources : \n");
+		wstring wstrErrorMSG = TEXT("[CSmith_Fig] Failed SetUp_ShaderResources : \n");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 
@@ -216,7 +218,7 @@ HRESULT COakes::SetUp_ShaderResources()
 	return S_OK;
 }
 
-HRESULT COakes::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
+HRESULT CSmith_Fig::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
 	BEGININSTANCE;
 
@@ -239,7 +241,7 @@ HRESULT COakes::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[COakes] Failed SetUp_ShadowShaderResources : \n");
+		wstring wstrErrorMSG = TEXT("[CSmith_Fig] Failed SetUp_ShadowShaderResources : \n");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 
@@ -253,33 +255,33 @@ HRESULT COakes::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4
 	return S_OK;
 }
 
-COakes* COakes::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CSmith_Fig* CSmith_Fig::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	COakes* pInstance = New COakes(pDevice, pContext);
+	CSmith_Fig* pInstance = New CSmith_Fig(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created COakes");
+		MSG_BOX("Failed to Created CSmith_Fig");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* COakes::Clone(void* pArg)
+CGameObject* CSmith_Fig::Clone(void* pArg)
 {
-	COakes* pInstance = New COakes(*this);
+	CSmith_Fig* pInstance = New CSmith_Fig(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned COakes");
+		MSG_BOX("Failed to Cloned CSmith_Fig");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void COakes::Free()
+void CSmith_Fig::Free()
 {
 	__super::Free();
 
