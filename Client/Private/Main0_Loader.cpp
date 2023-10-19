@@ -612,6 +612,15 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			throw TEXT("Prototype_GameObject_Cylinder");
 #pragma endregion
 
+#pragma region Load Player_Effect
+
+		/*For_Player_WandHeadLight*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_WandHead_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/WandLight"), eLevelID))))
+			throw TEXT("Prototype_GameObject_WandHead_Particle");
+
+#pragma endregion
+
 #pragma region Load Magic
 		{
 			/* --------------Magic-------------- */

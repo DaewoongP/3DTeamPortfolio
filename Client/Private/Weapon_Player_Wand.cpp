@@ -1,6 +1,7 @@
 #include "Weapon_Player_Wand.h"
 #include "GameInstance.h"
 #include "Player.h"
+#include"ParticleSystem.h"
 
 CWeapon_Player_Wand::CWeapon_Player_Wand(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CParts(pDevice, pContext)
@@ -14,7 +15,11 @@ CWeapon_Player_Wand::CWeapon_Player_Wand(const CWeapon_Player_Wand& rhs)
 
 HRESULT CWeapon_Player_Wand::Initialize_Prototype()
 {
-	return __super::Initialize_Prototype();
+	if (FAILED(__super::Initialize_Prototype()))
+		return E_FAIL;
+
+	
+	return S_OK;
 }
 
 HRESULT CWeapon_Player_Wand::Initialize(void* pArg)
@@ -27,7 +32,7 @@ HRESULT CWeapon_Player_Wand::Initialize(void* pArg)
 	if (FAILED(Add_Components(pArg)))
 		return E_FAIL;
 
-
+	
 	m_pisLightOn = pCweapon_Player_Wand_Desc->pisLightOn;
 
 	//매쉬에서 원점과 가장 먼 지점을 찾는 로직.(지팡이 끝 지점을 얻어내기 위함임.)
@@ -51,6 +56,8 @@ HRESULT CWeapon_Player_Wand::Initialize(void* pArg)
 			}
 		}
 	}
+
+	m_pHeadEffectCom->Play(m_OffsetMatrix.Translation());
 
 	BEGININSTANCE;
 
@@ -87,6 +94,7 @@ void CWeapon_Player_Wand::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	HeadParticle(fTimeDelta);
 	Do_Lumos(fTimeDelta);
 }
 
@@ -250,6 +258,17 @@ void CWeapon_Player_Wand::Do_Lumos(_float fTimeDelta)
 	ENDINSTANCE;
 }
 
+void CWeapon_Player_Wand::HeadParticle(_float fTimeDelta)
+{
+	if (nullptr != m_pOwner)
+	{
+	
+
+		m_pHeadEffectCom->Get_Transform()->Set_Position(_float4x4(m_OffsetMatrix*m_pTransform->Get_WorldMatrix()).Translation());
+	}
+	
+}
+
 HRESULT CWeapon_Player_Wand::Add_Components(void* pArg)
 {
 	try /* Check Add_Components */
@@ -265,6 +284,11 @@ HRESULT CWeapon_Player_Wand::Add_Components(void* pArg)
 		if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxMesh"), TEXT("Com_Shader_Mesh"),
 			(CComponent**)&m_pShaderCom, this)))
 			throw TEXT("Failed Add_Component : Com_Shader_Mesh");
+		
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_WandHead_Particle"),
+			TEXT("Com_WandHead_Effect"), reinterpret_cast<CComponent**>(&m_pHeadEffectCom))))
+			throw TEXT("Failed Add_Component : Com_WandHead_Effect");
+
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -352,5 +376,6 @@ void CWeapon_Player_Wand::Free()
 		Safe_Release(m_pRendererCom);
 		Safe_Release(m_pLight);
 		Safe_Release(m_pVaultLight);
+		Safe_Release(m_pHeadEffectCom);
 	}
 }
