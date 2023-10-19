@@ -69,7 +69,6 @@ void COakes::Tick(_float fTimeDelta)
 
 	if (m_isPlayScript)
 		m_pScripts[m_iScriptIndex]->Tick(fTimeDelta);
-
 }
 
 void COakes::Late_Tick(_float fTimeDelta)
@@ -274,8 +273,6 @@ HRESULT COakes::Add_Components()
 		lstrcpy(pDesc.m_wszName, TEXT("애들레이크 오크스"));
 		lstrcpy(pDesc.m_wszFunc, TEXT("대화하기"));
 		pDesc.m_WorldMatrix = m_pTransform->Get_WorldMatrixPtr();
-
-	
 
 	m_pUI_Interaction = static_cast<CUI_Interaction*>(pGameInstance->Clone_Component(LEVEL_STATIC,
 			TEXT("Prototype_GameObject_UI_Interaction"), &pDesc));
