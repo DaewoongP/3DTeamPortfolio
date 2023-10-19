@@ -203,6 +203,7 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		return E_FAIL;
 	}
 	Safe_AddRef(m_pRenderer);
+	m_pRenderer->Get_Dof()->Off();
 
 	/* Prototype_Component_Shader_Debug */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_Debug"),

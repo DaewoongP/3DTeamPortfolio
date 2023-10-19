@@ -13,6 +13,7 @@ void CDOF::Default()
 {
 	m_fFocusDistance = 25.f;
 	m_fFocusRange = m_fFocusDistance - 1.f;
+	m_isDof = true;
 }
 
 HRESULT CDOF::Initialize(CVIBuffer_Rect* pRectBuffer)
@@ -69,6 +70,9 @@ HRESULT CDOF::Initialize(CVIBuffer_Rect* pRectBuffer)
 
 HRESULT CDOF::Render(const _tchar* pTargetTag)
 {
+	if (false == m_isDof)
+		return S_OK;
+
 	CRenderTarget_Manager* pRenderTarget_Manager = CRenderTarget_Manager::GetInstance();
 	Safe_AddRef(pRenderTarget_Manager);
 
