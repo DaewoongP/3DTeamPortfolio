@@ -1,7 +1,7 @@
 #include "Shader_Client_Defines.hlsli"
 
 float4x4 g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-float4x4 g_BoneMatrices[256];
+float4x4 g_BoneMatrices[512];
 texture2D g_DiffuseTexture;
 texture2D g_NormalTexture;
 texture2D g_EmissiveTexture;

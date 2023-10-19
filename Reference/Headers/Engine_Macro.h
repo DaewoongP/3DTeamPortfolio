@@ -1,7 +1,7 @@
 #pragma once
 ///////////////////////// My Macros /////////////////////////////
 #define			PURE							= 0
-#define			MAX_SHADERMATRIX				256
+#define			MAX_SHADERMATRIX				512
 #define			MAX_SHADERVECTOR				512
 #define			MAX_STR							256
 #define			MAX_DIK							256

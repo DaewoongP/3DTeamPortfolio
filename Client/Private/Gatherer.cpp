@@ -156,10 +156,24 @@ void CGatherer::Tick(_float fTimeDelta)
 		m_fDissolveAmount += fTimeDelta / 1.5f; // 디졸브 값 증가
 
 	// 플레이어와 충돌했을 때
-	if (true == m_isCol_with_Player && nullptr != m_pModel)
+	if (true == m_isCol_with_Player && nullptr != m_pModel && true == m_isGetItem)
 	{
-		// 여기서 버튼 UI가 나타나면 될듯
-		m_pUI_Interaction->Tick(fTimeDelta);
+		// 버튼 UI
+		switch (m_GatheringType)
+		{
+		case CGatherer::ASHWINDEREGG:
+			m_pUI_Interaction_Ash->Tick(fTimeDelta);
+			break;
+		case CGatherer::HORKLUMP:
+			m_pUI_Interaction_Hor->Tick(fTimeDelta);
+			break;
+		case CGatherer::LEAPINGTOADSTOOLS:
+			m_pUI_Interaction_Lea->Tick(fTimeDelta);
+			break;
+		case CGatherer::LEECH:
+			m_pUI_Interaction_Lee->Tick(fTimeDelta);
+			break;
+		}		
 
 		BEGININSTANCE;  // 버튼을 누르면 동작(한번만)
 		if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN) && true == m_isGetItem)
@@ -218,8 +232,24 @@ void CGatherer::Late_Tick(_float fTimeDelta)
 
 	BEGININSTANCE;
 
-	if (true == m_isCol_with_Player && nullptr != m_pModel)
-		m_pUI_Interaction->Late_Tick(fTimeDelta);
+	if (true == m_isCol_with_Player && nullptr != m_pModel && true == m_isGetItem)
+	{
+		switch (m_GatheringType)
+		{
+		case CGatherer::ASHWINDEREGG:
+			m_pUI_Interaction_Ash->Late_Tick(fTimeDelta);
+			break;
+		case CGatherer::HORKLUMP:
+			m_pUI_Interaction_Hor->Late_Tick(fTimeDelta);
+			break;
+		case CGatherer::LEAPINGTOADSTOOLS:
+			m_pUI_Interaction_Lea->Late_Tick(fTimeDelta);
+			break;
+		case CGatherer::LEECH:
+			m_pUI_Interaction_Lee->Late_Tick(fTimeDelta);
+			break;
+		}
+	}
 
 	if (nullptr != m_pRenderer)
 	{
@@ -365,11 +395,26 @@ HRESULT CGatherer::Add_Components()
 	Safe_AddRef(pGameInstance);
 	
 	CUI_Interaction::INTERACTIONDESC pDesc;
-	lstrcpy(pDesc.m_wszName, TEXT("안녕하세요부자정환입니다"));
-	lstrcpy(pDesc.m_wszFunc, TEXT("돈뿌리는걸좋아하는정환돈뿌리는걸좋아하는정환돈뿌리는걸좋아하는정환돈뿌리는걸좋아하는정환돈뿌리는걸좋아하는정환돈뿌리는걸좋아하는정환"));
-	pDesc.m_WorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+	lstrcpy(pDesc.m_wszName, TEXT("애쉬와인더 알"));
+	lstrcpy(pDesc.m_wszFunc, TEXT("획득하기"));
+	//pDesc.m_WorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+	m_UIMatirx = m_pTransform->Get_WorldMatrix();
+	m_UIMatirx._42 += 0.5f;
+	pDesc.m_WorldMatrix = &m_UIMatirx;
 
-	m_pUI_Interaction = static_cast<CUI_Interaction*>(pGameInstance->Clone_Component(LEVEL_STATIC,
+	m_pUI_Interaction_Ash = static_cast<CUI_Interaction*>(pGameInstance->Clone_Component(LEVEL_STATIC,
+		TEXT("Prototype_GameObject_UI_Interaction"), &pDesc));
+
+	lstrcpy(pDesc.m_wszName, TEXT("호클럼프 버섯"));
+	m_pUI_Interaction_Hor = static_cast<CUI_Interaction*>(pGameInstance->Clone_Component(LEVEL_STATIC,
+		TEXT("Prototype_GameObject_UI_Interaction"), &pDesc));
+	
+	lstrcpy(pDesc.m_wszName, TEXT("독버섯"));
+	m_pUI_Interaction_Lea = static_cast<CUI_Interaction*>(pGameInstance->Clone_Component(LEVEL_STATIC,
+		TEXT("Prototype_GameObject_UI_Interaction"), &pDesc));
+
+	lstrcpy(pDesc.m_wszName, TEXT("거머리"));
+	m_pUI_Interaction_Lee = static_cast<CUI_Interaction*>(pGameInstance->Clone_Component(LEVEL_STATIC,
 		TEXT("Prototype_GameObject_UI_Interaction"), &pDesc));
 
 	Safe_Release(pGameInstance);
@@ -492,5 +537,9 @@ void CGatherer::Free()
 	Safe_Release(m_pShader);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pRenderer);
-	Safe_Release(m_pUI_Interaction);
+
+	Safe_Release(m_pUI_Interaction_Ash);
+	Safe_Release(m_pUI_Interaction_Hor);
+	Safe_Release(m_pUI_Interaction_Lea);
+	Safe_Release(m_pUI_Interaction_Lee);
 }

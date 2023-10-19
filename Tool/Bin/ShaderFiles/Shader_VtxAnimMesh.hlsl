@@ -2,7 +2,7 @@
 
 float4x4 g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 float4x4 g_LightViewMatrix, g_LightProjMatrix;
-float4x4 g_BoneMatrices[256];
+float4x4 g_BoneMatrices[512];
 
 texture2D g_DiffuseTexture;
 texture2D g_NormalTexture;
