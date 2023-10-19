@@ -55,15 +55,16 @@ void CPensive_Death::Action_None_Tick()
 	//애니메이션 끝났으면?
 	if (true == m_StateMachineDesc.pOwnerModel->Is_Finish_Animation())
 	{
-		m_iActionIndex++;
 		if (m_iActionIndex == 0)
 		{
 			Change_Animation(TEXT("Death_End"));
 		}
 		else if (m_iActionIndex == 1)
 		{
-			//트리거
+			//사망처리
+			dynamic_cast<CGameObject*>(m_pOwner->Get_Owner())->Set_Dead();
 		}
+		m_iActionIndex++;
 	}
 }
 

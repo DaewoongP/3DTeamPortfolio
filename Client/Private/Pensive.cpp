@@ -79,7 +79,7 @@ HRESULT CPensive::Initialize_Level(_uint iCurrentLevelIndex)
 	LightDesc.vPos = m_pTransform->Get_Position().TransCoord();
 	pGameInstance->Add_Light(LightDesc, &m_pLight);
 	Safe_Release(pGameInstance);
-	m_pModelCom->Change_Animation(TEXT("Spawn"));
+	m_pModelCom->Strong_Change_Animation(TEXT("Spawn"));
 	return S_OK;
 }
 
@@ -146,6 +146,35 @@ void CPensive::Set_Protego_Collision(CTransform* pTransform, ATTACKTYPE eType) c
 			m_pMagicBall_Attack->Set_MagicBallState(CMagicBall::MAGICBALL_STATE_DYING);
 		m_pStateContext->Set_StateMachine(TEXT("Hit"));
 		m_pModelCom->Change_Animation(TEXT("Attack_Orb_Hit"));
+	}
+}
+
+void CPensive::Do_Damage(_int iDmg)
+{
+	m_pHealth->Damaged(iDmg);
+	if (m_isAttackAble)
+	{
+		if (m_pHealth->Get_Current_HP() <= 0 && !m_pStateContext->Is_Current_State(TEXT("Death")))
+		{
+			DieMagicBall();
+			m_pStateContext->Set_StateMachine(TEXT("Death"));
+			return;
+		}
+
+		if (m_pHealth->Get_MaxHP() * 0.5f > m_pHealth->Get_Current_HP())
+		{
+			m_iPhase = 2;
+		}
+		m_iGroogyStack += iDmg;
+		if (m_iGroogyStack > 400)
+		{
+			m_iGroogyStack = 0;
+			m_pRenderer->Set_ScreenRadial(true, 0.2f, 0.2f);
+			ADD_DECREASE_LIGHT(m_pTransform->Get_Position(), 100.f, 0.6f, m_vLightColor);
+			DieMagicBall();
+			m_pStateContext->Set_StateMachine(TEXT("Groogy"));
+			m_pModelCom->Change_Animation(TEXT("Stun_Start"));
+		}
 	}
 }
 
@@ -509,7 +538,7 @@ HRESULT CPensive::Add_Components()
 
 		/* For.Com_Health */
 		CHealth::HEALTHDESC HealthDesc;
-		HealthDesc.iMaxHP = 100;
+		HealthDesc.iMaxHP = 4000;
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 			throw TEXT("Com_Health");
@@ -542,8 +571,8 @@ HRESULT CPensive::Add_Components()
 
 		Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::BOSS;
 		Desc.pHealth = m_pHealth;
-		lstrcpy(Desc.wszObjectLevel, TEXT("999"));
-		lstrcpy(Desc.wszObjectName, TEXT("√÷∞≠ ∞Ò∑Ω"));
+		lstrcpy(Desc.wszObjectLevel, TEXT("98"));
+		lstrcpy(Desc.wszObjectName, TEXT("∞≠√∂ ∞Ò∑Ω ∆ÊΩ√∫Í"));
 
 		BEGININSTANCE;
 		m_pUI_HP = dynamic_cast<CUI_Group_Enemy_HP*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"), &Desc));

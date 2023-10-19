@@ -46,30 +46,7 @@ public:
 	void		 Set_AttackAble_False() { m_isAttackAble = false; }
 	void		 Set_Turnable_True() { m_isTurnAble = true; }
 	void		 Set_Turnable_False() { m_isTurnAble = false; }
-	void		 Do_Damage(_int iDmg) { 
-		m_pHealth->Damaged(iDmg); 
-		if (m_isAttackAble)
-		{
-			if (m_pHealth->Get_Current_HP() <= 0&&!m_pStateContext->Is_Current_State(TEXT("Death")))
-			{
-				DieMagicBall();
-				m_pStateContext->Set_StateMachine(TEXT("Death"));
-				return;
-			}
-
-			if (m_pHealth->Get_MaxHP() * 0.5f > m_pHealth->Get_Current_HP())
-			{
-				m_iPhase = 2;
-			}
-
-			if (iDmg > 300)
-			{
-				DieMagicBall();
-				m_pStateContext->Set_StateMachine(TEXT("Groogy"));
-				m_pModelCom->Change_Animation(TEXT("Stun_Start"));
-			}
-		}
-	}
+	void		 Do_Damage(_int iDmg);
 	void ResetMagicBall() { 
 		m_pMagicBall_Attack = nullptr;
 		m_pMagicBall_Protego = nullptr;
@@ -99,6 +76,7 @@ private:
 	CMagic::MAGICDESC		m_ProtegoInitDesc[3] = {};
 	_float4x4 m_SwordOffsetMatrix[3] = {};
 	_float4x4 m_AttackPosition = {};
+	_uint	  m_iGroogyStack = { 0 };
 
 	_float4 m_vLightColor = {};
 	CLight* m_pLight = { nullptr };
