@@ -104,7 +104,7 @@ HRESULT CLevel_Smith::Ready_Layer_Monsters(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	_float4x4 Matrix = XMMatrixTranslation(86.f, 10.f, 129.f);
+	_float4x4 Matrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixTranslation(86.f, 10.f, 129.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Armored_Troll)");
@@ -460,9 +460,6 @@ HRESULT CLevel_Smith::Load_Dummy_NPC(const _tchar* pLayerTag)
 	CHouse_Elf::ELFINITDESC ElfInitDesc;
 	ElfInitDesc.WorldMatrix = XMMatrixRotationY(XMConvertToRadians(234.f)) * XMMatrixTranslation(59.1f, 6.6f, 93.96f);
 	ElfInitDesc.wstrAnimationTag = TEXT("Choose");
-#ifdef _DEBUG
-	ElfInitDesc.isCheckPosition = false;
-#endif // _DEBUG
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Doby"), pLayerTag, TEXT("Doby_0"), &ElfInitDesc)))
 	{
 		MSG_BOX("Failed Add_GameObject : (Doby_0)");

@@ -552,4 +552,5 @@ void CCard_Fig::Free()
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pMagicSlot);
 	Safe_Release(m_pWeapon);
+	Safe_Release(m_pRigidBody);
 }

@@ -80,7 +80,7 @@ HRESULT CLevel_Sanctum::Ready_Layer_Monsters(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 
-	_float4x4 Matrix = XMMatrixTranslation(-2.f, -22.f, 130.f);
+	_float4x4 Matrix = XMMatrixTranslation(-34.f, -33.f, 129.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_ConjuredDragon"), pLayerTag, TEXT("GameObject_ConjuredDragon"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_ConjuredDragon)");
