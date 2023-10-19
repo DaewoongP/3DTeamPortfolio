@@ -23,26 +23,6 @@ private:
 		_float2 vPos = { 0.f, 0.f };
 	};
 
-public:
-	enum QUESTLIST
-	{
-		FIG,
-		POTION,
-		TOWN,
-		SECRET,
-		BONE,
-		QUESTLIST_END
-	};
-
-private:
-	enum QUESTTEXT
-	{
-		QUESTIONMARK,
-		UNLOCK,
-		CLEAR,
-		QUESTTEXT_END
-	};
-
 private:
 	explicit CMenu_Quest(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CMenu_Quest(const CMenu_Quest& rhs);
@@ -57,7 +37,7 @@ public:
 
 public:
 	void		Set_Open(_bool isOpen);
-	void		Set_FontState(QUESTLIST eQuest, QUESTTEXT eState);
+	void		Set_FontState(QUESTLIST eQuest, QUESTSTATE eState);
 
 private:
 	HRESULT Add_Prototype();
@@ -77,7 +57,7 @@ private:
 	vector<OFFSETDEST>			m_fOffset;
 	vector<CUI*>				m_pUIs;
 	vector<CUI_Effect_Back*>	m_pExplainBack;
-	_bool						m_isCurrentQuest[QUESTLIST_END] = { false };
+	_bool						m_isCurrentQuest[QUEST_END] = { false };
 
 	vector<CTexture*>			m_pTextures;
 private:

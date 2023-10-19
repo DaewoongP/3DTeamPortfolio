@@ -688,9 +688,6 @@
     <Filter Include="02. GameObject\04. UI\UI_Composite\UI_Interaction">
       <UniqueIdentifier>{06c934f6-bf3f-4fee-8a89-9fb722ad475e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="08 Script">
-      <UniqueIdentifier>{8259d964-e72a-469b-b6fd-a3ced577ab4a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\04. UI\UI\UI_Script">
       <UniqueIdentifier>{473ca6be-871b-4f7c-9069-df1ceb227470}</UniqueIdentifier>
     </Filter>
@@ -744,9 +741,6 @@
     </Filter>
     <Filter Include="04. Effect\Blink_Effect">
       <UniqueIdentifier>{58d8b344-dfb8-4b48-ab00-f18496e8f003}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="08. GameManager">
-      <UniqueIdentifier>{f7506b35-2a98-4706-aaf0-aacbf2491e33}</UniqueIdentifier>
     </Filter>
     <Filter Include="98. Default">
       <UniqueIdentifier>{cc18812b-2268-4f02-b60b-17a85252121a}</UniqueIdentifier>
@@ -873,6 +867,30 @@
     </Filter>
     <Filter Include="02. GameObject\11. Water">
       <UniqueIdentifier>{1b33b363-0555-47c0-bfe6-21b18984e66b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. Scene\Main_Menu\Guide_Book">
+      <UniqueIdentifier>{9ea80fb5-bafc-42e2-bc97-7d00918990a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Env">
+      <UniqueIdentifier>{397b10fb-04a8-4524-96cf-1c1ccba12d43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Cliffside">
+      <UniqueIdentifier>{db76acf0-1434-4a65-8c6d-2a7074254ab7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="08. Script">
+      <UniqueIdentifier>{8259d964-e72a-469b-b6fd-a3ced577ab4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="09. GameManager">
+      <UniqueIdentifier>{f7506b35-2a98-4706-aaf0-aacbf2491e33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10. Quest">
+      <UniqueIdentifier>{019794e9-d13f-4ec9-a419-4c2b5ea04f05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10. Quest\Manager">
+      <UniqueIdentifier>{5bfe5cd8-4edc-4bd4-9081-d6bb6fd36925}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10. Quest\Save_Fig">
+      <UniqueIdentifier>{0b6ed71e-efa1-46a6-a1cb-c7dd6e803bbf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1569,7 +1587,7 @@
       <Filter>02. GameObject\04. UI\Font\DamageFont</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Script.h">
-      <Filter>08 Script</Filter>
+      <Filter>08. Script</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Script.h">
       <Filter>02. GameObject\04. UI\UI\UI_Script</Filter>
@@ -1623,7 +1641,7 @@
       <Filter>04. Effect\Blink_Effect</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Game_Manager.h">
-      <Filter>08. GameManager</Filter>
+      <Filter>09. GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Cat.h">
       <Filter>02. GameObject\03. MapObject\Anim_Obj\Cat</Filter>
@@ -1733,6 +1751,24 @@
     <ClInclude Include="..\public\Water.h">
       <Filter>02. GameObject\11. Water</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Guide_Book.h">
+      <Filter>06. Scene\Main_Menu\Guide_Book</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Vault_Torch.h">
+      <Filter>02. GameObject\03. MapObject\Env</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Cliffside.h">
+      <Filter>07. Events\Cliffside</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Quest.h">
+      <Filter>10. Quest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Quest_Manager.h">
+      <Filter>10. Quest\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Quest_Save_Fig.h">
+      <Filter>10. Quest\Save_Fig</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1812,9 +1848,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Golem_Combat.cpp">
       <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\MapObject.cpp">
-      <Filter>02. GameObject\03. MapObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Action.cpp">
       <Filter>03. Behaviors\00. Action</Filter>
@@ -2386,7 +2419,7 @@
       <Filter>02. GameObject\04. UI\Font\DamageFont</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Script.cpp">
-      <Filter>08 Script</Filter>
+      <Filter>08. Script</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Script.cpp">
       <Filter>02. GameObject\04. UI\UI\UI_Script</Filter>
@@ -2440,7 +2473,7 @@
       <Filter>04. Effect\Blink_Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Game_Manager.cpp">
-      <Filter>08. GameManager</Filter>
+      <Filter>09. GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Cat.cpp">
       <Filter>02. GameObject\03. MapObject\Anim_Obj\Cat</Filter>
@@ -2549,6 +2582,27 @@
     </ClCompile>
     <ClCompile Include="..\private\Water.cpp">
       <Filter>02. GameObject\11. Water</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Guide_Book.cpp">
+      <Filter>06. Scene\Main_Menu\Guide_Book</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MapObject.cpp">
+      <Filter>02. GameObject\03. MapObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Vault_Torch.cpp">
+      <Filter>02. GameObject\03. MapObject\Env</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Cliffside.cpp">
+      <Filter>07. Events\Cliffside</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Quest.cpp">
+      <Filter>10. Quest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Quest_Manager.cpp">
+      <Filter>10. Quest\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Quest_Save_Fig.cpp">
+      <Filter>10. Quest\Save_Fig</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

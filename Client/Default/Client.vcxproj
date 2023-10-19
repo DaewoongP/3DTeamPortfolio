@@ -191,11 +191,13 @@
     <ClInclude Include="..\Public\DarkWizard_M.h" />
     <ClInclude Include="..\Public\Door.h" />
     <ClInclude Include="..\Public\Dummy_NPC.h" />
+    <ClInclude Include="..\Public\Event_Cliffside.h" />
     <ClInclude Include="..\Public\Event_Smeade.h" />
     <ClInclude Include="..\Public\Fly_Move.h" />
     <ClInclude Include="..\Public\Fly_Turn.h" />
     <ClInclude Include="..\public\Game_Manager.h" />
     <ClInclude Include="..\public\Gear_Item.h" />
+    <ClInclude Include="..\Public\Guide_Book.h" />
     <ClInclude Include="..\Public\Gull.h" />
     <ClInclude Include="..\Public\Hat_Arcane.h" />
     <ClInclude Include="..\Public\Hat_DarkArts_Delux.h" />
@@ -240,6 +242,9 @@
     <ClInclude Include="..\Public\Pensive_Sword_Throw.h" />
     <ClInclude Include="..\Public\Player.h" />
     <ClInclude Include="..\public\PotionStationCamera.h" />
+    <ClInclude Include="..\public\Quest.h" />
+    <ClInclude Include="..\public\Quest_Manager.h" />
+    <ClInclude Include="..\public\Quest_Save_Fig.h" />
     <ClInclude Include="..\public\Robe_Arcane.h" />
     <ClInclude Include="..\Public\Robe_DarkArts.h" />
     <ClInclude Include="..\Public\Robe_DarkArts_Delux.h" />
@@ -261,6 +266,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\public\Trigger.h" />
+    <ClInclude Include="..\Public\Vault_Torch.h" />
     <ClInclude Include="..\Public\Vendor.h" />
     <ClInclude Include="..\public\Water.h" />
     <ClInclude Include="..\Public\Weapon_DarkWizard_Wand.h" />
@@ -500,11 +506,13 @@
     <ClCompile Include="..\Private\DarkWizard_M.cpp" />
     <ClCompile Include="..\Private\Door.cpp" />
     <ClCompile Include="..\Private\Dummy_NPC.cpp" />
+    <ClCompile Include="..\Private\Event_Cliffside.cpp" />
     <ClCompile Include="..\Private\Event_Smeade.cpp" />
     <ClCompile Include="..\Private\Fly_Move.cpp" />
     <ClCompile Include="..\Private\Fly_Turn.cpp" />
     <ClCompile Include="..\private\Game_Manager.cpp" />
     <ClCompile Include="..\private\Gear_Item.cpp" />
+    <ClCompile Include="..\Private\Guide_Book.cpp" />
     <ClCompile Include="..\Private\Gull.cpp" />
     <ClCompile Include="..\Private\Hat_Arcane.cpp" />
     <ClCompile Include="..\Private\Hat_DarkArts_Delux.cpp" />
@@ -549,6 +557,9 @@
     <ClCompile Include="..\Private\Pensive_Sword_Throw.cpp" />
     <ClCompile Include="..\Private\Player.cpp" />
     <ClCompile Include="..\private\PotionStationCamera.cpp" />
+    <ClCompile Include="..\private\Quest.cpp" />
+    <ClCompile Include="..\private\Quest_Manager.cpp" />
+    <ClCompile Include="..\private\Quest_Save_Fig.cpp" />
     <ClCompile Include="..\private\Robe_Arcane.cpp" />
     <ClCompile Include="..\Private\Robe_DarkArts.cpp" />
     <ClCompile Include="..\Private\Robe_DarkArts_Delux.cpp" />
@@ -570,6 +581,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\private\Trigger.cpp" />
+    <ClCompile Include="..\Private\Vault_Torch.cpp" />
     <ClCompile Include="..\Private\Vendor.cpp" />
     <ClCompile Include="..\private\Water.cpp" />
     <ClCompile Include="..\Private\Weapon_DarkWizard_Wand.cpp" />

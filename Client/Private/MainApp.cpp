@@ -3,6 +3,7 @@
 #include "Level_Loading.h"
 #include "MagicBallPool.h"
 #include "UI_Group_Loading.h"
+#include "Quest_Manager.h"
 
 #ifdef _DEBUG
 #include "ImGui_Manager.h"
@@ -10,11 +11,13 @@
 
 CMainApp::CMainApp()
 	: m_pGameInstance{ CGameInstance::GetInstance() }
+	, m_pQuest_Manager{ CQuest_Manager::GetInstance() }
 #ifdef _DEBUG
 	, m_pImGui_Manager{ CImGui_Manager::GetInstance() }
 #endif // _DEBUG
 {
 	Safe_AddRef(m_pGameInstance);
+	Safe_AddRef(m_pQuest_Manager);
 	ZeroMemory(m_szFPS, sizeof(_tchar)* MAX_STR);
 #ifdef _DEBUG
 	Safe_AddRef(m_pImGui_Manager);
@@ -325,12 +328,14 @@ void CMainApp::Free()
 	Safe_Release(m_pContext);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pGameInstance);
+	Safe_Release(m_pQuest_Manager);
 
 #ifdef _DEBUG
 	Safe_Release(m_pImGui_Manager);
 	CImGui_Manager::GetInstance()->DestroyInstance();
 #endif // _DEBUG
 
+	CQuest_Manager::GetInstance()->DestroyInstance();
 	CMagicBallPool::GetInstance()->DestroyInstance();
 	CGameInstance::Release_Engine();
 }

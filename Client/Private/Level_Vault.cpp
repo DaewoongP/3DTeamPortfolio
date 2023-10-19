@@ -145,6 +145,7 @@ HRESULT CLevel_Vault::Load_MapObject(const _tchar* pObjectFilePath)
 	}
 
 	_uint iObjectNum = 0;
+	_uint iTorchNum = 0;
 
 	DWORD    dwByte = 0;
 
@@ -186,6 +187,7 @@ HRESULT CLevel_Vault::Load_MapObject(const _tchar* pObjectFilePath)
 		wstring wsHorklump(TEXT("Anim_Horklump"));
 		wstring wsLeech(TEXT("Anim_Leech"));
 		wstring wsVaultGate(TEXT("Anim_Gate_Vault"));
+		wstring wsVaultTorch(TEXT("SM_Intro_Vault_Torch"));
 
 		//// 보물상자
 		//if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
@@ -234,6 +236,24 @@ HRESULT CLevel_Vault::Load_MapObject(const _tchar* pObjectFilePath)
 				ENDINSTANCE;
 				return E_FAIL;
 			}
+		}
+
+		// 볼트 횃불
+		else if (0 == lstrcmp(modelName.c_str(), wsVaultTorch.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_Vault_Torch_%d"), (iTorchNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT,
+				TEXT("Prototype_GameObject_Vault_Torch"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone Vault_Torch");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+
+			++iTorchNum;
 		}
 
 		// 일반 맵 오브젝트

@@ -27,6 +27,8 @@ HRESULT CUI_Script::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	m_Textures.resize(1);
+
 	if (nullptr != pArg)
 	{
 		UIDESC* pDesc = (UIDESC*)pArg;
@@ -45,7 +47,7 @@ void CUI_Script::Tick(_float fTimeDelta)
 
 void CUI_Script::Late_Tick(_float fTimeDelta)
 {
-	if (nullptr == m_Textures[m_iTextureIndex])
+	if (0 == m_Textures.size() || nullptr == m_Textures[m_iTextureIndex])
 		return;
 
 	__super::Late_Tick(fTimeDelta);

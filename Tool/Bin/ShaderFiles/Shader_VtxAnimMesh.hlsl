@@ -98,8 +98,8 @@ PS_OUT PS_MAIN(PS_IN In)
     float3x3 WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal.xyz, In.vNormal.xyz);
     
     vNormal = mul(vNormal, WorldMatrix);
-    //if(vDiffuse.a<0.1f)
-    //    discard;
+    if(vDiffuse.a<0.1f)
+        discard;
     
     Out.vDiffuse = vDiffuse;
 	
