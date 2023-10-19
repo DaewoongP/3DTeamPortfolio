@@ -20,6 +20,7 @@ private:
 	HRESULT Ready_Layer_BackGround(const _tchar* pLayerTag);
 	HRESULT Ready_Events(const _tchar* pLayerTag);
 	HRESULT Ready_Lights();
+	HRESULT Ready_Shader();
 
 private:
 	HRESULT Load_MapObject(const _tchar* pObjectFilePath);

@@ -81,6 +81,15 @@ HRESULT CPensive_Shouting::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Particle_Pensive_Beast_SpreadFire")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Particle_Pensive_Beast_SpreadFire")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Beast/SpreadFire/"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Pensive_Hurray")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Pensive_Hurray")
@@ -172,6 +181,8 @@ void CPensive_Shouting::Ready_Begin()
 		(CCamera_Manager::SHAKE_POWER)0,
 		vAxis);
 	ENDINSTANCE;
+	m_ParticleVec[EFFECT_STATE_WAND][1]->Get_ShapeModuleRef().vLength.y = 0;
+	m_ParticleVec[EFFECT_STATE_WAND][1]->Get_ShapeModuleRef().vLength.x = 0;
 }
 
 void CPensive_Shouting::Ready_DrawMagic()
@@ -189,6 +200,7 @@ void CPensive_Shouting::Ready_CastMagic()
 
 void CPensive_Shouting::Ready_Dying()
 {
+	m_ParticleVec[EFFECT_STATE_WAND][1]->Stop();
 	for (int i = 0; i < m_TrailVec[EFFECT_STATE_HIT].size(); i++)
 	{
 		m_TrailVec[EFFECT_STATE_HIT].data()[i]->Enable(m_CurrentWeaponMatrix.Translation());
@@ -224,7 +236,9 @@ void CPensive_Shouting::Tick_Begin(_float fTimeDelta)
 
 void CPensive_Shouting::Tick_DrawMagic(_float fTimeDelta)
 {
-
+	m_ParticleVec[EFFECT_STATE_WAND][1]->Get_ShapeModuleRef().vLength.y += fTimeDelta * 4;
+	m_ParticleVec[EFFECT_STATE_WAND][1]->Get_ShapeModuleRef().vLength.x += fTimeDelta * 4;
+	cout << "µå·Î" << endl;
 }
 
 void CPensive_Shouting::Tick_CastMagic(_float fTimeDelta)
@@ -250,7 +264,7 @@ void CPensive_Shouting::Tick_Dying(_float fTimeDelta)
 
 HRESULT CPensive_Shouting::Add_Components()
 {
-	m_ParticleVec[EFFECT_STATE_WAND].resize(1);
+	m_ParticleVec[EFFECT_STATE_WAND].resize(2);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Particle_Pensive_Beast_Stone_Rain"),
 		TEXT("Com_Beast_Stone_Rain"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_WAND][0]))))
 	{
@@ -258,6 +272,14 @@ HRESULT CPensive_Shouting::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Particle_Pensive_Beast_SpreadFire"),
+		TEXT("Com_Beast_SpreadFire"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_WAND][1]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Particle_Pensive_Beast_SpreadFire)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
 
 	m_ParticleVec[EFFECT_STATE_HIT].resize(6);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Particle_Pensive_Beast_Distotion"),

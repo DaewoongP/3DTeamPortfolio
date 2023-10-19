@@ -40,7 +40,7 @@ HRESULT CLight_Manager::Add_Light(const CLight::LIGHTDESC& LightDesc, _Inout_ cl
 	if (true == isShadow)
 	{
 		m_LightViewMatrix[iLightViewIndex] = XMMatrixLookAtLH(LightDesc.vPos, LightDesc.vLookAt, _float4(0.f, 1.f, 0.f, 0.f));
-		m_LightProjMatrix[iLightViewIndex] = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), fAspect, 0.1f, 1000.f);
+		m_LightProjMatrix[iLightViewIndex] = XMMatrixPerspectiveFovLH(XMConvertToRadians(110.f), fAspect, 0.1f, 1000.f);
 		m_fAspect = fAspect;
 		m_isShadowRender[iLightViewIndex] = true;
 		m_pShadowLights[iLightViewIndex] = pLight;
@@ -171,7 +171,7 @@ HRESULT CLight_Manager::Return_Light(CLight* pLight)
 HRESULT CLight_Manager::Update_ShadowMatrix(_uint iShadowIndex, CLight::LIGHTDESC LightDesc)
 {
 	m_LightViewMatrix[iShadowIndex] = XMMatrixLookAtLH(LightDesc.vPos, LightDesc.vLookAt, _float4(0.f, 1.f, 0.f, 0.f));
-	m_LightProjMatrix[iShadowIndex] = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), m_fAspect, 0.1f, 1000.f);
+	m_LightProjMatrix[iShadowIndex] = XMMatrixPerspectiveFovLH(XMConvertToRadians(110.f), m_fAspect, 0.1f, 1000.f);
 	
 	return S_OK;
 }

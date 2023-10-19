@@ -3,7 +3,7 @@
 #include "Client_GameInstance_Functions.h"
 #include "BlackBoard.h"
 
-#include "Turn.h"
+#include "LookAt.h"
 #include "Action.h"
 #include "Check_Degree.h"
 #include "Check_Distance.h"
@@ -65,14 +65,14 @@ HRESULT CSequence_MoveTarget::Assemble_Childs()
 		CCheck_Distance* pTsk_Check_Distance = nullptr;
 		if (FAILED(Create_Behavior(pTsk_Check_Distance)))
 			throw TEXT("Failed Create_Behavior pTsk_Check_Distance");
-		CTurn* pTsk_Turn = nullptr;
-		if (FAILED(Create_Behavior(pTsk_Turn)))
-			throw TEXT("Failed Create_Behavior pTsk_Turn");
+		CLookAt* pTsk_LookAt = nullptr;
+		if (FAILED(Create_Behavior(pTsk_LookAt)))
+			throw TEXT("Failed Create_Behavior pTsk_LookAt");
 
 		/* Set Options */
 		pTsk_Check_Degree->Set_Option(pTransform);
 		pTsk_Check_Distance->Set_Option(pTransform);
-		pTsk_Turn->Set_Option(pTransform);
+		pTsk_LookAt->Set_Option(pTransform, 2.f);
 
 		/* Assemble Behaviors */
 		if (FAILED(Assemble_Behavior(TEXT("Action_Move"), m_pAction)))
@@ -83,8 +83,8 @@ HRESULT CSequence_MoveTarget::Assemble_Childs()
 			throw TEXT("Failed Assemble_Behavior Tsk_Check_Degree");
 		if (FAILED(m_pAction->Assemble_Behavior(TEXT("Tsk_Check_Distance"), pTsk_Check_Distance)))
 			throw TEXT("Failed Assemble_Behavior Tsk_Check_Distance");
-		if (FAILED(m_pAction->Assemble_Behavior(TEXT("Tsk_Turn"), pTsk_Turn)))
-			throw TEXT("Failed Assemble_Behavior Tsk_Turn");
+		if (FAILED(m_pAction->Assemble_Behavior(TEXT("Tsk_LookAt"), pTsk_LookAt)))
+			throw TEXT("Failed Assemble_Behavior Tsk_LookAt");
 	}
 	catch (const _tchar* pErrorTag)
 	{

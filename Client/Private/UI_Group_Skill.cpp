@@ -89,6 +89,7 @@ void CUI_Group_Skill::Set_SpellTexture(KEYLIST eKey, SPELL eSpell)
 	
 	m_KeyList[eKey] = eSpell;
 	m_pMains[eKey]->Set_Texture(m_SkillTextures[eSpell]);
+	m_pMains[eKey]->Set_SkillBackType(CUI_Group_SkillTap::Translation_SkillTap(eSpell));
 }
 
 void CUI_Group_Skill::Set_SkillCoolTime()

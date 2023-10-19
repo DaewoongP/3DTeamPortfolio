@@ -59,6 +59,7 @@ private: /* ImGui */
 
 private: /* Singleton */
 	class CMagicBallPool*	m_pMagicBallPool = { nullptr };
+	class CQuest_Manager*	m_pQuest_Manager = { nullptr };
 
 public:
 	static CMainApp* Create();

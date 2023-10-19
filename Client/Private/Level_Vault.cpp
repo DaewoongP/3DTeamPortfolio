@@ -18,6 +18,7 @@ HRESULT CLevel_Vault::Initialize()
 	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_Monster(TEXT("Layer_Monster")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Events(TEXT("Layer_Event")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Shader(), E_FAIL);
 
 	BEGININSTANCE;
 	pGameInstance->Reset_World_TimeAcc();
@@ -120,15 +121,31 @@ HRESULT CLevel_Vault::Ready_Lights()
 	LightDesc.vLookAt = _float4(51.7f, 0.f, 52.4f, 1.f);
 	LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
 
-	LightDesc.vDiffuse = BLACKDEFAULT;
-	LightDesc.vAmbient = BLACKDEFAULT;
-	LightDesc.vSpecular = BLACKDEFAULT;
+	LightDesc.vDiffuse = _float4(0.1f, 0.1f, 0.1f, 0.1f);
+	LightDesc.vAmbient = LightDesc.vDiffuse;
+	LightDesc.vSpecular = LightDesc.vDiffuse;
 
 	if (FAILED(pGameInstance->Add_Light(LightDesc, nullptr, true, 0, _float(g_iWinSizeX) / g_iWinSizeY)))
 		return E_FAIL;
 
 	ENDINSTANCE;
 	
+	return S_OK;
+}
+
+HRESULT CLevel_Vault::Ready_Shader()
+{
+	BEGININSTANCE;
+
+	CRenderer* pRenderer = static_cast<CRenderer*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer")));
+	pRenderer->Defualt_Shading();
+
+
+
+	Safe_Release(pRenderer);
+
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
@@ -145,6 +162,7 @@ HRESULT CLevel_Vault::Load_MapObject(const _tchar* pObjectFilePath)
 	}
 
 	_uint iObjectNum = 0;
+	_uint iTorchNum = 0;
 
 	DWORD    dwByte = 0;
 
@@ -186,6 +204,7 @@ HRESULT CLevel_Vault::Load_MapObject(const _tchar* pObjectFilePath)
 		wstring wsHorklump(TEXT("Anim_Horklump"));
 		wstring wsLeech(TEXT("Anim_Leech"));
 		wstring wsVaultGate(TEXT("Anim_Gate_Vault"));
+		wstring wsVaultTorch(TEXT("SM_Intro_Vault_Torch"));
 
 		//// 보물상자
 		//if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
@@ -234,6 +253,24 @@ HRESULT CLevel_Vault::Load_MapObject(const _tchar* pObjectFilePath)
 				ENDINSTANCE;
 				return E_FAIL;
 			}
+		}
+
+		// 볼트 횃불
+		else if (0 == lstrcmp(modelName.c_str(), wsVaultTorch.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_Vault_Torch_%d"), (iTorchNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT,
+				TEXT("Prototype_GameObject_Vault_Torch"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone Vault_Torch");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+
+			++iTorchNum;
 		}
 
 		// 일반 맵 오브젝트
