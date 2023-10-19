@@ -81,7 +81,7 @@ public:
 	void Set_TargetTransform(CTransform* _pTargetTransform = nullptr) { m_pTargetTransform = _pTargetTransform; }
 	void Set_Protego_Collision(CTransform* _pTransform, CEnemy::ATTACKTYPE _eAttackType) const;
 
-
+	void Set_Robe_Mesh_Index(const _uint& iMeshIndex) { m_iRobeMeshIndex = iMeshIndex; }
 	void Set_PowerUp(_bool isPowerUp) { m_isPowerUp = isPowerUp; }
 	void Set_DefUp(_bool isDefUp) { m_isDefUp = isDefUp; }
 	void Set_FocusOn(_bool isFocus) { m_isFocusOn = isFocus; }
@@ -247,6 +247,9 @@ private:
 
 	//루모스 끄기
 	_bool m_isPreLumos = { false };
+
+	// 로브 업데이트 메쉬 인덱스
+	_uint m_iRobeMeshIndex = { 0 };
 
 private:
 	HRESULT Add_Components();

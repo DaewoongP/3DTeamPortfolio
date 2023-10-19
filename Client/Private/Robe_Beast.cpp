@@ -55,7 +55,8 @@ _bool CRobe_Beast::Buy()
 void CRobe_Beast::Equipment()
 {
 	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Robe_Beast")
-		, CCustomModel::MESHTYPE::ROBE);
+		, CCustomModel::MESHTYPE::ROBE, _float4(1.f, 1.f, 1.f, 1.f), TEXT("../../Resources/GameData/ClothData/Robe_Beast.cloth"));
+	m_pPlayer->Set_Robe_Mesh_Index(3);
 }
 
 CRobe_Beast* CRobe_Beast::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)

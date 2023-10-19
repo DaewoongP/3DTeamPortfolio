@@ -19,9 +19,6 @@ public:
 		_float4x4 WorldMatrix;
 		wstring wstrAnimationTag = { TEXT("") };
 		_float4 vClothColor;
-#ifdef _DEBUG
-		_bool isCheckPosition = { false };
-#endif // _DEBUG
 	}ELFINITDESC;
 
 private:
@@ -37,12 +34,6 @@ public:
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix) override;
 
-#ifdef _DEBUG
-private:
-	_bool m_isCheckPosition = { false };
-	_float3 m_vAngle;
-	void Tick_TestShake();
-#endif // _DEBUG
 private:
 	_float m_fTimeDelta = { 0.f };
 	_bool m_isWalk = { false };

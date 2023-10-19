@@ -521,9 +521,15 @@ HRESULT CDugbog::Bind_HitMatrices()
 void CDugbog::DeathBehavior(const _float& fTimeDelta)
 {
 	m_isDead = true;
-
 	m_fDeadTimeAcc += fTimeDelta;
-	if (3.f < m_fDeadTimeAcc)
+
+	if (1.f < m_fDeadTimeAcc)
+	{
+		m_isDissolve = true;
+		m_fDissolveAmount += fTimeDelta / 1.5f; // 디졸브 값 증가
+	}
+
+	if (3.f < m_fDeadTimeAcc && m_fDissolveAmount >= 1.f)
 		Set_ObjEvent(OBJ_DEAD);
 }
 
