@@ -2,6 +2,7 @@
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 float g_fRadius;
+float2 g_vViewPort;
 
 struct VS_IN
 {
@@ -45,7 +46,7 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
     // 해봤자 최대 2정도
-    float fDistance = distance(float2(0.5f, 0.5f), In.vTexUV / 1280.f / 720.f);
+    float fDistance = distance(float2(0.5f, 0.5f), In.vTexUV / g_vViewPort.x / g_vViewPort.y);
     
     if (g_fRadius > fDistance)
     {

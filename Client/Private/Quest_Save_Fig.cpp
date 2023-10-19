@@ -24,9 +24,6 @@ _bool CQuest_Save_Fig::Is_Finished()
 
 HRESULT CQuest_Save_Fig::Initialize()
 {
-	if (FAILED(__super::Initialize(nullptr)))
-		return E_FAIL;
-
 	return S_OK;
 }
 

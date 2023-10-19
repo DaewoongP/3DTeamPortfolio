@@ -7,6 +7,7 @@ texture2D g_HDRTexture;
 texture2D g_GlowTexture;
 texture2D g_SSAOTexture;
 texture2D g_DepthTexture;
+texture2D g_RainTexture;
 bool g_isSSAO;
 bool g_isCircleFog;
 float g_fCamFar;
@@ -108,6 +109,9 @@ PS_OUT PS_MAIN(PS_IN In)
     //else
     //    fFogPower = saturate((vPosition.y - 10.f) / -10.f);
 
+    Out.vColor += g_RainTexture.Sample(LinearSampler, In.vTexUV);;
+    saturate(Out.vColor);
+    
     return Out;
 }
 

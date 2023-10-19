@@ -317,6 +317,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Glow.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Noise.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_RadialBlur.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Rain.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_RenderFunc.hlsli" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Light.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_MotionBlur.hlsl" />

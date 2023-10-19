@@ -1461,7 +1461,7 @@ HRESULT CPlayer::Ready_Camera()
 	CCamera::CAMERADESC CameraDesc;
 
 	CameraDesc.m_fAspect = _float(g_iWinSizeX) / _float(g_iWinSizeY);
-	CameraDesc.m_fFovY = XMConvertToRadians(90.f);
+	CameraDesc.m_fFovY = XMConvertToRadians(110.f);
 	CameraDesc.m_fNear = 0.1f;
 	CameraDesc.m_fFar = 1000.f;
 

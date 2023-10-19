@@ -42,6 +42,8 @@ public:
 	}
 	void Set_SSAO(_bool isSSAO) { m_isSSAO = isSSAO; }
 	_bool Get_SSAO() { return m_isSSAO; }
+	void Play_Rain() { m_isRaining = true; }
+	void Stop_Rain() { m_isRaining = false; }
 
 private:
 	explicit CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -80,6 +82,7 @@ private:
 	HRESULT Render_RadialBlur();
 	HRESULT Render_Screen();
 	HRESULT Render_ScreenRadial();
+	HRESULT Render_Rain();
 	HRESULT Render_Fade();
 
 	HRESULT Render_UI();
@@ -129,6 +132,7 @@ private:
 	class CShader*	m_pRadialBlurShader = { nullptr };
 	class CShader*	m_pFogShader = { nullptr };
 	class CShader*	m_pFadeShader = { nullptr };
+	class CShader*	m_pRainShader = { nullptr };
 	class CTexture*	m_pNoiseTexture = { nullptr };
 
 private:
@@ -137,6 +141,7 @@ private:
 	_float		m_fRadialBlurWidth = { 0.f };
 	_float		m_fRadialTime = { 0.f };
 	_float		m_fRadialTimeAcc = { 0.f };
+	_float		m_fRainTimeAcc = { 0.f };
 	_bool		m_isCircleFog = { false };
 	_float4		m_vFogColor;
 	_float3		m_vFogCenterPos;
@@ -144,6 +149,7 @@ private:
 
 private:
 	_bool		m_isFadeIn = { false };
+	_bool		m_isRaining = { false };
 	_float		m_fFadeTime = { 0.f };
 	_float		m_fGlowPower = { 0.f };
 	_float		m_fHDR = { 0.f };

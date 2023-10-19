@@ -1,18 +1,25 @@
 #include "Shader_EngineHeader.hlsli"
+
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
-float g_fRadius;
+float PI = acos(-1.0);
+float g_fTime;
 float2 g_vViewPort;
+
+float fract(float x)
+{
+    return x - floor(x);
+}
 
 struct VS_IN
 {
     float3 vPosition : POSITION;
-    float2 vTexUV : TEXCOORD0;    
+    float2 vTexUV : TEXCOORD0;
 };
 
 struct VS_OUT
 {
-    float4 vPosition : SV_Position;
+    float4 vPosition : SV_POSITION;
     float2 vTexUV : TEXCOORD0;
 };
 
@@ -42,33 +49,54 @@ struct PS_OUT
     float4 vColor : SV_TARGET0;
 };
 
+float rnd(float t)
+{
+    return fract(sin(t * 745.523) * 7894.552);
+}
+
+float rain(float3 p)
+{
+    p.y -= g_fTime * 4.0;
+    p.xy *= 60.0;
+  
+    p.y += rnd(floor(p.x)) * 80.0;
+  
+    return clamp(1.0 - length(float2(cos(p.x * PI), sin(p.y * 0.1) - 1.7)), 0.0, 1.0);
+}
+
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
-    // 해봤자 최대 2정도
-    float fDistance = distance(float2(0.5f, 0.5f), In.vTexUV / g_vViewPort.x / g_vViewPort.y);
+
+    float2 uv = In.vTexUV;
+    uv -= 0.5;
+    uv.y *= -1.f;
+    float fSpeed = 1.f;
+    uv /= float2(g_vViewPort.y / g_vViewPort.x, fSpeed);
+
+    float3 col = float3(0, 0, 0);
+    float fr = rain(float3(-uv, 5));
+    col = float3(fr, fr, fr);
+    col += rain(float3(-uv * 2.3, 5)) * 0.5;
+    col += rain(float3(-uv * 4.7, 5)) * 0.25;
+
+    col = pow(col, float3(0.4545, 0.4545, 0.4545));
+
+    Out.vColor = float4(col, 1);
     
-    if (g_fRadius > fDistance)
-    {
+    if (0.f == Out.vColor.a)
         discard;
-    }
-    else
-    {
-        float fFade = saturate((g_fRadius - fDistance) * -10.f);
-    }
-    
-    Out.vColor = float4(0.f, 0.f, 0.f, 1.f);
-    
+
     return Out;
 }
 
 technique11 DefaultTechnique
 {
-    pass Fade
+    pass Rain
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Depth_Disable, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
         HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;

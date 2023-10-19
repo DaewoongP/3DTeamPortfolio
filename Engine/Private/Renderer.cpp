@@ -102,6 +102,9 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_Fog"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_Rain"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
 
 #ifdef _DEBUG
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
@@ -154,6 +157,8 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Fog"), TEXT("Target_Fog"))))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Rain"), TEXT("Target_Rain"))))
+		return E_FAIL;
 
 #ifdef _DEBUG
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Picking"), TEXT("Target_Picking"))))
@@ -179,6 +184,8 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_DOF"), 80.f, 240.f, 160.f, 160.f)))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Glowed"), 80.f, 400.f, 160.f, 160.f)))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Rain"), 80.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), 240.f, 80.f, 160.f, 160.f)))
 		return E_FAIL;
@@ -264,7 +271,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_Fog()))
 		return E_FAIL;
-	
+	if (FAILED(Render_Rain()))
+		return E_FAIL;
 #pragma endregion
 
 #pragma region MRT_PostProcessing
@@ -280,24 +288,26 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 #pragma endregion
 
-	// After Effect
+#pragma region After Effect
 	if (FAILED(Render_Distortion()))
 		return E_FAIL;
 	
 	if (FAILED(Render_RadialBlur()))
 		return E_FAIL;
+#pragma endregion
 
-	// Screen Shading
+#pragma region Screen Shading
 	if (FAILED(Render_Screen()))
 		return E_FAIL;
 	if (FAILED(Render_ScreenRadial()))
 		return E_FAIL;
+#pragma endregion
 
 	// final
 	if (FAILED(Render_Fade()))
 		return E_FAIL;
 
-	// UI 렌더링
+	// UI Render
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
@@ -723,6 +733,8 @@ HRESULT CRenderer::Render_PostProcessing()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Depth"), m_pPostProcessingShader, "g_DepthTexture")))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Rain"), m_pPostProcessingShader, "g_RainTexture")))
+		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
@@ -915,6 +927,45 @@ HRESULT CRenderer::Render_ScreenRadial()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_Rain()
+{
+	if (false == m_isRaining)
+		return S_OK;
+
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Rain"))))
+		return E_FAIL;
+
+	if (FAILED(m_pRainShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pRainShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pRainShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	_float2 vViewPort = pGameInstance->Get_ViewPortSize(m_pContext);
+	m_fRainTimeAcc += pGameInstance->Get_World_Tick();
+	Safe_Release(pGameInstance);
+
+	if (FAILED(m_pRainShader->Bind_RawValue("g_fTime", &m_fRainTimeAcc, sizeof(_float))))
+		return E_FAIL;
+	
+	if (FAILED(m_pRainShader->Bind_RawValue("g_vViewPort", &vViewPort, sizeof(_float2))))
+		return E_FAIL;
+
+	if (FAILED(m_pRainShader->Begin("Rain")))
+		return E_FAIL;
+
+	if (FAILED(m_pRectBuffer->Render()))
+		return E_FAIL;
+
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Rain"))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_Fade()
 {
 	if (false == m_isFadeIn)
@@ -928,12 +979,15 @@ HRESULT CRenderer::Render_Fade()
 	if (FAILED(m_pFadeShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	CTimer_Manager* pTimer_Manager = CTimer_Manager::GetInstance();
-	Safe_AddRef(pTimer_Manager);
-	m_fFadeTime += pTimer_Manager->Get_World_Tick();
-	Safe_Release(pTimer_Manager);
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	_float2 vViewPort = pGameInstance->Get_ViewPortSize(m_pContext);
+	m_fFadeTime += pGameInstance->Get_World_Tick();
+	Safe_Release(pGameInstance);
 
 	if (FAILED(m_pFadeShader->Bind_RawValue("g_fRadius", &m_fFadeTime, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pFadeShader->Bind_RawValue("g_vViewPort", &vViewPort, sizeof(_float2))))
 		return E_FAIL;
 
 	if (FAILED(m_pFadeShader->Begin("Fade")))
@@ -1061,6 +1115,10 @@ HRESULT CRenderer::Add_Components()
 	
 	m_pFadeShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Fade.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
 	if (nullptr == m_pFadeShader)
+		return E_FAIL;
+	
+	m_pRainShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Rain.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
+	if (nullptr == m_pRainShader)
 		return E_FAIL;
 
 	m_pNoiseTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Noises/VFX_T_Cloud_Noise_Tile_D.png"));
@@ -1212,6 +1270,7 @@ void CRenderer::Free()
 	Safe_Release(m_pRadialBlurShader);
 	Safe_Release(m_pFogShader);
 	Safe_Release(m_pFadeShader);
+	Safe_Release(m_pRainShader);
 	Safe_Release(m_pNoiseTexture);
 
 	Safe_Release(m_pBlur);
