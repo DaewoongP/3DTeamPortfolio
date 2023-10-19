@@ -200,6 +200,28 @@ HRESULT CMain1_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 
 		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins3.ddd"), eLevelID)))
 			throw TEXT("Map Object_Ins");
+
+#pragma region Cat_Texture
+		/* For.Prototype_Component_Texture_Cat_Turk */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_Cat_Turk"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Anim_GreyCat/T_Cat_TurkishVan_D.dds")))))
+			throw TEXT("Prototype_Component_Texture_Cat_Turk");
+
+		/* For.Prototype_Component_Texture_Cat_Spot */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_Cat_Spot"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Anim_GreyCat/T_Cat_Spotted_D.dds")))))
+			throw TEXT("Prototype_Component_Texture_Cat_Spot");
+
+		/* For.Prototype_Component_Texture_Cat_Orange */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_Cat_Orange"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Anim_GreyCat/T_Cat_Orange_Body_D.dds")))))
+			throw TEXT("Prototype_Component_Texture_Cat_Orange");
+
+		/* For.Prototype_Component_Texture_Cat_Calico */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_Cat_Calico"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Anim_GreyCat/T_Cat_Calico_D.dds")))))
+			throw TEXT("Prototype_Component_Texture_Cat_Calico");
+#pragma endregion 
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -453,28 +475,6 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Vault_Torch"),
 		CVault_Torch::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Vault_Torch");
-
-#pragma region Cat_Texture
-	/* For.Prototype_Component_Texture_Cat_Turk */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_SMITH, TEXT("Prototype_Component_Texture_Cat_Turk"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Anim_GreyCat/T_Cat_TurkishVan_D.dds")))))
-		throw TEXT("Prototype_Component_Texture_Cat_Turk");
-
-	/* For.Prototype_Component_Texture_Cat_Spot */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_SMITH, TEXT("Prototype_Component_Texture_Cat_Spot"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Anim_GreyCat/T_Cat_Spotted_D.dds")))))
-		throw TEXT("Prototype_Component_Texture_Cat_Spot");
-
-	/* For.Prototype_Component_Texture_Cat_Orange */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_SMITH, TEXT("Prototype_Component_Texture_Cat_Orange"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Anim_GreyCat/T_Cat_Orange_Body_D.dds")))))
-		throw TEXT("Prototype_Component_Texture_Cat_Orange");
-
-	/* For.Prototype_Component_Texture_Cat_Calico */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_SMITH, TEXT("Prototype_Component_Texture_Cat_Calico"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Anim_GreyCat/T_Cat_Calico_D.dds")))))
-		throw TEXT("Prototype_Component_Texture_Cat_Calico");
-#pragma endregion 
 
 	HANDLE hFile = CreateFile(pMapObjectPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
