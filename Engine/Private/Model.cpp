@@ -202,6 +202,14 @@ HRESULT CModel::Render(_uint iMeshIndex)
 	return S_OK;
 }
 
+void CModel::Strong_Change_Animation(const wstring& wstrAnimationTag, ANIMTYPE eType)
+{
+	m_tAnimationDesc[eType].iCurrentAnimIndex = Find_Animation_Index(wstrAnimationTag, eType);
+	m_tAnimationDesc[eType].iPreviousAnimIndex = m_tAnimationDesc[eType].iCurrentAnimIndex;
+	m_tAnimationDesc[eType].isResetAnimTrigger = false;
+	m_tAnimationDesc[eType].isFinishAnimation = false;
+}
+
 void CModel::Change_Animation(const wstring& wstrAnimationTag, ANIMTYPE eType)
 {
 	m_tAnimationDesc[eType].iCurrentAnimIndex = Find_Animation_Index(wstrAnimationTag, eType);

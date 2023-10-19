@@ -23,6 +23,7 @@ public:
 
 private:
     _float m_fAction_Change_Duration{ 0.0f };
+    _int m_iActionIndex = {0};
 
 private:
     void Action_None_Tick();
