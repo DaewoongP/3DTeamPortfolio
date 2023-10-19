@@ -175,12 +175,12 @@ HRESULT CLevel_Cliffside::Ready_Layer_NPC(const _tchar* pLayerTag)
 
 	_float3 vPosition = _float3(40.f, 6.4f, 62.f);
 
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"), &vPosition)))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"), &vPosition)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Professor_Fig)");
 		ENDINSTANCE;
 		return E_FAIL;
-	}*/
+	}
 
 	ENDINSTANCE;
 

@@ -16,6 +16,7 @@ class CRootBehavior;
 END
 
 BEGIN(Client)
+class CScript;
 class CMagicBall;
 class CMagicSlot;
 class CWeapon_Fig_Wand;
@@ -57,6 +58,7 @@ private:
 private:
 	// 리스트 내에 들어있는 오브젝트 중 가장 가까운 객체 포인터
 	const CGameObject* m_pTarget = { nullptr };
+	const CGameObject* m_pPlayer = { nullptr };
 
 	CMagic::MAGICDESC m_MagicDesc;
 	_uint m_iCurrentSpell = { 0 };
@@ -65,6 +67,8 @@ private:
 	_bool m_isRangeInEnemy = { false };
 
 	CMagicBall* m_CastingMagic = { nullptr };
+
+	CScript* m_pScript = { nullptr };
 
 private:
 	HRESULT Make_AI();
@@ -100,6 +104,13 @@ private: /* Notify Functions */
 	void Cast_Levioso();
 	void Cast_Protego();
 	void Shot_Magic();
+
+private: // script
+	_bool	m_isFinishCombat = { false };
+	_bool	m_isPlayScript = { false };
+	void	Tick_Script(_float fTimeDelta);
+	void	Late_Tick_Script(_float fTimeDelta);
+	
 
 public:
 	static CProfessor_Fig* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

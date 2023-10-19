@@ -7,7 +7,7 @@ BEGIN(Client)
 class CQuest abstract : public CGameObject
 {
 public:
-	QUESTSTATE Get_State() { m_eCurState; }
+	QUESTSTATE Get_State() { return m_eCurState; }
 	void Set_State(QUESTSTATE eState) { m_eCurState = eState; }
 
 	virtual _bool Is_Finished() PURE;
@@ -18,7 +18,7 @@ protected:
 	virtual ~CQuest() = default;
 
 protected:
-	QUESTSTATE		m_eCurState = { QUESTSTATE_END };
+	QUESTSTATE		m_eCurState = { QUESTSTATE_QUESTIONMARK };
 
 public:
 	virtual CGameObject* Clone(void* pArg) { return nullptr; }

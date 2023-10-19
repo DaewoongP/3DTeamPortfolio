@@ -2,10 +2,13 @@
 #include "GameInstance.h"
 #include "PhysXConverter.h"
 
+#include "Player.h"
 #include "Action.h"
+#include "Script.h"
 #include "MagicSlot.h"
 #include "MagicBall.h"
 #include "Check_Degree.h"
+#include "Quest_Manager.h"
 #include "Check_Distance.h"
 #include "Selector_Degree.h"
 #include "Sequence_Attack.h"
@@ -56,6 +59,13 @@ HRESULT CProfessor_Fig::Initialize(void* pArg)
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 
+	BEGININSTANCE;
+	if (nullptr == m_pPlayer)
+	{
+		m_pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+	}
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
@@ -65,6 +75,9 @@ void CProfessor_Fig::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
+	if (true == m_isFinishCombat)
+		Tick_Script(fTimeDelta);
+
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 }
@@ -72,6 +85,9 @@ void CProfessor_Fig::Tick(_float fTimeDelta)
 void CProfessor_Fig::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	if (true == m_isFinishCombat)
+		Late_Tick_Script(fTimeDelta);
 
 	if (nullptr != m_pRenderer)
 	{
@@ -235,9 +251,11 @@ HRESULT CProfessor_Fig::Make_AI()
 		if (FAILED(m_pRootBehavior->Add_Type("pModel", m_pModelCom)))
 			throw TEXT("Failed Add_Type pModel");
 		if (FAILED(m_pRootBehavior->Add_Type("isRangeInEnemy", &m_isRangeInEnemy)))
-			throw TEXT("Failed Add_Type pModel");
+			throw TEXT("Failed Add_Type pModel"); 
 		if (FAILED(m_pRootBehavior->Add_Type("isChangeAnimation", &m_isChangeAnimation)))
 			throw TEXT("Failed Add_Type isChangeAnimation");
+		if (FAILED(m_pRootBehavior->Add_Type("isFinishCombat", &m_isFinishCombat)))
+			throw TEXT("Failed Add_Type isFinishCombat");
 
 		if (FAILED(m_pRootBehavior->Add_Type("fTargetDistance", _float())))
 			throw TEXT("Failed Add_Type fTargetDistance");
@@ -451,6 +469,17 @@ HRESULT CProfessor_Fig::Add_Components()
 			MSG_BOX("Failed CTest_Player Add_Component : (Com_MagicSlot)");
 			return E_FAIL;
 		}
+
+		BEGININSTANCE;
+
+		m_pScript = static_cast<CScript*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Script")));
+		m_pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Fig/Fig_1_1.png"));
+		m_pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Fig/Fig_1_2.png"));
+		m_pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Fig/Fig_1_3.png"));
+		m_pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Fig/Fig_1_4.png"));
+
+		ENDINSTANCE;
+
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -544,6 +573,9 @@ void CProfessor_Fig::Set_Current_Target()
 	}
 
 	m_isRangeInEnemy = (nullptr == m_pTarget) ? false : true;
+
+	if (false == m_isRangeInEnemy)
+		m_pTarget = m_pPlayer;
 }
 
 HRESULT CProfessor_Fig::Remove_GameObject(const wstring& wstrObjectTag)
@@ -730,6 +762,16 @@ HRESULT CProfessor_Fig::Make_Non_Combat(_Inout_ CSelector* pSelector)
 					return false;
 
 				return !*pIsRangeInEnemy;
+			});
+		pSequence_Turns->Add_Success_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsFinishCombat = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isFinishCombat", pIsFinishCombat)))
+					return false;
+
+				*pIsFinishCombat = true;
+
+				return true;
 			});
 
 		/* Set Options */
@@ -1037,6 +1079,35 @@ void CProfessor_Fig::Shot_Magic()
 	m_CastingMagic->Do_MagicBallState_To_Next();
 }
 
+void CProfessor_Fig::Tick_Script(_float fTimeDelta)
+{
+	if (!m_isPlayScript)
+	{
+		m_isPlayScript = true;
+		m_pScript->Reset_Script();
+		m_pScript->Set_isRender(true);
+	}
+
+	if (m_isPlayScript)
+	{
+		m_pScript->Tick(fTimeDelta);
+
+		if (true == m_pScript->Is_Finished())
+		{
+			CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
+			Safe_AddRef(pQuest_Manager);
+			pQuest_Manager->Clear_Quest(TEXT("Quest_Save_Fig"));
+			Safe_Release(pQuest_Manager);
+		}
+	}
+}
+
+void CProfessor_Fig::Late_Tick_Script(_float fTimeDelta)
+{
+	if (m_isPlayScript)
+		m_pScript->Late_Tick(fTimeDelta);
+}
+
 CProfessor_Fig* CProfessor_Fig::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CProfessor_Fig* pInstance = New CProfessor_Fig(pDevice, pContext);
@@ -1077,5 +1148,6 @@ void CProfessor_Fig::Free()
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pRootBehavior);
 		Safe_Release(m_pWeapon);
+		Safe_Release(m_pScript);
 	}
 }

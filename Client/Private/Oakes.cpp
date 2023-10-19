@@ -47,6 +47,8 @@ void COakes::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	Check_Quest();
+
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 
@@ -397,6 +399,17 @@ HRESULT COakes::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4
 	ENDINSTANCE;
 
 	return S_OK;
+}
+
+void COakes::Check_Quest()
+{
+	CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
+	Safe_AddRef(pQuest_Manager);
+	if (pQuest_Manager->Is_Quest_Finished(TEXT("Quest_Save_Fig")))
+	{
+		++m_iScriptIndex;
+	};
+	Safe_Release(pQuest_Manager);
 }
 
 COakes* COakes::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
