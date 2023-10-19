@@ -1,18 +1,19 @@
 #include "Script.h"
 #include "GameInstance.h"
 #include "UI_Script.h"
+#include "Quest_Manager.h"
 
-CMyScript::CMyScript(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CScript::CScript(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComposite(pDevice, pContext)
 {
 }
 
-CMyScript::CMyScript(const CMyScript& rhs)
+CScript::CScript(const CScript& rhs)
 	: CComposite(rhs)
 {
 }
 
-HRESULT CMyScript::Initialize_Prototype()
+HRESULT CScript::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
@@ -26,7 +27,7 @@ HRESULT CMyScript::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CMyScript::Initialize(void* pArg)
+HRESULT CScript::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -36,7 +37,26 @@ HRESULT CMyScript::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CMyScript::Add_Prototype()
+void CScript::Tick(_float fTimeDelta)
+{
+	Next_Script();
+}
+
+void CScript::Late_Tick(_float fTimeDelta)
+{
+	if (m_isRender)
+		__super::Late_Tick(fTimeDelta);
+}
+
+HRESULT CScript::Render()
+{
+	//if (nullptr != m_pUI_Script)
+	//	m_pUI_Script->Render();
+
+	return S_OK;
+}
+
+HRESULT CScript::Add_Prototype()
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -54,15 +74,23 @@ HRESULT CMyScript::Add_Prototype()
 	return S_OK;
 }
 
-HRESULT CMyScript::Add_Components()
+HRESULT CScript::Add_Components()
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
+	CUI::UIDESC desc;
+	desc.vCombinedXY = _float2(0.f, 0.f);
+	desc.fX = 640.f;
+	desc.fY = 530.f;
+	desc.fZ = 0.f;
+	desc.fSizeX = 820.f;
+	desc.fSizeY = 180.f;
+
 	if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Script"),
-		TEXT("Com_UI_Script"), reinterpret_cast<CComponent**>(&m_pUI_Script))))
+		TEXT("Com_UI_Script"), reinterpret_cast<CComponent**>(&m_pUI_Script), &desc)))
 	{
-		MSG_BOX("CMyScript : Failed Clone Component (Com_UI_Script)");
+		MSG_BOX("CScript : Failed Clone Component (Com_UI_Script)");
 		Safe_Release(pGameInstance);
 		__debugbreak();
 		return E_FAIL;
@@ -73,7 +101,7 @@ HRESULT CMyScript::Add_Components()
 	return S_OK;
 }
 
-HRESULT CMyScript::Add_Script(const _tchar* pTexturePath)
+HRESULT CScript::Add_Script(const _tchar* pTexturePath)
 {
 	if (m_Scripts.size() == 0)
 	{
@@ -87,28 +115,52 @@ HRESULT CMyScript::Add_Script(const _tchar* pTexturePath)
 	return S_OK;
 }
 
-_bool CMyScript::Next_Script()
+void CScript::Reset_Script()
 {
-	if (m_Scripts.size() - 1 == m_iCurrentScriptIndex)
-		return false;
-
-	++m_iCurrentScriptIndex;
+	m_iCurrentScriptIndex = 0;
 	m_pUI_Script->Set_Texture(m_Scripts[m_iCurrentScriptIndex]);
+}
 
+_bool CScript::Next_Script()
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
+	{
+
+		if (m_Scripts.size() - 1 == m_iCurrentScriptIndex)
+		{
+			Safe_Release(pGameInstance);
+			m_isRender = false;
+			return false;
+		}
+
+		Safe_Release(pGameInstance);
+		++m_iCurrentScriptIndex;
+		m_pUI_Script->Set_Texture(m_Scripts[m_iCurrentScriptIndex]);
+		m_isRender = true;
+		return true;
+	}
+
+	Safe_Release(pGameInstance);
 	return true;
 }
 
-HRESULT CMyScript::Render_Script(_float fTimeDelta)
+CScript* CScript::Find_Script(const _tchar* swzScriptTag, _umap<const _tchar*, CScript*>& pSript)
 {
-	__super::Late_Tick(fTimeDelta);
+	auto	iter = find_if(pSript.begin(), pSript.end(), CTag_Finder(swzScriptTag));
 
-	return S_OK;
+	if (iter == pSript.end())
+		return nullptr;
+
+	return iter->second;
 }
 
 
-CMyScript* CMyScript::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CScript* CScript::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CMyScript* pInstance = New CMyScript(pDevice, pContext);
+	CScript* pInstance = New CScript(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -119,9 +171,9 @@ CMyScript* CMyScript::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	return pInstance;
 }
 
-CComponent* CMyScript::Clone(void* pArg)
+CComponent* CScript::Clone(void* pArg)
 {
-	CMyScript* pInstance = New CMyScript(*this);
+	CScript* pInstance = New CScript(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
@@ -133,13 +185,19 @@ CComponent* CMyScript::Clone(void* pArg)
 }
 
 
-void CMyScript::Free()
+void CScript::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pUI_Script);
-	for (auto& pTexture : m_Scripts)
+
+	if (m_isCloned)
 	{
-		Safe_Release(pTexture);
+		Safe_Release(m_pUI_Script);
+
+		for (auto& pTexture : m_Scripts)
+		{
+			Safe_Release(pTexture);
+		}
 	}
+
 }

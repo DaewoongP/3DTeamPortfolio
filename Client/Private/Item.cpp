@@ -45,18 +45,11 @@ HRESULT CItem::Initialize(void* pArg)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	// 모든 레벨을 조사해서 플레이어 주소를 가져옴.
-	for (_uint i = 0; i < LEVEL_END; ++i)
-	{
-		m_pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(
-			i
-			, TEXT("Layer_Player")
-			, TEXT("GameObject_Player")));
+	m_pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(
+		LEVEL_STATIC
+		, TEXT("Layer_Player")
+		, TEXT("GameObject_Player")));
 
-		if (m_pPlayer != nullptr)
-			break;
-	}
-	
 	// 플레이어 주소에 대한 유효성 검사.
 	if (nullptr == m_pPlayer)
 	{

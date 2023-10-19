@@ -184,6 +184,7 @@ void CPensive_Fail_Ball::Ready_Dying()
 		m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Enable(m_pMeshEffect->Get_Transform()->Get_Position());
 		m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Play(m_pMeshEffect->Get_Transform()->Get_Position());
 	}
+
 	if (!m_isHeavyChange)
 	{
 		m_ParticleVec[EFFECT_STATE_HIT].data()[2]->Enable(m_pMeshEffect->Get_Transform()->Get_Position());

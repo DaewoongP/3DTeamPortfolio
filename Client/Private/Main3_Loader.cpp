@@ -397,10 +397,10 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Arm/Player_Arm.dat"), TEXT("Player_Arm")))))
 			throw TEXT("Prototype_Component_MeshPart_Player_Arm");
 
-		/* For.Prototype_Component_MeshPart_Robe01 */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Robe01"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Robe_Student/Robe_Student.dat"), TEXT("Robe01")))))
-			throw TEXT("Prototype_Component_MeshPart_Robe01");
+		/* For.Prototype_Component_MeshPart_Robe_Beast */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Robe_Beast"),
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Robe_Beast/Robe_Beast.dat"), TEXT("Robe_Beast")))))
+			throw TEXT("Prototype_Component_MeshPart_Robe_Beast");
 
 		/* For.Prototype_Component_MeshPart_Player_Top */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Player_Top"),

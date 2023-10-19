@@ -38,6 +38,7 @@
 #include "UI_Damage.h"
 #include "UI_Store.h"
 #include "UI_Interaction.h"
+#include "Script.h"
 #pragma endregion UI
 
 #pragma region Effects
@@ -95,6 +96,9 @@
 
 #include "Event_Vault_Spawn.h"
 #include "Event_Smeade.h"
+#include "Event_Cliffside.h"
+
+#include "Guide_Book.h"
 
 #ifdef _DEBUG
 #include "Test_Player.h"
@@ -232,6 +236,11 @@ HRESULT CMain0_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Water"),
 			CWater::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Water");
+
+		/* For.Prototype_GameObject_Event_Cliffside */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Cliffside"),
+			CEvent_Cliffside::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Event_Cliffside");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -434,6 +443,21 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Interaction"),
 				CUI_Interaction::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_GameObject_UI_Interaction");
+
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Script"),
+				CScript::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_Script");
+#pragma endregion
+
+#pragma region Guide_Book
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Guide_Book"),
+				CGuide_Book::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_Guide_Book");
+
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Guide_Book"),
+				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM,
+				TEXT("../../Resources/Models/Anims/Anim_GuideBook/Anim_GuideBook.dat")))))
+				throw TEXT("Prototype_Component_Model_Guide_Book");
 #pragma endregion
 
 #pragma region Load Texture
@@ -858,6 +882,46 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_Stone_Hit"),
 				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Monster_Hit/Troll_Stone/"), 3)))
 				throw TEXT("Reserve Particle : Particle_Troll_Stone_Hit");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Hit_Circle"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Hit/Circle/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Pensive_Hit_Circle");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Hit_Distotion"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Hit/Distotion/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Pensive_Hit_Distotion");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Hit_Spread"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Hit/Spread/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Pensive_Hit_Spread");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Hit_Stick_Glow"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Hit/Stick_Glow/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Pensive_Hit_Stick_Glow");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Black_Water"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Black_Water/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Pensive_Appear_Black_Water");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Water_Bubble"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Water_Bubble/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Pensive_Appear_Water_Bubble");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Water_Main"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Water_Main/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Pensive_Appear_Water_Main");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Water_Splash_01"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Water_Splash_01/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Pensive_Appear_Water_Splash_01");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Water_Splash_02"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Water_Splash_02/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Pensive_Appear_Water_Splash_02");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Flare"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Flare/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Pensive_Appear_Flare");
 		}
 #pragma endregion
 

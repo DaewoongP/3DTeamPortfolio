@@ -1,6 +1,7 @@
 #include "StateContext_Enemy.h"
 #include "StateMachine.h"
 #include "StateMachine_Enemy.h"
+#include "Pensive.h"
 
 CStateContext_Enemy::CStateContext_Enemy(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	: CComposite(_pDevice, _pContext)
@@ -57,6 +58,7 @@ HRESULT CStateContext_Enemy::Set_StateMachine(const _tchar* _pTag, void * _pArg)
 	
 	Safe_AddRef(m_pCurrentStateMachine);
 	m_pCurrentStateMachine->OnStateEnter(_pArg);
+	dynamic_cast<CPensive*>(m_pOwner)->ResetMagicBall();
 	return S_OK;
 }
 

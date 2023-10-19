@@ -91,6 +91,9 @@ HRESULT CWater::SetUp_ShaderResources()
 
 	if (FAILED(m_pShader->Bind_RawValue("g_fTime", &m_fTimeAcc, sizeof(_float))))
 		return E_FAIL;
+	
+	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
+		return E_FAIL;
 
 	Safe_Release(pGameInstance);
 

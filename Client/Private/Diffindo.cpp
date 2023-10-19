@@ -318,7 +318,6 @@ HRESULT CDiffindo::Add_RigidBody()
 	PxBoxGeometry BoxGeometry = PxBoxGeometry(2.f,0.1f,2.f);
 	//PxSphereGeometry SphereGeometry = PxSphereGeometry(3.f);
 	RigidBodyDesc.pGeometry = &BoxGeometry;
-	RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
 	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
 	RigidBodyDesc.isGravity = false;
 	RigidBodyDesc.pOwnerObject = this;
