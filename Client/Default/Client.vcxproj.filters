@@ -865,6 +865,9 @@
     <Filter Include="02. GameObject\11. Water">
       <UniqueIdentifier>{1b33b363-0555-47c0-bfe6-21b18984e66b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="07. Events\Cliffside">
+      <UniqueIdentifier>{db76acf0-1434-4a65-8c6d-2a7074254ab7}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\06. NPC\House_Elf">
       <UniqueIdentifier>{15e98751-98a2-4629-a638-7f71b9ab4fce}</UniqueIdentifier>
     </Filter>
@@ -1766,6 +1769,9 @@
     <ClInclude Include="..\public\Water.h">
       <Filter>02. GameObject\11. Water</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Event_Cliffside.h">
+      <Filter>07. Events\Cliffside</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\House_Elf.h">
       <Filter>02. GameObject\06. NPC\House_Elf</Filter>
     </ClInclude>
@@ -2612,6 +2618,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Water.cpp">
       <Filter>02. GameObject\11. Water</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Cliffside.cpp">
+      <Filter>07. Events\Cliffside</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\House_Elf.cpp">
       <Filter>02. GameObject\06. NPC\House_Elf</Filter>

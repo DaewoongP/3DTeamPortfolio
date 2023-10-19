@@ -463,7 +463,19 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		{
 			CHitState::HITSTATEDESC HitStateDesc;
 
-			HitStateDesc.iHitType = CHitState::HIT_LIGHT;
+			if (pDesc->eMagicTag == PENSIVE_GROUND_BALL ||
+				pDesc->eMagicTag == PENSIVE_FAIL_BALL ||
+				pDesc->eMagicTag == PENSIVE_SHOUTING ||
+				pDesc->eMagicTag == PENSIVE_SWORD_THROW ||
+				pDesc->eMagicTag == PENSIVE_MACE_ATTACK)
+			{
+				HitStateDesc.iHitType = CHitState::HIT_HEABY;
+			}
+			else
+			{
+				HitStateDesc.iHitType = CHitState::HIT_LIGHT;
+			}
+
 			if (nullptr == pDesc ||
 				nullptr == pDesc->pTransform)
 				return;
@@ -2319,7 +2331,7 @@ void CPlayer::Find_Target_For_Distance()
 
 	for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
 	{
-		if (true == static_cast<CGameObject*>(iter->second)->isDead())
+		if (true == static_cast<CGameObject*>(iter->second)->isDead() || false == static_cast<CEnemy*>(iter->second)->Is_Spawn())
 			continue;
 
 		_float3 vPlayerPos = m_pTransform->Get_Position();
@@ -2400,6 +2412,9 @@ void CPlayer::Find_Target_For_ViewSpace()
 
 	for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
 	{
+		if (true == static_cast<CGameObject*>(iter->second)->isDead() || false == static_cast<CEnemy*>(iter->second)->Is_Spawn())
+			continue;
+
 		CEnemy* pEnemy = static_cast<CEnemy*>((*iter).second);
 
 		_float4x4 TargetWorldMatrix = pEnemy->Get_Transform()->Get_WorldMatrix();

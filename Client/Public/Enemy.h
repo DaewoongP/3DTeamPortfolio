@@ -75,6 +75,7 @@ public:
 public:
 	virtual void Set_Protego_Collision(CTransform* pTransform, ATTACKTYPE eType) const {}
 	void Ready_Hit_Finisher() {};
+	const _bool Is_Spawn() const { return m_isSpawn; }
 
 protected:
 	CUI_Group_Enemy_HP* m_pUI_HP = { nullptr };
