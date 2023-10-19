@@ -351,7 +351,7 @@ HRESULT CMain2_Loader::Loading_For_Vault(LEVELID eLevelID)
 			throw TEXT("Prototype_Component_Weapon_Pensive_Sword");
 
 		/* ============ Enemy Models ============ */
-		PivotMatrix = XMMatrixScaling(3.5f, 3.5f, 3.5f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+		PivotMatrix = XMMatrixScaling(2.5f, 2.5f, 2.5f) * XMMatrixRotationY(XMConvertToRadians(180.f));
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Pensive"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/PensivePaladin/PensivePaladin.gcm"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Pensive");

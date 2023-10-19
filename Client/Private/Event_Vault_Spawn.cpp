@@ -115,6 +115,11 @@ void CEvent_Vault_Spawn::Check_Event_Spawn_3()
 				iter->second->Spawn();
 				Safe_Release(iter->second);
 				iter = m_pMonsters.erase(iter);
+				BEGININSTANCE;
+
+				pGameInstance->Add_CutScene(TEXT("Pensive_Enter"));
+
+				ENDINSTANCE;
 			}
 			else
 				++iter;
@@ -169,6 +174,12 @@ HRESULT CEvent_Vault_Spawn::Add_Components()
 		MSG_BOX("CEvent_Vault_Spawn Failed Add_Components : Trigger_Spawn_3");
 		return E_FAIL;
 	}
+
+	BEGININSTANCE;
+
+	pGameInstance->Read_CutSceneCamera(TEXT("Pensive_Enter"),TEXT("../../Resources/GameData/CutScene/pensive_Enter.cut"));
+
+	ENDINSTANCE;
 
 	return S_OK;
 }
