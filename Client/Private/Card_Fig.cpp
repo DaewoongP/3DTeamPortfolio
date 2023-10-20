@@ -54,6 +54,9 @@ HRESULT CCard_Fig::Initialize(void* pArg)
 	m_AttackTags.push_back(TEXT("Attack_Cast_Bombarda"));
 	m_AttackTags.push_back(TEXT("Attack_Cast_Finisher"));
 
+	m_pMagicSlot->Set_OwnerType(CMagic_Sound_Manager::OWNER_FIG);
+	m_pMagicSlot->Set_Volum(0.5f);
+
 	return S_OK;
 }
 

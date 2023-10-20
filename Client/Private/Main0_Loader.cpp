@@ -87,6 +87,8 @@
 #include "Pensive_Shouting.h"
 #include "Pensive_Sword_Throw.h"
 #include "Pensive_Mace_Attack.h"
+
+#include "Magic_Sound_Manager.h"
 #pragma endregion Magic
 
 #include "Trigger_Vault.h"
@@ -775,6 +777,12 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MagicSlot"),
 			CMagicSlot::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_MagicSlot");
+
+		/* For.Prototype_GameObject_Magic_Sound_Manager */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Magic_Sound_Manager"),
+			CMagic_Sound_Manager::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Magic_Sound_Manager");
+		
 #pragma endregion
 
 #pragma region Load Particle

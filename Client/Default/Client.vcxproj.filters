@@ -910,6 +910,9 @@
     <Filter Include="10. Quest\Save_Fig">
       <UniqueIdentifier>{0b6ed71e-efa1-46a6-a1cb-c7dd6e803bbf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05. Magic\Magic_Sound_Manager">
+      <UniqueIdentifier>{21076980-ffb0-4b0d-9c8a-4e6c54351f0f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1802,6 +1805,9 @@
     <ClInclude Include="..\public\Quest_Save_Fig.h">
       <Filter>10. Quest\Save_Fig</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Magic_Sound_Manager.h">
+      <Filter>05. Magic\Magic_Sound_Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2651,6 +2657,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Quest_Save_Fig.cpp">
       <Filter>10. Quest\Save_Fig</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Magic_Sound_Manager.cpp">
+      <Filter>05. Magic\Magic_Sound_Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
