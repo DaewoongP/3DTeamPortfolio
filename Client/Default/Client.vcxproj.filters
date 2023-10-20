@@ -892,9 +892,6 @@
     <Filter Include="10. Quest\Save_Fig">
       <UniqueIdentifier>{0b6ed71e-efa1-46a6-a1cb-c7dd6e803bbf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\03. MapObject\Anim_Obj\TrollHouse">
-      <UniqueIdentifier>{61ec76ed-b351-4ad2-b969-5c107543843f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\03. MapObject\Anim_Obj\Owl">
       <UniqueIdentifier>{a2d0ac88-bc9d-4275-b006-47de08699d2a}</UniqueIdentifier>
     </Filter>
@@ -1775,9 +1772,6 @@
     <ClInclude Include="..\public\Quest_Save_Fig.h">
       <Filter>10. Quest\Save_Fig</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\TrollHouse.h">
-      <Filter>02. GameObject\03. MapObject\Anim_Obj\TrollHouse</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Owl.h">
       <Filter>02. GameObject\03. MapObject\Anim_Obj\Owl</Filter>
     </ClInclude>
@@ -2615,9 +2609,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Quest_Save_Fig.cpp">
       <Filter>10. Quest\Save_Fig</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\TrollHouse.cpp">
-      <Filter>02. GameObject\03. MapObject\Anim_Obj\TrollHouse</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Owl.cpp">
       <Filter>02. GameObject\03. MapObject\Anim_Obj\Owl</Filter>

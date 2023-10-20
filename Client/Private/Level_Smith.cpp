@@ -277,7 +277,6 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 		wstring wsGreyCat(TEXT("Anim_GreyCat"));
 		wstring wsPotionStation(TEXT("SM_HM_Potion_Table"));
 		wstring wsShopDoor(TEXT("SM_HM_Shop_Door"));
-		wstring wsTrollHousefront(TEXT("Anim_TrollHouse_Front"));
 
 		// 보물상자
 		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
@@ -368,22 +367,6 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 			}
 
 			++iCatNum;
-		}
-
-		// 트롤 하우스
-		else if (0 == lstrcmp(modelName.c_str(), wsTrollHousefront.c_str()))
-		{
-			_tchar wszobjName[MAX_PATH] = { 0 };
-			_stprintf_s(wszobjName, TEXT("GameObject_TrollHouse_%d"), (iObjectNum));
-
-			if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH,
-				TEXT("Prototype_GameObject_TrollHouse"), TEXT("Layer_BackGround"),
-				wszobjName, &MapObjectDesc)))
-			{
-				MSG_BOX("Failed to Clone CTrollHouse in Level_Smith");
-				ENDINSTANCE;
-				return E_FAIL;
-			}
 		}
 
 		// 일반 맵오브젝트

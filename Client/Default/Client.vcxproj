@@ -251,7 +251,6 @@
     <ClInclude Include="..\Public\Robe_DarkArts_Delux.h" />
     <ClInclude Include="..\Public\Robe_Quidditch.h" />
     <ClInclude Include="..\Public\Script.h" />
-    <ClInclude Include="..\Public\TrollHouse.h" />
     <ClInclude Include="..\Public\UI_DamageFont.h" />
     <ClInclude Include="..\Public\UI_Interaction.h" />
     <ClInclude Include="..\Public\UI_Script.h" />
@@ -568,7 +567,6 @@
     <ClCompile Include="..\Private\Robe_DarkArts_Delux.cpp" />
     <ClCompile Include="..\Private\Robe_Quidditch.cpp" />
     <ClCompile Include="..\Private\Script.cpp" />
-    <ClCompile Include="..\Private\TrollHouse.cpp" />
     <ClCompile Include="..\Private\UI_DamageFont.cpp" />
     <ClCompile Include="..\Private\UI_Interaction.cpp" />
     <ClCompile Include="..\Private\UI_Script.cpp" />
