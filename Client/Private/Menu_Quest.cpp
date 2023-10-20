@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "UI_Effect_Back.h"
 #include "UI_Back.h"
+#include "Quest_Manager.h"
 
 CMenu_Quest::CMenu_Quest(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -57,6 +58,18 @@ void CMenu_Quest::Tick(_float fTimeDelta)
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
+
+
+	CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
+	Safe_AddRef(pQuest_Manager);
+
+	CQuest* pQuest = pQuest_Manager->Find_Quest(TEXT("Quest_Save_Fig"));
+	if (pQuest->Get_State() != QUESTSTATE_QUESTIONMARK)
+		Set_FontState(QUEST_FIG, pQuest->Get_State());
+
+	Safe_Release(pQuest_Manager);
+	
+
 
 	//if (pGameInstance->Get_DIKeyState(DIK_P, CInput_Device::KEY_DOWN))
 	//{

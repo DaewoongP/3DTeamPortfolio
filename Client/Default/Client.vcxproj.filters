@@ -916,6 +916,18 @@
     <Filter Include="10. Quest\Save_Fig">
       <UniqueIdentifier>{0b6ed71e-efa1-46a6-a1cb-c7dd6e803bbf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="10. Quest\Town">
+      <UniqueIdentifier>{78e4bee5-2ce8-4d66-948d-ffa6dbbdf9d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10. Quest\Secret">
+      <UniqueIdentifier>{1638d68d-60ff-4540-bbe6-0eef67ce2af6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10. Quest\Potion">
+      <UniqueIdentifier>{dba3ebe7-937c-43a8-ad10-c3a7a2e74dad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10. Quest\Bone">
+      <UniqueIdentifier>{be5494fa-2ceb-45df-b97f-6fc5acc894e0}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\03. MapObject\Anim_Obj\Owl">
       <UniqueIdentifier>{a2d0ac88-bc9d-4275-b006-47de08699d2a}</UniqueIdentifier>
     </Filter>
@@ -1820,6 +1832,18 @@
     <ClInclude Include="..\public\Quest_Save_Fig.h">
       <Filter>10. Quest\Save_Fig</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Quest_Potion.h">
+      <Filter>10. Quest\Potion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Quest_Town.h">
+      <Filter>10. Quest\Town</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Quest_Secret.h">
+      <Filter>10. Quest\Secret</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Quest_Bone.h">
+      <Filter>10. Quest\Bone</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Owl.h">
       <Filter>02. GameObject\03. MapObject\Anim_Obj\Owl</Filter>
     </ClInclude>
@@ -2684,6 +2708,18 @@
     </ClCompile>
     <ClCompile Include="..\private\Quest_Save_Fig.cpp">
       <Filter>10. Quest\Save_Fig</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Quest_Potion.cpp">
+      <Filter>10. Quest\Potion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Quest_Town.cpp">
+      <Filter>10. Quest\Town</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Quest_Secret.cpp">
+      <Filter>10. Quest\Secret</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Quest_Bone.cpp">
+      <Filter>10. Quest\Bone</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Owl.cpp">
       <Filter>02. GameObject\03. MapObject\Anim_Obj\Owl</Filter>

@@ -3,11 +3,11 @@
 
 BEGIN(Client)
 
-class CQuest_Save_Fig final : public CQuest
+class CQuest_Potion final : public CQuest
 {
 private:
-	explicit CQuest_Save_Fig(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual ~CQuest_Save_Fig() = default;
+	explicit CQuest_Potion(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual ~CQuest_Potion() = default;
 
 public:
 	void Set_Saved() { m_isSaved = true; }
@@ -26,7 +26,7 @@ private:
 	_bool		m_isSaved = { false };
 
 public:
-	static CQuest_Save_Fig* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CQuest_Potion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;
 };
 

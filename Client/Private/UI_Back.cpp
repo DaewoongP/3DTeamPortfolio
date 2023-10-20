@@ -125,7 +125,7 @@ HRESULT CUI_Back::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	if (m_Textures.size() > 0)
+	if (m_Textures.size() > 0 && m_iTextureIndex < m_Textures.size())
 	{
 		if (nullptr == m_Textures[m_iTextureIndex])
 			return E_FAIL;

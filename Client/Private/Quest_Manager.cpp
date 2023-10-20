@@ -21,24 +21,27 @@ HRESULT CQuest_Manager::Add_Quest(const _tchar* szQuestTag, class CQuest* pQuest
 
 void CQuest_Manager::Unlock_Quest(const _tchar* szQuestTag)
 {
-	m_pCurrentQuest = Find_Quest(szQuestTag);
+	CQuest* pQuest = Find_Quest(szQuestTag);
 
-	if (nullptr == m_pCurrentQuest)
+	if (nullptr == pQuest)
 		return;
 
-	Safe_AddRef(m_pCurrentQuest);
-
-	m_pCurrentQuest->Set_State(QUESTSTATE::QUESTSTATE_UNLOCK);
+	pQuest->Set_State(QUESTSTATE::QUESTSTATE_UNLOCK);
 }
 
 void CQuest_Manager::Clear_Quest(const _tchar* szQuestTag)
 {
-	m_pCurrentQuest->Set_State(QUESTSTATE::QUESTSTATE_CLEAR);
-	Safe_Release(m_pCurrentQuest);
+	CQuest* pQuest = Find_Quest(szQuestTag);
+	if (nullptr == pQuest)
+		return;
+
+	pQuest->Clear_Quest();
+	pQuest->Set_State(QUESTSTATE::QUESTSTATE_CLEAR);
 }
 
 CQuest* CQuest_Manager::Find_Quest(const _tchar* szQuestTag)
 {
+	std::lock_guard<std::mutex> lock(mtx);
 	auto Pair = find_if(m_Quests.begin(), m_Quests.end(), CTag_Finder(szQuestTag));
 
 	if (m_Quests.end() == Pair)
@@ -55,6 +58,4 @@ void CQuest_Manager::Free()
 	}
 
 	m_Quests.clear();
-
-	Safe_Release(m_pCurrentQuest);
 }

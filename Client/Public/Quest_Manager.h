@@ -22,10 +22,9 @@ public:
 	void Clear_Quest(const _tchar* szQuestTag);
 
 private:
-	CQuest*							m_pCurrentQuest = { nullptr };
 	_umap<const _tchar*, CQuest*>	m_Quests;
 
-private:
+public:
 	CQuest* Find_Quest(const _tchar* szQuestTag);
 
 public:
