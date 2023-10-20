@@ -14,6 +14,8 @@
 #include "Level_Sky.h"
 #include "Level_Sanctum.h"
 
+#include "Layer.h"
+
 CLevel_Loading::CLevel_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
 {
@@ -35,7 +37,9 @@ HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID, _bool isStaticLoaded)
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-	
+	CLayer* pLayer = pGameInstance->Find_Layer(LEVEL_STATIC, TEXT("Layer_Magic"));
+	if (nullptr != pLayer)
+		pLayer->Clear_Layer();
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Loading"), false);
 	Safe_Release(pGameInstance);
 

@@ -47,14 +47,6 @@ HRESULT CMagicBall::Initialize(void* pArg)
 
 void CMagicBall::Tick(_float fTimeDelta)
 {
-	
-	__super::Tick(fTimeDelta);
-}
-
-void CMagicBall::Late_Tick(_float fTimeDelta)
-{
-	__super::Late_Tick(fTimeDelta);
-
 	//실시간으로 갱신해줍니다.
 	m_fDyingTimer -= fTimeDelta;
 	if (m_fDyingTimer < 0 && (m_eMagicBallState < MAGICBALL_STATE_DYING))
@@ -77,6 +69,13 @@ void CMagicBall::Late_Tick(_float fTimeDelta)
 
 	//여기서 위치를 갱신해줍니다.
 	Tick_MagicBall_State(fTimeDelta);
+
+	__super::Tick(fTimeDelta);
+}
+
+void CMagicBall::Late_Tick(_float fTimeDelta)
+{
+	__super::Late_Tick(fTimeDelta);
 
 #ifdef _DEBUG
 	if (m_pRigidBody != nullptr)

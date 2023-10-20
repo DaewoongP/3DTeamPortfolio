@@ -30,16 +30,6 @@ HRESULT CLayer::Add_Component(const _tchar* pComponentTag, CComponent* pComponen
 	return S_OK;
 }
 
-HRESULT CLayer::Clear_Layer()
-{
-	for (auto& pComponent : m_Components)
-		Safe_Release(pComponent.second);
-
-	m_Components.clear();
-
-	return S_OK;
-}
-
 HRESULT CLayer::Delete_Component(const _tchar* pComponentTag)
 {
 	CComponent* pComponent = Find_Component(pComponentTag);
