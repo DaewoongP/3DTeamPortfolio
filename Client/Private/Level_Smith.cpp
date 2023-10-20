@@ -23,7 +23,7 @@ HRESULT CLevel_Smith::Initialize()
 	FAILED_CHECK_RETURN(Ready_Layer_NPC(TEXT("Layer_NPC")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_UI(TEXT("Layer_UI")), E_FAIL);
-	FAILED_CHECK_RETURN(Ready_Event(TEXT("Layer_Event")), E_FAIL);
+	//FAILED_CHECK_RETURN(Ready_Event(TEXT("Layer_Event")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Shader(), E_FAIL);
 
 	BEGININSTANCE;
@@ -132,7 +132,8 @@ HRESULT CLevel_Smith::Ready_Layer_NPC(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	Matrix = XMMatrixRotationY(XMConvertToRadians(55.f)) * XMMatrixTranslation(111.95f, 6.25f, 73.5f);
+	//Matrix = XMMatrixRotationY(XMConvertToRadians(55.f)) * XMMatrixTranslation(111.95f, 6.25f, 73.5f);
+	Matrix = XMMatrixRotationY(XMConvertToRadians(55.f)) * XMMatrixTranslation(35.f, 3.f, 15.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Oakes"), pLayerTag, TEXT("GameObject_Oakes"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Oakes)");
@@ -486,7 +487,7 @@ HRESULT CLevel_Smith::Load_Dummy_NPC(const _tchar* pLayerTag)
 	InitDesc.MeshPartsTags[7] = TEXT("Prototype_Component_MeshPart_Pants_Arcane_F");
 	InitDesc.MeshPartsTags[9] = TEXT("Prototype_Component_MeshPart_Boots_Arcane_F");
 	InitDesc.isInteraction = true;
-	lstrcpy(InitDesc.wszScriptTag, TEXT("../../Resources/UI/Game/Script/Town/Town_1.png"));
+	lstrcpy(InitDesc.wszScriptTag, TEXT("../../Resources/UI/Game/Script/Town/Town_3.png"));
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Dummy_NPC"), pLayerTag, TEXT("NPC_F_8"), &InitDesc)))
 	{
 		MSG_BOX("Failed Add_GameObject : (NPC_F_8)");
@@ -502,6 +503,8 @@ HRESULT CLevel_Smith::Load_Dummy_NPC(const _tchar* pLayerTag)
 	InitDesc.MeshPartsTags[6] = TEXT("Prototype_Component_MeshPart_Jacker_Celtic_A_F");
 	InitDesc.MeshPartsTags[7] = TEXT("Prototype_Component_MeshPart_Pants_Arcane_F");
 	InitDesc.MeshPartsTags[9] = TEXT("Prototype_Component_MeshPart_Boots_Arcane_F");
+	InitDesc.isInteraction = true;
+	lstrcpy(InitDesc.wszScriptTag, TEXT("../../Resources/UI/Game/Script/Town/Town_1.png"));
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Dummy_NPC"), pLayerTag, TEXT("NPC_F_9"), &InitDesc)))
 	{
 		MSG_BOX("Failed Add_GameObject : (NPC_F_9)");

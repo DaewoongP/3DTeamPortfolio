@@ -47,6 +47,7 @@ void COakes::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 
@@ -59,6 +60,8 @@ void COakes::Tick(_float fTimeDelta)
 
 		if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
 		{
+			Check_Quest();
+
 			m_isPlayScript = true;
 			m_pScripts[m_iScriptIndex]->Reset_Script();
 			m_pScripts[m_iScriptIndex]->Set_isRender(true);
@@ -105,18 +108,15 @@ void COakes::Late_Tick(_float fTimeDelta)
 }
 void COakes::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	// 플레이어가 range콜라이더 안에 진입한경우 "한번 불림"
 	wstring wsCollisionTag = CollisionEventDesc.pOtherCollisionTag;
 	wstring wsPlayer(TEXT("Player_Default"));
 
 	if (0 == lstrcmp(wsCollisionTag.c_str(), wsPlayer.c_str()))
 		m_isColPlayer = true;
-
 }
 
 void COakes::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
-	// 플레이어가 range콜라이더 밖으로 나간경우 "한번 불림"
 	wstring wsCollisionTag = CollisionEventDesc.pOtherCollisionTag;
 	wstring wsPlayer(TEXT("Player_Default"));
 
@@ -397,6 +397,22 @@ HRESULT COakes::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4
 	ENDINSTANCE;
 
 	return S_OK;
+}
+
+void COakes::Check_Quest()
+{
+	if (!m_isSaveFig)
+	{
+		CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
+		Safe_AddRef(pQuest_Manager);
+		if (pQuest_Manager->Is_Quest_Finished(TEXT("Quest_Save_Fig")))
+		{
+			m_pScripts[m_iScriptIndex]->Set_isRender(false);
+			m_isSaveFig = true;
+			++m_iScriptIndex;
+		};
+		Safe_Release(pQuest_Manager);
+	}
 }
 
 COakes* COakes::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
