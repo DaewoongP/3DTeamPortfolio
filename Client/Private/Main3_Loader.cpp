@@ -171,6 +171,8 @@ HRESULT CMain3_Loader::Loading()
 
 	hr = 0;
 
+	std::lock_guard<std::mutex> lock(mtx);
+
 	switch (m_eNextLevelID)
 	{
 	case LEVEL_LOGO:
