@@ -132,8 +132,8 @@ HRESULT CLevel_Smith::Ready_Layer_NPC(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	//Matrix = XMMatrixRotationY(XMConvertToRadians(55.f)) * XMMatrixTranslation(111.95f, 6.25f, 73.5f);
-	Matrix = XMMatrixRotationY(XMConvertToRadians(55.f)) * XMMatrixTranslation(35.f, 3.f, 15.f);
+	Matrix = XMMatrixRotationY(XMConvertToRadians(55.f)) * XMMatrixTranslation(111.95f, 6.25f, 73.5f);
+	//Matrix = XMMatrixRotationY(XMConvertToRadians(55.f)) * XMMatrixTranslation(35.f, 3.f, 15.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Oakes"), pLayerTag, TEXT("GameObject_Oakes"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Oakes)");

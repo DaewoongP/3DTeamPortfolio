@@ -24,7 +24,7 @@
 void CRenderer::Defualt_Shading()
 {
 	m_isSSAO = true;
-	m_fGlowPower = 7.5f;
+	m_fGlowPower = 5.5f;
 	m_fHDR = 0.5f;
 	m_fRadialBlurWidth = 0.0f;
 	m_isScreenRadial = false;
