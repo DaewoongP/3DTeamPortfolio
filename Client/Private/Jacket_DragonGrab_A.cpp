@@ -15,7 +15,7 @@ CJacket_DragonGrab_A::CJacket_DragonGrab_A(const CJacket_DragonGrab_A& rhs)
 HRESULT CJacket_DragonGrab_A::Initialize_Prototype(_uint iLevel)
 {
 	// 아이템 정보
-	m_ItemCreateDesc.eItemId = ITEM_ID_JACKET_DRAGONGRAB_A;
+	m_ItemCreateDesc.eItemId = ITEM_ID_OUTFIT_DRAGONGRAB_A;
 	m_ItemCreateDesc.eItemType = OUTFIT;
 	m_ItemCreateDesc.wstrKoreanName = TEXT("모자1");
 	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Gear/UI_T_GA_Back_001_F_Gryffindor.png");
@@ -45,7 +45,7 @@ _bool CJacket_DragonGrab_A::Buy()
 	CInventory* pPlayerInventory = m_pPlayerInformation->Get_Inventory();
 	Safe_AddRef(pPlayerInventory);
 
-	pPlayerInventory->Add_Item(ITEM_ID::ITEM_ID_JACKET_DRAGONGRAB_A);
+	pPlayerInventory->Add_Item(ITEM_ID::ITEM_ID_OUTFIT_DRAGONGRAB_A);
 
 	Safe_Release(pPlayerInventory);
 

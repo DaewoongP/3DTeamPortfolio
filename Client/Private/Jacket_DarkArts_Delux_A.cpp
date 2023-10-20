@@ -15,7 +15,7 @@ CJacket_DarkArts_Delux_A::CJacket_DarkArts_Delux_A(const CJacket_DarkArts_Delux_
 HRESULT CJacket_DarkArts_Delux_A::Initialize_Prototype(_uint iLevel)
 {
 	// 아이템 정보
-	m_ItemCreateDesc.eItemId = ITEM_ID_JACKET_DARKARTS_DELUX_A;
+	m_ItemCreateDesc.eItemId = ITEM_ID_OUTFIT_DARKARTS_DELUX_A;
 	m_ItemCreateDesc.eItemType = OUTFIT;
 	m_ItemCreateDesc.wstrKoreanName = TEXT("다크 디럭스 자켓_R");
 	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Gear/UI_T_GA_Outfit_072_M.png");
@@ -45,7 +45,7 @@ _bool CJacket_DarkArts_Delux_A::Buy()
 	CInventory* pPlayerInventory = m_pPlayerInformation->Get_Inventory();
 	Safe_AddRef(pPlayerInventory);
 
-	pPlayerInventory->Add_Item(ITEM_ID::ITEM_ID_JACKET_DARKARTS_DELUX_A);
+	pPlayerInventory->Add_Item(ITEM_ID::ITEM_ID_OUTFIT_DARKARTS_DELUX_A);
 
 	Safe_Release(pPlayerInventory);
 

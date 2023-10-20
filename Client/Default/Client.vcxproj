@@ -173,9 +173,6 @@
     <ClInclude Include="..\Public\Blink_Effect.h" />
     <ClInclude Include="..\Public\Bombarda.h" />
     <ClInclude Include="..\public\Breath_Effect.h" />
-    <ClInclude Include="..\Public\Boots_Arcane.h" />
-    <ClInclude Include="..\Public\Boots_Default.h" />
-    <ClInclude Include="..\Public\Boots_Merlin.h" />
     <ClInclude Include="..\Public\Broom_Begin.h" />
     <ClInclude Include="..\Public\Broom_Break.h" />
     <ClInclude Include="..\Public\Broom_End.h" />
@@ -211,7 +208,7 @@
     <ClInclude Include="..\Public\Hover_Move.h" />
     <ClInclude Include="..\Public\Hover_Turn.h" />
     <ClInclude Include="..\public\ImpulseSphere_Effect.h" />
-    <ClInclude Include="..\Public\Jacket_Arcane.h" />
+    <ClInclude Include="..\Public\Outfit_Arcane.h" />
     <ClInclude Include="..\Public\Jacket_Arcane_A.h" />
     <ClInclude Include="..\Public\Jacket_Celtic.h" />
     <ClInclude Include="..\Public\Jacket_Celtic_A.h" />
@@ -231,10 +228,6 @@
     <ClInclude Include="..\Public\Level_Sanctum.h" />
     <ClInclude Include="..\Public\Oakes.h" />
     <ClInclude Include="..\Public\Owl.h" />
-    <ClInclude Include="..\Public\Pants_Arcane.h" />
-    <ClInclude Include="..\Public\Pants_DarkArts_Delux.h" />
-    <ClInclude Include="..\Public\Pants_Merlin.h" />
-    <ClInclude Include="..\Public\Pants_Stealth.h" />
     <ClInclude Include="..\Public\Pensive_Appearence.h" />
     <ClInclude Include="..\Public\Pensive_Charge_Attack.h" />
     <ClInclude Include="..\Public\Pensive_Death.h" />
@@ -503,9 +496,6 @@
     <ClCompile Include="..\Private\Blink_Effect.cpp" />
     <ClCompile Include="..\Private\Bombarda.cpp" />
     <ClCompile Include="..\private\Breath_Effect.cpp" />
-    <ClCompile Include="..\Private\Boots_Arcane.cpp" />
-    <ClCompile Include="..\Private\Boots_Default.cpp" />
-    <ClCompile Include="..\Private\Boots_Merlin.cpp" />
     <ClCompile Include="..\Private\Broom_Begin.cpp" />
     <ClCompile Include="..\Private\Broom_Break.cpp" />
     <ClCompile Include="..\Private\Broom_End.cpp" />
@@ -539,7 +529,7 @@
     <ClCompile Include="..\Private\Hover_Move.cpp" />
     <ClCompile Include="..\Private\Hover_Turn.cpp" />
     <ClCompile Include="..\private\ImpulseSphere_Effect.cpp" />
-    <ClCompile Include="..\Private\Jacket_Arcane.cpp" />
+    <ClCompile Include="..\Private\Outfit_Arcane.cpp" />
     <ClCompile Include="..\Private\Jacket_Arcane_A.cpp" />
     <ClCompile Include="..\Private\Jacket_Celtic.cpp" />
     <ClCompile Include="..\Private\Jacket_Celtic_A.cpp" />
@@ -559,10 +549,6 @@
     <ClCompile Include="..\Private\Level_Sanctum.cpp" />
     <ClCompile Include="..\Private\Oakes.cpp" />
     <ClCompile Include="..\Private\Owl.cpp" />
-    <ClCompile Include="..\Private\Pants_Arcane.cpp" />
-    <ClCompile Include="..\Private\Pants_DarkArts_Delux.cpp" />
-    <ClCompile Include="..\Private\Pants_Merlin.cpp" />
-    <ClCompile Include="..\Private\Pants_Stealth.cpp" />
     <ClCompile Include="..\Private\Pensive_Appearence.cpp" />
     <ClCompile Include="..\Private\Pensive_Charge_Attack.cpp" />
     <ClCompile Include="..\Private\Pensive_Death.cpp" />

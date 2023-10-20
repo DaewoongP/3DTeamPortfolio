@@ -286,9 +286,9 @@ HRESULT CUI_Store::Set_Item()
 	m_pItems[7] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_ROBE_DARKARTS, LEVEL_STATIC, nullptr);
 	m_pItems[8] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_ROBE_DARKARTS_DELUX, LEVEL_STATIC, nullptr);
 	m_pItems[9] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_ROBE_QUDDITCH, LEVEL_STATIC, nullptr);
-	m_pItems[10] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_JACKET_ARCANE, LEVEL_STATIC, nullptr);
-	m_pItems[11] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_JACKET_CELTIC, LEVEL_STATIC, nullptr);
-	m_pItems[12] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_JACKET_DARKARTS_DELUX, LEVEL_STATIC, nullptr);
+	m_pItems[10] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_OUTFIT_ARCANE, LEVEL_STATIC, nullptr);
+	m_pItems[11] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_OUTFIT_CELTIC, LEVEL_STATIC, nullptr);
+	m_pItems[12] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_OUTFIT_DARKARTS_DELUX, LEVEL_STATIC, nullptr);
 
 	for (_uint i = 13; i < 20; ++i)
 		m_pItems[i] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_ROBE_ARCANE, LEVEL_STATIC, nullptr);

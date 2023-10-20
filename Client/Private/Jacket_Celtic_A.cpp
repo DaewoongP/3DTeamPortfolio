@@ -15,7 +15,7 @@ CJacket_Celtic_A::CJacket_Celtic_A(const CJacket_Celtic_A& rhs)
 HRESULT CJacket_Celtic_A::Initialize_Prototype(_uint iLevel)
 {
 	// 아이템 정보
-	m_ItemCreateDesc.eItemId = ITEM_ID_JACKET_CELTIC_A;
+	m_ItemCreateDesc.eItemId = ITEM_ID_OUTFIT_CELTIC_A;
 	m_ItemCreateDesc.eItemType = OUTFIT;
 	m_ItemCreateDesc.wstrKoreanName = TEXT("켈트 자켓_R");
 	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Gear/UI_T_GA_Outfit_105_M.png");
@@ -45,7 +45,7 @@ _bool CJacket_Celtic_A::Buy()
 	CInventory* pPlayerInventory = m_pPlayerInformation->Get_Inventory();
 	Safe_AddRef(pPlayerInventory);
 
-	pPlayerInventory->Add_Item(ITEM_ID::ITEM_ID_JACKET_CELTIC_A);
+	pPlayerInventory->Add_Item(ITEM_ID::ITEM_ID_OUTFIT_CELTIC_A);
 
 	Safe_Release(pPlayerInventory);
 
