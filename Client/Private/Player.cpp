@@ -1422,7 +1422,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Top
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Jacket_Arcane_A"),
+		TEXT("Prototype_Component_MeshPart_Jacket_Arcane"),
 		CCustomModel::TOP)))
 	{
 		MSG_BOX("Failed Add MeshPart Top");
@@ -1913,7 +1913,7 @@ void CPlayer::Shot_Basic_Last_Spell()
 
 void CPlayer::Protego()
 {
-	m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_ENEMY_ATTACK | COL_SHIELD), m_isPowerUp);
+	m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_ENEMY_ATTACK | COL_MAGIC | COL_SHIELD), m_isPowerUp);
 }
 
 void CPlayer::Gravity_On()
