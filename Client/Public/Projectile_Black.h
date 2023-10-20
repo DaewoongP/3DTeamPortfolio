@@ -3,6 +3,10 @@
 #include "Client_Defines.h"
 #include "MagicBall.h"
 
+BEGIN(Engine)
+class CParticleSystem;
+END
+
 BEGIN(Client)
 class CProjectile_Black final : public CMagicBall
 {
@@ -33,7 +37,16 @@ private:
 	virtual void Tick_Dying(_float fTimeDelta) override;
 
 private:
+	CMeshEffect* m_pMeshEffect;
+
+private:
 	HRESULT Add_Components();
+
+private:
+	CMeshEffect*		m_pMeshEffect_Outer_Ball = { nullptr };
+	CMeshEffect*		m_pMeshEffect_Inner_Ball = { nullptr };
+	CMeshEffect*		m_pMeshEffect_StartBoom = { nullptr };
+	CParticleSystem*	m_pParticle_Projectile_White_BulletTrace = { nullptr };
 
 public:
 	static CProjectile_Black* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);

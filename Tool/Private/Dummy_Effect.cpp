@@ -23,30 +23,26 @@ HRESULT CDummy_Effect::Initialize_Prototype()
 		return E_FAIL;
 	BEGININSTANCE;
 
-	if (nullptr == pGameInstance->Find_Prototype(0, TEXT("Prototype_GameObject_TestTrail")))
+	if (nullptr == pGameInstance->Find_Prototype(0, TEXT("Prototype_GameObject_MeshEffect_Outer_Ball")))
 	{
-		pGameInstance->Add_Prototype(0, TEXT("Prototype_GameObject_TestTrail")
-			, CDummyTrail::Create(m_pDevice, m_pContext, TEXT("")));
-	}
-
-	if (nullptr == pGameInstance->Find_Prototype(0, TEXT("Prototype_GameObject_TestParticle")))
-	{
-		pGameInstance->Add_Prototype(0, TEXT("Prototype_GameObject_TestParticle")
-			, CDummyParticle::Create(m_pDevice, m_pContext, TEXT("")));
-	}
-
-	if (nullptr == pGameInstance->Find_Prototype(0, TEXT("Prototype_GameObject_TestMeshEffect")))
-	{
-		pGameInstance->Add_Prototype(0, TEXT("Prototype_GameObject_TestMeshEffect")
-			, CDummyMeshEffect::Create(m_pDevice, m_pContext, TEXT("")));
-	}
-
-	if (nullptr == pGameInstance->Find_Prototype(0, TEXT("Prototype_GameObject_TestTexture_Flipbook")))
-	{
-		/* Prototype_Component_Texture_Ground */
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_TestTexture_Flipbook"),
-			CDummyFlipBook::Create(m_pDevice, m_pContext, LEVEL_TOOL, nullptr))))
+		if (FAILED(pGameInstance->Add_Prototype(0, TEXT("Prototype_GameObject_MeshEffect_Outer_Ball")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Projectile_White/Outer_Ball.ME"), 0))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
 			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(0, TEXT("Prototype_GameObject_MeshEffect_Inner_Ball")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(0, TEXT("Prototype_GameObject_MeshEffect_Inner_Ball")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Projectile_White/Inner_Ball.ME"), 0))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
 	}
 
 	ENDINSTANCE;
@@ -63,77 +59,43 @@ HRESULT CDummy_Effect::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pTransform->Set_Position(_float3(0.f, 0.f, 0.f));
-	
-	m_pTrailTransform = m_pTrail->Get_Transform();
-	m_pParticleSystemTransform = m_pParticleSystem->Get_Transform();
-	m_pMeshEffectTransform = m_pMeshEffect->Get_Transform();
-	Safe_AddRef(m_pTrailTransform);
-	Safe_AddRef(m_pParticleSystemTransform);
-	Safe_AddRef(m_pMeshEffectTransform);
 
-	PT_NOTIFY ptNotify;
-	ptNotify.isPlayOnce = true;
-	ptNotify.StartCondition = [&](const PARTICLE_IT& iter)->_bool {
-		return false == iter->isAlive;
-	};
-	ptNotify.Event = [&]() {
-		cout << "데스이벤트 발생" << endl;
-	};
-	m_pParticleSystem->Add_Notify(ptNotify);
+	//PT_NOTIFY ptNotify;
+	//ptNotify.isPlayOnce = true;
+	//ptNotify.StartCondition = [&](const PARTICLE_IT& iter)->_bool {
+	//	return false == iter->isAlive;
+	//};
+	//ptNotify.Event = [&]() {
+	//	cout << "데스이벤트 발생" << endl;
+	//};
+	//m_pParticleSystem->Add_Notify(ptNotify);
 
 	return S_OK;
 }
 
 void CDummy_Effect::Tick(_float fTimeDelta)
 {
-	m_pTrail->Tick(fTimeDelta);
-	m_pParticleSystem->Tick(fTimeDelta);
-	m_pMeshEffect->Tick(fTimeDelta);
-	m_pTextureFlipbook->Tick(fTimeDelta);
+	__super::Tick(fTimeDelta);
 	BEGININSTANCE;
 
-	if (pGameInstance->Get_DIKeyState(DIK_UPARROW))
+	if (pGameInstance->Get_DIKeyState(DIK_UPARROW, CInput_Device::KEY_DOWN))
 	{
-		m_pTransform->Go_Straight(fTimeDelta);
-	}
-	else if (pGameInstance->Get_DIKeyState(DIK_DOWNARROW))
-	{
-		m_pTransform->Go_Backward(fTimeDelta);
-	}
-	else if (pGameInstance->Get_DIKeyState(DIK_LEFTARROW))
-	{
-		m_pTransform->Go_Left(fTimeDelta);
-	}
-	else if (pGameInstance->Get_DIKeyState(DIK_RIGHTARROW))
-	{
-		m_pTransform->Go_Right(fTimeDelta);
-	}
-	else if (pGameInstance->Get_DIKeyState(DIK_SPACE))
-	{
-		m_pParticleSystem->Play();
+		m_pMeshEffect_Outer_Ball->Play(m_pTransform->Get_Position());
+		m_pMeshEffect_Inner_Ball->Play(m_pTransform->Get_Position());
 	}
 
-
-	SHAPE_MODULE& ShapeModule = m_pParticleSystem->Get_ShapeModuleRef();
-	float fLength = _float3(m_vPrevPos - m_pTransform->Get_Position()).Length();
-	if(fLength >= 0.001f)
-		ShapeModule.ShapeMatrix.MatrixLookAt(m_pTransform->Get_Position(), m_vPrevPos, _float3(0.f, 1.f, 0.f));
-	m_vPrevPos = m_pTransform->Get_Position();
 	ENDINSTANCE;
 }
 
 void CDummy_Effect::Late_Tick(_float fTimeDelta)
 {
-	//m_pTrail->Late_Tick(fTimeDelta);
-	m_pParticleSystem->Late_Tick(fTimeDelta);
-	//m_pMeshEffect->Late_Tick(fTimeDelta);
-	m_pTextureFlipbook->Late_Tick(fTimeDelta);
-	m_vPrevPos = m_pTransform->Get_Position();
+	__super::Late_Tick(fTimeDelta);
 }
 
 void CDummy_Effect::Tick_Imgui(_float fTimeDelta)
 {
-	m_pParticleSystem->Tick_Imgui(fTimeDelta);
+	//m_pMeshEffect_Outer_Ball->Tick_Imgui(fTimeDelta);
+	//m_pMeshEffect_Inner_Ball->Tick_Imgui(fTimeDelta);
 }
 
 HRESULT CDummy_Effect::Add_Components()
@@ -141,24 +103,18 @@ HRESULT CDummy_Effect::Add_Components()
 	try
 	{
 		/* Com_Trail */
-		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_GameObject_TestTrail"),
+		/*if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_GameObject_TestTrail"),
 			TEXT("Com_Trail"), reinterpret_cast<CComponent**>(&m_pTrail))))
-			throw "Com_Trail";
+			throw "Com_Trail";*/
 
-		/* Com_Pariticle */
-		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_GameObject_TestParticle"),
-			TEXT("Com_Pariticle"), reinterpret_cast<CComponent**>(&m_pParticleSystem))))
-			throw "Com_Pariticle";
+		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_GameObject_MeshEffect_Outer_Ball"),
+			TEXT("Com_test1"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Outer_Ball))))
+			throw "Com_test1";
 
-		/* Com_Pariticle */
-		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_GameObject_TestMeshEffect"),
-			TEXT("Com_MeshEffect"), reinterpret_cast<CComponent**>(&m_pMeshEffect))))
-			throw "Com_MeshEffect";
+		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_GameObject_MeshEffect_Inner_Ball"),
+			TEXT("Com_test2"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Inner_Ball))))
+			throw "Com_test2";
 
-		/* Com_Texture_Flipbook */
-		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_GameObject_TestTexture_Flipbook"),
-			TEXT("Com_Flipbook"), reinterpret_cast<CComponent**>(&m_pTextureFlipbook))))
-			throw "Com_Flipbook";
 	}
 	catch (const _char* pErrorMessage)
 	{
@@ -202,13 +158,7 @@ void CDummy_Effect::Free()
 
 	if (true == m_isCloned)
 	{
-		Safe_Release(m_pTrail);
-		Safe_Release(m_pParticleSystem);
-		Safe_Release(m_pMeshEffect);
-		Safe_Release(m_pTextureFlipbook);
-
-		Safe_Release(m_pTrailTransform);
-		Safe_Release(m_pParticleSystemTransform);
-		Safe_Release(m_pMeshEffectTransform);
+		Safe_Release(m_pMeshEffect_Inner_Ball);
+		Safe_Release(m_pMeshEffect_Outer_Ball);
 	}
 }

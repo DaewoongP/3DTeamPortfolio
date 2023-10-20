@@ -14,6 +14,7 @@ HRESULT CLevel_Sanctum::Initialize()
 	FAILED_CHECK_RETURN(Ready_Lights(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_Monsters(TEXT("Layer_Monster")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Effect(TEXT("Layer_Monster")), E_FAIL);
 	
 	BEGININSTANCE;
 	pGameInstance->Reset_World_TimeAcc();
@@ -111,6 +112,22 @@ HRESULT CLevel_Sanctum::Ready_Lights()
 		return E_FAIL;
 
 	ENDINSTANCE;
+	return S_OK;
+}
+
+HRESULT CLevel_Sanctum::Ready_Effect(const _tchar* pLayerTag)
+{
+	BEGININSTANCE;
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_Projectile_White_Effect"), pLayerTag, TEXT("GameObject_Projectile_White_Effect"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Projectile_White_Effect)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
 	return S_OK;
 }
 

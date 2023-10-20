@@ -612,7 +612,7 @@ HRESULT CConjuredDragon::Make_Magics()
 		magicInitDesc.eMagicTag = PROJECTILE_WHITE;
 		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 10;
-		magicInitDesc.fLifeTime = 3.5f;
+		magicInitDesc.fLifeTime = 1.0f;
 		magicInitDesc.isChase = false;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -626,7 +626,7 @@ HRESULT CConjuredDragon::Make_Magics()
 		magicInitDesc.eMagicTag = PROJECTILE_BLACK;
 		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 10;
-		magicInitDesc.fLifeTime = 3.5f;
+		magicInitDesc.fLifeTime = 1.0f;
 		magicInitDesc.isChase = false;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -2101,20 +2101,20 @@ HRESULT CConjuredDragon::Make_Air_Attacks(_Inout_ CRandomChoose* pRandomChoose)
 		pAttack_Breath->Set_Attack_Option(100.f);
 
 		/* Assemble Behaviors */
-		//if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Attack_Fireball"), pSequence_Attack_Fireball, 0.45f)))
-		//	throw TEXT("Failed Assemble_Behavior Sequence_Attack_Fireball");
-		//if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Attack_Breath"), pSequence_Attack_Breath, 0.35f)))
-		//	throw TEXT("Failed Assemble_Behavior Sequence_Attack_Breath");
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Attack_Fireball"), pSequence_Attack_Fireball, 0.45f)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Fireball");
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Attack_Breath"), pSequence_Attack_Breath, 0.35f)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Breath");
 		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Attack_Purse"), pSequence_Attack_Purse, 0.2f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Purse");
 
-		//if (FAILED(pSequence_Attack_Breath->Assemble_Behavior(TEXT("Action_Breath_WindUp"), pAction_Breath_WindUp)))
-		//	throw TEXT("Failed Assemble_Behavior Action_Breath_WindUp");
-		//if (FAILED(pSequence_Attack_Breath->Assemble_Behavior(TEXT("Attack_Breath"), pAttack_Breath)))
-		//	throw TEXT("Failed Assemble_Behavior Attack_Breath");
+		if (FAILED(pSequence_Attack_Breath->Assemble_Behavior(TEXT("Action_Breath_WindUp"), pAction_Breath_WindUp)))
+			throw TEXT("Failed Assemble_Behavior Action_Breath_WindUp");
+		if (FAILED(pSequence_Attack_Breath->Assemble_Behavior(TEXT("Attack_Breath"), pAttack_Breath)))
+			throw TEXT("Failed Assemble_Behavior Attack_Breath");
 
-		//if (FAILED(Make_Attack_Fireball(pSequence_Attack_Fireball)))
-		//	throw TEXT("Failed Make_Attack_Fireball");
+		if (FAILED(Make_Attack_Fireball(pSequence_Attack_Fireball)))
+			throw TEXT("Failed Make_Attack_Fireball");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -2392,8 +2392,6 @@ void CConjuredDragon::Shot_Fireball_Black()
 	CMagicBall* pMagicBall = m_pMagicSlot->Action_Magic_Skill(0, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_SHIELD));
 	if (nullptr == pMagicBall)
 		return;
-
-	pMagicBall->Set_MagicBallState(CMagicBall::MAGICBALL_STATE_CASTMAGIC);
 }
 
 void CConjuredDragon::Shot_Fireball_White()
@@ -2404,7 +2402,7 @@ void CConjuredDragon::Shot_Fireball_White()
 	CMagicBall* pMagicBall = m_pMagicSlot->Action_Magic_Skill(1, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_SHIELD));
 	if (nullptr == pMagicBall)
 		return;
-	pMagicBall->Set_MagicBallState(CMagicBall::MAGICBALL_STATE_CASTMAGIC);
+
 }
 
 void CConjuredDragon::On_Breath()

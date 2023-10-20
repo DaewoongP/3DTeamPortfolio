@@ -229,12 +229,13 @@ void CDummyTrail::Load_FileDialog()
 
 			_ulong dwByte = 0;
 
-			if (FAILED(Load(fsFilePath.wstring().c_str())))
+			if (FAILED(Load(fsFilePathName.wstring().c_str())))
 			{
 				MSG_BOX("Failed to loaded file");
 			}
 			else
 			{
+				ChangeTexture(&m_pTexture, m_wstrPath, m_wstrPath.c_str());
 				//RemakeBuffer(m_MainModuleDesc.iMaxParticles);
 				//ChangeTexture(&m_pMainTexture, m_RendererModuleDesc.wstrMaterialPath, ToRelativePath(m_RendererModuleDesc.wstrMaterialPath.c_str()).c_str());
 				//ChangeTexture(&m_pClipTexture, m_ShapeModuleDesc.wstrClipTexturePath, ToRelativePath(m_ShapeModuleDesc.wstrClipTexturePath.c_str()).c_str());

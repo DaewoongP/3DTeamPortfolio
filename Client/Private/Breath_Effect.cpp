@@ -122,7 +122,7 @@ HRESULT CBreath_Effect::Initialize(void* pArg)
 void CBreath_Effect::Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
-	ADD_IMGUI([&] {Tick_Imgui(fTimeDelta); });
+	//ADD_IMGUI([&] {Tick_Imgui(fTimeDelta); });
 #endif // _DEBUG
 
 	if (false == m_isEnable)

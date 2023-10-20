@@ -35,6 +35,10 @@ private:
 private:
 	HRESULT Add_Components();
 
+private:
+	CMeshEffect* m_pMeshEffect_Outer_Ball = { nullptr };
+	CMeshEffect* m_pMeshEffect_Inner_Ball = { nullptr };
+
 public:
 	static CProjectile_White* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
 	virtual CGameObject* Clone(void* pArg);

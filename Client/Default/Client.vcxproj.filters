@@ -874,6 +874,9 @@
     <Filter Include="02. GameObject\11. Water">
       <UniqueIdentifier>{1b33b363-0555-47c0-bfe6-21b18984e66b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\04. Projectile_White\Projectile_White_Effect">
+      <UniqueIdentifier>{cf3acc26-742e-445d-aa03-d0df3bc0e85f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1733,6 +1736,9 @@
     <ClInclude Include="..\public\Water.h">
       <Filter>02. GameObject\11. Water</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Projectile_White_Effect.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\04. Projectile_White\Projectile_White_Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2550,6 +2556,9 @@
     <ClCompile Include="..\private\Water.cpp">
       <Filter>02. GameObject\11. Water</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Projectile_White_Effect.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\04. Projectile_White\Projectile_White_Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2614,6 +2623,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Water.hlsl">
       <Filter>97. ShaderFiles\Textures</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Projectile_White.hlsl">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\04. Projectile_White\Projectile_White_Effect</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

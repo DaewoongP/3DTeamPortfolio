@@ -26,8 +26,8 @@ texture2D g_NormalTexture;
 // For. Noise //
 bool g_isNoiseActivated = false;
 unsigned int g_iOctaves = 1;
-float g_fPersistence;
-float g_fFrequency = 0.5f;
+//float g_fPersistence;
+//float g_fFrequency = 0.5f;
 float g_fStrength = 1.f;
 float g_fScrollSpeed = 0.f;
 float g_fNoiseTimeAcc = 0.f;
@@ -343,11 +343,11 @@ void VS_NoiseModule(VS_IN In, inout VS_OUT Out)
 
 	// 노이즈 스크롤 적용
 	float3 vNoiseInput = In.vPosition + float3(0, g_fNoiseTimeAcc * g_fScrollSpeed, 0);
-	float fNoiseValue = PerlinNoise_3D(vNoiseInput.x, vNoiseInput.y, vNoiseInput.z
-		, g_fFrequency, g_fPersistence, fOctavesScale, fOctavesMultiplier, g_iOctaves);
+	//float fNoiseValue = PerlinNoise_3D(vNoiseInput.x, vNoiseInput.y, vNoiseInput.z
+	//	, g_fFrequency, g_fPersistence, fOctavesScale, fOctavesMultiplier, g_iOctaves);
 
 	// 노이즈 강도 적용
-	float3 vDisplacedPosition = In.vPosition + fNoiseValue * g_fStrength;
+	//float3 vDisplacedPosition = In.vPosition + fNoiseValue * g_fStrength;
 }
 
 void PS_MainModule(PS_IN In, inout PS_OUT Out)

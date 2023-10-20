@@ -101,6 +101,8 @@ protected:
 	_bool m_isDiffuse = { true };
 
 	_bool m_isJustActionStop = { false };
+	_bool m_isFlutter = { false };
+	_float3 m_vStrength = { 1.f, 1.f, 1.f };
 protected:
 	CModel::TYPE m_eAnimType; // Save
 	string m_strPassName = { "Default" }; // Save

@@ -30,15 +30,8 @@ public:
 
 
 private: /* For. Component */
-	CDummyTrail* m_pTrail = { nullptr };
-	CDummyParticle* m_pParticleSystem = { nullptr };
-	CDummyMeshEffect* m_pMeshEffect = { nullptr };
-	CDummyFlipBook* m_pTextureFlipbook = { nullptr };
-
-private:
-	CTransform* m_pTrailTransform = { nullptr };
-	CTransform* m_pParticleSystemTransform = { nullptr };
-	CTransform* m_pMeshEffectTransform = { nullptr };
+	CDummyMeshEffect* m_pMeshEffect_Outer_Ball = { nullptr };
+	CDummyMeshEffect* m_pMeshEffect_Inner_Ball = { nullptr };
 
 	_float3		m_vPrevPos = { _float3() };
 
