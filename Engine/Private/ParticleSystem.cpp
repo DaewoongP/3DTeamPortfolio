@@ -247,6 +247,8 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 		InstDesc.vColor = Particle_iter->vColor;
 		InstDesc.iCurrentIndex = Particle_iter->iCurIndex;
 		InstDesc.vVelocity = Particle_iter->vVelocity;
+		InstDesc.vVelocity.w = Particle_iter->fLifeTime;
+
 		PlayEvent(Particle_iter);
 		m_ParticleMatrices.push_back(InstDesc);
 		++Particle_iter;

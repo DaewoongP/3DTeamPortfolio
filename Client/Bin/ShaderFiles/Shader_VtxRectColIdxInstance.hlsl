@@ -24,18 +24,17 @@ texture2D g_NormalTexture;
 ////////////////////////////////
 
 // For. Noise //
-bool g_isNoiseActivated = false;
-unsigned int g_iOctaves = 1;
-//float g_fPersistence;
-//float g_fFrequency = 0.5f;
-float g_fStrength = 1.f;
+bool g_isNoiseActivated = true;
+//float g_fPersistence = 0.5f; // [0, 1] 0에 가까울 수록 부드럽다, 1에 가까울수록 거칠다.
+//int g_iNumOctaves = 1;
+//float g_fFrequency = 1.f;
+//float g_fAmplitude = 1.f;
 float g_fScrollSpeed = 0.f;
-float g_fNoiseTimeAcc = 0.f;
-float fOctavesScale = 0.5f;
-float fOctavesMultiplier = 0.5f;
-float fPositionAmount = 0.0f;
-float fRotationAmount = 0.0f;
-float fSizeAmount = 0.0f;
+//float fOctavesScale = 0.5f;
+//float fOctavesMultiplier = 0.5f;
+float2 g_vRemap = { -1.f, 1.f };
+float3 g_vPositionAmount = { 1.f, 1.f, 1.f };
+float3 g_vSizeAmount = { 0.f, 0.f, 0.f };
 ////////////////
 
 struct VS_IN
@@ -105,18 +104,48 @@ VS_OUT VS_TS_MAIN(VS_IN In)
 {
 	VS_OUT			Out = (VS_OUT)0;
 
-	matrix			TransformMatrix;
+	matrix			TransformMatrix, NoiseMatrix = (matrix)0;
 	TransformMatrix = float4x4(In.vRight, In.vUp, In.vLook, In.vTranslation);
 
 	vector			vPosition;
 	vPosition = mul(vector(In.vPosition, 1.f), TransformMatrix);
 
-	matrix			matWV, matWVP;
+	// 노이즈모듈
+	if (true == g_isNoiseActivated)
+	{
+		// Velocity의 w는 lifetime값으로 사용중임.
+		float fNoiseValue = PerlinNoise_3D(In.vVelocity.x, In.vVelocity.y, In.vVelocity.w); // [-1, 1]
+		float fRemapValue = 0.f;
 
-	matWV = mul(g_WorldMatrix, g_ViewMatrix);
-	matWVP = mul(matWV, g_ProjMatrix);
+		// Remap
+		float fNormalized = (fNoiseValue + 1.0f) * 0.5f; // [0, 1]
+		fRemapValue = g_vRemap.x + fNormalized * (g_vRemap.y - g_vRemap.x);
 
-	Out.vPosition = mul(vPosition, matWVP);
+		float3 vNoiseScale = float3(
+			1.0f + fRemapValue * g_vSizeAmount.x,
+			1.0f + fRemapValue * g_vSizeAmount.y, 
+			1.0f + fRemapValue * g_vSizeAmount.z);
+		NoiseMatrix._11 = vNoiseScale.x;
+		NoiseMatrix._22 = vNoiseScale.y;
+		NoiseMatrix._33 = vNoiseScale.z;
+
+		float3 vNoiseTranslation = float3(
+			fRemapValue * g_vPositionAmount.x,
+			fRemapValue * g_vPositionAmount.y, 
+			fRemapValue * g_vPositionAmount.z);
+
+		NoiseMatrix._41 = vNoiseTranslation.x;
+		NoiseMatrix._42 = vNoiseTranslation.y;
+		NoiseMatrix._43 = vNoiseTranslation.z;
+		NoiseMatrix._44 = 1.0f;
+	}
+
+	matrix		matNW, matNWV, matNWVP;
+	matNW = mul(NoiseMatrix, g_WorldMatrix);
+	matNWV = mul(matNW, g_ViewMatrix);
+	matNWVP = mul(matNWV, g_ProjMatrix);
+
+	Out.vPosition = mul(vPosition, matNWVP);
 	SplitUV(In.vTexUV, g_iWidthLength, g_iHeightLength, In.iCurrentIndex, Out.vTexUV);
 	Out.vColor = In.vColor;
 
@@ -298,10 +327,9 @@ technique11		DefaultTechnique
 void VS_Module(VS_IN In, inout VS_OUT Out)
 {
 	VS_MainModule(In, Out);
-	VS_TextureSheetAnimationModule(In, Out);
 	//VS_NoiseModule(In, Out);
 
-	TilingAndOffset_float(Out.vTexUV, g_vTililing, g_vOffset, Out.vTexUV);
+	
 
 }
 void PS_Module(PS_IN In, inout PS_OUT Out)
@@ -325,24 +353,31 @@ void VS_MainModule(VS_IN In, inout VS_OUT Out)
 	matWVP = mul(matWV, g_ProjMatrix);
 
 	Out.vPosition = mul(vPosition, matWVP);
-	Out.vTexUV = In.vTexUV;
+	
 	Out.vColor = In.vColor;
 	Out.vVelocity = In.vVelocity;
-}
-void VS_TextureSheetAnimationModule(VS_IN In, inout VS_OUT Out)
-{
-	if (false == g_isTextureSheetAnimationActivated)
-		return;
 
-	SplitUV(In.vTexUV, g_iWidthLength, g_iHeightLength, In.iCurrentIndex, Out.vTexUV);
+	// 텍스처 시트
+	if (true == g_isTextureSheetAnimationActivated)
+	{
+		SplitUV(In.vTexUV, g_iWidthLength, g_iHeightLength, In.iCurrentIndex, Out.vTexUV);
+	}
+	else
+	{
+		Out.vTexUV = In.vTexUV;
+	}
+
+	// UV 애니메이션
+	TilingAndOffset_float(Out.vTexUV, g_vTililing, g_vOffset, Out.vTexUV);
 }
+
 void VS_NoiseModule(VS_IN In, inout VS_OUT Out)
 {
 	if (false == g_isNoiseActivated)
 		return;
 
 	// 노이즈 스크롤 적용
-	float3 vNoiseInput = In.vPosition + float3(0, g_fNoiseTimeAcc * g_fScrollSpeed, 0);
+	//float3 vNoiseInput = In.vPosition + float3(0, g_fNoiseTimeAcc * g_fScrollSpeed, 0);
 	//float fNoiseValue = PerlinNoise_3D(vNoiseInput.x, vNoiseInput.y, vNoiseInput.z
 	//	, g_fFrequency, g_fPersistence, fOctavesScale, fOctavesMultiplier, g_iOctaves);
 
