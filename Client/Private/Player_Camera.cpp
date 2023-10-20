@@ -227,24 +227,29 @@ void CPlayer_Camera::Follow_Transform()
 {
 	BEGININSTANCE;
 
-	//차이 벡터
-	_float3 vTargetDir{};
+	_float3 vPos = XMVectorSetY(m_FollowTargetMatrix.Translation(), m_FollowTargetMatrix.Translation().y + m_fCameraHeight);
 
-	vTargetDir = XMVectorSetY(m_FollowTargetMatrix.Translation(), m_FollowTargetMatrix.Translation().y + m_fCameraHeight);
+	m_pTransform->Set_Position(vPos);
 
-	vTargetDir -= m_pTransform->Get_Position();
 
-	//거리 비교
-	if (m_fFollowLimit < vTargetDir.Length())
-	{
-		//거리 만큼이동
-		m_pTransform->Set_Speed((_float)vTargetDir.Length() * m_fTimeSpeed);
+	////차이 벡터
+	//_float3 vTargetDir{};
 
-		_float fTick = pGameInstance->Get_World_Tick();
+	//vTargetDir = XMVectorSetY(m_FollowTargetMatrix.Translation(), m_FollowTargetMatrix.Translation().y + m_fCameraHeight);
 
-		//이동
-		m_pTransform->Move_Direction(vTargetDir, fTick);
-	}
+	//vTargetDir -= m_pTransform->Get_Position();
+
+	////거리 비교
+	//if (m_fFollowLimit < vTargetDir.Length())
+	//{
+	//	//거리 만큼이동
+	//	m_pTransform->Set_Speed((_float)vTargetDir.Length() * m_fTimeSpeed);
+
+	//	_float fTick = pGameInstance->Get_World_Tick();
+
+	//	//이동
+	//	m_pTransform->Move_Direction(vTargetDir, fTick);
+	//}
 
 	ENDINSTANCE;
 }
