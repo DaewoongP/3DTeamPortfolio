@@ -246,6 +246,7 @@
     <ClInclude Include="..\Public\Pensive_Sword_Throw.h" />
     <ClInclude Include="..\Public\Player.h" />
     <ClInclude Include="..\public\PotionStationCamera.h" />
+    <ClInclude Include="..\public\Projectile_White_Effect.h" />
     <ClInclude Include="..\public\Quest.h" />
     <ClInclude Include="..\public\Quest_Manager.h" />
     <ClInclude Include="..\public\Quest_Save_Fig.h" />
@@ -567,6 +568,7 @@
     <ClCompile Include="..\Private\Pensive_Sword_Throw.cpp" />
     <ClCompile Include="..\Private\Player.cpp" />
     <ClCompile Include="..\private\PotionStationCamera.cpp" />
+    <ClCompile Include="..\private\Projectile_White_Effect.cpp" />
     <ClCompile Include="..\private\Quest.cpp" />
     <ClCompile Include="..\private\Quest_Manager.cpp" />
     <ClCompile Include="..\private\Quest_Save_Fig.cpp" />
@@ -816,6 +818,7 @@
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ImpulseSphere.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Projectile_White.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Protego.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowAnimMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMesh.hlsl" />

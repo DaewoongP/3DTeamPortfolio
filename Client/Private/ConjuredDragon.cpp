@@ -608,7 +608,7 @@ HRESULT CConjuredDragon::Make_Magics()
 		magicInitDesc.eMagicTag = PROJECTILE_WHITE;
 		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 10;
-		magicInitDesc.fLifeTime = 3.5f;
+		magicInitDesc.fLifeTime = 1.0f;
 		magicInitDesc.isChase = false;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -622,7 +622,7 @@ HRESULT CConjuredDragon::Make_Magics()
 		magicInitDesc.eMagicTag = PROJECTILE_BLACK;
 		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 10;
-		magicInitDesc.fLifeTime = 3.5f;
+		magicInitDesc.fLifeTime = 1.0f;
 		magicInitDesc.isChase = false;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -660,11 +660,11 @@ HRESULT CConjuredDragon::Make_Notifies()
 		return E_FAIL;
 	
 	Func = [&] { this->Pulse_Charge(); };
-	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Charge"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Pulse_Charge"), Func)))
 		return E_FAIL;
 
-	Func = [&] { this->Pulse_StopCharge(); };
-	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("StopChargeCircle"), Func)))
+	Func = [&] { this->Pulse_Stop_Charge(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Pulse_Stop_Charge"), Func)))
 		return E_FAIL;
 
 	return S_OK;
@@ -2471,8 +2471,6 @@ void CConjuredDragon::Shot_Fireball_Black()
 	CMagicBall* pMagicBall = m_pMagicSlot->Action_Magic_Skill(0, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_SHIELD));
 	if (nullptr == pMagicBall)
 		return;
-
-	pMagicBall->Set_MagicBallState(CMagicBall::MAGICBALL_STATE_CASTMAGIC);
 }
 
 void CConjuredDragon::Shot_Fireball_White()
@@ -2483,7 +2481,7 @@ void CConjuredDragon::Shot_Fireball_White()
 	CMagicBall* pMagicBall = m_pMagicSlot->Action_Magic_Skill(1, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_SHIELD));
 	if (nullptr == pMagicBall)
 		return;
-	pMagicBall->Set_MagicBallState(CMagicBall::MAGICBALL_STATE_CASTMAGIC);
+
 }
 
 void CConjuredDragon::On_Breath()
@@ -2516,6 +2514,7 @@ void CConjuredDragon::Action_Pulse()
 
 	m_pEffect_ImpulseSphere->Play(m_vOffsetPos);
 	m_pEffect_Pulse_BoomWispy->Play(m_vOffsetPos);
+	
 }
 
 void CConjuredDragon::Pulse_Charge()
@@ -2525,17 +2524,14 @@ void CConjuredDragon::Pulse_Charge()
 	Safe_AddRef(pGameInstance);
 	Safe_Release(pGameInstance);
 #endif // _DEBUG
-
 	m_pEffect_Pulse_Charge->Play(m_vOffsetPos);
-	//m_pEffect_Pulse_CircleEmit->Play(m_vOffsetPos);
 }
 
-void CConjuredDragon::Pulse_StopCharge()
+void CConjuredDragon::Pulse_Stop_Charge()
 {
 	m_pEffect_Pulse_Charge->Stop();
 	m_pEffect_Pulse_CircleEmit->Stop();
 }
-
 
 CConjuredDragon* CConjuredDragon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

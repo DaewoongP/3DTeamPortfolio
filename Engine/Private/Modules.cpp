@@ -485,6 +485,8 @@ void SHAPE_MODULE::Set_ShapeLook(_float3 vSourPos, _float3 vDestPos)
 	ShapeMatrix.Up(vUp);
 	ShapeMatrix.Look(vLook);
 }
+
+
 void SHAPE_MODULE::Restart()
 {
 	fLoopPhi = vPhi.x;

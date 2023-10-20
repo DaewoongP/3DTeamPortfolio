@@ -588,6 +588,7 @@ void CParticleSystem::Action_By_StopOption()
 			return;
 
 		Set_ObjEvent(CGameObject::OBJ_DEAD);
+		Disable();
 	}
 }
 

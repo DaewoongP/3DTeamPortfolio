@@ -20,86 +20,75 @@ HRESULT CProjectile_Black::Initialize_Prototype(_uint iLevel)
 	if (FAILED(__super::Initialize_Prototype(iLevel)))
 		return E_FAIL;
 	BEGININSTANCE;
+	m_iLevel = iLevel;
 
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_MagicTrail_BasicCast_Effect")))
+	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_Particle_StartDistortion")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_MagicTrail_BasicCast_Effect")
-			, CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/BasicCast/BasicCast.trail"), m_iLevel))))
+		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_Particle_StartDistortion")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Projectile_White/StartDistortion/"), iLevel))))
 		{
-			ENDINSTANCE;
-			return E_FAIL;
-		}
-	}
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Hit_Effect_Splash_Particle")))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Hit_Effect_Splash_Particle")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BasicCast/Ht_Effect_Splash"), m_iLevel))))
-		{
-			ENDINSTANCE;
-			return E_FAIL;
-		}
-	}
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Glow_Particle")))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Glow_Particle")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BasicCast/Glow"), m_iLevel))))
-		{
+			__debugbreak();
 			ENDINSTANCE;
 			return E_FAIL;
 		}
 	}
 
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_DefaultConeBoom_Particle")))
+	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_Particle_Projectile_White_BulletTrace")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_DefaultConeBoom_Particle")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BasicCast/DefaultConeBoom"), m_iLevel))))
+		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_Particle_Projectile_White_BulletTrace")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Projectile_White/BulletTrace/"), iLevel))))
 		{
+			__debugbreak();
 			ENDINSTANCE;
 			return E_FAIL;
 		}
 	}
 
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_SphereTrace_Particle")))
+	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_Trail_Projectile_White")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_SphereTrace_Particle")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BasicCast/Default_SphereTrace"), m_iLevel))))
+		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_Trail_Projectile_White")
+			, CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Projectile_White/Projectile_White_Trail.trail"), iLevel))))
 		{
-			ENDINSTANCE;
-			return E_FAIL;
-		}
-	}
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Basic_Cast_Hit_Glow_Particle")))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Basic_Cast_Hit_Glow_Particle")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BasicCast/Hit_Effect"), m_iLevel))))
-		{
+			__debugbreak();
 			ENDINSTANCE;
 			return E_FAIL;
 		}
 	}
 
+	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_MeshEffect_Outer_Ball")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_MeshEffect_Outer_Ball")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Projectile_White/Outer_Ball.ME"), iLevel))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
 
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect")))
+	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_MeshEffect_Inner_Ball")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect")
-			, CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/BasicTrail/BasicTrail.trail"), m_iLevel))))
+		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_MeshEffect_Inner_Ball")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Projectile_White/Inner_Ball.ME"), iLevel))))
 		{
+			__debugbreak();
 			ENDINSTANCE;
 			return E_FAIL;
 		}
 	}
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Distortion")))
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_MeshEffect_StartBoom")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Distortion")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Default/Default_Distortion"), m_iLevel))))
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_MeshEffect_StartBoom")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Projectile_White/StartBoom.ME"), m_iLevel))))
 		{
+			__debugbreak();
 			ENDINSTANCE;
 			return E_FAIL;
 		}
 	}
+
 	ENDINSTANCE;
-
-
 	return S_OK;
 }
 
@@ -134,10 +123,10 @@ void CProjectile_Black::Late_Tick(_float fTimeDelta)
 void CProjectile_Black::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	//플레이어랑 충돌했으면?
-	if (wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Player_Default")) != nullptr)
-	{
-		Set_MagicBallState(MAGICBALL_STATE_DYING);
-	}
+	//if (wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Player_Default")) != nullptr)
+	//{
+	//	Set_MagicBallState(MAGICBALL_STATE_DYING);
+	//}
 	__super::OnCollisionEnter(CollisionEventDesc);
 }
 
@@ -173,6 +162,7 @@ HRESULT CProjectile_Black::Reset(MAGICBALLINITDESC& InitDesc)
 
 void CProjectile_Black::Ready_Begin()
 {
+	Ready_StraightMove(m_TrailVec[EFFECT_STATE_MAIN][0]);
 	__super::Ready_Begin();
 }
 
@@ -183,12 +173,15 @@ void CProjectile_Black::Ready_DrawMagic()
 
 void CProjectile_Black::Ready_CastMagic()
 {
-	Ready_SplineMove(m_TrailVec[EFFECT_STATE_MAIN][0]);
 	__super::Ready_CastMagic();
+	m_pMeshEffect_Outer_Ball->Play(m_CurrentWeaponMatrix.Translation());
+	m_pMeshEffect_Inner_Ball->Play(m_CurrentWeaponMatrix.Translation());
+	m_pMeshEffect_StartBoom->Play(m_CurrentWeaponMatrix.Translation());
 }
 
 void CProjectile_Black::Ready_Dying()
 {
+	//m_pParticle_Projectile_White_BulletTrace->Stop();
 	__super::Ready_Dying();
 }
 
@@ -199,23 +192,34 @@ void CProjectile_Black::Tick_Begin(_float fTimeDelta)
 
 void CProjectile_Black::Tick_DrawMagic(_float fTimeDelta)
 {
+	Do_MagicBallState_To_Next();
 	__super::Tick_DrawMagic(fTimeDelta);
 }
 
 void CProjectile_Black::Tick_CastMagic(_float fTimeDelta)
 {
 	__super::Tick_CastMagic(fTimeDelta);
-	m_ParticleVec[EFFECT_STATE_MAIN][1]->Get_Transform()->LookAt(m_vEndPosition);
+	//m_ParticleVec[EFFECT_STATE_MAIN][1]->Get_Transform()->LookAt(m_vEndPosition);
 	if (m_fLerpAcc != 1)
 	{
 		m_fLerpAcc += fTimeDelta / m_fLifeTime * m_fTimeScalePerDitance;
 		if (m_fLerpAcc > 1)
 			m_fLerpAcc = 1;
-		m_TrailVec[EFFECT_STATE_MAIN][0]->Spline_Move(m_vSplineLerp[0], m_vStartPosition, m_vEndPosition, m_vSplineLerp[1], m_fLerpAcc);
+
+		_float3 vLerpPos = _float3::Lerp(m_vStartPosition, m_vEndPosition, m_fLerpAcc);
+		m_TrailVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Set_Position(vLerpPos);
+		_float3 vTrailPos = m_TrailVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Get_Position();
+		m_ParticleVec[EFFECT_STATE_MAIN][0]->Get_Transform()->LookAt(m_vStartPosition);
+		m_ParticleVec[EFFECT_STATE_MAIN][0]->Get_ShapeModuleRef().Set_ShapeLook(m_vEndPosition, m_vStartPosition);
+		m_ParticleVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Set_Position(vTrailPos);
+		m_pMeshEffect_Outer_Ball->Get_Transform()->Set_Position(vTrailPos);
+		m_pMeshEffect_Inner_Ball->Get_Transform()->Set_Position(vTrailPos);
 		m_pTransform->Set_Position(XMVectorLerp(m_vStartPosition, m_vEndPosition, m_fLerpAcc));
 	}
 	else
 	{
+		m_pMeshEffect_Outer_Ball->Stop();
+		m_pMeshEffect_Inner_Ball->Stop();
 		Do_MagicBallState_To_Next();
 	}
 }
@@ -227,64 +231,26 @@ void CProjectile_Black::Tick_Dying(_float fTimeDelta)
 
 HRESULT CProjectile_Black::Add_Components()
 {
-	m_TrailVec[EFFECT_STATE_WAND].resize(1);
 	m_ParticleVec[EFFECT_STATE_WAND].resize(1);
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect"),
-		TEXT("Com_Wand_Trail"), reinterpret_cast<CComponent**>(&m_TrailVec[EFFECT_STATE_WAND][0]))))
-	{
-		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_BasicCast_Wand_Trail_Effect)");
-		__debugbreak();
-		return E_FAIL;
-	}
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_SphereTrace_Particle")
-		, TEXT("Com_Default_SphereTrace_Particle"), (CComponent**)&m_ParticleVec[EFFECT_STATE_WAND][0])))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
+	FAILED_CHECK(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_StartDistortion"),
+		TEXT("Com_Particle_StartDistortion"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_WAND][0])));
+
+	m_ParticleVec[EFFECT_STATE_MAIN].resize(1);
+	FAILED_CHECK(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Projectile_White_BulletTrace"),
+		TEXT("Com_Particle_Projectile_White_BulletTrace"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][0])));
 
 	m_TrailVec[EFFECT_STATE_MAIN].resize(1);
-	m_ParticleVec[EFFECT_STATE_MAIN].resize(2);
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_MagicTrail_BasicCast_Effect"),
-		TEXT("Com_TrailEffect"), reinterpret_cast<CComponent**>(&m_TrailVec[EFFECT_STATE_MAIN][0]))))
-	{
-		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_MagicTrail_BasicCast_Effect)");
-		__debugbreak();
-		return E_FAIL;
-	}
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Glow_Particle")
-		, TEXT("Com_Glow_Particle"), (CComponent**)&m_ParticleVec[EFFECT_STATE_MAIN][0])))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_Distortion")
-		, TEXT("Com_Default_Distortion"), (CComponent**)&m_ParticleVec[EFFECT_STATE_MAIN][1])))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
+	FAILED_CHECK(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Trail_Projectile_White"),
+		TEXT("Com_Trail_Projectile_White"), reinterpret_cast<CComponent**>(&m_TrailVec[EFFECT_STATE_MAIN][0])));
 
+	FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_MeshEffect_Outer_Ball"),
+		TEXT("Com_MeshEffet_Outer_Ball"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Outer_Ball)));
 
-	m_ParticleVec[EFFECT_STATE_HIT].resize(3);
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_DefaultConeBoom_Particle")
-		, TEXT("Com_DefaultConeBoom_Particle"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][0])))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Basic_Cast_Hit_Glow_Particle")
-		, TEXT("Com_Hit_Glow_Particle"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][1])))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Hit_Effect_Splash_Particle")
-		, TEXT("Com_Hit_Effect_Splash_Particle"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][2])))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
+	FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_MeshEffect_Inner_Ball"),
+		TEXT("Com_MeshEffet_Inner_Ball"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Inner_Ball)));
+
+	FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_MeshEffect_StartBoom"),
+		TEXT("Com_MeshEffet_StartBoom"), reinterpret_cast<CComponent**>(&m_pMeshEffect_StartBoom)));
 
 	return S_OK;
 }
@@ -317,4 +283,9 @@ CGameObject* CProjectile_Black::Clone(void* pArg)
 void CProjectile_Black::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pMeshEffect_Outer_Ball);
+	Safe_Release(m_pMeshEffect_Inner_Ball);
+	Safe_Release(m_pMeshEffect_StartBoom);
+	Safe_Release(m_pParticle_Projectile_White_BulletTrace);
 }

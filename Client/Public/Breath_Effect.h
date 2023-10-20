@@ -40,11 +40,15 @@ public:
 #endif // _DEBUG
 
 private:
+	//CMeshEffect*	 m_pMeshEffect_Breath = { nullptr };
 	CParticleSystem* m_pParticle_Breath_RedFire = { nullptr };
-	CParticleSystem* m_pParticle_Breath_BlackFire = { nullptr };
 	CParticleSystem* m_pParticle_Breath_WhiteFire = { nullptr };
 	CParticleSystem* m_pParticle_Breath_RedBurn = { nullptr };
+	CParticleSystem* m_pParticle_Breath_WhiteBurn = { nullptr };
+	CParticleSystem* m_pParticle_Breath_Vomit = { nullptr };
+	CParticleSystem* m_pParticle_Breath_Distortion = { nullptr };
 	class CCoolTime* m_pAttachedTime = { nullptr };
+	class CCoolTime* m_pStopTime = { nullptr };
 
 private:
 	_uint m_iLevel = { 0 };
@@ -52,7 +56,9 @@ private:
 	const _float3* m_pStartPos = { nullptr };
 	_float3* m_pTargetPos = { nullptr };
 	_float m_fTerrainYPos = { 0.f };
-	_bool m_isStart = { false };
+	_bool m_isBurnStart = { false };
+	_bool m_isBurnStop = { false };
+
 private:
 	HRESULT Add_Components();
 

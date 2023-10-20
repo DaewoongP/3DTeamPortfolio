@@ -52,6 +52,7 @@
 #include "Breath.h"
 #include "Pulse.h"
 #include "RadialBlur.h"
+#include "Projectile_White_Effect.h"
 #pragma endregion Effects
 
 #pragma region Magic
@@ -324,6 +325,11 @@ HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Pulse"),
 			CPulse::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Pulse");
+
+		/* For.Prototype_GameObject_Projectile_White*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Projectile_White_Effect"),
+			CProjectile_White_Effect::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Projectile_White_Effect");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -717,12 +723,10 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 				CBombarda::Create(m_pDevice, m_pContext, eLevelID))))
 				throw TEXT("Prototype_GameObject_Bombarda");
 			
+			/* For.Prototype_GameObject_Blink_Trail */
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Blink_Trail"),
 				CBlink_Effect::Create(m_pDevice, m_pContext, eLevelID))))
 				throw TEXT("Prototype_GameObject_Blink_Trail");
-
-		
-
 		}
 		
 
