@@ -98,6 +98,7 @@
 #include "Water.h"
 
 #include "Event_Vault_Spawn.h"
+#include "Event_Vault_Torch.h"
 #include "Event_Smeade.h"
 #include "Event_Cliffside.h"
 
@@ -275,6 +276,11 @@ HRESULT CMain0_Loader::Loading_For_Vault(LEVELID eLevelID)
 	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Spawn"),
 		CEvent_Vault_Spawn::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Event_Spawn");
+
+	/* For.Prototype_GameObject_Event_Torch */
+	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Torch"),
+		CEvent_Vault_Torch::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Event_Torch");
 
 	return S_OK;
 }

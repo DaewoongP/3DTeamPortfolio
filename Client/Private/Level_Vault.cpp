@@ -104,6 +104,12 @@ HRESULT CLevel_Vault::Ready_Events(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+	if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT, TEXT("Prototype_GameObject_Event_Torch"), pLayerTag, TEXT("Event_Torch"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Event_Torch)");
+		return E_FAIL;
+	}
+
 	ENDINSTANCE;
 
 	return S_OK;

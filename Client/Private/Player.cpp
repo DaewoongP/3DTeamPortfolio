@@ -196,10 +196,10 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	m_fTargetViewRange = 2.0f;
 
-	BEGININSTANCE;
+	/*BEGININSTANCE;
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Music/"));	
 	pGameInstance->Play_BGM(TEXT("01_Main.mp3"), 1.0f);
-	ENDINSTANCE;
+	ENDINSTANCE;*/
 
 	//m_vecEaseList.resize(CEase::EASE_END);
 
