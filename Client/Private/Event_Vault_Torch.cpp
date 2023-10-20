@@ -68,8 +68,8 @@ HRESULT CEvent_Vault_Torch::Add_Components()
 	TriggerDesc.isCollisionToDead = true;
 	strcpy_s(TriggerDesc.szCollisionTag, "Trigger_Vault_Torch_On_1");
 	lstrcpy(TriggerDesc.szOtherTag, TEXT("Player_Default"));
-	TriggerDesc.vTriggerSize = _float3(5.f, 5.f, 5.f);
-	TriggerDesc.vTriggerWorldPos = _float3(50.f, -3.5f, 53.f);
+	TriggerDesc.vTriggerSize = _float3(3.5f, 2.5f, 3.5f);
+	TriggerDesc.vTriggerWorldPos = _float3(29.7f, -1.25f, 30.3f);
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Trigger"),
 		TEXT("Trigger_Torch_On_1"), reinterpret_cast<CComponent**>(&m_pTorch_Stage_1), &TriggerDesc)))
@@ -81,8 +81,8 @@ HRESULT CEvent_Vault_Torch::Add_Components()
 	TriggerDesc.isCollisionToDead = true;
 	strcpy_s(TriggerDesc.szCollisionTag, "Trigger_Vault_Torch_On_2");
 	lstrcpy(TriggerDesc.szOtherTag, TEXT("Player_Default"));
-	TriggerDesc.vTriggerSize = _float3(5.f, 5.f, 5.f);
-	TriggerDesc.vTriggerWorldPos = _float3(103.f, -3.f, 104.f);
+	TriggerDesc.vTriggerSize = _float3(3.5f, 2.5f, 3.5f);
+	TriggerDesc.vTriggerWorldPos = _float3(82.1, -1.25f, 81.2f);
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Trigger"),
 		TEXT("Trigger_Torch_On_2"), reinterpret_cast<CComponent**>(&m_pTorch_Stage_2), &TriggerDesc)))
