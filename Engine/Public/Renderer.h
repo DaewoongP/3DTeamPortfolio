@@ -25,11 +25,11 @@ public:
 		m_vFogCenterPos = vFogCenterPos;
 		m_fFogRadius = fFogRadius;
 	}
-	void FadeIn(_float fFadeSpeed) {
+	void FadeOut(_float fFadeSpeed) {
 		m_isFade = true;
 		m_fFadeSpeed = fFadeSpeed;
 	}
-	void FadeOut(_float fFadeSpeed) {
+	void FadeIn(_float fFadeSpeed) {
 		m_isFade = true;
 		m_fFadeSpeed = fFadeSpeed * -1.f;
 	}

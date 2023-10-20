@@ -14,6 +14,7 @@ BEGIN(Engine)
 class CSequence;
 class CSelector;
 class CRandomChoose;
+class CCamera_Shake;
 END
 
 BEGIN(Client)
@@ -97,6 +98,14 @@ private: /* 페이즈 관련 함수 */
 private:
 	CMagicSlot* m_pMagicSlot = { nullptr };
 	CWeapon_Dragon_Head* m_pWeapon = { nullptr };
+
+private:
+	//카메라 쉐이크 노티파이에 함수를 넣기 위한 클래스
+	CCamera_Shake* m_pEnter_Shake = { nullptr };
+
+private:
+	virtual HRESULT Add_Components_for_Shake();
+	virtual HRESULT Make_Notifies_for_Shake();
 
 private: // For. Effect
 	_float3 m_vOffsetPos = { _float3() }; 
