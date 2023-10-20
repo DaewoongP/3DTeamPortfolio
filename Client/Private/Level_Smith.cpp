@@ -649,7 +649,7 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 				TEXT("Prototype_GameObject_Gatherer"), TEXT("Layer_BackGround"),
 				wszobjName, &MapObjectDesc)))
 			{
-				MSG_BOX("Failed to Clone Gatherer");
+				MSG_BOX("Failed to Clone Gatherer in Level_Smith");
 				ENDINSTANCE;
 				return E_FAIL;
 			}
@@ -681,7 +681,7 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 				TEXT("Prototype_GameObject_Owl"), TEXT("Layer_BackGround"),
 				wszobjName, &MapObjectDesc)))
 			{
-				MSG_BOX("Failed to Clone Door in Level_Smith");
+				MSG_BOX("Failed to Clone Owl in Level_Smith");
 				ENDINSTANCE;
 				return E_FAIL;
 			}
