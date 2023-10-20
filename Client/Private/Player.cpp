@@ -242,7 +242,7 @@ HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 void CPlayer::Tick(_float fTimeDelta)
 {
 	BEGININSTANCE;
-	//�÷��̾� ī�޶� �ƴ϶��?
+	
 	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
 	{
 		ENDINSTANCE;
@@ -330,7 +330,8 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
-
+		if (nullptr != m_pTarget)
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_EDGEHIGHLIGHT, m_pTarget);
 #ifdef _DEBUG
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
 #endif // _DEBUG
