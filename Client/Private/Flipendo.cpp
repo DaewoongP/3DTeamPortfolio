@@ -21,28 +21,39 @@ HRESULT CFlipendo::Initialize_Prototype(_uint iLevel)
 		return E_FAIL;
 	BEGININSTANCE;
 
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_MagicTrail_Winga_Effect")))
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Flipendo_Trail")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_MagicTrail_BasicCast_Effect")
-			, CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/BasicCast/BasicCast.trail"), m_iLevel))))
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Flipendo_Trail")
+			, CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Flippendo/FlippendoGlow.trail"), m_iLevel))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
 		}
 	}
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Confringo_Dust_Effect")))
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Flipendo_Trail_Distortion")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Confringo_Dust_Effect")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Confringo/Dust"), m_iLevel))))
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Flipendo_Trail_Distortion")
+			, CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Flippendo/Distortion_NonTex1.trail"), m_iLevel))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
 		}
 	}
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Glow_Particle")))
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Flipendo_Move_Effect")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Glow_Particle")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BasicCast/Glow"), m_iLevel))))
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Flipendo_Move_Effect")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Flipendo/Move_Effect"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Flipendo_WandEffect")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Flipendo_WandEffect")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Flipendo/WandEffect"), m_iLevel))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
@@ -213,11 +224,19 @@ void CFlipendo::Tick_Dying(_float fTimeDelta)
 
 HRESULT CFlipendo::Add_Components()
 {
-	m_TrailVec[EFFECT_STATE_WAND].resize(1);
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect"),
-		TEXT("Com_Wand_Trail"), reinterpret_cast<CComponent**>(&m_TrailVec[EFFECT_STATE_WAND][0]))))
+	m_TrailVec[EFFECT_STATE_WAND].resize(2);
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Flipendo_Trail"),
+		TEXT("Com_Flipendo_Trail"), reinterpret_cast<CComponent**>(&m_TrailVec[EFFECT_STATE_WAND][0]))))
 	{
-		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_BasicCast_Wand_Trail_Effect)");
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Flipendo_Trail)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Flipendo_Trail_Distortion"),
+		TEXT("Com_Flipendo_Trail_Distortion"), reinterpret_cast<CComponent**>(&m_TrailVec[EFFECT_STATE_WAND][1]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Flipendo_Trail_Distortion)");
 		__debugbreak();
 		return E_FAIL;
 	}
@@ -231,14 +250,14 @@ HRESULT CFlipendo::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Confringo_Dust_Effect")
-		, TEXT("Com__Trail_Dust"), (CComponent**)&m_ParticleVec[EFFECT_STATE_MAIN][0])))
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Flipendo_Move_Effect")
+		, TEXT("Com_Flipendo_Move_Effect"), (CComponent**)&m_ParticleVec[EFFECT_STATE_MAIN][0])))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Glow_Particle")
-		, TEXT("Com_Glow_Particle"), (CComponent**)&m_ParticleVec[EFFECT_STATE_MAIN][1])))
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Flipendo_WandEffect")
+		, TEXT("Com_Wand_Effect"), (CComponent**)&m_ParticleVec[EFFECT_STATE_MAIN][1])))
 	{
 		__debugbreak();
 		return E_FAIL;

@@ -47,6 +47,8 @@ HRESULT CCutScene_Camera_Tool::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
+	
+	pGameInstance->Add_Timer(TEXT("Record_Timer"), true, 1.0f);
 
 	ENDINSTANCE;
 	return S_OK;
@@ -90,7 +92,8 @@ void CCutScene_Camera_Tool::Tick(_float _fTimeDelta)
 
 	ImGui::Text("At-->Ctrl : Eye-->Space");
 	ImGui::RadioButton("At_Point", &m_iEyeOrAt, CUTSCENE_AT); ImGui::SameLine();
-	ImGui::RadioButton("Eye_Point", &m_iEyeOrAt, CUTSCENE_EYE);
+	ImGui::RadioButton("Eye_Point", &m_iEyeOrAt, CUTSCENE_EYE);ImGui::SameLine();
+	ImGui::RadioButton("Look_Point", &m_iEyeOrAt, CUTSCENE_LOOK);
 
 
 
@@ -162,6 +165,8 @@ void CCutScene_Camera_Tool::Tick(_float _fTimeDelta)
 	default:
 		break;
 	}
+
+	Recording_Camera_Move();
 
 	Set_Position_CurrentPoint();
 
@@ -359,12 +364,12 @@ void CCutScene_Camera_Tool::Create_CameraInfo(_float4 _vRayPos, _float4 _vRayDir
 		if (nullptr == pCameraPoint)
 		{
 			MSG_BOX("CameraInfo Create Failed");
-			BEGININSTANCE;
+			/*BEGININSTANCE;
 
 		CCamera_Point::CAMERAPOINTDESC CameraPointDesc;
 
 		CameraPointDesc.vPosition = Point_Create_Position(_vRayPos, _vRayDir);
-			ENDINSTANCE;
+			ENDINSTANCE;*/
 
 			return;
 		}
@@ -454,6 +459,101 @@ void CCutScene_Camera_Tool::Create_OriginAt(_float4 _vRayPos, _float4 _vRayDir)
 	}
 }
 
+void CCutScene_Camera_Tool::Create_LookPoint()
+{
+	if (CUTSCENE_LOOK == m_iEyeOrAt)
+	{
+		BEGININSTANCE;
+
+		// ( 생성 )
+		CCamera_Point::CAMERAPOINTDESC CameraPointDesc;
+
+		CameraPointDesc.vPosition = *pGameInstance->Get_CamPosition() + (pGameInstance->Get_CamLook()->TransCoord() * 10.0f);
+
+		CCamera_Point* pCameraPoint =
+			dynamic_cast<CCamera_Point*>(
+				pGameInstance->Clone_Component(LEVEL_TOOL,
+					TEXT("Prototype_GameObject_Camera_Point"),
+					&CameraPointDesc));
+
+		//생성 실패 탈출
+		if (nullptr == pCameraPoint)
+		{
+			MSG_BOX("OriginAt Create Failed");
+
+			ENDINSTANCE;
+
+			return;
+		}
+
+#ifdef _DEBUG
+		//색만 바꿔서 
+		pCameraPoint->Set_Collider_Color(_float4(1.0f, 0.0f, 0.0f, 1.0f));
+#endif	
+		//넣겠다.
+		m_OriginAtList.push_back(pCameraPoint);
+
+		// ( 선택 )
+		m_pCurrentPoint = pCameraPoint;
+
+		//반복자 초기화로 값 수정 막기
+		m_CurrentIterater = m_CameraInfoList.end();
+
+		//변경
+		Change_AtPoint(m_pCurrentPoint);
+		
+
+		// ( 생성 )
+		CameraPointDesc.vPosition = *pGameInstance->Get_CamPosition();
+
+		pCameraPoint =
+			dynamic_cast<CCamera_Point*>(
+				pGameInstance->Clone_Component(LEVEL_TOOL,
+					TEXT("Prototype_GameObject_Camera_Point"),
+					&CameraPointDesc));
+
+		//생성 실패 탈출
+		if (nullptr == pCameraPoint)
+		{
+			MSG_BOX("CameraInfo Create Failed");
+
+			return;
+		}
+		
+#ifdef _DEBUG
+		pCameraPoint->Set_Collider_Color(_float4(0.0f, 0.0f, 1.0f, 1.0f));
+#endif
+		
+		CAMERAPOINTINFODESC CameraPointInfoDesc;
+
+		CameraPointInfoDesc.pEyePoint = pCameraPoint;
+		CameraPointInfoDesc.pAtPoint = m_pAtCurrentPoint;
+		Safe_AddRef(m_pAtCurrentPoint);
+		
+		m_CameraInfoList.push_back(CameraPointInfoDesc);
+		
+		//가장 마지막 이터레이터로 갱신
+		m_CurrentIterater = --m_CameraInfoList.end();
+
+		//현제 오브젝트로 바꿈
+		m_pCurrentPoint = pCameraPoint;
+		
+		//( 선택 )
+
+		//색 변경
+		Change_EyePoint(m_CurrentIterater);
+		
+		
+		
+		
+		
+		m_isLineUpdate = true;
+
+		ENDINSTANCE;
+	}
+
+}
+
 
 
 _bool CCutScene_Camera_Tool::Select_Eye_Point(_float4 _vRayPos, _float4 _vRayDir)
@@ -519,6 +619,7 @@ void CCutScene_Camera_Tool::Create_Tick(_float4 _vRayPos, _float4 _vRayDir)
 {
 	Create_CameraInfo(_vRayPos, _vRayDir);
 	Create_OriginAt(_vRayPos, _vRayDir);
+	Create_LookPoint();
 }
 
 void CCutScene_Camera_Tool::Delete_Eye_Point(_float4 _vRayPos, _float4 _vRayDir)
@@ -1750,6 +1851,30 @@ void CCutScene_Camera_Tool::Stop_CutScene()
 	if (ImGui::Button("Stop_CurScene"))
 	{
 		pGameInstance->Stop_CutScene();
+	}
+
+	ENDINSTANCE;
+}
+
+void CCutScene_Camera_Tool::Recording_Camera_Move()
+{
+	BEGININSTANCE;
+
+	if (CUTSCENE_LOOK == m_iEyeOrAt && pGameInstance->Get_DIKeyState(DIK_R, CInput_Device::KEY_DOWN))
+	{
+		m_isRecording = !m_isRecording;
+
+		if (false == m_isRecording)
+		{
+			pGameInstance->Reset_Timer(TEXT("Record_Timer"));
+		}
+	}
+
+	ImGui::Checkbox("isRecording", &m_isRecording);
+
+	if (true == m_isRecording && pGameInstance->Check_Timer(TEXT("Record_Timer")))
+	{
+		Create_LookPoint();
 	}
 
 	ENDINSTANCE;

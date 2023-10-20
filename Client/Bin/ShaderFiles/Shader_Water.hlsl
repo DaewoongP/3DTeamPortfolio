@@ -3,6 +3,7 @@
 float4x4 g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 float g_fTime;
+float g_fCamFar;
 
 #define TAU 6.28318530718
 #define MAX_ITER 5
@@ -17,6 +18,7 @@ struct VS_OUT
 {
     float4 vPosition : SV_POSITION;
     float2 vTexUV : TEXCOORD0;
+    float4 vProjPos : TEXCOORD1;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -28,7 +30,8 @@ VS_OUT VS_MAIN(VS_IN In)
 
     Out.vPosition = mul(vector(In.vPosition, 1.f), WVPMatrix);
     Out.vTexUV = In.vTexUV;
-
+    Out.vProjPos = Out.vPosition;
+    
     return Out;
 }
 
@@ -36,11 +39,14 @@ struct PS_IN
 {
     float4 vPosition : SV_POSITION;
     float2 vTexUV : TEXCOORD0;
+    float4 vProjPos : TEXCOORD1;
 };
 
 struct PS_OUT
 {
     float4 vDiffuse : SV_TARGET0;
+    float4 vNormal : SV_TARGET1;
+    float4 vDepth : SV_TARGET2;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -64,10 +70,12 @@ PS_OUT PS_MAIN(PS_IN In)
     
     fPower /= float(MAX_ITER);
     fPower = 1.17f - pow(fPower, 1.4f);
-    float3 vColor = pow(abs(fPower), 6.f);
+    float3 vColor = pow(abs(fPower), 8.f);
     Out.vDiffuse.rgb = saturate(vColor + float3(0.f, 0.35f, 0.5f));
     Out.vDiffuse.a = 1.f;
-    
+    float3 vNormal = float3(0, 1, 0);
+    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
     return Out;
 }
 

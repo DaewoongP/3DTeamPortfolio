@@ -7,16 +7,27 @@
 BEGIN(Client)
 class CUI_Script;
 
-class CMyScript final : public CComposite
+class CScript final : public CComposite
 {
-protected:
-    explicit CMyScript(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-    explicit CMyScript(const CMyScript& rhs);
-    virtual ~CMyScript() = default;
+private:
+    explicit CScript(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+    explicit CScript(const CScript& rhs);
+    virtual ~CScript() = default;
 
 public:
     virtual HRESULT Initialize_Prototype() override;
     virtual HRESULT Initialize(void* pArg) override;
+    virtual void Tick(_float fTimeDelta) override;
+    virtual void Late_Tick(_float fTimeDelta) override;
+    virtual HRESULT Render() override;
+
+public:
+    void Set_isRender(_bool isrender) {
+        m_isRender = isrender;
+    }
+    _bool Is_Finished() {
+        return m_isFinished;
+    }
 
 private:
     HRESULT Add_Prototype();
@@ -26,8 +37,10 @@ public:
     HRESULT Add_Script(const _tchar* pTexturePath);
 
 public:
+    void    Reset_Script();
     _bool   Next_Script();
-    HRESULT Render_Script(_float fTimeDelta);
+
+    static CScript* Find_Script(const _tchar* swzScriptTag, _umap<const _tchar*, CScript*>& pSript);
 
 private:
     _tchar m_szScriptTag[MAX_PATH] = TEXT("");
@@ -36,9 +49,11 @@ private:
     _uint                   m_iCurrentScriptIndex = { 0 };
     vector<CTexture*>       m_Scripts;
     CUI_Script*             m_pUI_Script;
+    _bool                   m_isRender = { false };
+    _bool                   m_isFinished = { false };
 
 public:
-    static CMyScript* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+    static CScript* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     virtual CComponent* Clone(void* pArg) override;
     virtual void Free() override;
 };

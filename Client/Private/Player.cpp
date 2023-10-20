@@ -18,6 +18,7 @@
 #include "Enemy.h"
 #include "UI_Group_Enemy_HP.h"
 
+#include "Card_Fig.h"
 #include "Magic.h"
 
 #include "UI_Group_Skill.h"
@@ -188,12 +189,16 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(25.f, 3.f, 22.5f);
 	//m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
 	m_vLevelInitPosition[LEVEL_VAULT] = _float3(161, 2 ,93);
-	m_vLevelInitPosition[LEVEL_SMITH] = _float3(30.f, 3.f, 15.f); // �⺻ ��ġ
-	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(94.5f, 7.2f, 78.f); // ���� �����̼� �ٷ� ��
-	m_vLevelInitPosition[LEVEL_SKY] = _float3(88.8f, 12.5f, 69.8f); // ���� �����̼� �ٷ� ��
+	m_vLevelInitPosition[LEVEL_SMITH] = _float3(30.f, 3.f, 15.f);
+	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(94.5f, 7.2f, 78.f);
+	m_vLevelInitPosition[LEVEL_SKY] = _float3(88.8f, 12.5f, 69.8f);
 
-	m_fTargetViewRange = 1.0f;
+	m_fTargetViewRange = 2.0f;
 
+	BEGININSTANCE;
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Music/"));	
+	pGameInstance->Play_BGM(TEXT("01_Main.mp3"), 1.0f);
+	ENDINSTANCE;
 
 	//m_vecEaseList.resize(CEase::EASE_END);
 
@@ -241,7 +246,7 @@ HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 void CPlayer::Tick(_float fTimeDelta)
 {
 	BEGININSTANCE;
-	//�÷��̾� ī�޶� �ƴ϶��?
+	
 	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
 	{
 		ENDINSTANCE;
@@ -286,7 +291,6 @@ void CPlayer::Tick(_float fTimeDelta)
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::OTHERBODY);
 
 
-	//���?������Ʈ
 	if (nullptr != m_pFrncSpellToggle)
 	{
 		m_pFrncSpellToggle(nullptr);
@@ -313,7 +317,6 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
-	//�÷��̾� ī�޶� �ƴ϶��?
 	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
 	{
 		ENDINSTANCE;
@@ -331,7 +334,8 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
-
+		if (nullptr != m_pTarget)
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_EDGEHIGHLIGHT, m_pTarget);
 #ifdef _DEBUG
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
 #endif // _DEBUG
@@ -378,6 +382,10 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		//Protego
 		if (m_pStateContext->Is_Current_State(TEXT("Protego")))
 		{
+			BEGININSTANCE;
+			_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_36443.wav") },{TEXT("playermale_35938.wav") } ,{TEXT("playermale_35067.wav") },{TEXT("playermale_27895.wav") }   };
+			pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
+			ENDINSTANCE;
 		}
 		//ȸ�ǽ� ����
 		else if (m_pStateContext->Is_Current_State(TEXT("Roll")))
@@ -403,6 +411,10 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			break;
 			case CEnemy::ATTACK_LIGHT:
 			{
+				BEGININSTANCE;
+				_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_24397.wav") },{TEXT("playermale_99996.wav") } ,{TEXT("playermale_35941.wav")},{TEXT("playermale_99995.wav") } };
+				pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
+				ENDINSTANCE;
 				if (m_pStateContext->Is_Current_State(TEXT("Jump")))
 				{
 					HitStateDesc.iHitType = CHitState::HIT_HEABY;
@@ -415,6 +427,10 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			break;
 			case CEnemy::ATTACK_HEAVY:
 			{
+				BEGININSTANCE;
+				_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_25735.wav") },{TEXT("playermale_99991.wav") } ,{TEXT("playermale_99992.wav") },{TEXT("playermale_99993.wav") } };
+				pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
+				ENDINSTANCE;
 				HitStateDesc.iHitType = CHitState::HIT_HEABY;
 			}
 			break;
@@ -464,7 +480,19 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		{
 			CHitState::HITSTATEDESC HitStateDesc;
 
-			HitStateDesc.iHitType = CHitState::HIT_LIGHT;
+			if (pDesc->eMagicTag == PENSIVE_GROUND_BALL ||
+				pDesc->eMagicTag == PENSIVE_FAIL_BALL ||
+				pDesc->eMagicTag == PENSIVE_SHOUTING ||
+				pDesc->eMagicTag == PENSIVE_SWORD_THROW ||
+				pDesc->eMagicTag == PENSIVE_MACE_ATTACK)
+			{
+				HitStateDesc.iHitType = CHitState::HIT_HEABY;
+			}
+			else
+			{
+				HitStateDesc.iHitType = CHitState::HIT_LIGHT;
+			}
+
 			if (nullptr == pDesc ||
 				nullptr == pDesc->pTransform)
 				return;
@@ -554,8 +582,6 @@ HRESULT CPlayer::Render()
 			}
 		}
 	}
-
-	//if(m_isInvisible) �������� ���� ShaderPass �ٲ��ָ� �ɰͰ���.
 
 	return S_OK;
 }
@@ -690,6 +716,9 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
+	m_pMagicSlot->Set_OwnerType(CMagic_Sound_Manager::OWNER_PLAYER);
+	m_pMagicSlot->Set_Volum(0.8f);
+
 	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
 	RigidBodyDesc.isStatic = false;
 	RigidBodyDesc.isTrigger = false;
@@ -707,7 +736,7 @@ HRESULT CPlayer::Add_Components()
 	RigidBodyDesc.vDebugColor = _float4(1.f, 105 / 255.f, 180 / 255.f, 1.f); // hot pink
 	RigidBodyDesc.pOwnerObject = this;
 	RigidBodyDesc.eThisCollsion = COL_PLAYER;
-	RigidBodyDesc.eCollisionFlag = COL_ENEMY_RANGE | COL_ENEMY_ATTACK | COL_TRIGGER | COL_STATIC | COL_MAGIC;
+	RigidBodyDesc.eCollisionFlag = COL_ENEMY_RANGE | COL_NPC_RANGE  | COL_ENEMY_ATTACK | COL_TRIGGER | COL_STATIC | COL_MAGIC;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Player_Default");
 
 	/* Com_RigidBody */
@@ -776,8 +805,14 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
-
-
+	CCard_Fig::CARDFIGINITDESC CardFigInitDesc;
+	CardFigInitDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Card_Fig"),
+		TEXT("Card_Fig"), reinterpret_cast<CComponent**>(&m_pCard_Fig), &CardFigInitDesc)))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -830,7 +865,6 @@ HRESULT CPlayer::Add_Magic()
 {
 	CMagic::MAGICDESC magicInitDesc;
 
-	// �������?
 	{
 		magicInitDesc.eBuffType = BUFF_LEVIOSO;
 		magicInitDesc.eMagicGroup = CMagic::MG_CONTROL;
@@ -843,7 +877,6 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// ��������
 	{
 		magicInitDesc.eBuffType = BUFF_CONFRINGO;
 		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
@@ -856,7 +889,6 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// �Ǵϼ�
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
@@ -869,7 +901,6 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// �μ����?
 	{
 		magicInitDesc.eBuffType = BUFF_NCENDIO;
 		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
@@ -882,7 +913,6 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// ���?
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
@@ -895,9 +925,6 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// �Ƹ���������
-	// �ӵ� ���� �����Դϴ�.
-	// ���� �����ϴ�.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_CONTROL;
@@ -910,9 +937,6 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// �ƾ���
-	// ���߿� ����?�������?�����Դϴ�.
-	// ���� �����ϴ�.
 	{
 		magicInitDesc.eBuffType = BUFF_ACCIO;
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
@@ -925,9 +949,6 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// �𼾵�
-	// ���� ������ �ϴ� �����Դϴ�.
-	// ���� ���մϴ�.
 	{
 		magicInitDesc.eBuffType = BUFF_DESCENDO;
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
@@ -940,9 +961,6 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// �ø��浵
-	// ���߿� ���?�ѹ��� x������ ȸ����Ű�� �����Դϴ�.
-	// ���� �����ϴ�.
 	{
 		magicInitDesc.eBuffType = BUFF_FLIPENDO;
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
@@ -955,9 +973,6 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// �����縮�Ƹ�����
-	// ���⸦ ���������� �����Դϴ�.
-	// ���� �߰��Դϴ�.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
@@ -970,9 +985,6 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// ���丮��
-	// ������ ���ָ� �ɾ� �ٸ� ���� �ο��?�����?�����Դϴ�.
-	// ���� �߰��Դϴ�.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_CURSE;
@@ -985,8 +997,6 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// ũ��ÿ�?
-	// ������ ���� ���� �ٸ� ���� ���� ��ź�Ǵ� ����ü�� �߻��մϴ�.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_CURSE;
@@ -999,9 +1009,8 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	//����������
 	{
-		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eBuffType = BUFF_STUPEFY;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = STUPEFY;
@@ -1012,7 +1021,6 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	//���ɵ�
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
@@ -1025,7 +1033,6 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	//���ٸ���
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
@@ -1043,7 +1050,7 @@ HRESULT CPlayer::Add_Magic()
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(3, FINISHER);
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(4, STUPEFY);
 
-	Set_Spell_Botton(0, ACCIO);
+	Set_Spell_Botton(0, BOMBARDA);
 	Set_Spell_Botton(1, FLIPENDO);
 	Set_Spell_Botton(2, DIFFINDO);
 	Set_Spell_Botton(3, CRUCIO);
@@ -1055,22 +1062,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
-#pragma region ī�޶� ���� �׽�Ʈ
-	//	if (pGameInstance->Get_DIKeyState(DIK_J, CInput_Device::KEY_DOWN))
-	//{
-	//	pGameInstance->Set_Camera(TEXT("Player_Camera"),2.0f);
-	//}
-	//
-	//
-	//if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
-	//{
-	//	pGameInstance->Set_Camera(TEXT("Other_Camera"), 2.0f);
-	//}  
-#pragma endregion
-
-
 #ifdef _DEBUG
-	//ī�޶� ����ũ �׽�Ʈ
 	if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))
 	{
 		_float3 vAxis = _float3(m_fx, m_fy, m_fz);
@@ -1089,14 +1081,13 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	}
 #endif // _DEBUG
 
-	//����
 	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_RBUTTON, CInput_Device::KEY_PRESSING))
 	{
 		Find_Target_For_ViewSpace();
 	}
 
 	//������ ��
-	if (pGameInstance->Get_DIKeyState(DIK_TAB, CInput_Device::KEY_DOWN))
+	if (pGameInstance->Get_DIKeyState(DIK_G, CInput_Device::KEY_DOWN))
 	{
 		Go_Use_Item();
 		/*switch (m_pPlayer_Information->Get_PotionTap()->Get_CurTool()->Get_ItemID())
@@ -1123,7 +1114,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	//case Client::ITEM_ID_WIGGENWELD_POTION:
 
-#pragma region ������Ʈ ���� Ű �Է�
+#pragma region 
 
 	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_DOWN))
 	{
@@ -1153,7 +1144,6 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_BASIC;
 
-		// ��Ÿ : Ÿ�԰� ���� ������ �Ѱ��ش�.
 		if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
 		{
 			Go_MagicCast(&MagicCastingStateDesc);
@@ -1161,7 +1151,6 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_NORMAL;
 
-		//�⺻ ����
 		/*if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN) && m_pMagicSlot->IsCoolOn_Skill(SKILLINPUT_1))
 		{
 			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Magic_Spell_Button_1(); };
@@ -1191,10 +1180,8 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		{
 			if (pGameInstance->Get_DIKeyState(DIK_1 + i, CInput_Device::KEY_DOWN) && m_pMagicSlot->IsCoolOn_Skill(i))
 			{
-				//�׼�
 				MagicCastingStateDesc.iSpecialAction = Special_Action(i);
 
-				//�Լ� ������
 				switch (i)
 				{
 				case Client::CPlayer::SKILLINPUT_1:
@@ -1222,31 +1209,21 @@ void CPlayer::Key_Input(_float fTimeDelta)
 				default:
 					break;
 				}
-
-
-
-
-
-
-
-
 				Go_MagicCast(&MagicCastingStateDesc);
 			}
 		}
 
-
-
-
-		/*if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
+		if (pGameInstance->Get_DIKeyState(DIK_C, CInput_Device::KEY_DOWN))
 		{
-			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Lumos(); };
-
-			Go_MagicCast(&MagicCastingStateDesc);
-		}*/
+			BEGININSTANCE;
+			_tchar szVoiceTag[3][MAX_PATH] = { {TEXT("playermale_34286.wav") },{TEXT("playermale_23883.wav") } ,{TEXT("playermale_32104.wav") } };
+			pGameInstance->Play_Sound(szVoiceTag[rand() % 3], CSound_Manager::SOUND_VOICE, 0.7f, true);
+			ENDINSTANCE;
+			m_pCard_Fig->Spawn_Fig(m_pTarget);
+		}
 
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_FINISHER;
 
-		//���� �߰���
 		if (pGameInstance->Get_DIKeyState(DIK_X, CInput_Device::KEY_DOWN) && m_pPlayer_Information->Is_Use_Fnisher() && nullptr != m_pTarget)
 		{
 			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Finisher(); };
@@ -1406,7 +1383,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Hair
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Player_Hair"),
+		TEXT("Prototype_Component_MeshPart_Hair_M_C"),
 		CCustomModel::HAIR)))
 	{
 		MSG_BOX("Failed Add MeshPart Hair");
@@ -1450,8 +1427,8 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Robe
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Robe_Arcane"),
-		CCustomModel::ROBE)))
+		TEXT("Prototype_Component_MeshPart_Robe_Quidditch"),
+		CCustomModel::ROBE, _float4(1.f, 1.f, 1.f, 1.f), TEXT("../../Resources/GameData/ClothData/Robe_Quidditch.cloth"))))
 	{
 		MSG_BOX("Failed Add MeshPart Robe");
 
@@ -1514,7 +1491,7 @@ HRESULT CPlayer::Ready_Camera()
 	CCamera::CAMERADESC CameraDesc;
 
 	CameraDesc.m_fAspect = _float(g_iWinSizeX) / _float(g_iWinSizeY);
-	CameraDesc.m_fFovY = XMConvertToRadians(90.f);
+	CameraDesc.m_fFovY = XMConvertToRadians(110.f);
 	CameraDesc.m_fNear = 0.1f;
 	CameraDesc.m_fFar = 1000.f;
 
@@ -1634,7 +1611,6 @@ void CPlayer::UpdateLookAngle()
 
 HRESULT CPlayer::Ready_StateMachine()
 {
-	//ä���� �ִٸ� �ȵǴϱ� E_Fail
 	if (true == m_StateMachineDesc.IsValid())
 	{
 		MSG_BOX("Failed Ready_StateMachine");
@@ -1905,7 +1881,6 @@ void CPlayer::Update_Target_Angle()
 		vDirTarget.Normalize();
 	}
 
-	//�� �� ����
 	_float3 vLook{};
 
 	vLook = m_pTransform->Get_Look();
@@ -2344,7 +2319,7 @@ void CPlayer::Update_Cloth(_float fTimeDelta)
 	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(m_fClothPower * vVelocity,
 		XMMatrixInverse(nullptr, XMMatrixRotationQuaternion(m_pTransform->Get_Quaternion()))));
 	
-	//m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
+	m_pCustomModel->Tick(CCustomModel::ROBE, m_iRobeMeshIndex, fTimeDelta);
 }
 
 void CPlayer::Find_Target_For_Distance()
@@ -2368,71 +2343,55 @@ void CPlayer::Find_Target_For_Distance()
 	_float fMinDistance = { 50.0f };
 
 
-	//�Ÿ��� ���� ���� ����
 	CGameObject* pTarget = { nullptr };
 
 	for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
 	{
-		if (true == static_cast<CGameObject*>(iter->second)->isDead())
+		if (true == static_cast<CGameObject*>(iter->second)->isDead() || false == static_cast<CEnemy*>(iter->second)->Is_Spawn())
 			continue;
 
-		//�÷��̾��?
 		_float3 vPlayerPos = m_pTransform->Get_Position();
 
-		//������ 
 		_float3 vMonsterPos = dynamic_cast<CGameObject*>(iter->second)->Get_Transform()->Get_Position();
 
-		//�Ÿ��� ���ϰ�
 		_float fDistance = XMVectorGetX(XMVector3Length(vPlayerPos - vMonsterPos));
 
-		//���� ������ �۴ٸ�
 		if (fMinDistance > fDistance)
 		{
-			//�Ÿ��� �����ϰ�
 			fMinDistance = fDistance;
-			//��ü�� �����Ѵ�.
 			pTarget = dynamic_cast<CGameObject*>(iter->second);
 		}
 	}
 
-	// ��ü�� �ִٸ�
 	if (nullptr != pTarget)
 	{
-		//���� ��ü�� �����ְ�
 		if (nullptr != m_pTargetTransform)
 		{
 			Safe_Release(m_pTargetTransform);
 		}
 
-		//Ÿ������ �Ѵ�.
 		m_pTargetTransform = pTarget->Get_Transform();
 
 		Safe_AddRef(m_pTargetTransform);
 
-
-		//���� ��ü�� �����ְ�
 		if (nullptr != m_pTarget)
 		{
 			Safe_Release(m_pTarget);
 		}
 
-		//Ÿ������ �Ѵ�.
 		m_pTarget = pTarget;
 
 		Safe_AddRef(m_pTarget);
 	}
 
-	//��ü�� ���ٸ� 
 	else if (nullptr == pTarget)
 	{
-		//���� ��ü�� �����ְ�
 		if (nullptr != m_pTargetTransform)
 		{
 			Safe_Release(m_pTargetTransform);
 			m_pTargetTransform = nullptr;
 		}
 
-		//���� ��ü�� �����ְ�
 		if (nullptr != m_pTarget)
 		{
 			Safe_Release(m_pTarget);
@@ -2444,7 +2403,6 @@ void CPlayer::Find_Target_For_Distance()
 
 void CPlayer::Find_Target_For_ViewSpace()
 {
-	//�ִ°� �����?
 	if (nullptr != m_pTarget)
 	{
 		Clear_Target();
@@ -2462,30 +2420,25 @@ void CPlayer::Find_Target_For_ViewSpace()
 
 	_float fMinDistance = { 50.0f };
 
-	//�Ÿ��� ���� ���� ����
 	CGameObject* pTarget = { nullptr };
-
-	//���Ϳ��带 �佺���̽��� �ø���.
-	//x, y�������� +,- ������ �����ؼ� �ȿ� �ִ��� Ȯ���Ѵ�.
 
 	_float4x4 viewMatrix = *pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW);
 
-	//�ӽ� ���� �����̳�
 	list<pair<CEnemy*, _float>> EnemyList;
 
-	//���� �ȿ� �ִ°͵鸸 ����
 	for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
 	{
+		if (true == static_cast<CGameObject*>(iter->second)->isDead() || false == static_cast<CEnemy*>(iter->second)->Is_Spawn())
+			continue;
+
 		CEnemy* pEnemy = static_cast<CEnemy*>((*iter).second);
 
-		//�佺���̽��� �ø���
 		_float4x4 TargetWorldMatrix = pEnemy->Get_Transform()->Get_WorldMatrix();
 
 		_float4x4 TargetViewMatrix = TargetWorldMatrix * viewMatrix;
 
 		_float3 vTargetViewPosition = TargetViewMatrix.Translation();
 
-		//-1 ~ 1 ���̿� �ִ� �͵��� �߿� ī�޶󺸴� �տ� �ִ°�
 		if (-m_fTargetViewRange < vTargetViewPosition.x &&
 			m_fTargetViewRange > vTargetViewPosition.x &&
 			-m_fTargetViewRange < vTargetViewPosition.y &&
@@ -2496,7 +2449,6 @@ void CPlayer::Find_Target_For_ViewSpace()
 		}
 	}
 
-	//����ٸ�?
 	if (true == EnemyList.empty())
 	{
 		ENDINSTANCE;
@@ -2519,25 +2471,20 @@ void CPlayer::Find_Target_For_ViewSpace()
 		return;
 	}
 
-	//���� ��ü�� �����ְ�
 	if (nullptr != m_pTargetTransform)
 	{
 		Safe_Release(m_pTargetTransform);
 	}
-
-	//Ÿ������ �Ѵ�.
 	m_pTargetTransform = pTarget->Get_Transform();
 
 	Safe_AddRef(m_pTargetTransform);
 
 
-	//���� ��ü�� �����ְ�
 	if (nullptr != m_pTarget)
 	{
 		Safe_Release(m_pTarget);
 	}
 
-	//Ÿ������ �Ѵ�.
 	m_pTarget = pTarget;
 
 	Safe_AddRef(m_pTarget);
@@ -3060,6 +3007,10 @@ void CPlayer::Go_Use_Potion()
 	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
 		(m_pStateContext->Is_Current_State(TEXT("Idle"))))
 	{
+		BEGININSTANCE;
+		_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_36445.wav") },{TEXT("playermale_28806.wav") } ,{TEXT("playermale_33405.wav") } ,{TEXT("playermale_36448.wav") } };
+		pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f,true);
+		ENDINSTANCE;
 		m_pStateContext->Set_StateMachine(TEXT("UseItem"), &UseItemDesc);
 	}
 }
@@ -3155,6 +3106,7 @@ void CPlayer::Free()
 		Safe_Release(m_UI_Group_SkillTap);
 		Safe_Release(m_pCooltime);
 		Safe_Release(m_pDefence);
+		Safe_Release(m_pCard_Fig);
 		
 	//	Safe_Release(m_pBlink);
 

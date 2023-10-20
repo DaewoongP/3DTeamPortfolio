@@ -46,10 +46,10 @@ HRESULT CArmored_Troll::Initialize(void* pArg)
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
-	
+
 	if (FAILED(Add_Components_for_Shake()))
 		return E_FAIL;
-	
+
 	return S_OK;
 }
 
@@ -69,8 +69,8 @@ HRESULT CArmored_Troll::Initialize_Level(_uint iCurrentLevelIndex)
 		return E_FAIL;
 
 	if (FAILED(Make_Notifies()))
-		return E_FAIL;	
-	
+		return E_FAIL;
+
 	if (FAILED(Make_Notifies_for_Shake()))
 		return E_FAIL;
 
@@ -83,15 +83,13 @@ HRESULT CArmored_Troll::Initialize_Level(_uint iCurrentLevelIndex)
 	m_DarkAuraBoneMatrix[3] = m_pModelCom->Get_Bone_Index(38)->Get_CombinedTransformationMatrixPtr();
 	m_DarkAuraBoneMatrix[4] = m_pModelCom->Get_Bone_Index(97)->Get_CombinedTransformationMatrixPtr();
 
+	m_pTarget = m_pPlayer;
+
 	return S_OK;
 }
 
 void CArmored_Troll::Tick(_float fTimeDelta)
 {
-	Set_Current_Target();
-	if (nullptr == m_pTarget)
-		m_pTarget = m_pPlayer;
-	
 	__super::Tick(fTimeDelta);
 
 	m_pHitMatrix = m_HitMatrices[rand() % 3];
@@ -128,7 +126,7 @@ void CArmored_Troll::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		pGameInstance->Play_Particle(TEXT("Particle_Troll_Stone_Hit"), CollisionEventDesc.pOtherTransform->Get_Position(), vDir);
 		pGameInstance->Play_Particle(TEXT("Particle_Troll_Dust_Hit"), CollisionEventDesc.pOtherTransform->Get_Position(), vDir);
 		ENDINSTANCE;
-		
+
 		m_iCurrentSpell |= eBuff;
 	}
 }
@@ -153,8 +151,8 @@ HRESULT CArmored_Troll::Add_Components_for_Shake()
 	{
 		CCamera_Shake::CAMERA_SHAKE_DESC Camera_Shake_Desc = { CCamera_Shake::CAMERA_SHAKE_DESC() };
 
-		_float fMaxDistance = {30.0f};
-		_float fMinDistance = {2.0f};
+		_float fMaxDistance = { 30.0f };
+		_float fMinDistance = { 2.0f };
 
 
 		Camera_Shake_Desc.eShake_Priority = CCamera_Manager::SHAKE_PRIORITY_1;
@@ -384,7 +382,7 @@ HRESULT CArmored_Troll::Add_Components()
 		RigidBodyDesc.isStatic = false;
 		RigidBodyDesc.isTrigger = false;
 		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
-		RigidBodyDesc.vOffsetPosition = _float3(0.f, 2.5f, 0.f);
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 2.7f, 0.f);
 		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
 		RigidBodyDesc.fStaticFriction = 0.f;
 		RigidBodyDesc.fDynamicFriction = 1.f;
@@ -395,7 +393,7 @@ HRESULT CArmored_Troll::Add_Components()
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
 		RigidBodyDesc.pOwnerObject = this;
 		RigidBodyDesc.eThisCollsion = COL_ENEMY;
-		RigidBodyDesc.eCollisionFlag = COL_NPC_RANGE | COL_MAGIC | COL_STATIC;
+		RigidBodyDesc.eCollisionFlag = COL_MAGIC | COL_STATIC;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body");
 
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
@@ -408,7 +406,7 @@ HRESULT CArmored_Troll::Add_Components()
 		RigidBodyDesc.isStatic = true;
 		RigidBodyDesc.isTrigger = true;
 		RigidBodyDesc.eThisCollsion = COL_ENEMY_ATTACK;
-		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_SHIELD;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_SHIELD;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body_Attack");
 		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
 			throw TEXT("Failed Create_Collider");
@@ -500,9 +498,15 @@ HRESULT CArmored_Troll::Bind_HitMatrices()
 void CArmored_Troll::DeathBehavior(const _float& fTimeDelta)
 {
 	m_isDead = true;
-
 	m_fDeadTimeAcc += fTimeDelta;
-	if (5.5f < m_fDeadTimeAcc)
+
+	if (2.5f < m_fDeadTimeAcc)
+	{
+		m_isDissolve = true;
+		m_fDissolveAmount += fTimeDelta / 1.5f; // 디졸브 값 증가
+	}
+
+	if (5.5f < m_fDeadTimeAcc && m_fDissolveAmount >= 1.f)
 		Set_ObjEvent(OBJ_DEAD);
 }
 
@@ -568,6 +572,9 @@ HRESULT CArmored_Troll::Make_Alive(_Inout_ CSelector* pSelector)
 	try
 	{
 		/* Create Child Behavior */
+		CSequence* pSequence_Intro = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Intro)))
+			throw TEXT("Failed Create_Behavior pSequence_Intro");
 		CSequence* pSequence_Flipendo = { nullptr };
 		if (FAILED(Create_Behavior(pSequence_Flipendo)))
 			throw TEXT("Failed Create_Behavior pSequence_Flipendo");
@@ -615,6 +622,8 @@ HRESULT CArmored_Troll::Make_Alive(_Inout_ CSelector* pSelector)
 		/* Set Options */
 
 		/* Assemble Behaviors */
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Intro"), pSequence_Intro)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Intro");
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Flipendo"), pSequence_Flipendo)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Flipendo");
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_Attacks"), pSelector_Attacks)))
@@ -627,6 +636,8 @@ HRESULT CArmored_Troll::Make_Alive(_Inout_ CSelector* pSelector)
 		if (FAILED(pSelector_Attacks->Assemble_Behavior(TEXT("Sequence_Taunts"), pSequence_Taunts)))
 			throw TEXT("Failed Selector Assemble_Behavior Sequence_Taunts");
 
+		if (FAILED(Make_Intro(pSequence_Intro)))
+			throw TEXT("Failed Make_Intro");
 		if (FAILED(Make_Flipendo(pSequence_Flipendo)))
 			throw TEXT("Failed Make_Flipendo");
 		if (FAILED(Make_Attack_Degree(pSequence_Attacks_Degree)))
@@ -639,6 +650,64 @@ HRESULT CArmored_Troll::Make_Alive(_Inout_ CSelector* pSelector)
 	catch (const _tchar* pErrorTag)
 	{
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Alive : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CArmored_Troll::Make_Intro(CSequence* pSequence)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		/* Create Child Behaviors */
+		CAction* pAction_Intro_1 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Intro_1)))
+			throw TEXT("Failed Create_Behavior pAction_Intro_1");
+		CAction* pAction_Intro_2 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Intro_2)))
+			throw TEXT("Failed Create_Behavior pAction_Intro_2");
+		CAction* pAction_Intro_3 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Intro_3)))
+			throw TEXT("Failed Create_Behavior pAction_Intro_3");
+		CAction* pAction_Intro_4 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Intro_4)))
+			throw TEXT("Failed Create_Behavior pAction_Intro_4");
+
+		/* Set Decorators */
+
+		/* Set Options */
+		pAction_Intro_1->Set_Options(TEXT("Intro_2"), m_pModelCom, false, 0.f, true);
+		pAction_Intro_2->Set_Options(TEXT("Attack_Tantrum_1"), m_pModelCom, false, 0.f, true);
+		pAction_Intro_3->Set_Options(TEXT("Attack_Tantrum_2"), m_pModelCom, false, 0.f, true);
+		pAction_Intro_4->Set_Options(TEXT("Taunt_Front_4"), m_pModelCom, false, 0.f, true);
+
+		/* Assemble Behaviors */
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Intro_1"), pAction_Intro_1)))
+			throw TEXT("Failed Assemble_Behavior Action_Intro_1");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Intro_2"), pAction_Intro_2)))
+			throw TEXT("Failed Assemble_Behavior Action_Intro_2");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Intro_3"), pAction_Intro_3)))
+			throw TEXT("Failed Assemble_Behavior Action_Intro_3");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Intro_4"), pAction_Intro_4)))
+			throw TEXT("Failed Assemble_Behavior Action_Intro_4");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Intro : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -918,9 +987,9 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_Far(_Inout_ CSequence* pSequence)
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Random_Attack"), pRandom_Attack)))
 			throw TEXT("Failed Assemble_Behavior Random_Attack");
 
-		if (FAILED(pRandom_Attack->Assemble_Behavior(TEXT("Sequence_Attack_Charge"), pSelector_Attack_Charge, 0.6f)))
+		if (FAILED(pRandom_Attack->Assemble_Behavior(TEXT("Sequence_Attack_Charge"), pSelector_Attack_Charge, 0.3f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Charge");
-		if (FAILED(pRandom_Attack->Assemble_Behavior(TEXT("Sequence_Attack_Run"), pSequence_Attack_Run, 0.4f)))
+		if (FAILED(pRandom_Attack->Assemble_Behavior(TEXT("Sequence_Attack_Run"), pSequence_Attack_Run, 0.7f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Run");
 
 		if (FAILED(Make_Pattern_Attack_Run(pSequence_Attack_Run)))
@@ -2290,15 +2359,12 @@ void CArmored_Troll::Free()
 {
 	__super::Free();
 
-	if (true == m_isCloned)
+	for (_uint i = 0; i < m_DarkAura.size(); i++)
 	{
-		for (_uint i = 0; i < m_DarkAura.size(); i++)
-		{
-			Safe_Release(m_DarkAura[i]);
-		}
-		Safe_Release(m_pWeapon);
-		Safe_Release(m_pStep_Shake);
-		Safe_Release(m_pHit_Shake);
-		Safe_Release(m_pDeath_Shake);
+		Safe_Release(m_DarkAura[i]);
 	}
+	Safe_Release(m_pWeapon);
+	Safe_Release(m_pStep_Shake);
+	Safe_Release(m_pHit_Shake);
+	Safe_Release(m_pDeath_Shake);
 }

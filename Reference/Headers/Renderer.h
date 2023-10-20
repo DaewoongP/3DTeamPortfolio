@@ -8,7 +8,7 @@ class ENGINE_DLL CRenderer final : public CGameObject
 {
 public:
 	enum RENDERGROUP { RENDER_PRIORITY, RENDER_DEPTH, RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_BLEND,
-					  RENDER_GLOW, RENDER_DISTORTION,RENDER_DISTORTION_ZIGZAG, RENDER_RADIALBLUR, RENDER_SCREEN, RENDER_UI,
+					  RENDER_GLOW, RENDER_DISTORTION, RENDER_EDGEHIGHLIGHT, RENDER_RADIALBLUR, RENDER_SCREEN, RENDER_UI,
 		// ETC
 		RENDER_PICKING, RENDER_BRUSHING, RENDER_UITEXTURE, RENDER_END };
 
@@ -19,6 +19,20 @@ public:
 	_float Get_HDR() { return m_fHDR; }
 	void Set_HDR(_float fPower) { m_fHDR = fPower; }
 	class CDOF* Get_Dof() { return m_pDOF; }
+	void Set_Fog(_bool isFog, _float4 vFogColor, _float3 vFogCenterPos, _float fFogRadius) {
+		m_isCircleFog = isFog;
+		m_vFogColor = vFogColor;
+		m_vFogCenterPos = vFogCenterPos;
+		m_fFogRadius = fFogRadius;
+	}
+	void FadeIn(_float fFadeSpeed) {
+		m_isFade = true;
+		m_fFadeSpeed = fFadeSpeed;
+	}
+	void FadeOut(_float fFadeSpeed) {
+		m_isFade = true;
+		m_fFadeSpeed = fFadeSpeed * -1.f;
+	}
 
 public:
 	// radial on / off , sample 최대개수 = 10
@@ -36,6 +50,11 @@ public:
 	}
 	void Set_SSAO(_bool isSSAO) { m_isSSAO = isSSAO; }
 	_bool Get_SSAO() { return m_isSSAO; }
+	void Play_Rain() { m_isRaining = true; }
+	void Stop_Rain() { m_isRaining = false; }
+
+public:
+	void Defualt_Shading();
 
 private:
 	explicit CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -68,13 +87,15 @@ private:
 	HRESULT Render_NonLight();
 	HRESULT Render_Blend();
 	HRESULT Render_HDR();
-	HRESULT Render_Fog();
 	HRESULT Render_PostProcessing();
 	HRESULT Render_Distortion();
 	HRESULT Render_RadialBlur();
+	HRESULT Render_EdgeHighLight();
 	HRESULT Render_Screen();
-	
 	HRESULT Render_ScreenRadial();
+	HRESULT Render_Rain();
+	HRESULT Render_Fade();
+
 	HRESULT Render_UI();
 
 #ifdef _DEBUG
@@ -111,35 +132,48 @@ private:
 	class CLight_Manager*			m_pLight_Manager = { nullptr };
 
 private:
-	class CVIBuffer_Rect*			m_pRectBuffer = { nullptr };
-	_float4x4						m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
+	class CVIBuffer_Rect*	m_pRectBuffer = { nullptr };
+	_float4x4				m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
 
-	class CShader*					m_pDeferredShader = { nullptr };
-	class CShader*					m_pLightShader = { nullptr };
-	class CShader*					m_pPostProcessingShader = { nullptr };
-	class CShader*					m_pSSAOShader = { nullptr };
-	class CShader*					m_pDistortionShader = { nullptr };
-	class CShader*					m_pRadialBlurShader = { nullptr };
-	class CShader*					m_pFogShader = { nullptr };
-	class CTexture*					m_pNoiseTexture = { nullptr };
-
-private:
-	_bool							m_isSSAO = { false };
-	_bool							m_isScreenRadial = { false };
-	_float							m_fRadialBlurWidth = { 0.f };
-	_float							m_fRadialTime = { 0.f };
-	_float							m_fRadialTimeAcc = { 0.f };
-	_float4							m_vFogColor;
+	class CShader*	m_pDeferredShader = { nullptr };
+	class CShader*	m_pLightShader = { nullptr };
+	class CShader*	m_pPostProcessingShader = { nullptr };
+	class CShader*	m_pSSAOShader = { nullptr };
+	class CShader*	m_pDistortionShader = { nullptr };
+	class CShader*	m_pRadialBlurShader = { nullptr };
+	class CShader*	m_pFadeShader = { nullptr };
+	class CShader*	m_pRainShader = { nullptr };
+	class CShader*	m_pEdgeShader = { nullptr };
+	class CTexture*	m_pNoiseTexture = { nullptr };
+	class CTexture* m_pFadeTexture = { nullptr };
 
 private:
-	class CBlur*					m_pBlur = { nullptr };
-	class CBloom*					m_pBloom = { nullptr };
-	class CShadow*					m_pShadow = { nullptr };
-	class CGlow*					m_pGlow = { nullptr };
-	_float							m_fGlowPower = { 0.f };
-	_float							m_fHDR = { 0.f };
-	class CDOF*						m_pDOF = { nullptr };
-	class CFlowmap*					m_pFlowmap = { nullptr };
+	_bool		m_isSSAO = { false };
+	_bool		m_isScreenRadial = { false };
+	_float		m_fRadialBlurWidth = { 0.f };
+	_float		m_fRadialTime = { 0.f };
+	_float		m_fRadialTimeAcc = { 0.f };
+	_float		m_fRainTimeAcc = { 0.f };
+	_bool		m_isCircleFog = { false };
+	_float4		m_vFogColor;
+	_float3		m_vFogCenterPos;
+	_float		m_fFogRadius = { 0.f };
+
+private:
+	_bool		m_isFade = { false };
+	_float		m_fFadeTime = { 1.f };
+	_float		m_fFadeSpeed = { 0.f };
+	_bool		m_isRaining = { false };
+	_float		m_fGlowPower = { 0.f };
+	_float		m_fHDR = { 0.f };
+
+private:
+	class CBlur*		m_pBlur = { nullptr };
+	class CBloom*		m_pBloom = { nullptr };
+	class CShadow*		m_pShadow = { nullptr };
+	class CGlow*		m_pGlow = { nullptr };
+	class CDOF*			m_pDOF = { nullptr };
+	class CFlowmap*		m_pFlowmap = { nullptr };
 
 public:
 	static CRenderer* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

@@ -184,7 +184,7 @@ void CPlayer_Camera::Mouse_Input(_float _fTimeDelta)
 
 		fAngle = fabsf(acosf(fAngle));
 
-		_float fStandardAngle = XMConvertToRadians(60.0f);
+		_float fStandardAngle = XMConvertToRadians(80.0f);
 
 		//기준 보다 커지면 안됌
 		if (fStandardAngle >= fAngle)
@@ -260,7 +260,12 @@ void CPlayer_Camera::Eye_At_Distance()
 	//일단 확인용으로 imgui를 사용한다.
 
 	BEGININSTANCE;
-	//pGameInstance->RayCast(m_pTransform->Get_Position(), m_vEyeStandard, m_fEyeMaxDistance, nullptr, &m_fEyeIntersectDistance,1,CPhysX_Manager::RAY_ONLY_STATIC);
+
+	/*_float3 vEyeDir = XMVector3TransformNormal(m_vEyeStandard, m_pTransform->Get_WorldMatrix());
+
+	vEyeDir.Normalize();
+
+	pGameInstance->RayCast(m_pTransform->Get_Position(),vEyeDir,10.0f,nullptr, &m_fEyeIntersectDistance);*/
 	//eye
 	//충돌해서 값이 있고, 최대 거리보다 길다면
 	if (0.0f != m_fEyeIntersectDistance &&

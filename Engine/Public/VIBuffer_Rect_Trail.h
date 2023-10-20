@@ -51,7 +51,7 @@ public:
 	virtual HRESULT Initialize_Prototype(_uint iTrailNum);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick();
-	virtual void Tick_Spline();
+	virtual void Tick_Spline(_float DistPer = 0.1f);
 	virtual void Tick_Lightning(vector<_float3>* posVec);
 
 	// 쉐이더 컬러 변수이름, 컬러값, 쉐이더 변수, 패스 인덱스

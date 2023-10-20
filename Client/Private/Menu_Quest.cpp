@@ -34,11 +34,11 @@ HRESULT CMenu_Quest::Initialize(void* pArg)
 	Ready_Offset();
 	Ready_DefaultTexture();
 	
-	Add_Components(TEXT("First"), FIG);
-	Add_Components(TEXT("Second"), POTION);
-	Add_Components(TEXT("Third"), TOWN);
-	Add_Components(TEXT("Fourth"), SECRET);
-	Add_Components(TEXT("Fifth"), BONE);
+	Add_Components(TEXT("First"), QUEST_FIG);
+	Add_Components(TEXT("Second"), QUEST_POTION);
+	Add_Components(TEXT("Third"), QUEST_TOWN);
+	Add_Components(TEXT("Fourth"), QUEST_SECRET);
+	Add_Components(TEXT("Fifth"), QUEST_BONE);
 
 	return S_OK;
 }
@@ -116,7 +116,7 @@ void CMenu_Quest::Set_Open(_bool isOpen)
 	m_isOpen = isOpen;
 }
 
-void CMenu_Quest::Set_FontState(QUESTLIST eQuest, QUESTTEXT eState)
+void CMenu_Quest::Set_FontState(QUESTLIST eQuest, QUESTSTATE eState)
 {
 	if (nullptr != m_pTexts[eQuest])
 	{
@@ -124,7 +124,7 @@ void CMenu_Quest::Set_FontState(QUESTLIST eQuest, QUESTTEXT eState)
 		m_pTexts[eQuest]->Set_XY(m_fOffset[eQuest].vPos);
 		m_pTexts[eQuest]->Set_Size(m_fOffset[eQuest].vSize);
 
-		if (eState == UNLOCK)
+		if (eState == QUESTSTATE_UNLOCK)
 			m_isCurrentQuest[eQuest] = true;
 		else
 			m_isCurrentQuest[eQuest] = false;
@@ -219,37 +219,37 @@ HRESULT CMenu_Quest::Add_Components(wstring wszTag, QUESTLIST eType)
 
 	switch (eType)
 	{
-	case Client::CMenu_Quest::FIG:
+	case Client::QUEST_FIG:
 	{
 		pText->Add_Texture(TEXT("../../Resources/UI/Game/Quest/1_Fig_Font.png"));
 		pText->Add_Texture(TEXT("../../Resources/UI/Game/Quest/1_Fig_Font_False.png"));
 	}
 		break;
-	case Client::CMenu_Quest::POTION:
+	case Client::QUEST_POTION:
 	{
 		pText->Add_Texture(TEXT("../../Resources/UI/Game/Quest/2_PotionQuest_Font.png"));
 		pText->Add_Texture(TEXT("../../Resources/UI/Game/Quest/2_PotionQuest_Font_False.png"));
 	}
 		break;
-	case Client::CMenu_Quest::TOWN:
+	case Client::QUEST_TOWN:
 	{
 		pText->Add_Texture(TEXT("../../Resources/UI/Game/Quest/3_Twon_Font.png"));
 		pText->Add_Texture(TEXT("../../Resources/UI/Game/Quest/3_Twon_Font_False.png"));
 	}
 		break;
-	case Client::CMenu_Quest::SECRET:
+	case Client::QUEST_SECRET:
 	{
 		pText->Add_Texture(TEXT("../../Resources/UI/Game/Quest/4_Secret_Font.png"));
 		pText->Add_Texture(TEXT("../../Resources/UI/Game/Quest/4_Secret_Font_False.png"));
 	}
 		break;
-	case Client::CMenu_Quest::BONE:
+	case Client::QUEST_BONE:
 	{
 		pText->Add_Texture(TEXT("../../Resources/UI/Game/Quest/5_Boss_Font.png"));
 		pText->Add_Texture(TEXT("../../Resources/UI/Game/Quest/5_Boss_Font_False.png"));
 	}
 		break;
-	case Client::CMenu_Quest::QUESTLIST_END:
+	case Client::QUEST_END:
 		break;
 	default:
 		break;
@@ -268,7 +268,7 @@ HRESULT CMenu_Quest::Add_Components(wstring wszTag, QUESTLIST eType)
 	UIDesc.fSizeY = { 64.f };
 	switch (eType)
 	{
-	case Client::CMenu_Quest::FIG:
+	case Client::QUEST_FIG:
 	{
 		_tchar szTexturePath[MAX_PATH] = TEXT("../../Resources/UI/Game/Quest/Fig_Explain.png");
 		lstrcpy(UIDesc.szTexturePath, szTexturePath);
@@ -278,7 +278,7 @@ HRESULT CMenu_Quest::Add_Components(wstring wszTag, QUESTLIST eType)
 		m_pExplainBack.push_back(pExplain);
 	}
 	break;
-	case Client::CMenu_Quest::POTION:
+	case Client::QUEST_POTION:
 	{
 		_tchar szTexturePath[MAX_PATH] = TEXT("../../Resources/UI/Game/Quest/PotionQuest_Explain.png");
 		lstrcpy(UIDesc.szTexturePath, szTexturePath);
@@ -288,7 +288,7 @@ HRESULT CMenu_Quest::Add_Components(wstring wszTag, QUESTLIST eType)
 		m_pExplainBack.push_back(pExplain);
 	}
 	break;
-	case Client::CMenu_Quest::TOWN:
+	case Client::QUEST_TOWN:
 	{
 		_tchar szTexturePath[MAX_PATH] = TEXT("../../Resources/UI/Game/Quest/Town_Explain.png");
 		lstrcpy(UIDesc.szTexturePath, szTexturePath);
@@ -298,7 +298,7 @@ HRESULT CMenu_Quest::Add_Components(wstring wszTag, QUESTLIST eType)
 		m_pExplainBack.push_back(pExplain);
 	}
 	break;
-	case Client::CMenu_Quest::SECRET:
+	case Client::QUEST_SECRET:
 	{
 		_tchar szTexturePath[MAX_PATH] = TEXT("../../Resources/UI/Game/Quest/Secret_Explain.png");
 		lstrcpy(UIDesc.szTexturePath, szTexturePath);
@@ -308,7 +308,7 @@ HRESULT CMenu_Quest::Add_Components(wstring wszTag, QUESTLIST eType)
 		m_pExplainBack.push_back(pExplain);
 	}
 	break;
-	case Client::CMenu_Quest::BONE:
+	case Client::QUEST_BONE:
 	{
 		_tchar szTexturePath[MAX_PATH] = TEXT("../../Resources/UI/Game/Quest/Boss_Explain.png");
 		lstrcpy(UIDesc.szTexturePath, szTexturePath);
@@ -318,7 +318,7 @@ HRESULT CMenu_Quest::Add_Components(wstring wszTag, QUESTLIST eType)
 		m_pExplainBack.push_back(pExplain);
 	}
 	break;
-	case Client::CMenu_Quest::QUESTLIST_END:
+	case Client::QUEST_END:
 		break;
 	default:
 		break;
@@ -336,22 +336,22 @@ HRESULT CMenu_Quest::Add_Components(wstring wszTag, QUESTLIST eType)
 
 	switch (eType)
 	{
-	case Client::CMenu_Quest::FIG:
+	case Client::QUEST_FIG:
 		m_pTextures.push_back(CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/Quest/1_Fig.png")));
 		break;
-	case Client::CMenu_Quest::POTION:
+	case Client::QUEST_POTION:
 		m_pTextures.push_back(CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/Quest/2_PotionQuest.png")));
 		break;
-	case Client::CMenu_Quest::TOWN:
+	case Client::QUEST_TOWN:
 		m_pTextures.push_back(CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/Quest/3_Twon.png")));
 		break;
-	case Client::CMenu_Quest::SECRET:
+	case Client::QUEST_SECRET:
 		m_pTextures.push_back(CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/Quest/4_Secret.png")));
 		break;
-	case Client::CMenu_Quest::BONE:
+	case Client::QUEST_BONE:
 		m_pTextures.push_back(CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/Quest/5_Boss.png")));
 		break;
-	case Client::CMenu_Quest::QUESTLIST_END:
+	case Client::QUEST_END:
 		break;
 	default:
 		break;

@@ -302,8 +302,9 @@
     <ClCompile Include="..\private\VIBuffer_Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Fade.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Flowmap.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Fog.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Edge.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Bloom.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Blur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
@@ -316,6 +317,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Glow.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Noise.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_RadialBlur.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Rain.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_RenderFunc.hlsli" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Light.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_MotionBlur.hlsl" />

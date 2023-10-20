@@ -83,6 +83,9 @@ void CDummyTrail::Tick_Imgui(_float _fTimeDelta)
 		ImGui::Separator();
 		pEffectWindow->Table_ColorEdit3("Head Color", "dpiv92490v", &m_vHeadColor);
 		pEffectWindow->Table_ColorEdit3("Tail Color", "cklvklcvxjoiowe", &m_vTailColor);
+	
+
+
 		ImGui::Separator();
 
 		// 너비 선택
@@ -169,6 +172,7 @@ void CDummyTrail::ChangeTexture(CTexture** _pTexture, wstring& _wstrOriginPath, 
 		return;
 	}
 	ENDINSTANCE;
+
 }
 
 void CDummyTrail::RemakeBuffer()

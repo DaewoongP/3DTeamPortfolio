@@ -366,7 +366,7 @@ HRESULT CGatherer::Add_Components()
 	
 	CUI_Interaction::INTERACTIONDESC pDesc;
 	lstrcpy(pDesc.m_wszName, TEXT("안녕하세요부자정환입니다"));
-	lstrcpy(pDesc.m_wszFunc, TEXT("돈뿌리는걸좋아하는정환돈뿌리는걸좋아하는정환돈뿌리는걸좋아하는정환돈뿌리는걸좋아하는정환돈뿌리는걸좋아하는정환돈뿌리는걸좋아하는정환"));
+	lstrcpy(pDesc.m_wszFunc, TEXT("돈뿌리는걸좋아하는정환"));
 	pDesc.m_WorldMatrix = m_pTransform->Get_WorldMatrixPtr();
 
 	m_pUI_Interaction = static_cast<CUI_Interaction*>(pGameInstance->Clone_Component(LEVEL_STATIC,

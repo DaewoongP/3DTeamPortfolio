@@ -688,9 +688,6 @@
     <Filter Include="02. GameObject\04. UI\UI_Composite\UI_Interaction">
       <UniqueIdentifier>{06c934f6-bf3f-4fee-8a89-9fb722ad475e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="08 Script">
-      <UniqueIdentifier>{8259d964-e72a-469b-b6fd-a3ced577ab4a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\04. UI\UI\UI_Script">
       <UniqueIdentifier>{473ca6be-871b-4f7c-9069-df1ceb227470}</UniqueIdentifier>
     </Filter>
@@ -744,9 +741,6 @@
     </Filter>
     <Filter Include="04. Effect\Blink_Effect">
       <UniqueIdentifier>{58d8b344-dfb8-4b48-ab00-f18496e8f003}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="08. GameManager">
-      <UniqueIdentifier>{f7506b35-2a98-4706-aaf0-aacbf2491e33}</UniqueIdentifier>
     </Filter>
     <Filter Include="98. Default">
       <UniqueIdentifier>{cc18812b-2268-4f02-b60b-17a85252121a}</UniqueIdentifier>
@@ -841,9 +835,6 @@
     <Filter Include="02. GameObject\06. NPC\Fig">
       <UniqueIdentifier>{f57312ad-47ea-49f5-928a-bbbe0da4e59a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\06. NPC\Fig\Weapons">
-      <UniqueIdentifier>{469a34a9-d8a0-49f7-8077-04a0e0c53e16}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\06. NPC\Dummy">
       <UniqueIdentifier>{dfc55a73-3047-4bbc-b36c-564040baf9e1}</UniqueIdentifier>
     </Filter>
@@ -876,6 +867,57 @@
     </Filter>
     <Filter Include="02. GameObject\02. Enemy\04. Dragon\04. Projectile_White\Projectile_White_Effect">
       <UniqueIdentifier>{cf3acc26-742e-445d-aa03-d0df3bc0e85f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Cliffside">
+      <UniqueIdentifier>{db76acf0-1434-4a65-8c6d-2a7074254ab7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\06. NPC\House_Elf">
+      <UniqueIdentifier>{15e98751-98a2-4629-a638-7f71b9ab4fce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\03. Gear\Robe_Beast">
+      <UniqueIdentifier>{36c29b00-f38a-484e-8661-21ae9aa96338}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\06. NPC\Jammin">
+      <UniqueIdentifier>{0439cf3f-15e3-4b94-a1ae-c6eb1625c7e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\06. NPC\Fig\Combat">
+      <UniqueIdentifier>{5ee826f6-c052-4db1-9653-5a2d4a8a6b09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\06. NPC\Fig\Combat\Weapons">
+      <UniqueIdentifier>{469a34a9-d8a0-49f7-8077-04a0e0c53e16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\06. NPC\Fig\NonCombat">
+      <UniqueIdentifier>{86b2a51a-067b-4c8b-b5f5-1dfa2b277e83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\06. NPC\Fig\Card">
+      <UniqueIdentifier>{d82ab8bd-779f-43e8-b78e-097b556318ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. Scene\Main_Menu\Guide_Book">
+      <UniqueIdentifier>{9ea80fb5-bafc-42e2-bc97-7d00918990a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Env">
+      <UniqueIdentifier>{397b10fb-04a8-4524-96cf-1c1ccba12d43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Cliffside">
+      <UniqueIdentifier>{db76acf0-1434-4a65-8c6d-2a7074254ab7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="08. Script">
+      <UniqueIdentifier>{8259d964-e72a-469b-b6fd-a3ced577ab4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="09. GameManager">
+      <UniqueIdentifier>{f7506b35-2a98-4706-aaf0-aacbf2491e33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10. Quest">
+      <UniqueIdentifier>{019794e9-d13f-4ec9-a419-4c2b5ea04f05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10. Quest\Manager">
+      <UniqueIdentifier>{5bfe5cd8-4edc-4bd4-9081-d6bb6fd36925}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10. Quest\Save_Fig">
+      <UniqueIdentifier>{0b6ed71e-efa1-46a6-a1cb-c7dd6e803bbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\Magic_Sound_Manager">
+      <UniqueIdentifier>{21076980-ffb0-4b0d-9c8a-4e6c54351f0f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1159,7 +1201,7 @@
       <Filter>02. GameObject\01. Player\01. StateMachine\05. MagicCastingState</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Weapon_Fig_Wand.h">
-      <Filter>02. GameObject\06. NPC\Fig\Weapons</Filter>
+      <Filter>02. GameObject\06. NPC\Fig\Combat\Weapons</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Seamless_Loader.h">
       <Filter>02. GameObject\99. Debug\SeamLess</Filter>
@@ -1572,7 +1614,7 @@
       <Filter>02. GameObject\04. UI\Font\DamageFont</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Script.h">
-      <Filter>08 Script</Filter>
+      <Filter>08. Script</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Script.h">
       <Filter>02. GameObject\04. UI\UI\UI_Script</Filter>
@@ -1626,7 +1668,7 @@
       <Filter>04. Effect\Blink_Effect</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Game_Manager.h">
-      <Filter>08. GameManager</Filter>
+      <Filter>09. GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Cat.h">
       <Filter>02. GameObject\03. MapObject\Anim_Obj\Cat</Filter>
@@ -1715,9 +1757,6 @@
     <ClInclude Include="..\Public\Oakes.h">
       <Filter>02. GameObject\06. NPC\Oakes</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Professor_Fig.h">
-      <Filter>02. GameObject\06. NPC\Fig</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Dummy_NPC.h">
       <Filter>02. GameObject\06. NPC\Dummy</Filter>
     </ClInclude>
@@ -1738,6 +1777,48 @@
     </ClInclude>
     <ClInclude Include="..\public\Projectile_White_Effect.h">
       <Filter>02. GameObject\02. Enemy\04. Dragon\04. Projectile_White\Projectile_White_Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Cliffside.h">
+      <Filter>07. Events\Cliffside</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\House_Elf.h">
+      <Filter>02. GameObject\06. NPC\House_Elf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Robe_Beast.h">
+      <Filter>02. GameObject\09. Item\03. Gear\Robe_Beast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Jammin.h">
+      <Filter>02. GameObject\06. NPC\Jammin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Professor_Fig.h">
+      <Filter>02. GameObject\06. NPC\Fig\Combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Smith_FIg.h">
+      <Filter>02. GameObject\06. NPC\Fig\NonCombat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Card_Fig.h">
+      <Filter>02. GameObject\06. NPC\Fig\Card</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Guide_Book.h">
+      <Filter>06. Scene\Main_Menu\Guide_Book</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Vault_Torch.h">
+      <Filter>02. GameObject\03. MapObject\Env</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Cliffside.h">
+      <Filter>07. Events\Cliffside</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Quest.h">
+      <Filter>10. Quest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Quest_Manager.h">
+      <Filter>10. Quest\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Quest_Save_Fig.h">
+      <Filter>10. Quest\Save_Fig</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Magic_Sound_Manager.h">
+      <Filter>05. Magic\Magic_Sound_Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1818,9 +1899,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Golem_Combat.cpp">
       <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\MapObject.cpp">
-      <Filter>02. GameObject\03. MapObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Action.cpp">
       <Filter>03. Behaviors\00. Action</Filter>
@@ -1997,7 +2075,7 @@
       <Filter>02. GameObject\01. Player\01. StateMachine\05. MagicCastingState</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Weapon_Fig_Wand.cpp">
-      <Filter>02. GameObject\06. NPC\Fig\Weapons</Filter>
+      <Filter>02. GameObject\06. NPC\Fig\Combat\Weapons</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Seamless_Loader.cpp">
       <Filter>02. GameObject\99. Debug\SeamLess</Filter>
@@ -2392,7 +2470,7 @@
       <Filter>02. GameObject\04. UI\Font\DamageFont</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Script.cpp">
-      <Filter>08 Script</Filter>
+      <Filter>08. Script</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Script.cpp">
       <Filter>02. GameObject\04. UI\UI\UI_Script</Filter>
@@ -2446,7 +2524,7 @@
       <Filter>04. Effect\Blink_Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Game_Manager.cpp">
-      <Filter>08. GameManager</Filter>
+      <Filter>09. GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Cat.cpp">
       <Filter>02. GameObject\03. MapObject\Anim_Obj\Cat</Filter>
@@ -2535,9 +2613,6 @@
     <ClCompile Include="..\Private\Oakes.cpp">
       <Filter>02. GameObject\06. NPC\Oakes</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Professor_Fig.cpp">
-      <Filter>02. GameObject\06. NPC\Fig</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Dummy_NPC.cpp">
       <Filter>02. GameObject\06. NPC\Dummy</Filter>
     </ClCompile>
@@ -2558,6 +2633,51 @@
     </ClCompile>
     <ClCompile Include="..\private\Projectile_White_Effect.cpp">
       <Filter>02. GameObject\02. Enemy\04. Dragon\04. Projectile_White\Projectile_White_Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Cliffside.cpp">
+      <Filter>07. Events\Cliffside</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\House_Elf.cpp">
+      <Filter>02. GameObject\06. NPC\House_Elf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Robe_Beast.cpp">
+      <Filter>02. GameObject\09. Item\03. Gear\Robe_Beast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Jammin.cpp">
+      <Filter>02. GameObject\06. NPC\Jammin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Professor_Fig.cpp">
+      <Filter>02. GameObject\06. NPC\Fig\Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Smith_FIg.cpp">
+      <Filter>02. GameObject\06. NPC\Fig\NonCombat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Card_Fig.cpp">
+      <Filter>02. GameObject\06. NPC\Fig\Card</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Guide_Book.cpp">
+      <Filter>06. Scene\Main_Menu\Guide_Book</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MapObject.cpp">
+      <Filter>02. GameObject\03. MapObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Vault_Torch.cpp">
+      <Filter>02. GameObject\03. MapObject\Env</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Cliffside.cpp">
+      <Filter>07. Events\Cliffside</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Quest.cpp">
+      <Filter>10. Quest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Quest_Manager.cpp">
+      <Filter>10. Quest\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Quest_Save_Fig.cpp">
+      <Filter>10. Quest\Save_Fig</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Magic_Sound_Manager.cpp">
+      <Filter>05. Magic\Magic_Sound_Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
