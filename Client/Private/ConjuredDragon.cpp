@@ -2,6 +2,8 @@
 
 #include "Client_GameInstance_Functions.h"
 
+#include "Camera_Shake.h"
+
 #include "Wait.h"
 #include "Death.h"
 #include "Pulse.h"
@@ -119,6 +121,9 @@ HRESULT CConjuredDragon::Initialize_Prototype()
 			return E_FAIL;
 		}
 	}
+
+	pGameInstance->Read_CutSceneCamera(TEXT("Dragon_Enter"),TEXT("../../Resources/GameData/CutScene/Sanctum_Dragon_Enter.cut"));
+
 	ENDINSTANCE;
 
 	return S_OK;
@@ -178,7 +183,10 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_PRESSING))
 	{
 		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
+		{
 			m_isSpawn = true;
+			pGameInstance->Add_CutScene(TEXT("Dragon_Enter"));
+		}
 		if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
 			m_isFinish = true;
 	}
@@ -502,6 +510,53 @@ void CConjuredDragon::Check_Phase()
 		m_isPhaseTwo = false;
 		m_isPhaseFinal = true;
 	}
+}
+
+HRESULT CConjuredDragon::Add_Components_for_Shake()
+{
+	try
+	{
+		/*CCamera_Shake::CAMERA_SHAKE_DESC Camera_Shake_Desc = { CCamera_Shake::CAMERA_SHAKE_DESC() };
+
+		_float fMaxDistance = { 30.0f };
+		_float fMinDistance = { 2.0f };
+
+
+		Camera_Shake_Desc.eShake_Priority = CCamera_Manager::SHAKE_PRIORITY_1;
+		Camera_Shake_Desc.isDistanceOption = true;
+		Camera_Shake_Desc.pTransform = m_pTransform;
+		Camera_Shake_Desc.Shake_Info_Desc.eEase = CEase::IN_EXPO;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Axis = CCamera_Manager::SHAKE_AXIS_UP;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Power = CCamera_Manager::SHAKE_POWER_DECRECENDO;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Type = CCamera_Manager::SHAKE_TYPE_TRANSLATION;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakeDuration = 0.2f;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakePower = 0.05f;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakeSpeed = 10.0f;
+		Camera_Shake_Desc.Shake_Info_Desc.vShake_Axis_Set = _float3();
+
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Enemy_Camera_Shake"),
+			TEXT("Com_Step_Shake"), reinterpret_cast<CComponent**>(&m_pStep_Shake), &Camera_Shake_Desc)))
+			throw TEXT("Com_Step_Shake");
+
+		m_pStep_Shake->Ready_Shake(fMaxDistance, fMinDistance, Camera_Shake_Desc.Shake_Info_Desc.fShakePower);*/
+
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Add_Components : ");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
+
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CConjuredDragon::Make_Notifies_for_Shake()
+{
+	return E_NOTIMPL;
 }
 
 HRESULT CConjuredDragon::Make_AI()

@@ -53,8 +53,9 @@ void CProtegoState::OnStateEnter(void* _pArg)
 	if (nullptr == _pArg)
 	{
 		//시작 애니메이션
-		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Protego_Start_anm"));
+		//m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Protego_Start_anm"));
 		Change_Animation(TEXT("Hu_Cmbt_Protego_Start_anm"), false);
+		*m_StateMachineDesc.pisFinishAnimation = false;
 	}
 	//시전중에 맞았다!! 
 	else
