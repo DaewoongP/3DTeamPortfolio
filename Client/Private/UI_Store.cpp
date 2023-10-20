@@ -66,16 +66,6 @@ HRESULT CUI_Store::Initialize(void* pArg)
 }
 void CUI_Store::Tick(_float fTimeDelta)
 {
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
-	{
-		m_isOpen = (true == m_isOpen) ? false : true;
-	}
-
-	Safe_Release(pGameInstance);
-
 	if (false == m_isOpen)
 		return;
 

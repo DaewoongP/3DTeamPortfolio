@@ -1,5 +1,7 @@
 #include "Vendor.h"
 #include "GameInstance.h"
+#include "UI_Store.h"
+#include "UI_Interaction.h"
 
 CVendor::CVendor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -34,6 +36,7 @@ HRESULT CVendor::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pTransform->Set_Speed(10.f);
+	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 	m_pTransform->Set_Scale(_float3(1.15f, 1.15f, 1.15f));
 	m_pTransform->Rotation(_float3(0.f, XMConvertToRadians(45.f), 0.f));
@@ -45,6 +48,24 @@ void CVendor::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	if (m_isColPlayer)
+	{
+		m_pUI_Interaction->Tick(fTimeDelta);
+
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+		if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
+		{
+			m_isOpenStore = !m_isOpenStore;
+			m_pUI_Store->Set_isOpen(m_isOpenStore);
+		}
+		Safe_Release(pGameInstance);
+	}
+	
+	if (m_isOpenStore)
+		m_pUI_Store->Tick(fTimeDelta);
+
+
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 }
@@ -53,10 +74,36 @@ void CVendor::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
+	if (m_isColPlayer && !m_isOpenStore)
+		m_pUI_Interaction->Late_Tick(fTimeDelta);
+
+	if (m_isOpenStore)
+		m_pUI_Store->Late_Tick(fTimeDelta);
+
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
+	}
+}
+
+void CVendor::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
+{
+	wstring wsCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wsPlayer(TEXT("Player_Default"));
+
+	if (0 == lstrcmp(wsCollisionTag.c_str(), wsPlayer.c_str()))
+		m_isColPlayer = true;
+}
+
+void CVendor::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
+{
+	wstring wsCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wsPlayer(TEXT("Player_Default"));
+
+	if (0 == lstrcmp(wsCollisionTag.c_str(), wsPlayer.c_str()))
+	{
+		m_isColPlayer = false;
 	}
 }
 
@@ -163,6 +210,77 @@ HRESULT CVendor::Add_Components()
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowAnimMesh"),
 			TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShaderCom))))
 			throw TEXT("Com_ShadowShader");
+
+		/* Com_RigidBody */
+		CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+		RigidBodyDesc.isStatic = false;
+		RigidBodyDesc.isTrigger = false;
+		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
+		RigidBodyDesc.fDynamicFriction = 1.f;
+		RigidBodyDesc.fRestitution = 0.f;
+		RigidBodyDesc.fStaticFriction = 0.f;
+		RigidBodyDesc.pOwnerObject = this;
+		RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
+		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.85f, 0.f);
+		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
+		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.25f, 0.6f);
+		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
+		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Body");
+		RigidBodyDesc.eThisCollsion = COL_NPC;
+		RigidBodyDesc.eCollisionFlag = COL_STATIC;
+
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+			throw TEXT("Com_RigidBody");
+
+		RigidBodyDesc.isStatic = true;
+		RigidBodyDesc.isTrigger = true;
+		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
+		RigidBodyDesc.fDynamicFriction = 1.f;
+		RigidBodyDesc.fRestitution = 0.f;
+		RigidBodyDesc.fStaticFriction = 0.f;
+		RigidBodyDesc.pOwnerObject = this;
+		RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
+		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.85f, 0.f);
+		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
+		PxSphereGeometry pSphereGeomatry = PxSphereGeometry(2.f); // 범위 설정 
+		RigidBodyDesc.pGeometry = &pSphereGeomatry;
+		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "NPC_Range");
+		RigidBodyDesc.eThisCollsion = COL_NPC_RANGE;
+		RigidBodyDesc.eCollisionFlag = COL_STATIC | COL_PLAYER;
+
+		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
+			return E_FAIL;
+
+		/* Com_UI_Interaction */
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+
+		CUI_Interaction::INTERACTIONDESC pDesc;
+		lstrcpy(pDesc.m_wszName, TEXT("상점"));
+		lstrcpy(pDesc.m_wszFunc, TEXT("이용하기"));
+		pDesc.m_WorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+
+		m_pUI_Interaction = static_cast<CUI_Interaction*>(pGameInstance->Clone_Component(LEVEL_STATIC,
+			TEXT("Prototype_GameObject_UI_Interaction"), &pDesc));
+
+		if (m_pUI_Interaction == nullptr)
+		{
+			Safe_Release(pGameInstance);
+			throw TEXT("Com_UI_Interaction");
+		}
+
+		/* For.Com_Store */
+		m_pUI_Store = static_cast<CUI_Store*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Store")));
+		
+		if (nullptr == m_pUI_Store)
+		{
+			Safe_Release(pGameInstance);
+			throw TEXT("Com_Store ");
+		}			
+		Safe_Release(pGameInstance);
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -288,5 +406,10 @@ void CVendor::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pShadowShaderCom);
+	Safe_Release(m_pRigidBody);
 	Safe_Release(m_pRenderer);
+
+	Safe_Release(m_pUI_Store);
+	Safe_Release(m_pUI_Interaction);
+	
 }

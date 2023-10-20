@@ -34,6 +34,9 @@ public:
 	virtual void	Late_Tick(_float fTimeDelta) override;
 
 public:
+	void	Set_isOpen(_bool isOpen) {
+		m_isOpen = isOpen;
+	}
 	void Open();
 	void Close();
 private:

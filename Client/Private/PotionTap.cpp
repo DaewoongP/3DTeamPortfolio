@@ -46,6 +46,9 @@ void CPotionTap::Tick(_float fTimeDelta)
 		m_pUI_Main_Count->Tick(fTimeDelta);
 		m_pUI_Main_Count->Set_Text(to_wstring(m_pPotions[m_eCurPotion].size()).c_str());
 	}
+	else
+		m_pUI_Main_Count->Set_Text(TEXT(""));
+
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -123,8 +126,8 @@ HRESULT CPotionTap::Add_Components()
 	Desc.m_fRotation = { 0.f };
 	Desc.m_vOrigin = { 0.f, 0.f };
 	Desc.m_vScale = { 0.4f, 0.4f };
-	Desc.m_vPos = { 321.5f, 619.f };
-	wstring wstrNCount = to_wstring(0);
+	Desc.m_vPos = { 317.5f, 619.f };
+	wstring wstrNCount = TEXT("");
 	lstrcpy(Desc.m_pText, wstrNCount.c_str());
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Font"),
