@@ -278,7 +278,6 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 		wstring wsPotionStation(TEXT("SM_HM_Potion_Table"));
 		wstring wsShopDoor(TEXT("SM_HM_Shop_Door"));
 		wstring wsTrollHousefront(TEXT("Anim_TrollHouse_Front"));
-		wstring wsTrollHouseback(TEXT("Anim_TrollHouse_Back"));
 
 		// 보물상자
 		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
@@ -372,8 +371,7 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 		}
 
 		// 트롤 하우스
-		else if (0 == lstrcmp(modelName.c_str(), wsTrollHousefront.c_str()) ||
-			  	 0 == lstrcmp(modelName.c_str(), wsTrollHouseback.c_str()))
+		else if (0 == lstrcmp(modelName.c_str(), wsTrollHousefront.c_str()))
 		{
 			_tchar wszobjName[MAX_PATH] = { 0 };
 			_stprintf_s(wszobjName, TEXT("GameObject_TrollHouse_%d"), (iObjectNum));

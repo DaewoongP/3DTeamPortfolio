@@ -534,7 +534,6 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 		wstring wsVaultGate(TEXT("Anim_Gate_Vault"));
 		wstring wsCat(TEXT("Anim_GreyCat"));
 		wstring wsTrollHousefront(TEXT("Anim_TrollHouse_Front"));
-		wstring wsTrollHouseback(TEXT("Anim_TrollHouse_Back"));
 
 		wstring ws(LoadDesc.wszTag);
 		size_t findIndex = ws.find(TEXT("Model_")) + 6;
@@ -568,7 +567,6 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 			0 == lstrcmp(modelName.c_str(), wsCat.c_str()) ||
 			0 == lstrcmp(modelName.c_str(), wsCliffGate.c_str()) || 
 			0 == lstrcmp(modelName.c_str(), wsTrollHousefront.c_str()) ||
-			0 == lstrcmp(modelName.c_str(), wsTrollHouseback.c_str()) ||
 			0 == lstrcmp(modelName.c_str(), wsVaultGate.c_str()))
 		{
 			if (FAILED(pGameInstance->Add_Prototype(eID, LoadDesc.wszTag,

@@ -5,6 +5,8 @@
 #include "Player_Information.h"
 #include "Inventory.h"
 
+#include "UI_Interaction.h"
+
 CTreasure_Chest::CTreasure_Chest(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -40,6 +42,14 @@ HRESULT CTreasure_Chest::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	// 플레이어 찾기
+	BEGININSTANCE;
+	m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+	m_pPlayerInformation = m_pPlayer->Get_Player_Information();
+	Safe_AddRef(m_pPlayer);
+	Safe_AddRef(m_pPlayerInformation);
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
@@ -54,16 +64,30 @@ HRESULT CTreasure_Chest::Initialize_Level(_uint iCurrentLevelIndex)
 		return E_FAIL;
 	}
 
-	// 리지드 바디 설정
+	// 리지드 바디 초기화
+	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+	RigidBodyDesc.isStatic = true;
+	RigidBodyDesc.isTrigger = true;
+	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
+	RigidBodyDesc.eConstraintFlag = CRigidBody::All;
+	RigidBodyDesc.fStaticFriction = 1.f;
+	RigidBodyDesc.fDynamicFriction = 1.f;
+	RigidBodyDesc.fRestitution = 0.f;
+	PxSphereGeometry MyGeometry = PxSphereGeometry(2.f);
+	RigidBodyDesc.pGeometry = &MyGeometry;
+	RigidBodyDesc.pOwnerObject = this;
+	RigidBodyDesc.vDebugColor = _float4(0.f, 1.f, 1.f, 1.f);
+	RigidBodyDesc.eThisCollsion = COL_STATIC;
+	RigidBodyDesc.eCollisionFlag = COL_PLAYER;
+	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Gatherer");
 
-	// 플레이어 찾기
-	BEGININSTANCE;
-	m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(iCurrentLevelIndex, TEXT("Layer_Player"), TEXT("GameObject_Player")));
-	m_pPlayerInformation = m_pPlayer->Get_Player_Information();
-
-	Safe_AddRef(m_pPlayer);
-	Safe_AddRef(m_pPlayerInformation);
-	ENDINSTANCE;
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+	{
+		MSG_BOX("Failed CDoor Add_Component : (Com_RigidBody)");
+		__debugbreak();
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -72,26 +96,34 @@ void CTreasure_Chest::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	// 플레이어와 거리 비교
-	_float3 vPlayerPos = m_pPlayer->Get_PlayerPos();
-	_float3 vChestPos = m_pTransform->Get_Position();
-
-	m_fDist_From_Player = sqrtf((vPlayerPos.x - vChestPos.x) * (vPlayerPos.x - vChestPos.x) + 
-		(vPlayerPos.y - vChestPos.y) * (vPlayerPos.y - vChestPos.y) + 
-		(vPlayerPos.z - vChestPos.z) * (vPlayerPos.z - vChestPos.z));
 
 	// 일정 거리안으로 들어왔을 때
-	if (2.f >= m_fDist_From_Player && nullptr != m_pModel)
+	if (true == m_isCol_with_Player && nullptr != m_pModel && true == m_isGetItem)
 	{
-		// 여기서 버튼 UI가 나타나면 될듯
+		// 버튼 UI가
+		m_pUI_Interaction->Tick(fTimeDelta);
 
 		BEGININSTANCE;  // 버튼을 누르면 동작(한번만)
-		if (pGameInstance->Get_DIKeyState(DIK_E, CInput_Device::KEY_DOWN) && true == m_isGetItem)
+		if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN) && true == m_isGetItem)
 		{
 			m_isGetItem = false;
 
 			// 인벤토리 획득 처리
-			//m_pPlayerInformation->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_"));
+			for (int i = 0; i < 2; ++i)
+			{
+				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_DUGBOG_TONGUE);
+				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LACEWING_FLIES);
+				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_KNOTGRASS);
+				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_MALLOWSWEET);
+				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_MOONSTONE);
+				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_SHRIVELFIG);
+				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_MONGREL_FUR);
+				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_TROLL_BOGEYS);
+				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_STENCH_OF_THE_DEAD);
+				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_SPIDER_FANG);
+				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_DITTANY_LEAVES);
+				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_FLUXWEED_STEM);
+			}			
 #ifdef _DEBUG
 			cout << "보물 상자가 열리고 어떤 아이템 획득" << '\n';
 #endif // _DEBUG
@@ -118,17 +150,42 @@ void CTreasure_Chest::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	BEGININSTANCE; 
+
+	if (true == m_isCol_with_Player && nullptr != m_pModel && true == m_isGetItem)
+	{
+		m_pUI_Interaction->Late_Tick(fTimeDelta);
+	}
 	
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
 #ifdef _DEBUG
-		//m_pRenderer->Add_DebugGroup(m_pRigidBody);
+		m_pRenderer->Add_DebugGroup(m_pRigidBody);
 #endif // _DEBUG
 	}
 	
 	ENDINSTANCE;
+}
+
+void CTreasure_Chest::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
+{
+	wstring wsCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wsPlayer(TEXT("Player_Default"));
+
+	// 플레이어와 충돌했다면 수집 활성화
+	if (0 == lstrcmp(wsCollisionTag.c_str(), wsPlayer.c_str()))
+		m_isCol_with_Player = true;
+}
+
+void CTreasure_Chest::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
+{
+	wstring wsCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wsPlayer(TEXT("Player_Default"));
+
+	// 플레이어와 충돌이 끝났다면 수집 비활성화
+	if (0 == lstrcmp(wsCollisionTag.c_str(), wsPlayer.c_str()))
+		m_isCol_with_Player = false;
 }
 
 HRESULT CTreasure_Chest::Render()
@@ -206,6 +263,21 @@ HRESULT CTreasure_Chest::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+
+	/* Com_UI_Interaction */
+	BEGININSTANCE;
+
+	CUI_Interaction::INTERACTIONDESC pDesc;
+	lstrcpy(pDesc.m_wszName, TEXT("보물상자"));
+	lstrcpy(pDesc.m_wszFunc, TEXT("열기"));
+	m_UIMatirx = m_pTransform->Get_WorldMatrix();
+	m_UIMatirx._42 += 1.5f;
+	pDesc.m_WorldMatrix = &m_UIMatirx;
+
+	m_pUI_Interaction = static_cast<CUI_Interaction*>(pGameInstance->Clone_Component(LEVEL_STATIC,
+		TEXT("Prototype_GameObject_UI_Interaction"), &pDesc));
+
+	ENDINSTANCE;
 
 	return S_OK;
 }
@@ -295,9 +367,11 @@ void CTreasure_Chest::Free()
 	Safe_Release(m_pPlayer);
 	Safe_Release(m_pPlayerInformation);
 
-	//Safe_Release(m_pRigidBody);
+	Safe_Release(m_pRigidBody);
 	Safe_Release(m_pShadowShader);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pRenderer);
+
+	Safe_Release(m_pUI_Interaction);
 }
