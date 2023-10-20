@@ -1,4 +1,4 @@
-#include "DarkWizard_M.h"
+#include "DarkWizard_F.h"
 #include "PhysXConverter.h"
 
 #include "Client_GameInstance_Functions.h"
@@ -21,17 +21,17 @@
 #include "Sequence_MoveTarget.h"
 #include "Weapon_DarkWizard_Wand.h"
 
-CDarkWizard_M::CDarkWizard_M(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CDarkWizard_F::CDarkWizard_F(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEnemy(pDevice, pContext)
 {
 }
 
-CDarkWizard_M::CDarkWizard_M(const CDarkWizard_M& rhs)
+CDarkWizard_F::CDarkWizard_F(const CDarkWizard_F& rhs)
 	: CEnemy(rhs)
 {
 }
 
-HRESULT CDarkWizard_M::Initialize_Prototype()
+HRESULT CDarkWizard_F::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -39,7 +39,7 @@ HRESULT CDarkWizard_M::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CDarkWizard_M::Initialize(void* pArg)
+HRESULT CDarkWizard_F::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -53,7 +53,7 @@ HRESULT CDarkWizard_M::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CDarkWizard_M::Initialize_Level(_uint iCurrentLevelIndex)
+HRESULT CDarkWizard_F::Initialize_Level(_uint iCurrentLevelIndex)
 {
 	if (FAILED(Add_Components_Level(iCurrentLevelIndex)))
 		return E_FAIL;
@@ -83,7 +83,7 @@ HRESULT CDarkWizard_M::Initialize_Level(_uint iCurrentLevelIndex)
 	return S_OK;
 }
 
-void CDarkWizard_M::Tick(_float fTimeDelta)
+void CDarkWizard_F::Tick(_float fTimeDelta)
 {
 	Set_Current_Target();
 
@@ -91,7 +91,7 @@ void CDarkWizard_M::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
-	m_pHitMatrix = m_HitMatrices[rand() % 3];
+	m_pHitMatrix = m_HitMatrices[2];
 
 	Tick_Spells();
 
@@ -99,19 +99,19 @@ void CDarkWizard_M::Tick(_float fTimeDelta)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 }
 
-void CDarkWizard_M::Late_Tick(_float fTimeDelta)
+void CDarkWizard_F::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 }
 
-void CDarkWizard_M::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
+void CDarkWizard_F::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionEnter(CollisionEventDesc);
 
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 	wstring wstrOtherCollisionTag = CollisionEventDesc.pOtherCollisionTag;
-	
+
 	/* Collision Magic */
 	if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
 	{
@@ -165,7 +165,7 @@ void CDarkWizard_M::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	}
 }
 
-void CDarkWizard_M::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
+void CDarkWizard_F::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
@@ -179,31 +179,31 @@ void CDarkWizard_M::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 	}
 }
 
-HRESULT CDarkWizard_M::Render()
+HRESULT CDarkWizard_F::Render()
 {
 	if (FAILED(__super::SetUp_ShaderResources()))
 		return E_FAIL;
 
 	if (FAILED(__super::Render()))
 	{
-		MSG_BOX("[CDarkWizard_M] Failed Render");
+		MSG_BOX("[CDarkWizard_F] Failed Render");
 		return E_FAIL;
 	}
 
 	return S_OK;
 }
 
-void CDarkWizard_M::Set_Protego_Collision(CTransform* pTransform, CEnemy::ATTACKTYPE eType) const
+void CDarkWizard_F::Set_Protego_Collision(CTransform* pTransform, CEnemy::ATTACKTYPE eType) const
 {
 	if (eType == ATTACK_BREAK || eType == ATTACK_SUPERBREAK)
 	{
-		if(m_iCurrentSpell & BUFF_PROTEGO)
+		if (m_iCurrentSpell & BUFF_PROTEGO)
 			m_iCurrentSpell ^= BUFF_PROTEGO;
 		m_fProtegoCoolTime = 0.f;
 	}
 }
 
-HRESULT CDarkWizard_M::Add_Components_for_Shake()
+HRESULT CDarkWizard_F::Add_Components_for_Shake()
 {
 	try
 	{
@@ -244,7 +244,7 @@ HRESULT CDarkWizard_M::Add_Components_for_Shake()
 	return S_OK;
 }
 
-HRESULT CDarkWizard_M::Make_Notifies_for_Shake()
+HRESULT CDarkWizard_F::Make_Notifies_for_Shake()
 {
 	if (nullptr == m_pDescendo_Shake)
 	{
@@ -259,7 +259,7 @@ HRESULT CDarkWizard_M::Make_Notifies_for_Shake()
 	return S_OK;
 }
 
-HRESULT CDarkWizard_M::Make_AI()
+HRESULT CDarkWizard_F::Make_AI()
 {
 	BEGININSTANCE;
 
@@ -326,7 +326,7 @@ HRESULT CDarkWizard_M::Make_AI()
 	return S_OK;
 }
 
-HRESULT CDarkWizard_M::Make_Magics()
+HRESULT CDarkWizard_F::Make_Magics()
 {
 	//Basic Magic BasicCast
 	{
@@ -347,7 +347,7 @@ HRESULT CDarkWizard_M::Make_Magics()
 		CMagic::MAGICDESC magicInitDesc;
 		magicInitDesc.eBuffType = BUFF_PROTEGO;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_PURPLE;
+		magicInitDesc.eMagicType = CMagic::MT_YELLOW;
 		magicInitDesc.eMagicTag = PROTEGO;
 		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 0;
@@ -366,7 +366,7 @@ HRESULT CDarkWizard_M::Make_Magics()
 		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 10;
 		magicInitDesc.fLifeTime = 0.8f;
-		magicInitDesc.isChase = false;
+		magicInitDesc.isChase = true;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
@@ -390,7 +390,7 @@ HRESULT CDarkWizard_M::Make_Magics()
 	return S_OK;
 }
 
-HRESULT CDarkWizard_M::Make_Notifies()
+HRESULT CDarkWizard_F::Make_Notifies()
 {
 	function<void()> Func = [&] { (*this).Change_Animation(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Change_Animation"), Func)))
@@ -443,7 +443,7 @@ HRESULT CDarkWizard_M::Make_Notifies()
 	return S_OK;
 }
 
-HRESULT CDarkWizard_M::Add_Components()
+HRESULT CDarkWizard_F::Add_Components()
 {
 	try /* Check Add_Components */
 	{
@@ -517,7 +517,7 @@ HRESULT CDarkWizard_M::Add_Components()
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CDarkWizard_M] Failed Add_Components : \n");
+		wstring wstrErrorMSG = TEXT("[CDarkWizard_F] Failed Add_Components : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -528,12 +528,12 @@ HRESULT CDarkWizard_M::Add_Components()
 	return S_OK;
 }
 
-HRESULT CDarkWizard_M::Add_Components_Level(_uint iCurrentLevelIndex)
+HRESULT CDarkWizard_F::Add_Components_Level(_uint iCurrentLevelIndex)
 {
 	try
 	{
 		/* For.Com_Model */
-		if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, TEXT("Prototype_Component_Model_DarkWizard_M"),
+		if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, TEXT("Prototype_Component_Model_DarkWizard_F"),
 			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 			throw TEXT("Com_Model");
 
@@ -554,7 +554,7 @@ HRESULT CDarkWizard_M::Add_Components_Level(_uint iCurrentLevelIndex)
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CDarkWizard_M] Failed Add_Components_Level : \n");
+		wstring wstrErrorMSG = TEXT("[CDarkWizard_F] Failed Add_Components_Level : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -565,7 +565,7 @@ HRESULT CDarkWizard_M::Add_Components_Level(_uint iCurrentLevelIndex)
 	return S_OK;
 }
 
-HRESULT CDarkWizard_M::Bind_HitMatrices()
+HRESULT CDarkWizard_F::Bind_HitMatrices()
 {
 	const CBone* pBone = m_pModelCom->Get_Bone(TEXT("Head"));
 	if (nullptr == pBone)
@@ -585,7 +585,7 @@ HRESULT CDarkWizard_M::Bind_HitMatrices()
 	return S_OK;
 }
 
-void CDarkWizard_M::DeathBehavior(const _float& fTimeDelta)
+void CDarkWizard_F::DeathBehavior(const _float& fTimeDelta)
 {
 	m_isDead = true;
 	m_fDeadTimeAcc += fTimeDelta;
@@ -600,7 +600,7 @@ void CDarkWizard_M::DeathBehavior(const _float& fTimeDelta)
 		Set_ObjEvent(OBJ_DEAD);
 }
 
-HRESULT CDarkWizard_M::Make_Death(_Inout_ CSelector* pSelector)
+HRESULT CDarkWizard_F::Make_Death(_Inout_ CSelector* pSelector)
 {
 	BEGININSTANCE;
 
@@ -713,7 +713,7 @@ HRESULT CDarkWizard_M::Make_Death(_Inout_ CSelector* pSelector)
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CDarkWizard_M] Failed Make_Death : \n");
+		wstring wstrErrorMSG = TEXT("[CDarkWizard_F] Failed Make_Death : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -728,7 +728,7 @@ HRESULT CDarkWizard_M::Make_Death(_Inout_ CSelector* pSelector)
 	return S_OK;
 }
 
-HRESULT CDarkWizard_M::Make_Alive(_Inout_ CSelector* pSelector)
+HRESULT CDarkWizard_F::Make_Alive(_Inout_ CSelector* pSelector)
 {
 	BEGININSTANCE;
 
@@ -804,7 +804,7 @@ HRESULT CDarkWizard_M::Make_Alive(_Inout_ CSelector* pSelector)
 	return S_OK;
 }
 
-HRESULT CDarkWizard_M::Make_Hit_Combo(_Inout_ CSelector* pSelector)
+HRESULT CDarkWizard_F::Make_Hit_Combo(_Inout_ CSelector* pSelector)
 {
 	BEGININSTANCE;
 
@@ -849,7 +849,7 @@ HRESULT CDarkWizard_M::Make_Hit_Combo(_Inout_ CSelector* pSelector)
 	return S_OK;
 }
 
-HRESULT CDarkWizard_M::Make_Check_Spell(_Inout_ CSelector* pSelector)
+HRESULT CDarkWizard_F::Make_Check_Spell(_Inout_ CSelector* pSelector)
 {
 	BEGININSTANCE;
 
@@ -939,7 +939,7 @@ HRESULT CDarkWizard_M::Make_Check_Spell(_Inout_ CSelector* pSelector)
 	return S_OK;;
 }
 
-HRESULT CDarkWizard_M::Make_Protego(_Inout_ CSequence* pSequence)
+HRESULT CDarkWizard_F::Make_Protego(_Inout_ CSequence* pSequence)
 {
 	BEGININSTANCE;
 
@@ -967,7 +967,7 @@ HRESULT CDarkWizard_M::Make_Protego(_Inout_ CSequence* pSequence)
 					return false;
 				if (10.f > *pProtegoCoolTime)
 					return false;
-				
+
 				return true;
 			});
 
@@ -995,7 +995,7 @@ HRESULT CDarkWizard_M::Make_Protego(_Inout_ CSequence* pSequence)
 	return S_OK;
 }
 
-HRESULT CDarkWizard_M::Make_NormalAttack(_Inout_ CSelector* pSelector)
+HRESULT CDarkWizard_F::Make_NormalAttack(_Inout_ CSelector* pSelector)
 {
 	BEGININSTANCE;
 
@@ -1095,7 +1095,7 @@ HRESULT CDarkWizard_M::Make_NormalAttack(_Inout_ CSelector* pSelector)
 	return S_OK;;
 }
 
-HRESULT CDarkWizard_M::Make_Taunts(_Inout_ CRandomChoose* pRandomChoose)
+HRESULT CDarkWizard_F::Make_Taunts(_Inout_ CRandomChoose* pRandomChoose)
 {
 	BEGININSTANCE;
 
@@ -1165,7 +1165,7 @@ HRESULT CDarkWizard_M::Make_Taunts(_Inout_ CRandomChoose* pRandomChoose)
 	return S_OK;
 }
 
-HRESULT CDarkWizard_M::Make_Fly_Combo(_Inout_ CSelector* pSelector)
+HRESULT CDarkWizard_F::Make_Fly_Combo(_Inout_ CSelector* pSelector)
 {
 	BEGININSTANCE;
 
@@ -1222,7 +1222,7 @@ HRESULT CDarkWizard_M::Make_Fly_Combo(_Inout_ CSelector* pSelector)
 	return S_OK;
 }
 
-HRESULT CDarkWizard_M::Make_Turns(_Inout_ CSequence* pSequence)
+HRESULT CDarkWizard_F::Make_Turns(_Inout_ CSequence* pSequence)
 {
 	BEGININSTANCE;
 
@@ -1299,7 +1299,7 @@ HRESULT CDarkWizard_M::Make_Turns(_Inout_ CSequence* pSequence)
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CDarkWizard_M] Failed Make_Turns : \n");
+		wstring wstrErrorMSG = TEXT("[CDarkWizard_F] Failed Make_Turns : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -1314,7 +1314,7 @@ HRESULT CDarkWizard_M::Make_Turns(_Inout_ CSequence* pSequence)
 	return S_OK;
 }
 
-HRESULT CDarkWizard_M::Make_Air_Hit(_Inout_ CSequence* pSequence)
+HRESULT CDarkWizard_F::Make_Air_Hit(_Inout_ CSequence* pSequence)
 {
 	BEGININSTANCE;
 
@@ -1460,7 +1460,7 @@ HRESULT CDarkWizard_M::Make_Air_Hit(_Inout_ CSequence* pSequence)
 	return S_OK;
 }
 
-HRESULT CDarkWizard_M::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
+HRESULT CDarkWizard_F::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 {
 	BEGININSTANCE;
 
@@ -1535,7 +1535,7 @@ HRESULT CDarkWizard_M::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 	return S_OK;
 }
 
-void CDarkWizard_M::Attack_Light()
+void CDarkWizard_F::Attack_Light()
 {
 	if (nullptr == m_pTarget)
 		return;
@@ -1546,7 +1546,7 @@ void CDarkWizard_M::Attack_Light()
 	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_NPC | COL_SHIELD));
 }
 
-void CDarkWizard_M::Attack_Heavy()
+void CDarkWizard_F::Attack_Heavy()
 {
 	if (nullptr == m_pTarget)
 		return;
@@ -1557,15 +1557,19 @@ void CDarkWizard_M::Attack_Heavy()
 	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_NPC | COL_SHIELD));
 }
 
-void CDarkWizard_M::Cast_Levioso()
+void CDarkWizard_F::Cast_Levioso()
 {
 	if (nullptr == m_pTarget)
 		return;
 
+	_float4x4 OffsetMatrix = _float4x4();
+	if (nullptr != m_pTarget)
+		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
+
 	m_CastingMagic = m_pMagicSlot->Action_Magic_Skill(0, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_NPC | COL_SHIELD));
 }
 
-void CDarkWizard_M::Cast_Protego()
+void CDarkWizard_F::Cast_Protego()
 {
 	if (nullptr == m_pTarget)
 		return;
@@ -1575,7 +1579,7 @@ void CDarkWizard_M::Cast_Protego()
 	m_iCurrentSpell |= BUFF_PROTEGO;
 }
 
-void CDarkWizard_M::Cast_Confringo()
+void CDarkWizard_F::Cast_Confringo()
 {
 	if (nullptr == m_pTarget)
 		return;
@@ -1583,38 +1587,38 @@ void CDarkWizard_M::Cast_Confringo()
 	m_CastingMagic = m_pMagicSlot->Action_Magic_Skill(1, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_NPC | COL_SHIELD));
 }
 
-void CDarkWizard_M::Shot_Magic()
+void CDarkWizard_F::Shot_Magic()
 {
 	m_CastingMagic->Do_MagicBallState_To_Next();
 }
 
-CDarkWizard_M* CDarkWizard_M::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CDarkWizard_F* CDarkWizard_F::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CDarkWizard_M* pInstance = New CDarkWizard_M(pDevice, pContext);
+	CDarkWizard_F* pInstance = New CDarkWizard_F(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CDarkWizard_M");
+		MSG_BOX("Failed to Created CDarkWizard_F");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CDarkWizard_M::Clone(void* pArg)
+CGameObject* CDarkWizard_F::Clone(void* pArg)
 {
-	CDarkWizard_M* pInstance = New CDarkWizard_M(*this);
+	CDarkWizard_F* pInstance = New CDarkWizard_F(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CDarkWizard_M");
+		MSG_BOX("Failed to Cloned CDarkWizard_F");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CDarkWizard_M::Free()
+void CDarkWizard_F::Free()
 {
 	__super::Free();
 

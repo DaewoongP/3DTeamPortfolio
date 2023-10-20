@@ -201,6 +201,10 @@ void CDummyParticle::MainMoudle_TreeNode(CEffect_Window* pEffectWindow)
 			if (true == m_MainModuleDesc.isStartColorRange)
 			{
 				pEffectWindow->Table_ColorEdit4("Start Color2", "kxcv883jdsd", &m_MainModuleDesc.vStartColor2);
+				pEffectWindow->Table_CheckBox("OterhColor", "aser2208spjiw", &m_MainModuleDesc.isStartOtherColorRange);
+				if (true == m_MainModuleDesc.isStartOtherColorRange)
+					pEffectWindow->Table_ColorEdit4("Start Color2", "kxcv883jdsd", &m_MainModuleDesc.vStartColor3);
+
 			}
 			
 			pEffectWindow->Table_DragFloat("GravityModifier", "g50j8dfbji0", &m_MainModuleDesc.fGravityModifier, 0.01f, -FLT_MAX, FLT_MAX);
@@ -522,7 +526,7 @@ void CDummyParticle::VelocityOverLifeTime_TreeNode(CEffect_Window* pEffectWindow
 			// Orbital
 			pEffectWindow->Table_Void();
 			VelocityModule.strOrbitalOption = m_pOrbitalOptionCombo->Tick(CComboBox::TABLE);
-			if ("Constant" == VelocityModule.strLinearOption)
+			if ("Constant" == VelocityModule.strOrbitalOption)
 			{
 				pEffectWindow->Table_DragXYZ("Orbit", "vkjsdfijfe", &VelocityModule.vOrbital, 0.01f, -FLT_MAX, FLT_MAX);
 			}
@@ -537,7 +541,7 @@ void CDummyParticle::VelocityOverLifeTime_TreeNode(CEffect_Window* pEffectWindow
 			// Radial
 			pEffectWindow->Table_Void();
 			VelocityModule.strRadialOption = m_pRadialOptionCombo->Tick(CComboBox::TABLE);
-			if ("Constant" == VelocityModule.strLinearOption)
+			if ("Constant" == VelocityModule.strRadialOption)
 			{
 				pEffectWindow->Table_DragFloat("Radial", "9839jkfi4g", &VelocityModule.fRadial, 0.01f, -FLT_MAX, FLT_MAX);
 			}
@@ -550,7 +554,7 @@ void CDummyParticle::VelocityOverLifeTime_TreeNode(CEffect_Window* pEffectWindow
 			// Speed Modifier
 			pEffectWindow->Table_Void();
 			VelocityModule.strSpeedModifierOption = m_pSpeedModifierOptionCombo->Tick(CComboBox::TABLE);
-			if ("Constant" == VelocityModule.strLinearOption)
+			if ("Constant" == VelocityModule.strSpeedModifierOption)
 			{
 				pEffectWindow->Table_DragFloat("Speed Modifier", "kcv893jdf", &VelocityModule.fSpeedModifier);
 			}

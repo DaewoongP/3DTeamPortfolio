@@ -865,6 +865,9 @@
     <Filter Include="02. GameObject\11. Water">
       <UniqueIdentifier>{1b33b363-0555-47c0-bfe6-21b18984e66b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\04. Projectile_White\Projectile_White_Effect">
+      <UniqueIdentifier>{cf3acc26-742e-445d-aa03-d0df3bc0e85f}</UniqueIdentifier>
+    </Filter>
     <Filter Include="07. Events\Cliffside">
       <UniqueIdentifier>{db76acf0-1434-4a65-8c6d-2a7074254ab7}</UniqueIdentifier>
     </Filter>
@@ -924,6 +927,12 @@
     </Filter>
     <Filter Include="10. Quest\Bone">
       <UniqueIdentifier>{be5494fa-2ceb-45df-b97f-6fc5acc894e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Anim_Obj\Owl">
+      <UniqueIdentifier>{a2d0ac88-bc9d-4275-b006-47de08699d2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\Magic_Sound_Manager">
+      <UniqueIdentifier>{21076980-ffb0-4b0d-9c8a-4e6c54351f0f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1781,6 +1790,9 @@
     <ClInclude Include="..\public\Water.h">
       <Filter>02. GameObject\11. Water</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Projectile_White_Effect.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\04. Projectile_White\Projectile_White_Effect</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Event_Cliffside.h">
       <Filter>07. Events\Cliffside</Filter>
     </ClInclude>
@@ -1831,6 +1843,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\Quest_Bone.h">
       <Filter>10. Quest\Bone</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Owl.h">
+      <Filter>02. GameObject\03. MapObject\Anim_Obj\Owl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DarkWizard_F.h">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\01. Female</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Magic_Sound_Manager.h">
+      <Filter>05. Magic\Magic_Sound_Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2643,6 +2664,9 @@
     <ClCompile Include="..\private\Water.cpp">
       <Filter>02. GameObject\11. Water</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Projectile_White_Effect.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\04. Projectile_White\Projectile_White_Effect</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Event_Cliffside.cpp">
       <Filter>07. Events\Cliffside</Filter>
     </ClCompile>
@@ -2696,6 +2720,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\Quest_Bone.cpp">
       <Filter>10. Quest\Bone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Owl.cpp">
+      <Filter>02. GameObject\03. MapObject\Anim_Obj\Owl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DarkWizard_F.cpp">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\01. Female</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Magic_Sound_Manager.cpp">
+      <Filter>05. Magic\Magic_Sound_Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2761,6 +2794,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Water.hlsl">
       <Filter>97. ShaderFiles\Textures</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Projectile_White.hlsl">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\04. Projectile_White\Projectile_White_Effect</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

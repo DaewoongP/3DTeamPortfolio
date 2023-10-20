@@ -2,6 +2,8 @@
 
 #include "Client_GameInstance_Functions.h"
 
+#include "Camera_Shake.h"
+
 #include "Wait.h"
 #include "Death.h"
 #include "Pulse.h"
@@ -119,6 +121,9 @@ HRESULT CConjuredDragon::Initialize_Prototype()
 			return E_FAIL;
 		}
 	}
+
+	pGameInstance->Read_CutSceneCamera(TEXT("Dragon_Enter"),TEXT("../../Resources/GameData/CutScene/Sanctum_Dragon_Enter.cut"));
+
 	ENDINSTANCE;
 
 	return S_OK;
@@ -178,7 +183,10 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_PRESSING))
 	{
 		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
+		{
 			m_isSpawn = true;
+			pGameInstance->Add_CutScene(TEXT("Dragon_Enter"));
+		}
 		if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
 			m_isFinish = true;
 	}
@@ -504,6 +512,53 @@ void CConjuredDragon::Check_Phase()
 	}
 }
 
+HRESULT CConjuredDragon::Add_Components_for_Shake()
+{
+	try
+	{
+		/*CCamera_Shake::CAMERA_SHAKE_DESC Camera_Shake_Desc = { CCamera_Shake::CAMERA_SHAKE_DESC() };
+
+		_float fMaxDistance = { 30.0f };
+		_float fMinDistance = { 2.0f };
+
+
+		Camera_Shake_Desc.eShake_Priority = CCamera_Manager::SHAKE_PRIORITY_1;
+		Camera_Shake_Desc.isDistanceOption = true;
+		Camera_Shake_Desc.pTransform = m_pTransform;
+		Camera_Shake_Desc.Shake_Info_Desc.eEase = CEase::IN_EXPO;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Axis = CCamera_Manager::SHAKE_AXIS_UP;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Power = CCamera_Manager::SHAKE_POWER_DECRECENDO;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Type = CCamera_Manager::SHAKE_TYPE_TRANSLATION;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakeDuration = 0.2f;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakePower = 0.05f;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakeSpeed = 10.0f;
+		Camera_Shake_Desc.Shake_Info_Desc.vShake_Axis_Set = _float3();
+
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Enemy_Camera_Shake"),
+			TEXT("Com_Step_Shake"), reinterpret_cast<CComponent**>(&m_pStep_Shake), &Camera_Shake_Desc)))
+			throw TEXT("Com_Step_Shake");
+
+		m_pStep_Shake->Ready_Shake(fMaxDistance, fMinDistance, Camera_Shake_Desc.Shake_Info_Desc.fShakePower);*/
+
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Add_Components : ");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
+
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CConjuredDragon::Make_Notifies_for_Shake()
+{
+	return E_NOTIMPL;
+}
+
 HRESULT CConjuredDragon::Make_AI()
 {
 	BEGININSTANCE;
@@ -608,7 +663,7 @@ HRESULT CConjuredDragon::Make_Magics()
 		magicInitDesc.eMagicTag = PROJECTILE_WHITE;
 		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 10;
-		magicInitDesc.fLifeTime = 3.5f;
+		magicInitDesc.fLifeTime = 1.0f;
 		magicInitDesc.isChase = false;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -622,7 +677,7 @@ HRESULT CConjuredDragon::Make_Magics()
 		magicInitDesc.eMagicTag = PROJECTILE_BLACK;
 		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 10;
-		magicInitDesc.fLifeTime = 3.5f;
+		magicInitDesc.fLifeTime = 1.0f;
 		magicInitDesc.isChase = false;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -660,11 +715,11 @@ HRESULT CConjuredDragon::Make_Notifies()
 		return E_FAIL;
 	
 	Func = [&] { this->Pulse_Charge(); };
-	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Charge"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Pulse_Charge"), Func)))
 		return E_FAIL;
 
-	Func = [&] { this->Pulse_StopCharge(); };
-	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("StopChargeCircle"), Func)))
+	Func = [&] { this->Pulse_Stop_Charge(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Pulse_Stop_Charge"), Func)))
 		return E_FAIL;
 
 	return S_OK;
@@ -2471,8 +2526,6 @@ void CConjuredDragon::Shot_Fireball_Black()
 	CMagicBall* pMagicBall = m_pMagicSlot->Action_Magic_Skill(0, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_SHIELD));
 	if (nullptr == pMagicBall)
 		return;
-
-	pMagicBall->Set_MagicBallState(CMagicBall::MAGICBALL_STATE_CASTMAGIC);
 }
 
 void CConjuredDragon::Shot_Fireball_White()
@@ -2483,7 +2536,7 @@ void CConjuredDragon::Shot_Fireball_White()
 	CMagicBall* pMagicBall = m_pMagicSlot->Action_Magic_Skill(1, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_SHIELD));
 	if (nullptr == pMagicBall)
 		return;
-	pMagicBall->Set_MagicBallState(CMagicBall::MAGICBALL_STATE_CASTMAGIC);
+
 }
 
 void CConjuredDragon::On_Breath()
@@ -2516,6 +2569,7 @@ void CConjuredDragon::Action_Pulse()
 
 	m_pEffect_ImpulseSphere->Play(m_vOffsetPos);
 	m_pEffect_Pulse_BoomWispy->Play(m_vOffsetPos);
+	
 }
 
 void CConjuredDragon::Pulse_Charge()
@@ -2525,17 +2579,14 @@ void CConjuredDragon::Pulse_Charge()
 	Safe_AddRef(pGameInstance);
 	Safe_Release(pGameInstance);
 #endif // _DEBUG
-
 	m_pEffect_Pulse_Charge->Play(m_vOffsetPos);
-	//m_pEffect_Pulse_CircleEmit->Play(m_vOffsetPos);
 }
 
-void CConjuredDragon::Pulse_StopCharge()
+void CConjuredDragon::Pulse_Stop_Charge()
 {
 	m_pEffect_Pulse_Charge->Stop();
 	m_pEffect_Pulse_CircleEmit->Stop();
 }
-
 
 CConjuredDragon* CConjuredDragon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

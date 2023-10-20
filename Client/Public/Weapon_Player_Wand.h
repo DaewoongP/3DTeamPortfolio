@@ -33,6 +33,7 @@ private:
 	explicit CWeapon_Player_Wand(const CWeapon_Player_Wand& rhs);
 	virtual ~CWeapon_Player_Wand() = default;
 
+
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
@@ -40,11 +41,12 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	void Do_Lumos(_float fTimeDelta);
-
+	void HeadParticle(_float fTimeDelta);
 private:
 	CModel*				m_pModelCom = { nullptr };
 	CShader*			m_pShaderCom = { nullptr };
 	CRenderer*			m_pRendererCom = { nullptr };
+	CParticleSystem*	m_pHeadEffectCom = { nullptr };
 
 private:
 	_bool*				m_pisLightOn = { nullptr };

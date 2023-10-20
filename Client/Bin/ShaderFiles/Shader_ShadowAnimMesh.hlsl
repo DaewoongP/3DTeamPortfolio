@@ -1,7 +1,7 @@
 #include "Shader_Client_Defines.hlsli"
 
 float4x4 g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-float4x4 g_BoneMatrices[256];
+float4x4 g_BoneMatrices[512];
 float g_fCamFar;
 
 struct VS_IN

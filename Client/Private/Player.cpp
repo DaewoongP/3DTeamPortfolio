@@ -186,15 +186,20 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_pCustomModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));
 	m_pCustomModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"), CModel::OTHERBODY);
 
-	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(25.f, 3.f, 22.5f);
+	//m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(25.f, 3.f, 22.5f);
 	//m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
 	m_vLevelInitPosition[LEVEL_VAULT] = _float3(161, 2 ,93);
-	m_vLevelInitPosition[LEVEL_SMITH] = _float3(30.f, 3.f, 15.f);
+	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(30.f, 3.f, 15.f);
+	m_vLevelInitPosition[LEVEL_SMITH] = _float3(32.f, 3.f, 25.f);
 	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(94.5f, 7.2f, 78.f);
 	m_vLevelInitPosition[LEVEL_SKY] = _float3(88.8f, 12.5f, 69.8f);
 
 	m_fTargetViewRange = 2.0f;
 
+	BEGININSTANCE;
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Music/"));	
+	pGameInstance->Play_BGM(TEXT("01_Main.mp3"), 1.0f);
+	ENDINSTANCE;
 
 	//m_vecEaseList.resize(CEase::EASE_END);
 
@@ -242,7 +247,7 @@ HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 void CPlayer::Tick(_float fTimeDelta)
 {
 	BEGININSTANCE;
-	//ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½Æ´Ï¶ï¿½ï¿?
+	
 	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
 	{
 		ENDINSTANCE;
@@ -299,6 +304,8 @@ void CPlayer::Tick(_float fTimeDelta)
 	}
 
 	m_isPreLumos = m_isLumosOn;
+	for(_uint i = 0 ; i<m_vecPlayer_StateParicle.size();++i)
+	m_vecPlayer_StateParicle[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
 
 	//m_pCooltime->Tick(fTimeDelta);
 	//Potion_Duration(fTimeDelta);
@@ -330,7 +337,8 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
-
+		if (nullptr != m_pTarget)
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_EDGEHIGHLIGHT, m_pTarget);
 #ifdef _DEBUG
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
 #endif // _DEBUG
@@ -377,6 +385,10 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		//Protego
 		if (m_pStateContext->Is_Current_State(TEXT("Protego")))
 		{
+			BEGININSTANCE;
+			_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_36443.wav") },{TEXT("playermale_35938.wav") } ,{TEXT("playermale_35067.wav") },{TEXT("playermale_27895.wav") }   };
+			pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
+			ENDINSTANCE;
 		}
 		//È¸ÇÇ½Ã ¹«½Ã
 		else if (m_pStateContext->Is_Current_State(TEXT("Roll")))
@@ -402,6 +414,10 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			break;
 			case CEnemy::ATTACK_LIGHT:
 			{
+				BEGININSTANCE;
+				_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_24397.wav") },{TEXT("playermale_99996.wav") } ,{TEXT("playermale_35941.wav")},{TEXT("playermale_99995.wav") } };
+				pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
+				ENDINSTANCE;
 				if (m_pStateContext->Is_Current_State(TEXT("Jump")))
 				{
 					HitStateDesc.iHitType = CHitState::HIT_HEABY;
@@ -414,6 +430,10 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			break;
 			case CEnemy::ATTACK_HEAVY:
 			{
+				BEGININSTANCE;
+				_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_25735.wav") },{TEXT("playermale_99991.wav") } ,{TEXT("playermale_99992.wav") },{TEXT("playermale_99993.wav") } };
+				pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
+				ENDINSTANCE;
 				HitStateDesc.iHitType = CHitState::HIT_HEABY;
 			}
 			break;
@@ -591,6 +611,8 @@ HRESULT CPlayer::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatr
 	return S_OK;
 }
 
+
+
 void CPlayer::Potion_Duration(_float fTimeDelta)
 {
 	//if (m_isPowerUp)
@@ -676,6 +698,46 @@ HRESULT CPlayer::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+	
+	/* For.Com_PotionParticle */
+	m_vecPotionParticle.resize(2);
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Heal_Particle"), 
+		TEXT("Com_HealParticle"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[0]))))
+	{
+		__debugbreak();
+			return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Maxima_Particle"),
+		TEXT("Com_MaximaParticle"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[1]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	
+	/* For.Com_Player_Effect */
+	//m_vecPlayer_StateParicle.resize(1);
+	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_Effect"),
+	//	TEXT("Com_Blink_Effect"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[0]))))
+	//{
+	//__debugbreak();
+	//	return E_FAIL;
+	//}
+	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_SubEffect"),
+	//	TEXT("Com_Blink_Effect"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[0]))))
+	//{
+	//	__debugbreak();
+	//	return E_FAIL;
+	//}
+	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_Disotrtion"),
+	//	TEXT("Com_Blink_Effect"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[1]))))
+	//{
+	//	__debugbreak();
+	//	return E_FAIL;
+	//}
+
+
+
+
 
 	const CBone* pBone = m_pCustomModel->Get_Bone(TEXT("SKT_RightHand"));
 	if (nullptr == pBone)
@@ -698,6 +760,9 @@ HRESULT CPlayer::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+
+	m_pMagicSlot->Set_OwnerType(CMagic_Sound_Manager::OWNER_PLAYER);
+	m_pMagicSlot->Set_Volum(0.8f);
 
 	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
 	RigidBodyDesc.isStatic = false;
@@ -1101,7 +1166,6 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		CRollState::tagRollStateDesc RollStateDesc;
 
 		RollStateDesc.IsBlink = false;
-
 		Go_Roll(&RollStateDesc);
 	}
 
@@ -1189,20 +1253,16 @@ void CPlayer::Key_Input(_float fTimeDelta)
 				default:
 					break;
 				}
-
-
-
-
-
-
-
-
 				Go_MagicCast(&MagicCastingStateDesc);
 			}
 		}
 
 		if (pGameInstance->Get_DIKeyState(DIK_C, CInput_Device::KEY_DOWN))
 		{
+			BEGININSTANCE;
+			_tchar szVoiceTag[3][MAX_PATH] = { {TEXT("playermale_34286.wav") },{TEXT("playermale_23883.wav") } ,{TEXT("playermale_32104.wav") } };
+			pGameInstance->Play_Sound(szVoiceTag[rand() % 3], CSound_Manager::SOUND_VOICE, 0.7f, true);
+			ENDINSTANCE;
 			m_pCard_Fig->Spawn_Fig(m_pTarget);
 		}
 
@@ -1422,7 +1482,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Top
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Jacket_Arcane_A"),
+		TEXT("Prototype_Component_MeshPart_Jacket_Arcane"),
 		CCustomModel::TOP)))
 	{
 		MSG_BOX("Failed Add MeshPart Top");
@@ -1913,7 +1973,7 @@ void CPlayer::Shot_Basic_Last_Spell()
 
 void CPlayer::Protego()
 {
-	m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_ENEMY_ATTACK | COL_SHIELD), m_isPowerUp);
+	m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_ENEMY_ATTACK | COL_MAGIC | COL_SHIELD), m_isPowerUp);
 }
 
 void CPlayer::Gravity_On()
@@ -2531,6 +2591,9 @@ void CPlayer::Go_Roll(void* _pArg)
 		)
 	{
 		m_pStateContext->Set_StateMachine(TEXT("Roll"), _pArg);
+		for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
+		m_vecPlayer_StateParicle[i]->Play(m_pTransform->Get_Position());
+
 	}
 }
 
@@ -2887,11 +2950,13 @@ void CPlayer::Blink_Start()
 void CPlayer::Blink_End()
 {
 	m_isBlink = false;
+	//m_vecPlayer_StateParicle[0]->Stop();
 }
 
 void CPlayer::Healing()
 {
 	m_pPlayer_Information->fix_HP(40);
+	
 
 
 
@@ -2988,9 +3053,20 @@ void CPlayer::Go_Use_Potion()
 
 	UseItemDesc.funcPotion = [&] {(*this).Drink_Heal_Potion(); };
 	
+	if(UseItemDesc.eItem_Id==ITEM_ID_WIGGENWELD_POTION)
+	m_vecPotionParticle[0]->Play(m_pTransform->Get_Position());
+	
+	if (UseItemDesc.eItem_Id == ITEM_ID_MAXIMA_POTION)
+		m_vecPotionParticle[1]->Play(m_pTransform->Get_Position());
+
+
 	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
 		(m_pStateContext->Is_Current_State(TEXT("Idle"))))
 	{
+		BEGININSTANCE;
+		_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_36445.wav") },{TEXT("playermale_28806.wav") } ,{TEXT("playermale_33405.wav") } ,{TEXT("playermale_36448.wav") } };
+		pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f,true);
+		ENDINSTANCE;
 		m_pStateContext->Set_StateMachine(TEXT("UseItem"), &UseItemDesc);
 	}
 }
@@ -3101,6 +3177,16 @@ void CPlayer::Free()
 
 		Safe_Release(m_StateMachineDesc.pOwnerModel);
 		Safe_Release(m_StateMachineDesc.pPlayerTransform);
+
+		for (int i = 0; i < m_vecPotionParticle.size(); i++)
+		{
+			Safe_Release(m_vecPotionParticle.data()[i]);
+		}
+		for (int i = 0; i < m_vecPlayer_StateParicle.size(); i++)
+		{
+			Safe_Release(m_vecPlayer_StateParicle.data()[i]);
+		}
+
 
 		m_vecCoolTimeRatio.clear();
 		m_vecSpellCheck.clear();

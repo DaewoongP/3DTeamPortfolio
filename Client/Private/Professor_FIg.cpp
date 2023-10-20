@@ -54,7 +54,8 @@ HRESULT CProfessor_Fig::Initialize(void* pArg)
 
 	if (FAILED(Make_Notifies()))
 		return E_FAIL;
-
+	m_pMagicSlot->Set_OwnerType(CMagic_Sound_Manager::OWNER_FIG);
+	m_pMagicSlot->Set_Volum(0.5f);
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
@@ -112,7 +113,10 @@ void CProfessor_Fig::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		{
 			return;
 		}
-
+		BEGININSTANCE;
+		_tchar szVoiceTag[2][MAX_PATH] = { {TEXT("eleazarfig_13367.wav") },{TEXT("eleazarfig_13368.wav")} };
+		pGameInstance->Play_Sound(szVoiceTag[rand() % 2], CSound_Manager::SOUND_VOICE, 0.5f, true);
+		ENDINSTANCE;
 		//Protego
 		if (BUFF_PROTEGO & m_iCurrentSpell)
 		{

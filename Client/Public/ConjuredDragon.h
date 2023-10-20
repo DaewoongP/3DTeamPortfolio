@@ -14,6 +14,7 @@ BEGIN(Engine)
 class CSequence;
 class CSelector;
 class CRandomChoose;
+class CCamera_Shake;
 END
 
 BEGIN(Client)
@@ -98,6 +99,14 @@ private:
 	CMagicSlot* m_pMagicSlot = { nullptr };
 	CWeapon_Dragon_Head* m_pWeapon = { nullptr };
 
+private:
+	//카메라 쉐이크 노티파이에 함수를 넣기 위한 클래스
+	CCamera_Shake* m_pEnter_Shake = { nullptr };
+
+private:
+	virtual HRESULT Add_Components_for_Shake();
+	virtual HRESULT Make_Notifies_for_Shake();
+
 private: // For. Effect
 	_float3 m_vOffsetPos = { _float3() }; 
 	_float3 m_vHeadPosition = { _float3() };
@@ -156,7 +165,7 @@ private: /* Notify Func */
 	void Off_Breath();
 	void Action_Pulse();
 	void Pulse_Charge();
-	void Pulse_StopCharge();
+	void Pulse_Stop_Charge();
 
 public:
 	static CConjuredDragon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

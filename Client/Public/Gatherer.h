@@ -60,8 +60,12 @@ private:
 	CPlayer*			 m_pPlayer = { nullptr };			 // 플레이어 주소
 	CPlayer_Information* m_pPlayerInformation = { nullptr }; // 플레이어 인벤토리와 상호작용하기 위한 주소
 
-	CUI_Interaction*	m_pUI_Interaction = { nullptr };
 	CLight* m_pLight_Horklump = { nullptr };				 // 호클럼프 버섯 빛
+
+	CUI_Interaction* m_pUI_Interaction_Ash = { nullptr };
+	CUI_Interaction* m_pUI_Interaction_Hor = { nullptr };
+	CUI_Interaction* m_pUI_Interaction_Lea = { nullptr };
+	CUI_Interaction* m_pUI_Interaction_Lee = { nullptr };
 
 private:
 	// 절두체 컬링을 위해 Bounding Box를 생성 하기위한 최소, 최대 정점
@@ -74,6 +78,8 @@ private:
 	_bool			m_isDissolveStart = { false };
 
 	_uint			m_iCurrentLevel = { LEVEL_END };
+
+	_float4x4		m_UIMatirx;
 
 private:
 	MAPOBJECTDESC	m_ObjectDesc;
