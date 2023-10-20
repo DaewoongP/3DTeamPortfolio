@@ -68,8 +68,8 @@ HRESULT CUI_Effect_Back::Render()
 		if (FAILED(m_pShaderCom->Begin("Alpha")))
 			return E_FAIL;
 		break;
-	case Client::CUI_Effect_Back::SKILL:
-		if (FAILED(m_pShaderCom->Begin("Cool")))
+	case Client::CUI_Effect_Back::MAINSKILL:
+		if (FAILED(m_pShaderCom->Begin("MainSkill")))
 			return E_FAIL;
 		break;
 	case Client::CUI_Effect_Back::SKILLBACK:
@@ -194,7 +194,7 @@ HRESULT CUI_Effect_Back::SetUp_ShaderResources()
 			return E_FAIL;
 	}
 	break;
-	case Client::CUI_Effect_Back::SKILL:
+	case Client::CUI_Effect_Back::MAINSKILL:
 	{
 		//if (FAILED(m_pShaderCom->Bind_RawValue("g_isClicked", &m_isClicked, sizeof(_bool))))
 		//	return E_FAIL;
@@ -204,6 +204,43 @@ HRESULT CUI_Effect_Back::SetUp_ShaderResources()
 			if (FAILED(m_pShaderCom->Bind_RawValue("g_fCoolTime", &Cool, sizeof(_float))))
 				return E_FAIL;
 		}
+
+		if (CUI_Group_SkillTap::SKILLTAP::ARRESTOMOMENTUM <= m_eSkillType && m_eSkillType <= CUI_Group_SkillTap::SKILLTAP::TRANSFORMATIONOVERLAND)
+		{
+			// yellow
+			_float4 vColor = _float4(255.f / 255.f, 255.f / 255.f, 0.f, 1.f);
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_vBackColor", &vColor, sizeof(_float4))))
+				return E_FAIL;
+		}
+		else if (CUI_Group_SkillTap::SKILLTAP::ACCIO <= m_eSkillType && m_eSkillType <= CUI_Group_SkillTap::SKILLTAP::FILPENDO)
+		{
+			// purple
+			_float4 vColor = _float4(204.f / 255.f, 204.f / 255.f, 1.f, 1.f);
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_vBackColor", &vColor, sizeof(_float4))))
+				return E_FAIL;
+		}
+		else if (CUI_Group_SkillTap::SKILLTAP::CONFRINGO <= m_eSkillType && m_eSkillType <= CUI_Group_SkillTap::SKILLTAP::EXPULSO)
+		{
+			// red
+			_float4 vColor = _float4(255.f / 255.f, 51.f / 255.f, 51.f / 255.f, 1.f);
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_vBackColor", &vColor, sizeof(_float4))))
+				return E_FAIL;
+		}
+		else if (CUI_Group_SkillTap::SKILLTAP::INCENDIO <= m_eSkillType && m_eSkillType <= CUI_Group_SkillTap::SKILLTAP::REPARE)
+		{
+			// sky
+			_float4 vColor = _float4(204 / 255.f, 1.f, 1.f, 1.f);
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_vBackColor", &vColor, sizeof(_float4))))
+				return E_FAIL;
+		}
+		else if (CUI_Group_SkillTap::SKILLTAP::WINGARDIUM <= m_eSkillType && m_eSkillType <= CUI_Group_SkillTap::SKILLTAP::IMPERIUS)
+		{
+			// green
+			_float4 vColor = _float4(51.f / 255.f, 255.f / 255.f, 204.f / 255.f, 1.f);
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_vBackColor", &vColor, sizeof(_float4))))
+				return E_FAIL;
+		}
+
 	}
 	break;
 	case Client::CUI_Effect_Back::SKILLBACK:
