@@ -50,7 +50,7 @@ PS_OUT PS_MAIN(PS_IN In)
     vector vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
 
     float2 uv = In.vTexUV;
-    float fWidth = 3.f;
+    float fWidth = 1.f;
 
     int i = 0;
     // right
