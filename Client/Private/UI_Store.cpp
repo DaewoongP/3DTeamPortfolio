@@ -277,7 +277,7 @@ HRESULT CUI_Store::Set_Item()
 	m_pItems.resize(m_pSlots.size());
 
 	m_pItems[0] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_HAT_ARCANE, LEVEL_STATIC, nullptr);
-	m_pItems[1] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_HAT_DARTARTS_DELUX, LEVEL_STATIC, nullptr);
+	m_pItems[1] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_HAT_WIZARD, LEVEL_STATIC, nullptr);
 	m_pItems[2] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_MASK_DEMIGUISE, LEVEL_STATIC, nullptr);
 	m_pItems[3] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_MASK_GUARDIAN, LEVEL_STATIC, nullptr);
 	m_pItems[4] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_MASK_NIFFLER, LEVEL_STATIC, nullptr);

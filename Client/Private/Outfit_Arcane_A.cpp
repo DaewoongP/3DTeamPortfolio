@@ -17,7 +17,7 @@ HRESULT COutfit_Arcane_A::Initialize_Prototype(_uint iLevel)
 	// 아이템 정보
 	m_ItemCreateDesc.eItemId = ITEM_ID_OUTFIT_ARCANE_A;
 	m_ItemCreateDesc.eItemType = OUTFIT;
-	m_ItemCreateDesc.wstrKoreanName = TEXT("아케인 자켓_R");
+	m_ItemCreateDesc.wstrKoreanName = TEXT("아케인 세트_R");
 	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Gear/UI_T_GA_Outfit_076_M.png");
 	m_ItemCreateDesc.iCost = 100;
 
@@ -54,7 +54,7 @@ _bool COutfit_Arcane_A::Buy()
 
 void COutfit_Arcane_A::Equipment()
 {
-	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Outfit_Arcane_A")
+	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Jacket_Arcane_A")
 		, CCustomModel::MESHTYPE::TOP);
 	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Pants_Arcane")
 		, CCustomModel::MESHTYPE::PANTS);

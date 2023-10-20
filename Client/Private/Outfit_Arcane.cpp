@@ -54,11 +54,11 @@ _bool COutfit_Arcane::Buy()
 
 void COutfit_Arcane::Equipment()
 {
-	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Outfit_Arcane")
+	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Jacket_Arcane")
 		, CCustomModel::MESHTYPE::TOP);
 	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Pants_Arcane")
 		, CCustomModel::MESHTYPE::PANTS);
-	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Socks_E")
+	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Socks_D")
 		, CCustomModel::MESHTYPE::SOCKS);
 	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Boots_Arcane")
 		, CCustomModel::MESHTYPE::SHOES);
