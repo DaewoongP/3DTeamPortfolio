@@ -284,7 +284,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	Go_Protego(&m_ProtegoStateDesc);
 
 	Fix_Mouse();
-	Update_Cloth(fTimeDelta);
+	//Update_Cloth(fTimeDelta);
 
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
@@ -303,6 +303,8 @@ void CPlayer::Tick(_float fTimeDelta)
 	}
 
 	m_isPreLumos = m_isLumosOn;
+	for(_uint i = 0 ; i<m_vecPlayer_StateParicle.size();++i)
+	m_vecPlayer_StateParicle[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
 
 	//m_pCooltime->Tick(fTimeDelta);
 	//Potion_Duration(fTimeDelta);
@@ -608,6 +610,8 @@ HRESULT CPlayer::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatr
 	return S_OK;
 }
 
+
+
 void CPlayer::Potion_Duration(_float fTimeDelta)
 {
 	//if (m_isPowerUp)
@@ -693,6 +697,46 @@ HRESULT CPlayer::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+	
+	/* For.Com_PotionParticle */
+	m_vecPotionParticle.resize(2);
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Heal_Particle"), 
+		TEXT("Com_HealParticle"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[0]))))
+	{
+		__debugbreak();
+			return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Maxima_Particle"),
+		TEXT("Com_MaximaParticle"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[1]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	
+	/* For.Com_Player_Effect */
+	//m_vecPlayer_StateParicle.resize(1);
+	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_Effect"),
+	//	TEXT("Com_Blink_Effect"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[0]))))
+	//{
+	//__debugbreak();
+	//	return E_FAIL;
+	//}
+	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_SubEffect"),
+	//	TEXT("Com_Blink_Effect"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[0]))))
+	//{
+	//	__debugbreak();
+	//	return E_FAIL;
+	//}
+	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_Disotrtion"),
+	//	TEXT("Com_Blink_Effect"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[1]))))
+	//{
+	//	__debugbreak();
+	//	return E_FAIL;
+	//}
+
+
+
+
 
 	const CBone* pBone = m_pCustomModel->Get_Bone(TEXT("SKT_RightHand"));
 	if (nullptr == pBone)
@@ -1121,7 +1165,6 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		CRollState::tagRollStateDesc RollStateDesc;
 
 		RollStateDesc.IsBlink = false;
-
 		Go_Roll(&RollStateDesc);
 	}
 
@@ -2547,6 +2590,9 @@ void CPlayer::Go_Roll(void* _pArg)
 		)
 	{
 		m_pStateContext->Set_StateMachine(TEXT("Roll"), _pArg);
+		for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
+		m_vecPlayer_StateParicle[i]->Play(m_pTransform->Get_Position());
+
 	}
 }
 
@@ -2903,11 +2949,13 @@ void CPlayer::Blink_Start()
 void CPlayer::Blink_End()
 {
 	m_isBlink = false;
+	//m_vecPlayer_StateParicle[0]->Stop();
 }
 
 void CPlayer::Healing()
 {
 	m_pPlayer_Information->fix_HP(40);
+	
 
 
 
@@ -3004,6 +3052,13 @@ void CPlayer::Go_Use_Potion()
 
 	UseItemDesc.funcPotion = [&] {(*this).Drink_Heal_Potion(); };
 	
+	if(UseItemDesc.eItem_Id==ITEM_ID_WIGGENWELD_POTION)
+	m_vecPotionParticle[0]->Play(m_pTransform->Get_Position());
+	
+	if (UseItemDesc.eItem_Id == ITEM_ID_MAXIMA_POTION)
+		m_vecPotionParticle[1]->Play(m_pTransform->Get_Position());
+
+
 	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
 		(m_pStateContext->Is_Current_State(TEXT("Idle"))))
 	{
@@ -3121,6 +3176,16 @@ void CPlayer::Free()
 
 		Safe_Release(m_StateMachineDesc.pOwnerModel);
 		Safe_Release(m_StateMachineDesc.pPlayerTransform);
+
+		for (int i = 0; i < m_vecPotionParticle.size(); i++)
+		{
+			Safe_Release(m_vecPotionParticle.data()[i]);
+		}
+		for (int i = 0; i < m_vecPlayer_StateParicle.size(); i++)
+		{
+			Safe_Release(m_vecPlayer_StateParicle.data()[i]);
+		}
+
 
 		m_vecCoolTimeRatio.clear();
 		m_vecSpellCheck.clear();

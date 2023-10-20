@@ -201,6 +201,10 @@ void CDummyParticle::MainMoudle_TreeNode(CEffect_Window* pEffectWindow)
 			if (true == m_MainModuleDesc.isStartColorRange)
 			{
 				pEffectWindow->Table_ColorEdit4("Start Color2", "kxcv883jdsd", &m_MainModuleDesc.vStartColor2);
+				pEffectWindow->Table_CheckBox("OterhColor", "aser2208spjiw", &m_MainModuleDesc.isStartOtherColorRange);
+				if (true == m_MainModuleDesc.isStartOtherColorRange)
+					pEffectWindow->Table_ColorEdit4("Start Color2", "kxcv883jdsd", &m_MainModuleDesc.vStartColor3);
+
 			}
 			
 			pEffectWindow->Table_DragFloat("GravityModifier", "g50j8dfbji0", &m_MainModuleDesc.fGravityModifier, 0.01f, -FLT_MAX, FLT_MAX);

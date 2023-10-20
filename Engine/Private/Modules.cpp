@@ -65,6 +65,7 @@ HRESULT MAIN_MODULE::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &isDirectionRotation, sizeof(_bool), &dwByte, nullptr);
 	WriteFile(hFile, &isStartColorRange, sizeof(isStartColorRange), &dwByte, nullptr);
 	WriteFile(hFile, &vStartColor2, sizeof(vStartColor2), &dwByte, nullptr);
+	WriteFile(hFile, &vStartColor3, sizeof(vStartColor3), &dwByte, nullptr);
 
 	CloseHandle(hFile);
 
@@ -128,6 +129,8 @@ HRESULT MAIN_MODULE::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &isDirectionRotation, sizeof isDirectionRotation, &dwByte, nullptr);
 	ReadFile(hFile, &isStartColorRange, sizeof(isStartColorRange), &dwByte, nullptr);
 	ReadFile(hFile, &vStartColor2, sizeof(vStartColor2), &dwByte, nullptr);
+	ReadFile(hFile, &vStartColor3, sizeof(vStartColor3), &dwByte, nullptr);
+
 	CloseHandle(hFile);
 
 	return S_OK;

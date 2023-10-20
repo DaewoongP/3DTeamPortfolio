@@ -620,6 +620,41 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			throw TEXT("Prototype_GameObject_Cylinder");
 #pragma endregion
 
+#pragma region Load Player_Effect
+
+		/*For_Player_WandHeadLight*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_WandHead_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/WandLight"), eLevelID))))
+			throw TEXT("Prototype_GameObject_WandHead_Particle");
+		/*For.Player_BlinkEffect*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Blink_Effect")
+		//	, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Blink/BlinkFog"), eLevelID))))
+		//	throw TEXT("Prototype_GameObject_Blink_Effect");
+	
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Blink_SubEffect")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Blink/BlinkFoot"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Blink_SubEffect");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Blink_Disotrtion")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Blink/BlinkDistortion"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Blink_Disotrtion");
+
+
+#pragma endregion
+
+#pragma region Potion_Effect
+
+		/*For_Player_WandHeadLight*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Heal_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/Wiggenweld"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Heal_Particle");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Maxima_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/Maxima"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Maxima_Particle");
+
+#pragma endregion
+
 #pragma region Load Magic
 		{
 			/* --------------Magic-------------- */
@@ -895,6 +930,18 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Monster_Hit/Troll_Stone/"), 3)))
 				throw TEXT("Reserve Particle : Particle_Troll_Stone_Hit");
 
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Effect"),
+				TEXT("../../Resources/GameData/ParticleData/Blink/BlinkFog/"))))
+				throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Effect");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Effect1"),
+				TEXT("../../Resources/GameData/ParticleData/Blink/BlinkFog1/"))))
+				throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Effect1");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Distortion"),
+				TEXT("../../Resources/GameData/ParticleData/Blink/BlinkDistortion/"))))
+				throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Distortion");
+				
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Hit_Circle"),
 				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Hit/Circle/"), 3)))
 				throw TEXT("Reserve Particle : Particle_Pensive_Hit_Circle");
