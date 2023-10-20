@@ -1413,21 +1413,10 @@ HRESULT CPlayer::Ready_MeshParts()
 {
 	_float4 vColor = _float4();
 
-	//Hat
-	if (FAILED(m_pCustomModel->Add_MeshParts(
-		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Hat_Arcane"),
-		CCustomModel::HAT)))
-	{
-		MSG_BOX("Failed Add MeshPart Hat");
-
-		return E_FAIL;
-	}
-
 	//Hair
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Hair_M_C"),
+		TEXT("Prototype_Component_MeshPart_Player_Hair"),
 		CCustomModel::HAIR)))
 	{
 		MSG_BOX("Failed Add MeshPart Hair");

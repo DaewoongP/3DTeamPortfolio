@@ -504,6 +504,7 @@ void CArmored_Troll::DeathBehavior(const _float& fTimeDelta)
 	{
 		m_isDissolve = true;
 		m_fDissolveAmount += fTimeDelta / 1.5f; // 디졸브 값 증가
+		m_pWeapon->On_Dissolve();
 	}
 
 	if (5.5f < m_fDeadTimeAcc && m_fDissolveAmount >= 1.f)

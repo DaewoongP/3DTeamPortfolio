@@ -267,7 +267,7 @@ HRESULT CUI_Store::Set_Item()
 	m_pItems.resize(m_pSlots.size());
 
 	m_pItems[0] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_HAT_ARCANE, LEVEL_STATIC, nullptr);
-	m_pItems[1] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_HAT_DARTARTS_DELUX, LEVEL_STATIC, nullptr);
+	m_pItems[1] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_HAT_WIZARD, LEVEL_STATIC, nullptr);
 	m_pItems[2] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_MASK_DEMIGUISE, LEVEL_STATIC, nullptr);
 	m_pItems[3] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_MASK_GUARDIAN, LEVEL_STATIC, nullptr);
 	m_pItems[4] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_MASK_NIFFLER, LEVEL_STATIC, nullptr);
@@ -276,9 +276,9 @@ HRESULT CUI_Store::Set_Item()
 	m_pItems[7] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_ROBE_DARKARTS, LEVEL_STATIC, nullptr);
 	m_pItems[8] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_ROBE_DARKARTS_DELUX, LEVEL_STATIC, nullptr);
 	m_pItems[9] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_ROBE_QUDDITCH, LEVEL_STATIC, nullptr);
-	m_pItems[10] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_JACKET_ARCANE, LEVEL_STATIC, nullptr);
-	m_pItems[11] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_JACKET_CELTIC, LEVEL_STATIC, nullptr);
-	m_pItems[12] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_JACKET_DARKARTS_DELUX, LEVEL_STATIC, nullptr);
+	m_pItems[10] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_OUTFIT_ARCANE, LEVEL_STATIC, nullptr);
+	m_pItems[11] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_OUTFIT_CELTIC, LEVEL_STATIC, nullptr);
+	m_pItems[12] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_OUTFIT_DARKARTS_DELUX, LEVEL_STATIC, nullptr);
 
 	for (_uint i = 13; i < 20; ++i)
 		m_pItems[i] = CItem::SimpleFactory(ITEM_ID::ITEM_ID_ROBE_ARCANE, LEVEL_STATIC, nullptr);

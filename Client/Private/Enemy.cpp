@@ -172,7 +172,7 @@ HRESULT CEnemy::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatri
 				throw TEXT("Bind_BoneMatrices");
 
 			if (FAILED(m_pShadowShaderCom->Begin("Shadow")))
-				throw TEXT("Shader Begin AnimMesh");
+				throw TEXT("Shader Begin Shadow");
 
 			if (FAILED(m_pModelCom->Render(i)))
 				throw TEXT("Model Render");
@@ -273,6 +273,7 @@ HRESULT CEnemy::Add_Components()
 			TEXT("Com_RootBehavior"), reinterpret_cast<CComponent**>(&m_pRootBehavior))))
 			throw TEXT("Com_RootBehavior");
 
+		/* For.Dissolve_Texture */
 		m_pDissolveTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/VFX/Textures/Noises/VFX_T_NoiseGreypack02_D.png"));
 		if (nullptr == m_pDissolveTexture)
 			throw TEXT("m_pDissolveTexture is nullptr");
@@ -664,22 +665,19 @@ void CEnemy::Free()
 {
 	__super::Free();
 
-	if (true == m_isCloned)
-	{
-		Safe_Release(m_pRootBehavior);
-		Safe_Release(m_pUI_HP);
-		Safe_Release(m_pHealth);
-		Safe_Release(m_pModelCom);
-		Safe_Release(m_pRenderer);
-		Safe_Release(m_pShaderCom);
-		Safe_Release(m_pRigidBody);
-		Safe_Release(m_pShadowShaderCom);
-		Safe_Release(m_pDissolveTexture);
+	Safe_Release(m_pRootBehavior);
+	Safe_Release(m_pUI_HP);
+	Safe_Release(m_pHealth);
+	Safe_Release(m_pModelCom);
+	Safe_Release(m_pRenderer);
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pRigidBody);
+	Safe_Release(m_pShadowShaderCom);
+	Safe_Release(m_pDissolveTexture);
 
-		for (auto iter = m_MagicTickDesc.begin(); iter != m_MagicTickDesc.end(); ++iter)
-		{
-			if (iter->second != nullptr)
-				Safe_Delete(iter->second);
-		}
+	for (auto iter = m_MagicTickDesc.begin(); iter != m_MagicTickDesc.end(); ++iter)
+	{
+		if (iter->second != nullptr)
+			Safe_Delete(iter->second);
 	}
 }

@@ -83,7 +83,6 @@
 #include "Mongrel_Fur_Item.h"
 
 #include "Hat_Arcane.h"
-#include "Hat_DarkArts_Delux.h"
 #include "Hat_Wizard.h"
 #include "Robe_Arcane.h"
 #include "Robe_Beast.h"
@@ -93,21 +92,12 @@
 #include "Mask_Demiguise.h"
 #include "Mask_Guardian.h"
 #include "Mask_Niffler.h"
-#include "Jacket_Arcane.h"
-#include "Jacket_Arcane_A.h"
-#include "Jacket_Celtic.h"
-#include "Jacket_Celtic_A.h"
-#include "Jacket_DarkArts_Delux.h"
-#include "Jacket_DarkArts_Delux_A.h"
-#include "Jacket_DragonGrab.h"
-#include "Jacket_DragonGrab_A.h"
-#include "Pants_Arcane.h"
-#include "Pants_DarkArts_Delux.h"
-#include "Pants_Merlin.h"
-#include "Pants_Stealth.h"
-#include "Boots_Arcane.h"
-#include "Boots_Default.h"
-#include "Boots_Merlin.h"
+#include "Outfit_Arcane.h"
+#include "Outfit_Arcane_A.h"
+#include "Outfit_Celtic.h"
+#include "Outfit_Celtic_A.h"
+#include "Outfit_DarkArts_Delux.h"
+#include "Outfit_DarkArts_Delux_A.h"
 #pragma endregion
 
 
@@ -222,7 +212,10 @@ HRESULT CMain3_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 		return E_FAIL;
 	try /* Failed Check Add_Prototype*/
 	{
-		
+		/* For.Prototype_GameObject_Professor_Fig */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Professor_Fig"),
+			CProfessor_Fig::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Professor_Fig");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -535,8 +528,6 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 #pragma endregion
 
 #pragma region Player_Information
-
-
 		/* For.Prototype_Component_Player_Health */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Player_Health"),
 			CHealth::Create(m_pDevice, m_pContext))))
@@ -546,7 +537,6 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Player_Information"),
 			CPlayer_Information::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Player_Information");
-
 #pragma endregion
 
 #pragma region Load Fig
@@ -555,11 +545,6 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Professor_Fig"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Professor_Fig/Professor_Fig.gcm"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Professor_Fig");
-
-		/* For.Prototype_GameObject_Professor_Fig */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Professor_Fig"),
-			CProfessor_Fig::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Professor_Fig");
 
 		/* For.Prototype_Component_Model_Weopon_Fig_Wand */
 		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
@@ -736,26 +721,6 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 			CRobe_Quidditch::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Robe_Quidditch");
 
-		/* For.Prototype_GameObject_Pants_Arcane */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Pants_Arcane"),
-			CPants_Arcane::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_Pants_Arcane");
-
-		/* For.Prototype_GameObject_Pants_DarkArts_Delux */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Pants_DarkArts_Delux"),
-			CPants_DarkArts_Delux::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_Pants_DarkArts_Delux");
-
-		/* For.Prototype_GameObject_Pants_Merlin */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Pants_Merlin"),
-			CPants_Merlin::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_Pants_Merlin");
-
-		/* For.Prototype_GameObject_Pants_Stealth */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Pants_Stealth"),
-			CPants_Stealth::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_Pants_Stealth");
-
 		/* For.Prototype_GameObject_Mask_Demiguise */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Mask_Demiguise"),
 			CMask_Demiguise::Create(m_pDevice, m_pContext, eLevelID))))
@@ -771,75 +736,45 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 			CMask_Niffler::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Mask_Niffler");
 
-		/* For.Prototype_GameObject_Jacket_Arcane */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Jacket_Arcane"),
-			CJacket_Arcane::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_Jacket_Arcane");
+		/* For.Prototype_GameObject_Outfit_Arcane */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Outfit_Arcane"),
+			COutfit_Arcane::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Outfit_Arcane");
 
-		/* For.Prototype_GameObject_Jacket_Arcane_A */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Jacket_Arcane_A"),
-			CJacket_Arcane_A::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_Jacket_Arcane_A");
+		/* For.Prototype_GameObject_Outfit_Arcane_A */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Outfit_Arcane_A"),
+			COutfit_Arcane_A::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Outfit_Arcane_A");
 
-		/* For.Prototype_GameObject_Jacket_Celtic */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Jacket_Celtic"),
-			CJacket_Celtic::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_Jacket_Celtic");
+		/* For.Prototype_GameObject_Outfit_Celtic */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Outfit_Celtic"),
+			COutfit_Celtic::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Outfit_Celtic");
 
-		/* For.Prototype_GameObject_Jacket_Celtic_A */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Jacket_Celtic_A"),
-			CJacket_Celtic_A::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_Jacket_Celtic_A");
+		/* For.Prototype_GameObject_Outfit_Celtic_A */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Outfit_Celtic_A"),
+			COutfit_Celtic_A::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Outfit_Celtic_A");
 
-		/* For.Prototype_GameObject_Jacket_DarkArts_Delux */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Jacket_DarkArts_Delux"),
-			CJacket_DarkArts_Delux::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_Jacket_DarkArts_Delux");
+		/* For.Prototype_GameObject_Outfit_DarkArts_Delux */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Outfit_DarkArts_Delux"),
+			COutfit_DarkArts_Delux::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Outfit_DarkArts_Delux");
 
-		/* For.Prototype_GameObject_Jacket_DarkArts_Delux_A */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Jacket_DarkArts_Delux_A"),
-			CJacket_DarkArts_Delux_A::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_Jacket_DarkArts_Delux_A");
-
-		/* For.Prototype_GameObject_Jacket_DragonGrab */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Jacket_DragonGrab"),
-			CJacket_DragonGrab::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_Jacket_DragonGrab");
-
-		/* For.Prototype_GameObject_Jacket_DragonGrab_A */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Jacket_DragonGrab_A"),
-			CJacket_DragonGrab_A::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_Jacket_DragonGrab_A");
+		/* For.Prototype_GameObject_Outfit_DarkArts_Delux_A */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Outfit_DarkArts_Delux_A"),
+			COutfit_DarkArts_Delux_A::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Outfit_DarkArts_Delux_A");
 
 		/* For.Prototype_GameObject_Hat_Arcane */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Hat_Arcane"),
 			CHat_Arcane::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Hat_Arcane");
 
-		/* For.Prototype_GameObject_Hat_DarkArts_Delux */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Hat_DarkArts_Delux"),
-			CHat_DarkArts_Delux::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_Hat_DarkArts_Delux");
-
 		/* For.Prototype_GameObject_Hat_Wizard */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Hat_Wizard"),
 			CHat_Wizard::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Hat_Wizard");
-
-		/* For.Prototype_GameObject_Boots_Arcane */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Boots_Arcane"),
-			CBoots_Arcane::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_Boots_Arcane");
-
-		/* For.Prototype_GameObject_Boots_Default */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Boots_Default"),
-			CBoots_Default::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_Boots_Default");
-
-		/* For.Prototype_GameObject_Boots_Merlin */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Boots_Merlin"),
-			CBoots_Merlin::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_Boots_Merlin");
 #pragma endregion
 
 #pragma region MeshParts
@@ -963,15 +898,25 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Pants_Stealth/Pants_Stealth.dat"), TEXT("Pants_Stealth")))))
 			throw TEXT("Prototype_Component_MeshPart_Pants_Stealth");
 
+		/* For.Prototype_Component_MeshPart_Socks_D */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Socks_D"),
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Socks_D/Socks_D.dat"), TEXT("Socks_D")))))
+			throw TEXT("Prototype_Component_MeshPart_Socks_D");
+
+		/* For.Prototype_Component_MeshPart_Socks_E */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Socks_E"),
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Socks_E/Socks_E.dat"), TEXT("Socks_E")))))
+			throw TEXT("Prototype_Component_MeshPart_Socks_E");
+		
 		/* For.Prototype_Component_MeshPart_Boots_Arcane */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Boots_Arcane"),
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Boots_Arcane/Boots_Arcane.dat"), TEXT("Boots_Arcane")))))
 			throw TEXT("Prototype_Component_MeshPart_Boots_Arcane");
 
-		/* For.Prototype_Component_MeshPart_Boots_Default */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Boots_Default"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Boots_Default/Boots_Default.dat"), TEXT("Boots_Default")))))
-			throw TEXT("Prototype_Component_MeshPart_Boots_Default");
+		/* For.Prototype_Component_MeshPart_Boots_DarkArtsDelux */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Boots_DarkArtsDelux"),
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Boots_DarkArtsDelux/Boots_DarkArtsDelux.dat"), TEXT("Boots_DarkArtsDelux")))))
+			throw TEXT("Prototype_Component_MeshPart_Boots_DarkArtsDelux");
 
 		/* For.Prototype_Component_MeshPart_Boots_Merlin */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MeshPart_Boots_Merlin"),
