@@ -111,7 +111,6 @@ HRESULT CScript::Add_Script(const _tchar* pTexturePath)
 	else
 		m_Scripts.push_back(CTexture::Create(m_pDevice, m_pContext, pTexturePath));
 
-
 	return S_OK;
 }
 

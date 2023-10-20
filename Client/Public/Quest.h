@@ -17,6 +17,9 @@ protected:
 	explicit CQuest(const CQuest& rhs);
 	virtual ~CQuest() = default;
 
+public:
+	virtual void	Clear_Quest() PURE;
+
 protected:
 	QUESTSTATE		m_eCurState = { QUESTSTATE_QUESTIONMARK };
 

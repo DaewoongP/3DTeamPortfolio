@@ -23,7 +23,7 @@ HRESULT CLevel_Smith::Initialize()
 	FAILED_CHECK_RETURN(Ready_Layer_NPC(TEXT("Layer_NPC")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_UI(TEXT("Layer_UI")), E_FAIL);
-	FAILED_CHECK_RETURN(Ready_Event(TEXT("Layer_Event")), E_FAIL);
+	//FAILED_CHECK_RETURN(Ready_Event(TEXT("Layer_Event")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Shader(), E_FAIL);
 
 	BEGININSTANCE;
@@ -130,7 +130,8 @@ HRESULT CLevel_Smith::Ready_Layer_NPC(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	Matrix = XMMatrixRotationY(XMConvertToRadians(55.f)) * XMMatrixTranslation(111.95f, 6.25f, 73.5f);
+	//Matrix = XMMatrixRotationY(XMConvertToRadians(55.f)) * XMMatrixTranslation(111.95f, 6.25f, 73.5f);
+	Matrix = XMMatrixRotationY(XMConvertToRadians(55.f)) * XMMatrixTranslation(35.f, 3.f, 15.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Oakes"), pLayerTag, TEXT("GameObject_Oakes"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Oakes)");

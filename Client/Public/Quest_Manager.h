@@ -22,7 +22,6 @@ public:
 	void Clear_Quest(const _tchar* szQuestTag);
 
 private:
-	CQuest*							m_pCurrentQuest = { nullptr };
 	_umap<const _tchar*, CQuest*>	m_Quests;
 
 public:

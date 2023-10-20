@@ -32,6 +32,11 @@ HRESULT CQuest_Save_Fig::Render()
 	return S_OK;
 }
 
+void CQuest_Save_Fig::Clear_Quest()
+{
+	m_isSaved = true;
+}
+
 CQuest_Save_Fig* CQuest_Save_Fig::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CQuest_Save_Fig* pInstance = New CQuest_Save_Fig(pDevice, pContext);
