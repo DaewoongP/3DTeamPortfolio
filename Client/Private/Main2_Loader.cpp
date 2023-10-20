@@ -104,6 +104,8 @@ HRESULT CMain2_Loader::Loading()
 	
 	hr = 0;
 
+	std::lock_guard<std::mutex> lock(mtx);
+
 	switch (m_eNextLevelID)
 	{
 	case LEVEL_LOGO:
@@ -346,8 +348,6 @@ HRESULT CMain2_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 
 	try
 	{
-		std::lock_guard<std::mutex> lock(mtx);
-
 		/* ============ Enemy Weapon Models ============ */
 
 		_float4x4 PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));

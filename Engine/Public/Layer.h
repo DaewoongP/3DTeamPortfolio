@@ -24,7 +24,14 @@ public:
 	HRESULT			Initialize_Level(_uint iCurrentLevelIndex);
 	HRESULT			Add_Component(const _tchar* pComponentTag, class CComponent* pComponent);
 	// 레이어 클리어
-	HRESULT			Clear_Layer();
+	HRESULT			Clear_Layer() {
+		for (auto& pComponent : m_Components)
+			Safe_Release(pComponent.second);
+
+		m_Components.clear();
+
+		return S_OK;
+	}
 	HRESULT			Delete_Component(const _tchar* pComponentTag);
 
 public:
