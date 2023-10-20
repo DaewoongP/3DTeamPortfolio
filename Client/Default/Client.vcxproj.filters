@@ -736,9 +736,6 @@
     <Filter Include="02. GameObject\05. Terrain\03. PlayerInformation">
       <UniqueIdentifier>{32c19ffc-fb69-42ca-ba81-07c40b9b305f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\02. Enemy\07. Pensive\Pensive_Ground_Ball">
-      <UniqueIdentifier>{471c54cd-7a5b-4ece-8242-6d120e185254}</UniqueIdentifier>
-    </Filter>
     <Filter Include="04. Effect\Blink_Effect">
       <UniqueIdentifier>{58d8b344-dfb8-4b48-ab00-f18496e8f003}</UniqueIdentifier>
     </Filter>

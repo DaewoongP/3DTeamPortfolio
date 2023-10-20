@@ -6,6 +6,8 @@
 #include "MagicSlot.h"
 #include "Weapon_Dragon_Head.h"
 #include "MagicBall.h"
+#include "Vault_Torch.h"
+#include "Layer.h"
 
 CPensive::CPensive(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEnemy(pDevice, pContext)
@@ -68,18 +70,38 @@ HRESULT CPensive::Initialize_Level(_uint iCurrentLevelIndex)
 	m_AttackPosition = *m_HitMatrices[0] * m_pModelCom->Get_PivotFloat4x4();
 	m_pHitMatrix = &m_AttackPosition;
 
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
+	BEGININSTANCE
 	CLight::LIGHTDESC LightDesc;
 	LightDesc.eType = CLight::TYPE_POINT;
-	LightDesc.fRange = 20.f;
+	LightDesc.fRange = 10.f;
 	m_vLightColor = LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vAmbient = LightDesc.vDiffuse;
 	LightDesc.vSpecular = LightDesc.vDiffuse;
 	LightDesc.vPos = m_pTransform->Get_Position().TransCoord();
 	pGameInstance->Add_Light(LightDesc, &m_pLight);
-	Safe_Release(pGameInstance);
 	m_pModelCom->Strong_Change_Animation(TEXT("Spawn"));
+	
+	//토치를 찾아와줍시다.
+	CLayer* pLayer = pGameInstance->Find_Layer(iCurrentLevelIndex,TEXT("Layer_BackGround"));
+	ENDINSTANCE;
+	Safe_AddRef(pLayer);
+	_umap<const _tchar*, class CComponent*>* pComponent_Map = pLayer->Get_Components();
+	for (auto it = pComponent_Map->begin(); it != pComponent_Map->end(); ++it)
+	{
+		if (wcsstr((it->first), TEXT("GameObject_Vault_Torch")) != nullptr)
+		{
+			if (it->second != nullptr &&
+				static_cast<CVault_Torch*>(it->second)->Get_TorchIndex() > 23 &&
+				static_cast<CVault_Torch*>(it->second)->Get_TorchIndex() < 36)
+			{
+				m_pTorch.push_back(static_cast<CVault_Torch*>(it->second));
+				Safe_AddRef(it->second);
+			}
+				
+		}
+	}
+	PensiveSwitchOff();
+	Safe_Release(pLayer);
 	return S_OK;
 }
 
@@ -350,6 +372,14 @@ HRESULT CPensive::Make_Notifies()
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("AttackDisable"), Func)))
 		return E_FAIL;
 
+	Func = [&] {(*this).PensiveSwitchOn(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Torch_On"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).PensiveSwitchOff(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Torch_Off"), Func)))
+		return E_FAIL;
+	
 	return S_OK;
 }
 
@@ -464,6 +494,22 @@ void CPensive::DieMagicBall()
 		m_pMagicBall_Sword[1]->Set_MagicBallState(CMagicBall::MAGICBALL_STATE_END);
 	if (m_pMagicBall_Sword[2] != nullptr)
 		m_pMagicBall_Sword[2]->Set_MagicBallState(CMagicBall::MAGICBALL_STATE_END);
+}
+
+void CPensive::PensiveSwitchOn()
+{
+	for (_int i = 0; i < m_pTorch.size(); i++)
+	{
+		m_pTorch[i]->Switch_OnOff(true);
+	}
+}
+
+void CPensive::PensiveSwitchOff()
+{
+	for (_int i = 0; i < m_pTorch.size(); i++)
+	{
+		m_pTorch[i]->Switch_OnOff(false);
+	}
 }
 
 void CPensive::Attack_Ground()
@@ -759,6 +805,10 @@ void CPensive::Free()
 
 	if (true == m_isCloned)
 	{
+		for (_int i = 0; i < m_pTorch.size(); i++)
+		{
+			Safe_Release(m_pTorch[i]);
+		}
 		Safe_Release(m_pDragonHead[0]);
 		Safe_Release(m_pDragonHead[1]);
 		Safe_Release(m_pDragonHead[2]);
