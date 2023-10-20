@@ -9,6 +9,7 @@
 #include "ConjuredDragon.h"
 #include "Armored_Troll.h"
 #include "DarkWizard_M.h"
+#include "DarkWizard_F.h"
 #include "Forest_Troll.h"
 #include "Golem_Combat.h"
 #include "Dugbog.h"
@@ -167,52 +168,10 @@ HRESULT CMain2_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 
 		/* ========================== DEBUG ========================== */
 		/* 밑에 코드는 몬스터의 간단한 행동을 테스트 하기 위해		   */
-		/* 1스테이지에 직접 소환해서 테스트하기 위한 임시 코드입니다.  */
+		/* 1스테이지에 직접 소환하는 임시 코드입니다.				    */
 		/* =========================================================== */
 
-		/* For.Prototype_Component_Model_Weopon_Golem_Combat */
-		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weopon_Golem_Combat"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Golem_Combat_Sword/Golem_Combat_Sword.dat"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Weopon_Golem_Combat");
-
-		/* For.Prototype_Component_Weapon_Golem_Combat */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Weapon_Golem_Combat"),
-			CWeapon_Golem_Combat::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Weapon_Golem_Combat");
-
-		/* For.Prototype_Component_Model_Weopon_DarkWizard_Wand */
-		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weopon_DarkWizard_Wand"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/DarkWizard_Wand/DarkWizard_Wand.dat"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Weopon_DarkWizard_Wand");
-
-		/* For.Prototype_Component_Weapon_DarkWizard_Wand */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Weapon_DarkWizard_Wand"),
-			CWeapon_DarkWizard_Wand::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Weapon_DarkWizard_Wand");
-
 		PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
-		/* For.Prototype_Component_Model_Golem_Combat */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Golem_Combat"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Golem_CombatGrunt/Golem_CombatGrunt.gcm"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Golem_Combat");
-
-		/* For.Prototype_GameObject_Golem_CombatGrunt */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Golem_CombatGrunt"),
-			CGolem_Combat::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Golem_CombatGrunt");
-
-		/* For.Prototype_Component_Model_DarkWizard_M */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_DarkWizard_M"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/DarkWizard_M/DarkWizard_M.gcm"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_DarkWizard_M");
-
-		/* For.Prototype_GameObject_DarkWizard_M */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_DarkWizard_M"),
-			CDarkWizard_M::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_DarkWizard_M");
-
 		PivotMatrix = XMMatrixScaling(0.45f, 0.45f, 0.45f);
 		/* For.Prototype_Component_Model_Wolf */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Wolf"),
@@ -351,7 +310,7 @@ HRESULT CMain2_Loader::Loading_For_Vault(LEVELID eLevelID)
 			throw TEXT("Prototype_Component_Weapon_Pensive_Sword");
 
 		/* ============ Enemy Models ============ */
-		PivotMatrix = XMMatrixScaling(3.5f, 3.5f, 3.5f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+		PivotMatrix = XMMatrixScaling(2.5f, 2.5f, 2.5f) * XMMatrixRotationY(XMConvertToRadians(180.f));
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Pensive"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/PensivePaladin/PensivePaladin.gcm"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Pensive");
@@ -455,6 +414,38 @@ HRESULT CMain2_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_ConjuredDragon"),
 			CConjuredDragon::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_ConjuredDragon");
+
+		/* For.Prototype_Component_Model_Weopon_DarkWizard_Wand */
+		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weopon_DarkWizard_Wand"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/DarkWizard_Wand/DarkWizard_Wand.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Weopon_DarkWizard_Wand");
+
+		/* For.Prototype_Component_Weapon_DarkWizard_Wand */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Weapon_DarkWizard_Wand"),
+			CWeapon_DarkWizard_Wand::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Weapon_DarkWizard_Wand");
+
+		/* For.Prototype_Component_Model_DarkWizard_M */
+		PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_DarkWizard_M"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/DarkWizard_M/DarkWizard_M.gcm"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_DarkWizard_M");
+
+		/* For.Prototype_GameObject_DarkWizard_M */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_DarkWizard_M"),
+			CDarkWizard_M::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_DarkWizard_M");
+
+		/* For.Prototype_Component_Model_DarkWizard_F */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_DarkWizard_F"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/DarkWizard_F/DarkWizard_F.gcm"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_DarkWizard_F");
+
+		/* For.Prototype_GameObject_DarkWizard_F */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_DarkWizard_F"),
+			CDarkWizard_F::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_DarkWizard_F");
 	}
 	catch (const _tchar* pErrorTag)
 	{

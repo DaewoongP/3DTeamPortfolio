@@ -14,6 +14,7 @@ HRESULT CLevel_Sanctum::Initialize()
 	FAILED_CHECK_RETURN(Ready_Lights(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_Monsters(TEXT("Layer_Monster")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Shader(), E_FAIL);
 	
 	BEGININSTANCE;
 	pGameInstance->Reset_World_TimeAcc();
@@ -80,13 +81,15 @@ HRESULT CLevel_Sanctum::Ready_Layer_Monsters(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 
-	_float4x4 Matrix = XMMatrixTranslation(-2.f, -22.f, 130.f);
+	_float4x4 Matrix = XMMatrixTranslation(-34.f, -33.f, 129.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_ConjuredDragon"), pLayerTag, TEXT("GameObject_ConjuredDragon"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_ConjuredDragon)");
 		ENDINSTANCE;
 		return E_FAIL;
 	}
+
+	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Sanctum.mon"));
 
 	ENDINSTANCE;
 
@@ -111,6 +114,22 @@ HRESULT CLevel_Sanctum::Ready_Lights()
 		return E_FAIL;
 
 	ENDINSTANCE;
+	return S_OK;
+}
+
+HRESULT CLevel_Sanctum::Ready_Shader()
+{
+	BEGININSTANCE;
+
+	CRenderer* pRenderer = static_cast<CRenderer*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer")));
+	pRenderer->Defualt_Shading();
+
+
+
+	Safe_Release(pRenderer);
+
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
@@ -180,6 +199,123 @@ HRESULT CLevel_Sanctum::Load_MapObject(const _tchar* pObjectFilePath)
 HRESULT CLevel_Sanctum::Load_MapObject_Ins(const _tchar* pObjectFilePath)
 {
 	return E_NOTIMPL;
+}
+
+HRESULT CLevel_Sanctum::Load_Monsters(const wstring& wstrMonsterFilePath)
+{
+	HANDLE hFile = CreateFile(wstrMonsterFilePath.c_str(), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+	{
+		MSG_BOX("Failed to Create MapObject File for Load MapObject");
+		return E_FAIL;
+	}
+
+	_uint iMonsterNum = 0;
+	_ulong dwByte = { 0 };
+
+	while (true)
+	{
+		_float4x4 WorldMatrix = _float4x4();
+		wstring wstrMonsterTag = { TEXT("") };
+		string strComponentTag = { "" };
+		wstring wstrModelFilePath = { TEXT("") };
+		wstring wstrPrototypeModelTag = { TEXT("") };
+
+		/* Read Monster WorldMatrix */
+		if (!ReadFile(hFile, &WorldMatrix, sizeof(_float4x4), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read WorldMatrix");
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+
+		/* Read Monster Tag */
+		_uint iLength = { 0 };
+		if (!ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read iLength");
+			CloseHandle(hFile);
+		}
+		_tchar wszTag[MAX_PATH] = { TEXT("") };
+		if (!ReadFile(hFile, wszTag, sizeof(_tchar) * iLength, &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read m_vecSaveObject.wszTag");
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		wstrMonsterTag = wszTag;
+
+		/* Read Monster ComponentTag */
+		iLength = { 0 };
+		if (!ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read wstrComponentTag.iTagLen");
+			return E_FAIL;
+		}
+		_char szTag[MAX_PATH] = { "" };
+		if (!ReadFile(hFile, szTag, iLength, &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read wstrComponentTag.wszTag");
+			return E_FAIL;
+		}
+		strComponentTag = szTag;
+
+		/* Read Monster PrototypeModelTag */
+		iLength = { 0 };
+		if (!ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read m_vecSaveObject.iLength");
+			CloseHandle(hFile);
+		}
+		ZEROMEM(wszTag);
+		if (!ReadFile(hFile, wszTag, sizeof(_tchar) * iLength, &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read m_vecSaveObject.wszTag");
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		wstrPrototypeModelTag = wszTag;
+
+		/* Read Monster ModelFilePath */
+		iLength = { 0 };
+		if (!ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read m_vecSaveObject.iLength");
+			CloseHandle(hFile);
+		}
+		ZEROMEM(wszTag);
+		if (!ReadFile(hFile, wszTag, sizeof(_tchar) * iLength, &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read m_vecSaveObject.wszTag");
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		wstrModelFilePath = wszTag;
+
+		if (dwByte == 0)
+		{
+			break;
+		}
+
+		wstring wstrPrototypeTag = TEXT("Prototype_GameObject_");
+		wstrPrototypeTag += wstrMonsterTag;
+		wstring wstrComponentTag = strToWStr(strComponentTag);
+
+		BEGININSTANCE;
+		if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, wstrPrototypeTag.c_str(),
+			TEXT("Layer_Monster"), wstrComponentTag.c_str(), &WorldMatrix)))
+		{
+			MSG_BOX("[Load_Monsters] Failed Load Monster");
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+		ENDINSTANCE;
+	}
+
+	CloseHandle(hFile);
+
+	return S_OK;
 }
 
 CLevel_Sanctum* CLevel_Sanctum::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

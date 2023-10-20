@@ -52,6 +52,7 @@ public:
 	virtual HRESULT Render(_uint iMeshIndex);
 
 public:
+	void	Strong_Change_Animation(const wstring& wstrAnimationTag, ANIMTYPE eType = UPPERBODY);
 	void	Change_Animation(const wstring& wstrAnimationTag, ANIMTYPE eType = UPPERBODY);
 	void	Change_Animation(_uint iAnimIndex, ANIMTYPE eType = UPPERBODY);
 	//루트애니메이션을 사용할경우 ctransform을 넣어준다.

@@ -115,7 +115,9 @@ struct ENGINE_DLL MAIN_MODULE : public MODULE
 	_bool isAutoRandomSeed = { true }; // 파티클 수명 주기마다 랜덤 값을 매번 바뀌게하는 용도.
 	string strStopAction = {"None"}; // None, Disable, Destroy, Callback, Pool // 객체 수명이 다하거나 파티클의 모든 재생이 완료됐을 때 옵션에 따라 행동이 달라진다.
 	_bool isStartColorRange = { false };
-	_float4 vStartColor2 = { 1.f, 1.f, 1.f, 1.f };
+	_bool isStartOtherColorRange = { false };
+	_float4 vStartColor2 = { 1.f, 1.f, 1.f, 1.f };	
+	_float4 vStartColor3 = { 1.f, 1.f, 1.f, 1.f };
 
 	_float fParticleSystemAge = { 0.f };
 };

@@ -425,7 +425,7 @@ HRESULT CDugbog::Add_Components()
 		RigidBodyDesc.fRestitution = 0.f;
 		PxSphereGeometry pSphereGeomatry3 = PxSphereGeometry(1.f);
 		RigidBodyDesc.pGeometry = &pSphereGeomatry2;
-		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
+		RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
 		RigidBodyDesc.pOwnerObject = this;
 		RigidBodyDesc.eThisCollsion = COL_ENEMY_ATTACK;
@@ -438,14 +438,14 @@ HRESULT CDugbog::Add_Components()
 		RigidBodyDesc.isStatic = true;
 		RigidBodyDesc.isTrigger = true;
 		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
-		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.5f, 1.5f);
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.5f, 0.5f);
 		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, XMConvertToRadians(90.f), 0.f);
 		RigidBodyDesc.fStaticFriction = 0.f;
 		RigidBodyDesc.fDynamicFriction = 1.f;
 		RigidBodyDesc.fRestitution = 0.f;
-		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.6f, 1.2f);
+		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.6f, 1.f);
 		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
-		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
+		RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 1.f, 1.f);
 		RigidBodyDesc.pOwnerObject = this;
 		RigidBodyDesc.eThisCollsion = COL_ENEMY_ATTACK;
@@ -521,9 +521,15 @@ HRESULT CDugbog::Bind_HitMatrices()
 void CDugbog::DeathBehavior(const _float& fTimeDelta)
 {
 	m_isDead = true;
-
 	m_fDeadTimeAcc += fTimeDelta;
-	if (3.f < m_fDeadTimeAcc)
+
+	if (1.f < m_fDeadTimeAcc)
+	{
+		m_isDissolve = true;
+		m_fDissolveAmount += fTimeDelta / 1.5f; // 디졸브 값 증가
+	}
+
+	if (3.f < m_fDeadTimeAcc && m_fDissolveAmount >= 1.f)
 		Set_ObjEvent(OBJ_DEAD);
 }
 
@@ -808,7 +814,7 @@ HRESULT CDugbog::Make_Alive(_Inout_ CSelector* pSelector)
 			});
 
 		/* Set Options */
-		pRandom_Attacks->Set_Option(1.5f);
+		pRandom_Attacks->Set_Option(2.f);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_Hit_Combo"), pSelector_Hit_Combo)))

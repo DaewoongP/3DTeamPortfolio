@@ -76,6 +76,10 @@ HRESULT CDarkWizard_M::Initialize_Level(_uint iCurrentLevelIndex)
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
+
+	if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -191,9 +195,10 @@ HRESULT CDarkWizard_M::Render()
 
 void CDarkWizard_M::Set_Protego_Collision(CTransform* pTransform, CEnemy::ATTACKTYPE eType) const
 {
-	if (eType & ATTACK_BREAK || eType & ATTACK_SUPERBREAK)
+	if (eType == ATTACK_BREAK || eType == ATTACK_SUPERBREAK)
 	{
-		m_iCurrentSpell ^= BUFF_PROTEGO;
+		if(m_iCurrentSpell & BUFF_PROTEGO)
+			m_iCurrentSpell ^= BUFF_PROTEGO;
 		m_fProtegoCoolTime = 0.f;
 	}
 }
@@ -346,7 +351,7 @@ HRESULT CDarkWizard_M::Make_Magics()
 		magicInitDesc.eMagicTag = PROTEGO;
 		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 0;
-		magicInitDesc.fLifeTime = 60.f;
+		magicInitDesc.fLifeTime = 600.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 		m_MagicDesc = magicInitDesc;
 	}
@@ -361,11 +366,26 @@ HRESULT CDarkWizard_M::Make_Magics()
 		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 10;
 		magicInitDesc.fLifeTime = 0.8f;
-		magicInitDesc.isChase = true;
+		magicInitDesc.isChase = false;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
+	//Skill Magic CONFRINGO
+	{
+		CMagic::MAGICDESC magicInitDesc;
+		magicInitDesc.eBuffType = BUFF_CONFRINGO;
+		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
+		magicInitDesc.eMagicType = CMagic::MT_RED;
+		magicInitDesc.eMagicTag = CONFRINGO;
+		magicInitDesc.fInitCoolTime = 0.f;
+		magicInitDesc.iDamage = 10;
+		magicInitDesc.fLifeTime = 0.8f;
+		magicInitDesc.isChase = false;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, LEVIOSO);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, CONFRINGO);
 
 	return S_OK;
 }
@@ -394,6 +414,10 @@ HRESULT CDarkWizard_M::Make_Notifies()
 
 	Func = [&] {(*this).Cast_Protego(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Cast_Protego"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Cast_Confringo(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Cast_Confringo"), Func)))
 		return E_FAIL;
 
 	Func = [&] {(*this).Shot_Magic(); };
@@ -527,9 +551,6 @@ HRESULT CDarkWizard_M::Add_Components_Level(_uint iCurrentLevelIndex)
 		if (FAILED(Add_Component(iCurrentLevelIndex, TEXT("Prototype_Component_Weapon_DarkWizard_Wand"),
 			TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
 			throw TEXT("Com_Weapon");
-
-		if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
-			return E_FAIL;
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -567,9 +588,15 @@ HRESULT CDarkWizard_M::Bind_HitMatrices()
 void CDarkWizard_M::DeathBehavior(const _float& fTimeDelta)
 {
 	m_isDead = true;
-
 	m_fDeadTimeAcc += fTimeDelta;
-	if (4.f < m_fDeadTimeAcc)
+
+	if (2.f < m_fDeadTimeAcc)
+	{
+		m_isDissolve = true;
+		m_fDissolveAmount += fTimeDelta / 1.5f; // 디졸브 값 증가
+	}
+
+	if (4.f < m_fDeadTimeAcc && m_fDissolveAmount >= 1.f)
 		Set_ObjEvent(OBJ_DEAD);
 }
 
@@ -835,9 +862,9 @@ HRESULT CDarkWizard_M::Make_Check_Spell(_Inout_ CSelector* pSelector)
 			throw TEXT("Failed __super Make_Check_Spell");
 
 		/* Make Child Behaviors */
-		/*CSequence_Groggy* pSequence_Groggy = nullptr;
-		if (FAILED(Create_Behavior(pSequence_Groggy)))
-			throw TEXT("Failed Create_Behavior pSequence_Groggy");*/
+		CAction* pAction_Groggy = nullptr;
+		if (FAILED(Create_Behavior(pAction_Groggy)))
+			throw TEXT("Failed Create_Behavior pAction_Groggy");
 		CSequence_Levitate* pSequence_Levitate = nullptr;
 		if (FAILED(Create_Behavior(pSequence_Levitate)))
 			throw TEXT("Failed Create_Behavior pSequence_Levitate");
@@ -846,14 +873,37 @@ HRESULT CDarkWizard_M::Make_Check_Spell(_Inout_ CSelector* pSelector)
 			throw TEXT("Failed Create_Behavior pSequence_Descendo");
 
 		/* Set Decorations */
+		pAction_Groggy->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_uint* pICurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
+					return false;
+
+				if (BUFF_STUPEFY & *pICurrentSpell)
+					return true;
+
+				return false;
+			});
+
+		pAction_Groggy->Add_Success_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_uint* pICurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
+					return false;
+
+				if (*pICurrentSpell & BUFF_STUPEFY)
+					*pICurrentSpell ^= BUFF_STUPEFY;
+
+				return true;
+			});
 
 		/* Set_Options */
-		//pSequence_Groggy->Set_LoopTime(3.f);
+		pAction_Groggy->Set_Options(TEXT("Groggy"), m_pModelCom);
 		pSequence_Levitate->Set_Option(3.f, 1.6f);
 
 		/* Stupefy */
-		/*if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Groggy"), pSequence_Groggy)))
-			throw TEXT("Failed Assemble_Behavior Sequence_Groggy");*/
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Action_Groggy"), pAction_Groggy)))
+			throw TEXT("Failed Assemble_Behavior Action_Groggy");
 		/* Levioso */
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Levitate"), pSequence_Levitate)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Levitate");
@@ -958,13 +1008,16 @@ HRESULT CDarkWizard_M::Make_NormalAttack(_Inout_ CSelector* pSelector)
 		CSequence* pSequence_Turns = nullptr;
 		if (FAILED(Create_Behavior(pSequence_Turns)))
 			throw TEXT("Failed Create_Behavior pSequence_Turns");
-		CAction* pAction_Cast_Levioso = nullptr;
-		if (FAILED(Create_Behavior(pAction_Cast_Levioso)))
-			throw TEXT("Failed Create_Behavior pAction_Cast_Levioso");
 		CRandomChoose* pRandom_Attack = nullptr;
 		if (FAILED(Create_Behavior(pRandom_Attack)))
 			throw TEXT("Failed Create_Behavior pRandom_Attack");
 
+		CAction* pAction_Cast_Levioso = nullptr;
+		if (FAILED(Create_Behavior(pAction_Cast_Levioso)))
+			throw TEXT("Failed Create_Behavior pAction_Cast_Levioso");
+		CAction* pAction_Cast_Confringo = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Cast_Confringo)))
+			throw TEXT("Failed Create_Behavior pAction_Cast_Confringo");
 		CSequence_Attack* pSequence_Attack_1 = nullptr;
 		if (FAILED(Create_Behavior(pSequence_Attack_1)))
 			throw TEXT("Failed Create_Behavior pSequence_Attack_1");
@@ -985,6 +1038,9 @@ HRESULT CDarkWizard_M::Make_NormalAttack(_Inout_ CSelector* pSelector)
 				if (true == IsDebuff((BUFF_TYPE)*pICurrentSpell))
 					return false;
 
+				if (BUFF_STUPEFY & *pICurrentSpell)
+					return false;
+
 				return true;
 			});
 		pRandom_Attack->Add_Change_Condition(CBehavior::BEHAVIOR_SUCCESS, [&](CBlackBoard* pBlackBoard)->_bool
@@ -993,7 +1049,8 @@ HRESULT CDarkWizard_M::Make_NormalAttack(_Inout_ CSelector* pSelector)
 			});
 
 		/* Set Options */
-		pAction_Cast_Levioso->Set_Options(TEXT("Cast_Levioso"), m_pModelCom, false, 10.f);
+		pAction_Cast_Levioso->Set_Options(TEXT("Cast_Levioso"), m_pModelCom);
+		pAction_Cast_Confringo->Set_Options(TEXT("Cast_Confringo"), m_pModelCom);
 		pSequence_Attack_1->Set_Attack_Action_Options(TEXT("Attack_2Combo_1"), m_pModelCom);
 		pSequence_Attack_1->Set_Attack_Option(15.f);
 		pSequence_Attack_2->Set_Attack_Action_Options(TEXT("Attack_2Combo_2"), m_pModelCom);
@@ -1004,19 +1061,21 @@ HRESULT CDarkWizard_M::Make_NormalAttack(_Inout_ CSelector* pSelector)
 		/* Assemble Behaviors */
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Turns"), pSequence_Turns)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Turns");
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Action_Cast_Levioso"), pAction_Cast_Levioso)))
-			throw TEXT("Failed Assemble_Behavior Action_Cast_Levioso");
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Random_Attack"), pRandom_Attack)))
 			throw TEXT("Failed Assemble_Behavior Random_Attack");
 
 		if (FAILED(Make_Turns(pSequence_Turns)))
 			throw TEXT("Failed Make_Turns");
 
-		if (FAILED(pRandom_Attack->Assemble_Behavior(TEXT("Sequence_Attack_1"), pSequence_Attack_1, 0.35f)))
+		if (FAILED(pRandom_Attack->Assemble_Behavior(TEXT("Action_Cast_Levioso"), pAction_Cast_Levioso, 0.2f)))
+			throw TEXT("Failed Assemble_Behavior Action_Cast_Levioso");
+		if (FAILED(pRandom_Attack->Assemble_Behavior(TEXT("Action_Cast_Confringo"), pAction_Cast_Confringo, 0.2f)))
+			throw TEXT("Failed Assemble_Behavior Action_Cast_Confringo");
+		if (FAILED(pRandom_Attack->Assemble_Behavior(TEXT("Sequence_Attack_1"), pSequence_Attack_1, 0.2f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_1");
-		if (FAILED(pRandom_Attack->Assemble_Behavior(TEXT("Sequence_Attack_2"), pSequence_Attack_2, 0.35f)))
+		if (FAILED(pRandom_Attack->Assemble_Behavior(TEXT("Sequence_Attack_2"), pSequence_Attack_2, 0.2f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_2");
-		if (FAILED(pRandom_Attack->Assemble_Behavior(TEXT("Sequence_Attack_3"), pSequence_Attack_3, 0.3f)))
+		if (FAILED(pRandom_Attack->Assemble_Behavior(TEXT("Sequence_Attack_3"), pSequence_Attack_3, 0.2f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_3");
 	}
 	catch (const _tchar* pErrorTag)
@@ -1036,7 +1095,7 @@ HRESULT CDarkWizard_M::Make_NormalAttack(_Inout_ CSelector* pSelector)
 	return S_OK;;
 }
 
-HRESULT CDarkWizard_M::Make_Taunts(CRandomChoose* pRandomChoose)
+HRESULT CDarkWizard_M::Make_Taunts(_Inout_ CRandomChoose* pRandomChoose)
 {
 	BEGININSTANCE;
 
@@ -1052,6 +1111,9 @@ HRESULT CDarkWizard_M::Make_Taunts(CRandomChoose* pRandomChoose)
 		CAction* pAction_Taunt_2 = nullptr;
 		if (FAILED(Create_Behavior(pAction_Taunt_2)))
 			throw TEXT("Failed Create_Behavior pAction_Taunt_2");
+		CAction* pAction_Taunt_3 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Taunt_3)))
+			throw TEXT("Failed Create_Behavior pAction_Taunt_3");
 
 		/* Set Decorations */
 		pRandomChoose->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -1061,6 +1123,9 @@ HRESULT CDarkWizard_M::Make_Taunts(CRandomChoose* pRandomChoose)
 					return false;
 
 				if (true == IsDebuff((BUFF_TYPE)*pICurrentSpell))
+					return false;
+
+				if (BUFF_STUPEFY & *pICurrentSpell)
 					return false;
 
 				return true;
@@ -1073,12 +1138,15 @@ HRESULT CDarkWizard_M::Make_Taunts(CRandomChoose* pRandomChoose)
 		/* Set Options */
 		pAction_Taunt_1->Set_Options(TEXT("Taunt_1"), m_pModelCom);
 		pAction_Taunt_2->Set_Options(TEXT("Taunt_2"), m_pModelCom);
+		pAction_Taunt_3->Set_Options(TEXT("Taunt_3"), m_pModelCom);
 
 		/* Assemble Behaviors */
-		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Taunt_1"), pAction_Taunt_1, 0.5f)))
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Taunt_1"), pAction_Taunt_1, 0.33f)))
 			throw TEXT("Failed Assemble_Behavior Action_Taunt_1");
-		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Taunt_2"), pAction_Taunt_2, 0.5f)))
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Taunt_2"), pAction_Taunt_2, 0.33f)))
 			throw TEXT("Failed Assemble_Behavior Action_Taunt_2");
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Taunt_3"), pAction_Taunt_3, 0.34f)))
+			throw TEXT("Failed Assemble_Behavior Action_Taunt_3");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -1228,62 +1296,6 @@ HRESULT CDarkWizard_M::Make_Turns(_Inout_ CSequence* pSequence)
 			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_BACK");
 		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_BACK, pAction_Left_180)))
 			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_BACK");
-	}
-	catch (const _tchar* pErrorTag)
-	{
-		wstring wstrErrorMSG = TEXT("[CDarkWizard_M] Failed Make_Turns : \n");
-		wstrErrorMSG += pErrorTag;
-		MSG_BOX(wstrErrorMSG.c_str());
-		__debugbreak();
-
-		ENDINSTANCE;
-
-		return E_FAIL;
-	}
-
-	ENDINSTANCE;
-
-	return S_OK;
-}
-
-HRESULT CDarkWizard_M::Make_Combat(_Inout_ CSelector* pSelector)
-{
-	BEGININSTANCE;
-
-	try /* Failed Check Make_Turns */
-	{
-		if (nullptr == pSelector)
-			throw TEXT("Parameter pSelector is nullptr");
-
-		/* Make Child Behaviors */
-		CAction* pAction_Levioso = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Levioso)
-			throw TEXT("pAction_Levioso is nullptr");
-		CAction* pAction_Protego = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Protego)
-			throw TEXT("pAction_Protego is nullptr");
-
-		/* Set Decorations */
-		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
-			{
-				_bool* pIsRangeInEnemy = { nullptr };
-
-				if (FAILED(pBlackBoard->Get_Type("isRangeInEnemy", pIsRangeInEnemy)))
-					return false;
-
-				return *pIsRangeInEnemy;
-			});
-
-		/* Set Options */
-		pAction_Levioso->Set_Options(TEXT("Attack_Cast_Levioso"), m_pModelCom, false, 10.f);
-		pAction_Protego->Set_Options(TEXT("Cast_Protego"), m_pModelCom, false, 10.f);
-
-		/* Assemble Behaviors */
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Action_Levioso"), pAction_Levioso)))
-			throw TEXT("Failed Assemble_Behavior Action_Levioso");
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Action_Protego"), pAction_Protego)))
-			throw TEXT("Failed Assemble_Behavior Action_Protego");
-
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -1550,10 +1562,6 @@ void CDarkWizard_M::Cast_Levioso()
 	if (nullptr == m_pTarget)
 		return;
 
-	_float4x4 OffsetMatrix = _float4x4();
-	if (nullptr != m_pTarget)
-		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
-
 	m_CastingMagic = m_pMagicSlot->Action_Magic_Skill(0, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_NPC | COL_SHIELD));
 }
 
@@ -1562,8 +1570,17 @@ void CDarkWizard_M::Cast_Protego()
 	if (nullptr == m_pTarget)
 		return;
 
+	m_pHitMatrix = m_HitMatrices[2];
 	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COL_MAGIC);
 	m_iCurrentSpell |= BUFF_PROTEGO;
+}
+
+void CDarkWizard_M::Cast_Confringo()
+{
+	if (nullptr == m_pTarget)
+		return;
+
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Skill(1, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_NPC | COL_SHIELD));
 }
 
 void CDarkWizard_M::Shot_Magic()

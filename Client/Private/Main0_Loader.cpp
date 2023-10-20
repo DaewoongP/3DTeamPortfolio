@@ -52,6 +52,7 @@
 #include "Breath.h"
 #include "Pulse.h"
 #include "RadialBlur.h"
+#include "Projectile_White_Effect.h"
 #pragma endregion Effects
 
 #pragma region Magic
@@ -87,6 +88,8 @@
 #include "Pensive_Shouting.h"
 #include "Pensive_Sword_Throw.h"
 #include "Pensive_Mace_Attack.h"
+
+#include "Magic_Sound_Manager.h"
 #pragma endregion Magic
 
 #include "Trigger_Vault.h"
@@ -322,6 +325,11 @@ HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Pulse"),
 			CPulse::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Pulse");
+
+		/* For.Prototype_GameObject_Projectile_White*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Projectile_White_Effect"),
+			CProjectile_White_Effect::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Projectile_White_Effect");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -612,6 +620,41 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			throw TEXT("Prototype_GameObject_Cylinder");
 #pragma endregion
 
+#pragma region Load Player_Effect
+
+		/*For_Player_WandHeadLight*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_WandHead_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/WandLight"), eLevelID))))
+			throw TEXT("Prototype_GameObject_WandHead_Particle");
+		/*For.Player_BlinkEffect*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Blink_Effect")
+		//	, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Blink/BlinkFog"), eLevelID))))
+		//	throw TEXT("Prototype_GameObject_Blink_Effect");
+	
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Blink_SubEffect")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Blink/BlinkFoot"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Blink_SubEffect");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Blink_Disotrtion")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Blink/BlinkDistortion"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Blink_Disotrtion");
+
+
+#pragma endregion
+
+#pragma region Potion_Effect
+
+		/*For_Player_WandHeadLight*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Heal_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/Wiggenweld"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Heal_Particle");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Maxima_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/Maxima"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Maxima_Particle");
+
+#pragma endregion
+
 #pragma region Load Magic
 		{
 			/* --------------Magic-------------- */
@@ -715,12 +758,10 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 				CBombarda::Create(m_pDevice, m_pContext, eLevelID))))
 				throw TEXT("Prototype_GameObject_Bombarda");
 			
+			/* For.Prototype_GameObject_Blink_Trail */
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Blink_Trail"),
 				CBlink_Effect::Create(m_pDevice, m_pContext, eLevelID))))
 				throw TEXT("Prototype_GameObject_Blink_Trail");
-
-		
-
 		}
 		
 
@@ -775,6 +816,12 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MagicSlot"),
 			CMagicSlot::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_MagicSlot");
+
+		/* For.Prototype_GameObject_Magic_Sound_Manager */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Magic_Sound_Manager"),
+			CMagic_Sound_Manager::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Magic_Sound_Manager");
+		
 #pragma endregion
 
 #pragma region Load Particle
@@ -882,6 +929,58 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_Stone_Hit"),
 				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Monster_Hit/Troll_Stone/"), 3)))
 				throw TEXT("Reserve Particle : Particle_Troll_Stone_Hit");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Effect"),
+				TEXT("../../Resources/GameData/ParticleData/Blink/BlinkFog/"))))
+				throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Effect");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Effect1"),
+				TEXT("../../Resources/GameData/ParticleData/Blink/BlinkFog1/"))))
+				throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Effect1");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Distortion"),
+				TEXT("../../Resources/GameData/ParticleData/Blink/BlinkDistortion/"))))
+				throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Distortion");
+				
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Hit_Circle"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Hit/Circle/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Pensive_Hit_Circle");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Hit_Distotion"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Hit/Distotion/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Pensive_Hit_Distotion");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Hit_Spread"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Hit/Spread/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Pensive_Hit_Spread");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Hit_Stick_Glow"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Hit/Stick_Glow/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Pensive_Hit_Stick_Glow");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Black_Water"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Black_Water/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Pensive_Appear_Black_Water");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Water_Bubble"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Water_Bubble/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Pensive_Appear_Water_Bubble");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Water_Main"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Water_Main/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Pensive_Appear_Water_Main");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Water_Splash_01"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Water_Splash_01/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Pensive_Appear_Water_Splash_01");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Water_Splash_02"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Water_Splash_02/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Pensive_Appear_Water_Splash_02");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Flare"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Flare/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Pensive_Appear_Flare");
 		}
 #pragma endregion
 

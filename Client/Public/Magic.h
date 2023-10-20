@@ -65,6 +65,7 @@ public:
 	void Set_CoolMultipleTimer(_float value) { m_fCoolMultipleTimer = value; }
 
 	_float Get_CoolTimeRatio() { return m_fCurrentCoolTime / m_MagicDesc.fInitCoolTime; }
+	SPELL Get_SpellType() { return m_MagicDesc.eMagicTag; }
 
 	//스킬 가속
 	void Set_SkillCoolMultiple(_float fTime, _float fValue) 

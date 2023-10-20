@@ -14,6 +14,7 @@ BEGIN(Engine)
 class CSequence;
 class CSelector;
 class CRandomChoose;
+class CCamera_Shake;
 END
 
 BEGIN(Client)
@@ -87,7 +88,7 @@ private:
 	void Check_Air_Balance(const _float& fTimeDelta);
 
 private: /* 페이즈 관련 함수 */
-	_bool m_isPhaseOne = { true };
+	_bool m_isPhaseOne = { false };
 	_bool m_isPhaseTwo = { false };
 	_bool m_isPhaseFinal = { false };
 	_bool m_isFinish = { false };
@@ -97,6 +98,14 @@ private: /* 페이즈 관련 함수 */
 private:
 	CMagicSlot* m_pMagicSlot = { nullptr };
 	CWeapon_Dragon_Head* m_pWeapon = { nullptr };
+
+private:
+	//카메라 쉐이크 노티파이에 함수를 넣기 위한 클래스
+	CCamera_Shake* m_pEnter_Shake = { nullptr };
+
+private:
+	virtual HRESULT Add_Components_for_Shake();
+	virtual HRESULT Make_Notifies_for_Shake();
 
 private: // For. Effect
 	_float3 m_vOffsetPos = { _float3() }; 
@@ -120,6 +129,7 @@ private:
 	HRESULT Add_Effects();
 
 private: /* 행동 묶음들 */
+	HRESULT Make_NonSpawn(_Inout_ CRandomChoose* pRandomChoose);
 	HRESULT Make_Death(_Inout_ CSequence* pSequence);
 	HRESULT Make_Alive(_Inout_ CSelector* pSelector);
 	HRESULT Make_Final(_Inout_ CSelector* pSelector);
@@ -155,7 +165,7 @@ private: /* Notify Func */
 	void Off_Breath();
 	void Action_Pulse();
 	void Pulse_Charge();
-	void Pulse_StopCharge();
+	void Pulse_Stop_Charge();
 
 public:
 	static CConjuredDragon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

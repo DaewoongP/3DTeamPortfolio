@@ -18,6 +18,13 @@ HRESULT CEvent_Cliffside::Initialize(void* pArg)
 {
 	FAILED_CHECK_RETURN(Add_Components(), E_FAIL);
 
+	BEGININSTANCE;
+
+	pGameInstance->Add_Timer(TEXT("Cliffside_CutScene_Fade_Out"),false,1.0f);
+	pGameInstance->Add_Timer(TEXT("Cliffside_CutScene_Play"),false,4.0f);
+
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
@@ -34,24 +41,118 @@ void CEvent_Cliffside::Late_Tick(_float fTimeDelta)
 
 void CEvent_Cliffside::Check_Event_Play_CutScene_0_0()
 {
-	if (true == m_isCutScene_0_0)
-		return;
+	BEGININSTANCE;
 
-	if (true == m_pCutScene_0_0->Is_Collision())
+	switch (m_eCliffside_Sequence)
 	{
-		BEGININSTANCE;
+	case Client::CEvent_Cliffside::CLIFFSIDE_SEQUENCE_FADE_OUT:
+	{
+		//진입시
+		if (true == m_isEnter)
+		{
+			//페이드 아웃
+			m_pRenderer->FadeOut(1.0f);
+			//타이머 리셋
+			pGameInstance->Reset_Timer(TEXT("Cliffside_CutScene_Fade_Out"));
+			//진입 표시
+			m_isEnter = false;
+		}
 
-		pGameInstance->Add_CutScene(TEXT("CutScene_0_0"));
-
-		ENDINSTANCE;
-
-		if (m_pCutScene_0_0->isDead())
-			m_isCutScene_0_0 = true;
+		//타이머 체크
+		if (true == pGameInstance->Check_Timer(TEXT("Cliffside_CutScene_Fade_Out")))
+		{
+			m_isEnter = true;
+			
+			m_eCliffside_Sequence = CLIFFSIDE_SEQUENCE_PLAY_CUTSCENE;
+			
+			//컷씬 재생
+			pGameInstance->Add_CutScene(TEXT("CutScene_0_0"));
+		}
 	}
+		break;
+	case Client::CEvent_Cliffside::CLIFFSIDE_SEQUENCE_PLAY_CUTSCENE:
+	{
+		//진입시
+		if (true == m_isEnter)
+		{
+			//페이드 인
+			m_pRenderer->FadeIn(1.0f);
+			//타이머 리셋
+			pGameInstance->Reset_Timer(TEXT("Cliffside_CutScene_Play"));
+			//진입 표시
+			m_isEnter = false;
+			
+		}
+
+		//타이머 종료
+		if (true == pGameInstance->Check_Timer(TEXT("Cliffside_CutScene_Play")))
+		{
+			m_eCliffside_Sequence = CLIFFSIDE_SEQUENCE_FADE_OUT_IN;
+			m_isEnter = true;
+		}
+	}
+	break;
+	case Client::CEvent_Cliffside::CLIFFSIDE_SEQUENCE_FADE_OUT_IN:
+	{
+		//진입시
+		if (true == m_isEnter)
+		{
+			//페이드 아웃
+			m_pRenderer->FadeOut(1.0f);
+			//타이머 리셋
+			pGameInstance->Reset_Timer(TEXT("Cliffside_CutScene_Fade_Out"));
+			//진입 표시
+			m_isEnter = false;
+		}
+
+		//타이머 체크
+		if (true == pGameInstance->Check_Timer(TEXT("Cliffside_CutScene_Fade_Out")))
+		{
+			m_isEnter = true;
+
+			m_eCliffside_Sequence = CLIFFSIDE_SEQUENCE_END;
+
+			//페이드 인
+			m_pRenderer->FadeIn(1.0f);
+		}
+	}
+		break;
+	case Client::CEvent_Cliffside::CLIFFSIDE_SEQUENCE_END:
+	{
+		if (true == m_isEnter)
+			break;
+
+		if (true == m_pCutScene_0_0->Is_Collision())
+		{
+			if (m_pCutScene_0_0->isDead())
+			{
+				m_isEnter = true;
+				m_eCliffside_Sequence = CLIFFSIDE_SEQUENCE_FADE_OUT;
+			}
+		}
+	}
+	break;
+	default:
+		break;
+	}
+
+
+
+
+
+	ENDINSTANCE;
 }
 
 HRESULT CEvent_Cliffside::Add_Components()
 {
+	/* Com_Renderer */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
+		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
 	CTrigger::TRIGGERDESC TriggerDesc;
 
 	/* For.Trigger_CutScene_0_0 */
@@ -111,5 +212,6 @@ void CEvent_Cliffside::Free()
 	if (true == m_isCloned)
 	{
 		Safe_Release(m_pCutScene_0_0);
+		Safe_Release(m_pRenderer);
 	}
 }

@@ -55,17 +55,16 @@ protected:
 
 public:
 	// 매직볼의 상태를 강제로 세팅합니다.
-	void Set_MagicBallState(MAGICBALL_STATE eState) { m_eMagicBallState = eState; m_isFirstFrameInState = true;}
+	void Set_MagicBallState(MAGICBALL_STATE eState) { m_eMagicBallState = eState; m_isFirstFrameInState = true; m_isHeavyChange = true;}
 	void Set_MagicBallState_quiet(MAGICBALL_STATE eState) { m_eMagicBallState = eState; m_isFirstFrameInState = false;}
 	_float3 Get_MoveDir() { return m_vDir; }
-	
+
 	// 매직볼의 상태를 자연스레 다음으로 세팅합니다.
 	void Do_MagicBallState_To_Next() { 
 		if (m_eMagicBallState != MAGICBALL_STATE_END)
 		{
 			m_eMagicBallState = static_cast<MAGICBALL_STATE>(m_eMagicBallState + 1);
 			m_isFirstFrameInState = true;
-			m_isHeavyChange = true;
 		}
 	}
 	void Re_Set_StartEndLerpAcc(_float3 vStart, _float3 vDir);

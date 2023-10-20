@@ -64,7 +64,6 @@ private:
 	array<CParticleSystem*, 5> m_DarkAura = { nullptr };
 	array<const _float4x4*, 5> m_DarkAuraBoneMatrix = { nullptr };
 
-
 private:
 	_float m_fDeadTimeAcc = { 0.f };
 	void DeathBehavior(const _float& fTimeDelta);
@@ -73,6 +72,7 @@ private: /* Çàµ¿ ¹­À½µé */
 	HRESULT Make_Death(_Inout_ CSequence* pSequence);
 	HRESULT Make_Alive(_Inout_ CSelector* pSelector);
 
+	HRESULT Make_Intro(_Inout_ CSequence* pSequence);
 	HRESULT Make_Flipendo(_Inout_ CSequence* pSequence);
 	HRESULT Make_Attack_Degree(_Inout_ CSequence* pSequence);
 	HRESULT Make_Pattern_Attack_Far(_Inout_ CSequence* pSequence);

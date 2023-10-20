@@ -18,7 +18,7 @@ HRESULT CRobe_Arcane::Initialize_Prototype(_uint iLevel)
 	m_ItemCreateDesc.eItemId = ITEM_ID_ROBE_ARCANE;
 	m_ItemCreateDesc.eItemType = BACK;
 	m_ItemCreateDesc.wstrKoreanName = TEXT("아케인 로브");
-	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Gear/UI_T_GA_Back_096_M.png");
+	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Gear/UI_T_GA_Back_074_Male.png");
 	m_ItemCreateDesc.iCost = 100;
 
 	// 기어 정보

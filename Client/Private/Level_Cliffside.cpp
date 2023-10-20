@@ -17,6 +17,7 @@ HRESULT CLevel_Cliffside::Initialize()
 	FAILED_CHECK_RETURN(Ready_Layer_Monster(TEXT("Layer_Monster")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_NPC(TEXT("Layer_NPC")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Events(TEXT("Layer_Event")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Shader(), E_FAIL);
 
 	BEGININSTANCE;
 	pGameInstance->Reset_World_TimeAcc();
@@ -100,67 +101,6 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 
-	///////////////////////////////////////////////////////////////////////
-	///////////////	테스트용 몬스터 배치 코드 입니다. /////////////////////
-	///////////////	실전 배치시 해당 코드는 지워주세요.////////////////////
-	///////////////////////////////////////////////////////////////////////
-	_float4x4 Matrix = XMMatrixTranslation(40.f, 10.f, 60.f);
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Golem_CombatGrunt"), pLayerTag, TEXT("GameObject_Golem_Combat"), &Matrix)))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Golem_Combat)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}*/
-	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Wolf"), pLayerTag, TEXT("GameObject_Wolf"), &Matrix)))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Wolf)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-	/*Matrix = XMMatrixTranslation(40.f, 10.f, 65.f);
-	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Dugbog"), pLayerTag, TEXT("GameObject_Dugbog"), &Matrix)))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Dugbog)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}*/
-	/*Matrix = XMMatrixTranslation(35.f, 10.f, 60.f);
-	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Golem_CombatGrunt"), pLayerTag, TEXT("GameObject_Golem_Combat1"), &Matrix)))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Golem_Combat)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-	Matrix = XMMatrixTranslation(35.f, 10.f, 65.f);
-	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Dugbog"), pLayerTag, TEXT("GameObject_Dugbog1"), &Matrix)))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Dugbog)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-	Matrix = XMMatrixTranslation(40.f, 10.f, 55.f);
-	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Golem_CombatGrunt"), pLayerTag, TEXT("GameObject_Golem_Combat2"), &Matrix)))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Golem_Combat)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-	Matrix = XMMatrixTranslation(35.f, 10.f, 55.f);
-	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Dugbog"), pLayerTag, TEXT("GameObject_Dugbog2"), &Matrix)))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Dugbog)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}*/
-	Matrix = XMMatrixTranslation(35.f, 10.f, 65.f);
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_DarkWizard_M"), pLayerTag, TEXT("GameObject_DarkWizard_M"), &Matrix)))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_DarkWizard_M)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}*/
-	///////////////////////////////////////////////////////////////////////
-
 	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Cliff.mon"));
 
 	ENDINSTANCE;
@@ -174,12 +114,12 @@ HRESULT CLevel_Cliffside::Ready_Layer_NPC(const _tchar* pLayerTag)
 
 	_float3 vPosition = _float3(40.f, 6.4f, 62.f);
 
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"), &vPosition)))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"), &vPosition)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Professor_Fig)");
 		ENDINSTANCE;
 		return E_FAIL;
-	}*/
+	}
 
 	ENDINSTANCE;
 
@@ -195,6 +135,22 @@ HRESULT CLevel_Cliffside::Ready_Events(const _tchar* pLayerTag)
 		MSG_BOX("Failed Add_GameObject : (Event_Cliffside)");
 		return E_FAIL;
 	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CLevel_Cliffside::Ready_Shader()
+{
+	BEGININSTANCE;
+
+	CRenderer* pRenderer = static_cast<CRenderer*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer")));
+	pRenderer->Defualt_Shading();
+
+
+
+	Safe_Release(pRenderer);
 
 	ENDINSTANCE;
 
