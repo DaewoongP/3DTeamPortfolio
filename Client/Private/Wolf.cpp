@@ -138,6 +138,7 @@ void CWolf::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			m_CurrentTickSpells.emplace(eBuff, Action);
 			m_eCurrentAnim = WF_DIE; // 원래는 디센도 애니메이션인데 죽는 애니메이션도 겸함
 			m_isDecendo = true;
+			//디센도 카메라 쉐이크
 		}
 
 		// 레비오소 피격중일 때 평타 반응

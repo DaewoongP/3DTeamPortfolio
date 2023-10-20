@@ -86,33 +86,30 @@ void Remap_float4(float4 In, float2 InMinMax, float2 OutMinMax, out float4 Out)
 	Out = OutMinMax.x + (In - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / (InMinMax.y - InMinMax.x);
 }
 
-float PerlinNoise_3D(float x, float y, float z, float fFrequency, float fPersistence
-	, float fOctavesScale, float fOctavesMultiplier, unsigned int fOctaves)
+// 전역 변수들
+float g_fPersistence = 0.5f; // [0, 1] 0에 가까울 수록 부드럽다, 1에 가까울수록 거칠다.
+int g_iNumOctaves = 1;
+float g_fFrequency = 1.f;
+float g_fAmplitude = 1.f;
+
+float PerlinNoise_3D(float x, float y, float z)
 {
-	float total = 0.0;
-	float p = fPersistence;
-	int n = fOctaves - 1;
+	float fFrequency = g_fFrequency;
+	float fAmplitude = g_fAmplitude;
+	float fTotal = 0.f;
+	float fMaxValue = 0.f; // 초기화 값을 0으로 설정
 
-	if (fOctaves > 1)
+	for (int i = 0; i < g_iNumOctaves; i++)
 	{
-		x *= fOctavesScale;
-		y *= fOctavesScale;
-		z *= fOctavesScale;
+		fTotal += InterpolateNoise_3(x * fFrequency, y * fFrequency, z * fFrequency) * fAmplitude;
+
+		fMaxValue += fAmplitude;
+
+		fAmplitude *= g_fPersistence;
+		fFrequency *= 2.0f;
 	}
 
-	for (int i = 0; i <= n; i++)
-	{
-		float fFrequency = pow(2.0, i);
-		float amplitude = pow(p, i);
-
-		total += InterpolateNoise_3(x * fFrequency, y * fFrequency, z * fFrequency) * amplitude;
-	}
-	if (fOctaves > 1)
-	{
-		return total * fOctavesMultiplier;
-	}
-	else
-		return total;
+	return fTotal / fMaxValue;
 }
 
 ////////////////////////////////////////////////////

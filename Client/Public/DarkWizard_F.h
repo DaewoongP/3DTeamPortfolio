@@ -20,12 +20,12 @@ END
 
 BEGIN(Client)
 
-class CDarkWizard_M final : public CEnemy
+class CDarkWizard_F final : public CEnemy
 {
 private:
-	explicit CDarkWizard_M(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CDarkWizard_M(const CDarkWizard_M& rhs);
-	virtual ~CDarkWizard_M() = default;
+	explicit CDarkWizard_F(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CDarkWizard_F(const CDarkWizard_F& rhs);
+	virtual ~CDarkWizard_F() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -94,7 +94,7 @@ private: /* Notify Functions */
 	void Shot_Magic();
 
 public:
-	static CDarkWizard_M* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CDarkWizard_F* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };

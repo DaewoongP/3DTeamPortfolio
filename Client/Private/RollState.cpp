@@ -172,6 +172,7 @@ void CRollState::OnStateTick()
 			{
 				Set_StateMachine(TEXT("Idle"));
 				*m_StateMachineDesc.pisFinishAnimation = false;
+
 			}
 		}
 	}

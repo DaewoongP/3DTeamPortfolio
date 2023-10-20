@@ -54,6 +54,9 @@ HRESULT CCard_Fig::Initialize(void* pArg)
 	m_AttackTags.push_back(TEXT("Attack_Cast_Bombarda"));
 	m_AttackTags.push_back(TEXT("Attack_Cast_Finisher"));
 
+	m_pMagicSlot->Set_OwnerType(CMagic_Sound_Manager::OWNER_FIG);
+	m_pMagicSlot->Set_Volum(0.5f);
+
 	return S_OK;
 }
 
@@ -64,9 +67,12 @@ void CCard_Fig::Tick(_float fTimeDelta)
 	if (false == m_isSpawn)
 	{
 		BEGININSTANCE;
-		_float4x4 CameraWorldMatrix = *m_pParentWorldMatrix;
+		//_float3 vCameraPosition = pGameInstance->Get_CamPosition()->xyz();
+		//_float3 vCameraLook = *pGameInstance->Get_CamLook();
+		_float4x4 CameraWorldMatrix = *m_pParentWorldMatrix;//XMMatrixTranslation(vCameraPosition.x, vCameraPosition.y, vCameraPosition.z);
 		_float4x4 WorldMatrix = m_OffsetMatrix * CameraWorldMatrix;
 		m_pTransform->Set_WorldMatrix(WorldMatrix);
+		//m_pTransform->Set_Look(vCameraLook);
 		ENDINSTANCE;
 	}
 	else
@@ -466,18 +472,21 @@ void CCard_Fig::Action(const _float& fTimeDelta)
 void CCard_Fig::Jump_Up(const _float& fTimeDelta)
 {
 	if (false == m_isAction4)
+	{
+		m_fTimeAcc = 0.f;
 		return;
+	}
 
 	m_fTimeAcc += fTimeDelta;
-	_float fWaitTime = 0.5f;
+	_float fWaitTime = 0.4f;
 
 	if (m_fTimeAcc < fWaitTime)
 		return;
 
 	_float3 vForce = _float3();
 	_float fUpTimeAcc = m_fTimeAcc - fWaitTime;
-	_float fUpTime = 3.f;
-	vForce = m_pTransform->Get_Up() * 10.f;
+	_float fUpTime = 1.f;
+	vForce = m_pTransform->Get_Up() * 300.f;
 
 	vForce = vForce - vForce * (fUpTimeAcc / (fUpTime / 2.f));
 

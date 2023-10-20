@@ -102,7 +102,6 @@ public:
 	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix) override;
 
 
-
 	void Potion_Duration(_float fTimeDelta);
 	virtual void On_Maigc_Throw_Data(void* data) const override;
 	_bool Is_Action_Camera_Playing();
@@ -116,6 +115,8 @@ private:
 	CCoolTime*		m_pCooltime = { nullptr };
 	CDefence*		m_pDefence = { nullptr };
 	CBlink_Effect* m_pBlink = { nullptr };
+	vector<CParticleSystem*> m_vecPotionParticle;
+	vector<CParticleSystem*> m_vecPlayer_StateParicle;
 
 private: /* Card Fig 전용 데이터 */
 	CCard_Fig* m_pCard_Fig = { nullptr };

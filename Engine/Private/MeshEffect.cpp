@@ -7,9 +7,9 @@
 CMeshEffect::CMeshEffect(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	: CGameObject(_pDevice, _pContext)
 {
-	m_Path[TEXTURE_PATH] = TEXT("../../Resources/NonAnims/SM_SpherePrimitiveRegularNormals_01/T_Default_Material_Grid_M.png");
-	m_Path[ALPHA_CLIP_TEXTURE_PATH] = TEXT("../../Resources/Effects/Texture/Gradients/Default_Gradient.png");
-	m_Path[MODEL_PATH] = TEXT("../../Resources/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat");
+	m_Path[TEXTURE_PATH] = TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/T_Default_Material_Grid_M.png");
+	m_Path[ALPHA_CLIP_TEXTURE_PATH] = TEXT("../../Resources/Effects/Textures/Gradients/Default_Gradient.png");
+	m_Path[MODEL_PATH] = TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat");
 }
 
 CMeshEffect::CMeshEffect(const CMeshEffect& _rhs)
@@ -41,14 +41,21 @@ CMeshEffect::CMeshEffect(const CMeshEffect& _rhs)
 	, m_TransfomationMatrix(_rhs.m_TransfomationMatrix)
 	, m_fLifeTime(_rhs.m_fLifeTime)
 	, m_fAge(_rhs.m_fAge)
-	, m_eAnimType(_rhs.m_eAnimType)
-	, m_strPassName(_rhs.m_strPassName)
-	, m_isClipTexture(_rhs.m_isClipTexture)
-	, m_PivotMatrix(_rhs.m_PivotMatrix)
-	, m_strCurAnim(_rhs.m_strCurAnim)
+	, m_isAlphaBlend(_rhs.m_isAlphaBlend)
+	, m_strClipChannel(_rhs.m_strClipChannel)
+	, m_fClipThreshold(_rhs.m_fClipThreshold)
 	, m_isGlow(_rhs.m_isGlow)
 	, m_isDistortion(_rhs.m_isDistortion)
 	, m_isDiffuse(_rhs.m_isDiffuse)
+	, m_isClipTexture(_rhs.m_isClipTexture)
+	, m_isJustActionStop(_rhs.m_isJustActionStop)
+	, m_isFlutter(_rhs.m_isFlutter)
+	, m_vStrength(_rhs.m_vStrength)
+	, m_eAnimType(_rhs.m_eAnimType)
+	, m_strPassName(_rhs.m_strPassName)
+	, m_strCurAnim(_rhs.m_strCurAnim)
+	, m_PivotMatrix(_rhs.m_PivotMatrix)
+	
 {
 	for (_uint i = 0; i < PATH_END; ++i)
 		m_Path[i] = _rhs.m_Path[i];
@@ -362,6 +369,19 @@ HRESULT CMeshEffect::Setup_ShaderResources()
 	if (FAILED(m_pShader->Bind_RawValue("g_fClipThreshold", &m_fClipThreshold, sizeof(_float))))
 		return E_FAIL;
 
+	if (FAILED(m_pShader->Bind_RawValue("g_isFlutter", &m_isFlutter, sizeof(m_isFlutter))))
+		return E_FAIL;
+
+	_float3 vTimeAcc; 
+	vTimeAcc.x += pGameInstance->Get_World_TimeAcc();
+	vTimeAcc.y += vTimeAcc.x + 1.f;
+	vTimeAcc.z += vTimeAcc.x + 2.f;
+	if (FAILED(m_pShader->Bind_RawValue("g_vTimeAcc", &vTimeAcc, sizeof(vTimeAcc))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_RawValue("g_vStrength", &m_vStrength, sizeof(m_vStrength))))
+		return E_FAIL;
+
 	return S_OK;
 }
 HRESULT CMeshEffect::Save(const _tchar* pFilePath)
@@ -413,6 +433,8 @@ HRESULT CMeshEffect::Save(const _tchar* pFilePath)
 	WriteFile(hFile, &m_isGlow, sizeof(m_isGlow), &dwByte, nullptr);
 	WriteFile(hFile, &m_isDistortion, sizeof(m_isDistortion), &dwByte, nullptr);
 	WriteFile(hFile, &m_isDiffuse, sizeof(m_isDiffuse), &dwByte, nullptr);
+	WriteFile(hFile, &m_isFlutter, sizeof(m_isFlutter), &dwByte, nullptr);
+	WriteFile(hFile, &m_vStrength, sizeof(m_vStrength), &dwByte, nullptr);
 	CloseHandle(hFile);
 
 	return S_OK;
@@ -474,6 +496,8 @@ HRESULT CMeshEffect::Load(const _tchar* pFilePath)
 	ReadFile(hFile, &m_isGlow, sizeof(m_isGlow), &dwByte, nullptr);
 	ReadFile(hFile, &m_isDistortion, sizeof(m_isDistortion), &dwByte, nullptr);
 	ReadFile(hFile, &m_isDiffuse, sizeof(m_isDiffuse), &dwByte, nullptr);
+	ReadFile(hFile, &m_isFlutter, sizeof(m_isFlutter), &dwByte, nullptr);
+	ReadFile(hFile, &m_vStrength, sizeof(m_vStrength), &dwByte, nullptr);
 	CloseHandle(hFile);
 
 	return S_OK;

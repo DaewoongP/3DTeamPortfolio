@@ -28,8 +28,10 @@ HRESULT CLevel_Smith::Initialize()
 
 	BEGININSTANCE;
 	pGameInstance->Reset_World_TimeAcc();
-	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
+	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);	
 	ENDINSTANCE;
+
+
 
 	return S_OK;
 }
@@ -50,7 +52,7 @@ void CLevel_Smith::Tick(_float fTimeDelta)
 		}
 	}
 
-	if (pGameInstance->Get_DIKeyState(DIK_F12, CInput_Device::KEY_DOWN))
+	if (pGameInstance->Get_DIKeyState(DIK_F8, CInput_Device::KEY_DOWN))
 	{
 		pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE));
 	}

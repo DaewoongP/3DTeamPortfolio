@@ -1,15 +1,14 @@
 #include "..\Public\MagicSlot.h"
 #include "GameInstance.h"
-
 #include "MagicBallPool.h"
 
 CMagicSlot::CMagicSlot(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CComponent(pDevice, pContext)
+	: CComposite(pDevice, pContext)
 {
 }
 
 CMagicSlot::CMagicSlot(const CMagicSlot& rhs)
-	: CComponent(rhs)
+	: CComposite(rhs)
 {
 }
 
@@ -48,6 +47,20 @@ HRESULT CMagicSlot::Initialize(void* pArg)
 
 	Add_Magic_To_Basic_Slot(0, BASICCAST);
 	Add_Magic_To_Basic_Slot(1, PROTEGO);
+	try /* Check Add_Components */
+	{
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Magic_Sound_Manager"),
+		TEXT("Com_Magic_Sound_Manager"), reinterpret_cast<CComponent**>(&m_pMagic_SoundMgr))))
+		throw TEXT("Com_Magic_Sound_Manager");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CPensive] Failed Add_Components : ");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -136,8 +149,7 @@ CMagicBall* CMagicSlot::Action_Magic_Skill(_uint iIndex, const CGameObject* pTar
 			return nullptr;
 		}
 		
-		
-
+		m_pMagic_SoundMgr->Spell_Magic(m_eOwnerType,m_MagicSlots[iIndex]->Get_SpellType(), m_fVolum);
 		return m_MagicSlots[iIndex]->Magic_Cast(pTarget, pWeaponMatrix, eCollisionFlag,isPowerUp);
 	}
 	else if (m_MagicSlots[iIndex] == nullptr)
@@ -158,7 +170,7 @@ CMagicBall* CMagicSlot::Action_Magic_Basic(_uint iIndex, const CGameObject* pTar
 		{
 			return nullptr;
 		}
-
+		m_pMagic_SoundMgr->Spell_Magic(m_eOwnerType,m_MagicEssentialSlots[iIndex]->Get_SpellType(), m_fVolum);
 		return m_MagicEssentialSlots[iIndex]->Magic_Cast(pTarget, pWeaponMatrix, eCollisionFlag,isPowerUp);
 	}
 	else if (m_MagicEssentialSlots[iIndex] == nullptr)
@@ -198,6 +210,11 @@ CComponent* CMagicSlot::Clone(void* pArg)
 
 void CMagicSlot::Free()
 {
+	if (m_isCloned)
+	{
+		Safe_Release(m_pMagic_SoundMgr);
+	}
+
 	for (auto magic : m_Magics)
 	{
 		Safe_Release(magic);
@@ -214,4 +231,4 @@ void CMagicSlot::Free()
 	}
 
 	__super::Free();
-	}
+}

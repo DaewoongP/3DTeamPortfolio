@@ -588,6 +588,7 @@ void CParticleSystem::Action_By_StopOption()
 			return;
 
 		Set_ObjEvent(CGameObject::OBJ_DEAD);
+		Disable();
 	}
 }
 
@@ -916,15 +917,20 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 	}
 	else
 	{
-		if (RandomBool(0.5f))
+		if (RandomBool(0.33f))
 		{
 			_particle_iter->vColor = m_MainModuleDesc.vStartColor;
 			_particle_iter->vStartColor = m_MainModuleDesc.vStartColor;
 		}
-		else
+		else if(RandomBool(0.33f))
 		{
 			_particle_iter->vColor = m_MainModuleDesc.vStartColor2;
 			_particle_iter->vStartColor = m_MainModuleDesc.vStartColor2;
+		}
+		else 
+		{
+			_particle_iter->vColor = m_MainModuleDesc.vStartColor3;
+			_particle_iter->vStartColor = m_MainModuleDesc.vStartColor3;
 		}
 	}
 	//_particle_iter->fAngle = m_MainModuleDesc.f

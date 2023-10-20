@@ -189,6 +189,7 @@
     <ClInclude Include="..\Public\ConjuredDragon.h" />
     <ClInclude Include="..\public\CraftState.h" />
     <ClInclude Include="..\Public\Cylinder.h" />
+    <ClInclude Include="..\Public\DarkWizard_F.h" />
     <ClInclude Include="..\Public\DarkWizard_M.h" />
     <ClInclude Include="..\Public\Door.h" />
     <ClInclude Include="..\Public\Dummy_NPC.h" />
@@ -219,6 +220,7 @@
     <ClInclude Include="..\Public\Jammin.h" />
     <ClInclude Include="..\Public\Level_Sky.h" />
     <ClInclude Include="..\public\Level_Static.h" />
+    <ClInclude Include="..\Public\Magic_Sound_Manager.h" />
     <ClInclude Include="..\Public\Mask_Demiguise.h" />
     <ClInclude Include="..\Public\Mask_Guardian.h" />
     <ClInclude Include="..\Public\Mask_Niffler.h" />
@@ -245,6 +247,7 @@
     <ClInclude Include="..\Public\Pensive_Sword_Throw.h" />
     <ClInclude Include="..\Public\Player.h" />
     <ClInclude Include="..\public\PotionStationCamera.h" />
+    <ClInclude Include="..\public\Projectile_White_Effect.h" />
     <ClInclude Include="..\public\Quest.h" />
     <ClInclude Include="..\public\Quest_Manager.h" />
     <ClInclude Include="..\public\Quest_Save_Fig.h" />
@@ -509,6 +512,7 @@
     <ClCompile Include="..\Private\ConjuredDragon.cpp" />
     <ClCompile Include="..\private\CraftState.cpp" />
     <ClCompile Include="..\Private\Cylinder.cpp" />
+    <ClCompile Include="..\Private\DarkWizard_F.cpp" />
     <ClCompile Include="..\Private\DarkWizard_M.cpp" />
     <ClCompile Include="..\Private\Door.cpp" />
     <ClCompile Include="..\Private\Dummy_NPC.cpp" />
@@ -539,6 +543,7 @@
     <ClCompile Include="..\Private\Jammin.cpp" />
     <ClCompile Include="..\Private\Level_Sky.cpp" />
     <ClCompile Include="..\private\Level_Static.cpp" />
+    <ClCompile Include="..\Private\Magic_Sound_Manager.cpp" />
     <ClCompile Include="..\Private\Mask_Demiguise.cpp" />
     <ClCompile Include="..\Private\Mask_Guardian.cpp" />
     <ClCompile Include="..\Private\Mask_Niffler.cpp" />
@@ -565,6 +570,7 @@
     <ClCompile Include="..\Private\Pensive_Sword_Throw.cpp" />
     <ClCompile Include="..\Private\Player.cpp" />
     <ClCompile Include="..\private\PotionStationCamera.cpp" />
+    <ClCompile Include="..\private\Projectile_White_Effect.cpp" />
     <ClCompile Include="..\private\Quest.cpp" />
     <ClCompile Include="..\private\Quest_Manager.cpp" />
     <ClCompile Include="..\private\Quest_Save_Fig.cpp" />
@@ -814,6 +820,7 @@
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ImpulseSphere.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Projectile_White.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Protego.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowAnimMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMesh.hlsl" />
