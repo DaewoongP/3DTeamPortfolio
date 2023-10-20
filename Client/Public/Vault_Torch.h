@@ -7,6 +7,7 @@ class CMesh;
 class CModel;
 class CShader;
 class CRenderer;
+class CParticleSystem;
 END
 
 BEGIN(Client)
@@ -29,9 +30,18 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 
 private:
+	CParticleSystem* m_pEffect = { nullptr };
+
+private:
 	// Torch 넘버링. 구역별로 1, 2, 3 이렇게 나눠진다.
 	// 각 구역에는 총 12개의 Torch가 있다.
 	_uint m_iTorchIndex = { 0 }; 
+
+	_float m_fBrightTime = { 0.f }; // 빛이 타이밍
+	_bool  m_isBrightStart = { false };
+
+private:
+	void Torch_Bright();
 
 public:
 	static CVault_Torch* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
