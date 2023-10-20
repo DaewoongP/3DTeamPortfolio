@@ -1817,6 +1817,9 @@
     <ClInclude Include="..\public\Quest_Save_Fig.h">
       <Filter>10. Quest\Save_Fig</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\DarkWizard_F.h">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\01. Female</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Magic_Sound_Manager.h">
       <Filter>05. Magic\Magic_Sound_Manager</Filter>
     </ClInclude>
@@ -2675,6 +2678,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Quest_Save_Fig.cpp">
       <Filter>10. Quest\Save_Fig</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DarkWizard_F.cpp">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\01. Female</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Magic_Sound_Manager.cpp">
       <Filter>05. Magic\Magic_Sound_Manager</Filter>
