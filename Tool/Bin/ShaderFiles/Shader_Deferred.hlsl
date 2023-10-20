@@ -68,7 +68,7 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     vector vShade = g_ShadeTexture.Sample(LinearSampler, In.vTexUV);
     
     vector vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
-    
+    vSpecular *= 0.2f;
     vector vShadow = g_ShadowTexture.Sample(LinearSampler, In.vTexUV);
     
     if (vShadow.r < 0.8f)
@@ -79,6 +79,32 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     Out.vColor = vDiffuse * vShade + vSpecular;
     
     return Out;
+}
+
+float fbm(float2 n)
+{
+    float total = 0.0, amplitude = 1.0;
+    for (int i = 0; i < 5; i++)
+    {
+        total += noise(n) * amplitude;
+        n += n;
+        amplitude *= 0.4;
+    }
+    return total;
+}
+
+float lightShafts(float2 st)
+{
+    float angle = -0.2;
+    float2 _st = st;
+    st = float2(st.x * cos(angle) - st.y * sin(angle),
+              st.x * sin(angle) + st.y * cos(angle));
+    float val = fbm(float2(st.x * 2. + 200., st.y / 4.));
+    val += fbm(float2(st.x * 2. + 200., st.y / 4.));
+    val = val / 3.;
+    float mask = pow(clamp(1.0 - abs(_st.y - 0.15), 0., 1.) * 0.49 + 0.5, 2.0);
+    mask *= clamp(1.0 - abs(_st.x + 0.2), 0., 1.) * 0.49 + 0.5;
+    return pow(val * mask, 2.0);
 }
 
 technique11 DefaultTechnique
