@@ -141,7 +141,7 @@ HRESULT CPlayer_Information::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Potion_Tap"),
 		TEXT("Com_Potion_Tap"), reinterpret_cast<CComponent**>(&m_pPotionTap))))
 	{
-		MSG_BOX("Failed CPlayer_Information Add_Component : (Com_UI_Group_Finisher)");
+		MSG_BOX("Failed CPlayer_Information Add_Component : (Com_Potion_Tap)");
 		__debugbreak();
 		return E_FAIL;
 	}

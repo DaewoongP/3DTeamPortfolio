@@ -83,7 +83,7 @@ HRESULT CUI_Group_Brew::Initialize(void* pArg)
 	}
 
 	m_pPotionTap = pPlayer->Get_Player_Information()->Get_PotionTap();
-
+	Safe_AddRef(m_pPotionTap);
 	Safe_Release(pGameInstance);
 
 	return S_OK;
