@@ -178,12 +178,12 @@ HRESULT CMagic_Sound_Manager::Initialize_Prototype()
 	m_szSoundTag[OWNER_FIG][SPELL::DEPULSO].push_back(TEXT("eleazarfig_00403-02.wav"));
 
 	m_szSoundTag[OWNER_FIG][SPELL::LEVIOSO].push_back(TEXT("eleazarfig_00413.wav"));
-	m_szSoundTag[OWNER_FIG][SPELL::LEVIOSO].push_back(TEXT("eleazarfig_00413-01.wav"));
-	m_szSoundTag[OWNER_FIG][SPELL::LEVIOSO].push_back(TEXT("eleazarfig_00413-02.wav"));
+	m_szSoundTag[OWNER_FIG][SPELL::LEVIOSO].push_back(TEXT("EleazarFig_00413-01.wav"));
+	m_szSoundTag[OWNER_FIG][SPELL::LEVIOSO].push_back(TEXT("EleazarFig_00413-02.wav"));
 
 	m_szSoundTag[OWNER_FIG][SPELL::PROTEGO].push_back(TEXT("eleazarfig_00414.wav"));
-	m_szSoundTag[OWNER_FIG][SPELL::PROTEGO].push_back(TEXT("eleazarfig_00414-01.wav"));
-	m_szSoundTag[OWNER_FIG][SPELL::PROTEGO].push_back(TEXT("eleazarfig_00414-02.wav"));
+	m_szSoundTag[OWNER_FIG][SPELL::PROTEGO].push_back(TEXT("EleazarFig_00414-01.wav"));
+	m_szSoundTag[OWNER_FIG][SPELL::PROTEGO].push_back(TEXT("EleazarFig_00414-02.wav"));
 
 	m_szSoundTag[OWNER_FIG][SPELL::LUMOS].push_back(TEXT("eleazarfig_00420.wav"));
 

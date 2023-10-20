@@ -23,7 +23,7 @@ HRESULT CLevel_Static::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pC
 
 	FAILED_CHECK_RETURN(Add_Scene(), E_FAIL);
 	FAILED_CHECK_RETURN(Add_Cameras(pDevice, pContext), E_FAIL);
-	//FAILED_CHECK_RETURN(Add_Quests(pDevice, pContext), E_FAIL);
+	FAILED_CHECK_RETURN(Add_Quests(pDevice, pContext), E_FAIL);
 
 	m_pGameInstance->Reset_World_TimeAcc();
 	m_pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
