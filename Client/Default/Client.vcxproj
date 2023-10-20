@@ -219,6 +219,7 @@
     <ClInclude Include="..\Public\Jammin.h" />
     <ClInclude Include="..\Public\Level_Sky.h" />
     <ClInclude Include="..\public\Level_Static.h" />
+    <ClInclude Include="..\Public\Magic_Sound_Manager.h" />
     <ClInclude Include="..\Public\Mask_Demiguise.h" />
     <ClInclude Include="..\Public\Mask_Guardian.h" />
     <ClInclude Include="..\Public\Mask_Niffler.h" />
@@ -539,6 +540,7 @@
     <ClCompile Include="..\Private\Jammin.cpp" />
     <ClCompile Include="..\Private\Level_Sky.cpp" />
     <ClCompile Include="..\private\Level_Static.cpp" />
+    <ClCompile Include="..\Private\Magic_Sound_Manager.cpp" />
     <ClCompile Include="..\Private\Mask_Demiguise.cpp" />
     <ClCompile Include="..\Private\Mask_Guardian.cpp" />
     <ClCompile Include="..\Private\Mask_Niffler.cpp" />

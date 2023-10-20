@@ -1,7 +1,8 @@
 #pragma once
-#include "Component.h"
+#include "Composite.h"
 #include "Client_Defines.h"
 #include "Magic.h"
+#include "Magic_Sound_Manager.h"
 
 BEGIN(Client)
 
@@ -11,14 +12,12 @@ BEGIN(Client)
 // add_magic_skill를 이용해 desc와 함께 마법을 추가할것.
 class CMagicBallPool;
 
-class CMagicSlot final : public CComponent
+class CMagicSlot final : public CComposite
 {
 private:
 	explicit CMagicSlot(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CMagicSlot(const CMagicSlot& rhs);
 	virtual ~CMagicSlot() = default;
-public:
-
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -36,6 +35,9 @@ public:
 	void Set_CoolSpeedTime(_uint iSlot, _float value) { m_MagicSlots[iSlot]->Set_CoolSpeedTime(value); }
 	_float Get_CoolMultipleTimer(_uint iSlot) { return (m_MagicSlots[iSlot]->Get_CoolMultipleTimer()); }
 	void Set_CoolMultipleTimer(_uint iSlot, _float value) { m_MagicSlots[iSlot]->Set_CoolMultipleTimer(value); }
+	
+	void Set_OwnerType(CMagic_Sound_Manager::OWNERTYPE eType) { m_eOwnerType = eType; }
+	void Set_Volum(_float fVolum) { m_fVolum = fVolum; }
 
 	_float Get_CoolTimeRatio(_uint iSlot) { 
 		if (nullptr == m_MagicSlots[iSlot])
@@ -70,6 +72,9 @@ public:
 	CMagicBall* Action_Magic_Basic(_uint iIndex, const CGameObject* pTarget, const CGameObject* pWeaponMatrix, COLLISIONFLAG eCollisionFlag, _bool isPowerUp=false);
 
 private:
+	CMagic_Sound_Manager*						m_pMagic_SoundMgr = { nullptr };
+	_float										m_fVolum = { 0.5f };
+	CMagic_Sound_Manager::OWNERTYPE				m_eOwnerType = { CMagic_Sound_Manager::OWNER_END };
 
 private:
 	//4 Slot To Skill
@@ -80,6 +85,7 @@ private:
 private:
 	//SPELL_END Slot To All Skill
 	array<class CMagic*, SPELL::SPELL_END>		m_Magics = { nullptr };
+
 
 public:
 	static CMagicSlot* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
