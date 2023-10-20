@@ -940,6 +940,10 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Distortion"),
 				TEXT("../../Resources/GameData/ParticleData/Blink/BlinkDistortion/"))))
 				throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Distortion");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Particle"),
+				TEXT("../../Resources/GameData/ParticleData/Blink/BlinkParticle/"))))
+				throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Particle");
 				
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Hit_Circle"),
 				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Hit/Circle/"), 3)))
