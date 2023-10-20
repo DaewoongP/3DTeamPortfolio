@@ -18,6 +18,7 @@
 #include "Enemy.h"
 #include "UI_Group_Enemy_HP.h"
 
+#include "Card_Fig.h"
 #include "Magic.h"
 
 #include "UI_Group_Skill.h"
@@ -194,6 +195,10 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	m_fTargetViewRange = 2.0f;
 
+	BEGININSTANCE;
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Music/"));	
+	pGameInstance->Play_BGM(TEXT("01_Main.mp3"), 1.0f);
+	ENDINSTANCE;
 
 	//m_vecEaseList.resize(CEase::EASE_END);
 
@@ -241,7 +246,7 @@ HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 void CPlayer::Tick(_float fTimeDelta)
 {
 	BEGININSTANCE;
-	//ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½Æ´Ï¶ï¿½ï¿?
+	
 	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
 	{
 		ENDINSTANCE;
@@ -331,7 +336,8 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
-
+		if (nullptr != m_pTarget)
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_EDGEHIGHLIGHT, m_pTarget);
 #ifdef _DEBUG
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
 #endif // _DEBUG
@@ -378,6 +384,10 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		//Protego
 		if (m_pStateContext->Is_Current_State(TEXT("Protego")))
 		{
+			BEGININSTANCE;
+			_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_36443.wav") },{TEXT("playermale_35938.wav") } ,{TEXT("playermale_35067.wav") },{TEXT("playermale_27895.wav") }   };
+			pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
+			ENDINSTANCE;
 		}
 		//È¸ÇÇ½Ã ¹«½Ã
 		else if (m_pStateContext->Is_Current_State(TEXT("Roll")))
@@ -403,6 +413,10 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			break;
 			case CEnemy::ATTACK_LIGHT:
 			{
+				BEGININSTANCE;
+				_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_24397.wav") },{TEXT("playermale_99996.wav") } ,{TEXT("playermale_35941.wav")},{TEXT("playermale_99995.wav") } };
+				pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
+				ENDINSTANCE;
 				if (m_pStateContext->Is_Current_State(TEXT("Jump")))
 				{
 					HitStateDesc.iHitType = CHitState::HIT_HEABY;
@@ -415,6 +429,10 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			break;
 			case CEnemy::ATTACK_HEAVY:
 			{
+				BEGININSTANCE;
+				_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_25735.wav") },{TEXT("playermale_99991.wav") } ,{TEXT("playermale_99992.wav") },{TEXT("playermale_99993.wav") } };
+				pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
+				ENDINSTANCE;
 				HitStateDesc.iHitType = CHitState::HIT_HEABY;
 			}
 			break;
@@ -464,7 +482,19 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		{
 			CHitState::HITSTATEDESC HitStateDesc;
 
-			HitStateDesc.iHitType = CHitState::HIT_LIGHT;
+			if (pDesc->eMagicTag == PENSIVE_GROUND_BALL ||
+				pDesc->eMagicTag == PENSIVE_FAIL_BALL ||
+				pDesc->eMagicTag == PENSIVE_SHOUTING ||
+				pDesc->eMagicTag == PENSIVE_SWORD_THROW ||
+				pDesc->eMagicTag == PENSIVE_MACE_ATTACK)
+			{
+				HitStateDesc.iHitType = CHitState::HIT_HEABY;
+			}
+			else
+			{
+				HitStateDesc.iHitType = CHitState::HIT_LIGHT;
+			}
+
 			if (nullptr == pDesc ||
 				nullptr == pDesc->pTransform)
 				return;
@@ -730,6 +760,9 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
+	m_pMagicSlot->Set_OwnerType(CMagic_Sound_Manager::OWNER_PLAYER);
+	m_pMagicSlot->Set_Volum(0.8f);
+
 	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
 	RigidBodyDesc.isStatic = false;
 	RigidBodyDesc.isTrigger = false;
@@ -811,6 +844,15 @@ HRESULT CPlayer::Add_Components()
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Defence"),
 		TEXT("Com_Defence"), reinterpret_cast<CComponent**>(&m_pDefence), &Def)))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	CCard_Fig::CARDFIGINITDESC CardFigInitDesc;
+	CardFigInitDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Card_Fig"),
+		TEXT("Card_Fig"), reinterpret_cast<CComponent**>(&m_pCard_Fig), &CardFigInitDesc)))
 	{
 		__debugbreak();
 		return E_FAIL;
@@ -1012,7 +1054,7 @@ HRESULT CPlayer::Add_Magic()
 	}
 
 	{
-		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eBuffType = BUFF_STUPEFY;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = STUPEFY;
@@ -1052,7 +1094,7 @@ HRESULT CPlayer::Add_Magic()
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(3, FINISHER);
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(4, STUPEFY);
 
-	Set_Spell_Botton(0, ACCIO);
+	Set_Spell_Botton(0, BOMBARDA);
 	Set_Spell_Botton(1, FLIPENDO);
 	Set_Spell_Botton(2, DIFFINDO);
 	Set_Spell_Botton(3, CRUCIO);
@@ -1210,27 +1252,18 @@ void CPlayer::Key_Input(_float fTimeDelta)
 				default:
 					break;
 				}
-
-
-
-
-
-
-
-
 				Go_MagicCast(&MagicCastingStateDesc);
 			}
 		}
 
-
-
-
-		/*if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
+		if (pGameInstance->Get_DIKeyState(DIK_C, CInput_Device::KEY_DOWN))
 		{
-			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Lumos(); };
-
-			Go_MagicCast(&MagicCastingStateDesc);
-		}*/
+			BEGININSTANCE;
+			_tchar szVoiceTag[3][MAX_PATH] = { {TEXT("playermale_34286.wav") },{TEXT("playermale_23883.wav") } ,{TEXT("playermale_32104.wav") } };
+			pGameInstance->Play_Sound(szVoiceTag[rand() % 3], CSound_Manager::SOUND_VOICE, 0.7f, true);
+			ENDINSTANCE;
+			m_pCard_Fig->Spawn_Fig(m_pTarget);
+		}
 
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_FINISHER;
 
@@ -1393,7 +1426,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Hair
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Player_Hair"),
+		TEXT("Prototype_Component_MeshPart_Hair_M_C"),
 		CCustomModel::HAIR)))
 	{
 		MSG_BOX("Failed Add MeshPart Hair");
@@ -2329,7 +2362,7 @@ void CPlayer::Update_Cloth(_float fTimeDelta)
 	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(m_fClothPower * vVelocity,
 		XMMatrixInverse(nullptr, XMMatrixRotationQuaternion(m_pTransform->Get_Quaternion()))));
 	
-	m_pCustomModel->Tick(CCustomModel::ROBE, 0, fTimeDelta);
+	m_pCustomModel->Tick(CCustomModel::ROBE, m_iRobeMeshIndex, fTimeDelta);
 }
 
 void CPlayer::Find_Target_For_Distance()
@@ -2357,7 +2390,7 @@ void CPlayer::Find_Target_For_Distance()
 
 	for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
 	{
-		if (true == static_cast<CGameObject*>(iter->second)->isDead())
+		if (true == static_cast<CGameObject*>(iter->second)->isDead() || false == static_cast<CEnemy*>(iter->second)->Is_Spawn())
 			continue;
 
 		_float3 vPlayerPos = m_pTransform->Get_Position();
@@ -2438,6 +2471,9 @@ void CPlayer::Find_Target_For_ViewSpace()
 
 	for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
 	{
+		if (true == static_cast<CGameObject*>(iter->second)->isDead() || false == static_cast<CEnemy*>(iter->second)->Is_Spawn())
+			continue;
+
 		CEnemy* pEnemy = static_cast<CEnemy*>((*iter).second);
 
 		_float4x4 TargetWorldMatrix = pEnemy->Get_Transform()->Get_WorldMatrix();
@@ -3026,6 +3062,10 @@ void CPlayer::Go_Use_Potion()
 	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
 		(m_pStateContext->Is_Current_State(TEXT("Idle"))))
 	{
+		BEGININSTANCE;
+		_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_36445.wav") },{TEXT("playermale_28806.wav") } ,{TEXT("playermale_33405.wav") } ,{TEXT("playermale_36448.wav") } };
+		pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f,true);
+		ENDINSTANCE;
 		m_pStateContext->Set_StateMachine(TEXT("UseItem"), &UseItemDesc);
 	}
 }
@@ -3121,6 +3161,7 @@ void CPlayer::Free()
 		Safe_Release(m_UI_Group_SkillTap);
 		Safe_Release(m_pCooltime);
 		Safe_Release(m_pDefence);
+		Safe_Release(m_pCard_Fig);
 		
 	//	Safe_Release(m_pBlink);
 

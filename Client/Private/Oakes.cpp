@@ -1,9 +1,9 @@
-#include "Oakes.h"
+#include "../Public/Script.h"
 #include "GameInstance.h"
+#include "Oakes.h"
 #include "UI_Interaction.h"
-#include "../../Client/Public/Script.h"
 #include "UI_Script.h"
-
+#include "Quest_Manager.h"
 
 COakes::COakes(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -40,7 +40,6 @@ HRESULT COakes::Initialize(void* pArg)
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
-	m_pTransform->Rotation(_float3(0.f, XMConvertToRadians(45.f), 0.f));
 
 	return S_OK;
 }
@@ -69,8 +68,17 @@ void COakes::Tick(_float fTimeDelta)
 
 
 	if (m_isPlayScript)
+	{
 		m_pScripts[m_iScriptIndex]->Tick(fTimeDelta);
 
+		if (true == m_pScripts[0]->Is_Finished())
+		{
+			CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
+			Safe_AddRef(pQuest_Manager);
+			pQuest_Manager->Unlock_Quest(TEXT("Quest_Save_Fig"));
+			Safe_Release(pQuest_Manager);
+		}
+	}
 }
 
 void COakes::Late_Tick(_float fTimeDelta)
@@ -275,8 +283,6 @@ HRESULT COakes::Add_Components()
 		lstrcpy(pDesc.m_wszName, TEXT("애들레이크 오크스"));
 		lstrcpy(pDesc.m_wszFunc, TEXT("대화하기"));
 		pDesc.m_WorldMatrix = m_pTransform->Get_WorldMatrixPtr();
-
-	
 
 	m_pUI_Interaction = static_cast<CUI_Interaction*>(pGameInstance->Clone_Component(LEVEL_STATIC,
 			TEXT("Prototype_GameObject_UI_Interaction"), &pDesc));

@@ -203,6 +203,7 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		return E_FAIL;
 	}
 	Safe_AddRef(m_pRenderer);
+	m_pRenderer->Get_Dof()->Off();
 
 	/* Prototype_Component_Shader_Debug */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_Debug"),
@@ -542,6 +543,46 @@ HRESULT CMainTool::Ready_Prototype_Object()
 		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DogBog_Water_Foot"),
 			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/DogBog_Water_Foot/"), 3)))
 			throw TEXT("Reserve Particle : Particle_DogBog_Water_Foot");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Hit_Circle"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Hit/Circle/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Pensive_Hit_Circle");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Hit_Distotion"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Hit/Distotion/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Pensive_Hit_Distotion");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Hit_Spread"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Hit/Spread/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Pensive_Hit_Spread");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Hit_Stick_Glow"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Hit/Stick_Glow/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Pensive_Hit_Stick_Glow");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Black_Water"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Black_Water/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Pensive_Appear_Black_Water");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Water_Bubble"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Water_Bubble/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Pensive_Appear_Water_Bubble");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Water_Main"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Water_Main/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Pensive_Appear_Water_Main");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Water_Splash_01"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Water_Splash_01/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Pensive_Appear_Water_Splash_01");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Water_Splash_02"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Water_Splash_02/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Pensive_Appear_Water_Splash_02");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Flare"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Flare/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Pensive_Appear_Flare");
 	}
 #pragma endregion
 

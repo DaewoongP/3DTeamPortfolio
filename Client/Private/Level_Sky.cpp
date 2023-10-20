@@ -12,6 +12,7 @@ HRESULT CLevel_Sky::Initialize()
 {
 	FAILED_CHECK_RETURN(Ready_Lights(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Shader(), E_FAIL);
 
 	BEGININSTANCE;
 	pGameInstance->Reset_World_TimeAcc();
@@ -90,6 +91,22 @@ HRESULT CLevel_Sky::Ready_Lights()
 
 	if (FAILED(pGameInstance->Add_Light(LightDesc)))
 		return E_FAIL;
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CLevel_Sky::Ready_Shader()
+{
+	BEGININSTANCE;
+
+	CRenderer* pRenderer = static_cast<CRenderer*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer")));
+	pRenderer->Defualt_Shading();
+
+
+
+	Safe_Release(pRenderer);
 
 	ENDINSTANCE;
 

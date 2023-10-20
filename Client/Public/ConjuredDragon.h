@@ -87,7 +87,7 @@ private:
 	void Check_Air_Balance(const _float& fTimeDelta);
 
 private: /* 페이즈 관련 함수 */
-	_bool m_isPhaseOne = { true };
+	_bool m_isPhaseOne = { false };
 	_bool m_isPhaseTwo = { false };
 	_bool m_isPhaseFinal = { false };
 	_bool m_isFinish = { false };
@@ -120,6 +120,7 @@ private:
 	HRESULT Add_Effects();
 
 private: /* 행동 묶음들 */
+	HRESULT Make_NonSpawn(_Inout_ CRandomChoose* pRandomChoose);
 	HRESULT Make_Death(_Inout_ CSequence* pSequence);
 	HRESULT Make_Alive(_Inout_ CSelector* pSelector);
 	HRESULT Make_Final(_Inout_ CSelector* pSelector);
@@ -155,7 +156,7 @@ private: /* Notify Func */
 	void Off_Breath();
 	void Action_Pulse();
 	void Pulse_Charge();
-	void Pulse_StopCharge();
+	void Pulse_Stop_Charge();
 
 public:
 	static CConjuredDragon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -131,6 +131,11 @@ void CDummyMeshEffect::Tick_Imgui(_float _fTimeDelta)
 		pEffectWindow->Table_CheckBox("Glow", "dkvijies", &m_isGlow);
 		pEffectWindow->Table_CheckBox("Distortion", "ciceicjoeijdsfs", &m_isDistortion);
 		pEffectWindow->Table_CheckBox("Diffuse", "dkssudgktpdyqksrkqtmtqslek", &m_isDiffuse);
+		pEffectWindow->Table_CheckBox("Flutter", "dcijm3i39ckkc", &m_isFlutter);
+		if (m_isFlutter)
+		{
+			pEffectWindow->Table_DragXYZ("Strength", "dkjivjkemsdf", &m_vStrength, 0.1f);
+		}
 		ImGui::Separator();
 
 		//pEffectWindow->Table_DragFloat("RimPower", "iv893jdjxxcv", &m_fRimPower);

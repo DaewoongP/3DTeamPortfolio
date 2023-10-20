@@ -526,7 +526,7 @@ void CDummyParticle::VelocityOverLifeTime_TreeNode(CEffect_Window* pEffectWindow
 			// Orbital
 			pEffectWindow->Table_Void();
 			VelocityModule.strOrbitalOption = m_pOrbitalOptionCombo->Tick(CComboBox::TABLE);
-			if ("Constant" == VelocityModule.strLinearOption)
+			if ("Constant" == VelocityModule.strOrbitalOption)
 			{
 				pEffectWindow->Table_DragXYZ("Orbit", "vkjsdfijfe", &VelocityModule.vOrbital, 0.01f, -FLT_MAX, FLT_MAX);
 			}
@@ -541,7 +541,7 @@ void CDummyParticle::VelocityOverLifeTime_TreeNode(CEffect_Window* pEffectWindow
 			// Radial
 			pEffectWindow->Table_Void();
 			VelocityModule.strRadialOption = m_pRadialOptionCombo->Tick(CComboBox::TABLE);
-			if ("Constant" == VelocityModule.strLinearOption)
+			if ("Constant" == VelocityModule.strRadialOption)
 			{
 				pEffectWindow->Table_DragFloat("Radial", "9839jkfi4g", &VelocityModule.fRadial, 0.01f, -FLT_MAX, FLT_MAX);
 			}
@@ -554,7 +554,7 @@ void CDummyParticle::VelocityOverLifeTime_TreeNode(CEffect_Window* pEffectWindow
 			// Speed Modifier
 			pEffectWindow->Table_Void();
 			VelocityModule.strSpeedModifierOption = m_pSpeedModifierOptionCombo->Tick(CComboBox::TABLE);
-			if ("Constant" == VelocityModule.strLinearOption)
+			if ("Constant" == VelocityModule.strSpeedModifierOption)
 			{
 				pEffectWindow->Table_DragFloat("Speed Modifier", "kcv893jdf", &VelocityModule.fSpeedModifier);
 			}

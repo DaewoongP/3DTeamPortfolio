@@ -567,9 +567,15 @@ HRESULT CDarkWizard_M::Bind_HitMatrices()
 void CDarkWizard_M::DeathBehavior(const _float& fTimeDelta)
 {
 	m_isDead = true;
-
 	m_fDeadTimeAcc += fTimeDelta;
-	if (4.f < m_fDeadTimeAcc)
+
+	if (2.f < m_fDeadTimeAcc)
+	{
+		m_isDissolve = true;
+		m_fDissolveAmount += fTimeDelta / 1.5f; // 디졸브 값 증가
+	}
+
+	if (4.f < m_fDeadTimeAcc && m_fDissolveAmount >= 1.f)
 		Set_ObjEvent(OBJ_DEAD);
 }
 
@@ -1228,62 +1234,6 @@ HRESULT CDarkWizard_M::Make_Turns(_Inout_ CSequence* pSequence)
 			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_BACK");
 		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_BACK, pAction_Left_180)))
 			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_BACK");
-	}
-	catch (const _tchar* pErrorTag)
-	{
-		wstring wstrErrorMSG = TEXT("[CDarkWizard_M] Failed Make_Turns : \n");
-		wstrErrorMSG += pErrorTag;
-		MSG_BOX(wstrErrorMSG.c_str());
-		__debugbreak();
-
-		ENDINSTANCE;
-
-		return E_FAIL;
-	}
-
-	ENDINSTANCE;
-
-	return S_OK;
-}
-
-HRESULT CDarkWizard_M::Make_Combat(_Inout_ CSelector* pSelector)
-{
-	BEGININSTANCE;
-
-	try /* Failed Check Make_Turns */
-	{
-		if (nullptr == pSelector)
-			throw TEXT("Parameter pSelector is nullptr");
-
-		/* Make Child Behaviors */
-		CAction* pAction_Levioso = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Levioso)
-			throw TEXT("pAction_Levioso is nullptr");
-		CAction* pAction_Protego = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Protego)
-			throw TEXT("pAction_Protego is nullptr");
-
-		/* Set Decorations */
-		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
-			{
-				_bool* pIsRangeInEnemy = { nullptr };
-
-				if (FAILED(pBlackBoard->Get_Type("isRangeInEnemy", pIsRangeInEnemy)))
-					return false;
-
-				return *pIsRangeInEnemy;
-			});
-
-		/* Set Options */
-		pAction_Levioso->Set_Options(TEXT("Attack_Cast_Levioso"), m_pModelCom, false, 10.f);
-		pAction_Protego->Set_Options(TEXT("Cast_Protego"), m_pModelCom, false, 10.f);
-
-		/* Assemble Behaviors */
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Action_Levioso"), pAction_Levioso)))
-			throw TEXT("Failed Assemble_Behavior Action_Levioso");
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Action_Protego"), pAction_Protego)))
-			throw TEXT("Failed Assemble_Behavior Action_Protego");
-
 	}
 	catch (const _tchar* pErrorTag)
 	{

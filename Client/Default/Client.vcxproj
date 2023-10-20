@@ -181,6 +181,7 @@
     <ClInclude Include="..\Public\Broom_End.h" />
     <ClInclude Include="..\Public\Breath.h" />
     <ClInclude Include="..\Public\Camera_Includes.h" />
+    <ClInclude Include="..\Public\Card_Fig.h" />
     <ClInclude Include="..\Public\Cat.h" />
     <ClInclude Include="..\public\ChineseChompingCabbageItem.h" />
     <ClInclude Include="..\Public\Cliff_Gate.h" />
@@ -202,6 +203,7 @@
     <ClInclude Include="..\Public\Hat_Arcane.h" />
     <ClInclude Include="..\Public\Hat_DarkArts_Delux.h" />
     <ClInclude Include="..\Public\Hat_Wizard.h" />
+    <ClInclude Include="..\Public\House_Elf.h" />
     <ClInclude Include="..\Public\Hover_Idle.h" />
     <ClInclude Include="..\Public\Hover_Move.h" />
     <ClInclude Include="..\Public\Hover_Turn.h" />
@@ -214,8 +216,10 @@
     <ClInclude Include="..\Public\Jacket_DarkArts_Delux_A.h" />
     <ClInclude Include="..\Public\Jacket_DragonGrab.h" />
     <ClInclude Include="..\Public\Jacket_DragonGrab_A.h" />
+    <ClInclude Include="..\Public\Jammin.h" />
     <ClInclude Include="..\Public\Level_Sky.h" />
     <ClInclude Include="..\public\Level_Static.h" />
+    <ClInclude Include="..\Public\Magic_Sound_Manager.h" />
     <ClInclude Include="..\Public\Mask_Demiguise.h" />
     <ClInclude Include="..\Public\Mask_Guardian.h" />
     <ClInclude Include="..\Public\Mask_Niffler.h" />
@@ -242,14 +246,17 @@
     <ClInclude Include="..\Public\Pensive_Sword_Throw.h" />
     <ClInclude Include="..\Public\Player.h" />
     <ClInclude Include="..\public\PotionStationCamera.h" />
+    <ClInclude Include="..\public\Projectile_White_Effect.h" />
     <ClInclude Include="..\public\Quest.h" />
     <ClInclude Include="..\public\Quest_Manager.h" />
     <ClInclude Include="..\public\Quest_Save_Fig.h" />
     <ClInclude Include="..\public\Robe_Arcane.h" />
     <ClInclude Include="..\Public\Robe_DarkArts.h" />
     <ClInclude Include="..\Public\Robe_DarkArts_Delux.h" />
+    <ClInclude Include="..\Public\Robe_Beast.h" />
     <ClInclude Include="..\Public\Robe_Quidditch.h" />
     <ClInclude Include="..\Public\Script.h" />
+    <ClInclude Include="..\Public\Smith_FIg.h" />
     <ClInclude Include="..\Public\UI_DamageFont.h" />
     <ClInclude Include="..\Public\UI_Interaction.h" />
     <ClInclude Include="..\Public\UI_Script.h" />
@@ -497,6 +504,7 @@
     <ClCompile Include="..\Private\Broom_Break.cpp" />
     <ClCompile Include="..\Private\Broom_End.cpp" />
     <ClCompile Include="..\Private\Breath.cpp" />
+    <ClCompile Include="..\Private\Card_Fig.cpp" />
     <ClCompile Include="..\Private\Cat.cpp" />
     <ClCompile Include="..\private\ChineseChompingCabbageItem.cpp" />
     <ClCompile Include="..\Private\Cliff_Gate.cpp" />
@@ -517,6 +525,7 @@
     <ClCompile Include="..\Private\Hat_Arcane.cpp" />
     <ClCompile Include="..\Private\Hat_DarkArts_Delux.cpp" />
     <ClCompile Include="..\Private\Hat_Wizard.cpp" />
+    <ClCompile Include="..\Private\House_Elf.cpp" />
     <ClCompile Include="..\Private\Hover_Idle.cpp" />
     <ClCompile Include="..\Private\Hover_Move.cpp" />
     <ClCompile Include="..\Private\Hover_Turn.cpp" />
@@ -529,8 +538,10 @@
     <ClCompile Include="..\Private\Jacket_DarkArts_Delux_A.cpp" />
     <ClCompile Include="..\Private\Jacket_DragonGrab.cpp" />
     <ClCompile Include="..\Private\Jacket_DragonGrab_A.cpp" />
+    <ClCompile Include="..\Private\Jammin.cpp" />
     <ClCompile Include="..\Private\Level_Sky.cpp" />
     <ClCompile Include="..\private\Level_Static.cpp" />
+    <ClCompile Include="..\Private\Magic_Sound_Manager.cpp" />
     <ClCompile Include="..\Private\Mask_Demiguise.cpp" />
     <ClCompile Include="..\Private\Mask_Guardian.cpp" />
     <ClCompile Include="..\Private\Mask_Niffler.cpp" />
@@ -557,14 +568,17 @@
     <ClCompile Include="..\Private\Pensive_Sword_Throw.cpp" />
     <ClCompile Include="..\Private\Player.cpp" />
     <ClCompile Include="..\private\PotionStationCamera.cpp" />
+    <ClCompile Include="..\private\Projectile_White_Effect.cpp" />
     <ClCompile Include="..\private\Quest.cpp" />
     <ClCompile Include="..\private\Quest_Manager.cpp" />
     <ClCompile Include="..\private\Quest_Save_Fig.cpp" />
     <ClCompile Include="..\private\Robe_Arcane.cpp" />
     <ClCompile Include="..\Private\Robe_DarkArts.cpp" />
     <ClCompile Include="..\Private\Robe_DarkArts_Delux.cpp" />
+    <ClCompile Include="..\Private\Robe_Beast.cpp" />
     <ClCompile Include="..\Private\Robe_Quidditch.cpp" />
     <ClCompile Include="..\Private\Script.cpp" />
+    <ClCompile Include="..\Private\Smith_FIg.cpp" />
     <ClCompile Include="..\Private\UI_DamageFont.cpp" />
     <ClCompile Include="..\Private\UI_Interaction.cpp" />
     <ClCompile Include="..\Private\UI_Script.cpp" />
@@ -804,6 +818,7 @@
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ImpulseSphere.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Projectile_White.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Protego.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowAnimMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMesh.hlsl" />

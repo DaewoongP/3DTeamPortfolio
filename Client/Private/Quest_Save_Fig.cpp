@@ -10,14 +10,6 @@ _bool CQuest_Save_Fig::Is_Finished()
 {
 	if (false == m_isSaved)
 		return false;
-	/*if (3 > m_iNumGrass)
-		return false;
-	if (3 > m_iNumTest)
-		return false;
-	if (3 > m_iNumTest1)
-		return false;
-	if (3 > m_iNumTest2)
-		return false;*/
 
 	return true;
 }

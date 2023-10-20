@@ -8,7 +8,7 @@ class ENGINE_DLL CRenderer final : public CGameObject
 {
 public:
 	enum RENDERGROUP { RENDER_PRIORITY, RENDER_DEPTH, RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_BLEND,
-					  RENDER_GLOW, RENDER_DISTORTION,RENDER_DISTORTION_ZIGZAG, RENDER_RADIALBLUR, RENDER_SCREEN, RENDER_UI,
+					  RENDER_GLOW, RENDER_DISTORTION, RENDER_EDGEHIGHLIGHT, RENDER_RADIALBLUR, RENDER_SCREEN, RENDER_UI,
 		// ETC
 		RENDER_PICKING, RENDER_BRUSHING, RENDER_UITEXTURE, RENDER_END };
 
@@ -24,6 +24,14 @@ public:
 		m_vFogColor = vFogColor;
 		m_vFogCenterPos = vFogCenterPos;
 		m_fFogRadius = fFogRadius;
+	}
+	void FadeIn(_float fFadeSpeed) {
+		m_isFade = true;
+		m_fFadeSpeed = fFadeSpeed;
+	}
+	void FadeOut(_float fFadeSpeed) {
+		m_isFade = true;
+		m_fFadeSpeed = fFadeSpeed * -1.f;
 	}
 
 public:
@@ -44,6 +52,9 @@ public:
 	_bool Get_SSAO() { return m_isSSAO; }
 	void Play_Rain() { m_isRaining = true; }
 	void Stop_Rain() { m_isRaining = false; }
+
+public:
+	void Defualt_Shading();
 
 private:
 	explicit CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -76,10 +87,10 @@ private:
 	HRESULT Render_NonLight();
 	HRESULT Render_Blend();
 	HRESULT Render_HDR();
-	HRESULT Render_Fog();
 	HRESULT Render_PostProcessing();
 	HRESULT Render_Distortion();
 	HRESULT Render_RadialBlur();
+	HRESULT Render_EdgeHighLight();
 	HRESULT Render_Screen();
 	HRESULT Render_ScreenRadial();
 	HRESULT Render_Rain();
@@ -130,10 +141,11 @@ private:
 	class CShader*	m_pSSAOShader = { nullptr };
 	class CShader*	m_pDistortionShader = { nullptr };
 	class CShader*	m_pRadialBlurShader = { nullptr };
-	class CShader*	m_pFogShader = { nullptr };
 	class CShader*	m_pFadeShader = { nullptr };
 	class CShader*	m_pRainShader = { nullptr };
+	class CShader*	m_pEdgeShader = { nullptr };
 	class CTexture*	m_pNoiseTexture = { nullptr };
+	class CTexture* m_pFadeTexture = { nullptr };
 
 private:
 	_bool		m_isSSAO = { false };
@@ -148,9 +160,10 @@ private:
 	_float		m_fFogRadius = { 0.f };
 
 private:
-	_bool		m_isFadeIn = { false };
+	_bool		m_isFade = { false };
+	_float		m_fFadeTime = { 1.f };
+	_float		m_fFadeSpeed = { 0.f };
 	_bool		m_isRaining = { false };
-	_float		m_fFadeTime = { 0.f };
 	_float		m_fGlowPower = { 0.f };
 	_float		m_fHDR = { 0.f };
 

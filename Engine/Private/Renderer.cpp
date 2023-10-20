@@ -21,6 +21,23 @@
 #include "Font_Manager.h"
 #endif // _DEBUG
 
+void CRenderer::Defualt_Shading()
+{
+	m_isSSAO = true;
+	m_fGlowPower = 7.5f;
+	m_fHDR = 0.5f;
+	m_fRadialBlurWidth = 0.0f;
+	m_isScreenRadial = false;
+	m_isCircleFog = false;
+	m_isFade = false;
+	m_fRadialTimeAcc = 1.f;
+	m_fFadeSpeed = 0.1f;
+	m_fFadeTime = 0.f;
+	m_isRaining = false;
+	if (nullptr != m_pDOF)
+		m_pDOF->Default();
+}
+
 CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 	, m_pRenderTarget_Manager(CRenderTarget_Manager::GetInstance())
@@ -105,7 +122,19 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_Rain"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
-
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_Edge_Diffuse"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 0.f))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_Edge_Normal"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_Edge_Depth"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_EdgeHighLight"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+	
 #ifdef _DEBUG
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_Picking"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
@@ -159,6 +188,14 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Rain"), TEXT("Target_Rain"))))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Edge"), TEXT("Target_Edge_Diffuse"))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Edge"), TEXT("Target_Edge_Normal"))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Edge"), TEXT("Target_Edge_Depth"))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_EdgeHighLight"), TEXT("Target_EdgeHighLight"))))
+		return E_FAIL;
 
 #ifdef _DEBUG
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Picking"), TEXT("Target_Picking"))))
@@ -187,18 +224,20 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Rain"), 80.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), 240.f, 80.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Edge_Diffuse"), 240.f, 80.f, 160.f, 160.f)))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Edge_Normal"), 240.f, 240.f, 160.f, 160.f)))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Edge_Depth"), 240.f, 400.f, 160.f, 160.f)))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_EdgeHighLight"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
 
 	m_isDebugRender = false;
 	m_isMRTRender = false;	
 #endif // _DEBUG
-	m_isSSAO = true;
-	m_fGlowPower = 7.5f;
-	m_fHDR = 0.5f;
-	m_fRadialBlurWidth = 0.0f;
-	m_isScreenRadial = false;
-	m_fRadialTimeAcc = 1.f;
+	
+	Defualt_Shading();
 
 	return S_OK;
 }
@@ -258,8 +297,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 #pragma endregion
 
 #pragma region Render Targets
-	/*if (FAILED(m_pDOF->Render(TEXT("Target_Deferred"))))
-		return E_FAIL;*/
+	if (FAILED(m_pDOF->Render(TEXT("Target_Deferred"))))
+		return E_FAIL;
 	if (FAILED(Render_HDR()))
 		return E_FAIL;
 
@@ -268,8 +307,6 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(m_pGlow->Render(m_RenderObjects[RENDER_GLOW], m_fGlowPower)))
 		return E_FAIL;
 	if (FAILED(Render_SSAO()))
-		return E_FAIL;
-	if (FAILED(Render_Fog()))
 		return E_FAIL;
 	if (FAILED(Render_Rain()))
 		return E_FAIL;
@@ -294,6 +331,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 	
 	if (FAILED(Render_RadialBlur()))
 		return E_FAIL;
+	if (FAILED(Render_EdgeHighLight()))
+		return E_FAIL;
 #pragma endregion
 
 #pragma region Screen Shading
@@ -304,13 +343,13 @@ HRESULT CRenderer::Draw_RenderGroup()
 #pragma endregion
 
 	// final
-	if (FAILED(Render_Fade()))
-		return E_FAIL;
+	
 
 	// UI Render
 	if (FAILED(Render_UI()))
 		return E_FAIL;
-
+	if (FAILED(Render_Fade()))
+		return E_FAIL;
 #pragma region Debugs
 #ifdef _DEBUG
 	if (FAILED(Render_Picking()))
@@ -696,33 +735,6 @@ HRESULT CRenderer::Render_HDR()
 	return S_OK;
 }
 
-HRESULT CRenderer::Render_Fog()
-{
-	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Fog"))))
-		return E_FAIL;
-
-	if (FAILED(m_pNoiseTexture->Bind_ShaderResource(m_pFogShader, "g_NoiseTexture")))
-		return E_FAIL;
-
-	if (FAILED(m_pFogShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pFogShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pFogShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
-		return E_FAIL;
-
-	if (FAILED(m_pFogShader->Begin("Fog")))
-		return E_FAIL;
-
-	if (FAILED(m_pRectBuffer->Render()))
-		return E_FAIL;
-
-	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Fog"))))
-		return E_FAIL;
-
-	return S_OK;
-}
-
 HRESULT CRenderer::Render_PostProcessing()
 {
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_HDR"), m_pPostProcessingShader, "g_HDRTexture")))
@@ -865,6 +877,59 @@ HRESULT CRenderer::Render_RadialBlur()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_EdgeHighLight()
+{
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Edge"))))
+		return E_FAIL;
+
+	for (auto& pGameObject : m_RenderObjects[RENDER_EDGEHIGHLIGHT])
+	{
+		if (nullptr != pGameObject)
+			pGameObject->Render();
+
+		Safe_Release(pGameObject);
+	}
+
+	m_RenderObjects[RENDER_EDGEHIGHLIGHT].clear();
+
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Edge"))))
+		return E_FAIL;
+	
+#pragma region EdgeDetection
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_EdgeHighLight"))))
+		return E_FAIL;
+
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Edge_Depth"), m_pEdgeShader, "g_DepthTexture")))
+		return E_FAIL;
+
+	if (FAILED(m_pEdgeShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pEdgeShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pEdgeShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	_float2 vViewPort = pGameInstance->Get_ViewPortSize(m_pContext);
+	if (FAILED(m_pEdgeShader->Bind_RawValue("g_vViewPort", &vViewPort, sizeof(_float2))))
+		return E_FAIL;
+
+	Safe_Release(pGameInstance);
+
+	if (FAILED(m_pEdgeShader->Begin("Edge")))
+		return E_FAIL;
+
+	if (FAILED(m_pRectBuffer->Render()))
+		return E_FAIL;
+	
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_EdgeHighLight"))))
+		return E_FAIL;
+#pragma endregion
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_Screen()
 {
 	if (FAILED(Sort_Z(RENDER_SCREEN)))
@@ -968,9 +1033,6 @@ HRESULT CRenderer::Render_Rain()
 
 HRESULT CRenderer::Render_Fade()
 {
-	if (false == m_isFadeIn)
-		return S_OK;
-
 	// 화면 마지막에 그냥 띄워버리면 편함.
 	if (FAILED(m_pFadeShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
@@ -978,16 +1040,22 @@ HRESULT CRenderer::Render_Fade()
 		return E_FAIL;
 	if (FAILED(m_pFadeShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
-
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-	_float2 vViewPort = pGameInstance->Get_ViewPortSize(m_pContext);
-	m_fFadeTime += pGameInstance->Get_World_Tick();
-	Safe_Release(pGameInstance);
-
-	if (FAILED(m_pFadeShader->Bind_RawValue("g_fRadius", &m_fFadeTime, sizeof(_float))))
+	if (FAILED(m_pFadeTexture->Bind_ShaderResource(m_pFadeShader, "g_FadeTexture")))
 		return E_FAIL;
-	if (FAILED(m_pFadeShader->Bind_RawValue("g_vViewPort", &vViewPort, sizeof(_float2))))
+	if (true == m_isFade)
+	{
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+		_float2 vViewPort = pGameInstance->Get_ViewPortSize(m_pContext);
+		m_fFadeTime += pGameInstance->Get_World_Tick() * m_fFadeSpeed;
+		if (m_fFadeTime > 1.f ||
+			m_fFadeTime < 0.f)
+			m_isFade = false;
+		m_fFadeTime = clamp(m_fFadeTime, 0.f, 1.f);
+		Safe_Release(pGameInstance);
+	}
+	
+	if (FAILED(m_pFadeShader->Bind_RawValue("g_fFade", &m_fFadeTime, sizeof(_float))))
 		return E_FAIL;
 
 	if (FAILED(m_pFadeShader->Begin("Fade")))
@@ -1109,10 +1177,6 @@ HRESULT CRenderer::Add_Components()
 	if (nullptr == m_pRadialBlurShader)
 		return E_FAIL;
 	
-	m_pFogShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Fog.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
-	if (nullptr == m_pFogShader)
-		return E_FAIL;
-	
 	m_pFadeShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Fade.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
 	if (nullptr == m_pFadeShader)
 		return E_FAIL;
@@ -1120,9 +1184,17 @@ HRESULT CRenderer::Add_Components()
 	m_pRainShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Rain.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
 	if (nullptr == m_pRainShader)
 		return E_FAIL;
+	
+	m_pEdgeShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Edge.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
+	if (nullptr == m_pEdgeShader)
+		return E_FAIL;
 
 	m_pNoiseTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Noises/VFX_T_Cloud_Noise_Tile_D.png"));
 	if (nullptr == m_pNoiseTexture)
+		return E_FAIL;
+	
+	m_pFadeTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/fade.dds"));
+	if (nullptr == m_pFadeTexture)
 		return E_FAIL;
 
 	m_pShadow = CShadow::Create(m_pDevice, m_pContext, m_pRectBuffer);
@@ -1268,10 +1340,11 @@ void CRenderer::Free()
 	Safe_Release(m_pSSAOShader);
 	Safe_Release(m_pDistortionShader);
 	Safe_Release(m_pRadialBlurShader);
-	Safe_Release(m_pFogShader);
 	Safe_Release(m_pFadeShader);
 	Safe_Release(m_pRainShader);
+	Safe_Release(m_pEdgeShader);
 	Safe_Release(m_pNoiseTexture);
+	Safe_Release(m_pFadeTexture);
 
 	Safe_Release(m_pBlur);
 	Safe_Release(m_pBloom);
