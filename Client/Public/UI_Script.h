@@ -26,8 +26,11 @@ public:
 
 public:
 	void	Set_Texture(CTexture* pTexture) {
+		if (nullptr != m_Textures[m_iTextureIndex])
+			Safe_Release(m_Textures[m_iTextureIndex]);
+
 		m_Textures[m_iTextureIndex] = pTexture;
-	//	Safe_AddRef(m_Textures[m_iTextureIndex]);
+		Safe_AddRef(m_Textures[m_iTextureIndex]);
 	}
 
 protected:
