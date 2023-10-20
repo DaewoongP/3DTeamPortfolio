@@ -34,9 +34,13 @@ HRESULT COwl::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_ObjectDesc = *reinterpret_cast<MAPOBJECTDESC*>(pArg);
+	m_ObjectDesc.WorldMatrix._42 += 5.f;
 	m_pTransform->Set_WorldMatrix(m_ObjectDesc.WorldMatrix);
 
-	return S_OK;
+	m_pTransform->Set_Speed(-10.f);
+	m_pTransform->Set_RotationSpeed(XMConvertToRadians(180.f));
+
+ 	return S_OK;
 }
 
 HRESULT COwl::Initialize_Level(_uint iCurrentLevelIndex)
@@ -50,6 +54,9 @@ HRESULT COwl::Initialize_Level(_uint iCurrentLevelIndex)
 		return E_FAIL;
 	}
 
+	m_pModel->Set_CurrentAnimIndex(0);
+	m_pModel->Get_Animation()->Set_Loop(true);
+
 	return S_OK;
 }
 
@@ -57,8 +64,10 @@ void COwl::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	Owl_Fly(fTimeDelta);
+
 	if (nullptr != m_pModel)
-		m_pModel->Play_Animation(0.f, CModel::UPPERBODY, m_pTransform);
+		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 }
 
 void COwl::Late_Tick(_float fTimeDelta)
@@ -89,7 +98,7 @@ HRESULT COwl::Render()
 		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 		m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
 
-		m_pShader->Begin("AnimMesh");
+		m_pShader->Begin("AnimMesh_Owl");
 
 		if (FAILED(m_pModel->Render(iMeshCount)))
 			return E_FAIL;
@@ -186,6 +195,38 @@ HRESULT COwl::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 L
 	ENDINSTANCE;
 
 	return S_OK;
+}
+
+void COwl::Owl_Fly(_float fTimeDelta)
+{
+	m_fFlyTime += fTimeDelta;
+
+	if (false == m_isOwlTurn)
+	{
+		if (8.f <= m_fFlyTime)
+		{
+			m_fFlyTime = 0.f;
+			m_isOwlTurn = true;
+
+			return;
+		}
+
+		m_pTransform->Go_Straight(fTimeDelta);
+	}
+
+	else
+	{
+		if (1.f <= m_fFlyTime)
+		{
+			m_fFlyTime = 0.f;
+			m_isOwlTurn = false;
+
+			return;
+		}
+
+		m_pTransform->Go_Straight(fTimeDelta);
+		m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);
+	}
 }
 
 COwl* COwl::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

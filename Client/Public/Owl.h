@@ -44,9 +44,14 @@ private:
 	MAPOBJECTDESC m_ObjectDesc;
 
 private:
+	_float	m_fFlyTime = { 0.f };
+	_bool	m_isOwlTurn = { false };
+
+private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix);
+	void Owl_Fly(_float fTimeDelta);
 
 public:
 	static COwl* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
