@@ -28,8 +28,10 @@ HRESULT CLevel_Smith::Initialize()
 
 	BEGININSTANCE;
 	pGameInstance->Reset_World_TimeAcc();
-	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
+	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);	
 	ENDINSTANCE;
+
+
 
 	return S_OK;
 }

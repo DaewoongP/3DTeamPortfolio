@@ -586,6 +586,31 @@ HRESULT CMainTool::Ready_Prototype_Object()
 	}
 #pragma endregion
 
+	/*For.Player_BlinkEffect*/
+	if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Effect"),
+		TEXT("../../Resources/GameData/ParticleData/Blink/BlinkFog"))))
+		throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Effect");
+
+	if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Effect1"),
+		TEXT("../../Resources/GameData/ParticleData/Blink/BlinkFog1"))))
+		throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Effect1");
+
+	if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Effect2"),
+		TEXT("../../Resources/GameData/ParticleData/Blink/BlinkFog2"))))
+		throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Effect2");
+
+
+	if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Disotrtion"),
+		TEXT("../../Resources/GameData/ParticleData/Blink/BlinkDistortion"))))
+		throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Disotrtion");
+
+	if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_SubEffect"),
+		TEXT("../../Resources/GameData/ParticleData/Blink/BlinkFoot"))))
+		throw TEXT("Reserve Particle : Prototype_GameObject_Blink_SubEffect");
+
+
+
+
 
 #ifdef _DEBUG
 
