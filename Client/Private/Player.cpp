@@ -280,7 +280,11 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	UpdateLookAngle();
 
-	Key_Input(fTimeDelta);
+	/*if(!m_isFlying)
+		Key_Input(fTimeDelta);
+	else*/
+		Key_input_Flying(fTimeDelta);
+
 	//m_pStateContext->Tick(fTimeDelta)
 	Go_Protego(&m_ProtegoStateDesc);
 
@@ -1827,79 +1831,79 @@ HRESULT CPlayer::Ready_StateMachine()
 
 #pragma region Flying
 
-	//try
-	//{
-	//	//지팡이 탑승 스테이트
-	//	if (FAILED(m_pStateContext->Add_StateMachine(
-	//		LEVEL_STATIC,
-	//		TEXT("Com_Player_Broom_Begin"),
-	//		TEXT("Broom_Begin"),
-	//		TEXT("Prototype_Component_State_Broom_Begin"),
-	//		&m_StateMachineDesc)))
-	//		throw("Failed Add Broom_Begin State");
+	try
+	{
+		//지팡이 탑승 스테이트
+		if (FAILED(m_pStateContext->Add_StateMachine(
+			LEVEL_STATIC,
+			TEXT("Com_Player_Broom_Begin"),
+			TEXT("Broom_Begin"),
+			TEXT("Prototype_Component_State_Broom_Begin"),
+			&m_StateMachineDesc)))
+			throw("Failed Add Broom_Begin State");
 
-	//	//호버 idle
-	//	if (FAILED(m_pStateContext->Add_StateMachine(
-	//		LEVEL_STATIC,
-	//		TEXT("Com_Player_Hover_Idle"),
-	//		TEXT("Hover_Idle"),
-	//		TEXT("Prototype_Component_State_Hover_Idle"),
-	//		&m_StateMachineDesc)))
-	//		throw("Failed Add Hover_Idle State");
+		//호버 idle
+		if (FAILED(m_pStateContext->Add_StateMachine(
+			LEVEL_STATIC,
+			TEXT("Com_Player_Hover_Idle"),
+			TEXT("Hover_Idle"),
+			TEXT("Prototype_Component_State_Hover_Idle"),
+			&m_StateMachineDesc)))
+			throw("Failed Add Hover_Idle State");
 
-	//	//호버 move
-	//	if (FAILED(m_pStateContext->Add_StateMachine(
-	//		LEVEL_STATIC,
-	//		TEXT("Com_Player_Hover_Move"),
-	//		TEXT("Hover_Move"),
-	//		TEXT("Prototype_Component_State_Hover_Move"),
-	//		&m_StateMachineDesc)))
-	//		throw("Failed Add Hover_Move State");
+		//호버 move
+		if (FAILED(m_pStateContext->Add_StateMachine(
+			LEVEL_STATIC,
+			TEXT("Com_Player_Hover_Move"),
+			TEXT("Hover_Move"),
+			TEXT("Prototype_Component_State_Hover_Move"),
+			&m_StateMachineDesc)))
+			throw("Failed Add Hover_Move State");
 
-	//	//호버 turn
-	//	if (FAILED(m_pStateContext->Add_StateMachine(
-	//		LEVEL_STATIC,
-	//		TEXT("Com_Player_Hover_Turn"),
-	//		TEXT("Hover_Turn"),
-	//		TEXT("Prototype_Component_State_Hover_Turn"),
-	//		&m_StateMachineDesc)))
-	//		throw("Failed Add Hover_Turn State");
+		//호버 turn
+		//if (FAILED(m_pStateContext->Add_StateMachine(
+		//	LEVEL_STATIC,
+		//	TEXT("Com_Player_Hover_Turn"),
+		//	TEXT("Hover_Turn"),
+		//	TEXT("Prototype_Component_State_Hover_Turn"),
+		//	&m_StateMachineDesc)))
+		//	throw("Failed Add Hover_Turn State");
 
-	//	//fly move
-	//	if (FAILED(m_pStateContext->Add_StateMachine(
-	//		LEVEL_STATIC,
-	//		TEXT("Com_Player_Fly_Move"),
-	//		TEXT("Hover_Move"),
-	//		TEXT("Prototype_Component_State_Fly_Move"),
-	//		&m_StateMachineDesc)))
-	//		throw("Failed Add Fly_Move State");
+		////fly move
+		//if (FAILED(m_pStateContext->Add_StateMachine(
+		//	LEVEL_STATIC,
+		//	TEXT("Com_Player_Fly_Move"),
+		//	TEXT("Hover_Move"),
+		//	TEXT("Prototype_Component_State_Fly_Move"),
+		//	&m_StateMachineDesc)))
+		//	throw("Failed Add Fly_Move State");
 
-	//	//Break
-	//	if (FAILED(m_pStateContext->Add_StateMachine(
-	//		LEVEL_STATIC,
-	//		TEXT("Com_Player_Broom_Break"),
-	//		TEXT("Broom_Break"),
-	//		TEXT("Prototype_Component_State_Broom_Break"),
-	//		&m_StateMachineDesc)))
-	//		throw("Failed Add Broom_Break State");
+		////Break
+		//if (FAILED(m_pStateContext->Add_StateMachine(
+		//	LEVEL_STATIC,
+		//	TEXT("Com_Player_Broom_Break"),
+		//	TEXT("Broom_Break"),
+		//	TEXT("Prototype_Component_State_Broom_Break"),
+		//	&m_StateMachineDesc)))
+		//	throw("Failed Add Broom_Break State");
 
-	//	//지팡이 착지 스테이트
-	//	if (FAILED(m_pStateContext->Add_StateMachine(
-	//		LEVEL_STATIC,
-	//		TEXT("Com_Player_Broom_End"),
-	//		TEXT("Broom_End"),
-	//		TEXT("Prototype_Component_State_Broom_End"),
-	//		&m_StateMachineDesc)))
-	//		throw("Failed Add Broom_End State");
-	//}
-	//catch (const _tchar* pErrorTag)
-	//{
-	//	wstring wstrErrorMSG = {};
-	//	wstrErrorMSG += pErrorTag;
-	//	MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
-	//	__debugbreak();
-	//	return E_FAIL;
-	//}
+		//지팡이 착지 스테이트
+		if (FAILED(m_pStateContext->Add_StateMachine(
+			LEVEL_STATIC,
+			TEXT("Com_Player_Broom_End"),
+			TEXT("Broom_End"),
+			TEXT("Prototype_Component_State_Broom_End"),
+			&m_StateMachineDesc)))
+			throw("Failed Add Broom_End State");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = {};
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
+		return E_FAIL;
+	}
 
 #pragma endregion
 	m_pStateContext->Set_StateMachine(TEXT("Idle"));
@@ -2658,9 +2662,9 @@ void CPlayer::Key_input_Flying(_float fTimeDelta)
 {
 	BEGININSTANCE;
 	//조준
-	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_RBUTTON, CInput_Device::KEY_PRESSING))
+	if (pGameInstance->Get_DIKeyState(DIK_H, CInput_Device::KEY_DOWN))
 	{
-		Find_Target_For_ViewSpace();
+		m_isFlying = !m_isFlying;
 	}
 
 #pragma region 스테이트 변경 키 입력

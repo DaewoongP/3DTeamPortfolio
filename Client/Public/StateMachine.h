@@ -36,6 +36,8 @@ public:
 
         //하늘을 날고있는지 아닌지
         _bool* pIsFlying = { nullptr };
+        //비행상태 구분용도임.
+        _uint* pMainStateType = { nullptr };
 
         //카메라 트렌스 폼
         CTransform* pCameraTransform = { nullptr };
@@ -59,6 +61,7 @@ public:
             if (nullptr == ppTarget) { return false; }
             if (nullptr == pIsFlying) { return false; }
             if (nullptr == pCameraTransform) { return false; }
+            if (nullptr == pMainStateType) { return false; }
 
             return true;
         };

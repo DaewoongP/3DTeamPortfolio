@@ -22,7 +22,6 @@ public:
     virtual void OnStateTick();
     virtual void OnStateExit();
 
-private:
     void Go_Hover_Idle();
     void Go_Move();
 

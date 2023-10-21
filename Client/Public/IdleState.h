@@ -31,6 +31,7 @@ private:
     void Action_None_Tick();
     void Action_Casual_Tick();
     void Action_Cmbt_Tick();
+    void Action_Fly_Tick();
 
     void Bind_Notify();
 

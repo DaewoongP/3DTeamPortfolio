@@ -52,7 +52,6 @@ void CBroom_End::OnStateTick()
 	if (m_StateMachineDesc.pOwnerModel->Is_Finish_Animation())
 	{
 		Go_Idle();
-
 		Go_Loop();
 	}
 }
