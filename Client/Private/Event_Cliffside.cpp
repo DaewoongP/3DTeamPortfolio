@@ -53,8 +53,7 @@ void CEvent_Cliffside::Check_Event_Play_CutScene_0_0()
 		{
 			//페이드 아웃
 			m_pRenderer->FadeOut(1.0f);
-			//타이머 리셋
-			pGameInstance->Reset_Timer(TEXT("Cliffside_CutScene_Fade_Out"));
+			
 			//진입 표시
 			m_isEnter = false;
 		}
@@ -132,6 +131,8 @@ void CEvent_Cliffside::Check_Event_Play_CutScene_0_0()
 			{
 				m_isEnter = true;
 				m_eCliffside_Sequence = CLIFFSIDE_SEQUENCE_FADE_OUT;
+				//타이머 리셋
+				pGameInstance->Reset_Timer(TEXT("Cliffside_CutScene_Fade_Out"));
 			}
 		}
 	}

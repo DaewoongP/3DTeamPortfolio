@@ -37,7 +37,7 @@ HRESULT CEvent_Smeade::Initialize(void* pArg)
 	pGameInstance->Read_CutSceneCamera(TEXT("Troll_Enter"), TEXT("../../Resources/GameData/CutScene/Troll_Enter.cut"));
 
 	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Fade_Out"), false, 1.0f);
-	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play"), false, 14.427);
+	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play"), false, 14.428);
 
 	ENDINSTANCE;
 	
@@ -71,8 +71,7 @@ void CEvent_Smeade::Check_Event_Spawn_Troll()
 		{
 			//페이드 아웃
 			m_pRenderer->FadeOut(1.0f);
-			//타이머 리셋
-			pGameInstance->Reset_Timer(TEXT("Troll_Spawn_CutScene_Fade_Out"));
+			
 			//진입 표시
 			m_isEnter = false;
 		}
@@ -161,6 +160,8 @@ void CEvent_Smeade::Check_Event_Spawn_Troll()
 			{
 				m_isEnter = true;
 				m_eTroll_Spawn_Sequence = TROLLSPAWN_SEQUENCE_FADE_OUT;
+				//타이머 리셋
+				pGameInstance->Reset_Timer(TEXT("Troll_Spawn_CutScene_Fade_Out"));
 			}
 		}
 	}
@@ -274,6 +275,7 @@ void CEvent_Smeade::Free()
 	{
 		Safe_Release(m_pSpawn_Troll);
 		Safe_Release(m_pCutSceneTest);
+		Safe_Release(m_pRenderer);
 
 		for (auto& Pair : m_pMonsters)
 			Safe_Release(Pair.second);
