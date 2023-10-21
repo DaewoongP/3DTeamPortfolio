@@ -36,14 +36,19 @@ private:
 	CTrigger* m_pTorch_Stage_2 = { nullptr };
 
 private: /* 횃불 점등 관련 */
-	_umap<wstring, CVault_Torch*> m_pTorchs;
+	_umap<wstring, CVault_Torch*> m_pTorchs_1; // 1번 구역
+	_umap<wstring, CVault_Torch*> m_pTorchs_2; // 2번 구역
+
 	_bool m_isOn_1 = { false };
 	_bool m_isOn_2 = { false };
-	void Check_Event_On_1();
-	void Check_Event_On_2();
+
+	_float m_fStage1Time = { 0.f };
+	_float m_fStage2Time = { 0.f };
 
 private:
 	HRESULT Add_Components();
+	void Check_Event_On_1(_float fTimeDelta);
+	void Check_Event_On_2(_float fTimeDelta);
 
 public:
 	static CEvent_Vault_Torch* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -28,8 +28,24 @@ HRESULT CEvent_Vault_Torch::Initialize(void* pArg)
 		// Vault_Torch를 찾는다.
 		if (wstring::npos != wstrObjTag.find(TEXT("Vault_Torch")))
 		{
-			m_pTorchs.emplace(wstrObjTag, static_cast<CVault_Torch*>(Pair.second));
-			Safe_AddRef(Pair.second);
+			// 토치 인덱스 추출
+			size_t findIndex = wstrObjTag.find(TEXT("Torch_")) + 6;
+
+			wstring wsModelIndex = wstrObjTag.substr(findIndex);
+			
+			// 0 ~ 11번 횃불
+			if (0 <= stoi(wsModelIndex) && 11 >= stoi(wsModelIndex))
+			{
+				m_pTorchs_1.emplace(wstrObjTag, static_cast<CVault_Torch*>(Pair.second));
+				Safe_AddRef(Pair.second);
+			}
+
+			// 12 ~ 23번 횃불
+			else if (12 <= stoi(wsModelIndex) && 23 >= stoi(wsModelIndex))
+			{
+				m_pTorchs_2.emplace(wstrObjTag, static_cast<CVault_Torch*>(Pair.second));
+				Safe_AddRef(Pair.second);
+			}
 		}
 	}
 
@@ -40,8 +56,8 @@ void CEvent_Vault_Torch::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	Check_Event_On_1();
-	Check_Event_On_2();
+	Check_Event_On_1(fTimeDelta);
+	Check_Event_On_2(fTimeDelta);
 }
 
 void CEvent_Vault_Torch::Late_Tick(_float fTimeDelta)
@@ -49,16 +65,77 @@ void CEvent_Vault_Torch::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 }
 
-void CEvent_Vault_Torch::Check_Event_On_1()
+void CEvent_Vault_Torch::Check_Event_On_1(_float fTimeDelta)
 {
 	if (true == m_isOn_1)
 		return;
+
+	if (true == m_pTorch_Stage_1->Is_Collision())
+	{
+		m_fStage1Time += fTimeDelta;
+
+		_uint iTorchIndex = (_uint)(m_fStage1Time * 10.f);
+
+		// 0.2 초마다 불이 켜짐
+		if (0 == (iTorchIndex % 2))
+		{
+			for (auto iter = m_pTorchs_1.begin(); iter != m_pTorchs_1.end();)
+			{
+				if (iTorchIndex == iter->second->Get_TorchIndex() || 
+					iTorchIndex + 1 == iter->second->Get_TorchIndex())
+				{
+					// 앞쪽부터 횃불 두 개를 켠다.
+					//iter->second->
+					Safe_Release(iter->second);
+					iter = m_pTorchs_1.erase(iter);
+				}
+
+				else
+					++iter;
+			}
+
+			if (m_pTorch_Stage_1->isDead() &&
+				0 == m_pTorchs_1.size())
+				m_isOn_1 = true;
+		}
+	}
 }
 
-void CEvent_Vault_Torch::Check_Event_On_2()
+void CEvent_Vault_Torch::Check_Event_On_2(_float fTimeDelta)
 {
-	if (true == m_isOn_1)
+	if (true == m_isOn_2)
 		return;
+
+	if (true == m_pTorch_Stage_2->Is_Collision())
+	{
+		m_fStage2Time += fTimeDelta;
+
+		// 두번째 횃불의 인덱스는 12부터 시작한다.
+		_uint iTorchIndex = (_uint)(m_fStage2Time * 10.f) + 12;
+
+		// 0.2 초마다 불이 켜짐
+		if (0 == (iTorchIndex % 2))
+		{
+			for (auto iter = m_pTorchs_2.begin(); iter != m_pTorchs_2.end();)
+			{
+				if (iTorchIndex == iter->second->Get_TorchIndex() ||
+					iTorchIndex + 1 == iter->second->Get_TorchIndex())
+				{
+					// 앞쪽부터 횃불 두 개를 켠다.
+					//iter->second->
+					Safe_Release(iter->second);
+					iter = m_pTorchs_2.erase(iter);
+				}
+
+				else
+					++iter;
+			}
+
+			if (m_pTorch_Stage_2->isDead() &&
+				0 == m_pTorchs_2.size())
+				m_isOn_2 = true;
+		}
+	}
 }
 
 HRESULT CEvent_Vault_Torch::Add_Components()
@@ -126,6 +203,10 @@ void CEvent_Vault_Torch::Free()
 
 	Safe_Release(m_pTorch_Stage_1);
 	Safe_Release(m_pTorch_Stage_2);
-	for (auto& Pair : m_pTorchs)
+
+	for (auto& Pair : m_pTorchs_1)
+		Safe_Release(Pair.second);
+
+	for (auto& Pair : m_pTorchs_2)
 		Safe_Release(Pair.second);
 }
