@@ -85,6 +85,8 @@ HRESULT CArmored_Troll::Initialize_Level(_uint iCurrentLevelIndex)
 
 	m_pTarget = m_pPlayer;
 
+	m_pModelCom->Change_Animation(TEXT("Idle_Combat"));
+
 	return S_OK;
 }
 

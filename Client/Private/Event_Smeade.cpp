@@ -19,8 +19,9 @@ HRESULT CEvent_Smeade::Initialize(void* pArg)
 	FAILED_CHECK_RETURN(Add_Components(), E_FAIL);
 
 	BEGININSTANCE;
+	
 	auto pMonsterLayer = pGameInstance->Find_Components_In_Layer(LEVEL_SMITH, TEXT("Layer_Monster"));
-	ENDINSTANCE;
+	
 	for (auto Pair : *pMonsterLayer)
 	{
 		wstring wstrObjTag = Pair.first;
@@ -31,7 +32,11 @@ HRESULT CEvent_Smeade::Initialize(void* pArg)
 			Safe_AddRef(Pair.second);
 		}
 	}
+	//ÄÆ¾À ÁØºñ
+	pGameInstance->Read_CutSceneCamera(TEXT("Troll_Enter"), TEXT("../../Resources/GameData/CutScene/Troll_Enter.cut"));
 
+	ENDINSTANCE;
+	
 	return S_OK;
 }
 
@@ -71,6 +76,13 @@ void CEvent_Smeade::Check_Event_Spawn_Troll()
 
 		if (m_pSpawn_Troll->isDead())
 			m_isSpawned_Troll = true;
+
+		//ÄÆ¾À Àç»ý
+		BEGININSTANCE;
+
+		pGameInstance->Add_CutScene(TEXT("Troll_Enter"));
+
+		ENDINSTANCE;
 	}
 }
 

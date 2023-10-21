@@ -166,6 +166,8 @@ void CCutScene_Camera_Tool::Tick(_float _fTimeDelta)
 		break;
 	}
 
+	Move_Button();
+
 	Recording_Camera_Move();
 
 	Set_Position_CurrentPoint();
@@ -1878,6 +1880,92 @@ void CCutScene_Camera_Tool::Recording_Camera_Move()
 	}
 
 	ENDINSTANCE;
+}
+
+void CCutScene_Camera_Tool::Move_Button()
+{
+	ImGui::Text("Move_Point");
+
+	ImGui::RadioButton("X", &m_iAllPointMoveAxisRadio, 0); ImGui::SameLine();
+	ImGui::RadioButton("Y", &m_iAllPointMoveAxisRadio, 1); ImGui::SameLine();
+	ImGui::RadioButton("Z", &m_iAllPointMoveAxisRadio, 2);
+
+	ImGui::DragFloat("Move_Value", &m_fAllPointMoveValue, 0.001f, -1.0f, 1.0f);
+
+	if (ImGui::Button("All_MovePoint"))
+	{
+		if (0.0f != m_fAllPointMoveValue)
+		{
+			_float4 vAxis = { _float4() };
+
+			switch (m_iAllPointMoveAxisRadio)
+			{
+			case 0:
+			{
+				vAxis = _float4(1.0f, 0.0f, 0.0f, 1.0f);
+			}
+			break;
+			case 1:
+			{
+				vAxis = _float4(0.0f, 1.0f, 0.0f, 1.0f);
+			}
+			break;
+			case 2:
+			{
+				vAxis = _float4(0.0f, 0.0f, 1.0f, 1.0f);
+			}
+			break;
+			default:
+				break;
+			}
+
+			vAxis *= m_fAllPointMoveValue;
+			
+			for (auto& iter : m_CameraInfoList)
+			{
+				iter.pAtPoint->Set_Position(iter.pAtPoint->Get_Position() + vAxis);
+				iter.pEyePoint->Set_Position(iter.pEyePoint->Get_Position() + vAxis);
+			}
+		}
+	}
+	if (ImGui::Button("Section_MovePoint"))
+	{
+		if (0.0f != m_fAllPointMoveValue && m_CameraInfoList.end() != m_iterStart && m_CameraInfoList.end() != m_iterEnd)
+		{
+			_float4 vAxis = { _float4() };
+
+			switch (m_iAllPointMoveAxisRadio)
+			{
+			case 0:
+			{
+				vAxis = _float4(1.0f, 0.0f, 0.0f, 1.0f);
+			}
+			break;
+			case 1:
+			{
+				vAxis = _float4(0.0f, 1.0f, 0.0f, 1.0f);
+			}
+			break;
+			case 2:
+			{
+				vAxis = _float4(0.0f, 0.0f, 1.0f, 1.0f);
+			}
+			break;
+			default:
+				break;
+			}
+
+			vAxis *= m_fAllPointMoveValue;
+
+			for (list<CAMERAPOINTINFODESC>::iterator & iter = m_iterStart; iter != ++m_iterEnd; ++iter)
+			{
+				iter->pAtPoint->Set_Position(iter->pAtPoint->Get_Position() + vAxis);
+				iter->pEyePoint->Set_Position(iter->pEyePoint->Get_Position() + vAxis);
+			}
+		}
+	}
+
+
 }
 
 CCutScene_Camera_Tool* CCutScene_Camera_Tool::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, void* pArg)

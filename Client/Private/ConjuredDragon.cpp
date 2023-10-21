@@ -185,7 +185,7 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
 		{
 			m_isSpawn = true;
-			pGameInstance->Add_CutScene(TEXT("Dragon_Enter"));
+			
 		}
 		if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
 			m_isFinish = true;
@@ -224,6 +224,10 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 
 void CConjuredDragon::Late_Tick(_float fTimeDelta)
 {
+	if (true == m_isPhaseTwo &&
+		false == m_isSpawn)
+		return;
+
 	CGameObject::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRenderer)
@@ -1099,7 +1103,7 @@ HRESULT CConjuredDragon::Make_Alive(_Inout_ CSelector* pSelector)
 
 				return !(pHealth->isDead());
 			});
-		pAction_Intro->Add_End_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+		pAction_Intro->Add_Success_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				CTransform* pTransform = { nullptr };
 				_bool* pIsPhaseOne = { nullptr };
