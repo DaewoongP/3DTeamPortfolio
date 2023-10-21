@@ -170,6 +170,7 @@
     <ClInclude Include="..\Public\AncientDoor_R.h" />
     <ClInclude Include="..\Public\Animation_Camera_Model.h" />
     <ClInclude Include="..\public\AshwinderEggs_Item.h" />
+    <ClInclude Include="..\Public\BigBird.h" />
     <ClInclude Include="..\Public\Blink_Effect.h" />
     <ClInclude Include="..\Public\Bombarda.h" />
     <ClInclude Include="..\public\Breath_Effect.h" />
@@ -501,6 +502,7 @@
     <ClCompile Include="..\Private\AncientDoor_R.cpp" />
     <ClCompile Include="..\Private\Animation_Camera_Model.cpp" />
     <ClCompile Include="..\Private\AshwinderEggs_Item.cpp" />
+    <ClCompile Include="..\Private\BigBird.cpp" />
     <ClCompile Include="..\Private\Blink_Effect.cpp" />
     <ClCompile Include="..\Private\Bombarda.cpp" />
     <ClCompile Include="..\private\Breath_Effect.cpp" />

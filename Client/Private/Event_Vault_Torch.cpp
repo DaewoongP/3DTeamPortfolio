@@ -159,7 +159,7 @@ HRESULT CEvent_Vault_Torch::Add_Components()
 	strcpy_s(TriggerDesc.szCollisionTag, "Trigger_Vault_Torch_On_2");
 	lstrcpy(TriggerDesc.szOtherTag, TEXT("Player_Default"));
 	TriggerDesc.vTriggerSize = _float3(3.5f, 2.5f, 3.5f);
-	TriggerDesc.vTriggerWorldPos = _float3(82.1, -1.25f, 81.2f);
+	TriggerDesc.vTriggerWorldPos = _float3(82.1f, -1.25f, 81.2f);
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Trigger"),
 		TEXT("Trigger_Torch_On_2"), reinterpret_cast<CComponent**>(&m_pTorch_Stage_2), &TriggerDesc)))

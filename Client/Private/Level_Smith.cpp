@@ -603,6 +603,7 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 		wstring wsOwl(TEXT("Anim_Owl"));
 		wstring wsPotionStation(TEXT("SM_HM_Potion_Table"));
 		wstring wsShopDoor(TEXT("SM_HM_Shop_Door"));
+		wstring wsBigBird(TEXT("Anim_BigBird"));
 
 		// 보물상자
 		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
@@ -682,6 +683,22 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 				wszobjName, &MapObjectDesc)))
 			{
 				MSG_BOX("Failed to Clone Owl in Level_Smith");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}
+
+		// 빅버드
+		else if (0 == lstrcmp(modelName.c_str(), wsBigBird.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_BigBird_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH,
+				TEXT("Prototype_GameObject_BigBird"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone BigBird in Level_Smith");
 				ENDINSTANCE;
 				return E_FAIL;
 			}

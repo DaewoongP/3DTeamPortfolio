@@ -13,7 +13,7 @@ HRESULT CLevel_Sanctum::Initialize()
 {
 	FAILED_CHECK_RETURN(Ready_Lights(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
-	FAILED_CHECK_RETURN(Ready_Layer_Monsters(TEXT("Layer_Monster")), E_FAIL);
+	//FAILED_CHECK_RETURN(Ready_Layer_Monsters(TEXT("Layer_Monster")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Shader(), E_FAIL);
 	
 	BEGININSTANCE;
@@ -198,7 +198,7 @@ HRESULT CLevel_Sanctum::Load_MapObject(const _tchar* pObjectFilePath)
 
 HRESULT CLevel_Sanctum::Load_MapObject_Ins(const _tchar* pObjectFilePath)
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 HRESULT CLevel_Sanctum::Load_Monsters(const wstring& wstrMonsterFilePath)
