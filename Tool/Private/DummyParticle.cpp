@@ -40,7 +40,7 @@ HRESULT CDummyParticle::Initialize(void* _pArg)
 	m_pConeEmitFromCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Emit From", { "Base", "Volume" });
 	m_pBoxEmitFromCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Emit From", { "Volume", "Shell", "Edge" });
 	m_pMeshTypeCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Type", { "Vertex", "Edge", "Triangle" });
-	m_pStopActionCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Stop Action", { "None", "Disable", "Destroy", "Callback", "Pool"}, "None");
+	m_pStopActionCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Stop Action", { "None", "Disable", "Destroy", "Callback", "Pool" }, "None");
 	m_pClipChannelCombo = CComboBox::Create(Generate_Hashtag(true).data(), "ClipChannel", { "Red", "Green", "Blue", "Alpha" }, "Alpha");
 	m_pClipChannelCombo->Set_StartTag(m_ShapeModuleDesc.strClipChannel.data());
 	vector<string> Passes = m_pShader->Get_PassList();
@@ -50,7 +50,7 @@ HRESULT CDummyParticle::Initialize(void* _pArg)
 	m_pSizeYEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingY", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
 	m_pSizeZEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingZ", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
 	m_pAngularVelocityCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Option", { "Constant", "Range" }, "Constant");
-	m_pNoiseStrengthOptionComboBox = CComboBox::Create(Generate_Hashtag(true).data(), "Strength Option", { "Constant", "Range", "Curve"}, "Constant");
+	m_pNoiseStrengthOptionComboBox = CComboBox::Create(Generate_Hashtag(true).data(), "Strength Option", { "Constant", "Range", "Curve" }, "Constant");
 	m_pNoiseStrengthCurveEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Easing", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
 	m_pVelocitySpaceCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Space", { "Local", "World" });
 	m_pLinearOptionCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Linear Option", { "Constant", "Range" });
@@ -78,7 +78,7 @@ HRESULT CDummyParticle::Initialize(void* _pArg)
 	m_pGradientTextureIFD = CImageFileDialog::Create(m_pDevice, "GradientTextureDialog");
 	m_pGradientTextureIFD->m_strStartPath = "../../Resources/Effects/Textures/Gradients/";
 	m_pGradientTextureIFD->m_iImageButtonWidth = 32;
-	
+
 	m_pDistortionTextureIFD = CImageFileDialog::Create(m_pDevice, "DistortionTextureDialog");
 	m_pDistortionTextureIFD->m_strStartPath = "../../Resources/Effects/Textures/";
 	m_pDistortionTextureIFD->m_iImageButtonWidth = 32;
@@ -109,6 +109,8 @@ void CDummyParticle::Tick_Imgui(_float _fTimeDelta)
 	ColorOverLifeTime_TreeNode(pEffectWindow);
 	ImGui::Separator();
 	SizeOverLifeTime_TreeNode(pEffectWindow);
+	ImGui::Separator();
+	NoiseModule_TreeNode(pEffectWindow);
 	ImGui::Separator();
 	TextureSheetAnimationModule_TreeNode(pEffectWindow);
 	ImGui::Separator();
@@ -206,7 +208,7 @@ void CDummyParticle::MainMoudle_TreeNode(CEffect_Window* pEffectWindow)
 					pEffectWindow->Table_ColorEdit4("Start Color2", "kxcv883jdsd", &m_MainModuleDesc.vStartColor3);
 
 			}
-			
+
 			pEffectWindow->Table_DragFloat("GravityModifier", "g50j8dfbji0", &m_MainModuleDesc.fGravityModifier, 0.01f, -FLT_MAX, FLT_MAX);
 			pEffectWindow->Table_DragFloat("SimulationSpeed", "a1ip40c854dfg", &m_MainModuleDesc.fSimulationSpeed);
 			pEffectWindow->Table_CheckBox("Play On Awake*", "zxci0pj380uj", &m_MainModuleDesc.isPlayOnAwake);
@@ -628,7 +630,7 @@ void CDummyParticle::RendererModule_TreeNode(CEffect_Window* pEffectWindow)
 					////////
 				}
 			}
-			
+
 			pEffectWindow->Table_DragFloat2("StartOffset", "eri3idkkds", &m_RendererModuleDesc.vStartOffset, 0.1f, -FLT_MAX);
 			pEffectWindow->Table_DragFloat2("Delta Offset", "ckksdi23480ksdl", &m_RendererModuleDesc.vDeltaOffset, 0.1f, -FLT_MAX);
 			pEffectWindow->Table_Void();
@@ -717,14 +719,14 @@ void CDummyParticle::SizeOverLifeTime_TreeNode(CEffect_Window* pEffectWindow)
 void CDummyParticle::RotationOverLifetimeModule_TreeNode(CEffect_Window* pEffectWindow)
 {
 	ImGui::Checkbox("##RotationOverLifetimeModule_CheckBox", &m_RotationOverLifetimeModuleDesc.isActivate);
-	
+
 	if (false == m_RotationOverLifetimeModuleDesc.isActivate)
 	{
 		ImGui::SameLine();
 		ImGui::Text("     RotationOverLifetimeModule");
 		return;
 	}
-	
+
 	ImGui::SameLine();
 
 	if (ImGui::TreeNode("RotationOverLifetimeModule"))
@@ -736,7 +738,7 @@ void CDummyParticle::RotationOverLifetimeModule_TreeNode(CEffect_Window* pEffect
 			pEffectWindow->Table_DragFloatWithOption("Angular Velocity", "vj93jf9jdfsd"
 				, &m_RotationOverLifetimeModuleDesc.fAngularVelocity, &m_RotationOverLifetimeModuleDesc.vAngularVelocityRange
 				, &m_RotationOverLifetimeModuleDesc.isAngularVelocityRange, 0.9f, -FLT_MAX);
-			
+
 			ImGui::EndTable();
 		}
 		ImGui::TreePop();
@@ -747,7 +749,7 @@ void CDummyParticle::RotationOverLifetimeModule_TreeNode(CEffect_Window* pEffect
 	//ImGui::Text("I recommend enabling the billboard option in the RendererModule.");
 	//ImGui::PopStyleColor();
 
-	
+
 }
 void CDummyParticle::TextureSheetAnimationModule_TreeNode(CEffect_Window* pEffectWindow)
 {
@@ -758,7 +760,7 @@ void CDummyParticle::TextureSheetAnimationModule_TreeNode(CEffect_Window* pEffec
 		TSAModule.iWidthLength = 1;
 		TSAModule.iHeightLength = 1;
 	}
-	
+
 	if (false == TSAModule.isActivate)
 	{
 		ImGui::SameLine();
@@ -833,65 +835,37 @@ void CDummyParticle::TextureSheetAnimationModule_TreeNode(CEffect_Window* pEffec
 }
 void CDummyParticle::NoiseModule_TreeNode(CEffect_Window* pEffectWindow)
 {
-	ImGui::Checkbox("##NoiseModule_CheckBox", &m_NoiseModuleDesc.isActivate);
+	NOISE_MODULE& NoiseModule = m_NoiseModuleDesc;
+	ImGui::Checkbox("##NoiseModule_CheckBox", &NoiseModule.isActivate);
 
-	if (false == m_NoiseModuleDesc.isActivate)
+	if (false == NoiseModule.isActivate)
 	{
 		ImGui::SameLine();
-		ImGui::Text("     NoiseLifetimeModule");
+		ImGui::Text("     NoiseModule");
 		return;
 	}
 
 	ImGui::SameLine();
 
-	if (ImGui::TreeNode("NoiseLifetimeModule"))
+	if (ImGui::TreeNode("NoiseModule"))
 	{
-		if (ImGui::BeginTable("NoiseLifetimeTable", 2))
+		if (ImGui::BeginTable("NoiseTable", 2))
 		{
 			ImGui::TableNextRow();
 
-			pEffectWindow->Table_CheckBox("Separate Axes", "IVJ89IVJ99K3F9", &m_NoiseModuleDesc.isSeparateAxes);
-			m_NoiseModuleDesc.strStrengthOption = m_pNoiseStrengthOptionComboBox->Tick(CComboBox::TABLE);
-			if (false == m_NoiseModuleDesc.isSeparateAxes)
-			{
-				if ("Constant" == m_NoiseModuleDesc.strStrengthOption)
-				{
-					pEffectWindow->Table_DragFloat("Strength", "lxckjvm8939dxcxv", &m_NoiseModuleDesc.fStrength);
-				}
-				else if ("Range" == m_NoiseModuleDesc.strStrengthOption)
-				{
-					pEffectWindow->Table_DragFloat2Range("Strength", "iopjlkcj9923", &m_NoiseModuleDesc.vStrengthRange, 0.01f, -FLT_MAX);
-				}
-				else if ("Curve" == m_NoiseModuleDesc.strStrengthOption)
-				{
-					//m_pNoiseStrengthCurveEaseCombo->Tick(CComboBox::TABLE);
-					//if (m_pNoiseStrengthCurveEaseCombo->IsUpdated())
-					//	m_NoiseModuleDesc.eStrengthEaseX = m_pNoiseStrengthCurveEaseCombo->Get_Current_Item_Index();
-				}
-			}
-			else
-			{
-				if ("Constant" == m_NoiseModuleDesc.strStrengthOption)
-				{
-					pEffectWindow->Table_DragXYZ("Strength", "v9c9cvk2kci", &m_NoiseModuleDesc.vStrength3DMax);
-				}
-				else if ("Range" == m_NoiseModuleDesc.strStrengthOption)
-				{
-					pEffectWindow->Table_DragXYZ("Strength", "v9c9cvk2kci", &m_NoiseModuleDesc.vStrength3DMin);
-					pEffectWindow->Table_DragXYZ("Strength", "v9c9cvk2kci", &m_NoiseModuleDesc.vStrength3DMax);
-				}
-				else if ("Curve" == m_NoiseModuleDesc.strStrengthOption)
-				{
-					//m_pNoiseStrengthCurveEaseCombo->Tick(CComboBox::TABLE);
-					//if (m_pNoiseStrengthCurveEaseCombo->IsUpdated())
-					//	m_NoiseModuleDesc.eStrengthEaseX = m_pNoiseStrengthCurveEaseCombo->Get_Current_Item_Index();
-				}
-			}
+			pEffectWindow->Table_DragFloat("Strength", "yutyfgsersd", &NoiseModule.fAmplitude, 0.01f, -FLT_MAX);
+			pEffectWindow->Table_DragFloat("Frequency", "vr624dfsdfcv", &NoiseModule.fFrequency, 0.01f, 0.0001f);
+			//pEffectWindow->Table_DragFloat("Persistence", "kcvjijwef", &NoiseModule.fPersistence, 0.01f, 0.0001f);
+			pEffectWindow->Table_DragInt("Octaves", "bt6v5ecfewddf", (_int*)(&NoiseModule.iNumOctaves), 0.03f, 1, 4);
+			pEffectWindow->Table_DragFloat2Range("Remap", "kc939kjsdkljf", &NoiseModule.vRemap, 0.001f, -FLT_MAX, FLT_MAX);
+			pEffectWindow->Table_DragXYZ("Position Amount", "ujyjrgrfed", &NoiseModule.vPositionAmount, 0.01f);
+			pEffectWindow->Table_DragXYZ("Size Amount", "89c83jdjkjkscxc", &NoiseModule.vSizeAmount, 0.01f);
 			ImGui::EndTable();
 		}
 		ImGui::TreePop();
 	}
 }
+
 void CDummyParticle::Save_FileDialog()
 {
 	if (ImGui::Button("Save Particle"))

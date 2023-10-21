@@ -31,7 +31,12 @@ HRESULT CDummyMeshEffect::Initialize(void* pArg)
 	m_pClipTextureIFD->m_strStartPath = "../../Resources/Effects/Textures/";
 	m_pClipTextureIFD->m_iImageButtonWidth = 32;
 
+	m_pEmissionTextureIFD = CImageFileDialog::Create(m_pDevice, Generate_Hashtag(true).data());
+	m_pEmissionTextureIFD->m_strStartPath = "../../Resources/Effects/Textures/";
+	m_pEmissionTextureIFD->m_iImageButtonWidth = 32;
+
 	m_pClipChannelCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Clip Channel", { "Red", "Green", "Blue", "Alpha" }, "Red");
+	m_pEmissionChannelCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Emission Channel", { "Red", "Green", "Blue", "Alpha" }, "Red");
 	m_pColorEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Color Ease", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
 	m_pPosEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Position Ease", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
 	m_pRotEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Rotation Ease", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
@@ -52,9 +57,8 @@ void CDummyMeshEffect::Tick_Imgui(_float _fTimeDelta)
 	{
 		ImGui::TableNextRow();
 		
-		pEffectWindow->Table_ImageButton("Diffuse Texture", "bgfqsqxxc", m_pTextureIFD);
-
 		// 메인 텍스처 교체
+		pEffectWindow->Table_ImageButton("Diffuse Texture", "bgfqsqxxc", m_pTextureIFD);
 		if (m_pTextureIFD->IsOk())
 		{
 			fs::path fsFilePath = m_pTextureIFD->Get_FilePathName();
@@ -137,6 +141,24 @@ void CDummyMeshEffect::Tick_Imgui(_float _fTimeDelta)
 			pEffectWindow->Table_DragXYZ("Strength", "dkjivjkemsdf", &m_vStrength, 0.1f);
 		}
 		ImGui::Separator();
+		pEffectWindow->Table_CheckBox("Emission", "ckvmie4jmimcvk", &m_isEmission);
+		if (m_isEmission)
+		{
+			// 이미션 텍스처 교체
+			pEffectWindow->Table_ImageButton("Emission Texture", "kcjviejf", m_pEmissionTextureIFD);
+			if (m_pEmissionTextureIFD->IsOk())
+			{
+				fs::path fsFilePath = m_pEmissionTextureIFD->Get_FilePathName();
+				ChangeTexture(&m_pEmissionTexture, m_Path[EMISSION_PATH], ToRelativePath(fsFilePath.wstring().data()).c_str());
+			}
+			m_pEmissionChannelCombo->Tick(CComboBox::FLAG::TABLE);
+			if (m_pEmissionChannelCombo->IsUpdated())
+				m_strEmissionChannel = m_pEmissionChannelCombo->Get_Current_Item();
+
+			pEffectWindow->Table_DragFloat2Range("Remap Range", "kjvisdjfiwejf", &m_vRemap, 0.01f, 0.f, 1.f);
+			pEffectWindow->Table_DragFloat("Frequency", "ckkcmdmdmcmx", &m_fFrequency, 0.01f, 0.001f);
+			pEffectWindow->Table_ColorEdit3("Emmision Color", "kdiijv93oidksdf", &m_vEmissionColor);
+		}
 
 		//pEffectWindow->Table_DragFloat("RimPower", "iv893jdjxxcv", &m_fRimPower);
 
@@ -313,9 +335,11 @@ HRESULT CDummyMeshEffect::Load_FileDialog()
 			else
 			{
 				// LoadAfter
-				ChangeTexture(&m_pTexture, m_Path[TEXTURE_PATH], m_Path[TEXTURE_PATH].c_str());
+ 				ChangeTexture(&m_pTexture, m_Path[TEXTURE_PATH], m_Path[TEXTURE_PATH].c_str());
+				ChangeTexture(&m_pEmissionTexture, m_Path[EMISSION_PATH], m_Path[EMISSION_PATH].c_str());
 				ChangeModel(&m_pModel, m_Path[MODEL_PATH], m_Path[MODEL_PATH].c_str());
 				m_pTextureIFD->ChangeTexture(wstrToStr(m_Path[TEXTURE_PATH]).c_str());
+				m_pEmissionTextureIFD->ChangeTexture(wstrToStr(m_Path[EMISSION_PATH]).c_str());
 				m_pColorEaseCombo->Update_Current_Item(m_eColorEase);
 				m_pScaleEaseCombo->Update_Current_Item(m_eSizeEase);
 				m_pRotEaseCombo->Update_Current_Item(m_eRotEase);
@@ -363,7 +387,9 @@ void CDummyMeshEffect::Free()
 
 	Safe_Release(m_pTextureIFD);
 	Safe_Release(m_pClipTextureIFD);
+	Safe_Release(m_pEmissionTextureIFD);
 	Safe_Release(m_pClipChannelCombo);
+	Safe_Release(m_pEmissionChannelCombo);
 	Safe_Release(m_pPassComboBox);
 	Safe_Release(m_pColorEaseCombo);
 	Safe_Release(m_pPosEaseCombo);

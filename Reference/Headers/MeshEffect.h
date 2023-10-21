@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "Model.h"
 #include "Ease.h"
+
 BEGIN(Engine)
 class CRenderer;
 class CTexture;
@@ -16,7 +17,7 @@ BEGIN(Engine)
 class ENGINE_DLL CMeshEffect : public CGameObject
 {
 protected:
-	enum PATH { TEXTURE_PATH, ALPHA_CLIP_TEXTURE_PATH, MODEL_PATH, PATH_END};
+	enum PATH { TEXTURE_PATH, ALPHA_CLIP_TEXTURE_PATH, MODEL_PATH, EMISSION_PATH, PATH_END};
 
 protected:
 	explicit CMeshEffect(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
@@ -27,6 +28,7 @@ public:
 	void Set_PassName(string strPassName);
 	void Set_Path(wstring wstrPath, PATH ePath);
 
+	_bool IsEnable();
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* pFilePath, _uint _iLevel, _float4x4 PivotMatrix = _float4x4());
 	virtual HRESULT Initialize(void* _pArg) override;
@@ -112,9 +114,17 @@ protected:
 	string m_strCurAnim; // Save
 	
 protected:
+	_bool m_isEmission = { false };
+	_float m_fFrequency = { 1.f };
+	_float2 m_vRemap = { 0.f, 1.f };
+	_float3 m_vEmissionColor = { 1.f, 1.f, 1.f };
+	string m_strEmissionChannel = { "Red" };
+
+protected:
 	CModel* m_pModel = { nullptr };
 	CTexture* m_pTexture = { nullptr };
 	CTexture* m_pClipTexture = { nullptr };
+	CTexture* m_pEmissionTexture = { nullptr };
 	CShader* m_pShader = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 

@@ -25,91 +25,14 @@ void SplitUV(float2 In, uint iWidthLength, uint iHeightLength, uint iCurIndex, o
 	Out.y = In.y * fUnitHeight + vStartUV.y;	// y * 0.2f + 0.2f
 }
 
-///////////////// 펄린노이즈 3D /////////////////////
-
-float Noise3(int x, int y, int z)
-{
-	int n = x + y * 57 + z * 131;
-	n = (n << 13) ^ n;
-	return (1.0 - (float)((n * (n * n * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0);
-}
-
-float SmoothNoise_3(float x, float y, float z)
-{
-	float corners = (Noise3(x - 1, y - 1, z - 1) + Noise3(x + 1, y - 1, z - 1) +
-		Noise3(x - 1, y + 1, z - 1) + Noise3(x + 1, y + 1, z - 1) +
-		Noise3(x - 1, y - 1, z + 1) + Noise3(x + 1, y - 1, z + 1) +
-		Noise3(x - 1, y + 1, z + 1) + Noise3(x + 1, y + 1, z + 1)) / 16.0;
-
-	float sides = (Noise3(x - 1, y, z) + Noise3(x + 1, y, z) + Noise3(x, y - 1, z) +
-		Noise3(x, y + 1, z) + Noise3(x, y, z - 1) + Noise3(x, y, z + 1)) / 8.0;
-
-	float center = Noise3(x, y, z) / 4.0;
-	return corners + sides + center;
-}
-
-float InterpolateNoise_3(float x, float y, float z)
-{
-	int integer_X = int(x);
-	float fractional_X = x - integer_X;
-
-	int integer_Y = int(y);
-	float fractional_Y = y - integer_Y;
-
-	int integer_Z = int(z);
-	float fractional_Z = z - integer_Z;
-
-	// Blending weights
-	float v1 = SmoothNoise_3(integer_X, integer_Y, integer_Z);
-	float v2 = SmoothNoise_3(integer_X + 1, integer_Y, integer_Z);
-	float v3 = SmoothNoise_3(integer_X, integer_Y + 1, integer_Z);
-	float v4 = SmoothNoise_3(integer_X + 1, integer_Y + 1, integer_Z);
-	float v5 = SmoothNoise_3(integer_X, integer_Y, integer_Z + 1);
-	float v6 = SmoothNoise_3(integer_X + 1, integer_Y, integer_Z + 1);
-	float v7 = SmoothNoise_3(integer_X, integer_Y + 1, integer_Z + 1);
-	float v8 = SmoothNoise_3(integer_X + 1, integer_Y + 1, integer_Z + 1);
-
-	float i1 = lerp(v1, v2, fractional_X);
-	float i2 = lerp(v3, v4, fractional_X);
-	float i3 = lerp(v5, v6, fractional_X);
-	float i4 = lerp(v7, v8, fractional_X);
-
-	float j1 = lerp(i1, i2, fractional_Y);
-	float j2 = lerp(i3, i4, fractional_Y);
-
-	return lerp(j1, j2, fractional_Z);
-}
-
-
 void Remap_float4(float4 In, float2 InMinMax, float2 OutMinMax, out float4 Out)
 {
 	Out = OutMinMax.x + (In - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / (InMinMax.y - InMinMax.x);
 }
 
-// 전역 변수들
-float g_fPersistence = 0.5f; // [0, 1] 0에 가까울 수록 부드럽다, 1에 가까울수록 거칠다.
-int g_iNumOctaves = 1;
-float g_fFrequency = 1.f;
-float g_fAmplitude = 1.f;
-
-float PerlinNoise_3D(float x, float y, float z)
+void Remap_float(float In, float2 InMinMax, float2 OutMinMax, out float Out)
 {
-	float fFrequency = g_fFrequency;
-	float fAmplitude = g_fAmplitude;
-	float fTotal = 0.f;
-	float fMaxValue = 0.f; // 초기화 값을 0으로 설정
-
-	for (int i = 0; i < g_iNumOctaves; i++)
-	{
-		fTotal += InterpolateNoise_3(x * fFrequency, y * fFrequency, z * fFrequency) * fAmplitude;
-
-		fMaxValue += fAmplitude;
-
-		fAmplitude *= g_fPersistence;
-		fFrequency *= 2.0f;
-	}
-
-	return fTotal / fMaxValue;
+	Out = OutMinMax.x + (In - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / (InMinMax.y - InMinMax.x);
 }
 
 ////////////////////////////////////////////////////

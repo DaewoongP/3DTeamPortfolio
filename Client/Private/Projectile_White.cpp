@@ -22,32 +22,10 @@ HRESULT CProjectile_White::Initialize_Prototype(_uint iLevel)
 	BEGININSTANCE;
 	m_iLevel = iLevel;
 
-	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_MeshEffect_Outer_Ball")))
+	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_MeshEffect_Projectile_Black")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_MeshEffect_Outer_Ball")
-			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Projectile_White/Outer_Ball.ME"), iLevel))))
-		{
-			__debugbreak();
-			ENDINSTANCE;
-			return E_FAIL;
-		}
-	}
-
-	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_MeshEffect_Inner_Ball")))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_MeshEffect_Inner_Ball")
-			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Projectile_White/Inner_Ball.ME"), iLevel))))
-		{
-			__debugbreak();
-			ENDINSTANCE;
-			return E_FAIL;
-		}
-	}
-
-	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_Particle_Test")))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_Particle_Test")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Test/"), iLevel))))
+		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_MeshEffect_Projectile_Black")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Projectile_Black/Projectile_Black.ME"), iLevel))))
 		{
 			__debugbreak();
 			ENDINSTANCE;
@@ -136,14 +114,13 @@ void CProjectile_White::Ready_DrawMagic()
 {
 	__super::Ready_DrawMagic();
 
-	m_pMeshEffect_Outer_Ball->Play(m_CurrentWeaponMatrix.Translation());
-	m_pMeshEffect_Inner_Ball->Play(m_CurrentWeaponMatrix.Translation());
 }
 
 void CProjectile_White::Ready_CastMagic()
 {
 	//Ready_SplineMove(m_TrailVec[EFFECT_STATE_MAIN][0]);
 	__super::Ready_CastMagic();
+	//m_pMeshEffect_Projectile_Black->Play(m_CurrentWeaponMatrix.Translation());
 }
 
 void CProjectile_White::Ready_Dying()
@@ -158,6 +135,7 @@ void CProjectile_White::Tick_Begin(_float fTimeDelta)
 
 void CProjectile_White::Tick_DrawMagic(_float fTimeDelta)
 {
+	Do_MagicBallState_To_Next();
 	__super::Tick_DrawMagic(fTimeDelta);
 }
 
@@ -165,18 +143,25 @@ void CProjectile_White::Tick_CastMagic(_float fTimeDelta)
 {
 	__super::Tick_CastMagic(fTimeDelta);
 	//m_ParticleVec[EFFECT_STATE_MAIN][1]->Get_Transform()->LookAt(m_vEndPosition);
-	//if (m_fLerpAcc != 1)
-	//{
-	//	m_fLerpAcc += fTimeDelta / m_fLifeTime * m_fTimeScalePerDitance;
-	//	if (m_fLerpAcc > 1)
-	//		m_fLerpAcc = 1;
-	//	m_TrailVec[EFFECT_STATE_MAIN][0]->Spline_Move(m_vSplineLerp[0], m_vStartPosition, m_vEndPosition, m_vSplineLerp[1], m_fLerpAcc);
-	//	m_pTransform->Set_Position(XMVectorLerp(m_vStartPosition, m_vEndPosition, m_fLerpAcc));
-	//}
-	//else
-	//{
-	//	Do_MagicBallState_To_Next();
-	//}
+	if (m_fLerpAcc != 1)
+	{
+		m_fLerpAcc += fTimeDelta / m_fLifeTime * m_fTimeScalePerDitance;
+		if (m_fLerpAcc > 1)
+			m_fLerpAcc = 1;
+		//_float3 vLerpPos = _float3::Lerp(m_vStartPosition, m_vEndPosition, m_fLerpAcc);
+		//m_TrailVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Set_Position(vLerpPos);
+		//_float3 vTrailPos = m_TrailVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Get_Position();
+		//m_ParticleVec[EFFECT_STATE_MAIN][0]->Get_Transform()->LookAt(m_vStartPosition);
+		//m_ParticleVec[EFFECT_STATE_MAIN][0]->Get_ShapeModuleRef().Set_ShapeLook(m_vEndPosition, m_vStartPosition);
+		//m_ParticleVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Set_Position(vTrailPos);
+		//m_MeshEffectVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Set_Position(vLerpPos);
+		//m_pMeshEffect_Projectile_Black->Get_Transform()->LookAt(m_vEndPosition);
+		//m_pTransform->Set_Position(XMVectorLerp(m_vStartPosition, m_vEndPosition, m_fLerpAcc));
+	}
+	else
+	{
+		Do_MagicBallState_To_Next();
+	}
 
 	Do_MagicBallState_To_Next();
 }
@@ -188,15 +173,13 @@ void CProjectile_White::Tick_Dying(_float fTimeDelta)
 
 HRESULT CProjectile_White::Add_Components()
 {
-	m_ParticleVec[EFFECT_STATE_WAND].resize(1);
-	FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Test"),
-		TEXT("Com_Test"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_WAND][0])));
+	//m_ParticleVec[EFFECT_STATE_WAND].resize(1);
+	//FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Test"),
+	//	TEXT("Com_Test"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_WAND][0])));
 
-	FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_MeshEffect_Outer_Ball"),
-		TEXT("Com_MeshEffet_Outer_Ball"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Outer_Ball)));
-
-	FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_MeshEffect_Inner_Ball"),
-		TEXT("Com_MeshEffet_Inner_Ball"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Inner_Ball)));
+	//m_MeshEffectVec[EFFECT_STATE_MAIN].resize(1);
+	//FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_MeshEffect_Projectile_Black"),
+	//	TEXT("Com_MeshEffect_Projectile_Black"), reinterpret_cast<CComponent**>(&m_MeshEffectVec[EFFECT_STATE_MAIN][0])));
 
 	return S_OK;
 }
@@ -230,6 +213,5 @@ void CProjectile_White::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pMeshEffect_Outer_Ball);
-	Safe_Release(m_pMeshEffect_Inner_Ball);
+	Safe_Release(m_pMeshEffect_Projectile_Black);
 }

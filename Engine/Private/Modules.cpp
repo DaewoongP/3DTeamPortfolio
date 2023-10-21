@@ -1,6 +1,7 @@
 #include "..\Public\Modules.h"
 #include "ParticleSystem.h"
 #include "GameInstance.h"
+#include "Shader.h"
 void MODULE::Save(HANDLE hFile, _ulong& dwByte)
 {
 	WriteFile(hFile, &isActivate, sizeof isActivate, &dwByte, nullptr);
@@ -1229,6 +1230,102 @@ void TEXTURE_SHEET_ANIMATION::CalculateMaxSize()
 	iMaxIndex = iWidthLength * iHeightLength - 1;
 }
 
+HRESULT NOISE_MODULE::Save(const _tchar* _pDirectoyPath)
+{
+	fs::path fsFilePath = _pDirectoyPath;
+	fsFilePath = fsFilePath / TEXT("NoiseModule.ptc");
+
+	HANDLE hFile = CreateFile(fsFilePath.wstring().data()
+		, GENERIC_WRITE
+		, 0
+		, 0
+		, CREATE_ALWAYS
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	_ulong dwByte = 0;
+
+	__super::Save(hFile, dwByte);
+
+	WriteFile(hFile, &fPersistence, sizeof fPersistence, &dwByte, nullptr);
+	WriteFile(hFile, &fFrequency, sizeof fFrequency, &dwByte, nullptr);
+	WriteFile(hFile, &fAmplitude, sizeof fAmplitude, &dwByte, nullptr);
+	WriteFile(hFile, &iNumOctaves, sizeof iNumOctaves, &dwByte, nullptr);
+	WriteFile(hFile, &vRemap, sizeof vRemap, &dwByte, nullptr);
+	WriteFile(hFile, &vPositionAmount, sizeof vPositionAmount, &dwByte, nullptr);
+	WriteFile(hFile, &vSizeAmount, sizeof vSizeAmount, &dwByte, nullptr);
+
+	CloseHandle(hFile);
+	return S_OK;
+}
+
+HRESULT NOISE_MODULE::Load(const _tchar* _pDirectoyPath)
+{
+	fs::path fsFilePath = _pDirectoyPath;
+	fsFilePath = fsFilePath / TEXT("NoiseModule.ptc");
+	if (false == fs::exists(fsFilePath))
+		return S_OK;
+
+	HANDLE hFile = CreateFile(fsFilePath.wstring().data()
+		, GENERIC_READ
+		, 0
+		, 0
+		, OPEN_EXISTING
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	_ulong dwByte = 0;
+	_char szBuffer[MAX_PATH];
+	__super::Load(hFile, dwByte);
+
+	ReadFile(hFile, &fPersistence, sizeof fPersistence, &dwByte, nullptr);
+	ReadFile(hFile, &fFrequency, sizeof fFrequency, &dwByte, nullptr);
+	ReadFile(hFile, &fAmplitude, sizeof fAmplitude, &dwByte, nullptr);
+	ReadFile(hFile, &iNumOctaves, sizeof iNumOctaves, &dwByte, nullptr);
+	ReadFile(hFile, &vRemap, sizeof vRemap, &dwByte, nullptr);
+	ReadFile(hFile, &vPositionAmount, sizeof vPositionAmount, &dwByte, nullptr);
+	ReadFile(hFile, &vSizeAmount, sizeof vSizeAmount, &dwByte, nullptr);
+
+	CloseHandle(hFile);
+	// 파티클 텍스처 시트 구현해!
+	return S_OK;
+}
+
+HRESULT NOISE_MODULE::Bind_Values(CShader* pShader)
+{
+	if (false == isActivate)
+	{
+		if (FAILED(pShader->Bind_RawValue("g_isNoiseActivated", &isActivate, sizeof(isActivate))))
+			return E_FAIL;
+
+		return S_OK;
+	}
+	if (FAILED(pShader->Bind_RawValue("g_isNoiseActivated", &isActivate, sizeof(isActivate))))
+		return E_FAIL;
+	if(FAILED(pShader->Bind_RawValue("g_fAmplitude", &fAmplitude, sizeof(fAmplitude))))
+		return E_FAIL;
+	if(FAILED(pShader->Bind_RawValue("g_fFrequency", &fFrequency, sizeof(fFrequency))))
+		return E_FAIL;
+	if(FAILED(pShader->Bind_RawValue("g_iNumOctaves", &iNumOctaves, sizeof(iNumOctaves))))
+		return E_FAIL;
+	if(FAILED(pShader->Bind_RawValue("g_fPersistence", &fPersistence, sizeof(fPersistence))))
+		return E_FAIL;
+	if(FAILED(pShader->Bind_RawValue("g_vRemap", &vRemap, sizeof(vRemap))))
+		return E_FAIL;
+	if(FAILED(pShader->Bind_RawValue("g_vPositionAmount", &vPositionAmount, sizeof(vPositionAmount))))
+		return E_FAIL;
+	if(FAILED(pShader->Bind_RawValue("g_vSizeAmount", &vSizeAmount, sizeof(vSizeAmount))))
+		return E_FAIL;
+	
+	return S_OK;
+}
+
 void PARTICLE::Restart()
 {
 	fAge = { 0.f };
@@ -1245,3 +1342,5 @@ void PARTICLE::Restart()
 	iCurIndex = { 0 };
 	isAlive = { true };
 }
+
+

@@ -19,6 +19,7 @@ CParticleSystem::CParticleSystem(const CParticleSystem& _rhs)
 	, m_RotationOverLifetimeModuleDesc(_rhs.m_RotationOverLifetimeModuleDesc)
 	, m_VelocityOverLifeTimeModuleDesc(_rhs.m_VelocityOverLifeTimeModuleDesc)
 	, m_TextureSheetAnimationModuleDesc(_rhs.m_TextureSheetAnimationModuleDesc)
+	, m_NoiseModuleDesc(_rhs.m_NoiseModuleDesc)
 	, m_RendererModuleDesc(_rhs.m_RendererModuleDesc)
 	, m_StopAction(_rhs.m_StopAction)
 	, m_iLevel(_rhs.m_iLevel)
@@ -247,7 +248,7 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 		InstDesc.vColor = Particle_iter->vColor;
 		InstDesc.iCurrentIndex = Particle_iter->iCurIndex;
 		InstDesc.vVelocity = Particle_iter->vVelocity;
-		InstDesc.vVelocity.w = Particle_iter->fLifeTime;
+		InstDesc.vVelocity.w = Particle_iter->fAge;
 
 		PlayEvent(Particle_iter);
 		m_ParticleMatrices.push_back(InstDesc);
@@ -408,6 +409,9 @@ HRESULT CParticleSystem::Setup_ShaderResources()
 
 		if (FAILED(m_RendererModuleDesc.Bind_Values(m_pShader)))
 			throw "RendererModuleDesc";
+
+		if (FAILED(m_NoiseModuleDesc.Bind_Values(m_pShader)))
+			throw "NoiseModuleDesc";
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -454,6 +458,8 @@ HRESULT CParticleSystem::Save(const _tchar* _pDirectoryPath)
 		return E_FAIL;
 	if (FAILED(m_RotationOverLifetimeModuleDesc.Save(_pDirectoryPath)))
 		return E_FAIL;
+	if (FAILED(m_NoiseModuleDesc.Save(_pDirectoryPath)))
+		return E_FAIL;
 	if (FAILED(m_RendererModuleDesc.Save(_pDirectoryPath)))
 		return E_FAIL;
 
@@ -476,6 +482,8 @@ HRESULT CParticleSystem::Load(const _tchar* _pDirectoryPath)
 	if (FAILED(m_SizeOverLifeTimeModuleDesc.Load(_pDirectoryPath)))
 		return E_FAIL;
 	if (FAILED(m_RotationOverLifetimeModuleDesc.Load(_pDirectoryPath)))
+		return E_FAIL;
+	if (FAILED(m_NoiseModuleDesc.Load(_pDirectoryPath)))
 		return E_FAIL;
 	if (FAILED(m_RendererModuleDesc.Load(_pDirectoryPath)))
 		return E_FAIL;

@@ -25,6 +25,7 @@ class CMagicSlot;
 class CEnergyBall;
 class CWeapon_Dragon_Head;
 class CImpulseSphere_Effect;
+class CBreath_Effect;
 END
 
 BEGIN(Client)

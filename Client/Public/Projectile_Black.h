@@ -37,15 +37,13 @@ private:
 	virtual void Tick_Dying(_float fTimeDelta) override;
 
 private:
-	CMeshEffect* m_pMeshEffect;
-
-private:
 	HRESULT Add_Components();
 
 private:
 	CMeshEffect*		m_pMeshEffect_Outer_Ball = { nullptr };
 	CMeshEffect*		m_pMeshEffect_Inner_Ball = { nullptr };
 	CMeshEffect*		m_pMeshEffect_StartBoom = { nullptr };
+	CMeshEffect*		m_pMeshEffect_EndBoom = { nullptr };
 	CParticleSystem*	m_pParticle_Projectile_White_BulletTrace = { nullptr };
 
 public:
