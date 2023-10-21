@@ -132,6 +132,8 @@ PS_OUT PS_MAIN_SKY(PS_IN In)
     if (vDiffuse.a < 0.1f)
         discard;
 
+    vDiffuse *= 0.25f;
+    
     Out.vDiffuse = vDiffuse;
     Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);

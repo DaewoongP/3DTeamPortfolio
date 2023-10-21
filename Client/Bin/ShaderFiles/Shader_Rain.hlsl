@@ -70,17 +70,17 @@ PS_OUT PS_MAIN(PS_IN In)
 
     float2 uv = In.vTexUV;
     uv -= 0.5;
-    uv.y *= -1.f;
+    uv.y *= -0.707f;
     
     uv /= float2(g_vViewPort.y / g_vViewPort.x, 1.f);
 
     float3 col = float3(0, 0, 0);
-    float fr = 0.f;// = rain(float3(-uv, 5));
+    float fr = 0.f; //rain(float3(-uv, 5));
     col = float3(fr, fr, fr);
-    col += rain(float3(-uv * 2.3, 5)) * 0.5;
-    col += rain(float3(-uv * 4.7, 5)) * 0.25;
-
-    col = pow(col, float3(0.4545, 0.4545, 0.4545));
+    col += rain(float3(-uv * 5.2, 5)) * 0.5;
+    col += rain(float3(-uv * 8.7, 3)) * 0.25;
+    
+    //col = pow(col, float3(0.4545, 0.4545, 0.4545));
 
     Out.vColor = float4(col, 1);
     
@@ -96,7 +96,6 @@ PS_OUT PS_MAIN_TEST(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
     
     float2 q = In.vTexUV;
-    q.y *= -1.f;
     float2 p = -1.0 + 2.0 * q;
     p.x *= g_vViewPort.x / g_vViewPort.y;
     
@@ -106,16 +105,7 @@ PS_OUT PS_MAIN_TEST(PS_IN In)
     float f = PerlinNoise2D(st, 1.5) * PerlinNoise2D(st * 0.773, 1.5) * 1.55;
     f = 0.25 + clamp(pow(abs(f), 13.0) * 13.0, 0.0, q.y * .14);
     
-    col += 0.25 * f * (0.2);
-     //+ backgroundColor);
-    
-    // post processing
-    col = pow(clamp(col, 0.0, 1.0), float3(0.4545, 0.4545, 0.4545));
-    col *= 1.2 * float3(1., 0.99, 0.95);
-    col = clamp(1.06 * col - 0.03, 0., 1.);
-    q.y = (q.y - .12) * (1. / 0.76);
-    col *= 0.5 + 0.5 * pow(16.0 * q.x * q.y * (1.0 - q.x) * (1.0 - q.y), 0.1);
-
+    col += f;
     Out.vColor = float4(col, 1.0);
     
     return Out;
