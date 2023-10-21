@@ -49,13 +49,6 @@ private:
 
 	mutable _float m_fProtegoCoolTime = { 0.f };
 
-	//카메라 쉐이크 노티파이에 함수를 넣기 위한 클래스
-	CCamera_Shake* m_pDescendo_Shake = { nullptr };
-
-private:
-	virtual HRESULT Add_Components_for_Shake();
-	virtual HRESULT Make_Notifies_for_Shake();
-
 private:
 	HRESULT Make_AI();
 	HRESULT Make_Magics();
@@ -91,7 +84,12 @@ private: /* Notify Functions */
 	void Cast_Levioso();
 	void Cast_Protego();
 	void Cast_Confringo();
+	void Cast_Diffindo();
 	void Shot_Magic();
+
+private:
+	static _uint iNumClass;
+	static _float fAttackCoolTime; // 적군 마법사 무리의 공격 쿨타임
 
 public:
 	static CDarkWizard_F* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -25,6 +25,9 @@
 #include "UI_Group_Enemy_HP.h"
 #include "Weapon_Dragon_Head.h"
 #include "ImpulseSphere_Effect.h"
+
+#include "UI_Damage.h"
+
 CConjuredDragon::CConjuredDragon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEnemy(pDevice, pContext)
 {
@@ -224,6 +227,10 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 
 void CConjuredDragon::Late_Tick(_float fTimeDelta)
 {
+	if (true == m_isPhaseTwo &&
+		false == m_isSpawn)
+		return;
+
 	CGameObject::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRenderer)
@@ -251,6 +258,9 @@ void CConjuredDragon::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
 		auto Action = pCollisionMagicBallDesc->Action;
 		_int iDamage = pCollisionMagicBallDesc->iDamage;
+
+		if (nullptr != m_pHitMatrix)
+			m_pUI_Damage->Add_Font(iDamage, XMVector3TransformCoord(m_pHitMatrix->Translation(), m_pTransform->Get_WorldMatrix()));
 
 		m_pHealth->Damaged(iDamage);
 
@@ -1099,7 +1109,7 @@ HRESULT CConjuredDragon::Make_Alive(_Inout_ CSelector* pSelector)
 
 				return !(pHealth->isDead());
 			});
-		pAction_Intro->Add_End_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+		pAction_Intro->Add_Success_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				CTransform* pTransform = { nullptr };
 				_bool* pIsPhaseOne = { nullptr };
@@ -1711,6 +1721,9 @@ HRESULT CConjuredDragon::Make_Ground_Attacks(_Inout_ CSequence* pSequence)
 		CSequence* pSequence_Attack_Pulse = { nullptr };
 		if (FAILED(Create_Behavior(pSequence_Attack_Pulse)))
 			throw TEXT("Failed Create_Behavior pSequence_Attack_Pulse");
+		CSequence* pSequence_Attack_AOE = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Attack_AOE)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_AOE");
 		CSequence* pSequence_Attack_Range = { nullptr };
 		if (FAILED(Create_Behavior(pSequence_Attack_Range)))
 			throw TEXT("Failed Create_Behavior pSequence_Attack_Range");
@@ -1743,17 +1756,21 @@ HRESULT CConjuredDragon::Make_Ground_Attacks(_Inout_ CSequence* pSequence)
 
 		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Pulse"), pSequence_Attack_Pulse, 0.1f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Pulse");
-		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Range"), pSequence_Attack_Range, 0.8f)))
+		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_AOE"), pSequence_Attack_AOE, 0.1f)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_AOE");
+		/*if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Range"), pSequence_Attack_Range, 0.7f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Range");
 		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Melee"), pSequence_Attack_Melee, 0.1f)))
-			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Melee");
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Melee");*/
 
 		if (FAILED(Make_Ground_Attack_Pulse(pSequence_Attack_Pulse)))
 			throw TEXT("Failed Make_Ground_Attack_Pulse");
-		if (FAILED(Make_Ground_Attacks_Range(pSequence_Attack_Range)))
+		if (FAILED(Make_Ground_Attack_AOE(pSequence_Attack_AOE)))
+			throw TEXT("Failed Make_Ground_Attack_AOE");
+		/*if (FAILED(Make_Ground_Attacks_Range(pSequence_Attack_Range)))
 			throw TEXT("Failed Make_Ground_Attacks_Range");
 		if (FAILED(Make_Ground_Attacks_Melee(pSequence_Attack_Melee)))
-			throw TEXT("Failed Make_Ground_Attacks_Melee");
+			throw TEXT("Failed Make_Ground_Attacks_Melee");*/
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -1955,6 +1972,61 @@ HRESULT CConjuredDragon::Make_Ground_Attack_Pulse(_Inout_ CSequence* pSequence)
 	catch (const _tchar* pErrorTag)
 	{
 		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Make_Ground_Attack_Pulse : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CConjuredDragon::Make_Ground_Attack_AOE(CSequence* pSequence)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		CAction* pAction_Ground_To_Fly = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Ground_To_Fly)))
+			throw TEXT("Failed Create_Behavior pAction_Ground_To_Fly");
+		CAction* pAction_Attack_AOE_1 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Attack_AOE_1)))
+			throw TEXT("Failed Create_Behavior pAction_Attack_AOE_1");
+		CAction* pAction_Attack_AOE_2 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Attack_AOE_2)))
+			throw TEXT("Failed Create_Behavior pAction_Attack_AOE_2");
+		CAction* pAction_Land = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Land)))
+			throw TEXT("Failed Create_Behavior pAction_Land");
+
+		/* Set Options */
+		pAction_Ground_To_Fly->Set_Options(TEXT("Ground_To_Fly"), m_pModelCom);
+		pAction_Attack_AOE_1->Set_Options(TEXT("Attack_AOE_1"), m_pModelCom);
+		pAction_Attack_AOE_2->Set_Options(TEXT("Attack_AOE_2"), m_pModelCom);
+		pAction_Land->Set_Options(TEXT("Landing_To_Cmbt"), m_pModelCom);
+
+		/* Assemble Behaviors */
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Ground_To_Fly"), pAction_Ground_To_Fly)))
+			throw TEXT("Failed Assemble_Behavior Action_Ground_To_Fly");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Attack_AOE_1"), pAction_Attack_AOE_1)))
+			throw TEXT("Failed Assemble_Behavior Action_Attack_AOE_1");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Attack_AOE_2"), pAction_Attack_AOE_2)))
+			throw TEXT("Failed Assemble_Behavior Action_Attack_AOE_2");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Land"), pAction_Land)))
+			throw TEXT("Failed Assemble_Behavior Action_Land");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Make_Ground_Attack_AOE : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -2285,7 +2357,7 @@ HRESULT CConjuredDragon::Make_Attack_Fireball(_Inout_ CSequence* pSequence)
 			throw TEXT("Failed Create_Behavior pSequence_Attack_Fireball_2");
 
 		/* Set Options */
-		pSequence_Attack_Fireball_1->Set_Attack_Action_Options(TEXT("Air_Attack_Fireball_2"), m_pModelCom);
+		pSequence_Attack_Fireball_1->Set_Attack_Action_Options(TEXT("Air_Attack_Fireball_1"), m_pModelCom);
 		pSequence_Attack_Fireball_1->Set_Attack_Option(100.f);
 		pSequence_Attack_Fireball_2->Set_Attack_Action_Options(TEXT("Air_Attack_Fireball_2"), m_pModelCom);
 		pSequence_Attack_Fireball_2->Set_Attack_Option(100.f);
@@ -2523,9 +2595,7 @@ void CConjuredDragon::Shot_Fireball_Black()
 	if (nullptr == m_pTarget)
 		return;
 
-	CMagicBall* pMagicBall = m_pMagicSlot->Action_Magic_Skill(0, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_SHIELD));
-	if (nullptr == pMagicBall)
-		return;
+	m_pMagicSlot->Action_Magic_Skill(0, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_SHIELD));
 }
 
 void CConjuredDragon::Shot_Fireball_White()
@@ -2533,10 +2603,7 @@ void CConjuredDragon::Shot_Fireball_White()
 	if (nullptr == m_pTarget)
 		return;
 
-	CMagicBall* pMagicBall = m_pMagicSlot->Action_Magic_Skill(1, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_SHIELD));
-	if (nullptr == pMagicBall)
-		return;
-
+	m_pMagicSlot->Action_Magic_Skill(1, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_SHIELD));
 }
 
 void CConjuredDragon::On_Breath()

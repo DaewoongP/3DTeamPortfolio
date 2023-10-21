@@ -22,6 +22,8 @@
 #include "Sequence_Levitate.h"
 #include "Sequence_MoveTarget.h"
 
+#include "UI_Damage.h"
+
 CDugbog::CDugbog(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEnemy(pDevice, pContext)
 {
@@ -123,6 +125,9 @@ void CDugbog::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
 		auto Action = pCollisionMagicBallDesc->Action;
 		_int iDamage = pCollisionMagicBallDesc->iDamage;
+
+		if (nullptr != m_pHitMatrix)
+			m_pUI_Damage->Add_Font(iDamage, XMVector3TransformCoord(m_pHitMatrix->Translation(), m_pTransform->Get_WorldMatrix()));
 
 		m_pHealth->Damaged(iDamage);
 

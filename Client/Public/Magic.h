@@ -91,7 +91,7 @@ public:
 
 public:
 	//목표와 시작 위치를 설정해줌. 지팡이에서 파티클 재생을 해주기위해 지팡이도 던져줌.
-	virtual class CMagicBall* Magic_Cast(const CGameObject* pTarget, const CGameObject* pWeapon, COLLISIONFLAG eCollisionFlag,_bool PowerUp);
+	virtual class CMagicBall* Magic_Cast(const CGameObject* pTarget, const CGameObject* pWeapon, COLLISIONFLAG eCollisionFlag, COLLISIONFLAG eThisCollisionFlag, _bool PowerUp);
 
 protected:
 	MAGICDESC					m_MagicDesc = {};

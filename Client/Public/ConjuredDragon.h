@@ -23,6 +23,7 @@ class CAction;
 class CBreath;
 class CMagicSlot;
 class CEnergyBall;
+class CBreath_Effect;
 class CWeapon_Dragon_Head;
 class CImpulseSphere_Effect;
 END
@@ -147,6 +148,7 @@ private: /* Çàµ¿ ¹­À½µé */
 	HRESULT Make_Ground_Attacks_Melee(_Inout_ CSequence* pSequence);
 	HRESULT Make_Ground_Attacks_Range(_Inout_ CSequence* pSequence);
 	HRESULT Make_Ground_Attack_Pulse(_Inout_ CSequence* pSequence);
+	HRESULT Make_Ground_Attack_AOE(_Inout_ CSequence* pSequence);
 
 	HRESULT Make_Ground_Charge(_Inout_ CSequence* pSequence);
 

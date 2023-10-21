@@ -71,6 +71,7 @@ namespace Client
 		BUFF_DESCENDO		= 1 << 8,
 		BUFF_FLIPENDO		= 1 << 9,
 		BUFF_PROTEGO		= 1 << 10,
+		BUFF_DIFFINDO		= 1 << 11,
 		BUFF_END = 11
 	};
 

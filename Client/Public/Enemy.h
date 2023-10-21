@@ -8,6 +8,7 @@
 /* =============================================== */
 
 #include "GameObject.h"
+#include "Magic_Sound_Manager.h"
 #include "Client_Defines.h"
 
 BEGIN(Engine)
@@ -16,12 +17,14 @@ class CShader;
 class CHealth;
 class CRenderer;
 class CSelector;
+class CTexture;
 class CSequence;
 class CRigidBody;
 class CRootBehavior;
 END
 
 BEGIN(Client)
+class CUI_Damage;
 class CUI_Group_Enemy_HP;
 class CWeapon_Armored_Troll;
 END
@@ -87,6 +90,7 @@ protected:
 	CRootBehavior* m_pRootBehavior = { nullptr };
 	CShader* m_pShadowShaderCom = { nullptr };
 	CTexture* m_pDissolveTexture = { nullptr };
+	CUI_Damage* m_pUI_Damage = { nullptr };
 
 protected:
 	const CGameObject* m_pTarget = { nullptr };
@@ -95,6 +99,7 @@ protected:
 	_uint m_iPreviusSpell = { 0 };
 	unordered_map<BUFF_TYPE, function<void(void*)>> m_CurrentTickSpells;
 	unordered_map<BUFF_TYPE, MAIGBUFFTICKDESC*>		m_MagicTickDesc;
+	CMagic_Sound_Manager::OWNERTYPE m_eOwnerType;
 
 	_bool m_isSpawn = { false };
 	_bool m_isParring = { false };

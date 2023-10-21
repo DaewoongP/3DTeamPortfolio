@@ -21,6 +21,8 @@
 #include "Sequence_Levitate.h"
 #include "Sequence_MoveTarget.h"
 
+#include "UI_Damage.h"
+
 CArmored_Troll::CArmored_Troll(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEnemy(pDevice, pContext)
 {
@@ -85,6 +87,8 @@ HRESULT CArmored_Troll::Initialize_Level(_uint iCurrentLevelIndex)
 
 	m_pTarget = m_pPlayer;
 
+	m_pModelCom->Change_Animation(TEXT("Idle_Combat"));
+
 	return S_OK;
 }
 
@@ -117,6 +121,9 @@ void CArmored_Troll::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		CMagicBall::COLLSIONREQUESTDESC* pCollisionMagicBallDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
 		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
 		_int iDamage = pCollisionMagicBallDesc->iDamage;
+
+		if (nullptr != m_pHitMatrix)
+			m_pUI_Damage->Add_Font(iDamage, XMVector3TransformCoord(m_pHitMatrix->Translation(), m_pTransform->Get_WorldMatrix()));
 
 		m_pHealth->Damaged(iDamage);
 
@@ -687,6 +694,13 @@ HRESULT CArmored_Troll::Make_Intro(CSequence* pSequence)
 		CAction* pAction_Intro_4 = { nullptr };
 		if (FAILED(Create_Behavior(pAction_Intro_4)))
 			throw TEXT("Failed Create_Behavior pAction_Intro_4");
+		CAction* pAction_Intro_5 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Intro_5)))
+			throw TEXT("Failed Create_Behavior pAction_Intro_5");
+
+		CWait* pTsk_Wait = { nullptr };
+		if (FAILED(Create_Behavior(pTsk_Wait)))
+			throw TEXT("Failed Create_Behavior pTsk_Wait");
 
 		/* Set Decorators */
 
@@ -695,6 +709,8 @@ HRESULT CArmored_Troll::Make_Intro(CSequence* pSequence)
 		pAction_Intro_2->Set_Options(TEXT("Attack_Tantrum_1"), m_pModelCom, false, 0.f, true);
 		pAction_Intro_3->Set_Options(TEXT("Attack_Tantrum_2"), m_pModelCom, false, 0.f, true);
 		pAction_Intro_4->Set_Options(TEXT("Taunt_Front_4"), m_pModelCom, false, 0.f, true);
+		pAction_Intro_5->Set_Options(TEXT("Idle_Combat"), m_pModelCom, true, 0.f, true);
+		pTsk_Wait->Set_Timer(2.f);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Intro_1"), pAction_Intro_1)))
@@ -705,6 +721,11 @@ HRESULT CArmored_Troll::Make_Intro(CSequence* pSequence)
 			throw TEXT("Failed Assemble_Behavior Action_Intro_3");
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Intro_4"), pAction_Intro_4)))
 			throw TEXT("Failed Assemble_Behavior Action_Intro_4");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Intro_5"), pAction_Intro_5)))
+			throw TEXT("Failed Assemble_Behavior Action_Intro_5");
+
+		if (FAILED(pAction_Intro_5->Assemble_Behavior(TEXT("Tsk_Wait"), pTsk_Wait)))
+			throw TEXT("Failed Assemble_Behavior Tsk_Wait");
 	}
 	catch (const _tchar* pErrorTag)
 	{

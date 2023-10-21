@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 
 #include "Player.h"
+#include "UI_Damage.h"
 #include "UI_Group_Enemy_HP.h"
 
 CEnemy::CEnemy(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -87,7 +88,8 @@ void CEnemy::Late_Tick(_float fTimeDelta)
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
+		if(false == m_isDissolve)
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
 #ifdef _DEBUG
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
 #endif // _DEBUG
@@ -277,6 +279,20 @@ HRESULT CEnemy::Add_Components()
 		m_pDissolveTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/VFX/Textures/Noises/VFX_T_NoiseGreypack02_D.png"));
 		if (nullptr == m_pDissolveTexture)
 			throw TEXT("m_pDissolveTexture is nullptr");
+
+		/* For.UI_Damage */
+		CUI_DamageFont::DAMAGEFONTDESC DamageDesc;
+		DamageDesc.m_vColor = _float4(1.f, 1.f, 1.f, 0.f);
+		DamageDesc.m_fRotation = 0.f;
+		DamageDesc.m_vOrigin = { 0.f, 0.f };
+		DamageDesc.m_vMinScale = { 0.5f, 0.5f };
+		DamageDesc.m_vMaxScale = { 1.f, 1.f };
+		DamageDesc.m_fLifeTime = { 0.7f };
+		DamageDesc.m_fMoveSpeed = { 2.f };
+		DamageDesc.m_fAlphaSpeed = { 0.1f };
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Damage"),
+			TEXT("Com_UI_Damage"), reinterpret_cast<CComponent**>(&m_pUI_Damage), &DamageDesc)))
+			throw TEXT("Failed m_pUI_Damage");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -674,6 +690,7 @@ void CEnemy::Free()
 	Safe_Release(m_pRigidBody);
 	Safe_Release(m_pShadowShaderCom);
 	Safe_Release(m_pDissolveTexture);
+	Safe_Release(m_pUI_Damage);
 
 	for (auto iter = m_MagicTickDesc.begin(); iter != m_MagicTickDesc.end(); ++iter)
 	{

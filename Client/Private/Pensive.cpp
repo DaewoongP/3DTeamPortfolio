@@ -490,7 +490,7 @@ void CPensive::Attack_Orb()
 {
 	m_pMagicBall_Attack = m_pMagicSlot->Action_Magic_Skill((_uint)1, m_pPlayer, m_pDragonHead[1], COLLISIONFLAG(COL_PLAYER | COL_SHIELD | COL_STATIC));
 	m_pMagicSlot->Add_Magics(m_ProtegoInitDesc[rand()%3]);
-	m_pMagicBall_Protego = m_pMagicSlot->Action_Magic_Skill((_uint)2, m_pDragonHead[1], m_pDragonHead[1], COLLISIONFLAG(COL_MAGIC));
+	m_pMagicBall_Protego = m_pMagicSlot->Action_Magic_Skill((_uint)2, m_pDragonHead[1], m_pDragonHead[1], COLLISIONFLAG(COL_MAGIC), COL_SHIELD_ENEMY);
 }
 
 void CPensive::Attack_Shouting()

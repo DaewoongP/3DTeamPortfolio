@@ -149,7 +149,11 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 	m_CollisionDesc.pTransform = m_pTransform;
 	m_eCollisionFlag = InitDesc.eCollisionFlag;
 
-	m_pRigidBody->Set_CollisionFlag("Magic_Ball", m_eCollisionFlag);
+	if (COL_TEST == InitDesc.eThisCollisionFlag)
+		m_pRigidBody->Set_CollisionFlag("Magic_Ball", m_eCollisionFlag);
+	else
+		m_pRigidBody->Set_CollisionFlag("Magic_Ball", InitDesc.eThisCollisionFlag, m_eCollisionFlag);
+
 	//상태 초기화
 	Set_ObjEvent(OBJ_NONE);
 	Set_MagicBallState(MAGICBALL_STATE_BEGIN);
