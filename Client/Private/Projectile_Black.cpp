@@ -204,7 +204,7 @@ void CProjectile_Black::Ready_CastMagic()
 void CProjectile_Black::Ready_Dying()
 {
 	//m_pParticle_Projectile_White_BulletTrace->Stop();
-	m_pMeshEffect_EndBoom->Play(m_pMeshEffect_Outer_Ball->Get_Transform()->Get_Position());
+	//m_pMeshEffect_EndBoom->Play(m_pMeshEffect_Outer_Ball->Get_Transform()->Get_Position());
 	__super::Ready_Dying();
 }
 
@@ -262,9 +262,9 @@ HRESULT CProjectile_Black::Add_Components()
 	FAILED_CHECK(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Projectile_White_BulletTrace"),
 		TEXT("Com_Particle_Projectile_White_BulletTrace"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][0])));
 
-	m_ParticleVec[EFFECT_STATE_HIT].resize(1);
+	/*m_ParticleVec[EFFECT_STATE_HIT].resize(1);
 	FAILED_CHECK(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Projectile_White_HitBoom"),
-		TEXT("Com_Particle_Projectile_HitBoom"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_HIT][0])));
+		TEXT("Com_Particle_Projectile_HitBoom"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_HIT][0])));*/
 
 	m_TrailVec[EFFECT_STATE_MAIN].resize(1);
 	FAILED_CHECK(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Trail_Projectile_White"),
@@ -279,8 +279,8 @@ HRESULT CProjectile_Black::Add_Components()
 	FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_MeshEffect_StartBoom"),
 		TEXT("Com_MeshEffet_StartBoom"), reinterpret_cast<CComponent**>(&m_pMeshEffect_StartBoom)));
 
-	FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_MeshEffect_EndBoom"),
-		TEXT("Com_MeshEffect_EndBoom"), reinterpret_cast<CComponent**>(&m_pMeshEffect_EndBoom)));
+	//FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_MeshEffect_EndBoom"),
+	//	TEXT("Com_MeshEffect_EndBoom"), reinterpret_cast<CComponent**>(&m_pMeshEffect_EndBoom)));
 
 	return S_OK;
 }
