@@ -30,11 +30,11 @@ public:
     virtual void Bind_Notify();
 
     void LookFront();
-
     void Go_Idle();
-
     void Switch_MoveType();
 
+private:
+    _tchar m_wszPostAnimationTag[MAX_PATH] = {};
 
 public:
     static CHover_Move* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

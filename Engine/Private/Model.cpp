@@ -229,7 +229,8 @@ void CModel::Change_Animation(_uint iAnimIndex, ANIMTYPE eType)
 void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTransform)
 {
 	//애니메이션 없으면 재생하지마
-	if (m_tAnimationDesc[eType].iNumAnimations == 0)
+	if (m_tAnimationDesc[eType].iNumAnimations == 0||
+		m_tAnimationDesc[eType].iCurrentAnimIndex >= m_tAnimationDesc[eType].iNumAnimations)
 		return;
 
 

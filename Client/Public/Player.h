@@ -173,6 +173,7 @@ private:
 
 	//카메라룩과 플레이어룩의 차이 각을 담기위한 변수(음수일 경우 오른쪽, 양수일 경우 왼쪽)
 	_float m_fLookAngle{};
+	_float m_fLookAngle_Y{};
 	//방향키 입력이 들어왔는지 확인하는 변수
 	_bool m_isDirectionKeyPressed{ false };
 	//타겟을 향하기위한 각 변수

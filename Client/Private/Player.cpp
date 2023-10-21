@@ -1634,24 +1634,46 @@ void CPlayer::UpdateLookAngle()
 		m_isDirectionKeyPressed = true;
 	}
 
-	_float3 vPlayerLook = m_pTransform->Get_Look();
-
-	vPlayerLook = XMVectorSetY(vPlayerLook, 0.0f);
-
-	vPlayerLook.Normalize();
-
-	_float fLookAngle = vPlayerLook.Dot(vNextLook);
-
-	if (1.0f < fLookAngle)
 	{
-		fLookAngle = 1.0f;
+		_float3 vPlayerLook = m_pTransform->Get_Look();
+
+		vPlayerLook = XMVectorSetY(vPlayerLook, 0.0f);
+
+		vPlayerLook.Normalize();
+
+		_float fLookAngle = vPlayerLook.Dot(vNextLook);
+
+		if (1.0f < fLookAngle)
+		{
+			fLookAngle = 1.0f;
+		}
+
+		m_fLookAngle = acosf(fLookAngle);
+
+		if (0.0f > vPlayerLook.Cross(vNextLook).y)
+		{
+			m_fLookAngle *= -1;
+		}
 	}
 
-	m_fLookAngle = acosf(fLookAngle);
-
-	if (0.0f > vPlayerLook.Cross(vNextLook).y)
 	{
-		m_fLookAngle *= -1;
+		_float3 vPlayerLook = m_pTransform->Get_Look();
+		vPlayerLook = XMVectorSetX(vPlayerLook, 0.0f);
+		vPlayerLook.Normalize();
+
+		_float fLookAngle = vPlayerLook.Dot(vNextLook);
+
+		if (1.0f < fLookAngle)
+		{
+			fLookAngle = 1.0f;
+		}
+
+		m_fLookAngle_Y = acosf(fLookAngle);
+
+		if (0.0f > vPlayerLook.Cross(vNextLook).x)
+		{
+			m_fLookAngle_Y *= -1;
+		}
 	}
 
 	ENDINSTANCE;
@@ -1675,6 +1697,7 @@ HRESULT CPlayer::Ready_StateMachine()
 	m_StateMachineDesc.piActionType = &m_iActionType;
 	m_StateMachineDesc.piMoveType = &m_iMoveType;
 	m_StateMachineDesc.pOwnerLookAngle = &m_fLookAngle;
+	m_StateMachineDesc.pOwnerLookAngle_Y = &m_fLookAngle_Y;
 	m_StateMachineDesc.pfuncFinishAnimation = [&] { (*this).Finish_Animation(); };
 	m_StateMachineDesc.pLumosOn = &m_isLumosOn;
 	m_StateMachineDesc.ppTarget = &m_pTarget;

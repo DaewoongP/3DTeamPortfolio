@@ -113,26 +113,67 @@ void CFly_Move::OnStateExit()
 {
 }
 
-void CFly_Move::Bind_Notify()
-{
-	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_BM_Sprint_Loop_Fwd_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
-	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_BM_Jog_Loop_Fwd_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
-	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_BM_Sprint2Jog_RU_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
-	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_BM_Jog2Sprint_RU_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
-}
-
 void CFly_Move::LookFront()
 {
 	_float fAngle = *m_StateMachineDesc.pOwnerLookAngle;
-
+	_float fAngle_y = *m_StateMachineDesc.pOwnerLookAngle_Y;
 	BEGININSTANCE;
-	
 	if (true == *m_StateMachineDesc.pisDirectionPressed)
 	{
-		//지속적으로 회전
-		m_StateMachineDesc.pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fAngle * pGameInstance->Get_World_Tick() * (*m_StateMachineDesc.pfRotaionSpeed));
-	}
+		_float speed = fAngle * pGameInstance->Get_World_Tick() * (*m_StateMachineDesc.pfRotaionSpeed);
+		_float speed_y = fAngle_y * pGameInstance->Get_World_Tick() * (*m_StateMachineDesc.pfRotaionSpeed);
 
+		m_StateMachineDesc.pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), speed);
+
+		if (speed == 0 && speed_y == 0)
+		{
+			if (lstrcmp(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Fwd_anm")))
+			{
+				lstrcpy(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Fwd_anm"));
+				Change_Animation(TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Fwd_anm"));
+			}
+		}
+		else if (fabsf(speed) > fabsf(speed_y))
+		{
+			if (speed < 0)
+			{
+				if (lstrcmp(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Lft_anm")))
+				{
+					lstrcpy(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Lft_anm"));
+					Change_Animation(TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Lft_anm"));
+				}
+			}
+			else if (speed > 0)
+			{
+				if (lstrcmp(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Rht_anm")))
+				{
+					lstrcpy(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Rht_anm"));
+					Change_Animation(TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Rht_anm"));
+				}
+			}
+		}
+		else
+		{
+			if (speed_y < 0)
+			{
+				if (lstrcmp(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Lft_anm")))
+				{
+					lstrcpy(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Lft_anm"));
+					Change_Animation(TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Lft_anm"));
+				}
+			}
+			else if (speed_y > 0)
+			{
+				if (lstrcmp(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Rht_anm")))
+				{
+					lstrcpy(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Rht_anm"));
+					Change_Animation(TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Rht_anm"));
+				}
+			}
+		}
+
+		//Hu_Broom_FlyNoStirrups_Fast_Dn_anm=
+	}
 	ENDINSTANCE;
 }
 

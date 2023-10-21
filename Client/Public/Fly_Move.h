@@ -35,6 +35,9 @@ public:
 
     void Switch_MoveType();
 
+private:
+    _tchar m_wszPostAnimationTag[MAX_PATH] = {};
+
 
 public:
     static CFly_Move* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

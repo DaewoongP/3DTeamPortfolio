@@ -3,6 +3,7 @@
 #include "Client_Defines.h"
 #include "StateContext.h"
 #include "Player.h"
+#include "GameObject.h"
 
 CHover_Idle::CHover_Idle(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	:CStateMachine(_pDevice,_pContext)
@@ -78,6 +79,7 @@ void CHover_Idle::OnStateTick()
 	}
 	}
 	Go_Start();
+	Go_Turn();
 }
 
 void CHover_Idle::OnStateExit()
@@ -108,6 +110,28 @@ void CHover_Idle::Go_Start()
 	}
 }
 
+void CHover_Idle::Go_Turn()
+{
+	_float fAngle = *m_StateMachineDesc.pOwnerLookAngle;
+
+	if (true == *m_StateMachineDesc.pisDirectionPressed)
+	{
+		BEGININSTANCE;		
+		//양수 오른쪽
+		if (m_f45Angle < (*m_StateMachineDesc.pOwnerLookAngle))
+		{
+			Change_Animation(TEXT("Hu_Broom_FlyNoStirrups_Hover_Idle_Lft_anm"));
+			static_cast<CGameObject*>(m_pOwner->Get_Owner())->Get_Transform()->Turn(_float3(0, 1, 0), pGameInstance->Get_World_Tick());
+		}
+		//음수 왼쪽
+		if (-m_f45Angle > (*m_StateMachineDesc.pOwnerLookAngle))
+		{
+			Change_Animation(TEXT("Hu_Broom_FlyNoStirrups_Hover_Idle_Rht_anm"));
+			static_cast<CGameObject*>(m_pOwner->Get_Owner())->Get_Transform()->Turn(_float3(0,1,0), -pGameInstance->Get_World_Tick());
+		}
+		ENDINSTANCE;
+	}
+}
 
 void CHover_Idle::ActionType_Change()
 {

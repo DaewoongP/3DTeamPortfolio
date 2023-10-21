@@ -20,6 +20,7 @@ public:
         _bool* pisFinishAnimation = { nullptr };//공//
         CModel* pOwnerModel = { nullptr };//플//
         _float* pOwnerLookAngle = { nullptr };//플//
+        _float* pOwnerLookAngle_Y = { nullptr };
         _bool* pisDirectionPressed = { nullptr };//플//
         CTransform* pPlayerTransform = { nullptr };//플//
         _float* pfTargetAngle = { nullptr };//플//
@@ -36,8 +37,6 @@ public:
 
         //하늘을 날고있는지 아닌지
         _bool* pIsFlying = { nullptr };
-        //비행상태 구분용도임.
-        _uint* pMainStateType = { nullptr };
 
         //카메라 트렌스 폼
         CTransform* pCameraTransform = { nullptr };
@@ -61,7 +60,7 @@ public:
             if (nullptr == ppTarget) { return false; }
             if (nullptr == pIsFlying) { return false; }
             if (nullptr == pCameraTransform) { return false; }
-            if (nullptr == pMainStateType) { return false; }
+            if (nullptr == pOwnerLookAngle_Y) { return false; }
 
             return true;
         };
