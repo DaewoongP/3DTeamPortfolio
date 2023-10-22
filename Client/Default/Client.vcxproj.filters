@@ -949,6 +949,9 @@
     <Filter Include="02. GameObject\03. MapObject\Env\Lamppost">
       <UniqueIdentifier>{932325f7-c36e-46b5-903e-6cd0c72bef3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\LightStand">
+      <UniqueIdentifier>{b89c1f33-7332-4303-8b51-675b8608ea09}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1880,6 +1883,9 @@
     <ClInclude Include="..\Public\Lamppost.h">
       <Filter>02. GameObject\03. MapObject\Env\Lamppost</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\LightStand.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\LightStand</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2768,6 +2774,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Lamppost.cpp">
       <Filter>02. GameObject\03. MapObject\Env\Lamppost</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LightStand.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\LightStand</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
