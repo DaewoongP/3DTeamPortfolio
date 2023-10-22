@@ -1099,7 +1099,7 @@ HRESULT CConjuredDragon::Make_Alive(_Inout_ CSelector* pSelector)
 
 				return !(pHealth->isDead());
 			});
-		pAction_Intro->Add_End_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+		pAction_Intro->Add_Success_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				CTransform* pTransform = { nullptr };
 				_bool* pIsPhaseOne = { nullptr };

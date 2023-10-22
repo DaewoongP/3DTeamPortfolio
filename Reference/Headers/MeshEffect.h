@@ -28,6 +28,12 @@ public:
 	void Set_PassName(string strPassName);
 	void Set_Path(wstring wstrPath, PATH ePath);
 
+	_float3 Get_StartRot() { return m_vStartRot; }
+	void Set_StartRot(_float3 vStartRot) { m_vStartRot = vStartRot; }
+
+	_float3 Get_EndRot() { return m_vEndRot; }
+	void Set_EndRot(_float3 vEndRot) { m_vEndRot = vEndRot; }
+
 	_bool IsEnable();
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* pFilePath, _uint _iLevel, _float4x4 PivotMatrix = _float4x4());
