@@ -133,7 +133,7 @@ HRESULT COwl::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
-		MSG_BOX("Failed CCat Add_Component : (Com_Renderer)");
+		MSG_BOX("Failed COwl Add_Component : (Com_Renderer)");
 		__debugbreak();
 		return E_FAIL;
 	}
@@ -143,7 +143,7 @@ HRESULT COwl::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
-		MSG_BOX("Failed CCat Add_Component : (Com_Shader)");
+		MSG_BOX("Failed COwl Add_Component : (Com_Shader)");
 		__debugbreak();
 		return E_FAIL;
 	}
@@ -152,7 +152,7 @@ HRESULT COwl::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowAnimMesh"),
 		TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShader))))
 	{
-		MSG_BOX("Failed CCat Add_Component : (Com_ShadowShader)");
+		MSG_BOX("Failed COwl Add_Component : (Com_ShadowShader)");
 		__debugbreak();
 		return E_FAIL;
 	}

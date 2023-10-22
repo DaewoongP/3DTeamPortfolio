@@ -46,12 +46,12 @@ HRESULT CBigBird::Initialize_Level(_uint iCurrentLevelIndex)
 	if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, m_ObjectDesc.wszTag,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{
-		MSG_BOX("Failed COwl Add_Component : (Com_Model)");
+		MSG_BOX("Failed CBigBird Add_Component : (Com_Model)");
 		__debugbreak();
 		return E_FAIL;
 	}
 
-	m_pModel->Set_CurrentAnimIndex(0);
+	m_pModel->Set_CurrentAnimIndex(1);
 	m_pModel->Get_Animation()->Set_Loop(true);
 
 	return S_OK;
@@ -61,7 +61,7 @@ void CBigBird::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	BigBird_Run(fTimeDelta);
+	//BigBird_Run(fTimeDelta);
 
 	if (nullptr != m_pModel)
 		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
@@ -131,17 +131,16 @@ HRESULT CBigBird::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
-		MSG_BOX("Failed CCat Add_Component : (Com_Renderer)");
+		MSG_BOX("Failed CBigBird Add_Component : (Com_Renderer)");
 		__debugbreak();
 		return E_FAIL;
 	}
-
 
 	/* Com_Shader */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
-		MSG_BOX("Failed CCat Add_Component : (Com_Shader)");
+		MSG_BOX("Failed CBigBird Add_Component : (Com_Shader)");
 		__debugbreak();
 		return E_FAIL;
 	}
@@ -150,7 +149,7 @@ HRESULT CBigBird::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowAnimMesh"),
 		TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShader))))
 	{
-		MSG_BOX("Failed CCat Add_Component : (Com_ShadowShader)");
+		MSG_BOX("Failed CBigBird Add_Component : (Com_ShadowShader)");
 		__debugbreak();
 		return E_FAIL;
 	}
@@ -219,7 +218,7 @@ CGameObject* CBigBird::Clone(void* pArg)
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned COwl");
+		MSG_BOX("Failed to Cloned CBigBird");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
