@@ -605,7 +605,7 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 		wstring wsShopDoor(TEXT("SM_HM_Shop_Door"));
 		wstring wsBigBird(TEXT("Anim_BigBird"));
 		wstring wsSmithToCliff(TEXT("SM_HM_Cliff_Gate"));
-
+		wstring wsLamppost(TEXT("SM_HM_Lamppost"));
 
 		// 보물상자
 		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
@@ -685,6 +685,22 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 				wszobjName, &MapObjectDesc)))
 			{
 				MSG_BOX("Failed to Clone SmithToCliff_Gate");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}
+
+		// 가로등
+		else if (0 == lstrcmp(modelName.c_str(), wsLamppost.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_Lamppost_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH,
+				TEXT("Prototype_GameObject_Lamppost"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone Lamppost");
 				ENDINSTANCE;
 				return E_FAIL;
 			}

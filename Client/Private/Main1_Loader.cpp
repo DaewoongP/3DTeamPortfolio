@@ -24,6 +24,7 @@
 #include "Owl.h"
 #include "BigBird.h"
 #include "SmithToCliff_Gate.h"
+#include "Lamppost.h"
 
 CMain1_Loader::CMain1_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -493,6 +494,11 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_SmithToCliff_Gate"),
 		CSmithToCliff_Gate::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_SmithToCliff_Gate");
+
+	/* For.Prototype_GameObject_Lamppost */
+	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Lamppost"),
+		CLamppost::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Lamppost");
 
 	HANDLE hFile = CreateFile(pMapObjectPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 

@@ -943,6 +943,12 @@
     <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\SmithToCliff_Gate">
       <UniqueIdentifier>{9c8464ea-6b00-4115-af3d-5cd83bf6afc5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Env\Vault_Torch">
+      <UniqueIdentifier>{a0bb4357-e447-4268-9096-a91a1d820286}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Env\Lamppost">
+      <UniqueIdentifier>{932325f7-c36e-46b5-903e-6cd0c72bef3c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1826,9 +1832,6 @@
     <ClInclude Include="..\Public\Guide_Book.h">
       <Filter>06. Scene\Main_Menu\Guide_Book</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Vault_Torch.h">
-      <Filter>02. GameObject\03. MapObject\Env</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Event_Cliffside.h">
       <Filter>07. Events\Cliffside</Filter>
     </ClInclude>
@@ -1870,6 +1873,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\SmithToCliff_Gate.h">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\SmithToCliff_Gate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Vault_Torch.h">
+      <Filter>02. GameObject\03. MapObject\Env\Vault_Torch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Lamppost.h">
+      <Filter>02. GameObject\03. MapObject\Env\Lamppost</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2712,9 +2721,6 @@
     <ClCompile Include="..\Private\MapObject.cpp">
       <Filter>02. GameObject\03. MapObject</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Vault_Torch.cpp">
-      <Filter>02. GameObject\03. MapObject\Env</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Event_Cliffside.cpp">
       <Filter>07. Events\Cliffside</Filter>
     </ClCompile>
@@ -2756,6 +2762,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\SmithToCliff_Gate.cpp">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\SmithToCliff_Gate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Vault_Torch.cpp">
+      <Filter>02. GameObject\03. MapObject\Env\Vault_Torch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Lamppost.cpp">
+      <Filter>02. GameObject\03. MapObject\Env\Lamppost</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
