@@ -241,7 +241,7 @@ void CDiffindo::Tick_CastMagic(_float fTimeDelta)
 	m_ParticleVec[EFFECT_STATE_MAIN][1]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
 
 	m_ParticleVec[EFFECT_STATE_MAIN][2]->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
-	m_ParticleVec[EFFECT_STATE_MAIN][3]->Get_Transform()->Set_WorldMatrix(m_pMeshEffect->Get_Transform()->Get_WorldMatrix());
+	m_ParticleVec[EFFECT_STATE_MAIN][3]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
 
 	_float distance =m_pMeshEffect->Get_Transform()->Get_Speed()* m_fLerpAcc;
 

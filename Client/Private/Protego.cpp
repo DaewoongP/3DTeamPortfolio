@@ -409,7 +409,7 @@ HRESULT CProtego::Reset(MAGICBALLINITDESC& InitDesc)
 		break;
 	case Client::CMagic::MT_ALL:
 		m_vColor1 = { 0.f, 0.f, 1.f, 1.f };
-		m_vColor2 = { 1.f, 0.f, 1.f, 1.f };
+		m_vColor2 = { 1.f, 01.f, 1.f, 1.f };
 		break;
 	default:
 		__debugbreak();

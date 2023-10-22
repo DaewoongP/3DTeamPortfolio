@@ -216,7 +216,12 @@ HRESULT CPlayer::Initialize(void* pArg)
 	//	IN_CIRC, OUT_CIRC, INOUT_CIRC,
 	//	IN_BOUNCE, OUT_BOUNCE, INOUT_BOUNCE,
 	//	IN_BACK, OUT_BACK, INOUT_BACK,
-	
+	for(int i = 0; i <m_vecTest_Particle.size();++i)
+	{
+		m_vecTest_Particle[i]->Play(_float3(m_pTransform->Get_Position().x, m_pTransform->Get_Position().y + 5.f, m_pTransform->Get_Position().z));
+		Test = _float3(m_pTransform->Get_Position().x, m_pTransform->Get_Position().y + 5.f, m_pTransform->Get_Position().z);
+	}
+
 	return S_OK;
 }
 
@@ -304,8 +309,6 @@ void CPlayer::Tick(_float fTimeDelta)
 	}
 
 	m_isPreLumos = m_isLumosOn;
-	for(_uint i = 0 ; i<m_vecPlayer_StateParicle.size();++i)
-	m_vecPlayer_StateParicle[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
 
 	//m_pCooltime->Tick(fTimeDelta);
 	//Potion_Duration(fTimeDelta);
@@ -448,9 +451,16 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			HitStateDesc.pTransform = pDesc->pEnemyTransform;
 
 			Go_Hit(&HitStateDesc);
+			for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
+			{
+				m_vecPlayer_StateParicle[i]->Play(pDesc->pEnemyTransform->Get_Position());
+			}
 
 			//ü�� ����
 			m_pPlayer_Information->fix_HP((pDesc->iDamage) * -1);
+
+
+
 		}
 	}
 	else if (wstring::npos != wstrCollisionTag.find(TEXT("Magic_Ball")))
@@ -714,28 +724,32 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 	
-	/* For.Com_Player_Effect */
-	//m_vecPlayer_StateParicle.resize(1);
-	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_Effect"),
-	//	TEXT("Com_Blink_Effect"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[0]))))
-	//{
-	//__debugbreak();
-	//	return E_FAIL;
-	//}
-	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_SubEffect"),
-	//	TEXT("Com_Blink_Effect"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[0]))))
-	//{
-	//	__debugbreak();
-	//	return E_FAIL;
-	//}
-	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_Disotrtion"),
-	//	TEXT("Com_Blink_Effect"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[1]))))
-	//{
-	//	__debugbreak();
-	//	return E_FAIL;
-	//}
-
-
+	m_vecPlayer_StateParicle.resize(2);
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Player_Hit_Particle"),
+		TEXT("Com_Player_HitParticle"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[0]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Player_Hit_Fog"),
+		TEXT("Com_Player_Hit_Fog"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[1]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	m_vecTest_Particle.resize(2);
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Landing_Fog"),
+		TEXT("Com_Landing_Fog"), reinterpret_cast<CComponent**>(&m_vecTest_Particle[0]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Landing_Light"),
+		TEXT("Com_Landing_Light"), reinterpret_cast<CComponent**>(&m_vecTest_Particle[1]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
 
 
 
@@ -1135,6 +1149,8 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	if (pGameInstance->Get_DIKeyState(DIK_G, CInput_Device::KEY_DOWN))
 	{
 		Go_Use_Item();
+		
+
 		/*switch (m_pPlayer_Information->Get_PotionTap()->Get_CurTool()->Get_ItemID())
 		{
 		case Client::ITEM_ID_EDURUS_POTION:
@@ -2591,8 +2607,6 @@ void CPlayer::Go_Roll(void* _pArg)
 		)
 	{
 		m_pStateContext->Set_StateMachine(TEXT("Roll"), _pArg);
-		for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
-		m_vecPlayer_StateParicle[i]->Play(m_pTransform->Get_Position());
 
 	}
 }
