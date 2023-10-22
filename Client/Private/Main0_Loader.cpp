@@ -626,6 +626,11 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Cylinder"),
 			CCylinder::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Cylinder");
+
+		/* For.Prototype_GameObject_SmithToCliff_Gate_Portal */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_SmithToCliff_Gate_Portal"),
+			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Portal/Door"), eLevelID))))
+			throw TEXT("Prototype_GameObject_SmithToCliff_Gate_Portal");
 #pragma endregion
 
 #pragma region Load Player_Effect
@@ -807,7 +812,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Monster_DarkFlare_Particle"),
 			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Monster_DarkFlare/"), eLevelID))))
-			throw TEXT("Prototype_Monster_DarkFlare_Particle");
+			throw TEXT("Prototype_Monster_DarkFlare_Particle");		
 		
 		{
 			CMagicBallPool* pMagicBallPool = CMagicBallPool::GetInstance();

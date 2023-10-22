@@ -16,20 +16,6 @@ HRESULT CSmithToCliff_Gate::Initialize_Prototype()
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	BEGININSTANCE;
-
-	if (nullptr == pGameInstance->Find_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_SmithToCliff_Gate_Portal")))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_SmithToCliff_Gate_Portal")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Portal/Door"), LEVEL_STATIC))))
-		{
-			ENDINSTANCE;
-			return E_FAIL;
-		}
-	}
-
-	ENDINSTANCE;
-
 	return S_OK;
 }
 
