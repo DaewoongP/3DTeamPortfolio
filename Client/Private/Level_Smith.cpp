@@ -604,6 +604,8 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 		wstring wsPotionStation(TEXT("SM_HM_Potion_Table"));
 		wstring wsShopDoor(TEXT("SM_HM_Shop_Door"));
 		wstring wsBigBird(TEXT("Anim_BigBird"));
+		wstring wsSmithToCliff(TEXT("SM_HM_Cliff_Gate"));
+
 
 		// 보물상자
 		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
@@ -667,6 +669,22 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 				wszobjName, &MapObjectDesc)))
 			{
 				MSG_BOX("Failed to Clone Door in Level_Smith");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}
+
+		// 스미드 to 절벽 게이트
+		else if (0 == lstrcmp(modelName.c_str(), wsSmithToCliff.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_SmithToCliff_Gate_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH,
+				TEXT("Prototype_GameObject_SmithToCliff_Gate"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone SmithToCliff_Gate");
 				ENDINSTANCE;
 				return E_FAIL;
 			}

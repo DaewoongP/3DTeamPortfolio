@@ -940,6 +940,9 @@
     <Filter Include="02. GameObject\03. MapObject\Anim_Obj\BigBird">
       <UniqueIdentifier>{ff9c3df0-5548-4afc-9001-b274864e6839}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\SmithToCliff_Gate">
+      <UniqueIdentifier>{9c8464ea-6b00-4115-af3d-5cd83bf6afc5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1865,6 +1868,9 @@
     <ClInclude Include="..\Public\BigBird.h">
       <Filter>02. GameObject\03. MapObject\Anim_Obj\BigBird</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\SmithToCliff_Gate.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\SmithToCliff_Gate</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2747,6 +2753,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\BigBird.cpp">
       <Filter>02. GameObject\03. MapObject\Anim_Obj\BigBird</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SmithToCliff_Gate.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\SmithToCliff_Gate</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

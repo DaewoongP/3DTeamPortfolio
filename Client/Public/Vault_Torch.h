@@ -37,9 +37,6 @@ private:
 	// 각 구역에는 총 12개의 Torch가 있다.
 	_uint m_iTorchIndex = { 0 }; 
 
-	_float m_fBrightTime = { 0.f }; // 빛이 타이밍
-	_bool  m_isBrightStart = { false };
-
 private:
 	void Torch_Bright();
 
