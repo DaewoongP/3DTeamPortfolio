@@ -38,7 +38,6 @@ private:
 private:
 	CMeshEffect* m_pMeshEffect_Projectile_Black = { nullptr };
 
-
 public:
 	static CProjectile_White* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
 	virtual CGameObject* Clone(void* pArg);

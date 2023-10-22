@@ -22,6 +22,17 @@ HRESULT CProjectile_White::Initialize_Prototype(_uint iLevel)
 	BEGININSTANCE;
 	m_iLevel = iLevel;
 
+	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_Trail_Projectile_Black")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_Trail_Projectile_Black")
+			, CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Projectile_Black/Projectile_Black.trail"), iLevel))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
 	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_MeshEffect_Projectile_Black")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_MeshEffect_Projectile_Black")
@@ -108,6 +119,7 @@ HRESULT CProjectile_White::Reset(MAGICBALLINITDESC& InitDesc)
 void CProjectile_White::Ready_Begin()
 {
 	__super::Ready_Begin();
+	Ready_StraightMove(m_TrailVec[EFFECT_STATE_MAIN][0]);
 }
 
 void CProjectile_White::Ready_DrawMagic()
@@ -120,7 +132,7 @@ void CProjectile_White::Ready_CastMagic()
 {
 	//Ready_SplineMove(m_TrailVec[EFFECT_STATE_MAIN][0]);
 	__super::Ready_CastMagic();
-	//m_pMeshEffect_Projectile_Black->Play(m_CurrentWeaponMatrix.Translation());
+	m_pMeshEffect_Projectile_Black->Play(m_CurrentWeaponMatrix.Translation());
 }
 
 void CProjectile_White::Ready_Dying()
@@ -148,9 +160,9 @@ void CProjectile_White::Tick_CastMagic(_float fTimeDelta)
 		m_fLerpAcc += fTimeDelta / m_fLifeTime * m_fTimeScalePerDitance;
 		if (m_fLerpAcc > 1)
 			m_fLerpAcc = 1;
-		//_float3 vLerpPos = _float3::Lerp(m_vStartPosition, m_vEndPosition, m_fLerpAcc);
-		//m_TrailVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Set_Position(vLerpPos);
-		//_float3 vTrailPos = m_TrailVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Get_Position();
+		_float3 vLerpPos = _float3::Lerp(m_vStartPosition, m_vEndPosition, m_fLerpAcc);
+		m_TrailVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Set_Position(vLerpPos);
+		_float3 vTrailPos = m_TrailVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Get_Position();
 		//m_ParticleVec[EFFECT_STATE_MAIN][0]->Get_Transform()->LookAt(m_vStartPosition);
 		//m_ParticleVec[EFFECT_STATE_MAIN][0]->Get_ShapeModuleRef().Set_ShapeLook(m_vEndPosition, m_vStartPosition);
 		//m_ParticleVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Set_Position(vTrailPos);
@@ -177,9 +189,12 @@ HRESULT CProjectile_White::Add_Components()
 	//FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Test"),
 	//	TEXT("Com_Test"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_WAND][0])));
 
-	//m_MeshEffectVec[EFFECT_STATE_MAIN].resize(1);
-	//FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_MeshEffect_Projectile_Black"),
-	//	TEXT("Com_MeshEffect_Projectile_Black"), reinterpret_cast<CComponent**>(&m_MeshEffectVec[EFFECT_STATE_MAIN][0])));
+	m_TrailVec[EFFECT_STATE_MAIN].resize(1);
+	FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Trail_Projectile_Black"),
+			TEXT("Com_Trail_Projectile_Black"), reinterpret_cast<CComponent**>(&m_TrailVec[EFFECT_STATE_MAIN][0])));
+
+	FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_MeshEffect_Projectile_Black"),
+		TEXT("Com_MeshEffect_Projectile_Black"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Projectile_Black)));
 
 	return S_OK;
 }
