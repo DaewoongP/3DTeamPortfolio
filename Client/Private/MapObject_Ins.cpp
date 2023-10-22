@@ -39,6 +39,8 @@ HRESULT CMapObject_Ins::Initialize(void* pArg)
 
 	m_pTransform->Set_Position(vPos);
 
+	m_vEmissive = _float4(0.f, 0.f, 0.f, 0.f);
+
 	return S_OK;
 }
 
@@ -78,11 +80,31 @@ HRESULT CMapObject_Ins::Render()
 		return E_FAIL;
 
 	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
+	vector<CMesh_Instance*> Meshes = m_pModel->Get_Meshes();
 
 	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; ++iMeshCount)
 	{
 		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 		m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
+
+		if (wcswcs(Meshes[iMeshCount]->Get_MeshName(), TEXT("Glass")))
+		{
+			m_vEmissive = _float4(1.f, 1.f, 1.f, 1.f);
+			if (FAILED(m_pShader->Bind_RawValue("g_vEmissive", &m_vEmissive, sizeof(_float4))))
+				return E_FAIL;
+		}
+		else if (wcswcs(Meshes[iMeshCount]->Get_MeshName(), TEXT("SUB_GEN_A_EXT_LOD1_Alphas")))
+		{
+			m_vEmissive = _float4(0.5f, 0.5f, 0.5f, 0.5f);
+			if (FAILED(m_pShader->Bind_RawValue("g_vEmissive", &m_vEmissive, sizeof(_float4))))
+				return E_FAIL;
+		}
+		else
+		{
+			m_vEmissive = _float4(0.f, 0.f, 0.f, 0.f);
+			if (FAILED(m_pShader->Bind_RawValue("g_vEmissive", &m_vEmissive, sizeof(_float4))))
+				return E_FAIL;
+		}
 
 		m_pShader->Begin("Mesh_No_Cull");
 

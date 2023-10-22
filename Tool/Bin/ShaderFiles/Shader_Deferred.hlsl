@@ -9,6 +9,7 @@ texture2D g_ShadeTexture;
 texture2D g_DepthTexture;
 texture2D g_ShadowTexture;
 texture2D g_SpecularTexture;
+texture2D g_EmissiveTexture;
 
 struct VS_IN
 {
@@ -70,13 +71,14 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     vector vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
     vSpecular *= 0.2f;
     vector vShadow = g_ShadowTexture.Sample(LinearSampler, In.vTexUV);
+    vector vEmissive = g_EmissiveTexture.Sample(LinearSampler, In.vTexUV);
     
     if (vShadow.r < 0.8f)
     {
         vShade *= vShadow.r;
     }
     
-    Out.vColor = vDiffuse * vShade + vSpecular;
+    Out.vColor = vDiffuse * vShade + vSpecular + vEmissive;
     
     return Out;
 }

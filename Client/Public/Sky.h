@@ -32,6 +32,8 @@ private:
 
 private:
 	LEVELID				m_iCurrentLevelIndex = { LEVEL_END };
+	_float2				m_vMoonPos;
+	_int				m_iFrame = { 0 };
 
 private:
 	HRESULT Add_Components();

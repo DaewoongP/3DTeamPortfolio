@@ -11,17 +11,34 @@ texture2D g_RainTexture;
 bool g_isSSAO;
 bool g_isCircleFog;
 float g_fCamFar;
+float4 g_vCamPos;
 
 // fog
 float3 g_vCircleFogCenter;
 float4 g_vFogColor;
 float g_fCircleFogRadius;
+float g_fTime;
 
 // HDR
 texture2D g_DeferredTexture;
 texture2D g_SkyTexture;
 texture2D g_DOFTexture;
 float g_fHDRPower;
+
+
+float fract(float f)
+{
+    return f - floor(f);
+}
+
+float3 fract(float3 f)
+{
+    return f - floor(f);
+}
+
+float hash11(float p);
+float smoothNoise13(in float3 x);
+float FractionalBrownianMotion(float3 p);
 
 struct VS_IN
 {
@@ -68,7 +85,19 @@ PS_OUT PS_MAIN(PS_IN In)
     vector vHDR = g_HDRTexture.Sample(LinearSampler, In.vTexUV);
     vector vGlow = g_GlowTexture.Sample(LinearSampler, In.vTexUV);
     vector vSSAO = g_SSAOTexture.Sample(LinearSampler, In.vTexUV);
-
+    vector vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
+    float fViewZ = vDepthDesc.y * g_fCamFar;
+    vector vPosition;
+    
+    vPosition.x = In.vTexUV.x * 2.f - 1.f;
+    vPosition.y = In.vTexUV.y * -2.f + 1.f;
+    vPosition.z = vDepthDesc.x;
+    vPosition.w = 1.f;
+    
+    vPosition = vPosition * fViewZ;
+    vPosition = mul(vPosition, g_ProjMatrixInv);
+    vPosition = mul(vPosition, g_ViewMatrixInv);
+    
     if (true == g_isSSAO)
         Out.vColor = vHDR * vSSAO + vGlow;
     else
@@ -78,18 +107,7 @@ PS_OUT PS_MAIN(PS_IN In)
     {
         float fFogPower = 0.f;
     
-        vector vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
-        float fViewZ = vDepthDesc.y * g_fCamFar;
-        vector vPosition;
-    
-        vPosition.x = In.vTexUV.x * 2.f - 1.f;
-        vPosition.y = In.vTexUV.y * -2.f + 1.f;
-        vPosition.z = vDepthDesc.x;
-        vPosition.w = 1.f;
-    
-        vPosition = vPosition * fViewZ;
-        vPosition = mul(vPosition, g_ProjMatrixInv);
-        vPosition = mul(vPosition, g_ViewMatrixInv);
+        
         float fDistance = distance(g_vCircleFogCenter, vPosition.xyz);
         if (g_fCircleFogRadius > fDistance)
         {
@@ -102,7 +120,20 @@ PS_OUT PS_MAIN(PS_IN In)
         
         Out.vColor = lerp(Out.vColor, g_vFogColor, fFogPower);
     }
-        
+    
+    // floor fog
+    float2 uv = In.vTexUV * float2(1280.f, 720.f) / 720.f;
+    float3 vFbmInput = float3(uv.x - g_fTime * 0.1f, vPosition.y * 2.f, 0.0);
+    if (g_vCamPos.y > vPosition.y)
+    {
+        vFbmInput = float3(uv.x - g_fTime * 0.1f, uv.y * 2.f, 0.0);
+    }
+    float3 vFogColor = float3(0.7, 0.7, 0.9);
+    float ft = saturate((g_vCamPos.y - vPosition.y) / 3.f);
+    Out.vColor.rgb += In.vTexUV.y * vFogColor * FractionalBrownianMotion(vFbmInput) * ft;
+    
+    vFbmInput = float3(uv.x - g_fTime * 0.1f, uv.y * 2.f, 0.0);
+    Out.vColor.rgb += In.vTexUV.y * vFogColor * FractionalBrownianMotion(vFbmInput) * 0.3f;
     // y값으로 비교
     //if (vPosition.y >= 10.f)
     //    fFogPower = 0.f;
@@ -162,4 +193,43 @@ technique11 DefaultTechnique
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader = compile ps_5_0 PS_MAIN_HDR();
     }
+}
+
+float hash11(float p)
+{
+    float3 p3 = fract(float3(p, p, p) * 0.1031);
+    p3 += dot(p3, p3.yzx + 19.19);
+    return fract((p3.x + p3.y) * p3.z);
+}
+
+float smoothNoise13(in float3 x)
+{
+    float3 p = floor(x);
+    float3 f = smoothstep(0.0, 1.0, fract(x));
+    float n = p.x + p.y * 57.0 + 113.0 * p.z;
+
+    return lerp(
+        		lerp(
+                    lerp(hash11(n + 0.0), hash11(n + 1.0), f.x),
+					lerp(hash11(n + 57.0), hash11(n + 58.0), f.x),
+                    f.y),
+				lerp(
+                    lerp(hash11(n + 113.0), hash11(n + 114.0), f.x),
+					lerp(hash11(n + 170.0), hash11(n + 171.0), f.x),
+                    f.y),
+        		f.z);
+}
+
+float FractionalBrownianMotion(float3 p)
+{
+    float3x3 m = float3x3(0.00, 1.60, 1.20, -1.60, 0.72, -0.96, -1.20, -0.96, 1.28);
+    
+    float f = 0.5000 * smoothNoise13(p);
+    p = mul(m, p) * 1.2;
+    f += 0.2500 * smoothNoise13(p);
+    p = mul(m, p) * 1.3;
+    f += 0.1666 * smoothNoise13(p);
+    p = mul(m, p) * 1.4;
+    f += 0.0834 * smoothNoise13(p);
+    return f;
 }

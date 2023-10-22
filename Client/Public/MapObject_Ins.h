@@ -47,6 +47,7 @@ private:
 	CModel_Instance*	m_pModel = { nullptr };
 
 private:
+	_float4				m_vEmissive;
 	MAPOJBECTINSDESC	m_ObjectDesc;
 
 private:

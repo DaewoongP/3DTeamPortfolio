@@ -8,9 +8,64 @@ texture2D g_DissolveTexture;
 float g_fCamFar, g_fDissolveAmount;
 float2 g_vOffset;
 
+float4 g_vEmissive;
+
+//sky
+float2 g_vMoonPos;
+int g_iFrame;
+float g_fTime;
+
 float IsIn_Range(float fMin, float fMax, float fValue)
 {
     return (fMin <= fValue) && (fMax >= fValue);
+}
+
+float fract(float f)
+{
+    return f - floor(f);
+}
+
+float3 fract(float3 f)
+{
+    return f - floor(f);
+}
+
+
+float hash12(float2 p)
+{
+    float3 p3 = fract(float3(p.xyx) * 0.1031);
+    p3 += dot(p3, p3.yzx + 19.19);
+    return fract((p3.x + p3.y) * p3.z);
+}
+
+float NoisyStarField(in float2 vSamplePos, float fThreshhold)
+{
+    float StarVal = hash12(vSamplePos);
+    if (StarVal >= fThreshhold)
+        StarVal = pow((StarVal - fThreshhold) / (1.0 - fThreshhold), 6.0);
+    else
+        StarVal = 0.0;
+    return StarVal;
+}
+
+float StableStarField(in float2 vSamplePos, float fThreshhold)
+{
+    // Linear interpolation between four samples.
+    // Note: This approach has some visual artifacts.
+    // There must be a better way to "anti alias" the star field.
+    float fractX = fract(vSamplePos.x);
+    float fractY = fract(vSamplePos.y);
+    float2 floorSample = floor(vSamplePos);
+    float v1 = NoisyStarField(floorSample, fThreshhold);
+    float v2 = NoisyStarField(floorSample + float2(0.0, 1.0), fThreshhold);
+    float v3 = NoisyStarField(floorSample + float2(1.0, 0.0), fThreshhold);
+    float v4 = NoisyStarField(floorSample + float2(1.0, 1.0), fThreshhold);
+
+    float StarVal = v1 * (1.0 - fractX) * (1.0 - fractY)
+        			+ v2 * (1.0 - fractX) * fractY
+        			+ v3 * fractX * (1.0 - fractY)
+        			+ v4 * fractX * fractY;
+    return StarVal;
 }
 
 struct VS_IN
@@ -91,7 +146,8 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vDiffuse = vDiffuse;
     Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
-
+    Out.vEmissive = g_vEmissive;
+    
     return Out;
 }
 
@@ -132,9 +188,30 @@ PS_OUT PS_MAIN_SKY(PS_IN In)
     if (vDiffuse.a < 0.1f)
         discard;
 
-    vDiffuse *= 0.25f;
+    vDiffuse *= 0.15f;
+
+    float2 vNormalizedUv = In.vTexUV;
     
-    Out.vDiffuse = vDiffuse;
+	// moon
+    float2 vUvMoonDiff = In.vTexUV - g_vMoonPos;
+    float fMoonDot = max(0.0, 1.0 - dot(vUvMoonDiff, vUvMoonDiff));
+    Out.vDiffuse.rgb += float3(0.6, 0.6, 0.6) * pow(fMoonDot, 350.0) + vDiffuse.rgb;
+	
+	// moon haze
+    Out.vDiffuse.rgb += float3(0.48, 0.54, 0.6) * pow(fMoonDot, 300.0);
+    Out.vDiffuse.a = 1.f;
+    
+    //[0.9, 0.9999]
+    float StarFieldThreshhold = 0.985;
+    
+    // Stars with a slow spin.
+    float fSpinRate = 0.0001;
+    float2 vInputPos = (2.0 * In.vTexUV * float2(1280.f, 720.f) / 720.f) - float2(1.0, 1.0);
+    float fSampleAngle = fSpinRate * float(g_iFrame) + atan2(vInputPos.y, vInputPos.x);
+    float2 vSamplePos = (0.5 * length(vInputPos) * float2(cos(fSampleAngle), sin(fSampleAngle)) + float2(0.5, 0.5)) * 720.f;
+    float StarVal = StableStarField(vSamplePos, StarFieldThreshhold);
+    Out.vDiffuse.rgb += float3(StarVal, StarVal, StarVal);
+    
     Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
 

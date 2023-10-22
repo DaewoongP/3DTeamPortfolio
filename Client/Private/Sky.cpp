@@ -28,6 +28,7 @@ HRESULT CSky::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pTransform->Set_Scale(_float3(5.f, 5.f, 5.f));
+	m_vMoonPos = _float2(0.8f, 0.2f);
 
 	return S_OK;
 }
@@ -131,8 +132,16 @@ HRESULT CSky::SetUp_ShaderResources()
 
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
-
+	_float fTimeAcc = pGameInstance->Get_World_TimeAcc();
 	Safe_Release(pGameInstance);
+
+	if (FAILED(m_pShader->Bind_RawValue("g_vMoonPos", &m_vMoonPos, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_RawValue("g_iFrame", &m_iFrame, sizeof(_int))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_RawValue("g_fTime", &fTimeAcc, sizeof(_float))))
+		return E_FAIL;
+	m_iFrame++;
 
 	return S_OK;
 }
