@@ -1,6 +1,6 @@
 #include "Shader_EngineHeader.hlsli"
 #include "Shader_Functions.hlsli"
-
+#include "Shader_Noise.hlsl"
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D		g_Texture;
@@ -25,18 +25,26 @@ texture2D g_NormalTexture;
 
 // For. Noise //
 bool g_isNoiseActivated = false;
-unsigned int g_iOctaves = 1;
-//float g_fPersistence;
-//float g_fFrequency = 0.5f;
-float g_fStrength = 1.f;
+float g_fAmplitude = 1.f;
+float g_fFrequency = 1.f;
+unsigned int g_iNumOctaves = 1;
 float g_fScrollSpeed = 0.f;
-float g_fNoiseTimeAcc = 0.f;
-float fOctavesScale = 0.5f;
-float fOctavesMultiplier = 0.5f;
-float fPositionAmount = 0.0f;
-float fRotationAmount = 0.0f;
-float fSizeAmount = 0.0f;
+float g_fPersistence = 0.5f; // [0, 1] 0에 가까울 수록 부드럽다, 1에 가까울수록 거칠다.
+//float fOctavesScale = 0.5f;
+//float fOctavesMultiplier = 0.5f;
+float2 g_vRemap = { -1.f, 1.f };
+float3 g_vPositionAmount = { 1.f, 1.f, 1.f };
+float3 g_vSizeAmount = { 0.f, 0.f, 0.f };
 ////////////////
+
+// For. Emission
+bool g_isEmission = { false };
+float g_fEmissionFrequency = { 1.f };
+float2 g_vEmissionRemap = { 1.f, 1.f };
+float3 g_vEmissionColor = { 1.f, 1.f, 1.f };
+int g_iEmissionChannel = { 0 };
+texture2D g_EmissionTexture;
+//////
 
 struct VS_IN
 {
@@ -98,7 +106,7 @@ VS_OUT VS_MAIN(VS_IN In)
 	VS_OUT			Out = (VS_OUT)0;
 
 	VS_Module(In, Out);
-	
+
 	return Out;
 }
 VS_OUT VS_TS_MAIN(VS_IN In)
@@ -108,11 +116,58 @@ VS_OUT VS_TS_MAIN(VS_IN In)
 	matrix			TransformMatrix;
 	TransformMatrix = float4x4(In.vRight, In.vUp, In.vLook, In.vTranslation);
 
+	// 노이즈모듈
+	if (true == g_isNoiseActivated)
+	{
+		// Velocity의 w는 age값으로 사용중임.
+		float fNoiseValue = FractalBrownianMotion(float3(In.vVelocity.x, In.vVelocity.y, In.vVelocity.w), 1, 0.5f, 1.f, 1.f);
+		float fRemapValue = 0.f;
+
+		// Remap
+		float fNormalized = (fNoiseValue + 1.0f) * 0.5f; // [0, 1]
+		fRemapValue = g_vRemap.x + fNormalized * (g_vRemap.y - g_vRemap.x);
+
+		// 기존의 축들을 정규화
+		float3 normalizedRight = normalize(In.vRight.xyz);
+		float3 normalizedUp = normalize(In.vUp.xyz);
+		float3 normalizedLook = normalize(In.vLook.xyz);
+
+		// 원래의 스케일값 계산
+		float3 originalScale = float3(length(In.vRight), length(In.vUp), length(In.vLook));
+
+		// 노이즈 기반 스케일 값을 계산
+		float3 vNoiseScale = float3(
+			1.0f + fRemapValue * g_vSizeAmount.x,
+			1.0f + fRemapValue * g_vSizeAmount.y,
+			1.0f + fRemapValue * g_vSizeAmount.z);
+
+		// 최종 스케일 값: 원래의 스케일 x 노이즈 스케일
+		float3 finalScale = originalScale * vNoiseScale;
+
+		// 스케일 값으로 각 축을 조정
+		normalizedRight *= finalScale.x;
+		normalizedUp *= finalScale.y;
+		normalizedLook *= finalScale.z;
+
+		float3 vNoiseTranslation = float3(
+			fRemapValue * g_vPositionAmount.x,
+			fRemapValue * g_vPositionAmount.y,
+			fRemapValue * g_vPositionAmount.z);
+
+		In.vTranslation += float4(vNoiseTranslation, 0.f);
+
+		// 변환 행렬을 다시 구성
+		TransformMatrix = matrix(
+			float4(normalizedRight, 0.f),
+			float4(normalizedUp, 0.f),
+			float4(normalizedLook, 0.f),
+			In.vTranslation);
+	}
+
 	vector			vPosition;
 	vPosition = mul(vector(In.vPosition, 1.f), TransformMatrix);
 
-	matrix			matWV, matWVP;
-
+	matrix		matWV, matWVP;
 	matWV = mul(g_WorldMatrix, g_ViewMatrix);
 	matWVP = mul(matWV, g_ProjMatrix);
 
@@ -170,7 +225,7 @@ PS_NONBLEND_OUT PS_NONBLEND(PS_IN In)
 		vector vNormal = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 		Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
 	}
-	
+
 	return Out;
 }
 
@@ -223,7 +278,7 @@ technique11		DefaultTechnique
 	pass Default
 	{
 		SetRasterizerState(RS_Cull_None);
-        SetDepthStencilState(DSS_Alpha, 0);
+		SetDepthStencilState(DSS_Alpha, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
@@ -264,17 +319,17 @@ technique11		DefaultTechnique
 		DomainShader = NULL/*compile ds_5_0 DS_MAIN()*/;
 		PixelShader = compile ps_5_0 PS_MOTION_BLUR();
 	}
-    pass Default_Depth_Disable
-    {
-        SetRasterizerState(RS_Cull_None);
-        SetDepthStencilState(DSS_Depth_Disable, 0);
-        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
-        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
-        PixelShader = compile ps_5_0 PS_MAIN();
-    }
+	pass Default_Depth_Disable
+	{
+		SetRasterizerState(RS_Cull_None);
+		SetDepthStencilState(DSS_Depth_Disable, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+		DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+		PixelShader = compile ps_5_0 PS_MAIN();
+	}
 
 	pass Smoke
 	{
@@ -298,10 +353,9 @@ technique11		DefaultTechnique
 void VS_Module(VS_IN In, inout VS_OUT Out)
 {
 	VS_MainModule(In, Out);
-	VS_TextureSheetAnimationModule(In, Out);
 	//VS_NoiseModule(In, Out);
 
-	TilingAndOffset_float(Out.vTexUV, g_vTililing, g_vOffset, Out.vTexUV);
+
 
 }
 void PS_Module(PS_IN In, inout PS_OUT Out)
@@ -316,33 +370,95 @@ void VS_MainModule(VS_IN In, inout VS_OUT Out)
 	matrix			TransformMatrix;
 	TransformMatrix = float4x4(In.vRight, In.vUp, In.vLook, In.vTranslation);
 
+	if (true == g_isNoiseActivated)
+	{
+		// Velocity의 w는 age값으로 사용중임.
+		float fNoiseValueX = FractalBrownianMotion(float3(In.vTranslation.x, In.vTranslation.y, In.vVelocity.w), g_iNumOctaves, g_fPersistence, g_fFrequency, g_fAmplitude);
+		float fNoiseValueY = FractalBrownianMotion(float3(In.vTranslation.y, In.vTranslation.z, In.vVelocity.w), g_iNumOctaves, g_fPersistence, g_fFrequency, g_fAmplitude);
+		float fNoiseValueZ = FractalBrownianMotion(float3(In.vTranslation.z, In.vTranslation.x, In.vVelocity.w), g_iNumOctaves, g_fPersistence, g_fFrequency, g_fAmplitude);
+
+		// Remap
+		float fRemapValueX = 0.f;
+		float fRemapValueY = 0.f;
+		float fRemapValueZ = 0.f;
+		float fNormalizedX = (fNoiseValueX + 1.0f) * 0.5f; // [0, 1]
+		float fNormalizedY = (fNoiseValueY + 1.0f) * 0.5f; // [0, 1]
+		float fNormalizedZ = (fNoiseValueZ + 1.0f) * 0.5f; // [0, 1]
+		fRemapValueX = g_vRemap.x + fNormalizedX * (g_vRemap.y - g_vRemap.x);
+		fRemapValueY = g_vRemap.x + fNormalizedY * (g_vRemap.y - g_vRemap.x);
+		fRemapValueZ = g_vRemap.x + fNormalizedZ * (g_vRemap.y - g_vRemap.x);
+		//fRemapValueX = fNoiseValueX;
+		//fRemapValueY = fNoiseValueY;
+		//fRemapValueZ = fNoiseValueZ;
+		// 기존의 축들을 정규화
+		float3 normalizedRight = normalize(In.vRight.xyz);
+		float3 normalizedUp = normalize(In.vUp.xyz);
+		float3 normalizedLook = normalize(In.vLook.xyz);
+
+		// 원래의 스케일값 계산
+		float3 originalScale = float3(length(In.vRight), length(In.vUp), length(In.vLook));
+
+		// 노이즈 기반 스케일 값을 계산
+		float3 vNoiseScale = float3(
+			1.0f + fRemapValueX * g_vSizeAmount.x,
+			1.0f + fRemapValueX * g_vSizeAmount.y,
+			1.0f + fRemapValueX * g_vSizeAmount.z);
+
+		// 최종 스케일 값: 원래의 스케일 x 노이즈 스케일
+		float3 finalScale = originalScale * vNoiseScale;
+
+		// 스케일 값으로 각 축을 조정
+		normalizedRight *= finalScale.x;
+		normalizedUp *= finalScale.y;
+		normalizedLook *= finalScale.z;
+
+		float3 vNoiseTranslation = float3(
+			fRemapValueX * g_vPositionAmount.x,
+			fRemapValueY * g_vPositionAmount.y,
+			fRemapValueZ * g_vPositionAmount.z);
+
+		In.vTranslation += float4(vNoiseTranslation, 0.f);
+
+		// 변환 행렬을 다시 구성
+		TransformMatrix = matrix(
+			float4(normalizedRight, 0.f),
+			float4(normalizedUp, 0.f),
+			float4(normalizedLook, 0.f),
+			In.vTranslation);
+	}
+
 	vector			vPosition;
 	vPosition = mul(vector(In.vPosition, 1.f), TransformMatrix);
 
-	matrix			matWV, matWVP;
-
+	matrix		matWV, matWVP;
 	matWV = mul(g_WorldMatrix, g_ViewMatrix);
 	matWVP = mul(matWV, g_ProjMatrix);
-
 	Out.vPosition = mul(vPosition, matWVP);
-	Out.vTexUV = In.vTexUV;
+
 	Out.vColor = In.vColor;
 	Out.vVelocity = In.vVelocity;
-}
-void VS_TextureSheetAnimationModule(VS_IN In, inout VS_OUT Out)
-{
-	if (false == g_isTextureSheetAnimationActivated)
-		return;
 
-	SplitUV(In.vTexUV, g_iWidthLength, g_iHeightLength, In.iCurrentIndex, Out.vTexUV);
+	// 텍스처 시트
+	if (true == g_isTextureSheetAnimationActivated)
+	{
+		SplitUV(In.vTexUV, g_iWidthLength, g_iHeightLength, In.iCurrentIndex, Out.vTexUV);
+	}
+	else
+	{
+		Out.vTexUV = In.vTexUV;
+	}
+
+	// UV 애니메이션
+	TilingAndOffset_float(Out.vTexUV, g_vTililing, g_vOffset, Out.vTexUV);
 }
+
 void VS_NoiseModule(VS_IN In, inout VS_OUT Out)
 {
 	if (false == g_isNoiseActivated)
 		return;
 
 	// 노이즈 스크롤 적용
-	float3 vNoiseInput = In.vPosition + float3(0, g_fNoiseTimeAcc * g_fScrollSpeed, 0);
+	//float3 vNoiseInput = In.vPosition + float3(0, g_fNoiseTimeAcc * g_fScrollSpeed, 0);
 	//float fNoiseValue = PerlinNoise_3D(vNoiseInput.x, vNoiseInput.y, vNoiseInput.z
 	//	, g_fFrequency, g_fPersistence, fOctavesScale, fOctavesMultiplier, g_iOctaves);
 
@@ -378,6 +494,26 @@ void PS_MainModule(PS_IN In, inout PS_OUT Out)
 	if (Out.vColor.a < g_fClipThreshold)
 	{
 		discard;
+	}
+
+	if (g_isEmission) 
+	{
+		float fEmissionValue = 0.f, fRemapValue = 0.f;
+		vector vEmission = g_EmissionTexture.Sample(LinearSampler, In.vTexUV);
+		float fSineTime = sin(g_fEmissionFrequency * In.vVelocity.w);
+		
+		if (0 == g_iEmissionChannel)
+			fEmissionValue = vEmission.r;
+		else if (1 == g_iEmissionChannel)
+			fEmissionValue = vEmission.g;
+		else if (2 == g_iEmissionChannel)
+			fEmissionValue = vEmission.b;
+		else if (3 == g_iEmissionChannel)
+			fEmissionValue = vEmission.a;
+		// out1 + (val - in1) * (out2 - out1) / (in2 - in1);
+
+		Remap_float(fSineTime, float2(-1.f, 1.f), g_vEmissionRemap, fRemapValue);
+		Out.vColor += fRemapValue * fEmissionValue * float4(g_vEmissionColor, 0.f);
 	}
 }
 void PS_TextureSheetAnimationModule(PS_IN In, inout PS_OUT Out)

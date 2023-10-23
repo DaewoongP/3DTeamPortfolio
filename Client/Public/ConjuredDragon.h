@@ -30,6 +30,7 @@ class CWeapon_Dragon_Left_Wing;
 class CWeapon_Dragon_Right_Wing;
 class CWeapon_Dragon_Tail;
 class CImpulseSphere_Effect;
+class CBreath_Effect;
 END
 
 BEGIN(Client)

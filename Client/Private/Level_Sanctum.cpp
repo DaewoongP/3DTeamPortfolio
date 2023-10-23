@@ -13,7 +13,8 @@ HRESULT CLevel_Sanctum::Initialize()
 {
 	FAILED_CHECK_RETURN(Ready_Lights(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
-	//FAILED_CHECK_RETURN(Ready_Layer_Monsters(TEXT("Layer_Monster")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Layer_Monsters(TEXT("Layer_Monster")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Layer_MapEffect(TEXT("Layer_Particle")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Shader(), E_FAIL);
 	
 	BEGININSTANCE;
@@ -125,6 +126,21 @@ HRESULT CLevel_Sanctum::Ready_Layer_Monsters(const _tchar* pLayerTag)
 
 	ENDINSTANCE;
 
+	return S_OK;
+}
+
+HRESULT CLevel_Sanctum::Ready_Layer_MapEffect(const _tchar* pLayerTag)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_MapParticle_Sanctum_CircularRocks01"), pLayerTag, TEXT("GameObject_MapEffect_CircularRocks"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_MapEffect_CircularRocks)");
+		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
 	return S_OK;
 }
 

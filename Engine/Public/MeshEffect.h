@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "Model.h"
 #include "Ease.h"
+
 BEGIN(Engine)
 class CRenderer;
 class CTexture;
@@ -16,7 +17,7 @@ BEGIN(Engine)
 class ENGINE_DLL CMeshEffect : public CGameObject
 {
 protected:
-	enum PATH { TEXTURE_PATH, ALPHA_CLIP_TEXTURE_PATH, MODEL_PATH, PATH_END};
+	enum PATH { TEXTURE_PATH, ALPHA_CLIP_TEXTURE_PATH, MODEL_PATH, EMISSION_PATH, PATH_END};
 
 protected:
 	explicit CMeshEffect(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
@@ -27,6 +28,18 @@ public:
 	void Set_PassName(string strPassName);
 	void Set_Path(wstring wstrPath, PATH ePath);
 
+	_float3 Get_StartRot() { return m_vStartRot; }
+	void Set_StartRot(_float3 vStartRot) { m_vStartRot = vStartRot; }
+
+	_float3 Get_EndRot() { return m_vEndRot; }
+	void Set_EndRot(_float3 vEndRot) { m_vEndRot = vEndRot; }
+
+	void Set_LifeTime(_float fLifeTime) { m_fLifeTime = fLifeTime; }
+
+	void Set_StartColor(_float4 vStartColor) { m_vStartColor = vStartColor; }
+	void Set_EndColor(_float4 vEndColor) { m_vStartColor = vEndColor; }
+
+	_bool IsEnable();
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* pFilePath, _uint _iLevel, _float4x4 PivotMatrix = _float4x4());
 	virtual HRESULT Initialize(void* _pArg) override;
@@ -103,6 +116,7 @@ protected:
 	_bool m_isJustActionStop = { false };
 	_bool m_isFlutter = { false };
 	_float3 m_vStrength = { 1.f, 1.f, 1.f };
+
 protected:
 	CModel::TYPE m_eAnimType; // Save
 	string m_strPassName = { "Default" }; // Save
@@ -112,9 +126,17 @@ protected:
 	string m_strCurAnim; // Save
 	
 protected:
+	_bool m_isEmission = { false };
+	_float m_fFrequency = { 1.f };
+	_float2 m_vRemap = { 0.f, 1.f };
+	_float3 m_vEmissionColor = { 1.f, 1.f, 1.f };
+	string m_strEmissionChannel = { "Red" };
+
+protected:
 	CModel* m_pModel = { nullptr };
 	CTexture* m_pTexture = { nullptr };
 	CTexture* m_pClipTexture = { nullptr };
+	CTexture* m_pEmissionTexture = { nullptr };
 	CShader* m_pShader = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 

@@ -51,7 +51,6 @@ private:
 	class CDummy_Effect* m_pDummyEffect= { nullptr };
 
 	_int m_iChooseRadio = { 0 };
-	
 
 public:
 	static CEffect_Window* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, ImVec2 _vWindowPos, ImVec2 _vWindowSize);

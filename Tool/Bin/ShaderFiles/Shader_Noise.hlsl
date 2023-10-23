@@ -120,3 +120,19 @@ float FractalNoise3D(float3 xyz, float frequency)
     gray = clamp(gray, 0, 1);
     return gray;
 }
+
+float FractalBrownianMotion(float3 position, int octaves, float persistence, float initialFrequency, float initialAmplitude) {
+    float total = 0;
+    float frequency = initialFrequency;
+    float amplitude = initialAmplitude;
+    float maxValue = 0;  // Used for normalizing result to 0.0 - 1.0
+
+    for (int i = 0; i < octaves; i++) {
+        total += PerlinNoise3D(position * frequency, frequency);
+        maxValue += amplitude;
+        frequency *= 2;
+        amplitude *= persistence;
+    }
+
+    return total / maxValue;
+}

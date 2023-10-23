@@ -148,6 +148,7 @@ protected:
 	CTexture* m_pGradientTexture = { nullptr }; // 알파테스트에 사용될 텍스처
 	CTexture* m_pNormalTexture = { nullptr }; // 텍스처시트에 사용될 텍스처
 	CTexture* m_pNoiseTexture = { nullptr }; // 노이즈에 사용될 텍스처
+	CTexture* m_pEmissionTexture = { nullptr }; // 노이즈에 사용될 텍스처
 	CVIBuffer_Rect_Particle_Instance* m_pBuffer = { nullptr };
 	CShader* m_pShader = { nullptr };
 	CModel* m_pModel = { nullptr };
@@ -168,6 +169,10 @@ protected:
 	_uint m_iLevel = { 0 };
 	_bool m_isStop = { false };
 	wstring m_szParticleTag = { TEXT("") };
+
+private:
+	HRESULT Save_Components(const _tchar* _pDirectoryPath);
+	HRESULT Load_Components(const _tchar* _pDirectoryPath);
 
 public:
 	static CParticleSystem* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath, _uint iLevel = 0);
