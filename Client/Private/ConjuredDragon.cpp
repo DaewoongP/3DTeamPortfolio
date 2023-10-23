@@ -185,7 +185,7 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
 		{
 			m_isSpawn = true;
-			
+			pGameInstance->Add_CutScene(TEXT("Dragon_Enter"));
 		}
 		if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
 			m_isFinish = true;

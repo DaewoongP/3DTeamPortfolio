@@ -934,6 +934,9 @@
     <Filter Include="02. GameObject\06. NPC\House_Elf\Jammin">
       <UniqueIdentifier>{0439cf3f-15e3-4b94-a1ae-c6eb1625c7e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="07. Events\Sanctum">
+      <UniqueIdentifier>{311816ca-2fe2-428a-95d1-c51ce652aa31}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1853,6 +1856,12 @@
     <ClInclude Include="..\Public\Magic_Sound_Manager.h">
       <Filter>05. Magic\Magic_Sound_Manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Event_Spawn_Dragon.h">
+      <Filter>07. Events\Sanctum</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Spawn_Darkwizard.h">
+      <Filter>07. Events\Sanctum</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2729,6 +2738,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Magic_Sound_Manager.cpp">
       <Filter>05. Magic\Magic_Sound_Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Spawn_Dragon.cpp">
+      <Filter>07. Events\Sanctum</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Spawn_Darkwizard.cpp">
+      <Filter>07. Events\Sanctum</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -14,6 +14,7 @@ HRESULT CLevel_Sanctum::Initialize()
 	FAILED_CHECK_RETURN(Ready_Lights(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_Monsters(TEXT("Layer_Monster")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Events(TEXT("Layer_Event")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Shader(), E_FAIL);
 	
 	BEGININSTANCE;
@@ -114,6 +115,21 @@ HRESULT CLevel_Sanctum::Ready_Lights()
 		return E_FAIL;
 
 	ENDINSTANCE;
+	return S_OK;
+}
+
+HRESULT CLevel_Sanctum::Ready_Events(const _tchar* pLayerTag)
+{
+	BEGININSTANCE;
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_Event_Spawn_Dragon"), pLayerTag, TEXT("Event_Spawn_Dragon"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Event_Spawn_Dragon)");
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
 	return S_OK;
 }
 

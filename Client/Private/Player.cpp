@@ -48,6 +48,11 @@ CPlayer::CPlayer(const CPlayer& rhs)
 {
 }
 
+CTransform* CPlayer::Get_Player_Camera_Transform()
+{
+	return m_pPlayer_Camera->Get_TransformPtr();
+}
+
 void CPlayer::Set_Protego_Collision(CTransform* _pTransform, CEnemy::ATTACKTYPE _eAttackType) const
 {
 	if (false == m_isUseProtego && m_pStateContext->Is_Current_State(TEXT("Protego")))

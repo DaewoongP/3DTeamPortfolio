@@ -10,6 +10,11 @@
 #include "GameObject.h"
 #include "Client_Defines.h"
 
+BEGIN(Engine)
+class CRenderer;
+END
+
+
 BEGIN(Client)
 class CEnemy;
 class CTrigger;

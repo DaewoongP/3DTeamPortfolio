@@ -840,6 +840,13 @@ _bool CGameInstance::Is_Current_Camera(const _tchar* _CameraTag)
 	return m_pCamera_Manager->Is_Current_Camera(_CameraTag);
 }
 
+_bool CGameInstance::Is_Playing_CutScene()
+{
+	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, false, TEXT("Camera NULL"));
+
+	return m_pCamera_Manager->Is_Playing_CutScene();
+}
+
 #ifdef _DEBUG
 void CGameInstance::Set_DebugCam(_bool isCam)
 {

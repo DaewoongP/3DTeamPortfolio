@@ -100,6 +100,7 @@
 #include "Event_Vault_Spawn.h"
 #include "Event_Smeade.h"
 #include "Event_Cliffside.h"
+#include "Event_Spawn_Dragon.h"
 
 #include "Guide_Book.h"
 
@@ -332,6 +333,11 @@ HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Projectile_White_Effect"),
 			CProjectile_White_Effect::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Projectile_White_Effect");
+
+		/* For.Prototype_GameObject_Event_Spawn_Dragon */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Spawn_Dragon"),
+			CEvent_Spawn_Dragon::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Event_Spawn_Dragon");
 	}
 	catch (const _tchar* pErrorTag)
 	{
