@@ -547,7 +547,7 @@ HRESULT CPlayer::Render()
 				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
 
 				m_pShader->Begin("HairMesh");
-
+				
 				m_pCustomModel->Render(iPartsIndex, i);
 			}
 		}
