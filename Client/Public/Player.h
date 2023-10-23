@@ -126,7 +126,8 @@ private:
 	CBlink_Effect* m_pBlink = { nullptr };
 	vector<CParticleSystem*> m_vecPotionParticle;
 	vector<CParticleSystem*> m_vecPlayer_StateParicle;
-
+	vector<CParticleSystem*> m_vecTest_Particle;
+	_float3 Test = { 0.f,0.f,0.f };
 private: /* Card Fig 전용 데이터 */
 	CCard_Fig* m_pCard_Fig = { nullptr };
 

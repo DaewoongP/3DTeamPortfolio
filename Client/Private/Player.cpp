@@ -455,9 +455,16 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			HitStateDesc.pTransform = pDesc->pEnemyTransform;
 
 			Go_Hit(&HitStateDesc);
+			for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
+			{
+				m_vecPlayer_StateParicle[i]->Play(pDesc->pEnemyTransform->Get_Position());
+			}
 
 			//ü�� ����
 			m_pPlayer_Information->fix_HP((pDesc->iDamage) * -1);
+
+
+
 		}
 	}
 	else if (wstring::npos != wstrCollisionTag.find(TEXT("Magic_Ball")))
@@ -544,7 +551,7 @@ HRESULT CPlayer::Render()
 				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
 
 				m_pShader->Begin("HairMesh");
-
+				
 				m_pCustomModel->Render(iPartsIndex, i);
 			}
 		}
@@ -716,6 +723,20 @@ HRESULT CPlayer::Add_Components()
 	}
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Maxima_Particle"),
 		TEXT("Com_MaximaParticle"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[1]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	
+	m_vecPlayer_StateParicle.resize(2);
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Player_Hit_Particle"),
+		TEXT("Com_Player_HitParticle"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[0]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Player_Hit_Fog"),
+		TEXT("Com_Player_Hit_Fog"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[1]))))
 	{
 		__debugbreak();
 		return E_FAIL;
@@ -1157,6 +1178,8 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	if (pGameInstance->Get_DIKeyState(DIK_G, CInput_Device::KEY_DOWN))
 	{
 		Go_Use_Item();
+		
+
 		/*switch (m_pPlayer_Information->Get_PotionTap()->Get_CurTool()->Get_ItemID())
 		{
 		case Client::ITEM_ID_EDURUS_POTION:

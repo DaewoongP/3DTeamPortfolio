@@ -647,21 +647,25 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_WandHead_Particle")
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/WandLight"), eLevelID))))
 			throw TEXT("Prototype_GameObject_WandHead_Particle");
-		/*For.Player_BlinkEffect*/
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Blink_Effect")
-		//	, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Blink/BlinkFog"), eLevelID))))
-		//	throw TEXT("Prototype_GameObject_Blink_Effect");
-	
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Blink_SubEffect")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Blink/BlinkFoot"), eLevelID))))
-			throw TEXT("Prototype_GameObject_Blink_SubEffect");
+		/*For.Player_Hit*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Player_Hit_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/PlayerHit/HitParticle"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Player_Hit_Particle");	
 
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Blink_Disotrtion")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Blink/BlinkDistortion"), eLevelID))))
-			throw TEXT("Prototype_GameObject_Blink_Disotrtion");
-
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Player_Hit_Fog")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/PlayerHit/HitFog"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Player_Hit_Fog");
 
 #pragma endregion
+
+		/*For.Test_LandingParticle*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Landing_Fog")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Landing/LandingFog"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Landing_Fog");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Landing_Light")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Landing/LandingLight"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Landing_Light");
 
 #pragma region Potion_Effect
 
@@ -947,7 +951,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_Stone_Hit"),
 				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Monster_Hit/Troll_Stone/"), 3)))
 				throw TEXT("Reserve Particle : Particle_Troll_Stone_Hit");
-
+			/*For.Player_Effect*/
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Effect"),
 				TEXT("../../Resources/GameData/ParticleData/Blink/BlinkFog/"))))
 				throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Effect");
@@ -959,7 +963,16 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Distortion"),
 				TEXT("../../Resources/GameData/ParticleData/Blink/BlinkDistortion/"))))
 				throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Distortion");
-				
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Particle"),
+				TEXT("../../Resources/GameData/ParticleData/Blink/BlinkParticle/"))))
+				throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Particle");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Player_Hit_Dust"),
+				TEXT("../../Resources/GameData/ParticleData/PlayerHit/HitDust/"))))
+				throw TEXT("Reserve Particle : Prototype_GameObject_Player_Hit_Dust");
+
+			/*For.Pensive_Effect*/
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Hit_Circle"),
 				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Hit/Circle/"), 3)))
 				throw TEXT("Reserve Particle : Particle_Pensive_Hit_Circle");

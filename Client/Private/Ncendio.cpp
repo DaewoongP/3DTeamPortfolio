@@ -21,33 +21,123 @@ HRESULT CNcendio::Initialize_Prototype(_uint iLevel)
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_BurnTarget_Particle")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_BurnTarget_Particle")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Ncendio/BurnTarget/"), m_iLevel))))
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Incendio/BurnTarget/"), m_iLevel))))
 		{
 			ENDINSTANCE;
 			__debugbreak();
 			return E_FAIL;
 		}
 	}
+
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireCircleBoom_Particle")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireCircleBoom_Particle")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Ncendio/FireCircleBoom/"), m_iLevel))))
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Incendio/LastFlare/"), m_iLevel))))
 		{
 			ENDINSTANCE;
 			__debugbreak();
 			return E_FAIL;
 		}
 	}
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireCircleBoom_Particle2")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireCircleBoom_Particle2")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Incendio/LastFlare2/"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			__debugbreak();
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireCircleBoom_Particle3")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireCircleBoom_Particle3")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Incendio/LastFlare3/"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			__debugbreak();
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireCircleBoom_Particle4")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireCircleBoom_Particle4")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Incendio/LastFlare4/"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			__debugbreak();
+			return E_FAIL;
+		}
+	}
+
+
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_SmokeCloud_Particle")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_SmokeCloud_Particle")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Ncendio/SmokeCloud/"), m_iLevel))))
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Incendio/SmokeCloud/"), m_iLevel))))
 		{
 			ENDINSTANCE;
 			__debugbreak();
 			return E_FAIL;
 		}
 	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Fire_Particle")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Fire_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Incendio/IncendioParticle/"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			__debugbreak();
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Fire_Particle2")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Fire_Particle2")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Incendio/IncendioParticle2/"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			__debugbreak();
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_SpreadFire")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_SpreadFire")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Incendio/SpreadFire"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			__debugbreak();
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_SpreadFire_Red")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_SpreadFire_Red")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Incendio/SpreadFire2"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			__debugbreak();
+			return E_FAIL;
+		}
+	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Ncendio_Distortion")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Ncendio_Distortion")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Incendio/Distortion"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			__debugbreak();
+			return E_FAIL;
+		}
+	}
+
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireRing_MeshEffect")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireRing_MeshEffect")
@@ -160,10 +250,17 @@ void CNcendio::Ready_Begin()
 	vBurnTargetOffset.Normalize();
 	vBurnTargetOffset *= 0.5f;
 
+	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_MAIN].size(); i++)
+	{
+		m_ParticleVec[EFFECT_STATE_MAIN].data()[i]->Enable(vOffsetPosition);
+		m_ParticleVec[EFFECT_STATE_MAIN].data()[i]->Play(vOffsetPosition);
+	}
+
 	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_HIT].size(); i++)
 	{
 		m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Enable(vOffsetPosition);
 		m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Play(vOffsetPosition);
+		
 	}
 
 	m_pFireRingMeshEffect->Play(vOffsetPosition);
@@ -195,32 +292,55 @@ void CNcendio::Tick_DrawMagic(_float fTimeDelta)
 
 void CNcendio::Tick_CastMagic(_float fTimeDelta)
 {
-	Do_MagicBallState_To_Next();
+	//Do_MagicBallState_To_Next();
 }
 
 void CNcendio::Tick_Dying(_float fTimeDelta)
 {
-	if(!m_ParticleVec[EFFECT_STATE_HIT].data()[0]->IsEnable()&&
-	   !m_ParticleVec[EFFECT_STATE_HIT].data()[1]->IsEnable()&&
-	   !m_ParticleVec[EFFECT_STATE_HIT].data()[2]->IsEnable())
-		Do_MagicBallState_To_Next();
+	//if (!m_ParticleVec[EFFECT_STATE_MAIN].data()[0]->IsEnable()&&
+	//	!m_ParticleVec[EFFECT_STATE_MAIN].data()[1]->IsEnable())
+	//	Do_MagicBallState_To_Next();
+	//
+	//if(!m_ParticleVec[EFFECT_STATE_HIT].data()[0]->IsEnable()&&
+	//   !m_ParticleVec[EFFECT_STATE_HIT].data()[1]->IsEnable()&&
+	//   !m_ParticleVec[EFFECT_STATE_HIT].data()[2]->IsEnable()&&
+	//	!m_ParticleVec[EFFECT_STATE_HIT].data()[3]->IsEnable())
+	//	Do_MagicBallState_To_Next();
 }
 
 HRESULT CNcendio::Add_Components()
 {
-	m_ParticleVec[EFFECT_STATE_HIT].resize(3);
+	m_ParticleVec[EFFECT_STATE_MAIN].resize(2);
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_SpreadFire")
+		, TEXT("Com_SpreadFire"), (CComponent**)&m_ParticleVec[EFFECT_STATE_MAIN][0]), E_FAIL);
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_SpreadFire_Red")
+		, TEXT("Com_SpreadFire_Red"), (CComponent**)&m_ParticleVec[EFFECT_STATE_MAIN][1]), E_FAIL);
+
+	m_ParticleVec[EFFECT_STATE_HIT].resize(8);
 	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_FireCircleBoom_Particle")
 		, TEXT("Com_FireCircleBoom"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][0]), E_FAIL);
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_FireCircleBoom_Particle2")
+		, TEXT("Com_FireCircleBoom"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][1]), E_FAIL);
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_FireCircleBoom_Particle3")
+		, TEXT("Com_FireCircleBoom"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][2]), E_FAIL);
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_FireCircleBoom_Particle4")
+		, TEXT("Com_FireCircleBoom"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][3]), E_FAIL);
 	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_BurnTarget_Particle")
-		, TEXT("Com_BurnTarget"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][1]), E_FAIL);
+		, TEXT("Com_BurnTarget"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][4]), E_FAIL);
 	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_SmokeCloud_Particle")
-		, TEXT("Com_SmokeCloud"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][2]), E_FAIL);
+		, TEXT("Com_SmokeCloud"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][5]), E_FAIL);
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Fire_Particle")
+		, TEXT("Com_SmokeCloud"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][6]), E_FAIL);
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Fire_Particle2")
+		, TEXT("Com_SmokeCloud"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][7]), E_FAIL);
+
+
 	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_FireRing_MeshEffect")
 		, TEXT("Com_FireRing"), (CComponent**)&m_pFireRingMeshEffect), E_FAIL);
 
+
 	return S_OK;
 }
-
 HRESULT CNcendio::Add_RigidBody()
 {
 	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
