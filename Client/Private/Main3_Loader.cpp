@@ -1054,7 +1054,7 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
-		__debugbreak();
+  		__debugbreak();
 		return E_FAIL;
 	}
 
