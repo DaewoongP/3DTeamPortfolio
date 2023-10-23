@@ -85,6 +85,7 @@ private:
 	virtual ~CPlayer() = default;
 
 public:
+	CTransform* Get_Player_Camera_Transform();
 	CPlayer_Information* Get_Player_Information() { return m_pPlayer_Information; }
 	_float3 Get_PlayerPos() { return m_pTransform->Get_Position(); }
 	SPELL Get_SpellList(SKILLINPUT eType) { return m_vecSpellCheck[eType]; }

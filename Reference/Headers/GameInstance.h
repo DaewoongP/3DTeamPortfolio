@@ -245,6 +245,8 @@ public:	/* For.Camera_Manager */
 	//현제 카메라가 뭔지 확인용
 	_bool Is_Current_Camera(const _tchar* _CameraTag);
 
+	_bool Is_Playing_CutScene();
+
 #ifdef _DEBUG
 	void Set_DebugCam(_bool isCam);
 #endif // _DEBUG

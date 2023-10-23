@@ -134,6 +134,11 @@ private:
 	//녹화 할지 말지
 	_bool m_isRecording = { false };
 
+	//전체 이동 값 저장
+	_float m_fAllPointMoveValue = { 0.0f };
+	//어떤 축 으로 이동할지
+	_int m_iAllPointMoveAxisRadio = { 0 };
+
 private:
 	//마우스로 위치 수정 기능
 	void Fix_Point();
@@ -242,6 +247,9 @@ private:
 
 	//녹화
 	void Recording_Camera_Move();
+
+	//전체 이동
+	void Move_Button();
 	
 public:
 	static CCutScene_Camera_Tool* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, void * pArg = nullptr);

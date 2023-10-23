@@ -20,7 +20,7 @@ class CEvent_Cliffside final : public CGameObject
 	{
 		CLIFFSIDE_SEQUENCE_FADE_OUT,
 		CLIFFSIDE_SEQUENCE_PLAY_CUTSCENE,
-		CLIFFSIDE_SEQUENCE_FADE_OUT_IN,
+		CLIFFSIDE_SEQUENCE_FADE_IN,
 		CLIFFSIDE_SEQUENCE_END
 	};
 
@@ -33,13 +33,16 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
-
+	
 private:
+	//ÄÆ¾À
 	CTrigger* m_pCutScene_0_0 = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 private:
 	_bool m_isEnter = { false };
 	CLIFFSIDE_SEQUENCE m_eCliffside_Sequence = { CLIFFSIDE_SEQUENCE_END };
+	
+private:
 	void Check_Event_Play_CutScene_0_0();
 
 private:

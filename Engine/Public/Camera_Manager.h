@@ -153,6 +153,9 @@ public:
 	//카메라, 컷씬 초기화
 	HRESULT Clear();
 
+	//컷씬 재생 중 임을 알리는 함수
+	_bool Is_Playing_CutScene() { return m_isPlayingCutScene; }
+
 
 	//for.protected
 
@@ -243,6 +246,10 @@ private:
 	_float3 m_vPreviousAt = { _float3() };
 	_float m_fSetCameraLerpTime = { 0.0f };
 	_float m_fSetCameraLerpTimeAcc = { 0.0f };
+
+private:
+	//컷씬 재생 중 임을 알리는 변수
+	_bool m_isPlayingCutScene = { false };
 
 private:
 	//태그로 컷씬을 찾는다.
