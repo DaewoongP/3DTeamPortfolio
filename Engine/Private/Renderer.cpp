@@ -24,6 +24,7 @@
 void CRenderer::Set_Night()
 {
 	m_isNight = true;
+	m_isFloorFog = true;
 }
 
 void CRenderer::Defualt_Shading()
@@ -34,6 +35,7 @@ void CRenderer::Defualt_Shading()
 	m_fRadialBlurWidth = 0.0f;
 	m_isScreenRadial = false;
 	m_isCircleFog = false;
+	m_isFloorFog = false;
 	m_isFade = false;
 	m_fRadialTimeAcc = 1.f;
 	m_fFadeSpeed = 0.1f;

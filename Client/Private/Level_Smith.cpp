@@ -161,27 +161,32 @@ HRESULT CLevel_Smith::Ready_Lights()
 	BEGININSTANCE;
 	CLight::LIGHTDESC		LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
+	++g_iTest;
+	if (g_iTest < 2)
+	{
+		LightDesc.eType = CLight::TYPE_DIRECTIONAL;
+		LightDesc.vPos = _float4(111.7f, 71.23f, 94.81f, 1.f);
+		LightDesc.vLookAt = _float4(81.3f, 0.f, 91.3f, 1.f);
+		LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
 
-	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
-	LightDesc.vPos = _float4(111.7f, 71.23f, 94.81f, 1.f);
-	LightDesc.vLookAt = _float4(81.3f, 0.f, 91.3f, 1.f);
-	LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
-	
-	LightDesc.vPos -= LightDesc.vDir * 0.5f;
+		LightDesc.vPos -= LightDesc.vDir * 0.5f;
 
-	LightDesc.vDiffuse = WHITEDEFAULT;
-	LightDesc.vAmbient = WHITEDEFAULT;
-	LightDesc.vSpecular = WHITEDEFAULT;
+		LightDesc.vDiffuse = WHITEDEFAULT;
+		LightDesc.vAmbient = WHITEDEFAULT;
+		LightDesc.vSpecular = WHITEDEFAULT;
+	}
+	else
+	{
+		LightDesc.eType = CLight::TYPE_DIRECTIONAL;
+		LightDesc.vPos = _float4(159.7f, 81.23f, 102.81f, 1.f);
+		LightDesc.vLookAt = _float4(108.3f, 0.f, 108.3f, 1.f);
+		LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
 
-	// night
-	/*LightDesc.eType = CLight::TYPE_DIRECTIONAL;
-	LightDesc.vPos = _float4(159.7f, 81.23f, 102.81f, 1.f);
-	LightDesc.vLookAt = _float4(108.3f, 0.f, 108.3f, 1.f);
-	LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
+		LightDesc.vDiffuse = _float4(0.4f, 0.53f, 0.55f, 0.5f);
+		LightDesc.vAmbient = LightDesc.vDiffuse;
+		LightDesc.vSpecular = LightDesc.vDiffuse;
 
-	LightDesc.vDiffuse = _float4(0.4f, 0.53f, 0.55f, 0.5f);
-	LightDesc.vAmbient = LightDesc.vDiffuse;
-	LightDesc.vSpecular = LightDesc.vDiffuse;*/
+	}
 
 	if (FAILED(pGameInstance->Add_Light(LightDesc, nullptr, true)))
 		return E_FAIL;
@@ -234,7 +239,10 @@ HRESULT CLevel_Smith::Ready_Shader()
 
 	CRenderer* pRenderer = static_cast<CRenderer*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer")));
 	pRenderer->Defualt_Shading();
-
+	if (g_iTest > 1)
+	{
+		pRenderer->Set_Night();
+	}
 
 
 	Safe_Release(pRenderer);
