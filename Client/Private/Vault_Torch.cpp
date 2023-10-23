@@ -90,37 +90,6 @@ HRESULT CVault_Torch::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
-	RigidBodyDesc.isStatic = true;
-	RigidBodyDesc.isTrigger = false;
-	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
-	RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.0f, 0.f);
-	RigidBodyDesc.fStaticFriction = 0.f;
-	RigidBodyDesc.fDynamicFriction = 0.f;
-	RigidBodyDesc.fRestitution = 0.f;
-	PxSphereGeometry SphereGeometry = PxSphereGeometry(2.f);
-	RigidBodyDesc.pGeometry = &SphereGeometry;
-	RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
-	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
-	RigidBodyDesc.isGravity = false;
-	RigidBodyDesc.pOwnerObject = this;
-	RigidBodyDesc.eThisCollsion = COL_ENEMY;
-	RigidBodyDesc.eCollisionFlag = COL_MAGIC;
-	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Torch");
-
-	/* Com_RigidBody */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
-		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
-	{
-		MSG_BOX("Failed CMagicBall Add_Component : (Com_RigidBody)");
-		__debugbreak();
-		return E_FAIL;
-	}
-
-
-	m_pEffect->Stop();
-	m_pEffect->Get_MainModuleRef().fSimulationSpeed = Random_Generator(0.5f, 1.0f);
-	Switch_OnOff(true);
 	return S_OK;
 }
 
@@ -141,12 +110,56 @@ HRESULT CVault_Torch::Initialize_Level(_uint iCurrentLevelIndex)
 
 	wstring wsModelIndex = wsTorch.substr(findIndex);
 	m_iTorchIndex = stoi(wsModelIndex);
+
+	// æ»√∂πŒ Torch
+	if (24 <= m_iTorchIndex)
+	{
+		CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+		RigidBodyDesc.isStatic = true;
+		RigidBodyDesc.isTrigger = false;
+		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.0f, 0.f);
+		RigidBodyDesc.fStaticFriction = 0.f;
+		RigidBodyDesc.fDynamicFriction = 0.f;
+		RigidBodyDesc.fRestitution = 0.f;
+		PxSphereGeometry SphereGeometry = PxSphereGeometry(2.f);
+		RigidBodyDesc.pGeometry = &SphereGeometry;
+		RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
+		RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
+		RigidBodyDesc.isGravity = false;
+		RigidBodyDesc.pOwnerObject = this;
+		RigidBodyDesc.eThisCollsion = COL_ENEMY;
+		RigidBodyDesc.eCollisionFlag = COL_MAGIC;
+		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Torch");
+
+		/* Com_RigidBody */
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+		{
+			MSG_BOX("Failed CMagicBall Add_Component : (Com_RigidBody)");
+			__debugbreak();
+			return E_FAIL;
+		}
+
+		m_pEffect->Stop();
+		m_pEffect->Get_MainModuleRef().fSimulationSpeed = Random_Generator(0.5f, 1.0f);
+		Switch_OnOff(true);
+	}
+	
+	// Ω…¡§»Ø Torch
+	else
+	{
+		m_pEffect->Stop();
+	}
+
 	return S_OK;
 }
 
 void CVault_Torch::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	Torch_On_By_Trigger(fTimeDelta);
 }
 
 void CVault_Torch::Late_Tick(_float fTimeDelta)
@@ -158,6 +171,7 @@ void CVault_Torch::Late_Tick(_float fTimeDelta)
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);	
 #ifdef _DEBUG
+		if(nullptr != m_pRigidBody)
 			m_pRenderer->Add_DebugGroup(m_pRigidBody);
 #endif // _DEBUG
 	}
@@ -175,6 +189,38 @@ void CVault_Torch::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		{
 			Switch_OnOff(true);
 		}
+	}
+}
+
+void CVault_Torch::Torch_On_By_Trigger(_float fTimeDelta)
+{
+	if (false == m_isTorchOn)
+		return;
+
+	m_fLightTime += fTimeDelta;
+
+	if (false == m_isEffectOn)
+	{
+		m_pEffect->Play(m_pTransform->Get_Position() + _float3(0, 1.2f, 0));
+		m_isEffectOn = true;
+	}	
+
+	if (nullptr == m_pLightbyTrigger && 0.2f <= m_fLightTime)
+	{
+		m_pEffect->Get_MainModuleRef().fSimulationSpeed = Random_Generator(0.5f, 1.0f);
+
+		BEGININSTANCE;
+
+		CLight::LIGHTDESC LightDesc;
+		LightDesc.eType = CLight::TYPE_POINT;
+		LightDesc.fRange = 10.f;
+		LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+		LightDesc.vAmbient = LightDesc.vDiffuse;
+		LightDesc.vSpecular = LightDesc.vDiffuse;
+		LightDesc.vPos = m_pTransform->Get_Position().TransCoord();
+		pGameInstance->Add_Light(LightDesc, &m_pLightbyTrigger);
+		
+		ENDINSTANCE;
 	}
 }
 
@@ -212,4 +258,6 @@ void CVault_Torch::Free()
 		Safe_Release(m_pEffect);
 		Safe_Release(m_pLight);
 	}
+
+	Safe_Release(m_pLightbyTrigger);
 }

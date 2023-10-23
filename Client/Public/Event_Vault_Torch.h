@@ -45,6 +45,8 @@ private: /* 횃불 점등 관련 */
 	_float m_fStage1Time = { 0.f };
 	_float m_fStage2Time = { 0.f };
 
+	_bool is = { false };
+
 private:
 	HRESULT Add_Components();
 	void Check_Event_On_1(_float fTimeDelta);
