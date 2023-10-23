@@ -16,7 +16,7 @@ class ENGINE_DLL CModel : public CComponent
 {
 public:
 	enum TYPE { TYPE_NONANIM, TYPE_ANIM, TYPE_END };
-	enum ANIMTYPE { UPPERBODY, UNDERBODY, OTHERBODY, ANIM_END };
+	enum ANIMTYPE { UPPERBODY, UNDERBODY, OTHERBODY, ANOTHERBODY, ANIM_END };
 
 protected:
 	explicit CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -24,8 +24,9 @@ protected:
 	virtual ~CModel() = default;
 
 public:
-	const _float4x4* Get_PivotFloat4x4Ptr() const { return &m_PivotMatrix; }
+	const _float4x4*			Get_PivotFloat4x4Ptr() const { return &m_PivotMatrix; }
 	_float4x4					Get_PivotFloat4x4() const { return m_PivotMatrix; }
+	void						Set_PivotFloat4x4(_float4x4 matirx) { m_PivotMatrix = matirx;}
 	_uint						Get_CurrentAnimIndex(ANIMTYPE eType = UPPERBODY) const { return m_tAnimationDesc[eType].iCurrentAnimIndex; }
 	_uint						Get_NumMeshes() const { return m_iNumMeshes; }
 	_uint						Get_NumAnimations(ANIMTYPE eType = UPPERBODY) const { return m_tAnimationDesc[eType].iNumAnimations; }

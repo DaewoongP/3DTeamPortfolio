@@ -5,6 +5,7 @@
 
 #include "StateContext.h"
 #include "Player.h"
+#include "ParticleSystem.h"
 
 CFly_Move::CFly_Move(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	:CStateMachine(_pDevice, _pContext)
@@ -20,6 +21,17 @@ CFly_Move::CFly_Move(const CFly_Move& rhs)
 
 HRESULT CFly_Move::Initialize_Prototype()
 {
+	BEGININSTANCE;
+	if (nullptr == pGameInstance->Find_Prototype(0, TEXT("Particle_Broom_Wind_Screen")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(0, TEXT("Particle_Broom_Wind_Screen")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Broom/Wind_Screen/"), 0))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	ENDINSTANCE;
 	return S_OK;
 }
 
@@ -31,27 +43,21 @@ HRESULT CFly_Move::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Particle_Broom_Wind_Screen"),
+		TEXT("Com_Broom_Wind_Screen"), reinterpret_cast<CComponent**>(&m_pWindParticle))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Particle_Broom_Wind_Screen)");
+		__debugbreak();
+		return E_FAIL;
+	}
 
-	BEGININSTANCE;
-
-	//pGameInstance->Add_Timer(TEXT("Meter per Sconde"), true, 1.0f);
-
-	ENDINSTANCE;
-
+	m_pWindParticle->Disable();
 	return S_OK;
 }
 
 void CFly_Move::Tick(_float fTimeDelta)
 {
 	OnStateTick();
-
-	BEGININSTANCE;
-
-	if (pGameInstance->Check_Timer(TEXT("Meter per Sconde")))
-	{
-	}
-
-	ENDINSTANCE;
 }
 
 void CFly_Move::Late_Tick(_float fTimeDelta)
@@ -60,18 +66,19 @@ void CFly_Move::Late_Tick(_float fTimeDelta)
 
 void CFly_Move::OnStateEnter(void* _pArg)
 {
+	m_pWindParticle->Play(static_cast<CPlayer*>(m_pOwner->Get_Owner())->Get_Transform()->Get_Position() + 
+		static_cast<CPlayer*>(m_pOwner->Get_Owner())->Get_Transform()->Get_Look()*5);
 }
 
 void CFly_Move::OnStateTick()
 {
 	LookFront();
-
-	//Over_135();
-
 	Go_Idle();
-
 	Switch_MoveType();
 
+	m_pWindParticle->Get_Transform()->Set_Position(static_cast<CPlayer*>(m_pOwner->Get_Owner())->Get_Transform()->Get_Position() +
+		static_cast<CPlayer*>(m_pOwner->Get_Owner())->Get_Transform()->Get_Look() * 5);
+	
 	if (true == *m_StateMachineDesc.pisFinishAnimation)
 	{
 		switch (*m_StateMachineDesc.piMoveType)
@@ -92,25 +99,15 @@ void CFly_Move::OnStateTick()
 		}
 		*m_StateMachineDesc.pisFinishAnimation = false;
 	}
-
-	if (*m_StateMachineDesc.piMoveType == CPlayer::MOVETYPE_SPRINT)
+	if (!*m_StateMachineDesc.pIsFlying)
 	{
-	wcout << m_StateMachineDesc.pOwnerModel->Get_Animation(CModel::OTHERBODY)->Get_AnimationName() << endl;
-
+		Set_StateMachine(TEXT("Broom_End"));
 	}
-
-
-
-	BEGININSTANCE;
-
-	//m_StateMachineDesc.pPlayerTransform->Go_Straight(7.0f * pGameInstance->Get_World_Tick());
-
-	ENDINSTANCE;
-
 }
 
 void CFly_Move::OnStateExit()
 {
+	m_pWindParticle->Disable();
 }
 
 void CFly_Move::LookFront()
@@ -120,35 +117,33 @@ void CFly_Move::LookFront()
 	BEGININSTANCE;
 	if (true == *m_StateMachineDesc.pisDirectionPressed)
 	{
+		//키가 눌렸으면 전진
+		_float3 vDir = XMVector3Normalize(m_StateMachineDesc.pPlayerTransform->Get_Look());
+		m_StateMachineDesc.pRigidBody->Add_Force(vDir * 60.f, PxForceMode::eFORCE, true);
+
+		//턴 해주는듯한 애니메이션 재생
 		_float speed = fAngle * pGameInstance->Get_World_Tick() * (*m_StateMachineDesc.pfRotaionSpeed);
 		_float speed_y = fAngle_y * pGameInstance->Get_World_Tick() * (*m_StateMachineDesc.pfRotaionSpeed);
 
+		//m_StateMachineDesc.pPlayerTransform->Turn(_float3(1.0f, 0.0f, 0.0f), speed_y);
 		m_StateMachineDesc.pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), speed);
-
-		if (speed == 0 && speed_y == 0)
-		{
-			if (lstrcmp(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Fwd_anm")))
-			{
-				lstrcpy(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Fwd_anm"));
-				Change_Animation(TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Fwd_anm"));
-			}
-		}
-		else if (fabsf(speed) > fabsf(speed_y))
+		
+		if (fabsf(speed) > fabsf(speed_y))
 		{
 			if (speed < 0)
 			{
-				if (lstrcmp(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Lft_anm")))
+				if (lstrcmp(m_wszPostAnimationTag, TEXT("Hu_Broom_FlyNoStirrups_Fast_Lft_anm")))
 				{
-					lstrcpy(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Lft_anm"));
-					Change_Animation(TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Lft_anm"));
+					lstrcpy(m_wszPostAnimationTag, TEXT("Hu_Broom_FlyNoStirrups_Fast_Lft_anm"));
+					Change_Animation(TEXT("Hu_Broom_FlyNoStirrups_Fast_Lft_anm"));
 				}
 			}
 			else if (speed > 0)
 			{
-				if (lstrcmp(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Rht_anm")))
+				if (lstrcmp(m_wszPostAnimationTag, TEXT("Hu_Broom_FlyNoStirrups_Fast_Rht_anm")))
 				{
-					lstrcpy(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Rht_anm"));
-					Change_Animation(TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Rht_anm"));
+					lstrcpy(m_wszPostAnimationTag, TEXT("Hu_Broom_FlyNoStirrups_Fast_Rht_anm"));
+					Change_Animation(TEXT("Hu_Broom_FlyNoStirrups_Fast_Rht_anm"));
 				}
 			}
 		}
@@ -156,97 +151,34 @@ void CFly_Move::LookFront()
 		{
 			if (speed_y < 0)
 			{
-				if (lstrcmp(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Lft_anm")))
+				if (lstrcmp(m_wszPostAnimationTag, TEXT("Hu_Broom_FlyNoStirrups_Fast_Dn_anm")))
 				{
-					lstrcpy(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Lft_anm"));
-					Change_Animation(TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Lft_anm"));
+					lstrcpy(m_wszPostAnimationTag, TEXT("Hu_Broom_FlyNoStirrups_Fast_Dn_anm"));
+					Change_Animation(TEXT("Hu_Broom_FlyNoStirrups_Fast_Dn_anm"));
 				}
+				
 			}
 			else if (speed_y > 0)
 			{
-				if (lstrcmp(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Rht_anm")))
+				if (lstrcmp(m_wszPostAnimationTag, TEXT("Hu_Broom_FlyNoStirrups_Fast_Up_anm")))
 				{
-					lstrcpy(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Rht_anm"));
-					Change_Animation(TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Rht_anm"));
+					lstrcpy(m_wszPostAnimationTag, TEXT("Hu_Broom_FlyNoStirrups_Fast_Up_anm"));
+					Change_Animation(TEXT("Hu_Broom_FlyNoStirrups_Fast_Up_anm"));
 				}
 			}
+			m_StateMachineDesc.pRigidBody->Add_Force(_float3(0, 1, 0) * speed_y * 400, PxForceMode::eFORCE, true);
 		}
-
-		//Hu_Broom_FlyNoStirrups_Fast_Dn_anm=
 	}
 	ENDINSTANCE;
 }
 
 void CFly_Move::Go_Idle()
 {
-	//방향키가 눌리지 않았을 경우
-	if (true != *m_StateMachineDesc.pisDirectionPressed)
+	//현재 이동속도가 n 이하라면? hover_move로 변경
+	if (true != *m_StateMachineDesc.pisDirectionPressed&&
+		m_StateMachineDesc.pRigidBody->Get_Current_Velocity().Length() < 8)
 	{
-		switch (*m_StateMachineDesc.piActionType)
-		{
-		case CPlayer::ACTION_NONE:
-		{
-			switch (*m_StateMachineDesc.piMoveType)
-			{
-			case CPlayer::MOVETYPE_JOGING:
-			{
-				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
-				Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
-			}
-			break;
-			case CPlayer::MOVETYPE_SPRINT:
-			{
-				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_anm"));
-				Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_anm"));
-			}
-			break;
-			}
-		}
-		break;
-		case CPlayer::ACTION_CASUAL:
-		{
-			switch (*m_StateMachineDesc.piMoveType)
-			{
-			case CPlayer::MOVETYPE_JOGING:
-			{
-				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
-				Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
-			}
-			break;
-			case CPlayer::MOVETYPE_SPRINT:
-			{
-				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_anm"));
-				Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_anm"));
-			}
-			break;
-			}
-		}
-		break;
-		case CPlayer::ACTION_CMBT:
-		{
-			switch (*m_StateMachineDesc.piMoveType)
-			{
-			case CPlayer::MOVETYPE_JOGING:
-			{
-				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_2Cmbt_anm"));
-				Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_2Cmbt_anm"));
-			}
-			break;
-			case CPlayer::MOVETYPE_SPRINT:
-			{
-				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_Cmbt_anm"));
-				Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_Cmbt_anm"));
-			}
-			break;
-			}
-		}
-		break;
-
-		default:
-			break;
-		}
-
-		Set_StateMachine(TEXT("Idle"));
+		Set_StateMachine(TEXT("Hover_Move"));
 	}
 }
 
@@ -262,18 +194,12 @@ void CFly_Move::Switch_MoveType()
 		case CPlayer::MOVETYPE_WALK:
 		case CPlayer::MOVETYPE_JOGING:
 		{
-			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_Jog2Sprint_RU_anm"));
-			Change_Animation(TEXT("Hu_BM_Jog2Sprint_RU_anm"));
-			
 			*m_StateMachineDesc.piMoveType = CPlayer::MOVETYPE_SPRINT;
 		}
 		break;
 
 		case CPlayer::MOVETYPE_SPRINT:
 		{
-			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_Sprint2Jog_RU_anm"));
-			Change_Animation(TEXT("Hu_BM_Sprint2Jog_RU_anm"));
-			
 			*m_StateMachineDesc.piMoveType = CPlayer::MOVETYPE_JOGING;
 		}
 		break;
@@ -315,6 +241,6 @@ void CFly_Move::Free()
 
 	if (true == m_isCloned)
 	{
-
+		Safe_Release(m_pWindParticle);
 	}
 }

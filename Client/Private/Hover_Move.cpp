@@ -36,15 +36,17 @@ HRESULT CHover_Move::Initialize(void* pArg)
 
 void CHover_Move::Tick(_float fTimeDelta)
 {
-	OnStateTick();
+	
 }
 
 void CHover_Move::Late_Tick(_float fTimeDelta)
 {
+	OnStateTick();
 }
 
 void CHover_Move::OnStateEnter(void* _pArg)
 {
+	
 }
 
 void CHover_Move::OnStateTick()
@@ -71,10 +73,27 @@ void CHover_Move::OnStateTick()
 		}
 		*m_StateMachineDesc.pisFinishAnimation = false;
 	}
-	BEGININSTANCE;
-	m_StateMachineDesc.pPlayerTransform->Go_Straight(7.0f * pGameInstance->Get_World_Tick());
-	ENDINSTANCE;
 
+	BEGININSTANCE;
+	//키를 눌렀을때
+	if (pGameInstance->Get_DIKeyState(DIK_LSHIFT, CInput_Device::KEY_DOWN))
+	{
+		//안달리고있다면?
+		if (*m_StateMachineDesc.piMoveType != (_uint)CPlayer::MOVETYPE_SPRINT)
+		{
+			//달려.
+			*m_StateMachineDesc.piMoveType = (_uint)CPlayer::MOVETYPE_SPRINT;
+		}
+		else 
+		{
+			*m_StateMachineDesc.piMoveType = (_uint)CPlayer::MOVETYPE_NONE;
+		}
+	}
+	if (!*m_StateMachineDesc.pIsFlying)
+	{
+		Set_StateMachine(TEXT("Broom_End"));
+	}
+	ENDINSTANCE;
 }
 
 void CHover_Move::OnStateExit()
@@ -92,10 +111,17 @@ void CHover_Move::LookFront()
 	BEGININSTANCE;
 	if (true == *m_StateMachineDesc.pisDirectionPressed)
 	{
+		//키가 눌렸으면 전진
+		_float3 vDir = XMVector3Normalize(m_StateMachineDesc.pPlayerTransform->Get_Look());
+		m_StateMachineDesc.pRigidBody->Add_Force(vDir * 10.f * ((*m_StateMachineDesc.piMoveType == CPlayer::MOVETYPE_SPRINT)?( 3.f ) : (1.f)), PxForceMode::eFORCE, true);
+
 		_float speed = fAngle * pGameInstance->Get_World_Tick() * (*m_StateMachineDesc.pfRotaionSpeed);
 		m_StateMachineDesc.pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), speed);
-		//Hu_Broom_FlyNoStirrups_Fast_Dn_anm
-		if (speed<0)
+		if (m_StateMachineDesc.pRigidBody->Get_Current_Velocity().Length() > 8)
+		{
+			Set_StateMachine(TEXT("Fly_Move"));
+		}
+		else if (speed<0)
 		{
 			if (lstrcmp(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Lft_anm")))
 			{
@@ -126,7 +152,8 @@ void CHover_Move::LookFront()
 void CHover_Move::Go_Idle()
 {
 	//방향키가 눌리지 않았을 경우
-	if (true != *m_StateMachineDesc.pisDirectionPressed)
+	if (true != *m_StateMachineDesc.pisDirectionPressed&&
+		m_StateMachineDesc.pRigidBody->Get_Current_Velocity().Length() < 1)
 	{
 		Set_StateMachine(TEXT("Hover_Idle"));
 	}

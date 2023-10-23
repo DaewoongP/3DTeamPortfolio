@@ -193,7 +193,6 @@ void CIdleState::Go_Start()
 	{
 		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Start_Fwd_anm"));
 		Change_Animation(TEXT("Hu_BM_RF_Jog_Start_Fwd_anm"));
-		Set_StateMachine(TEXT("Hover_Move"));
 	}
 }
 

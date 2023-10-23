@@ -10,6 +10,7 @@
 
 #include "Professor_FIg.h"
 #include "Weapon_Fig_Wand.h"
+#include "Broom_Stick.h"
 
 #pragma region Player State
 
@@ -360,6 +361,11 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 			CWeapon_Player_Wand::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Weapon_Player_Wand");
 
+		/* For.Prototype_Component_Weapon_Player_Broom */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Weapon_Player_Broom"),
+			CBroom_Stick::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Weapon_Player_Broom");
+
 		PivotMatrix *= XMMatrixScaling(0.5f, 0.5f, 0.5f);
 		/* For.Prototype_Component_Model_Animation_Camera */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Animation_Camera"),
@@ -376,6 +382,12 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weapon_Player_Wand"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/gaechul/gaechul.dat"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Weapon_Player_Wand");
+
+		/* For.Prototype_Component_Model_Weapon_Player_Broom */
+		PivotMatrix = XMMatrixIdentity();
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weapon_Player_Broom"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/MoonTrimmerBroom/MoonTrimmerBroom.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Weapon_Player_Broom");
 
 		/* For.Prototype_GameObject_Card_Fig */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Card_Fig"),
@@ -497,10 +509,10 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 		//	CFly_Turn::Create(m_pDevice, m_pContext))))
 		//	throw TEXT("Prototype_Component_State_Fly_Turn");
 
-		///* For.Prototype_Component_State_Fly_Move */
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_State_Fly_Move"),
-		//	CFly_Move::Create(m_pDevice, m_pContext))))
-		//	throw TEXT("Prototype_Component_State_Fly_Move");
+		/* For.Prototype_Component_State_Fly_Move */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_State_Fly_Move"),
+			CFly_Move::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_State_Fly_Move");
 
 		/* For.Prototype_Component_State_Hover_Idle */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_State_Hover_Idle"),

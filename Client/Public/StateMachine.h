@@ -37,6 +37,7 @@ public:
 
         //하늘을 날고있는지 아닌지
         _bool* pIsFlying = { nullptr };
+        CRigidBody* pRigidBody = { nullptr };
 
         //카메라 트렌스 폼
         CTransform* pCameraTransform = { nullptr };
@@ -61,6 +62,7 @@ public:
             if (nullptr == pIsFlying) { return false; }
             if (nullptr == pCameraTransform) { return false; }
             if (nullptr == pOwnerLookAngle_Y) { return false; }
+            if (nullptr == pRigidBody) { return false; }
 
             return true;
         };
@@ -94,6 +96,7 @@ protected:
 protected:
     void Change_Animation(const wstring& _AnimationTag, _bool _isLumos = true);
     void Change_Animation_Part(const wstring& _AnimationTag, _uint iPartIndex);
+    void Change_Animation_FlyOrNot(const wstring& _AnimationTag, _bool _isLumos);
 
 public:
     static CStateMachine* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

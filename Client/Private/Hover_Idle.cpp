@@ -59,6 +59,7 @@ void CHover_Idle::OnStateEnter(void* _pArg)
 		break;
 	}
 	}
+	*m_StateMachineDesc.piMoveType = (_uint)CPlayer::MOVETYPE_NONE;
 	RESET_TIMER_SAFELY("Hover_Idle_Change_Animation");
 }
 
@@ -80,6 +81,10 @@ void CHover_Idle::OnStateTick()
 	}
 	Go_Start();
 	Go_Turn();
+	if (!*m_StateMachineDesc.pIsFlying)
+	{
+		Set_StateMachine(TEXT("Broom_End"));
+	}
 }
 
 void CHover_Idle::OnStateExit()

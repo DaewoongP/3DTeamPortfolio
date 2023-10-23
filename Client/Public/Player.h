@@ -37,6 +37,7 @@ class CWiggenweldPotion;
 class CTool;
 class CBlink_Effect;
 class CCard_Fig;
+class CBroom_Stick;
 END
 
 BEGIN(Client)
@@ -101,7 +102,6 @@ public:
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix) override;
 
-
 	void Potion_Duration(_float fTimeDelta);
 	virtual void On_Maigc_Throw_Data(void* data) const override;
 	_bool Is_Action_Camera_Playing();
@@ -138,6 +138,7 @@ private:
 	//평타, 실드가 이미 탑재된 마법 슬롯 
 	class CMagicSlot* m_pMagicSlot = { nullptr };
 	CWeapon_Player_Wand* m_pWeapon = { nullptr };
+	CBroom_Stick* m_pBroom = { nullptr };
 
 	//절두체 타겟 설정 완료되면 사용
 	CTransform* m_pTargetTransform = { nullptr };
@@ -336,6 +337,12 @@ private:
 	void Blink_End();
 
 	void Healing();
+
+	void Landing();
+
+	void Broom_Appeaer();
+	void Broom_Disappeaer();
+	void Fly_Effect();
 
 #pragma endregion
 

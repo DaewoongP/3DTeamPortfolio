@@ -3,6 +3,7 @@
 #include "Player_Camera.h"
 #include "MagicSlot.h"
 #include "Weapon_Player_Wand.h"
+#include "Broom_Stick.h"
 #include "StateContext.h"
 #include "IdleState.h"
 
@@ -185,6 +186,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	m_pCustomModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));
 	m_pCustomModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"), CModel::OTHERBODY);
+	m_pCustomModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"), CModel::ANOTHERBODY);
 
 	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(25.f, 3.f, 22.5f);
 	//m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
@@ -294,6 +296,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::OTHERBODY);
+	m_pCustomModel->Play_Animation(fTimeDelta, CModel::ANOTHERBODY);
 
 
 	if (nullptr != m_pFrncSpellToggle)
@@ -757,6 +760,21 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Weapon_Player_Wand"),
 		TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
 		throw TEXT("Com_Weapon");
+
+	pBone = m_pCustomModel->Get_Bone_Index(46);
+	if (nullptr == pBone)
+		throw TEXT("pBone is nullptr");
+
+	CBroom_Stick::CWEAPON_PLAYER_BROOM_DESC ParentMatrixDesc2;
+	ParentMatrixDesc2.ParentMatrixDesc.OffsetMatrix = pBone->Get_OffsetMatrix();
+	ParentMatrixDesc2.ParentMatrixDesc.PivotMatrix = m_pCustomModel->Get_PivotFloat4x4();
+	ParentMatrixDesc2.ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
+	ParentMatrixDesc2.ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+	//뼈 바인딩해주기
+	if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Weapon_Player_Broom"),
+		TEXT("Com_Broom"), reinterpret_cast<CComponent**>(&m_pBroom), &ParentMatrixDesc2)))
+		throw TEXT("Com_Broom");
+	
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_MagicSlot"),
 		TEXT("Com_MagicSlot"), reinterpret_cast<CComponent**>(&m_pMagicSlot))))
@@ -1606,76 +1624,68 @@ void CPlayer::UpdateLookAngle()
 	m_isDirectionKeyPressed = false;
 
 	_float3 vNextLook{};
-
-	if (pGameInstance->Get_DIKeyState(DIK_W, CInput_Device::KEY_PRESSING) ||
-		pGameInstance->Get_DIKeyState(DIK_W, CInput_Device::KEY_DOWN))
+	_float3 vNextLook_y{};
 	{
-		vNextLook = m_pPlayer_Camera->Get_CamLookXZ();
-		m_isDirectionKeyPressed = true;
-	}
-	else if (pGameInstance->Get_DIKeyState(DIK_S, CInput_Device::KEY_PRESSING) ||
-		pGameInstance->Get_DIKeyState(DIK_S, CInput_Device::KEY_DOWN))
-	{
-		vNextLook = -m_pPlayer_Camera->Get_CamLookXZ();
-		m_isDirectionKeyPressed = true;
-	}
-
-	else if (pGameInstance->Get_DIKeyState(DIK_D, CInput_Device::KEY_PRESSING) ||
-		pGameInstance->Get_DIKeyState(DIK_D, CInput_Device::KEY_DOWN))
-	{
-		vNextLook = m_pPlayer_Camera->Get_CamRightXZ();
-		m_isDirectionKeyPressed = true;
-	}
-
-	else if (pGameInstance->Get_DIKeyState(DIK_A, CInput_Device::KEY_PRESSING) ||
-		pGameInstance->Get_DIKeyState(DIK_A, CInput_Device::KEY_DOWN))
-	{
-		vNextLook = -m_pPlayer_Camera->Get_CamRightXZ();
-		m_isDirectionKeyPressed = true;
-	}
-
-	{
-		_float3 vPlayerLook = m_pTransform->Get_Look();
-
-		vPlayerLook = XMVectorSetY(vPlayerLook, 0.0f);
-
-		vPlayerLook.Normalize();
-
-		_float fLookAngle = vPlayerLook.Dot(vNextLook);
-
-		if (1.0f < fLookAngle)
+		if (pGameInstance->Get_DIKeyState(DIK_W, CInput_Device::KEY_PRESSING) ||
+			pGameInstance->Get_DIKeyState(DIK_W, CInput_Device::KEY_DOWN))
 		{
-			fLookAngle = 1.0f;
+			vNextLook = m_pPlayer_Camera->Get_CamLookXZ();
+			vNextLook_y = m_pPlayer_Camera->Get_CamLookYZ();
+			m_isDirectionKeyPressed = true;
+		}
+		else if (pGameInstance->Get_DIKeyState(DIK_S, CInput_Device::KEY_PRESSING) ||
+			pGameInstance->Get_DIKeyState(DIK_S, CInput_Device::KEY_DOWN))
+		{
+			vNextLook = -m_pPlayer_Camera->Get_CamLookXZ();
+			m_isDirectionKeyPressed = true;
 		}
 
-		m_fLookAngle = acosf(fLookAngle);
-
-		if (0.0f > vPlayerLook.Cross(vNextLook).y)
+		else if (pGameInstance->Get_DIKeyState(DIK_D, CInput_Device::KEY_PRESSING) ||
+			pGameInstance->Get_DIKeyState(DIK_D, CInput_Device::KEY_DOWN))
 		{
-			m_fLookAngle *= -1;
+			vNextLook = m_pPlayer_Camera->Get_CamRightXZ();
+			m_isDirectionKeyPressed = true;
+		}
+
+		else if (pGameInstance->Get_DIKeyState(DIK_A, CInput_Device::KEY_PRESSING) ||
+			pGameInstance->Get_DIKeyState(DIK_A, CInput_Device::KEY_DOWN))
+		{
+			vNextLook = -m_pPlayer_Camera->Get_CamRightXZ();
+			m_isDirectionKeyPressed = true;
+		}
+
+		{
+			_float3 vPlayerLook = m_pTransform->Get_Look();
+			vPlayerLook = XMVectorSetY(vPlayerLook, 0.0f);
+			vPlayerLook.Normalize();
+			_float fLookAngle = vPlayerLook.Dot(vNextLook);
+			if (1.0f < fLookAngle)
+			{
+				fLookAngle = 1.0f;
+			}
+			m_fLookAngle = acosf(fLookAngle);
+			if (0.0f > vPlayerLook.Cross(vNextLook).y)
+			{
+				m_fLookAngle *= -1;
+			}
+		}
+		
+		{
+			_float3 vPlayerLook = m_pTransform->Get_Look();
+			vPlayerLook = XMVectorSetX(vPlayerLook, 0.0f);
+			vPlayerLook.Normalize();
+			_float fLookAngle = vPlayerLook.Dot(vNextLook_y);
+			if (1.0f < fLookAngle)
+			{
+				fLookAngle = 1.0f;
+			}
+			m_fLookAngle_Y = acosf(fLookAngle);
+			if (vNextLook_y.y < 0)
+			{
+				m_fLookAngle_Y *= -1;
+			}
 		}
 	}
-
-	{
-		_float3 vPlayerLook = m_pTransform->Get_Look();
-		vPlayerLook = XMVectorSetX(vPlayerLook, 0.0f);
-		vPlayerLook.Normalize();
-
-		_float fLookAngle = vPlayerLook.Dot(vNextLook);
-
-		if (1.0f < fLookAngle)
-		{
-			fLookAngle = 1.0f;
-		}
-
-		m_fLookAngle_Y = acosf(fLookAngle);
-
-		if (0.0f > vPlayerLook.Cross(vNextLook).x)
-		{
-			m_fLookAngle_Y *= -1;
-		}
-	}
-
 	ENDINSTANCE;
 }
 
@@ -1702,6 +1712,7 @@ HRESULT CPlayer::Ready_StateMachine()
 	m_StateMachineDesc.pLumosOn = &m_isLumosOn;
 	m_StateMachineDesc.ppTarget = &m_pTarget;
 	m_StateMachineDesc.pIsFlying = &m_isFlying;
+	m_StateMachineDesc.pRigidBody = m_pRigidBody;
 	m_StateMachineDesc.pCameraTransform = m_pPlayer_Camera->Get_TransformPtr();
 
 	Safe_AddRef(m_StateMachineDesc.pOwnerModel);
@@ -1892,14 +1903,14 @@ HRESULT CPlayer::Ready_StateMachine()
 		//	&m_StateMachineDesc)))
 		//	throw("Failed Add Hover_Turn State");
 
-		////fly move
-		//if (FAILED(m_pStateContext->Add_StateMachine(
-		//	LEVEL_STATIC,
-		//	TEXT("Com_Player_Fly_Move"),
-		//	TEXT("Hover_Move"),
-		//	TEXT("Prototype_Component_State_Fly_Move"),
-		//	&m_StateMachineDesc)))
-		//	throw("Failed Add Fly_Move State");
+		//fly move
+		if (FAILED(m_pStateContext->Add_StateMachine(
+			LEVEL_STATIC,
+			TEXT("Com_Player_Fly_Move"),
+			TEXT("Fly_Move"),
+			TEXT("Prototype_Component_State_Fly_Move"),
+			&m_StateMachineDesc)))
+			throw("Failed Add Fly_Move State");
 
 		////Break
 		//if (FAILED(m_pStateContext->Add_StateMachine(
@@ -2016,369 +2027,387 @@ void CPlayer::Gravity_Off()
 
 HRESULT CPlayer::Bind_Notify()
 {
-	function<void()> funcNotify = [&] {(*this).Shot_Basic_Spell(); };
-
-	//Ready_Spell
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_01_anm"), TEXT("Ready_Spell"), funcNotify)))
+	for(int i =0;i<CModel::ANOTHERBODY+1;i+= CModel::ANOTHERBODY)
 	{
-		MSG_BOX("Failed Bind_Notify");
+		function<void()> funcNotify = [&] {(*this).Shot_Basic_Spell(); };
+		CModel::ANIMTYPE ePartType = (CModel::ANIMTYPE)i;
+		//Ready_Spell
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_01_anm"), TEXT("Ready_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
 
-		return E_FAIL;
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_02_anm"), TEXT("Ready_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_03_anm"), TEXT("Ready_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_04_anm"), TEXT("Ready_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_01_anm"), TEXT("Ready_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_02_anm"), TEXT("Ready_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_03_anm"), TEXT("Ready_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_01_anm"), TEXT("Ready_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_02_anm"), TEXT("Ready_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_03_anm"), TEXT("Ready_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+
+
+		funcNotify = [&] {(*this).Shot_Basic_Last_Spell(); };
+
+		//Basic_Last
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_frmLft_anm"), TEXT("Ready_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_04_anm"), TEXT("Ready_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+
+
+		funcNotify = [&] {(*this).Finisher(); };
+
+		//Finisher
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Finisher_Lightning"), TEXT("Ready_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+
+
+		funcNotify = [&] {(*this).Next_Spell_Action(); };
+
+		//next_action_Spell
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_01_anm"), TEXT("Shot_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_02_anm"), TEXT("Shot_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_03_anm"), TEXT("Shot_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_04_anm"), TEXT("Shot_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_01_anm"), TEXT("Shot_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_02_anm"), TEXT("Shot_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_03_anm"), TEXT("Shot_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_01_anm"), TEXT("Shot_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_02_anm"), TEXT("Shot_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_03_anm"), TEXT("Shot_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_frmLft_anm"), TEXT("Shot_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_04_anm"), TEXT("Shot_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Spell_Action_01"), TEXT("Shot_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Spell_Action_02"), TEXT("Shot_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Spell_Action_03"), TEXT("Shot_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Finisher_Lightning"), TEXT("Shot_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Avada_Kedvra"), TEXT("Shot_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Crucio"), TEXT("Shot_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Imperio"), TEXT("Shot_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("DIFFINDO"), TEXT("Shot_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_01_Spin_anm"), TEXT("Shot_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Lumos_Start"), TEXT("Shot_Lumos"), funcNotify, CModel::OTHERBODY)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+
+
+
+
+		funcNotify = [&] {(*this).Protego(); };
+
+		//Protego
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Protego_Start_anm"), TEXT("Protego"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+
+		funcNotify = [&] {(*this).Gravity_On(); };
+
+		//Gravity_On
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_Jump_RF_anm"), TEXT("Gravity_On"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_Fwd_01_anm"), TEXT("Gravity_On"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_01_anm"), TEXT("Gravity_On"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+
+		funcNotify = [&] {(*this).Gravity_Off(); };
+
+		//Gravity_OFF
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_Jump_RF_anm"), TEXT("Gravity_Off"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_Fwd_01_anm"), TEXT("Gravity_Off"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_01_anm"), TEXT("Gravity_Off"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+
+
+		funcNotify = [&] {(*this).Blink_Start(); };
+
+		//Blink_Start
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_DdgeRll_Fwd_anm"), TEXT("Blink_Start"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+
+
+		funcNotify = [&] {(*this).Blink_End(); };
+
+		//Blink_End
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_DdgeRll_Fwd_anm"), TEXT("Blink_End"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Blink_Start"), TEXT("Blink_End"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+
+
+		funcNotify = [&] {(*this).Lumos(); };
+
+		//Ready_Lumos
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Lumos_Start"), TEXT("Ready_Lumos"), funcNotify, CModel::OTHERBODY)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+
+
+
+		funcNotify = [&] { (*this).Drink_Potion(); };
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Drink_Potion"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+
+
+		funcNotify = [&] { (*this).Add_Layer_Item(); };
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Add_Layer_Item"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+
+
+		funcNotify = [&] { (*this).Stupefy(); };
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_01_Spin_anm"), TEXT("Ready_Spell"), funcNotify,ePartType)))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+
+		funcNotify = [&] {(*this).Landing(); };
+
+		//Land
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Broom_NoStirrups_Dismount_anm"), TEXT("Land_On"), funcNotify, CModel::ANIMTYPE(0))))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
+		//Land
+		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Broom_Dismount_2Jog_anm"), TEXT("Land_Run"), funcNotify, CModel::ANIMTYPE(0))))
+		{
+			MSG_BOX("Failed Bind_Notify");
+
+			return E_FAIL;
+		}
 	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_02_anm"), TEXT("Ready_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_03_anm"), TEXT("Ready_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_04_anm"), TEXT("Ready_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_01_anm"), TEXT("Ready_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_02_anm"), TEXT("Ready_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_03_anm"), TEXT("Ready_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_01_anm"), TEXT("Ready_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_02_anm"), TEXT("Ready_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_03_anm"), TEXT("Ready_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-
-
-	funcNotify = [&] {(*this).Shot_Basic_Last_Spell(); };
-
-	//Basic_Last
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_frmLft_anm"), TEXT("Ready_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_04_anm"), TEXT("Ready_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-
-
-	funcNotify = [&] {(*this).Finisher(); };
-
-	//Finisher
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Finisher_Lightning"), TEXT("Ready_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-
-
-	funcNotify = [&] {(*this).Next_Spell_Action(); };
-
-	//next_action_Spell
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_01_anm"), TEXT("Shot_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_02_anm"), TEXT("Shot_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_03_anm"), TEXT("Shot_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_04_anm"), TEXT("Shot_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_01_anm"), TEXT("Shot_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_02_anm"), TEXT("Shot_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_03_anm"), TEXT("Shot_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_01_anm"), TEXT("Shot_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_02_anm"), TEXT("Shot_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_03_anm"), TEXT("Shot_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_frmLft_anm"), TEXT("Shot_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_04_anm"), TEXT("Shot_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Spell_Action_01"), TEXT("Shot_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Spell_Action_02"), TEXT("Shot_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Spell_Action_03"), TEXT("Shot_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Finisher_Lightning"), TEXT("Shot_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Avada_Kedvra"), TEXT("Shot_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Crucio"), TEXT("Shot_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Imperio"), TEXT("Shot_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("DIFFINDO"), TEXT("Shot_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_01_Spin_anm"), TEXT("Shot_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Lumos_Start"), TEXT("Shot_Lumos"), funcNotify, CModel::OTHERBODY)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-
-
-
-
-	funcNotify = [&] {(*this).Protego(); };
-
-	//Protego
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Protego_Start_anm"), TEXT("Protego"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-
-	funcNotify = [&] {(*this).Gravity_On(); };
-
-	//Gravity_On
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_Jump_RF_anm"), TEXT("Gravity_On"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_Fwd_01_anm"), TEXT("Gravity_On"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_01_anm"), TEXT("Gravity_On"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-
-	funcNotify = [&] {(*this).Gravity_Off(); };
-
-	//Gravity_OFF
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_Jump_RF_anm"), TEXT("Gravity_Off"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_Fwd_01_anm"), TEXT("Gravity_Off"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_01_anm"), TEXT("Gravity_Off"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-
-
-	funcNotify = [&] {(*this).Blink_Start(); };
-
-	//Blink_Start
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_DdgeRll_Fwd_anm"), TEXT("Blink_Start"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-
-
-	funcNotify = [&] {(*this).Blink_End(); };
-
-	//Blink_End
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_DdgeRll_Fwd_anm"), TEXT("Blink_End"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Blink_Start"), TEXT("Blink_End"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-
-
-	funcNotify = [&] {(*this).Lumos(); };
-
-	//Ready_Lumos
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Lumos_Start"), TEXT("Ready_Lumos"), funcNotify, CModel::OTHERBODY)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-
-
-
-	funcNotify = [&] { (*this).Drink_Potion(); };
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Drink_Potion"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-
-
-	funcNotify = [&] { (*this).Add_Layer_Item(); };
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Add_Layer_Item"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-
-
-	funcNotify = [&] { (*this).Stupefy(); };
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_01_Spin_anm"), TEXT("Ready_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
-
-
 	return S_OK;
 }
 
@@ -2681,6 +2710,8 @@ void CPlayer::Tick_TestShake()
 	ImGui::End();
 
 }
+#endif // _DEBUG
+
 void CPlayer::Key_input_Flying(_float fTimeDelta)
 {
 	BEGININSTANCE;
@@ -2804,7 +2835,7 @@ void CPlayer::Key_input_Flying(_float fTimeDelta)
 
 	ENDINSTANCE;
 }
-#endif // _DEBUG
+
 
 void CPlayer::Go_MagicCast(void* _pArg)
 {
@@ -2814,7 +2845,11 @@ void CPlayer::Go_MagicCast(void* _pArg)
 		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
-		m_pStateContext->Is_Current_State(TEXT("Magic_Cast")))
+		m_pStateContext->Is_Current_State(TEXT("Magic_Cast"))||
+		m_pStateContext->Is_Current_State(TEXT("Hover_Idle")) ||
+		m_pStateContext->Is_Current_State(TEXT("Hover_Move")) ||
+		m_pStateContext->Is_Current_State(TEXT("Fly_Move"))
+		)
 	{
 		if (nullptr != m_pTarget)
 		{
@@ -2917,9 +2952,18 @@ void CPlayer::Drink_Potion()
 	m_pPlayer_Information->Get_PotionTap()->Use_Item(m_pTransform->Get_Position());
 }
 
+void CPlayer::Landing()
+{
+	m_pStateContext->Set_StateMachine(TEXT("Idle"));
+}
+
 void CPlayer::Add_Potion()
 {
 	m_pPlayer_Information->Add_Potion();
+}
+
+void CPlayer::Broom_Appeaer()
+{
 }
 
 void CPlayer::Drink_Heal_Potion()
@@ -2972,6 +3016,11 @@ void CPlayer::Update_Skill_CoolTime()
 void CPlayer::Blink_Start()
 {
 	m_isBlink = true;
+}
+
+void CPlayer::Fly_Effect()
+{
+	m_pRenderer->Set_ScreenRadial(true, 0.2f, 0.2f);
 }
 
 void CPlayer::Blink_End()
@@ -3190,6 +3239,7 @@ void CPlayer::Free()
 		Safe_Release(m_pCooltime);
 		Safe_Release(m_pDefence);
 		Safe_Release(m_pCard_Fig);
+		Safe_Release(m_pBroom);
 		
 	//	Safe_Release(m_pBlink);
 
