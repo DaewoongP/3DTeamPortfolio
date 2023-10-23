@@ -197,7 +197,7 @@ HRESULT CPotionTap::Ready_PotionTextures()
 		TEXT("../../Resources/UI/Game/PotionTap/UI_T_Mandrake_Byproduct_Meter.png")));
 
 	m_pPotionTextures.push_back(CTexture::Create(m_pDevice, m_pContext,
-		TEXT("../../Resources/UI/Game/PotionTap/UI_T_ChompingCabbage_Byproduct_Meter.png")));
+		TEXT("../../Resources/UI/Game/UI/Icons/Potions/UI_T_WoundCleaning.png")));
 
 	m_pPotionTextures.push_back(CTexture::Create(m_pDevice, m_pContext,
 		TEXT("../../Resources/UI/Game/PotionTap/UI_T_VenomousTentacula_Byproduct_Meter.png")));
@@ -240,7 +240,7 @@ CTool* CPotionTap::ToolFactory(POTIONTAP eType)
 		break;
 	case Client::MANDRAKE:
 		break;
-	case Client::CHINESES_CHOPPING_CABBAGE:
+	case Client::HEALTH_POTION:
 		break;
 	case Client::TENTACULAR:
 		break;

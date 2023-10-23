@@ -52,7 +52,7 @@ HRESULT CUI_Potion_Tap::Initialize(void* pArg)
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_5_Edit.uidata"), FifthTag, POTIONTAP::INVISIBILITY_POTION);
 	
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_6_Edit.uidata"), SixthTag, POTIONTAP::MANDRAKE);
-	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_7_Edit.uidata"), SeventhTag, POTIONTAP::CHINESES_CHOPPING_CABBAGE);
+	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_7_Edit.uidata"), SeventhTag, POTIONTAP::HEALTH_POTION);
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_8_Edit.uidata"), EighthTag, POTIONTAP::TENTACULAR);
 
 	return S_OK;
@@ -61,6 +61,8 @@ HRESULT CUI_Potion_Tap::Initialize(void* pArg)
 void CUI_Potion_Tap::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	Set_CurCollision();
 
 	//Swap_InventoryItem();
 }
@@ -263,6 +265,37 @@ HRESULT CUI_Potion_Tap::Add_Components(wstring wszTag, POTIONTAP eType)
 		__debugbreak();
 		return E_FAIL;
 	}
+	switch (eType)
+	{
+	case Client::ENDURUS_POTION:
+		pItemBack->Add_Texture(TEXT("../../Resources/UI/Game/PotionTap/11.png"));
+		break;
+	case Client::MAXIMA_POTION:
+		pItemBack->Add_Texture(TEXT("../../Resources/UI/Game/PotionTap/22.png"));
+		break;
+	case Client::FOCUS_POTION:
+		pItemBack->Add_Texture(TEXT("../../Resources/UI/Game/PotionTap/33.png"));
+		break;
+	case Client::THUNDERBREW_POTION:
+		pItemBack->Add_Texture(TEXT("../../Resources/UI/Game/PotionTap/44.png"));
+		break;
+	case Client::INVISIBILITY_POTION:
+		pItemBack->Add_Texture(TEXT("../../Resources/UI/Game/PotionTap/55.png"));
+		break;
+	case Client::MANDRAKE:
+		pItemBack->Add_Texture(TEXT("../../Resources/UI/Game/PotionTap/66.png"));
+		break;
+	case Client::HEALTH_POTION:
+		pItemBack->Add_Texture(TEXT("../../Resources/UI/Game/PotionTap/77.png"));
+		break;
+	case Client::TENTACULAR:
+		pItemBack->Add_Texture(TEXT("../../Resources/UI/Game/PotionTap/88.png"));
+		break;
+	case Client::POTIONTAP_END:
+		break;
+	default:
+		break;
+	}
 	m_pItemBacks.push_back(pItemBack);
 
 	CUI_Font::FONTDESC Desc;
@@ -315,7 +348,7 @@ HRESULT CUI_Potion_Tap::Add_Components(wstring wszTag, POTIONTAP eType)
 		lstrcpy(Desc.m_pText, wstrNCount.c_str());
 	}
 		break;
-	case Client::CHINESES_CHOPPING_CABBAGE:
+	case Client::HEALTH_POTION:
 	{
 		Desc.m_vPos = { 473.f, 333.f };
 		wstring wstrNCount = to_wstring(0);
@@ -389,7 +422,7 @@ HRESULT CUI_Potion_Tap::Read_File(const _tchar* pFilePath, POTIONTAP iIndex)
 
 	m_pItemBacks[iIndex]->Load(Load_File(hFile));
 	m_pItemBacks[iIndex]->Set_Parent(m_pIcons[iIndex]);
-	
+	m_pItemBacks[iIndex]->Set_Z(0.9f);
 	CloseHandle(hFile);
 
 	return S_OK;
@@ -434,6 +467,21 @@ void CUI_Potion_Tap::Update_PotionCount(const vector<vector<CTool*>>& pPotions)
 	for (_uint i = 0; i < POTIONTAP_END; ++i)
 	{
 		Update_TextCount(pPotions, static_cast<POTIONTAP>(i));
+	}
+}
+
+void CUI_Potion_Tap::Set_CurCollision()
+{
+	_uint iIndex = 0;
+	for (auto& pFrame : m_pFrames)
+	{
+		if (pFrame->Get_Collision())
+			m_pItemBacks[iIndex]->CUI::Set_Texture(0);
+		else
+			m_pItemBacks[iIndex]->CUI::Set_Texture(1);
+
+
+		++iIndex;
 	}
 }
 

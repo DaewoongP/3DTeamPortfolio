@@ -320,11 +320,20 @@ HRESULT CMenu_Gear::Read_File_Slot(const _tchar* pFilePath, wstring wszTag, GEAR
 	_uint iSize = { 0 };
 	ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
 
+
 	wstring Icon = TEXT("Com_UI_Back_Gear_SlotIcon_");
 	Icon += wszTag;
 	CUI_Effect_Back* pIcon = static_cast<CUI_Effect_Back*>(Find_Component(Icon.c_str()));
 	pIcon->Load(Load_File(hFile));
 	pIcon->Set_Parent(m_pSlotFrames[eType]);
+	CUI_Image::IMAGEDESC ImageDesc;
+	ImageDesc.vCombinedXY = pIcon->Get_CombinedXY();
+	ImageDesc.fX = m_pSlotFrames[eType]->Get_XY().x;
+	ImageDesc.fY = m_pSlotFrames[eType]->Get_XY().y;
+	ImageDesc.fZ = 0.f;
+	ImageDesc.fSizeX = pIcon->Get_SizeXY().x;
+	ImageDesc.fSizeY = pIcon->Get_SizeXY().y;
+	pIcon->Set_ImageCom(ImageDesc);
 
 	wstring Back = TEXT("Com_UI_Back_Gear_SlotBack_");
 	Back += wszTag;
@@ -478,6 +487,27 @@ CUI::UIDESC CMenu_Gear::Load_File(const HANDLE hFile)
 	ReadFile(hFile, &isSave, sizeof(_bool), &dwByte, nullptr);
 
 	return UIDesc;
+}
+
+void CMenu_Gear::Set_GearTexture(vector<CItem*>* pPlayerCurItem)
+{
+	_uint iIndex = 0;
+	for (size_t i = 0; i < pPlayerCurItem->size(); i++)
+	{
+		if (nullptr == (*pPlayerCurItem)[iIndex])
+		{
+			++iIndex;
+			continue;
+		}
+		else
+		{
+			m_pSlotIcons[iIndex]->Set_Texture((*pPlayerCurItem)[iIndex]->Get_UITexture());
+			m_pSlotIcons[iIndex]->Set_ImageCom_Z(0.035f);
+		}
+
+		++iIndex;
+	}
+
 }
 
 void CMenu_Gear::Select_Gear()

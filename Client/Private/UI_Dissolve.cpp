@@ -1,17 +1,17 @@
-#include "UI_Logo.h"
+#include "UI_Dissolve.h"
 #include "GameInstance.h"
 
-CUI_Logo::CUI_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CUI_Dissolve::CUI_Dissolve(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUI(pDevice, pContext)
 {
 }
 
-CUI_Logo::CUI_Logo(const CUI_Logo& rhs)
+CUI_Dissolve::CUI_Dissolve(const CUI_Dissolve& rhs)
 	: CUI(rhs)
 {
 }
 
-HRESULT CUI_Logo::Initialize_Prototype()
+HRESULT CUI_Dissolve::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -19,7 +19,7 @@ HRESULT CUI_Logo::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CUI_Logo::Initialize(void* pArg)
+HRESULT CUI_Dissolve::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -32,13 +32,16 @@ HRESULT CUI_Logo::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CUI_Logo::Tick(_float fTimeDelta)
+void CUI_Dissolve::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	m_fDissolveAmount += fTimeDelta / 5.f;
+
+	if (m_isPlayDissolve)
+		m_fDissolveAmount += fTimeDelta / 5.f;
+
 }
 
-void CUI_Logo::Late_Tick(_float fTimeDelta)
+void CUI_Dissolve::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
@@ -48,7 +51,7 @@ void CUI_Logo::Late_Tick(_float fTimeDelta)
 	}
 }
 
-HRESULT CUI_Logo::Render()
+HRESULT CUI_Dissolve::Render()
 {
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
@@ -69,7 +72,7 @@ HRESULT CUI_Logo::Render()
 	return S_OK;
 }
 
-HRESULT CUI_Logo::Add_Components()
+HRESULT CUI_Dissolve::Add_Components()
 {
 	/* Com_Shader */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
@@ -103,7 +106,7 @@ HRESULT CUI_Logo::Add_Components()
 	return S_OK;
 }
 
-HRESULT CUI_Logo::SetUp_ShaderResources()
+HRESULT CUI_Dissolve::SetUp_ShaderResources()
 {
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 		return E_FAIL;
@@ -134,33 +137,33 @@ HRESULT CUI_Logo::SetUp_ShaderResources()
 	return S_OK;
 }
 
-CUI_Logo* CUI_Logo::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CUI_Dissolve* CUI_Dissolve::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUI_Logo* pInstance = New CUI_Logo(pDevice, pContext);
+	CUI_Dissolve* pInstance = New CUI_Dissolve(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CUI_Logo");
+		MSG_BOX("Failed to Created CUI_Dissolve");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CUI_Logo::Clone(void* pArg)
+CGameObject* CUI_Dissolve::Clone(void* pArg)
 {
-	CUI_Logo* pInstance = New CUI_Logo(*this);
+	CUI_Dissolve* pInstance = New CUI_Dissolve(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CUI_Logo");
+		MSG_BOX("Failed to Cloned CUI_Dissolve");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CUI_Logo::Free()
+void CUI_Dissolve::Free()
 {
 	__super::Free();
 

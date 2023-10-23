@@ -1,8 +1,10 @@
 #include "Menu_Quest.h"
 #include "GameInstance.h"
+
+#include "Quest_Manager.h"
+
 #include "UI_Effect_Back.h"
 #include "UI_Back.h"
-#include "Quest_Manager.h"
 
 CMenu_Quest::CMenu_Quest(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -56,37 +58,10 @@ void CMenu_Quest::Tick(_float fTimeDelta)
 		++iIndex;
 	}
 
+	Quest_Check();
+
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-
-
-	CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
-	Safe_AddRef(pQuest_Manager);
-
-	CQuest* pQuest = pQuest_Manager->Find_Quest(TEXT("Quest_Save_Fig"));
-	if (pQuest->Get_State() != QUESTSTATE_QUESTIONMARK)
-		Set_FontState(QUEST_FIG, pQuest->Get_State());
-
-	Safe_Release(pQuest_Manager);
-	
-
-
-	//if (pGameInstance->Get_DIKeyState(DIK_P, CInput_Device::KEY_DOWN))
-	//{
-	//	//Set_FontState(FIG, UNLOCK);
-	//	Set_FontState(POTION, UNLOCK);
-	//	//Set_FontState(TOWN, UNLOCK);
-	//	//Set_FontState(SECRET, UNLOCK);
-	//	//Set_FontState(BONE, UNLOCK);
-	//}
-	//if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
-	//{
-	//	//Set_FontState(FIG, CLEAR);
-	//	Set_FontState(POTION, CLEAR);
-	//	//Set_FontState(TOWN, CLEAR);
-	//	//Set_FontState(SECRET, CLEAR);
-	//	//Set_FontState(BONE, CLEAR);
-	//}
 
 	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
 	{
@@ -142,6 +117,39 @@ void CMenu_Quest::Set_FontState(QUESTLIST eQuest, QUESTSTATE eState)
 		else
 			m_isCurrentQuest[eQuest] = false;
 	}
+}
+
+void CMenu_Quest::Quest_Check()
+{
+	CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
+	Safe_AddRef(pQuest_Manager);
+
+	CQuest* pQuest = pQuest_Manager->Find_Quest(TEXT("Quest_Save_Fig"));
+
+	if (pQuest->Get_State() != QUESTSTATE_QUESTIONMARK)
+		Set_FontState(QUEST_FIG, pQuest->Get_State());
+
+	pQuest = pQuest_Manager->Find_Quest(TEXT("Quest_Potion"));
+
+	if (pQuest->Get_State() != QUESTSTATE_QUESTIONMARK)
+		Set_FontState(QUEST_POTION, pQuest->Get_State());
+
+	pQuest = pQuest_Manager->Find_Quest(TEXT("Quest_Town"));
+
+	if (pQuest->Get_State() != QUESTSTATE_QUESTIONMARK)
+		Set_FontState(QUEST_POTION, pQuest->Get_State());
+
+	pQuest = pQuest_Manager->Find_Quest(TEXT("Quest_Secret"));
+
+	if (pQuest->Get_State() != QUESTSTATE_QUESTIONMARK)
+		Set_FontState(QUEST_POTION, pQuest->Get_State());
+
+	pQuest = pQuest_Manager->Find_Quest(TEXT("Quest_Bone"));
+
+	if (pQuest->Get_State() != QUESTSTATE_QUESTIONMARK)
+		Set_FontState(QUEST_POTION, pQuest->Get_State());
+
+	Safe_Release(pQuest_Manager);
 }
 
 HRESULT CMenu_Quest::Add_Prototype()

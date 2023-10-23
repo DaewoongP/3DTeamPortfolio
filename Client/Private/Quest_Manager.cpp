@@ -39,6 +39,18 @@ void CQuest_Manager::Clear_Quest(const _tchar* szQuestTag)
 	pQuest->Set_State(QUESTSTATE::QUESTSTATE_CLEAR);
 }
 
+void CQuest_Manager::Tick(_float fTimeDelta)
+{
+	for (auto& Pair : m_Quests)
+	{
+		Pair.second->Tick(fTimeDelta);
+	}
+}
+
+void CQuest_Manager::Late_Tick(_float fTimeDelta)
+{
+}
+
 CQuest* CQuest_Manager::Find_Quest(const _tchar* szQuestTag)
 {
 	std::lock_guard<std::mutex> lock(mtx);

@@ -13,6 +13,8 @@ BEGIN(Client)
 class CMagicBall;
 class CMagicSlot;
 class CWeapon_Fig_Wand;
+class CUI_Dissolve;
+class CScript;
 END
 
 BEGIN(Client)
@@ -78,6 +80,9 @@ private:
 
 	CMagicBall* m_CastingMagic = { nullptr };
 
+	CUI_Dissolve* m_pUI_Card = { nullptr };
+	vector<CScript*> m_pScripts = { nullptr };
+
 private:
 	HRESULT Make_Magics();
 	HRESULT Make_Notifies();
@@ -94,6 +99,12 @@ private: /* Notify */
 	void Cast_Bombarda();
 	void Cast_Finisher();
 	void Shot_Magic();
+
+private:
+	_bool		m_isShowCard = { false };
+
+private: // Four UI
+	void		Ready_Card_UI();
 
 public:
 	static CCard_Fig* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
