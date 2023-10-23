@@ -386,6 +386,11 @@ void CField_Guide::Set_SelectedText()
 		if (pFrame->Get_Clicked())
 		{
 			FieldGuide_To_Menu(iIndex);
+
+			if (iIndex == 0 && nullptr != m_pPlayerInventory)
+				m_pMenu->Set_Gear(m_pPlayerInventory->Get_CurItem());
+
+
 			if (iIndex == 1)
 			{
 				m_pPlayerInventory->Set_Open(true);

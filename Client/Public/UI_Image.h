@@ -59,6 +59,10 @@ public:
 		m_isShow = !m_isShow;
 		return m_isShow;
 	}
+	void		Set_Z(_float fZ) {
+		m_fZ = fZ;
+	}
+
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -78,7 +82,6 @@ public:
 protected:
 	HRESULT Change_Position(_float fX, _float fY);
 	HRESULT Change_Scale(_float fX, _float fY);
-
 
 private:
 	CShader*		m_pShaderCom = { nullptr };

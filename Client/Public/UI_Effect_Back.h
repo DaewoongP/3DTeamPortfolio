@@ -38,6 +38,9 @@ public:
 	void Set_Clicked(_bool isClicked = false);
 	void Set_Texture(CTexture* pTexture);
 	void Set_ImageCom(CUI_Image::IMAGEDESC desc, _bool isChild = false);
+	void Set_ImageCom_Z(_float fZ) {
+		m_pImageCom->Set_Z(fZ);
+	}
 	_bool Switch_ImageShow() {
 		return m_pImageCom->SwitchShow();
 	}
@@ -91,9 +94,13 @@ private:
 	_bool			m_isClicked = { false };
 	_bool			m_isInteract = { false };
 	_bool			m_isShowImageCom = { false };
+
 private:
-	_float* m_fCoolTime = { 0 };
+	_float*			m_fCoolTime = { 0 };
 	_bool			m_isCool = { false };
+
+	_float  m_fDistortionTime = { 0.f };
+
 
 private: // for SkillBack
 	CUI_Group_SkillTap::SKILLTAP	m_eSkillType = { CUI_Group_SkillTap::SKILLTAP_END };

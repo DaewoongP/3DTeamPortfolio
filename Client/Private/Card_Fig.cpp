@@ -5,6 +5,9 @@
 #include "MagicBall.h"
 #include "Weapon_Fig_Wand.h"
 
+#include "UI_Dissolve.h"
+#include "Quest_Manager.h"
+
 CCard_Fig::CCard_Fig(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -81,16 +84,18 @@ void CCard_Fig::Tick(_float fTimeDelta)
 		Action(fTimeDelta);
 	}
 
+	Ready_Card_UI();
+
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 }
 
 void CCard_Fig::Late_Tick(_float fTimeDelta)
 {
+	__super::Late_Tick(fTimeDelta);
+
 	if (false == m_isSpawn)
 		return;
-
-	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRenderer)
 	{
@@ -330,6 +335,27 @@ HRESULT CCard_Fig::Add_Components()
 			MSG_BOX("Failed CTest_Player Add_Component : (Com_MagicSlot)");
 			return E_FAIL;
 		}
+
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Dissolve"),
+			TEXT("Com_UI_Card"), reinterpret_cast<CComponent**>(&m_pUI_Card))))
+		{
+			MSG_BOX("Failed Card_Fiog Add_Component : (Com_UI_Card)");
+			return E_FAIL;
+		}
+		CUI::UIDESC UIDesc;
+		UIDesc.vCombinedXY = { 0.f, 0.f };
+		UIDesc.fX = { 50.f };
+		UIDesc.fY = { 440.f };
+		UIDesc.fZ = { 0.5f };
+		UIDesc.fSizeX = { 96.f };
+		UIDesc.fSizeY = { 96.f };
+		_tchar szTexturePath[MAX_PATH] = TEXT("../../Resources/UI/Game/UI_Edit/Card_Fig.png");
+		lstrcpy(UIDesc.szTexturePath, szTexturePath);
+		m_pUI_Card->Load(UIDesc);
+		m_pUI_Card->Set_PlayDissolve(false);
+		//m_pUI_Card->Set_Effecttype();
+
+
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -525,6 +551,22 @@ void CCard_Fig::Shot_Magic()
 	m_CastingMagic->Do_MagicBallState_To_Next();
 }
 
+void CCard_Fig::Ready_Card_UI()
+{
+	if (!m_isShowCard)
+	{
+		CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
+		Safe_AddRef(pQuest_Manager);
+
+		if (pQuest_Manager->Is_Quest_Finished(TEXT("Quest_Potion")))
+			m_isShowCard = true;
+
+		Safe_Release(pQuest_Manager);
+	}
+
+	m_pUI_Card->Set_PlayDissolve(m_isShowCard);
+}
+
 CCard_Fig* CCard_Fig::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CCard_Fig* pInstance = New CCard_Fig(pDevice, pContext);
@@ -562,4 +604,6 @@ void CCard_Fig::Free()
 	Safe_Release(m_pMagicSlot);
 	Safe_Release(m_pWeapon);
 	Safe_Release(m_pRigidBody);
+
+	Safe_Release(m_pUI_Card);
 }

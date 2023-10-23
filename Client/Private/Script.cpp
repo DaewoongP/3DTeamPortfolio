@@ -32,6 +32,9 @@ HRESULT CScript::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	if (nullptr != pArg)
+		m_isCardScript = (_bool*)pArg;
+
 	Add_Components();
 
 	return S_OK;
@@ -81,12 +84,24 @@ HRESULT CScript::Add_Components()
 
 	CUI::UIDESC desc;
 	desc.vCombinedXY = _float2(0.f, 0.f);
-	desc.fX = 640.f;
-	desc.fY = 530.f;
 	desc.fZ = 0.f;
-	desc.fSizeX = 820.f;
-	desc.fSizeY = 180.f;
 
+
+	if (m_isCardScript)
+	{
+		desc.fX = 240.f;
+		desc.fY = 480.f;
+		desc.fSizeX = 300.f;
+		desc.fSizeY = 100.f;
+	}
+	else
+	{
+		desc.fX = 640.f;
+		desc.fY = 530.f;
+		desc.fSizeX = 820.f;
+		desc.fSizeY = 180.f;
+	}
+	
 	if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Script"),
 		TEXT("Com_UI_Script"), reinterpret_cast<CComponent**>(&m_pUI_Script), &desc)))
 	{
@@ -156,7 +171,6 @@ CScript* CScript::Find_Script(const _tchar* swzScriptTag, _umap<const _tchar*, C
 
 	return iter->second;
 }
-
 
 CScript* CScript::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

@@ -31,6 +31,8 @@ HRESULT CInventory::Initialize(void* pArg)
 	m_ResourcesCount.resize(INGREDIENT_END, 0);
 	Add_Components();
 
+	Setting_Item(ITEM_ID::ITEM_ID_ROBE_QUDDITCH);
+
 	//BEGININSTANCE;
 
 	//CWiggenweldPotion::INIT_DESC initDesc;
@@ -48,6 +50,11 @@ HRESULT CInventory::Initialize(void* pArg)
 
 void CInventory::Tick(_float fTimeDelta)
 {
+	if (m_isSetting)
+	{
+		m_isSetting = false;
+	}
+
 	if (m_isOpen)
 	{
 		m_pUI_Inventory[m_eCurOpenItemtype]->Tick(fTimeDelta);
@@ -248,6 +255,19 @@ _bool CInventory::Add_Item(ITEM_ID eItemID, _uint iLevel, void* pArg)
 		Safe_Release(pItem);
 		return false;
 	}
+	return true;
+}
+
+_bool CInventory::Setting_Item(ITEM_ID eItemID, _uint iLevel, void* pArg)
+{
+	CItem* pItem = CItem::SimpleFactory(eItemID, iLevel, pArg);
+	if (nullptr == pItem)
+		return false;
+
+	ITEMTYPE eCurType = m_pUI_Inventory[pItem->Get_Type()]->Get_CurType();
+
+	m_pPlayerCurItems[eCurType] = pItem;
+
 	return true;
 }
 

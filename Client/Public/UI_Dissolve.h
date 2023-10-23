@@ -10,12 +10,12 @@ END
 
 BEGIN(Client)
 
-class CUI_Logo final : public CUI
+class CUI_Dissolve final : public CUI
 {
 private:
-	explicit CUI_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CUI_Logo(const CUI_Logo& rhs);
-	virtual ~CUI_Logo() = default;
+	explicit CUI_Dissolve(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CUI_Dissolve(const CUI_Dissolve& rhs);
+	virtual ~CUI_Dissolve() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -23,6 +23,11 @@ public:
 	virtual void	Tick(_float fTimeDelta) override;
 	virtual void	Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+
+public:
+	void	Set_PlayDissolve(_bool isPlayDissolve) {
+		m_isPlayDissolve = isPlayDissolve;
+	}
 
 private:
 	CShader* m_pShaderCom = { nullptr };
@@ -35,11 +40,12 @@ private:
 	HRESULT SetUp_ShaderResources();
 
 private:
+	_bool		m_isPlayDissolve = { true };
 	_float		m_fTimeDelta = { 0.f };
 	_float		m_fDissolveAmount = { 0.f };
 
 public:
-	static CUI_Logo* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CUI_Dissolve* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };

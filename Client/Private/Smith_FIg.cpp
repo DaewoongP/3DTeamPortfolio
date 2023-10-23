@@ -51,36 +51,12 @@ void CSmith_Fig::Tick(_float fTimeDelta)
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 
+	Check_Quest();
 
-	if (true == m_isColPlayer && nullptr != m_pModelCom)
-	{
-		m_pUI_Interaction->Tick(fTimeDelta);
-
-		CGameInstance* pGameInstance = CGameInstance::GetInstance();
-		Safe_AddRef(pGameInstance);
-
-		if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
-		{
-			m_isPlayScript = true;
-			m_pScripts[m_iScriptIndex]->Reset_Script();
-			m_pScripts[m_iScriptIndex]->Set_isRender(true);
-		}
-		Safe_Release(pGameInstance);
-	}
+	Play_Script(fTimeDelta);
 
 
-	if (m_isPlayScript)
-	{
-		m_pScripts[m_iScriptIndex]->Tick(fTimeDelta);
 
-		if (true == m_pScripts[SMITHFIGSCRIPT_POTION]->Is_Finished())
-		{
-			CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
-			Safe_AddRef(pQuest_Manager);
-			pQuest_Manager->Unlock_Quest(TEXT("Quest_Potion"));
-			Safe_Release(pQuest_Manager);
-		}
-	}
 }
 
 void CSmith_Fig::Late_Tick(_float fTimeDelta)
@@ -294,11 +270,25 @@ HRESULT CSmith_Fig::Add_Components()
 		pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Fig/Fig_2_1.png"));
 		pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Fig/Fig_2_2.png"));
 		pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Fig/Fig_2_3.png"));
+		pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Fig/Fig_2_4.png"));
 		m_pScripts.push_back(pScript);
 
 		pScript = static_cast<CScript*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Script")));
 		pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Fig/Fig_3_1.png"));
 		pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Fig/Fig_3_2.png"));
+		pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Fig/Fig_3_3.png"));
+		m_pScripts.push_back(pScript);
+
+		pScript = static_cast<CScript*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Script")));
+		pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Fig/Fig_4_1.png"));
+		pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Fig/Fig_4_2.png"));
+		pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Fig/Fig_4_3.png"));
+		m_pScripts.push_back(pScript);
+
+		pScript = static_cast<CScript*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Script")));
+		pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Fig/Fig_6_1.png"));
+		pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Fig/Fig_6_2.png"));
+		pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Fig/Fig_6_3.png"));
 		m_pScripts.push_back(pScript);
 
 		Safe_Release(pGameInstance);
@@ -392,6 +382,119 @@ HRESULT CSmith_Fig::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _floa
 	ENDINSTANCE;
 
 	return S_OK;
+}
+
+void CSmith_Fig::Check_Quest()
+{
+	if (!m_isClearQuest[SMITHFIGSCRIPT_POTION])
+	{
+		CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
+		Safe_AddRef(pQuest_Manager);
+		if (pQuest_Manager->Is_Quest_Finished(TEXT("Quest_Potion")))
+		{
+			m_pScripts[m_iScriptIndex]->Set_isRender(false);
+			m_isClearQuest[SMITHFIGSCRIPT_POTION] = true;
+			++m_iScriptIndex;
+		};
+		Safe_Release(pQuest_Manager);
+	}
+
+	if (!m_isClearQuest[SMITHFIGSCRIPT_TOWN] && m_isClearQuest[SMITHFIGSCRIPT_POTION])
+	{
+		CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
+		Safe_AddRef(pQuest_Manager);
+		if (pQuest_Manager->Is_Quest_Finished(TEXT("Quest_Town")))
+		{
+			m_pScripts[m_iScriptIndex]->Set_isRender(false);
+			m_isClearQuest[SMITHFIGSCRIPT_TOWN] = true;
+			++m_iScriptIndex;
+		};
+		Safe_Release(pQuest_Manager);
+	}
+
+	if (!m_isClearQuest[SMITHFIGSCRIPT_SECRET] && m_isClearQuest[SMITHFIGSCRIPT_TOWN] && m_isClearQuest[SMITHFIGSCRIPT_POTION])
+	{
+		CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
+		Safe_AddRef(pQuest_Manager);
+		if (pQuest_Manager->Is_Quest_Finished(TEXT("Quest_Secret")))
+		{
+			m_pScripts[m_iScriptIndex]->Set_isRender(false);
+			m_isClearQuest[SMITHFIGSCRIPT_SECRET] = true;
+			++m_iScriptIndex;
+		};
+		Safe_Release(pQuest_Manager);
+	}
+
+	if (!m_isClearQuest[SMITHFIGSCRIPT_BONE] && m_isClearQuest[SMITHFIGSCRIPT_SECRET] && m_isClearQuest[SMITHFIGSCRIPT_TOWN] && m_isClearQuest[SMITHFIGSCRIPT_POTION])
+	{
+		CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
+		Safe_AddRef(pQuest_Manager);
+		if (pQuest_Manager->Is_Quest_Finished(TEXT("Quest_Bone")))
+		{
+			m_pScripts[m_iScriptIndex]->Set_isRender(false);
+			m_isClearQuest[SMITHFIGSCRIPT_BONE] = true;
+		};
+		Safe_Release(pQuest_Manager);
+	}
+
+}
+
+void CSmith_Fig::Play_Script(_float fTimeDelta)
+{
+
+	if (true == m_isColPlayer && nullptr != m_pModelCom)
+	{
+		m_pUI_Interaction->Tick(fTimeDelta);
+
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+
+		if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
+		{
+			m_isPlayScript = true;
+			m_pScripts[m_iScriptIndex]->Reset_Script();
+			m_pScripts[m_iScriptIndex]->Set_isRender(true);
+		}
+		Safe_Release(pGameInstance);
+	}
+
+
+	if (m_isPlayScript)
+	{
+		m_pScripts[m_iScriptIndex]->Tick(fTimeDelta);
+
+		if (true == m_pScripts[SMITHFIGSCRIPT_POTION]->Is_Finished())
+		{
+			CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
+			Safe_AddRef(pQuest_Manager);
+			pQuest_Manager->Unlock_Quest(TEXT("Quest_Potion"));
+			Safe_Release(pQuest_Manager);
+		}
+		
+		if (true == m_pScripts[SMITHFIGSCRIPT_TOWN]->Is_Finished())
+		{
+			CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
+			Safe_AddRef(pQuest_Manager);
+			pQuest_Manager->Unlock_Quest(TEXT("Quest_Town"));
+			Safe_Release(pQuest_Manager);
+		}
+		
+		if (true == m_pScripts[SMITHFIGSCRIPT_SECRET]->Is_Finished())
+		{
+			CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
+			Safe_AddRef(pQuest_Manager);
+			pQuest_Manager->Unlock_Quest(TEXT("Quest_Secret"));
+			Safe_Release(pQuest_Manager);
+		}
+
+		if (true == m_pScripts[SMITHFIGSCRIPT_BONE]->Is_Finished())
+		{
+			CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
+			Safe_AddRef(pQuest_Manager);
+			pQuest_Manager->Unlock_Quest(TEXT("Quest_Bone"));
+			Safe_Release(pQuest_Manager);
+		}
+	}
 }
 
 CSmith_Fig* CSmith_Fig::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

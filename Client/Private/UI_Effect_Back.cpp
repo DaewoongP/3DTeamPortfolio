@@ -205,6 +205,17 @@ HRESULT CUI_Effect_Back::SetUp_ShaderResources()
 				return E_FAIL;
 		}
 
+		//if (m_Textures.size() >= 2)
+		//{
+		//	if (FAILED(m_Textures[1]->Bind_ShaderResources(m_pShaderCom, "g_DistortionTexture")))
+		//		return E_FAIL;
+
+		//	m_fDistortionTime += 0.016f;
+		//	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDistortionTime", &m_fDistortionTime, sizeof(_float))))
+		//		return E_FAIL;
+		//}
+
+
 		if (CUI_Group_SkillTap::SKILLTAP::ARRESTOMOMENTUM <= m_eSkillType && m_eSkillType <= CUI_Group_SkillTap::SKILLTAP::TRANSFORMATIONOVERLAND)
 		{
 			// yellow

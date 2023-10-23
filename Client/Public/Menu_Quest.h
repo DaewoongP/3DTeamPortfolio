@@ -38,6 +38,7 @@ public:
 public:
 	void		Set_Open(_bool isOpen);
 	void		Set_FontState(QUESTLIST eQuest, QUESTSTATE eState);
+	void		Quest_Check();
 
 private:
 	HRESULT Add_Prototype();
@@ -60,6 +61,7 @@ private:
 	_bool						m_isCurrentQuest[QUEST_END] = { false };
 
 	vector<CTexture*>			m_pTextures;
+
 private:
 	_bool		m_isOpen = { false };
 

@@ -439,9 +439,6 @@
     <Filter Include="02. GameObject\04. UI\UI\UI_Dynamic_Back">
       <UniqueIdentifier>{94884128-bfde-49f0-b76a-4d2f1d79153e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\04. UI\UI\UI Behavior">
-      <UniqueIdentifier>{c8770083-7040-4ffe-848c-04ec093f0dac}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\09. Item\01. Tool">
       <UniqueIdentifier>{9cd20c79-d1dd-4c10-aa3f-aa47c981708a}</UniqueIdentifier>
     </Filter>
@@ -1245,7 +1242,7 @@
     <ClInclude Include="..\Public\UI_Group_Logo.h">
       <Filter>02. GameObject\04. UI\UI_Group\UI_Group_Logo</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_Logo.h">
+    <ClInclude Include="..\Public\UI_Dissolve.h">
       <Filter>02. GameObject\04. UI\UI\UI_Logo</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Weapon_Golem_Combat.h">
@@ -2104,7 +2101,7 @@
     <ClCompile Include="..\Private\UI_Group_Logo.cpp">
       <Filter>02. GameObject\04. UI\UI_Group\UI_Group_Logo</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_Logo.cpp">
+    <ClCompile Include="..\Private\UI_Dissolve.cpp">
       <Filter>02. GameObject\04. UI\UI\UI_Logo</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Weapon_Golem_Combat.cpp">

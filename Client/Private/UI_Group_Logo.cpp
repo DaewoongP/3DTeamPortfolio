@@ -4,7 +4,7 @@
 #include "UI_Effect_Back.h"
 #include "UI_Image.h"
 #include "UI_Button.h"
-#include "UI_Logo.h"
+#include "UI_Dissolve.h"
 
 CUI_Group_Logo::CUI_Group_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -83,8 +83,8 @@ HRESULT CUI_Group_Logo::Add_Prototype()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Logo"),
-		CUI_Logo::Create(m_pDevice, m_pContext), true)))
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Dissolve"),
+		CUI_Dissolve::Create(m_pDevice, m_pContext), true)))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;
@@ -128,7 +128,7 @@ HRESULT CUI_Group_Logo::Add_Components()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Logo"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Dissolve"),
 		TEXT("Com_UI_Back"), reinterpret_cast<CComponent**>(&m_pBack))))
 	{
 		MSG_BOX("CUI_Group_Logo : Failed Clone Component (Com_UI_Back)");
@@ -137,7 +137,7 @@ HRESULT CUI_Group_Logo::Add_Components()
 		return E_FAIL;
 	}
 
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Logo"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Dissolve"),
 		TEXT("Com_UI_Logo"), reinterpret_cast<CComponent**>(&m_pLogo))))
 	{
 		MSG_BOX("CUI_Group_Logo : Failed Clone Component (Com_UI_Logo)");
@@ -146,7 +146,7 @@ HRESULT CUI_Group_Logo::Add_Components()
 		return E_FAIL;
 	}
 
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Logo"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Dissolve"),
 		TEXT("Com_UI_Text"), reinterpret_cast<CComponent**>(&m_pText))))
 	{
 		MSG_BOX("CUI_Group_Logo : Failed Clone Component (Com_UI_Text)");

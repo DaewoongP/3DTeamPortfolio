@@ -3,7 +3,7 @@
 #include "Client_Defines.h"
 
 BEGIN(Client)
-class CUI_Logo;
+class CUI_Dissolve;
 class CUI_Effect_Back;
 class CUI_Back;
 
@@ -22,9 +22,9 @@ public:
 
 private:
 	CUI_Back*		m_pUI = { nullptr };
-	CUI_Logo*		m_pBack = { nullptr };
-	CUI_Logo*		m_pLogo = { nullptr };
-	CUI_Logo*		m_pText = { nullptr };
+	CUI_Dissolve*		m_pBack = { nullptr };
+	CUI_Dissolve*		m_pLogo = { nullptr };
+	CUI_Dissolve*		m_pText = { nullptr };
 
 private:
 	HRESULT Add_Prototype();

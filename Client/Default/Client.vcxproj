@@ -419,7 +419,7 @@
     <ClInclude Include="..\Public\Turn.h" />
     <ClInclude Include="..\Public\UI_Image.h" />
     <ClInclude Include="..\Public\UI_Inventory.h" />
-    <ClInclude Include="..\Public\UI_Logo.h" />
+    <ClInclude Include="..\Public\UI_Dissolve.h" />
     <ClInclude Include="..\Public\UI_Slot.h" />
     <ClInclude Include="..\Public\Wait.h" />
     <ClInclude Include="..\Public\Weapon_Armored_Troll.h" />
@@ -733,7 +733,7 @@
     <ClCompile Include="..\Private\Turn.cpp" />
     <ClCompile Include="..\Private\UI_Image.cpp" />
     <ClCompile Include="..\Private\UI_Inventory.cpp" />
-    <ClCompile Include="..\Private\UI_Logo.cpp" />
+    <ClCompile Include="..\Private\UI_Dissolve.cpp" />
     <ClCompile Include="..\Private\UI_Slot.cpp" />
     <ClCompile Include="..\Private\Wait.cpp" />
     <ClCompile Include="..\Private\Weapon_Armored_Troll.cpp" />

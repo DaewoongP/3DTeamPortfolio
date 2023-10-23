@@ -27,6 +27,9 @@ public:
 	_uint Get_Resource(INGREDIENT eType) {
 		return m_ResourcesCount[eType];
 	}
+	vector<CItem*>* Get_CurItem() {
+		return &m_pPlayerCurItems;
+	}
 	
 	_uint Get_Gold() { return m_iGold; }
 public:
@@ -41,7 +44,7 @@ public: // 아이템 구입 로직
 	void Earn_Money(_uint iCost);
 
 private:
-	_bool			m_isOpen = { false };
+	_bool				m_isOpen = { false };
 	ITEMTYPE			m_eCurOpenItemtype = { ITEMTYPE_END };
 
 private:
@@ -67,11 +70,17 @@ public:
 	_bool	Add_Item(CItem* pItem, ITEMTYPE eType);
 	_bool	Add_Item(const _tchar* pPrototypeTag, _uint iLevel = LEVEL_STATIC, void* pArg = nullptr);
 	_bool	Add_Item(ITEM_ID eItemID, _uint iLevel = LEVEL_STATIC, void* pArg = nullptr);
+	_bool	Setting_Item(ITEM_ID eItemID, _uint iLevel = LEVEL_STATIC, void* pArg = nullptr);
+
 
 	void	Delete_Item(ITEM_ID eTargetItemID);
 	_bool	Delete_Item(ITEMTYPE eType, CItem* pItem);
 	_bool	Delete_Item(ITEMTYPE eType, _uint iIndex);
 	void	Swap_Item(_uint Index, ITEMTYPE eType);
+
+
+private:
+	_bool		m_isSetting = { true };
 
 public:
 	static CInventory* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
