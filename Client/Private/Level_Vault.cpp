@@ -267,7 +267,7 @@ HRESULT CLevel_Vault::Load_MapObject(const _tchar* pObjectFilePath)
 		else if (0 == lstrcmp(modelName.c_str(), wsLightStand.c_str()))
 		{
 			_tchar wszobjName[MAX_PATH] = { 0 };
-			_stprintf_s(wszobjName, TEXT("GameObjec_LightStand_%d"), (iObjectNum));
+			_stprintf_s(wszobjName, TEXT("GameObject_LightStand_%d"), (iObjectNum));
 
 			if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT,
 				TEXT("Prototype_GameObject_LightStand"), TEXT("Layer_BackGround"),
