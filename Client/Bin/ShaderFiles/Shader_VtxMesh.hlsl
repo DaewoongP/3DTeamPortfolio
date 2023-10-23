@@ -12,6 +12,7 @@ float4 g_vEmissive;
 
 //sky
 float2 g_vMoonPos;
+bool g_isNight;
 int g_iFrame;
 float g_fTime;
 
@@ -188,29 +189,36 @@ PS_OUT PS_MAIN_SKY(PS_IN In)
     if (vDiffuse.a < 0.1f)
         discard;
 
-    vDiffuse *= 0.15f;
-
-    float2 vNormalizedUv = In.vTexUV;
-    
-	// moon
-    float2 vUvMoonDiff = In.vTexUV - g_vMoonPos;
-    float fMoonDot = max(0.0, 1.0 - dot(vUvMoonDiff, vUvMoonDiff));
-    Out.vDiffuse.rgb += float3(0.6, 0.6, 0.6) * pow(fMoonDot, 350.0) + vDiffuse.rgb;
+    // night mode
+    if (g_isNight)
+    {
+        vDiffuse *= 0.15f;
+        float2 vNormalizedUv = In.vTexUV;
+	    // moon
+        float2 vUvMoonDiff = In.vTexUV - g_vMoonPos;
+        float fMoonDot = max(0.0, 1.0 - dot(vUvMoonDiff, vUvMoonDiff));
+        Out.vDiffuse.rgb += float3(0.6, 0.6, 0.6) * pow(fMoonDot, 350.0) + vDiffuse.rgb;
 	
-	// moon haze
-    Out.vDiffuse.rgb += float3(0.48, 0.54, 0.6) * pow(fMoonDot, 300.0);
-    Out.vDiffuse.a = 1.f;
+	    // moon haze
+        Out.vDiffuse.rgb += float3(0.48, 0.54, 0.6) * pow(fMoonDot, 300.0);
+        Out.vDiffuse.a = 1.f;
     
-    //[0.9, 0.9999]
-    float StarFieldThreshhold = 0.985;
+        //[0.9, 0.9999]
+        float StarFieldThreshhold = 0.985;
     
-    // Stars with a slow spin.
-    float fSpinRate = 0.0001;
-    float2 vInputPos = (2.0 * In.vTexUV * float2(1280.f, 720.f) / 720.f) - float2(1.0, 1.0);
-    float fSampleAngle = fSpinRate * float(g_iFrame) + atan2(vInputPos.y, vInputPos.x);
-    float2 vSamplePos = (0.5 * length(vInputPos) * float2(cos(fSampleAngle), sin(fSampleAngle)) + float2(0.5, 0.5)) * 720.f;
-    float StarVal = StableStarField(vSamplePos, StarFieldThreshhold);
-    Out.vDiffuse.rgb += float3(StarVal, StarVal, StarVal);
+        // Stars with a slow spin.
+        float fSpinRate = 0.0001;
+        float2 vInputPos = (2.0 * In.vTexUV * float2(1280.f, 720.f) / 720.f) - float2(1.0, 1.0);
+        float fSampleAngle = fSpinRate * float(g_iFrame) + atan2(vInputPos.y, vInputPos.x);
+        float2 vSamplePos = (0.5 * length(vInputPos) * float2(cos(fSampleAngle), sin(fSampleAngle)) + float2(0.5, 0.5)) * 720.f;
+        float StarVal = StableStarField(vSamplePos, StarFieldThreshhold);
+        Out.vDiffuse.rgb += float3(StarVal, StarVal, StarVal);
+    }
+    else
+    {
+        Out.vDiffuse = vDiffuse;
+        Out.vDiffuse.a = 1.f;
+    }
     
     Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);

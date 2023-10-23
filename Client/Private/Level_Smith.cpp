@@ -164,13 +164,23 @@ HRESULT CLevel_Smith::Ready_Lights()
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
 	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
+	LightDesc.vPos = _float4(45.f, 54.7f, 112.5f, 1.f);
+	LightDesc.vLookAt = _float4(82.8f, 0.f, 80.9f, 1.f);
+	LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
+	// emissive¶û Ã³¸®¶§¹®¿¡ ºûÀ» Á» ´õ Ã³¸®ÇØÁà¾ßÇÔ.
+	LightDesc.vDiffuse = WHITEDEFAULT;
+	LightDesc.vAmbient = WHITEDEFAULT;
+	LightDesc.vSpecular = WHITEDEFAULT;
+
+	// night
+	/*LightDesc.eType = CLight::TYPE_DIRECTIONAL;
 	LightDesc.vPos = _float4(159.7f, 81.23f, 102.81f, 1.f);
 	LightDesc.vLookAt = _float4(108.3f, 0.f, 108.3f, 1.f);
 	LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
 
 	LightDesc.vDiffuse = _float4(0.4f, 0.53f, 0.55f, 0.5f);
 	LightDesc.vAmbient = LightDesc.vDiffuse;
-	LightDesc.vSpecular = LightDesc.vDiffuse;
+	LightDesc.vSpecular = LightDesc.vDiffuse;*/
 
 	if (FAILED(pGameInstance->Add_Light(LightDesc, nullptr, true)))
 		return E_FAIL;

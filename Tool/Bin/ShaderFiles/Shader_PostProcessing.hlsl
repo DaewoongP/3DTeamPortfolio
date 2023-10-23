@@ -10,6 +10,7 @@ texture2D g_DepthTexture;
 texture2D g_RainTexture;
 bool g_isSSAO;
 bool g_isCircleFog;
+bool g_isFloorFog;
 float g_fCamFar;
 float4 g_vCamPos;
 
@@ -122,19 +123,23 @@ PS_OUT PS_MAIN(PS_IN In)
     }
     
     // floor fog
-    float2 uv = In.vTexUV * float2(1280.f, 720.f) / 720.f;
-    float3 vFbmInput = float3(uv.x - g_fTime * 0.1f, vPosition.y * 2.f, 0.0);
-    if (g_vCamPos.y > vPosition.y)
+    if (g_isFloorFog)
     {
-        vFbmInput = float3(uv.x - g_fTime * 0.1f, uv.y * 2.f, 0.0);
-    }
-    float3 vFogColor = float3(0.7, 0.7, 0.9);
-    float ft = saturate((g_vCamPos.y - vPosition.y) / 3.f);
-    Out.vColor.rgb += In.vTexUV.y * vFogColor * FractionalBrownianMotion(vFbmInput) * ft;
+        float2 uv = In.vTexUV * float2(1280.f, 720.f) / 720.f;
+        float3 vFbmInput = float3(uv.x - g_fTime * 0.1f, vPosition.y * 2.f, 0.0);
+        if (g_vCamPos.y > vPosition.y)
+        {
+            vFbmInput = float3(uv.x - g_fTime * 0.1f, uv.y * 2.f, 0.0);
+        }
+        float3 vFogColor = float3(0.7, 0.7, 0.9);
+        float ft = saturate((g_vCamPos.y - vPosition.y) / 3.f);
+        Out.vColor.rgb += In.vTexUV.y * vFogColor * FractionalBrownianMotion(vFbmInput) * ft;
     
-    vFbmInput = float3(uv.x - g_fTime * 0.1f, uv.y * 2.f, 0.0);
-    Out.vColor.rgb += In.vTexUV.y * vFogColor * FractionalBrownianMotion(vFbmInput) * 0.3f;
-    // y값으로 비교
+        vFbmInput = float3(uv.x - g_fTime * 0.1f, uv.y * 2.f, 0.0);
+        Out.vColor.rgb += In.vTexUV.y * vFogColor * FractionalBrownianMotion(vFbmInput) * 0.3f;       
+    }
+    
+    //y값 안개
     //if (vPosition.y >= 10.f)
     //    fFogPower = 0.f;
     //else

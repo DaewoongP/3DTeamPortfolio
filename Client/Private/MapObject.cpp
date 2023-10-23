@@ -191,7 +191,7 @@ HRESULT CMapObject::Render()
 
 		if (wcswcs(Meshes[iMeshCount]->Get_MeshName(), TEXT("Glass")))
 		{
-			m_vEmissive = _float4(0.5f, 0.5f, 0.5f, 0.5f);
+			m_vEmissive = _float4(0.5f, 0.5f, 0.45f, 0.5f);
 			if (FAILED(m_pShader->Bind_RawValue("g_vEmissive", &m_vEmissive, sizeof(_float4))))
 				return E_FAIL;
 		}

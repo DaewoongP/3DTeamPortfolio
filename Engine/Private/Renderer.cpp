@@ -36,7 +36,6 @@ void CRenderer::Defualt_Shading()
 	m_isRaining = false;
 	if (nullptr != m_pDOF)
 		m_pDOF->Default();
-	m_pDOF->Off();
 }
 
 CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -782,6 +781,8 @@ HRESULT CRenderer::Render_PostProcessing()
 	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_fCircleFogRadius", &m_fFogRadius, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_isCircleFog", &m_isCircleFog, sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_isFloorFog", &m_isFloorFog, sizeof(_bool))))
 		return E_FAIL;
 	_float fTimeAcc = CGameInstance::GetInstance()->Get_World_TimeAcc();
 	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_fTime", &fTimeAcc, sizeof(_float))))

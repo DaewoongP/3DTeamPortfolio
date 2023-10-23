@@ -155,6 +155,7 @@ private:
 	_float		m_fRadialTimeAcc = { 0.f };
 	_float		m_fRainTimeAcc = { 0.f };
 	_bool		m_isCircleFog = { false };
+	_bool		m_isFloorFog = { false };
 	_float4		m_vFogColor;
 	_float3		m_vFogCenterPos;
 	_float		m_fFogRadius = { 0.f };
