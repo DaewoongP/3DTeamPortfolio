@@ -60,6 +60,7 @@ private:
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix);
 	void	Check_MinMaxPoint(_float3 vPoint);
+	void	Check_FireOn();
 
 public:
 	static CVault_Gate* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

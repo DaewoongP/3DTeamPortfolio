@@ -32,8 +32,6 @@ HRESULT CDoor::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	//m_pTransform->Set_RigidBody(m_pRigidBody);
-	// 
 	// 플레이어 찾기
 	BEGININSTANCE;
 	m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
@@ -53,33 +51,6 @@ HRESULT CDoor::Initialize_Level(_uint iCurrentLevelIndex)
 		__debugbreak();
 		return E_FAIL;
 	}
-
-	//// 리지드 바디 초기화
-	//CRigidBody::RIGIDBODYDESC RigidBodyDesc;
-	//RigidBodyDesc.isStatic = false;
-	//RigidBodyDesc.isTrigger = false;
-	//RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
-	//RigidBodyDesc.eConstraintFlag = CRigidBody::All;
-	//RigidBodyDesc.fStaticFriction = 1.f;
-	//RigidBodyDesc.fDynamicFriction = 1.f;
-	//RigidBodyDesc.fRestitution = 0.f;
-	//PxBoxGeometry MyGeometry = PxBoxGeometry(0.5f, 1.5f, 0.6f);
-	//RigidBodyDesc.pGeometry = &MyGeometry;
-	//RigidBodyDesc.vOffsetPosition = _float3(-0.35f, 0.75f, -0.15f);
-	//RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, XMConvertToRadians(60.f), 0.f);
-	//RigidBodyDesc.pOwnerObject = this;
-	//RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 1.f, 1.f);
-	//RigidBodyDesc.eThisCollsion = COL_STATIC;
-	//RigidBodyDesc.eCollisionFlag = COL_ENEMY | COL_PLAYER;
-	//strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "MapObject");
-	//
-	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
-	//	TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
-	//{
-	//	MSG_BOX("Failed CDoor Add_Component : (Com_RigidBody)");
-	//	__debugbreak();
-	//	return E_FAIL;
-	//}
 
 	return S_OK;
 }
@@ -210,8 +181,6 @@ CGameObject* CDoor::Clone(void* pArg)
 void CDoor::Free()
 {
 	__super::Free();
-
-	//Safe_Release(m_pRigidBody);
 
 	Safe_Release(m_pPlayer);
 }

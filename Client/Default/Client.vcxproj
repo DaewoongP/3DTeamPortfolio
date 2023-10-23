@@ -166,8 +166,6 @@
   <ItemGroup>
     <ClInclude Include="..\Public\Accio.h" />
     <ClInclude Include="..\Public\Action.h" />
-    <ClInclude Include="..\Public\AncientDoor_L.h" />
-    <ClInclude Include="..\Public\AncientDoor_R.h" />
     <ClInclude Include="..\Public\Animation_Camera_Model.h" />
     <ClInclude Include="..\public\AshwinderEggs_Item.h" />
     <ClInclude Include="..\Public\BigBird.h" />
@@ -264,6 +262,7 @@
     <ClInclude Include="..\Public\Robe_DarkArts_Delux.h" />
     <ClInclude Include="..\Public\Robe_Beast.h" />
     <ClInclude Include="..\Public\Robe_Quidditch.h" />
+    <ClInclude Include="..\Public\Sancutm_Door.h" />
     <ClInclude Include="..\Public\Script.h" />
     <ClInclude Include="..\Public\SmithToCliff_Gate.h" />
     <ClInclude Include="..\Public\Smith_FIg.h" />
@@ -501,8 +500,6 @@
   <ItemGroup>
     <ClCompile Include="..\Private\Accio.cpp" />
     <ClCompile Include="..\Private\Action.cpp" />
-    <ClCompile Include="..\Private\AncientDoor_L.cpp" />
-    <ClCompile Include="..\Private\AncientDoor_R.cpp" />
     <ClCompile Include="..\Private\Animation_Camera_Model.cpp" />
     <ClCompile Include="..\Private\AshwinderEggs_Item.cpp" />
     <ClCompile Include="..\Private\BigBird.cpp" />
@@ -597,6 +594,7 @@
     <ClCompile Include="..\Private\Robe_DarkArts_Delux.cpp" />
     <ClCompile Include="..\Private\Robe_Beast.cpp" />
     <ClCompile Include="..\Private\Robe_Quidditch.cpp" />
+    <ClCompile Include="..\Private\Sancutm_Door.cpp" />
     <ClCompile Include="..\Private\Script.cpp" />
     <ClCompile Include="..\Private\SmithToCliff_Gate.cpp" />
     <ClCompile Include="..\Private\Smith_FIg.cpp" />

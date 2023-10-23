@@ -907,12 +907,6 @@
     <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Door">
       <UniqueIdentifier>{c0f2b156-3bfd-454d-a84c-99b9be093137}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Door\AncientDoor_L">
-      <UniqueIdentifier>{56443a02-375f-4a90-9d44-bfd48cf55f16}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Door\AncientDoor_R">
-      <UniqueIdentifier>{81c40fce-6b8e-4ad2-b3a9-4cf39725c754}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\RP_Core">
       <UniqueIdentifier>{f8e2e068-d9cf-4946-a565-8d0e2044214d}</UniqueIdentifier>
     </Filter>
@@ -951,6 +945,9 @@
     </Filter>
     <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\LightStand">
       <UniqueIdentifier>{b89c1f33-7332-4303-8b51-675b8608ea09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Door\Sanctum_Door">
+      <UniqueIdentifier>{e1f83ab2-f7f2-4e31-91a4-387e610fc940}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1586,12 +1583,6 @@
     <ClInclude Include="..\Public\Broom_Break.h">
       <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Break</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\AncientDoor_L.h">
-      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\AncientDoor_L</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\AncientDoor_R.h">
-      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\AncientDoor_R</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Breath.h">
       <Filter>02. GameObject\02. Enemy\04. Dragon\00. Breath</Filter>
     </ClInclude>
@@ -1885,6 +1876,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\LightStand.h">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\LightStand</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sancutm_Door.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\Sanctum_Door</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2487,9 +2481,6 @@
     <ClCompile Include="..\Private\Broom_Break.cpp">
       <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Break</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\AncientDoor_L.cpp">
-      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\AncientDoor_L</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Breath.cpp">
       <Filter>02. GameObject\02. Enemy\04. Dragon\00. Breath</Filter>
     </ClCompile>
@@ -2522,9 +2513,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Gear_Item.cpp">
       <Filter>02. GameObject\09. Item\03. Gear</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\AncientDoor_R.cpp">
-      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\AncientDoor_R</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Event_Smeade.cpp">
       <Filter>07. Events\Smeade</Filter>
@@ -2777,6 +2765,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\LightStand.cpp">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\LightStand</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sancutm_Door.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\Sanctum_Door</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

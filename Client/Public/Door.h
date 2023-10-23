@@ -1,10 +1,6 @@
 #pragma once
 #include "MapObject.h"
 
-BEGIN(Engine)
-class CRigidBody;;
-END
-
 BEGIN(Client)
 
 class CPlayer;
@@ -27,7 +23,6 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 
 private:
-	CRigidBody* m_pRigidBody = { nullptr };
 	CPlayer* m_pPlayer = { nullptr };			 // 플레이어 주소
 
 private:

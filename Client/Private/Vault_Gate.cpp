@@ -77,7 +77,8 @@ void CVault_Gate::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	// 화로에 불 붙으면 해제
+	// 화로에 불 다 붙으면 문열림
+	Check_FireOn();
 
 	if (false == m_isCheckOnce)
 		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
@@ -226,6 +227,25 @@ void CVault_Gate::Check_MinMaxPoint(_float3 vPoint)
 		m_vMaxPoint.y = vPoint.y;
 	if (m_vMaxPoint.z < vPoint.z)
 		m_vMaxPoint.z = vPoint.z;
+}
+
+void CVault_Gate::Check_FireOn()
+{
+	if (false == m_isCheckOnce)
+		return;
+
+	_uint iFireOn = m_pLightStands.size();
+	_uint iCheckFireOn = 0;
+
+	// 화로가 전부 켜졌는지 확인
+	for (auto& iter : m_pLightStands)
+	{
+		if (true == iter->Get_FireOn())
+			++iCheckFireOn;
+	}
+
+	if (iFireOn == iCheckFireOn)
+		m_isCheckOnce = false;
 }
 
 CVault_Gate* CVault_Gate::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

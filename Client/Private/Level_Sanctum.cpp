@@ -176,17 +176,69 @@ HRESULT CLevel_Sanctum::Load_MapObject(const _tchar* pObjectFilePath)
 		}
 		BEGININSTANCE;
 
-		_tchar wszobjName[MAX_PATH] = { 0 };
-		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (iObjectNum));
+		// 읽어온 태그에서 모델이름 추출
+		wstring ws(MapObjectDesc.wszTag);
+		size_t findIndex = ws.find(TEXT("Model_")) + 6;
 
-		if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM,
-			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_BackGround"),
-			wszobjName, &MapObjectDesc)))
+		wstring modelName = ws.substr(findIndex);
+
+		// 비교해야되는 문자열
+		wstring wsLightStand(TEXT("SM_SanctumDun_LightStand_A"));
+		wstring wsSanctumDoorL(TEXT("SM_SanctumDun_Door_Repository__L"));
+		wstring wsSanctumDoorR(TEXT("SM_SanctumDun_Door_Repository__R"));
+
+		// 화로
+		if (0 == lstrcmp(modelName.c_str(), wsLightStand.c_str()))
 		{
-			MSG_BOX("Failed to Clone MapObject");
-			ENDINSTANCE;
-			return E_FAIL;
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_LightStand_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM,
+				TEXT("Prototype_GameObject_LightStand"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone LightStand");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
 		}
+
+		// 생텀 도어
+		if (0 == lstrcmp(modelName.c_str(), wsSanctumDoorL.c_str()) || 
+			0 == lstrcmp(modelName.c_str(), wsSanctumDoorR.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+
+			if(0 == lstrcmp(modelName.c_str(), wsSanctumDoorL.c_str()))
+				_stprintf_s(wszobjName, TEXT("GameObject_Sanctum_Door_Left"));
+
+			else
+				_stprintf_s(wszobjName, TEXT("GameObject_Sanctum_Door_Right"));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM,
+				TEXT("Prototype_GameObject_Sancutm_Door"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone SanctumDoor");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}
+
+		else
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM,
+				TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone MapObject");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}		
 
 		++iObjectNum; ENDINSTANCE;
 	}

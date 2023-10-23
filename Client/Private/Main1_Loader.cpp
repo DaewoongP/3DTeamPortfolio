@@ -26,6 +26,7 @@
 #include "SmithToCliff_Gate.h"
 #include "Lamppost.h"
 #include "LightStand.h"
+#include "Sancutm_Door.h"
 
 CMain1_Loader::CMain1_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -505,6 +506,11 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_LightStand"),
 		CLightStand::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_LightStand");
+
+	/* For.Prototype_GameObject_Sancutm_Door */
+	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Sancutm_Door"),
+		CSancutm_Door::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Sancutm_Door");
 
 	HANDLE hFile = CreateFile(pMapObjectPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
