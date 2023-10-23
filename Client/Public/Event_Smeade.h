@@ -10,6 +10,11 @@
 #include "GameObject.h"
 #include "Client_Defines.h"
 
+BEGIN(Engine)
+class CRenderer;
+END
+
+
 BEGIN(Client)
 class CEnemy;
 class CTrigger;
@@ -19,6 +24,13 @@ BEGIN(Client)
 
 class CEvent_Smeade final : public CGameObject
 {
+	enum TROLLSPAWN_SEQUENCE
+	{
+		TROLLSPAWN_SEQUENCE_FADE_OUT,
+		TROLLSPAWN_SEQUENCE_TROLL_SPAWN_AND_PLAY_CUTSCENE,
+		TROLLSPAWN_SEQUENCE_FADE_IN,
+		TROLLSPAWN_SEQUENCE_END
+	};
 private:
 	explicit CEvent_Smeade(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CEvent_Smeade(const CEvent_Smeade& rhs);
@@ -32,6 +44,11 @@ public:
 private:
 	CTrigger* m_pSpawn_Troll = { nullptr };
 
+private:
+	CRenderer* m_pRenderer = { nullptr };
+private:
+	_bool m_isEnter = { false };
+	TROLLSPAWN_SEQUENCE m_eTroll_Spawn_Sequence = { TROLLSPAWN_SEQUENCE_END };
 
 private:
 	CTrigger* m_pCutSceneTest = { nullptr };

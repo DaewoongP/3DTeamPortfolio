@@ -45,6 +45,7 @@ void CEvent_Cliffside::Check_Event_Play_CutScene_0_0()
 
 	switch (m_eCliffside_Sequence)
 	{
+		//페이드 아웃
 	case Client::CEvent_Cliffside::CLIFFSIDE_SEQUENCE_FADE_OUT:
 	{
 		//진입시
@@ -52,8 +53,7 @@ void CEvent_Cliffside::Check_Event_Play_CutScene_0_0()
 		{
 			//페이드 아웃
 			m_pRenderer->FadeOut(1.0f);
-			//타이머 리셋
-			pGameInstance->Reset_Timer(TEXT("Cliffside_CutScene_Fade_Out"));
+			
 			//진입 표시
 			m_isEnter = false;
 		}
@@ -65,11 +65,10 @@ void CEvent_Cliffside::Check_Event_Play_CutScene_0_0()
 			
 			m_eCliffside_Sequence = CLIFFSIDE_SEQUENCE_PLAY_CUTSCENE;
 			
-			//컷씬 재생
-			pGameInstance->Add_CutScene(TEXT("CutScene_0_0"));
 		}
 	}
 		break;
+		//컷씬 재생 및 페이드 인
 	case Client::CEvent_Cliffside::CLIFFSIDE_SEQUENCE_PLAY_CUTSCENE:
 	{
 		//진입시
@@ -81,26 +80,30 @@ void CEvent_Cliffside::Check_Event_Play_CutScene_0_0()
 			pGameInstance->Reset_Timer(TEXT("Cliffside_CutScene_Play"));
 			//진입 표시
 			m_isEnter = false;
-			
+			//컷씬 재생
+			pGameInstance->Add_CutScene(TEXT("CutScene_0_0"));
 		}
 
 		//타이머 종료
 		if (true == pGameInstance->Check_Timer(TEXT("Cliffside_CutScene_Play")))
 		{
-			m_eCliffside_Sequence = CLIFFSIDE_SEQUENCE_FADE_OUT_IN;
-			m_isEnter = true;
-		}
-	}
-	break;
-	case Client::CEvent_Cliffside::CLIFFSIDE_SEQUENCE_FADE_OUT_IN:
-	{
-		//진입시
-		if (true == m_isEnter)
-		{
+			m_eCliffside_Sequence = CLIFFSIDE_SEQUENCE_FADE_IN;
+			
 			//페이드 아웃
 			m_pRenderer->FadeOut(1.0f);
 			//타이머 리셋
 			pGameInstance->Reset_Timer(TEXT("Cliffside_CutScene_Fade_Out"));
+			
+			m_isEnter = true;
+		}
+	}
+	break;
+	//페이드 인 
+	case Client::CEvent_Cliffside::CLIFFSIDE_SEQUENCE_FADE_IN:
+	{
+		//진입시
+		if (true == m_isEnter)
+		{
 			//진입 표시
 			m_isEnter = false;
 		}
@@ -128,6 +131,8 @@ void CEvent_Cliffside::Check_Event_Play_CutScene_0_0()
 			{
 				m_isEnter = true;
 				m_eCliffside_Sequence = CLIFFSIDE_SEQUENCE_FADE_OUT;
+				//타이머 리셋
+				pGameInstance->Reset_Timer(TEXT("Cliffside_CutScene_Fade_Out"));
 			}
 		}
 	}

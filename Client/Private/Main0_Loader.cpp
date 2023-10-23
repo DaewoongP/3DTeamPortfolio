@@ -103,6 +103,7 @@
 #include "Event_Enter_Vault.h"
 #include "Event_Smeade.h"
 #include "Event_Cliffside.h"
+#include "Event_Spawn_Dragon.h"
 #pragma endregion
 
 #include "Guide_Book.h"
@@ -347,6 +348,11 @@ HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 			CProjectile_White_Effect::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Projectile_White_Effect");
 
+		/* For.Prototype_GameObject_Event_Spawn_Dragon */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Spawn_Dragon"),
+			CEvent_Spawn_Dragon::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Event_Spawn_Dragon");
+			
 		/* For.Prototype_GameObject_Test_Particle */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MapParticle_Sanctum_CircularRocks01"),
 			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/MapParticle/Sanctum/CircularRocks01"), eLevelID))))

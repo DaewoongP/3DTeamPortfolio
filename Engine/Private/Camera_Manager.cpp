@@ -72,6 +72,8 @@ void CCamera_Manager::Tick(_float _TimeDelta)
 		return;
 	}
 
+	m_isPlayingCutScene = false; 
+
 	m_pCurrentCamera->Tick(_TimeDelta);
 
 	Lerp_For_Set_Camera(_TimeDelta);
@@ -84,6 +86,8 @@ void CCamera_Manager::Tick(_float _TimeDelta)
 		Play_Spline_CutScene(_TimeDelta);
 		Clear_Queue(m_OffSetCameraDescs);
 		MainCameraOff();
+
+		m_isPlayingCutScene = true;
 	}
 	//컷씬 다음 우선 순위 -> 오프셋
 	else if (false == m_OffSetCameraDescs.empty())
