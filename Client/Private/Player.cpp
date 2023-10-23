@@ -287,11 +287,8 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	UpdateLookAngle();
 
-	/*if(!m_isFlying)
-		Key_Input(fTimeDelta);
-	else*/
-		Key_input_Flying(fTimeDelta);
-
+	Key_Input(fTimeDelta);
+	
 	//m_pStateContext->Tick(fTimeDelta)
 	Go_Protego(&m_ProtegoStateDesc);
 
@@ -1173,7 +1170,11 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			vAxis);
 	}
 #endif // _DEBUG
-
+	//조준
+	if (pGameInstance->Get_DIKeyState(DIK_H, CInput_Device::KEY_DOWN))
+	{
+		m_isFlying = !m_isFlying;
+	}
 	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_RBUTTON, CInput_Device::KEY_PRESSING))
 	{
 		Find_Target_For_ViewSpace();
@@ -1270,7 +1271,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			Go_MagicCast(&MagicCastingStateDesc);
 		}*/
 
-		for (size_t i = 0; i < SKILLINPUT_END; i++)
+		for (size_t i = 0; i < SKILLINPUT_END; ++i)
 		{
 			if (pGameInstance->Get_DIKeyState(DIK_1 + i, CInput_Device::KEY_DOWN) && m_pMagicSlot->IsCoolOn_Skill(i))
 			{
@@ -2737,11 +2738,7 @@ void CPlayer::Tick_TestShake()
 void CPlayer::Key_input_Flying(_float fTimeDelta)
 {
 	BEGININSTANCE;
-	//조준
-	if (pGameInstance->Get_DIKeyState(DIK_H, CInput_Device::KEY_DOWN))
-	{
-		m_isFlying = !m_isFlying;
-	}
+	
 
 #pragma region 스테이트 변경 키 입력
 
