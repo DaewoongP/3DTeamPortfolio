@@ -8,7 +8,7 @@ texture2D g_DissolveTexture;
 float g_fCamFar, g_fDissolveAmount;
 float2 g_vOffset;
 
-float4 g_vEmissive;
+float4 g_vBloom;
 
 //sky
 float2 g_vMoonPos;
@@ -126,7 +126,7 @@ struct PS_OUT
     vector vNormal : SV_TARGET1;
     vector vDepth : SV_TARGET2;
     float4 vEmissive : SV_TARGET3;
-    float4 vMRO : SV_TARGET4;
+    float4 vBloom : SV_TARGET4;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -147,7 +147,8 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vDiffuse = vDiffuse;
     Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
-    Out.vEmissive = g_vEmissive;
+    
+    Out.vBloom = g_vBloom;
     
     return Out;
 }
