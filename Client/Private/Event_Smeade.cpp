@@ -37,7 +37,7 @@ HRESULT CEvent_Smeade::Initialize(void* pArg)
 	pGameInstance->Read_CutSceneCamera(TEXT("Troll_Enter"), TEXT("../../Resources/GameData/CutScene/Troll_Enter.cut"));
 
 	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Fade_Out"), false, 1.0f);
-	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play"), false, 14.428);
+	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play"), false, 14.428f);
 
 	ENDINSTANCE;
 	
