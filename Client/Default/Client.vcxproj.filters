@@ -238,9 +238,6 @@
     <Filter Include="04. Effect\Normal">
       <UniqueIdentifier>{a74d6959-7585-400e-a1ae-d972cc6abd86}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\04. UI\UI\UI_Potion_Tap">
-      <UniqueIdentifier>{36aed02f-50ec-4f84-99e9-0238717d796e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="05. Magic\MagicBall\14. Expelliarmus">
       <UniqueIdentifier>{a129608e-6318-4dac-b3d0-548d33adac32}</UniqueIdentifier>
     </Filter>
@@ -372,9 +369,6 @@
     </Filter>
     <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Break">
       <UniqueIdentifier>{efc4ee26-398a-4d26-a05a-41a298491857}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\04. UI\Font\Normal">
-      <UniqueIdentifier>{1a0785f9-ac30-401c-8602-a10c1a2b05a5}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\01. Player\01. StateMachine\09. UseItem">
       <UniqueIdentifier>{71339f20-0740-4bfd-88f3-aebe95c69956}</UniqueIdentifier>
@@ -510,9 +504,6 @@
     </Filter>
     <Filter Include="05. Magic\Magic_Sound_Manager">
       <UniqueIdentifier>{21076980-ffb0-4b0d-9c8a-4e6c54351f0f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\06. NPC\House_Elf\Jammin">
-      <UniqueIdentifier>{0439cf3f-15e3-4b94-a1ae-c6eb1625c7e7}</UniqueIdentifier>
     </Filter>
     <Filter Include="07. Events\Sanctum">
       <UniqueIdentifier>{311816ca-2fe2-428a-95d1-c51ce652aa31}</UniqueIdentifier>
@@ -1389,9 +1380,6 @@
     <ClInclude Include="..\Public\MaximaPotion.h">
       <Filter>02. GameObject\11. Potion\MaximaPotion</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Item.h">
-      <Filter>02. GameObject\10. Item</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Check_Degree.h" />
     <ClInclude Include="..\Public\Check_Distance.h" />
     <ClInclude Include="..\Public\Check_Distance.h">
@@ -1598,9 +1586,6 @@
     <ClInclude Include="..\Public\UseItemState.h">
       <Filter>02. GameObject\01. Player\01. StateMachine\09. UseItem</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_Font.h">
-      <Filter>02. GameObject\05. UI\Font\Normal</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_Damage.h">
       <Filter>02. GameObject\05. UI\UI_Composite\UI_Damage</Filter>
     </ClInclude>
@@ -1609,9 +1594,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_Font.h">
       <Filter>02. GameObject\04. UI\Font\Normal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\UI_DamageFont.h">
-      <Filter>02. GameObject\05. UI\Font\DamageFont</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Fly_Move.h">
       <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Fly\Move</Filter>
@@ -1942,6 +1924,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\Weapon_Dragon_Right_Wing.h">
       <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Right_Wing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_DamageFont.h">
+      <Filter>02. GameObject\05. UI\Font\DamageFont</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Item.h">
+      <Filter>02. GameObject\10. Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Font.h">
+      <Filter>02. GameObject\05. UI\Font\Normal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2296,9 +2287,6 @@
     <ClCompile Include="..\Private\MaximaPotion.cpp">
       <Filter>02. GameObject\11. Potion\MaximaPotion</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Item.cpp">
-      <Filter>02. GameObject\10. Item</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Check_Degree.cpp" />
     <ClCompile Include="..\Private\Check_Distance.cpp" />
     <ClCompile Include="..\Private\MPBall.cpp">
@@ -2513,9 +2501,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_Store.cpp">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Store</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\UI_DamageFont.cpp">
-      <Filter>02. GameObject\05. UI\Font\DamageFont</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Fly_Move.cpp">
       <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Fly\Move</Filter>
@@ -2837,6 +2822,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Weapon_Dragon_Right_Wing.cpp">
       <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Right_Wing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_DamageFont.cpp">
+      <Filter>02. GameObject\05. UI\Font\DamageFont</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Item.cpp">
+      <Filter>02. GameObject\10. Item</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
