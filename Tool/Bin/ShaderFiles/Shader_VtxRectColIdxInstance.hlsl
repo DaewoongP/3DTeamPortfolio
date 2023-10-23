@@ -37,6 +37,15 @@ float3 g_vPositionAmount = { 1.f, 1.f, 1.f };
 float3 g_vSizeAmount = { 0.f, 0.f, 0.f };
 ////////////////
 
+// For. Emission
+bool g_isEmission = { false };
+float g_fEmissionFrequency = { 1.f };
+float2 g_vEmissionRemap = { 1.f, 1.f };
+float3 g_vEmissionColor = { 1.f, 1.f, 1.f };
+int g_iEmissionChannel = { 0 };
+texture2D g_EmissionTexture;
+//////
+
 struct VS_IN
 {
 	/* 그리기 위한 정점정보 */
@@ -365,8 +374,8 @@ void VS_MainModule(VS_IN In, inout VS_OUT Out)
 	{
 		// Velocity의 w는 age값으로 사용중임.
 		float fNoiseValueX = FractalBrownianMotion(float3(In.vTranslation.x, In.vTranslation.y, In.vVelocity.w), g_iNumOctaves, g_fPersistence, g_fFrequency, g_fAmplitude);
-		float fNoiseValueY = FractalBrownianMotion(float3(In.vTranslation.y, In.vTranslation.y, In.vVelocity.w), g_iNumOctaves, g_fPersistence, g_fFrequency, g_fAmplitude);
-		float fNoiseValueZ = FractalBrownianMotion(float3(In.vTranslation.z, In.vTranslation.y, In.vVelocity.w), g_iNumOctaves, g_fPersistence, g_fFrequency, g_fAmplitude);
+		float fNoiseValueY = FractalBrownianMotion(float3(In.vTranslation.y, In.vTranslation.z, In.vVelocity.w), g_iNumOctaves, g_fPersistence, g_fFrequency, g_fAmplitude);
+		float fNoiseValueZ = FractalBrownianMotion(float3(In.vTranslation.z, In.vTranslation.x, In.vVelocity.w), g_iNumOctaves, g_fPersistence, g_fFrequency, g_fAmplitude);
 
 		// Remap
 		float fRemapValueX = 0.f;
@@ -485,6 +494,26 @@ void PS_MainModule(PS_IN In, inout PS_OUT Out)
 	if (Out.vColor.a < g_fClipThreshold)
 	{
 		discard;
+	}
+
+	if (g_isEmission) 
+	{
+		float fEmissionValue = 0.f, fRemapValue = 0.f;
+		vector vEmission = g_EmissionTexture.Sample(LinearSampler, In.vTexUV);
+		float fSineTime = sin(g_fEmissionFrequency * In.vVelocity.w);
+		
+		if (0 == g_iEmissionChannel)
+			fEmissionValue = vEmission.r;
+		else if (1 == g_iEmissionChannel)
+			fEmissionValue = vEmission.g;
+		else if (2 == g_iEmissionChannel)
+			fEmissionValue = vEmission.b;
+		else if (3 == g_iEmissionChannel)
+			fEmissionValue = vEmission.a;
+		// out1 + (val - in1) * (out2 - out1) / (in2 - in1);
+
+		Remap_float(fSineTime, float2(-1.f, 1.f), g_vEmissionRemap, fRemapValue);
+		Out.vColor += fRemapValue * fEmissionValue * float4(g_vEmissionColor, 0.f);
 	}
 }
 void PS_TextureSheetAnimationModule(PS_IN In, inout PS_OUT Out)

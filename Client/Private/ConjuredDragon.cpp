@@ -145,7 +145,8 @@ HRESULT CConjuredDragon::Initialize(void* pArg)
 		return E_FAIL;
 	
 	m_pEffect_BlackSmokeIdle->Play(m_pTransform->Get_Position());
-
+	// 지워주세요.
+	//m_pHealth->Damaged(600);
 	return S_OK;
 }
 
@@ -185,10 +186,10 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
 		{
 			m_isSpawn = true;
-			pGameInstance->Add_CutScene(TEXT("Dragon_Enter"));
+			//pGameInstance->Add_CutScene(TEXT("Dragon_Enter"));
 		}
 		if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
-			m_isFinish = true;
+			;
 	}
 	ENDINSTANCE;
 	/* ========================= */
@@ -366,7 +367,7 @@ void CConjuredDragon::EnergyBall_PhaseOne(const _float& fTimeDelta)
 
 	CEnergyBall::ENERGYBALLINITDESC InitDesc;
 	InitDesc.vPosition = vPosition;
-	InitDesc.fActionProtegoTime = 2.5f;
+	InitDesc.fActionProtegoTime = 5.f;
 	InitDesc.DeathFunction = [&](const _float& fTimeDelta)->_bool { return this->Break_Invincible(fTimeDelta); };
 
 	m_pEnergyBall->Reset(InitDesc);
@@ -734,7 +735,7 @@ HRESULT CConjuredDragon::Add_Components()
 
 		/* For.Com_Health */
 		CHealth::HEALTHDESC HealthDesc;
-		HealthDesc.iMaxHP = 500;
+		HealthDesc.iMaxHP = 1000;
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 			throw TEXT("Com_Health");
@@ -1821,11 +1822,11 @@ HRESULT CConjuredDragon::Make_Ground_Attacks_Melee(_Inout_ CSequence* pSequence)
 			throw TEXT("Failed Assemble_Behavior Random_Attacks");
 
 		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Swipe_Left"), pSequence_Attack_Swipe_Left, 0.33f)))
-			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Swipe_Left");
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Swipe_Left"); // 이거요.
 		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Swipe_Right"), pSequence_Attack_Swipe_Right, 0.33f)))
-			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Swipe_Right");
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Swipe_Right"); // 이거요.
 		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Tail_360"), pSequence_Attack_Tail_360, 0.34f)))
-			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Tail_360");
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Tail_360"); // 이거요.
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -1894,7 +1895,7 @@ HRESULT CConjuredDragon::Make_Ground_Attacks_Range(_Inout_ CSequence* pSequence)
 		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Fireball_2"), pSequence_Attack_Fireball_2, 0.3f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Fireball_2");
 		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Charge"), pSequence_Attack_Charge, 0.1f)))
-			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Charge");
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Charge"); // 이거요.
 		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("pSequence_Attack_Breath"), pSequence_Attack_Breath, 0.3f)))
 			throw TEXT("Failed Assemble_Behavior pSequence_Attack_Breath");
 
@@ -2237,15 +2238,15 @@ HRESULT CConjuredDragon::Make_Air_Attacks(_Inout_ CRandomChoose* pRandomChoose)
 		/* Assemble Behaviors */
 		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Attack_Fireball"), pSequence_Attack_Fireball, 0.45f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Fireball");
-		//if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Attack_Breath"), pSequence_Attack_Breath, 0.35f)))
-		//	throw TEXT("Failed Assemble_Behavior Sequence_Attack_Breath");
-		//if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Attack_Purse"), pSequence_Attack_Purse, 0.2f)))
-		//	throw TEXT("Failed Assemble_Behavior Sequence_Attack_Purse");
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Attack_Breath"), pSequence_Attack_Breath, 0.35f)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Breath");
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Attack_Purse"), pSequence_Attack_Purse, 0.2f)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Purse");
 
-		//if (FAILED(pSequence_Attack_Breath->Assemble_Behavior(TEXT("Action_Breath_WindUp"), pAction_Breath_WindUp)))
-		//	throw TEXT("Failed Assemble_Behavior Action_Breath_WindUp");
-		//if (FAILED(pSequence_Attack_Breath->Assemble_Behavior(TEXT("Attack_Breath"), pAttack_Breath)))
-		//	throw TEXT("Failed Assemble_Behavior Attack_Breath");
+		if (FAILED(pSequence_Attack_Breath->Assemble_Behavior(TEXT("Action_Breath_WindUp"), pAction_Breath_WindUp)))
+			throw TEXT("Failed Assemble_Behavior Action_Breath_WindUp");
+		if (FAILED(pSequence_Attack_Breath->Assemble_Behavior(TEXT("Attack_Breath"), pAttack_Breath)))
+			throw TEXT("Failed Assemble_Behavior Attack_Breath");
 
 		if (FAILED(Make_Attack_Fireball(pSequence_Attack_Fireball)))
 			throw TEXT("Failed Make_Attack_Fireball");
@@ -2287,7 +2288,7 @@ HRESULT CConjuredDragon::Make_Attack_Fireball(_Inout_ CSequence* pSequence)
 		/* Set Options */
 		pSequence_Attack_Fireball_1->Set_Attack_Action_Options(TEXT("Air_Attack_Fireball_1"), m_pModelCom);
 		pSequence_Attack_Fireball_1->Set_Attack_Option(100.f);
-		pSequence_Attack_Fireball_2->Set_Attack_Action_Options(TEXT("Air_Attack_Fireball_1"), m_pModelCom);
+		pSequence_Attack_Fireball_2->Set_Attack_Action_Options(TEXT("Air_Attack_Fireball_2"), m_pModelCom);
 		pSequence_Attack_Fireball_2->Set_Attack_Option(100.f);
 
 		/* Assemble Behaviors */
@@ -2576,11 +2577,6 @@ void CConjuredDragon::Action_Pulse()
 
 void CConjuredDragon::Pulse_Charge()
 {
-#ifdef _DEBUG
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-	Safe_Release(pGameInstance);
-#endif // _DEBUG
 	m_pEffect_Pulse_Charge->Play(m_vOffsetPos);
 }
 

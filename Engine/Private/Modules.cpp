@@ -2,6 +2,7 @@
 #include "ParticleSystem.h"
 #include "GameInstance.h"
 #include "Shader.h"
+#include "Texture.h"
 void MODULE::Save(HANDLE hFile, _ulong& dwByte)
 {
 	WriteFile(hFile, &isActivate, sizeof isActivate, &dwByte, nullptr);
@@ -533,6 +534,13 @@ HRESULT RENDERER_MODULE::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &vDeltaOffset, sizeof(vDeltaOffset), &dwByte, nullptr);
 	WriteFile(hFile, &vStartTiling, sizeof(vStartTiling), &dwByte, nullptr);
 	WriteFile(hFile, &vDeltaTiling, sizeof(vDeltaTiling), &dwByte, nullptr);
+
+	WriteFile(hFile, &isEmission, sizeof(isEmission), &dwByte, nullptr);
+	WriteFile(hFile, &fEmissionFrequency, sizeof(fEmissionFrequency), &dwByte, nullptr);
+	WriteFile(hFile, &vEmissionRemap, sizeof(vEmissionRemap), &dwByte, nullptr);
+	WriteFile(hFile, &vEmissionColor, sizeof(vEmissionColor), &dwByte, nullptr);
+	WriteFile(hFile, strEmissionChannel.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, wstrEmissionPath.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 	CloseHandle(hFile);
 	return S_OK;
 }
@@ -580,6 +588,17 @@ HRESULT RENDERER_MODULE::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &vDeltaOffset, sizeof(vDeltaOffset), &dwByte, nullptr);
 	ReadFile(hFile, &vStartTiling, sizeof(vStartTiling), &dwByte, nullptr);
 	ReadFile(hFile, &vDeltaTiling, sizeof(vDeltaTiling), &dwByte, nullptr);
+
+	ReadFile(hFile, &isEmission, sizeof(isEmission), &dwByte, nullptr);
+	ReadFile(hFile, &fEmissionFrequency, sizeof(fEmissionFrequency), &dwByte, nullptr);
+	ReadFile(hFile, &vEmissionRemap, sizeof(vEmissionRemap), &dwByte, nullptr);
+	ReadFile(hFile, &vEmissionColor, sizeof(vEmissionColor), &dwByte, nullptr);
+	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	if(true == isEmission)
+		strEmissionChannel = szBuffer;
+	ReadFile(hFile, wszBuffer, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	if (true == isEmission)
+		wstrEmissionPath = wszBuffer;
 	CloseHandle(hFile);
 	return S_OK;
 }
@@ -598,13 +617,34 @@ void RENDERER_MODULE::Restart()
 	vTililing = vStartTiling;
 }
 
-HRESULT RENDERER_MODULE::Bind_Values(CShader* pShader)
+HRESULT RENDERER_MODULE::Bind_Values(CShader* pShader, CTexture* pEmissionTexture)
 {
 	if (FAILED(pShader->Bind_RawValue("g_vOffset", &vOffset, sizeof(_float2))))
 		return E_FAIL;
 	if (FAILED(pShader->Bind_RawValue("g_vTililing", &vTililing, sizeof(_float2))))
 		return E_FAIL;
 
+	if (FAILED(pShader->Bind_RawValue("g_isEmission", &isEmission, sizeof(isEmission))))
+		return E_FAIL;
+	if (isEmission)
+	{
+		if (FAILED(pEmissionTexture->Bind_ShaderResource(pShader, "g_EmissionTexture")))
+			return E_FAIL;
+		if (FAILED(pShader->Bind_RawValue("g_fEmissionFrequency", &fEmissionFrequency, sizeof(fEmissionFrequency))))
+			return E_FAIL;
+		if (FAILED(pShader->Bind_RawValue("g_vEmissionRemap", &vEmissionRemap, sizeof(vEmissionRemap))))
+			return E_FAIL;
+		if (FAILED(pShader->Bind_RawValue("g_vEmissionColor", &vEmissionColor, sizeof(vEmissionColor))))
+			return E_FAIL;
+
+		_int iEmissionChannel = { 0 };
+		if (strEmissionChannel == "Red") { iEmissionChannel = 0; }
+		else if (strEmissionChannel == "Green") { iEmissionChannel = 1; }
+		else if (strEmissionChannel == "Blue") { iEmissionChannel = 2; }
+		else if (strEmissionChannel == "Alpha") { iEmissionChannel = 3; }
+		if (FAILED(pShader->Bind_RawValue("g_iEmissionChannel", &iEmissionChannel, sizeof(_int))))
+			return E_FAIL;
+	}
 	return S_OK;
 }
 
@@ -838,9 +878,9 @@ HRESULT ROTATION_OVER_LIFETIME_MODULE::Save(const _tchar* _pDirectoyPath)
 	CloseHandle(hFile);
 	return S_OK;
 }
-HRESULT ROTATION_OVER_LIFETIME_MODULE::Load(const _tchar* _pDirectoyPath)
+HRESULT ROTATION_OVER_LIFETIME_MODULE::Load(const _tchar* _pDirectoryPath)
 {
-	fs::path fsFilePath = _pDirectoyPath;
+	fs::path fsFilePath = _pDirectoryPath;
 	fsFilePath = fsFilePath / TEXT("RotationOverLifeTimeModule.ptc");
 	if (false == fs::exists(fsFilePath))
 		return S_OK;

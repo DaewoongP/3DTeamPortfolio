@@ -2,7 +2,9 @@
 
 #include "GameInstance.h"
 
+#include "MagicBall.h"
 #include "MagicSlot.h"
+#include "Protego.h"
 
 CEnergyBall::CEnergyBall(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -19,10 +21,196 @@ HRESULT CEnergyBall::Initialize_Prototype()
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	BEGININSTANCE;
-	pGameInstance->Find_And_Add_Model(m_pDevice, m_pContext, LEVEL_SANCTUM, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat"));
-	ENDINSTANCE;
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
 
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_EnergyBall_ChargeDistortion")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_EnergyBall_ChargeDistortion")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/EnergyBall/ChargeDistortion/"), LEVEL_SANCTUM))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_EnergyBall_ChargeDarkBall")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_EnergyBall_ChargeDarkBall")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/EnergyBall/ChargeDarkBall/"), LEVEL_SANCTUM))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GodRod01")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GodRod01")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Conjured/GodRod01.ME"), LEVEL_SANCTUM))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GodRod02")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GodRod02")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Conjured/GodRod02.ME"), LEVEL_SANCTUM))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooBolt01")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooBolt01")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Conjured/GooBolt01.ME"), LEVEL_SANCTUM))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooBolt02")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooBolt02")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Conjured/GooBolt02.ME"), LEVEL_SANCTUM))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooStapleA01")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooStapleA01")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Conjured/GooStapleA01.ME"), LEVEL_SANCTUM))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooStapleA02")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooStapleA02")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Conjured/GooStapleA02.ME"), LEVEL_SANCTUM))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooStapleB01")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooStapleB01")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Conjured/GooStapleB01.ME"), LEVEL_SANCTUM))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooStapleB02")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooStapleB02")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Conjured/GooStapleB02.ME"), LEVEL_SANCTUM))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooSwirl01")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooSwirl01")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Conjured/GooSwirl01.ME"), LEVEL_SANCTUM))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooSwirl02")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooSwirl02")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Conjured/GooSwirl02.ME"), LEVEL_SANCTUM))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooSwirl03")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooSwirl03")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Conjured/GooSwirl03.ME"), LEVEL_SANCTUM))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooSwirl03")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooSwirl03")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Conjured/GooSwirl03.ME"), LEVEL_SANCTUM))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooSwirl04")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooSwirl04")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Conjured/GooSwirl04.ME"), LEVEL_SANCTUM))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooSwirl05")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooSwirl05")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Conjured/GooSwirl05.ME"), LEVEL_SANCTUM))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Projectile_White_Inner_Ball")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Projectile_White_Inner_Ball")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Projectile_White/Inner_Ball.ME"), LEVEL_SANCTUM))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	Safe_Release(pGameInstance);
 	return S_OK;
 }
 
@@ -51,6 +239,8 @@ HRESULT CEnergyBall::Initialize(void* pArg)
 	m_pTransform->Set_Position(pInitDesc->vPosition);
 	m_pTransform->Set_Scale(_float3(0.5f, 0.5f, 0.5f));
 
+	m_pMeshEffect_Inner_Ball->Get_Transform()->Set_Scale(_float3(1.3f, 1.3f, 1.3f));
+	m_pMeshEffect_Inner_Ball->Set_LifeTime(7.f);
 	return S_OK;
 }
 
@@ -70,21 +260,46 @@ void CEnergyBall::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	m_fTimeAcc += fTimeDelta;
-
+	
 	if (true == m_isFirst)
 	{
+		if (false == m_isEffectStart)
+		{
+			m_isEffectStart = true;
+			m_pParticle_EnergyBall_ChargeDistortion->Play(m_pTransform->Get_Position());
+			m_pParticle_EnergyBall_ChargeDarkBall->Play(m_pTransform->Get_Position());
+			for (auto& Conjureds : m_pMeshEffect_Conjured)
+			{
+				if (nullptr == Conjureds)
+					continue;
+
+				Conjureds->Play(m_pTransform->Get_Position());
+			}
+				
+			//m_pMesheffect->Play();
+		}
+		
 		if (m_fActionProtegoTime < m_fTimeAcc)
 		{
-			m_pMagicSlot->Action_Magic_Basic(1, this, nullptr, COL_MAGIC);
+			m_pParticle_EnergyBall_ChargeDistortion->Stop();
+			m_pParticle_EnergyBall_ChargeDarkBall->Stop();
+			m_pMeshEffect_Inner_Ball->Play(m_pTransform->Get_Position());
+			CMagicBall* pMagicBall = m_pMagicSlot->Action_Magic_Basic(1, this, nullptr, COL_MAGIC);
+			static_cast<CProtego*>(pMagicBall)->Set_Scale(6.7f);
 			m_isFirst = false;
 		}
 	}
 
 	if (9.5f <= m_fTimeAcc)
+	{
+		m_pMeshEffect_Inner_Ball->Stop();
 		m_isEnable = false;
+	}
+		
 
 	if (true == m_isDead)
 	{
+		m_pMeshEffect_Inner_Ball->Stop();
 		_bool isFinishDeathFunction = m_DeathFunction(fTimeDelta);
 		if (true == isFinishDeathFunction)
 			m_isEnable = false;
@@ -97,39 +312,10 @@ void CEnergyBall::Late_Tick(_float fTimeDelta)
 		return;
 
 	__super::Late_Tick(fTimeDelta);
-
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-	if (nullptr != m_pRenderer)
-	{
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
-	}
-
-	Safe_Release(pGameInstance);
 }
 
 HRESULT CEnergyBall::Render()
 {
-	if (FAILED(__super::Render()))
-		return E_FAIL;
-
-	if (FAILED(SetUp_ShaderResources()))
-		return E_FAIL;
-
-	_uint iNumMeshes = m_pModel->Get_NumMeshes();
-
-	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; ++iMeshCount)
-	{
-		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
-		m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
-
-		m_pShader->Begin("Mesh");
-
-		if (FAILED(m_pModel->Render(iMeshCount)))
-			return E_FAIL;
-	}
 
 	return S_OK;
 }
@@ -143,7 +329,7 @@ void CEnergyBall::Reset(const ENERGYBALLINITDESC& tagResetDesc)
 	m_fActionProtegoTime = tagResetDesc.fActionProtegoTime;
 	m_pTransform->Set_Position(tagResetDesc.vPosition);
 	m_DeathFunction = tagResetDesc.DeathFunction;
-
+	m_isEffectStart = false;
 	Make_Magics();
 }
 
@@ -170,6 +356,41 @@ HRESULT CEnergyBall::Make_Magics()
 		magicInitDesc.iDamage = 0;
 		magicInitDesc.fLifeTime = 7.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
+
+		m_pMeshEffect_Inner_Ball->Set_LifeTime(7.f);
+		switch (magicInitDesc.eMagicType)
+		{
+		case Client::CMagic::MT_NOTHING:
+			__debugbreak();
+			break;
+		case Client::CMagic::MT_YELLOW:
+			m_pMeshEffect_Inner_Ball->Set_StartColor(_float4(1.f, 1.f, 0.f, 1.f));
+			m_pMeshEffect_Inner_Ball->Set_EndColor(_float4(1.f, 1.f, 0.f, 1.f));
+			//m_vColor1 = { 1.f, 1.f, 0.f, 1.f };
+			//m_vColor2 = { 1.f, 0.5f, 0.f, 1.f };
+			break;
+		case Client::CMagic::MT_PURPLE:
+			m_pMeshEffect_Inner_Ball->Set_StartColor(_float4(0.f, 0.f, 1.f, 1.f));
+			m_pMeshEffect_Inner_Ball->Set_EndColor(_float4(0.f, 0.f, 1.f, 1.f));
+			/*m_vColor1 = { 0.f, 0.f, 1.f, 1.f };
+			m_vColor2 = { 0.5f, 0.f, 0.5f, 1.f };*/
+			break;
+		case Client::CMagic::MT_RED:
+			m_pMeshEffect_Inner_Ball->Set_StartColor(_float4(1.f, 0.f, 0.f, 1.f));
+			m_pMeshEffect_Inner_Ball->Set_EndColor(_float4(1.f, 0.f, 0.f, 1.f));
+			/*m_vColor1 = { 1.f, 0.f, 0.f, 1.f };
+			m_vColor2 = { 1.f, 0.5f, 0.f, 1.f };*/
+			break;
+		case Client::CMagic::MT_ALL:
+			m_pMeshEffect_Inner_Ball->Set_StartColor(_float4(0.f, 0.f, 1.f, 1.f));
+			m_pMeshEffect_Inner_Ball->Set_EndColor(_float4(0.f, 0.f, 1.f, 1.f));
+			/*m_vColor1 = { 0.f, 0.f, 1.f, 1.f };
+			m_vColor2 = { 1.f, 0.f, 1.f, 1.f };*/
+			break;
+		default:
+			__debugbreak();
+			break;
+		}
 	}
 
 	return S_OK;
@@ -177,31 +398,59 @@ HRESULT CEnergyBall::Make_Magics()
 
 HRESULT CEnergyBall::Add_Components()
 {
-	/* Com_Renderer */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
-		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
-	{
-		MSG_BOX("Failed CEnergyBall Add_Component : (Com_Renderer)");
-		__debugbreak();
-		return E_FAIL;
-	}
-
-	/* Com_Shader */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxMesh"),
-		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
-	{
-		MSG_BOX("Failed CEnergyBall Add_Component : (Com_Shader)");
-		__debugbreak();
-		return E_FAIL;
-	}
-
 	/* For.MagicSlot */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_MagicSlot"),
-		TEXT("Com_MagicSlot"), reinterpret_cast<CComponent**>(&m_pMagicSlot))))
-	{
-		MSG_BOX("Failed CEnergyBall Add_Component : (Com_MagicSlot)");
-		return E_FAIL;
-	}
+	FAILED_CHECK(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_MagicSlot"),
+		TEXT("Com_MagicSlot"), reinterpret_cast<CComponent**>(&m_pMagicSlot)));
+
+	/* For. Partices */
+	FAILED_CHECK(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_EnergyBall_ChargeDistortion"),
+		TEXT("Com_Particle_EnergyBall_ChargeDistortion"), reinterpret_cast<CComponent**>(&m_pParticle_EnergyBall_ChargeDistortion)));
+
+	FAILED_CHECK(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_EnergyBall_ChargeDarkBall"),
+		TEXT("Com_Particle_EnergyBall_ChargeDarkBall"), reinterpret_cast<CComponent**>(&m_pParticle_EnergyBall_ChargeDarkBall)));
+
+	FAILED_CHECK(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GodRod01"),
+		TEXT("Com_MeshEffect_Conjured_GodRod01"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Conjured[0])));
+
+	FAILED_CHECK(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GodRod02"),
+		TEXT("Com_MeshEffect_Conjured_GodRod02"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Conjured[1])));
+
+	FAILED_CHECK(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooBolt01"),
+		TEXT("Com_MeshEffect_Conjured_GooBolt01"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Conjured[2])));
+
+	FAILED_CHECK(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooBolt02"),
+		TEXT("Com_MeshEffect_Conjured_GooBolt02"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Conjured[3])));
+
+	//FAILED_CHECK(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooStapleA02"),
+	//	TEXT("Com_MeshEffect_Conjured_GooStapleA01"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Conjured[4])));
+
+	//FAILED_CHECK(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooStapleA02"),
+	//	TEXT("Com_MeshEffect_Conjured_GooStapleA02"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Conjured[5])));
+
+	//FAILED_CHECK(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooStapleB01"),
+	//	TEXT("Com_MeshEffect_Conjured_GooStapleB01"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Conjured[6])));
+
+	//FAILED_CHECK(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooStapleB02"),
+	//	TEXT("Com_MeshEffect_Conjured_GooStapleB02"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Conjured[7])));
+
+	FAILED_CHECK(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooSwirl01"),
+		TEXT("Com_MeshEffect_Conjured_GooSwirl01"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Conjured[8])));
+
+	FAILED_CHECK(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooSwirl02"),
+		TEXT("Com_MeshEffect_Conjured_GooSwirl02"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Conjured[9])));
+
+	FAILED_CHECK(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooSwirl03"),
+		TEXT("Com_MeshEffect_Conjured_GooSwirl03"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Conjured[10])));
+
+	FAILED_CHECK(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooSwirl04"),
+		TEXT("Com_MeshEffect_Conjured_GooSwirl04"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Conjured[11])));
+
+	FAILED_CHECK(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooSwirl05"),
+		TEXT("Com_MeshEffect_Conjured_GooSwirl05"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Conjured[12])));
+
+	FAILED_CHECK(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Projectile_White_Inner_Ball"),
+		TEXT("Com_MeshEffect_Projectile_White_Inner_Ball"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Inner_Ball)));
+
 
 	return S_OK;
 }
@@ -211,36 +460,14 @@ HRESULT CEnergyBall::Add_Components_Level(const _uint& iLevel)
 	BEGININSTANCE;
 
 	/* Com_Model */
-	if (FAILED(CComposite::Add_Component(iLevel, TEXT("Prototype_Component_Model_SM_SpherePrimitiveRegularNormals_01"),
-		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
-	{
-		MSG_BOX("Failed CEnergyBall Add_Component : (Com_Model)");
-		__debugbreak();
-		return E_FAIL;
-	}
+
 
 	ENDINSTANCE;
 
 	return S_OK;
 }
 
-HRESULT CEnergyBall::SetUp_ShaderResources()
-{
-	BEGININSTANCE;
 
-	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
-		return E_FAIL;
-
-	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-
-	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
-	ENDINSTANCE;
-
-	return S_OK;
-}
 
 CEnergyBall* CEnergyBall::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
@@ -272,7 +499,7 @@ void CEnergyBall::Free()
 	__super::Free();
 
 	Safe_Release(m_pMagicSlot);
-	Safe_Release(m_pRenderer);
-	Safe_Release(m_pShader);
-	Safe_Release(m_pModel);
+	Safe_Release(m_pParticle_EnergyBall_ChargeDistortion);
+	Safe_Release(m_pParticle_EnergyBall_ChargeDarkBall);
+	Safe_Release(m_pMeshEffect_Inner_Ball);
 }

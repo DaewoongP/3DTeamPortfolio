@@ -42,8 +42,6 @@ private:
 	_float4x4 m_InitMatrix_Projectile_Black;
 	_float4x4 m_InitMatrix_SplineUp[6];
 
-	//CParticleSystem* m_pParticle_BulletTrace = { nullptr };
-
 public:
 	static CProjectile_White* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
 	virtual CGameObject* Clone(void* pArg);

@@ -234,10 +234,10 @@ void CProjectile_White::Tick_Dying(_float fTimeDelta)
 HRESULT CProjectile_White::Add_Components()
 {
 	m_TrailVec[EFFECT_STATE_MAIN].resize(1);
-	FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Trail_Projectile_Black"),
+	FAILED_CHECK(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Trail_Projectile_Black"),
 			TEXT("Com_Trail_Projectile_Black"), reinterpret_cast<CComponent**>(&m_TrailVec[EFFECT_STATE_MAIN][0])));
 
-	FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_MeshEffect_Projectile_Black"),
+	FAILED_CHECK(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_MeshEffect_Projectile_Black"),
 		TEXT("Com_MeshEffect_Projectile_Black"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Projectile_Black)));
 
 	m_ParticleVec[EFFECT_STATE_MAIN].resize(1);
@@ -250,7 +250,7 @@ HRESULT CProjectile_White::Add_Components()
 
 	for (_uint i = 0; i < 6; ++i)
 	{
-		FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_MeshEffect_Projectile_Black_SplineUp"),
+		FAILED_CHECK(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_MeshEffect_Projectile_Black_SplineUp"),
 			Generate_HashtagW().data(), reinterpret_cast<CComponent**>(&m_pMeshEffect_SplineUp[i])));
 		m_pMeshEffect_SplineUp[i]->Set_StartRot(_float3(0.f, i * 60.f, 0.f));
 		m_pMeshEffect_SplineUp[i]->Set_EndRot(_float3(0.f, i * 60.f, 0.f));

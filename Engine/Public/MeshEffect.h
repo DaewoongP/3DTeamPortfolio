@@ -34,6 +34,11 @@ public:
 	_float3 Get_EndRot() { return m_vEndRot; }
 	void Set_EndRot(_float3 vEndRot) { m_vEndRot = vEndRot; }
 
+	void Set_LifeTime(_float fLifeTime) { m_fLifeTime = fLifeTime; }
+
+	void Set_StartColor(_float4 vStartColor) { m_vStartColor = vStartColor; }
+	void Set_EndColor(_float4 vEndColor) { m_vStartColor = vEndColor; }
+
 	_bool IsEnable();
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* pFilePath, _uint _iLevel, _float4x4 PivotMatrix = _float4x4());
@@ -111,6 +116,7 @@ protected:
 	_bool m_isJustActionStop = { false };
 	_bool m_isFlutter = { false };
 	_float3 m_vStrength = { 1.f, 1.f, 1.f };
+
 protected:
 	CModel::TYPE m_eAnimType; // Save
 	string m_strPassName = { "Default" }; // Save

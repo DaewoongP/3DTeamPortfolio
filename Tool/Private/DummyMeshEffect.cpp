@@ -167,8 +167,47 @@ void CDummyMeshEffect::Tick_Imgui(_float _fTimeDelta)
 
 	if (ImGui::Button("Play"))
 		Play(m_pTransform->Get_Position());
+	ImGui::SameLine();
 	if (ImGui::Button("Stop"))
 		Stop();
+	ImGui::SameLine();
+	// Button for Hard Reset
+	if (ImGui::Button("Hard Reset")) {
+		// 버튼의 현재 위치와 크기를 가져옵니다.
+		ImVec2 buttonPos = ImGui::GetItemRectMin();
+		ImVec2 buttonSize = ImGui::GetItemRectSize();
+
+		// 팝업의 크기를 설정합니다.
+		ImGui::SetNextWindowSize(ImVec2(350, 100));  // 여기서 300과 150은 예제로 사용된 크기입니다. 원하는 크기로 조절해주세요.
+
+		// 팝업이 버튼의 오른쪽에 위치하도록 좌표를 설정합니다.
+		ImGui::SetNextWindowPos(ImVec2(buttonPos.x + buttonSize.x, buttonPos.y));
+
+		// 팝업을 엽니다.
+		ImGui::OpenPopup("Confirm Reset");
+	}
+
+	// Modal popup for Hard Reset Confirmation
+	if (ImGui::BeginPopupModal("Confirm Reset", NULL, ImGuiWindowFlags_NoMove)) {
+		ImGui::Text("Are you sure you want to 'destroy' this effect?");
+
+		// OK Button
+		if (ImGui::Button("OK")) {
+			m_isHardReset = true;
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SetItemDefaultFocus();
+
+		// Spacing
+		ImGui::SameLine();
+
+		// Cancel Button
+		if (ImGui::Button("Cancel")) {
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
 
 	ImGui::Separator();
 

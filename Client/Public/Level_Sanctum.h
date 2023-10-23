@@ -17,6 +17,7 @@ public:
 private:
 	HRESULT Ready_Layer_BackGround(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Monsters(const _tchar* pLayerTag);
+	HRESULT Ready_Layer_MapEffect(const _tchar* pLayerTag);
 	HRESULT Ready_Lights();
 	HRESULT Ready_Shader();
 

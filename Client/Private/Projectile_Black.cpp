@@ -203,7 +203,6 @@ void CProjectile_Black::Ready_CastMagic()
 
 void CProjectile_Black::Ready_Dying()
 {
-	m_pParticle_Projectile_White_BulletTrace->Stop();
 	m_pMeshEffect_EndBoom->Play(m_pMeshEffect_Outer_Ball->Get_Transform()->Get_Position());
 	__super::Ready_Dying();
 }

@@ -332,6 +332,11 @@ HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Projectile_White_Effect"),
 			CProjectile_White_Effect::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Projectile_White_Effect");
+
+		/* For.Prototype_GameObject_Test_Particle */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MapParticle_Sanctum_CircularRocks01"),
+			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/MapParticle/Sanctum/CircularRocks01"), eLevelID))))
+			throw TEXT("Prototype_GameObject_MapParticle_Sanctum_CircularRocks01");
 	}
 	catch (const _tchar* pErrorTag)
 	{

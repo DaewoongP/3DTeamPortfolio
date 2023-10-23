@@ -39,6 +39,9 @@ public:
 	HRESULT Save_FileDialog();
 	HRESULT Load_FileDialog();
 
+public:
+	_bool m_isHardReset = { false };
+
 private:
 	CImageFileDialog* m_pTextureIFD = { nullptr };
 	CImageFileDialog* m_pClipTextureIFD = { nullptr };

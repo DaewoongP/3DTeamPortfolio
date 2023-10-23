@@ -373,7 +373,7 @@ struct ENGINE_DLL RENDERER_MODULE : public MODULE
 	HRESULT Load(const _tchar* _pDirectoyPath);
 	void Restart();
 	void Action(_float fTimeDelta);
-	HRESULT Bind_Values(class CShader* pShader);
+	HRESULT Bind_Values(class CShader* pShader, CTexture* pEmissionTexture);
 
 	wstring wstrShaderTag = { TEXT("Shader_VtxRectColInstance") };
 	wstring wstrMaterialPath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
@@ -393,6 +393,13 @@ struct ENGINE_DLL RENDERER_MODULE : public MODULE
 	_float2 vStartTiling = { 1.f, 1.f };
 	_float2 vTililing = { 1.f, 1.f };
 	_float2 vDeltaTiling = { 0.f, 0.f };
+
+	_bool isEmission = { false };
+	_float fEmissionFrequency = { 1.f };
+	_float2 vEmissionRemap = { 0.f, 1.f };
+	_float3 vEmissionColor = { 1.f, 1.f, 1.f };
+	string strEmissionChannel = { "Red" };
+	wstring wstrEmissionPath = { TEXT("../../Resources/Effects/Textures/Gradients/Default_Gradient.png") };
 };
 
 END
