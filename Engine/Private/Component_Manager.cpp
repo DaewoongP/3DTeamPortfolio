@@ -177,6 +177,8 @@ void CComponent_Manager::Clear_LevelResources(_uint iLevelIndex)
 		return;
 	}
 
+	std::lock_guard<std::mutex> lock(mtx);
+
 	for (auto& Pair : m_pLayers[iLevelIndex])
 		Safe_Release(Pair.second);
 

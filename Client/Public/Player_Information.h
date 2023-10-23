@@ -14,6 +14,7 @@ class CUI_Group_Finisher;
 class CInventory;
 class CUI_Group_Finisher_Icon;
 class CUI_Group_Potion;
+class CTool;
 
 class CPlayer_Information :
     public CComposite

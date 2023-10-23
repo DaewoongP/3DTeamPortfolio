@@ -44,6 +44,9 @@ void CBroom_End::Late_Tick(_float fTimeDelta)
 
 void CBroom_End::OnStateEnter(void* _pArg)
 {
+	Change_Animation(TEXT("Hu_Broom_Dismount_2Jog_anm"));
+	m_StateMachineDesc.pRigidBody->Set_LinearDamping(0.1f);
+	m_StateMachineDesc.pRigidBody->Set_Gravity(true);
 }
 
 void CBroom_End::OnStateTick()
@@ -51,65 +54,12 @@ void CBroom_End::OnStateTick()
 	//애니메이션이 끝났을 경우
 	if (m_StateMachineDesc.pOwnerModel->Is_Finish_Animation())
 	{
-		Go_Idle();
-
-		Go_Loop();
+		Set_StateMachine(TEXT("Idle"));
 	}
 }
 
 void CBroom_End::OnStateExit()
 {
-}
-
-void CBroom_End::Go_Idle()
-{
-	if (!wcscmp(m_StateMachineDesc.pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_BM_Land_Hard_v2_anm")))
-	{
-		Set_StateMachine(TEXT("Idle"));
-	}
-}
-
-void CBroom_End::Go_Loop()
-{
-	if (!wcscmp(m_StateMachineDesc.pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_BM_Land_Hard_2Jog_v2_anm")))
-	{
-		//Loop
-		if (true == *m_StateMachineDesc.pisDirectionPressed)
-		{
-			*m_StateMachineDesc.piMoveType = CPlayer::MOVETYPE_JOGING;
-			Set_StateMachine(TEXT("Move Loop"));
-		}
-		//idle
-		if (false == *m_StateMachineDesc.pisDirectionPressed)
-		{
-			switch (*m_StateMachineDesc.piActionType)
-			{
-			case CPlayer::ACTION_NONE:
-			{
-				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
-				Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
-			}
-			break;
-			case CPlayer::ACTION_CASUAL:
-			{
-				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
-				Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
-			}
-			break;
-			case CPlayer::ACTION_CMBT:
-			{
-				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_2Cmbt_anm"));
-				Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_2Cmbt_anm"));
-			}
-			break;
-
-			default:
-				break;
-			}
-
-			Set_StateMachine(TEXT("Idle"));
-		}
-	}
 }
 
 CBroom_End* CBroom_End::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

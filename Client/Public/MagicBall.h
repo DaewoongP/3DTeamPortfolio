@@ -30,7 +30,8 @@ public:
 		CMagic::MAGIC_TYPE		eMagicType = { CMagic::MT_END };
 		BUFF_TYPE				eBuffType = { BUFF_NONE };
 		SPELL					eMagicTag = { SPELL_END };
-		COLLISIONFLAG			eCollisionFlag;
+		COLLISIONFLAG			eThisCollisionFlag = { COL_TEST };
+		COLLISIONFLAG			eCollisionFlag = { COL_TEST };
 		_bool					isChase = { false };
 		_int					iDamage = { 0 };
 		_float					fLifeTime = { 1.0f };

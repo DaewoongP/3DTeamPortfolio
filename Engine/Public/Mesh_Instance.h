@@ -15,6 +15,7 @@ private:
 	virtual ~CMesh_Instance() = default;
 
 public:
+	_tchar* Get_MeshName() { return m_szName; }
 	_uint	Get_MaterialIndex() const { return m_iMaterialIndex; }
 	vector<_float4x4>			Get_InstanceMatrices() { return m_InstanceMatrixVec; }
 	vector<_float3>				Get_VertexPositions() { return m_VerticesPositionVec; }
@@ -32,6 +33,8 @@ private:
 	_uint						m_iIndexCountPerInstance = { 0 };	
 	_uint						m_iNumInstance = { 0 };
 	_uint						m_iMaterialIndex = { 0 };
+
+	_tchar						m_szName[MAX_PATH] = TEXT("");
 
 private:
 	vector<_float4x4>			m_InstanceMatrixVec;

@@ -1,6 +1,8 @@
 #include "..\Public\Vault_Gate.h"
 #include "GameInstance.h"
 
+#include "LightStand.h"
+
 CVault_Gate::CVault_Gate(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -53,29 +55,19 @@ HRESULT CVault_Gate::Initialize_Level(_uint iCurrentLevelIndex)
 	m_pModel->Set_CurrentAnimIndex(0);
 	m_pModel->Get_Animation(0)->Set_Loop(false);
 
-	// 리지드 바디 초기화
-	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
-	RigidBodyDesc.isStatic = true;
-	RigidBodyDesc.isTrigger = true;
-	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
-	RigidBodyDesc.eConstraintFlag = CRigidBody::All;
-	RigidBodyDesc.fStaticFriction = 1.f;
-	RigidBodyDesc.fDynamicFriction = 1.f;
-	RigidBodyDesc.fRestitution = 0.f;
-	PxSphereGeometry MyGeometry = PxSphereGeometry(8.f);
-	RigidBodyDesc.pGeometry = &MyGeometry;
-	RigidBodyDesc.pOwnerObject = this;
-	RigidBodyDesc.vDebugColor = _float4(0.f, 1.f, 0.f, 1.f);
-	RigidBodyDesc.eThisCollsion = COL_STATIC;
-	RigidBodyDesc.eCollisionFlag = COL_PLAYER;
-	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Vault_Gate");
+	BEGININSTANCE;
+	auto pBackGroundLayer = pGameInstance->Find_Components_In_Layer(LEVEL_VAULT, TEXT("Layer_BackGround"));
+	ENDINSTANCE;
 
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
-		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+	for (auto Pair : *pBackGroundLayer)
 	{
-		MSG_BOX("Failed CVault_Gate Add_Component : (Com_RigidBody)");
-		__debugbreak();
-		return E_FAIL;
+		wstring wsObjTag = Pair.first;
+
+		if (wstring::npos != wsObjTag.find(TEXT("LightStand")))
+		{
+			m_pLightStands.push_back(static_cast<CLightStand*>(Pair.second));
+			Safe_AddRef(Pair.second);
+		}
 	}
 
 	return S_OK;
@@ -85,15 +77,8 @@ void CVault_Gate::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	BEGININSTANCE;
-
-	// 퍼즐로 열려야 하는데 일단 그냥 열리게 해둠
-	if (pGameInstance->Get_DIKeyState(DIK_R, CInput_Device::KEY_DOWN) && true == m_isCol_with_Player)
-	{
-		m_isCheckOnce = false;
-	}
-
-	ENDINSTANCE;
+	// 화로에 불 다 붙으면 문열림
+	Check_FireOn();
 
 	if (false == m_isCheckOnce)
 		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
@@ -109,30 +94,7 @@ void CVault_Gate::Late_Tick(_float fTimeDelta)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
-#ifdef _DEBUG
-		m_pRenderer->Add_DebugGroup(m_pRigidBody);
-#endif // _DEBUG
 	}
-}
-
-void CVault_Gate::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
-{
-	wstring wsCollisionTag = CollisionEventDesc.pOtherCollisionTag;
-	wstring wsPlayer(TEXT("Player_Default"));
-
-	// 플레이어와 충돌했다면 활성화
-	if (0 == lstrcmp(wsCollisionTag.c_str(), wsPlayer.c_str()))
-		m_isCol_with_Player = true;
-}
-
-void CVault_Gate::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
-{
-	wstring wsCollisionTag = CollisionEventDesc.pOtherCollisionTag;
-	wstring wsPlayer(TEXT("Player_Default"));
-
-	// 플레이어와 충돌이 끝났다면 비활성화
-	if (0 == lstrcmp(wsCollisionTag.c_str(), wsPlayer.c_str()))
-		m_isCol_with_Player = false;
 }
 
 HRESULT CVault_Gate::Render()
@@ -267,6 +229,25 @@ void CVault_Gate::Check_MinMaxPoint(_float3 vPoint)
 		m_vMaxPoint.z = vPoint.z;
 }
 
+void CVault_Gate::Check_FireOn()
+{
+	if (false == m_isCheckOnce)
+		return;
+
+	_uint iFireOn = m_pLightStands.size();
+	_uint iCheckFireOn = 0;
+
+	// 화로가 전부 켜졌는지 확인
+	for (auto& iter : m_pLightStands)
+	{
+		if (true == iter->Get_FireOn())
+			++iCheckFireOn;
+	}
+
+	if (iFireOn == iCheckFireOn)
+		m_isCheckOnce = false;
+}
+
 CVault_Gate* CVault_Gate::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CVault_Gate* pInstance = New CVault_Gate(pDevice, pContext);
@@ -296,7 +277,9 @@ void CVault_Gate::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pRigidBody);
+	for (auto& iter : m_pLightStands)
+		Safe_Release(iter);
+
 	Safe_Release(m_pShadowShader);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pModel);

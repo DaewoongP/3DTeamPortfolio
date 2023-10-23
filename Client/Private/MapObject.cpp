@@ -36,6 +36,8 @@ HRESULT CMapObject::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	m_vEmissive = _float4(0.f, 0.f, 0.f, 0.f);
+
 	return S_OK;
 }
 
@@ -181,11 +183,24 @@ HRESULT CMapObject::Render()
 		return E_FAIL;
 
 	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
-
+	vector<CMesh*> Meshes = *m_pModel->Get_MeshesVec();
 	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; ++iMeshCount)
 	{
 		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 		m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
+
+		if (wcswcs(Meshes[iMeshCount]->Get_MeshName(), TEXT("Glass")))
+		{
+			m_vEmissive = _float4(0.5f, 0.5f, 0.45f, 0.5f);
+			if (FAILED(m_pShader->Bind_RawValue("g_vEmissive", &m_vEmissive, sizeof(_float4))))
+				return E_FAIL;
+		}
+		else
+		{
+			m_vEmissive = _float4(0.f, 0.f, 0.f, 0.f);
+			if (FAILED(m_pShader->Bind_RawValue("g_vEmissive", &m_vEmissive, sizeof(_float4))))
+				return E_FAIL;
+		}
 
 		m_pShader->Begin("Mesh_No_Cull");
 

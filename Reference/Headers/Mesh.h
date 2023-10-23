@@ -19,6 +19,7 @@ protected:
 	virtual ~CMesh() = default;
 
 public:
+	_tchar* Get_MeshName() { return m_szName; }
 	_uint	Get_MaterialIndex() const { return m_iMaterialIndex; }
 	void	Get_Matrices(CModel::BONES Bones, _Inout_ _float4x4* pMatrices, _float4x4 PivotMatrix);
 	vector<_float3>* Get_VerticesPositionVec() { return &m_VerticesPositionVec; }

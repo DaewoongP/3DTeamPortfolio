@@ -51,6 +51,8 @@ HRESULT CBloom::Initialize(CVIBuffer_Rect* pRectBuffer)
 		return E_FAIL;
 
 	m_pBlur = CBlur::Create(m_pDevice, m_pContext, pRectBuffer);
+	if (nullptr == m_pBlur)
+		return E_FAIL;
 
     return S_OK;
 }
@@ -59,32 +61,32 @@ HRESULT CBloom::Render(const _tchar* pRenderTargetTag)
 {
 	CRenderTarget_Manager* pRenderTarget_Manager = CRenderTarget_Manager::GetInstance();
 	Safe_AddRef(pRenderTarget_Manager);
+//
+//#pragma region ÇÏ¾áºÎºÐ ÃßÃâ
+//	if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_WhiteSpace"))))
+//		return E_FAIL;
+//
+//	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+//		return E_FAIL;
+//	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+//		return E_FAIL;
+//	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+//		return E_FAIL;
+//
+//	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(pRenderTargetTag, m_pShader, "g_TargetTexture")))
+//		return E_FAIL;
+//
+//	if (FAILED(m_pShader->Begin("WhiteSpace")))
+//		return E_FAIL;
+//
+//	if (FAILED(m_pBuffer->Render()))
+//		return E_FAIL;
+//
+//	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_WhiteSpace"))))
+//		return E_FAIL;
+//#pragma endregion
 
-#pragma region ÇÏ¾áºÎºÐ ÃßÃâ
-	if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_WhiteSpace"))))
-		return E_FAIL;
-
-	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
-		return E_FAIL;
-
-	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(pRenderTargetTag, m_pShader, "g_TargetTexture")))
-		return E_FAIL;
-
-	if (FAILED(m_pShader->Begin("WhiteSpace")))
-		return E_FAIL;
-
-	if (FAILED(m_pBuffer->Render()))
-		return E_FAIL;
-
-	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_WhiteSpace"))))
-		return E_FAIL;
-#pragma endregion
-
-	if (FAILED(m_pBlur->Render(TEXT("MRT_WhiteSpace_BlurX"), TEXT("Target_WhiteSpace"), CBlur::BLUR_X)))
+	if (FAILED(m_pBlur->Render(TEXT("MRT_WhiteSpace_BlurX"), pRenderTargetTag, CBlur::BLUR_X)))
 		return E_FAIL;
 	if (FAILED(m_pBlur->Render(TEXT("MRT_WhiteSpace_Blured"), TEXT("Target_WhiteSpace_BlurX"), CBlur::BLUR_Y)))
 		return E_FAIL;
@@ -92,7 +94,7 @@ HRESULT CBloom::Render(const _tchar* pRenderTargetTag)
 #pragma region ºí·ë Ã³¸®
 	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(pRenderTargetTag, m_pShader, "g_TargetTexture")))
 		return E_FAIL;
-	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_WhiteSpace"), m_pShader, "g_WhiteTexture")))
+	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(pRenderTargetTag, m_pShader, "g_WhiteTexture")))
 		return E_FAIL;
 	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_WhiteSpace_Blured"), m_pShader, "g_WhiteBlurTexture")))
 		return E_FAIL;

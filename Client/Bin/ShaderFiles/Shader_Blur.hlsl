@@ -29,6 +29,16 @@ float g_fLowBlurWeights[19] =
     0.1280f, 0.0553f, 0.0361f,
 };
 
+uint g_iSampleWeights = 13;
+float g_fSampleBlurWeights[13] =
+{
+    0.0561f, 0.1353f, 0.2780f,
+    0.4868f, 0.7261f, 0.9231f,
+    1.f,
+    0.9231f, 0.7261f, 0.4868f,
+    0.2780f, 0.1353f, 0.0561f,
+};
+
 struct VS_IN
 {
     float3 vPosition : POSITION;

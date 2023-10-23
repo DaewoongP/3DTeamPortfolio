@@ -44,14 +44,11 @@ HRESULT CMoveLoopState::Initialize(void* pArg)
 void CMoveLoopState::Tick(_float fTimeDelta)
 {
 	OnStateTick();
-
-	BEGININSTANCE;
-
-	if (pGameInstance->Check_Timer(TEXT("Meter per Sconde")))
+	if (*m_StateMachineDesc.pIsFlying)
 	{
+		Set_StateMachine(TEXT("Broom_Begin"));
+		return;
 	}
-
-	ENDINSTANCE;
 }
 
 void CMoveLoopState::Late_Tick(_float fTimeDelta)

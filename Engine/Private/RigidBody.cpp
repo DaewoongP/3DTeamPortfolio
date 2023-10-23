@@ -211,6 +211,23 @@ void CRigidBody::Set_CollisionFlag(const _char* szColliderTag, PxU32 eCollisionF
 	m_pActor->attachShape(*pShape);
 }
 
+void CRigidBody::Set_CollisionFlag(const _char* szColliderTag, PxU32 eThisCollisionFlag, PxU32 eOtherCollisionFlag)
+{
+	std::lock_guard<std::mutex> lock(mtx);
+
+	PxShape* pShape = Find_Shape(szColliderTag);
+
+	if (nullptr == pShape)
+		return;
+
+	PxFilterData FilterData = pShape->getSimulationFilterData();
+	m_pActor->detachShape(*pShape);
+	FilterData.word0 = eThisCollisionFlag;
+	FilterData.word1 = eOtherCollisionFlag;
+	pShape->setSimulationFilterData(FilterData);
+	m_pActor->attachShape(*pShape);
+}
+
 HRESULT CRigidBody::Initialize_Prototype()
 {
 #ifdef _DEBUG

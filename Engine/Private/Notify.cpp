@@ -35,6 +35,14 @@ CNotify::CNotify(const CNotify& rhs)
 	}
 }
 
+void CNotify::Reset()
+{
+	for (auto frame : m_KeyFrames)
+	{
+		(frame.second)->isEnable = true;
+	}
+}
+
 HRESULT CNotify::Initialize()
 {
 	return S_OK;

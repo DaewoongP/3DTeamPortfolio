@@ -114,7 +114,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_NPC(const _tchar* pLayerTag)
 
 	_float3 vPosition = _float3(40.f, 6.4f, 62.f);
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"), &vPosition)))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"), &vPosition)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Professor_Fig)");
 		ENDINSTANCE;
@@ -207,27 +207,11 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 		wstring modelName = ws.substr(findIndex);
 
 		// 비교해야되는 문자열
-		wstring wsTreasureChestName(TEXT("Anim_TreasureChest"));
 		wstring wsAshwinderEggs(TEXT("Anim_AshwinderEggs"));
 		wstring wsLeapingToadStools(TEXT("Anim_LeapingToadStools"));
 		wstring wsGull(TEXT("Anim_Gull"));
 		wstring wsCliffGate(TEXT("Anim_Gate_Reparo"));
-
-		//// 보물상자
-		//if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
-		//{
-		//	_tchar wszobjName[MAX_PATH] = { 0 };
-		//	_stprintf_s(wszobjName, TEXT("GameObject_Treasure_Chest_%d"), (iObjectNum));
-
-		//	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE,
-		//		TEXT("Prototype_GameObject_Treasure_Chest"), TEXT("Layer_BackGround"),
-		//		wszobjName, &MapObjectDesc)))
-		//	{
-		//		MSG_BOX("Failed to Clone Treasure_Chest");
-		//		ENDINSTANCE;
-		//		return E_FAIL;
-		//	}
-		//}
+		wstring wsSmithToCliff(TEXT("SM_HM_Cliff_Gate"));
 
 		// 채집물
 		if (0 == lstrcmp(modelName.c_str(), wsAshwinderEggs.c_str()) ||
@@ -273,6 +257,22 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 				wszobjName, &MapObjectDesc)))
 			{
 				MSG_BOX("Failed to Clone Cliff_Gate");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}
+
+		// 스미드 to 절벽 게이트
+		else if (0 == lstrcmp(modelName.c_str(), wsSmithToCliff.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_SmithToCliff_Gate_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE,
+				TEXT("Prototype_GameObject_SmithToCliff_Gate"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone SmithToCliff_Gate");
 				ENDINSTANCE;
 				return E_FAIL;
 			}

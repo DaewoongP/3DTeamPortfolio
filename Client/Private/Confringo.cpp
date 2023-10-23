@@ -155,7 +155,8 @@ void CConfringo::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionEnter(CollisionEventDesc);
 	//¸÷ÀÌ¶û Ãæµ¹ÇßÀ¸¸é?
-	if (wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Enemy_Body")) != nullptr)
+	if (wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Enemy_Body")) != nullptr||
+		wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Torch")) != nullptr)
 	{
 #pragma region Ä«¸Þ¶ó ½¦ÀÌÅ©
 		BEGININSTANCE;
@@ -238,7 +239,11 @@ void CConfringo::Ready_CastMagic()
 void CConfringo::Ready_Dying()
 {
 	ADD_DECREASE_LIGHT(m_vEndPosition, 20.f, 0.3f, m_vLightColor);
-	__super::Ready_Dying();
+	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_HIT].size(); i++)
+	{
+		m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Enable(Get_Transform()->Get_Position());
+		m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Play(Get_Transform()->Get_Position());
+	}
 }
 
 void CConfringo::Tick_Begin(_float fTimeDelta)
@@ -272,6 +277,15 @@ void CConfringo::Tick_CastMagic(_float fTimeDelta)
 
 void CConfringo::Tick_Dying(_float fTimeDelta)
 {
+	for (int i = 0; i < m_TrailVec[EFFECT_STATE_WAND].size(); i++)
+	{
+		m_TrailVec[EFFECT_STATE_WAND].data()[i]->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
+	}
+	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_WAND].size(); i++)
+	{
+		m_ParticleVec[EFFECT_STATE_WAND].data()[i]->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
+	}
+
 	__super::Tick_Dying(fTimeDelta);
 }
 
