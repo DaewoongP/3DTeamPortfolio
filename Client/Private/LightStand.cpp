@@ -16,21 +16,6 @@ HRESULT CLightStand::Initialize_Prototype()
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	BEGININSTANCE;
-
-	if (nullptr == pGameInstance->Find_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_LightStand_Fire")))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_LightStand_Fire")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/LightStand_Fire"), LEVEL_STATIC))))
-		{
-			ENDINSTANCE;
-			MSG_BOX("Failed to Create Prototype_GameObject_LightStand_Fire");
-			return E_FAIL;
-		}
-	}
-
-	ENDINSTANCE;
-
 	return S_OK;
 }
 

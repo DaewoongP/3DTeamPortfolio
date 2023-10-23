@@ -269,6 +269,11 @@ HRESULT CMain0_Loader::Loading_For_Vault(LEVELID eLevelID)
 		CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Cloister/Cloister.ME")))))
 		throw TEXT("Prototype_GameObject_Cloister_MeshEffect");
 
+	/* For.Prototype_GameObject_Vault_Torch_P*/
+	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Vault_Torch_P"),
+		CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Vault_Torch/")))))
+		throw TEXT("Prototype_GameObject_Vault_Torch_P");
+
 	/* For.Prototype_GameObject_Trigger_Vault */
 	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Trigger_Vault"),
 		CTrigger_Vault::Create(m_pDevice, m_pContext))))
@@ -635,6 +640,11 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_SmithToCliff_Gate_Portal"),
 			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Portal/Door"), eLevelID))))
 			throw TEXT("Prototype_GameObject_SmithToCliff_Gate_Portal");
+
+		/* For.Prototype_GameObject_LightStand_Fire */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_LightStand_Fire"),
+			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/LightStand_Fire"), eLevelID))))
+			throw TEXT("Prototype_GameObject_LightStand_Fire");
 #pragma endregion
 
 #pragma region Load Player_Effect

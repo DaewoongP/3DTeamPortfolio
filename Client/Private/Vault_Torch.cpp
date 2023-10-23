@@ -53,21 +53,6 @@ HRESULT CVault_Torch::Initialize_Prototype()
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	BEGININSTANCE;
-
-	if (nullptr == pGameInstance->Find_Prototype(LEVEL_VAULT, TEXT("Prototype_GameObject_Vault_Torch_P")))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_VAULT, TEXT("Prototype_GameObject_Vault_Torch_P")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Vault_Torch"), LEVEL_VAULT))))
-		{
-			ENDINSTANCE;
-			MSG_BOX("Failed to Create Prototype_GameObject_Vault_Torch_P");
-			return E_FAIL;
-		}
-	}
-
-	ENDINSTANCE;
-
 	return S_OK;
 }
 
