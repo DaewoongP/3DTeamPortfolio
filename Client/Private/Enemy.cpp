@@ -601,6 +601,12 @@ _bool CEnemy::isCombo(const _uint& iType)
 	return ReturnData;
 }
 
+void CEnemy::Print_Damage_Font(const _int& iDamage)
+{
+	if (nullptr != m_pHitMatrix && nullptr != m_pUI_Damage)
+		m_pUI_Damage->Add_Font(iDamage, XMVector3TransformCoord(m_pHitMatrix->Translation(), m_pTransform->Get_WorldMatrix()));
+}
+
 _bool CEnemy::isControlSpell(const _uint& iType)
 {
 	if (BUFF_LEVIOSO & iType)

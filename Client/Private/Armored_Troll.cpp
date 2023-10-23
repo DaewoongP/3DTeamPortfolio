@@ -21,6 +21,7 @@
 #include "Sequence_Levitate.h"
 #include "Sequence_MoveTarget.h"
 
+#include "Quest_Manager.h"
 #include "UI_Damage.h"
 
 CArmored_Troll::CArmored_Troll(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -122,8 +123,7 @@ void CArmored_Troll::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
 		_int iDamage = pCollisionMagicBallDesc->iDamage;
 
-		if (nullptr != m_pHitMatrix)
-			m_pUI_Damage->Add_Font(iDamage, XMVector3TransformCoord(m_pHitMatrix->Translation(), m_pTransform->Get_WorldMatrix()));
+		Print_Damage_Font(iDamage);
 
 		m_pHealth->Damaged(iDamage);
 
@@ -504,7 +504,16 @@ HRESULT CArmored_Troll::Bind_HitMatrices()
 
 void CArmored_Troll::DeathBehavior(const _float& fTimeDelta)
 {
-	m_isDead = true;
+	if (false == m_isEnterDeath)
+	{
+		CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
+		Safe_AddRef(pQuest_Manager);
+		pQuest_Manager->Clear_Quest(TEXT("Quest_Town"));
+		Safe_Release(pQuest_Manager);
+		m_isEnterDeath = true;
+		m_isDead = true;
+	}
+
 	m_fDeadTimeAcc += fTimeDelta;
 
 	if (3.5f < m_fDeadTimeAcc)
@@ -2348,7 +2357,7 @@ void CArmored_Troll::Exit_Attack()
 	m_CollisionRequestDesc.eType = ATTACK_NONE;
 	m_CollisionRequestDesc.iDamage = 0;
 	m_pRigidBody->Disable_Collision("Enemy_Body_Attack");
-	m_pWeapon->Off_Collider_Attack(&m_CollisionRequestDesc);
+	m_pWeapon->Off_Collider_Attack();
 }
 
 CArmored_Troll* CArmored_Troll::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

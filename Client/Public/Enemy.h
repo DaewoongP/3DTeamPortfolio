@@ -141,6 +141,7 @@ protected:
 	// 가까운 적을 타겟으로 세팅
 	void Set_Current_Target();
 	void Tick_Spells();
+	void Print_Damage_Font(const _int& iDamage);
 
 	HRESULT Remove_GameObject(const wstring& wstrObjectTag);
 	_bool IsEnemy(const wstring& wstrObjectTag);

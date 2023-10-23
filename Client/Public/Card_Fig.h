@@ -25,6 +25,11 @@ public:
 		const _float4x4* pParentWorldMatrix = { nullptr };
 	}CARDFIGINITDESC;
 
+public:
+	void On_Enter_Vault_Script() { m_isEnterVault = true; }
+	void On_Dragon_Death() { m_isDragonDeath = true; }
+	void On_Dragon_Hp_Down_Script() { m_isDragonHpDown = true; }
+
 private:
 	explicit CCard_Fig(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CCard_Fig(const CCard_Fig& rhs);
@@ -56,6 +61,11 @@ private:
 
 	vector<wstring> m_AttackTags;
 	_uint m_iCurrentTagIndex = { 0 };
+
+private: /* 피그 교수 이벤트 관련 데이터 */
+	_bool m_isEnterVault = { false };
+	_bool m_isDragonDeath = { false };
+	_bool m_isDragonHpDown = { false };
 
 private:
 	CModel* m_pModelCom = { nullptr };

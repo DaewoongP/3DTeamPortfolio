@@ -36,7 +36,6 @@ HRESULT CVendor::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pTransform->Set_Speed(10.f);
-	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 	m_pTransform->Set_Scale(_float3(1.15f, 1.15f, 1.15f));
 	m_pTransform->Rotation(_float3(0.f, XMConvertToRadians(45.f), 0.f));
@@ -65,7 +64,6 @@ void CVendor::Tick(_float fTimeDelta)
 	if (m_isOpenStore)
 		m_pUI_Store->Tick(fTimeDelta);
 
-
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 }
@@ -84,6 +82,9 @@ void CVendor::Late_Tick(_float fTimeDelta)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
+#ifdef _DEBUG
+		m_pRenderer->Add_DebugGroup(m_pRigidBody);
+#endif // _DEBUG
 	}
 }
 
@@ -213,9 +214,9 @@ HRESULT CVendor::Add_Components()
 
 		/* Com_RigidBody */
 		CRigidBody::RIGIDBODYDESC RigidBodyDesc;
-		RigidBodyDesc.isStatic = false;
-		RigidBodyDesc.isTrigger = false;
-		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
+		RigidBodyDesc.isStatic = true;
+		RigidBodyDesc.isTrigger = true;
+		RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
 		RigidBodyDesc.fDynamicFriction = 1.f;
 		RigidBodyDesc.fRestitution = 0.f;
 		RigidBodyDesc.fStaticFriction = 0.f;
@@ -223,36 +224,16 @@ HRESULT CVendor::Add_Components()
 		RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
 		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
 		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.85f, 0.f);
-		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
-		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.25f, 0.6f);
-		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
-		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Body");
-		RigidBodyDesc.eThisCollsion = COL_NPC;
-		RigidBodyDesc.eCollisionFlag = COL_STATIC;
+		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, 0.f);
+		PxSphereGeometry pSphereGeomatry = PxSphereGeometry(2.5f); // 범위 설정 
+		RigidBodyDesc.pGeometry = &pSphereGeomatry;
+		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "NPC_Range");
+		RigidBodyDesc.eThisCollsion = COL_NPC_RANGE;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER;
 
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 			throw TEXT("Com_RigidBody");
-
-		RigidBodyDesc.isStatic = true;
-		RigidBodyDesc.isTrigger = true;
-		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
-		RigidBodyDesc.fDynamicFriction = 1.f;
-		RigidBodyDesc.fRestitution = 0.f;
-		RigidBodyDesc.fStaticFriction = 0.f;
-		RigidBodyDesc.pOwnerObject = this;
-		RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
-		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
-		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.85f, 0.f);
-		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
-		PxSphereGeometry pSphereGeomatry = PxSphereGeometry(2.f); // 범위 설정 
-		RigidBodyDesc.pGeometry = &pSphereGeomatry;
-		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "NPC_Range");
-		RigidBodyDesc.eThisCollsion = COL_NPC_RANGE;
-		RigidBodyDesc.eCollisionFlag = COL_STATIC | COL_PLAYER;
-
-		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
-			return E_FAIL;
 
 		/* Com_UI_Interaction */
 		CGameInstance* pGameInstance = CGameInstance::GetInstance();

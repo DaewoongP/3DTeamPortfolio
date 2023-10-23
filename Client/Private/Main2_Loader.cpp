@@ -24,6 +24,10 @@
 #include "Weapon_Forest_Troll.h"
 #include "Weapon_Golem_Combat.h"
 #include "Weapon_Player_Wand.h"
+#include "Weapon_Dragon_Head.h"
+#include "Weapon_Dragon_Left_Wing.h"
+#include "Weapon_Dragon_Right_Wing.h"
+#include "Weapon_Dragon_Tail.h"
 #pragma endregion Weapon
 
 #include "Camera_Shake.h"
@@ -33,7 +37,6 @@
 #include "Pensive.h"
 #include "Weapon_Pensive_Sword.h"
 #include "Weapon_Pensive_Flail.h"
-#include "Weapon_Dragon_Head.h"
 
 #include "StateContext_Enemy.h"
 #include "Pensive_Appearence.h"
@@ -411,6 +414,21 @@ HRESULT CMain2_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Dragon_Head"),
 			CWeapon_Dragon_Head::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Dragon_Head");
+
+		/* For.Prototype_GameObject_Weapon_Dragon_Left_Wing */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Weapon_Dragon_Left_Wing"),
+			CWeapon_Dragon_Left_Wing::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Weapon_Dragon_Left_Wing");
+
+		/* For.Prototype_GameObject_Weapon_Dragon_Right_Wing */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Weapon_Dragon_Right_Wing"),
+			CWeapon_Dragon_Right_Wing::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Weapon_Dragon_Right_Wing");
+
+		/* For.Prototype_GameObject_Weapon_Dragon_Tail */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Weapon_Dragon_Tail"),
+			CWeapon_Dragon_Tail::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Weapon_Dragon_Tail");
 
 		/* For.Prototype_GameObject_ConjuredDragon */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_ConjuredDragon"),

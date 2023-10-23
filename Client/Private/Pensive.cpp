@@ -116,6 +116,8 @@ void CPensive::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
 		_int iDamage = pCollisionMagicBallDesc->iDamage;
 
+		Print_Damage_Font(iDamage);
+
 		Do_Damage(iDamage);
 		_float3 vDir = CollisionEventDesc.pOtherTransform->Get_Position() - m_pTransform->Get_Position();
 		vDir.Normalize();
