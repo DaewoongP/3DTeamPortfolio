@@ -90,19 +90,19 @@ HRESULT CMapObject_Ins::Render()
 		if (wcswcs(Meshes[iMeshCount]->Get_MeshName(), TEXT("Glass")))
 		{
 			m_vEmissive = _float4(0.5f, 0.5f, 0.45f, 0.5f);
-			if (FAILED(m_pShader->Bind_RawValue("g_vEmissive", &m_vEmissive, sizeof(_float4))))
+			if (FAILED(m_pShader->Bind_RawValue("g_vBloom", &m_vEmissive, sizeof(_float4))))
 				return E_FAIL;
 		}
 		else if (wcswcs(Meshes[iMeshCount]->Get_MeshName(), TEXT("SUB_GEN_A_EXT_LOD1_Alphas")))
 		{
 			m_vEmissive = _float4(0.5f, 0.5f, 0.45f, 0.5f);
-			if (FAILED(m_pShader->Bind_RawValue("g_vEmissive", &m_vEmissive, sizeof(_float4))))
+			if (FAILED(m_pShader->Bind_RawValue("g_vBloom", &m_vEmissive, sizeof(_float4))))
 				return E_FAIL;
 		}
 		else
 		{
 			m_vEmissive = _float4(0.f, 0.f, 0.f, 0.f);
-			if (FAILED(m_pShader->Bind_RawValue("g_vEmissive", &m_vEmissive, sizeof(_float4))))
+			if (FAILED(m_pShader->Bind_RawValue("g_vBloom", &m_vEmissive, sizeof(_float4))))
 				return E_FAIL;
 		}
 
