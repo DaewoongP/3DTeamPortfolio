@@ -12,7 +12,7 @@ float4 g_vColor;
 float4 g_vCamPos;
 
 bool g_isFlutter = false;
-float3 g_fTimeAcc;
+float g_fTimeAcc;
 float3 g_vStrength = { 1.f, 1.f, 1.f };
 
 // For. Emission

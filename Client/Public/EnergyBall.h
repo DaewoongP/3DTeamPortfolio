@@ -42,7 +42,6 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
-	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
@@ -69,7 +68,6 @@ private:
 private:
 	HRESULT Make_Magics();
 	HRESULT Add_Components();
-	HRESULT Add_Components_Level(const _uint& iLevel);
 
 public:
 	static CEnergyBall* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

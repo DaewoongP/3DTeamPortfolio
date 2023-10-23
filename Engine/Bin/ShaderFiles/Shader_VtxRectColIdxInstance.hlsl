@@ -1,6 +1,6 @@
 #include "Shader_EngineHeader.hlsli"
 #include "Shader_Functions.hlsli"
-#include "Shader_Noise.hlsl"
+
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D		g_Texture;

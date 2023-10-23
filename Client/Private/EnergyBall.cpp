@@ -244,14 +244,6 @@ HRESULT CEnergyBall::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CEnergyBall::Initialize_Level(_uint iCurrentLevelIndex)
-{
-	if (FAILED(Add_Components_Level(iCurrentLevelIndex)))
-		return E_FAIL;
-
-	return S_OK;
-}
-
 void CEnergyBall::Tick(_float fTimeDelta)
 {
 	if (false == m_isEnable)
@@ -343,55 +335,55 @@ void CEnergyBall::Set_Protego_Collision(CTransform* pTransform, CEnemy::ATTACKTY
 
 HRESULT CEnergyBall::Make_Magics()
 {
-	//Basic Magic Protego
-	{
-		_uint iMagicType = rand() % 3 + 1; // 1 ~ 3(Yellow, Purple, Red)
+	////Basic Magic Protego
+	//{
+	//	_uint iMagicType = rand() % 3 + 1; // 1 ~ 3(Yellow, Purple, Red)
 
-		CMagic::MAGICDESC magicInitDesc;
-		magicInitDesc.eBuffType = BUFF_PROTEGO;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = (CMagic::MAGIC_TYPE)iMagicType;
-		magicInitDesc.eMagicTag = PROTEGO;
-		magicInitDesc.fInitCoolTime = 0.f;
-		magicInitDesc.iDamage = 0;
-		magicInitDesc.fLifeTime = 7.f;
-		m_pMagicSlot->Add_Magics(magicInitDesc);
+	//	CMagic::MAGICDESC magicInitDesc;
+	//	magicInitDesc.eBuffType = BUFF_PROTEGO;
+	//	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+	//	magicInitDesc.eMagicType = (CMagic::MAGIC_TYPE)iMagicType;
+	//	magicInitDesc.eMagicTag = PROTEGO;
+	//	magicInitDesc.fInitCoolTime = 0.f;
+	//	magicInitDesc.iDamage = 0;
+	//	magicInitDesc.fLifeTime = 7.f;
+	//	m_pMagicSlot->Add_Magics(magicInitDesc);
 
-		m_pMeshEffect_Inner_Ball->Set_LifeTime(7.f);
-		switch (magicInitDesc.eMagicType)
-		{
-		case Client::CMagic::MT_NOTHING:
-			__debugbreak();
-			break;
-		case Client::CMagic::MT_YELLOW:
-			m_pMeshEffect_Inner_Ball->Set_StartColor(_float4(1.f, 1.f, 0.f, 1.f));
-			m_pMeshEffect_Inner_Ball->Set_EndColor(_float4(1.f, 1.f, 0.f, 1.f));
-			//m_vColor1 = { 1.f, 1.f, 0.f, 1.f };
-			//m_vColor2 = { 1.f, 0.5f, 0.f, 1.f };
-			break;
-		case Client::CMagic::MT_PURPLE:
-			m_pMeshEffect_Inner_Ball->Set_StartColor(_float4(0.f, 0.f, 1.f, 1.f));
-			m_pMeshEffect_Inner_Ball->Set_EndColor(_float4(0.f, 0.f, 1.f, 1.f));
-			/*m_vColor1 = { 0.f, 0.f, 1.f, 1.f };
-			m_vColor2 = { 0.5f, 0.f, 0.5f, 1.f };*/
-			break;
-		case Client::CMagic::MT_RED:
-			m_pMeshEffect_Inner_Ball->Set_StartColor(_float4(1.f, 0.f, 0.f, 1.f));
-			m_pMeshEffect_Inner_Ball->Set_EndColor(_float4(1.f, 0.f, 0.f, 1.f));
-			/*m_vColor1 = { 1.f, 0.f, 0.f, 1.f };
-			m_vColor2 = { 1.f, 0.5f, 0.f, 1.f };*/
-			break;
-		case Client::CMagic::MT_ALL:
-			m_pMeshEffect_Inner_Ball->Set_StartColor(_float4(0.f, 0.f, 1.f, 1.f));
-			m_pMeshEffect_Inner_Ball->Set_EndColor(_float4(0.f, 0.f, 1.f, 1.f));
-			/*m_vColor1 = { 0.f, 0.f, 1.f, 1.f };
-			m_vColor2 = { 1.f, 0.f, 1.f, 1.f };*/
-			break;
-		default:
-			__debugbreak();
-			break;
-		}
-	}
+	//	m_pMeshEffect_Inner_Ball->Set_LifeTime(7.f);
+	//	switch (magicInitDesc.eMagicType)
+	//	{
+	//	case Client::CMagic::MT_NOTHING:
+	//		__debugbreak();
+	//		break;
+	//	case Client::CMagic::MT_YELLOW:
+	//		m_pMeshEffect_Inner_Ball->Set_StartColor(_float4(1.f, 1.f, 0.f, 1.f));
+	//		m_pMeshEffect_Inner_Ball->Set_EndColor(_float4(1.f, 1.f, 0.f, 1.f));
+	//		//m_vColor1 = { 1.f, 1.f, 0.f, 1.f };
+	//		//m_vColor2 = { 1.f, 0.5f, 0.f, 1.f };
+	//		break;
+	//	case Client::CMagic::MT_PURPLE:
+	//		m_pMeshEffect_Inner_Ball->Set_StartColor(_float4(0.f, 0.f, 1.f, 1.f));
+	//		m_pMeshEffect_Inner_Ball->Set_EndColor(_float4(0.f, 0.f, 1.f, 1.f));
+	//		/*m_vColor1 = { 0.f, 0.f, 1.f, 1.f };
+	//		m_vColor2 = { 0.5f, 0.f, 0.5f, 1.f };*/
+	//		break;
+	//	case Client::CMagic::MT_RED:
+	//		m_pMeshEffect_Inner_Ball->Set_StartColor(_float4(1.f, 0.f, 0.f, 1.f));
+	//		m_pMeshEffect_Inner_Ball->Set_EndColor(_float4(1.f, 0.f, 0.f, 1.f));
+	//		/*m_vColor1 = { 1.f, 0.f, 0.f, 1.f };
+	//		m_vColor2 = { 1.f, 0.5f, 0.f, 1.f };*/
+	//		break;
+	//	case Client::CMagic::MT_ALL:
+	//		m_pMeshEffect_Inner_Ball->Set_StartColor(_float4(0.f, 0.f, 1.f, 1.f));
+	//		m_pMeshEffect_Inner_Ball->Set_EndColor(_float4(0.f, 0.f, 1.f, 1.f));
+	//		/*m_vColor1 = { 0.f, 0.f, 1.f, 1.f };
+	//		m_vColor2 = { 1.f, 0.f, 1.f, 1.f };*/
+	//		break;
+	//	default:
+	//		__debugbreak();
+	//		break;
+	//	}
+	//}
 
 	return S_OK;
 }
@@ -454,20 +446,6 @@ HRESULT CEnergyBall::Add_Components()
 
 	return S_OK;
 }
-
-HRESULT CEnergyBall::Add_Components_Level(const _uint& iLevel)
-{
-	BEGININSTANCE;
-
-	/* Com_Model */
-
-
-	ENDINSTANCE;
-
-	return S_OK;
-}
-
-
 
 CEnergyBall* CEnergyBall::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

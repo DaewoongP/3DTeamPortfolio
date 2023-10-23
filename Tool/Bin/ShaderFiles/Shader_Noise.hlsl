@@ -1,4 +1,4 @@
-static float3 Gradiant[12] =
+static float3 arrayGradiant[12] =
 {
     { 1, 1, 0 },
     { 1, -1, 0 },
@@ -17,7 +17,7 @@ static float3 Gradiant[12] =
 float dotGridGradient2D(int ix, int iy, float x, float y)
 {
     int index = frac(dot(float2(ix, iy), float2(413.23, 635.21))) * 12; //random index
-    float3 grad = Gradiant[index];
+    float3 grad = arrayGradiant[index];
 
     return dot(grad, float3(x, y, 0));
 }
@@ -25,7 +25,7 @@ float dotGridGradient2D(int ix, int iy, float x, float y)
 float dotGridGradient3D(int3 pos, float3 fract)
 {
     int index = frac(dot(pos, float3(413.23, 635.21, 463.15))) * 12; //random index
-    float3 grad = Gradiant[index];
+    float3 grad = arrayGradiant[index];
 
     return dot(grad, fract);
 }

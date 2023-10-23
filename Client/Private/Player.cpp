@@ -3220,8 +3220,6 @@ void CPlayer::Shot_Magic_Spell_Button_4()
 	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(SKILLINPUT_4, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_SHIELD_ENEMY), COL_MAGIC, m_isPowerUp);
 }
 
-
-
 CGameObject* CPlayer::Clone(void* pArg)
 {
 	CPlayer* pInstance = New CPlayer(*this);
