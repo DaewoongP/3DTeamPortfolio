@@ -46,6 +46,9 @@ void CPotionTap::Tick(_float fTimeDelta)
 		m_pUI_Main_Count->Tick(fTimeDelta);
 		m_pUI_Main_Count->Set_Text(to_wstring(m_pPotions[m_eCurPotion].size()).c_str());
 	}
+	else
+		m_pUI_Main_Count->Set_Text(TEXT(""));
+
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -123,8 +126,8 @@ HRESULT CPotionTap::Add_Components()
 	Desc.m_fRotation = { 0.f };
 	Desc.m_vOrigin = { 0.f, 0.f };
 	Desc.m_vScale = { 0.4f, 0.4f };
-	Desc.m_vPos = { 321.5f, 619.f };
-	wstring wstrNCount = to_wstring(0);
+	Desc.m_vPos = { 317.5f, 619.f };
+	wstring wstrNCount = TEXT("");
 	lstrcpy(Desc.m_pText, wstrNCount.c_str());
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Font"),
@@ -194,7 +197,7 @@ HRESULT CPotionTap::Ready_PotionTextures()
 		TEXT("../../Resources/UI/Game/PotionTap/UI_T_Mandrake_Byproduct_Meter.png")));
 
 	m_pPotionTextures.push_back(CTexture::Create(m_pDevice, m_pContext,
-		TEXT("../../Resources/UI/Game/PotionTap/UI_T_ChompingCabbage_Byproduct_Meter.png")));
+		TEXT("../../Resources/UI/Game/UI/Icons/Potions/UI_T_WoundCleaning.png")));
 
 	m_pPotionTextures.push_back(CTexture::Create(m_pDevice, m_pContext,
 		TEXT("../../Resources/UI/Game/PotionTap/UI_T_VenomousTentacula_Byproduct_Meter.png")));
@@ -237,7 +240,7 @@ CTool* CPotionTap::ToolFactory(POTIONTAP eType)
 		break;
 	case Client::MANDRAKE:
 		break;
-	case Client::CHINESES_CHOPPING_CABBAGE:
+	case Client::HEALTH_POTION:
 		break;
 	case Client::TENTACULAR:
 		break;

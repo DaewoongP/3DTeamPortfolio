@@ -39,10 +39,15 @@ public:
 	HRESULT Save_FileDialog();
 	HRESULT Load_FileDialog();
 
+public:
+	_bool m_isHardReset = { false };
+
 private:
 	CImageFileDialog* m_pTextureIFD = { nullptr };
 	CImageFileDialog* m_pClipTextureIFD = { nullptr };
+	CImageFileDialog* m_pEmissionTextureIFD = { nullptr };
 	CComboBox* m_pClipChannelCombo = { nullptr };
+	CComboBox* m_pEmissionChannelCombo = { nullptr };
 	CComboBox* m_pPassComboBox = { nullptr };
 	CComboBox* m_pColorEaseCombo = { nullptr };
 	CComboBox* m_pPosEaseCombo = { nullptr };

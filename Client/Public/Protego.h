@@ -21,6 +21,9 @@ private:
 	virtual ~CProtego() = default;
 
 public:
+	void Set_Scale(_float fScale) { m_fScale = fScale; }
+
+public:
 	virtual HRESULT Initialize_Prototype(_uint _iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;

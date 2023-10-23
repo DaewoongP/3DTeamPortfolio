@@ -8,6 +8,7 @@ class CModel;
 class CShader;
 class CRenderer;
 class CParticleSystem;
+class CLight;
 END
 
 BEGIN(Client)
@@ -21,6 +22,7 @@ private:
 
 public:
 	_uint Get_TorchIndex() const { return m_iTorchIndex; }
+	void Switch_OnOff(_bool isValue);
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -28,17 +30,18 @@ public:
 	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
+	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 
 private:
 	CParticleSystem* m_pEffect = { nullptr };
+	CLight* m_pLight = { nullptr };
+	CRigidBody* m_pRigidBody = { nullptr };
 
 private:
 	// Torch 넘버링. 구역별로 1, 2, 3 이렇게 나눠진다.
 	// 각 구역에는 총 12개의 Torch가 있다.
 	_uint m_iTorchIndex = { 0 }; 
-
-	_float m_fBrightTime = { 0.f }; // 빛이 타이밍
-	_bool  m_isBrightStart = { false };
+	_bool	m_isSwitch = { false };
 
 private:
 	void Torch_Bright();

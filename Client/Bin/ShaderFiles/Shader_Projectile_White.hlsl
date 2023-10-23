@@ -111,7 +111,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	vBlur /= fSampleCount;
 	Out.vColor = g_vColor;
 	Out.vColor *= vBlur;
-	Out.vColor.rgb += vEmmisive * g_fEmissiveStrength;
+	Out.vColor.rgb += vEmmisive.rgb * g_fEmissiveStrength;
 
 	return Out;
 }

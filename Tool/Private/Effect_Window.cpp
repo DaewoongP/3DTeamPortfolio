@@ -46,6 +46,24 @@ void CEffect_Window::Tick(_float _fTimeDelta)
 	__super::Tick(_fTimeDelta);
 	// 왼쪽 아래로 고정
 
+	if (true == m_pDummyParticle->m_isHardReset)
+	{
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+		Safe_Release(m_pDummyParticle);
+		m_pDummyParticle = dynamic_cast<CDummyParticle*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyParticle")));
+		Safe_Release(pGameInstance);
+	}
+
+	if (true == m_pDummyMeshEffect->m_isHardReset)
+	{
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+		Safe_Release(m_pDummyMeshEffect);
+		m_pDummyMeshEffect = dynamic_cast<CDummyMeshEffect*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyMeshEffect")));
+		Safe_Release(pGameInstance);
+	}
+
 	ImGui::RadioButton("Particle", &m_iChooseRadio, 0);
 	ImGui::RadioButton("MeshEffect", &m_iChooseRadio, 1);
 	ImGui::RadioButton("Trail", &m_iChooseRadio, 2);

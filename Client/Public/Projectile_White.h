@@ -36,8 +36,11 @@ private:
 	HRESULT Add_Components();
 
 private:
-	CMeshEffect* m_pMeshEffect_Outer_Ball = { nullptr };
-	CMeshEffect* m_pMeshEffect_Inner_Ball = { nullptr };
+	CMeshEffect* m_pMeshEffect_Projectile_Black = { nullptr };
+	CMeshEffect* m_pMeshEffect_SplineUp[6] = { nullptr };
+
+	_float4x4 m_InitMatrix_Projectile_Black;
+	_float4x4 m_InitMatrix_SplineUp[6];
 
 public:
 	static CProjectile_White* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);

@@ -19,6 +19,7 @@ CParticleSystem::CParticleSystem(const CParticleSystem& _rhs)
 	, m_RotationOverLifetimeModuleDesc(_rhs.m_RotationOverLifetimeModuleDesc)
 	, m_VelocityOverLifeTimeModuleDesc(_rhs.m_VelocityOverLifeTimeModuleDesc)
 	, m_TextureSheetAnimationModuleDesc(_rhs.m_TextureSheetAnimationModuleDesc)
+	, m_NoiseModuleDesc(_rhs.m_NoiseModuleDesc)
 	, m_RendererModuleDesc(_rhs.m_RendererModuleDesc)
 	, m_StopAction(_rhs.m_StopAction)
 	, m_iLevel(_rhs.m_iLevel)
@@ -75,6 +76,15 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
 			, ProtoTag.data()
 			, CTexture::Create(m_pDevice, m_pContext, m_RendererModuleDesc.wstrGraientTexture.c_str()))))
+			return E_FAIL;
+	}
+
+	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_RendererModuleDesc.wstrEmissionPath.c_str());
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, ProtoTag.data()))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
+			, ProtoTag.data()
+			, CTexture::Create(m_pDevice, m_pContext, m_RendererModuleDesc.wstrEmissionPath.c_str()))))
 			return E_FAIL;
 	}
 
@@ -247,6 +257,8 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 		InstDesc.vColor = Particle_iter->vColor;
 		InstDesc.iCurrentIndex = Particle_iter->iCurIndex;
 		InstDesc.vVelocity = Particle_iter->vVelocity;
+		InstDesc.vVelocity.w = Particle_iter->fAge;
+
 		PlayEvent(Particle_iter);
 		m_ParticleMatrices.push_back(InstDesc);
 		++Particle_iter;
@@ -404,8 +416,11 @@ HRESULT CParticleSystem::Setup_ShaderResources()
 		if (FAILED(m_pShader->Bind_RawValue("g_isTextureSheetAnimationActivated", &m_TextureSheetAnimationModuleDesc.isActivate, sizeof(_bool))))
 			throw "g_isTextureSheetAnimationActivated";
 
-		if (FAILED(m_RendererModuleDesc.Bind_Values(m_pShader)))
+		if (FAILED(m_RendererModuleDesc.Bind_Values(m_pShader, m_pEmissionTexture)))
 			throw "RendererModuleDesc";
+
+		if (FAILED(m_NoiseModuleDesc.Bind_Values(m_pShader)))
+			throw "NoiseModuleDesc";
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -452,7 +467,11 @@ HRESULT CParticleSystem::Save(const _tchar* _pDirectoryPath)
 		return E_FAIL;
 	if (FAILED(m_RotationOverLifetimeModuleDesc.Save(_pDirectoryPath)))
 		return E_FAIL;
+	if (FAILED(m_NoiseModuleDesc.Save(_pDirectoryPath)))
+		return E_FAIL;
 	if (FAILED(m_RendererModuleDesc.Save(_pDirectoryPath)))
+		return E_FAIL;
+	if (FAILED(this->Save_Components(_pDirectoryPath)))
 		return E_FAIL;
 
 	return S_OK;
@@ -475,9 +494,12 @@ HRESULT CParticleSystem::Load(const _tchar* _pDirectoryPath)
 		return E_FAIL;
 	if (FAILED(m_RotationOverLifetimeModuleDesc.Load(_pDirectoryPath)))
 		return E_FAIL;
+	if (FAILED(m_NoiseModuleDesc.Load(_pDirectoryPath)))
+		return E_FAIL;
 	if (FAILED(m_RendererModuleDesc.Load(_pDirectoryPath)))
 		return E_FAIL;
-
+	if (FAILED(this->Load_Components(_pDirectoryPath)))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -634,6 +656,11 @@ void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 			fLength = m_ShapeModuleDesc.vLength.y;
 		}
 
+		// 만약 1.f면 기존 그대로 나오고
+		// 만약 0.f에 가까울수록 전방향으로 퍼져야한다.
+		_float fThicknessValue = Random_Generator(m_ShapeModuleDesc.fRadiusThickness, 1.f);
+		fLength *= fThicknessValue;
+
 		// Phi각도 정함.
 		if ("Random" == m_ShapeModuleDesc.strPhiMode)
 		{
@@ -697,6 +724,11 @@ void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 			fLength = m_ShapeModuleDesc.vLength.y;
 		}
 
+		// 만약 1.f면 기존 그대로 나오고
+		// 만약 0.f에 가까울수록 전방향으로 퍼져야한다.
+		_float fThicknessValue = Random_Generator(m_ShapeModuleDesc.fRadiusThickness, 1.f);
+		fLength *= fThicknessValue;
+
 		// Theta각도 정함
 		if ("Random" == m_ShapeModuleDesc.strThetaMode)
 		{
@@ -755,7 +787,7 @@ void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 	{
 		_float3 vRightPos = m_ShapeModuleDesc.vLength * _float3(1.f, 0.f, 0.f) * 0.5f;
 		_float3 vLeftPos = vRightPos * -1.f;
-		
+
 		if ("Random" == m_ShapeModuleDesc.strPhiMode)
 		{
 			if (m_ShapeModuleDesc.fPhiSpread <= 0.01f) // Spread가 0.f일 경우
@@ -772,7 +804,7 @@ void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 			// 	
 			//}
 		}
-		
+
 		vDirection = _float3(0.f, 0.f, 1.f);
 	}
 	vPosition = XMVector3TransformCoord(vPosition, m_ShapeModuleDesc.ShapeMatrix);
@@ -782,11 +814,14 @@ void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 	{
 		vPosition += m_pTransform->Get_Position();
 	}
+
 	// 위치 세팅
 	_particle_iter->WorldMatrix.Translation(vPosition);
 
 	// 속도(방향 * 스피드) 설정
 	_particle_iter->vVelocity = (vDirection * fSpeed).TransNorm();
+
+
 
 	Safe_Release(pGameInstance);
 }
@@ -820,6 +855,11 @@ HRESULT CParticleSystem::Add_Components()
 		, ToPrototypeTag(TEXT("Prototype_Component_Texture"), TEXT("../../Resources/Effets/Textures/Noises/VFX_T_Noise04_D.png")).c_str()
 		, TEXT("Com_NoiseTexture")
 		, reinterpret_cast<CComponent**>(&m_pNoiseTexture)), E_FAIL);
+
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel
+		, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_RendererModuleDesc.wstrEmissionPath.c_str()).c_str()
+		, TEXT("Com_EmissionTexture")
+		, reinterpret_cast<CComponent**>(&m_pEmissionTexture)), E_FAIL);
 
 	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Shader_VtxRectColIdxInstance")
 		, TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader)), E_FAIL);
@@ -917,20 +957,36 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 	}
 	else
 	{
-		if (RandomBool(0.33f))
+		if (false == m_MainModuleDesc.isStartOtherColorRange)
 		{
-			_particle_iter->vColor = m_MainModuleDesc.vStartColor;
-			_particle_iter->vStartColor = m_MainModuleDesc.vStartColor;
+			if (RandomBool(0.5f))
+			{
+				_particle_iter->vColor = m_MainModuleDesc.vStartColor;
+				_particle_iter->vStartColor = m_MainModuleDesc.vStartColor;
+			}
+			else
+			{
+				_particle_iter->vColor = m_MainModuleDesc.vStartColor2;
+				_particle_iter->vStartColor = m_MainModuleDesc.vStartColor2;
+			}
 		}
-		else if(RandomBool(0.33f))
+		else
 		{
-			_particle_iter->vColor = m_MainModuleDesc.vStartColor2;
-			_particle_iter->vStartColor = m_MainModuleDesc.vStartColor2;
-		}
-		else 
-		{
-			_particle_iter->vColor = m_MainModuleDesc.vStartColor3;
-			_particle_iter->vStartColor = m_MainModuleDesc.vStartColor3;
+			if (RandomBool(0.33f))
+			{
+				_particle_iter->vColor = m_MainModuleDesc.vStartColor;
+				_particle_iter->vStartColor = m_MainModuleDesc.vStartColor;
+			}
+			else if (RandomBool(0.33f))
+			{
+				_particle_iter->vColor = m_MainModuleDesc.vStartColor2;
+				_particle_iter->vStartColor = m_MainModuleDesc.vStartColor2;
+			}
+			else
+			{
+				_particle_iter->vColor = m_MainModuleDesc.vStartColor3;
+				_particle_iter->vStartColor = m_MainModuleDesc.vStartColor3;
+			}
 		}
 	}
 	//_particle_iter->fAngle = m_MainModuleDesc.f
@@ -1017,6 +1073,51 @@ void CParticleSystem::Restart()
 	m_ShapeModuleDesc.Restart();
 	m_RendererModuleDesc.Restart();
 }
+HRESULT CParticleSystem::Save_Components(const _tchar* _pDirectoryPath)
+{
+	fs::path fsFilePath = _pDirectoryPath;
+	fsFilePath = fsFilePath / TEXT("ComponentData.ptc");
+
+	HANDLE hFile = CreateFile(fsFilePath.wstring().data()
+		, GENERIC_WRITE
+		, 0
+		, 0
+		, CREATE_ALWAYS
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	_ulong dwByte = 0;
+	m_pTransform->Write_File(hFile, &dwByte);
+	CloseHandle(hFile);
+	return S_OK;
+}
+HRESULT CParticleSystem::Load_Components(const _tchar* _pDirectoryPath)
+{
+	fs::path fsFilePath = _pDirectoryPath;
+	fsFilePath = fsFilePath / TEXT("ComponentData.ptc");
+	if (false == fs::exists(fsFilePath))
+		return S_OK;
+	
+	HANDLE hFile = CreateFile(fsFilePath.wstring().data()
+		, GENERIC_READ
+		, 0
+		, 0
+		, OPEN_EXISTING
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	_ulong dwByte = 0;
+	m_pTransform->Read_File(hFile, &dwByte);
+	CloseHandle(hFile);
+
+	return S_OK;
+}
 CParticleSystem* CParticleSystem::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath, _uint m_iLevel)
 {
 	CParticleSystem* pInstance = new CParticleSystem(_pDevice, _pContext);
@@ -1053,6 +1154,7 @@ void CParticleSystem::Free()
 		Safe_Release(m_pNormalTexture);
 		Safe_Release(m_pGradientTexture);
 		Safe_Release(m_pNoiseTexture);
+		Safe_Release(m_pEmissionTexture);
 		Safe_Release(m_pBuffer);
 		Safe_Release(m_pShader);
 		Safe_Release(m_pModel);

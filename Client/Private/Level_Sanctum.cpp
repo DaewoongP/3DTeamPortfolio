@@ -15,6 +15,7 @@ HRESULT CLevel_Sanctum::Initialize()
 	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_Monsters(TEXT("Layer_Monster")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Events(TEXT("Layer_Event")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Layer_MapEffect(TEXT("Layer_Particle")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Shader(), E_FAIL);
 	
 	BEGININSTANCE;
@@ -90,10 +91,57 @@ HRESULT CLevel_Sanctum::Ready_Layer_Monsters(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+	Matrix = XMMatrixRotationY(XMConvertToRadians(41.f)) * XMMatrixTranslation(-8.1f, 2.2f, 173.7f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_DarkWizard_Spawn"), pLayerTag, TEXT("Spawn_0"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Spawn_0)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	Matrix = XMMatrixRotationY(XMConvertToRadians(-63.f)) * XMMatrixTranslation(5.6f, 1.2f, 176.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_DarkWizard_Spawn"), pLayerTag, TEXT("Spawn_1"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Spawn_1)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	Matrix = XMMatrixRotationY(XMConvertToRadians(23.f)) * XMMatrixTranslation(-4.75f, 2.45f, 171.3f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_DarkWizard_Spawn"), pLayerTag, TEXT("Spawn_2"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Spawn_2)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	Matrix = XMMatrixRotationY(XMConvertToRadians(-27.f)) * XMMatrixTranslation(2.3f, 3.2f, 171.1f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_DarkWizard_Spawn"), pLayerTag, TEXT("Spawn_3"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Spawn_3)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
 	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Sanctum.mon"));
 
 	ENDINSTANCE;
 
+	return S_OK;
+}
+
+HRESULT CLevel_Sanctum::Ready_Layer_MapEffect(const _tchar* pLayerTag)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_MapParticle_Sanctum_CircularRocks01"), pLayerTag, TEXT("GameObject_MapEffect_CircularRocks"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_MapEffect_CircularRocks)");
+		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
 	return S_OK;
 }
 
@@ -192,17 +240,69 @@ HRESULT CLevel_Sanctum::Load_MapObject(const _tchar* pObjectFilePath)
 		}
 		BEGININSTANCE;
 
-		_tchar wszobjName[MAX_PATH] = { 0 };
-		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (iObjectNum));
+		// 읽어온 태그에서 모델이름 추출
+		wstring ws(MapObjectDesc.wszTag);
+		size_t findIndex = ws.find(TEXT("Model_")) + 6;
 
-		if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM,
-			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_BackGround"),
-			wszobjName, &MapObjectDesc)))
+		wstring modelName = ws.substr(findIndex);
+
+		// 비교해야되는 문자열
+		wstring wsLightStand(TEXT("SM_SanctumDun_LightStand_A"));
+		wstring wsSanctumDoorL(TEXT("SM_SanctumDun_Door_Repository__L"));
+		wstring wsSanctumDoorR(TEXT("SM_SanctumDun_Door_Repository__R"));
+
+		// 화로
+		if (0 == lstrcmp(modelName.c_str(), wsLightStand.c_str()))
 		{
-			MSG_BOX("Failed to Clone MapObject");
-			ENDINSTANCE;
-			return E_FAIL;
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_LightStand_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM,
+				TEXT("Prototype_GameObject_LightStand"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone LightStand");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
 		}
+
+		// 생텀 도어
+		if (0 == lstrcmp(modelName.c_str(), wsSanctumDoorL.c_str()) || 
+			0 == lstrcmp(modelName.c_str(), wsSanctumDoorR.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+
+			if(0 == lstrcmp(modelName.c_str(), wsSanctumDoorL.c_str()))
+				_stprintf_s(wszobjName, TEXT("GameObject_Sanctum_Door_Left"));
+
+			else
+				_stprintf_s(wszobjName, TEXT("GameObject_Sanctum_Door_Right"));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM,
+				TEXT("Prototype_GameObject_Sancutm_Door"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone SanctumDoor");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}
+
+		else
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM,
+				TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone MapObject");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}		
 
 		++iObjectNum; ENDINSTANCE;
 	}
@@ -214,7 +314,7 @@ HRESULT CLevel_Sanctum::Load_MapObject(const _tchar* pObjectFilePath)
 
 HRESULT CLevel_Sanctum::Load_MapObject_Ins(const _tchar* pObjectFilePath)
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 HRESULT CLevel_Sanctum::Load_Monsters(const wstring& wstrMonsterFilePath)

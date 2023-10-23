@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 
 #include "Player.h"
+#include "UI_Damage.h"
 #include "UI_Group_Enemy_HP.h"
 
 CEnemy::CEnemy(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -87,7 +88,8 @@ void CEnemy::Late_Tick(_float fTimeDelta)
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
+		if(false == m_isDissolve)
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
 #ifdef _DEBUG
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
 #endif // _DEBUG
@@ -172,7 +174,7 @@ HRESULT CEnemy::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatri
 				throw TEXT("Bind_BoneMatrices");
 
 			if (FAILED(m_pShadowShaderCom->Begin("Shadow")))
-				throw TEXT("Shader Begin AnimMesh");
+				throw TEXT("Shader Begin Shadow");
 
 			if (FAILED(m_pModelCom->Render(i)))
 				throw TEXT("Model Render");
@@ -273,9 +275,24 @@ HRESULT CEnemy::Add_Components()
 			TEXT("Com_RootBehavior"), reinterpret_cast<CComponent**>(&m_pRootBehavior))))
 			throw TEXT("Com_RootBehavior");
 
+		/* For.Dissolve_Texture */
 		m_pDissolveTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/VFX/Textures/Noises/VFX_T_NoiseGreypack02_D.png"));
 		if (nullptr == m_pDissolveTexture)
 			throw TEXT("m_pDissolveTexture is nullptr");
+
+		/* For.UI_Damage */
+		CUI_DamageFont::DAMAGEFONTDESC DamageDesc;
+		DamageDesc.m_vColor = _float4(1.f, 1.f, 1.f, 0.f);
+		DamageDesc.m_fRotation = 0.f;
+		DamageDesc.m_vOrigin = { 0.f, 0.f };
+		DamageDesc.m_vMinScale = { 0.5f, 0.5f };
+		DamageDesc.m_vMaxScale = { 1.f, 1.f };
+		DamageDesc.m_fLifeTime = { 0.7f };
+		DamageDesc.m_fMoveSpeed = { 2.f };
+		DamageDesc.m_fAlphaSpeed = { 0.1f };
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Damage"),
+			TEXT("Com_UI_Damage"), reinterpret_cast<CComponent**>(&m_pUI_Damage), &DamageDesc)))
+			throw TEXT("Failed m_pUI_Damage");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -584,6 +601,12 @@ _bool CEnemy::isCombo(const _uint& iType)
 	return ReturnData;
 }
 
+void CEnemy::Print_Damage_Font(const _int& iDamage)
+{
+	if (nullptr != m_pHitMatrix && nullptr != m_pUI_Damage)
+		m_pUI_Damage->Add_Font(iDamage, XMVector3TransformCoord(m_pHitMatrix->Translation(), m_pTransform->Get_WorldMatrix()));
+}
+
 _bool CEnemy::isControlSpell(const _uint& iType)
 {
 	if (BUFF_LEVIOSO & iType)
@@ -664,22 +687,20 @@ void CEnemy::Free()
 {
 	__super::Free();
 
-	if (true == m_isCloned)
-	{
-		Safe_Release(m_pRootBehavior);
-		Safe_Release(m_pUI_HP);
-		Safe_Release(m_pHealth);
-		Safe_Release(m_pModelCom);
-		Safe_Release(m_pRenderer);
-		Safe_Release(m_pShaderCom);
-		Safe_Release(m_pRigidBody);
-		Safe_Release(m_pShadowShaderCom);
-		Safe_Release(m_pDissolveTexture);
+	Safe_Release(m_pRootBehavior);
+	Safe_Release(m_pUI_HP);
+	Safe_Release(m_pHealth);
+	Safe_Release(m_pModelCom);
+	Safe_Release(m_pRenderer);
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pRigidBody);
+	Safe_Release(m_pShadowShaderCom);
+	Safe_Release(m_pDissolveTexture);
+	Safe_Release(m_pUI_Damage);
 
-		for (auto iter = m_MagicTickDesc.begin(); iter != m_MagicTickDesc.end(); ++iter)
-		{
-			if (iter->second != nullptr)
-				Safe_Delete(iter->second);
-		}
+	for (auto iter = m_MagicTickDesc.begin(); iter != m_MagicTickDesc.end(); ++iter)
+	{
+		if (iter->second != nullptr)
+			Safe_Delete(iter->second);
 	}
 }

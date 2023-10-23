@@ -69,7 +69,7 @@ HRESULT CMagic::ResetMagicDesc(MAGICDESC SkillDesc)
 	return S_OK;
 }
 
-CMagicBall* CMagic::Magic_Cast(const CGameObject* pTarget, const CGameObject* pWeapon, COLLISIONFLAG eCollisionFlag,_bool PowerUp)
+CMagicBall* CMagic::Magic_Cast(const CGameObject* pTarget, const CGameObject* pWeapon, COLLISIONFLAG eCollisionFlag, COLLISIONFLAG eThisCollisionFlag, _bool PowerUp)
 {
 	if (m_fCurrentCoolTime > 0)
 		return nullptr;
@@ -80,6 +80,7 @@ CMagicBall* CMagic::Magic_Cast(const CGameObject* pTarget, const CGameObject* pW
 	ballInit.eMagicGroup = m_MagicDesc.eMagicGroup;
 	ballInit.eMagicTag = m_MagicDesc.eMagicTag;
 	ballInit.eMagicType = m_MagicDesc.eMagicType;
+	ballInit.eThisCollisionFlag = eThisCollisionFlag;
 	ballInit.eCollisionFlag = eCollisionFlag;
 	ballInit.iDamage = m_MagicDesc.iDamage;
 	ballInit.fLifeTime = m_MagicDesc.fLifeTime;

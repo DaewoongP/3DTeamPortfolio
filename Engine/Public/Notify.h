@@ -24,6 +24,7 @@ private:
 public:
 	_uint	Get_NotifyFrameCount() { return m_iNumKeyFrames; }
 	vector<pair<wstring, KEYFRAME*>>* Get_NotifyFrame() { return &m_KeyFrames; }
+	void Reset();
 
 public:
 	HRESULT Initialize();

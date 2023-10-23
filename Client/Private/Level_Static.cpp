@@ -12,8 +12,8 @@ HRESULT CLevel_Static::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pC
 	Safe_AddRef(m_pGameInstance);
 
 	FAILED_CHECK_RETURN(Ready_Layer_Player(TEXT("Layer_Player")), E_FAIL);
-	FAILED_CHECK_RETURN(Ready_Layer_Inventory(TEXT("Layer_Inventory")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_UI(TEXT("Layer_UI")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Layer_Inventory(TEXT("Layer_Inventory")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_FieldGuide_UI(TEXT("Layer_FieldGuide_UI")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_Menu_UI(TEXT("Layer_Menu_UI")), E_FAIL);
 	
@@ -182,6 +182,18 @@ HRESULT CLevel_Static::Add_Quests(ID3D11Device* pDevice, ID3D11DeviceContext* pC
 
 	FAILED_CHECK(pQuest_Manager->Add_Quest(TEXT("Quest_Save_Fig"), 
 		CQuest_Save_Fig::Create(pDevice, pContext)));
+
+	FAILED_CHECK(pQuest_Manager->Add_Quest(TEXT("Quest_Potion"),
+		CQuest_Potion::Create(pDevice, pContext)));
+
+	FAILED_CHECK(pQuest_Manager->Add_Quest(TEXT("Quest_Town"),
+		CQuest_Town::Create(pDevice, pContext)));
+
+	FAILED_CHECK(pQuest_Manager->Add_Quest(TEXT("Quest_Secret"),
+		CQuest_Secret::Create(pDevice, pContext)));
+
+	FAILED_CHECK(pQuest_Manager->Add_Quest(TEXT("Quest_Bone"),
+		CQuest_Bone::Create(pDevice, pContext)));
 
 	Safe_Release(pQuest_Manager);
 

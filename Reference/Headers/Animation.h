@@ -62,12 +62,7 @@ public:
 	void Set_OffsetPosition(float* pos) { m_vOffsetPosition.x = pos[0]; m_vOffsetPosition.y = pos[1]; m_vOffsetPosition.z = pos[2];}
 
 	// 애니메이션을 초기화 하는 함수
-	void Reset()
-	{
-		for (auto& iCurrentKeyFrame : m_ChannelCurrentKeyFrames)
-			iCurrentKeyFrame = 0;
-		m_fTimeAcc = 0.0f;
-	}
+	void Reset();
 	void TimeAccReset() { m_fTimeAcc = 0.0f; }
 	void Delete_Translation();
 	void Delete_Rotation();

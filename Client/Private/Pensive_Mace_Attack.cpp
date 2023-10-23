@@ -227,6 +227,7 @@ void CPensive_Mace_Attack::Tick_DrawMagic(_float fTimeDelta)
 
 void CPensive_Mace_Attack::Tick_CastMagic(_float fTimeDelta)
 {
+	m_pTransform->Set_Position((_float4x4(XMMatrixTranslation(0, 2, 0)) * m_pMeshEffect->Get_Transform()->Get_WorldMatrix()).Translation());
 	m_pMeshEffect->Get_Transform()->Set_WorldMatrix(_float4x4(XMMatrixScaling(3, 3, 3)) *
 		_float4x4(XMMatrixRotationQuaternion(XMQuaternionRotationRollPitchYaw(XMConvertToRadians(-90.f), 0.f, XMConvertToRadians(90.f)))) * m_CurrentWeaponMatrix);
 	Do_MagicBallState_To_Next();
@@ -234,8 +235,10 @@ void CPensive_Mace_Attack::Tick_CastMagic(_float fTimeDelta)
 
 void CPensive_Mace_Attack::Tick_Dying(_float fTimeDelta)
 {
+	m_pTransform->Set_Position((_float4x4(XMMatrixTranslation(0, 2, 0)) * m_pMeshEffect->Get_Transform()->Get_WorldMatrix()).Translation());
 	m_pMeshEffect->Get_Transform()->Set_WorldMatrix(_float4x4(XMMatrixScaling(3, 3, 3)) *
 		_float4x4(XMMatrixRotationQuaternion(XMQuaternionRotationRollPitchYaw(XMConvertToRadians(-90.f), 0.f, XMConvertToRadians(90.f)))) * m_CurrentWeaponMatrix);
+	
 	_bool isAlive = { false };
 	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_HIT].size(); i++)
 	{
@@ -326,7 +329,7 @@ HRESULT CPensive_Mace_Attack::Add_RigidBody()
 	RigidBodyDesc.fStaticFriction = 0.f;
 	RigidBodyDesc.fDynamicFriction = 0.f;
 	RigidBodyDesc.fRestitution = 0.f;
-	PxSphereGeometry SphereGeometry = PxSphereGeometry(6.f);
+	PxSphereGeometry SphereGeometry = PxSphereGeometry(3.f);
 	RigidBodyDesc.pGeometry = &SphereGeometry;
 	RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
 	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);

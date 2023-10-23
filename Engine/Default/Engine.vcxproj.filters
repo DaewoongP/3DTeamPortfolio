@@ -1336,9 +1336,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstance.hlsl">
       <Filter>01. Utility\98. ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Distortion.hlsl">
-      <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_RadialBlur.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\RadialBlur</Filter>
     </FxCompile>
@@ -1352,6 +1349,12 @@
       <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Rain.hlsl">
+      <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_LightShaft.hlsl">
+      <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Distortion.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
     </FxCompile>
   </ItemGroup>

@@ -1,4 +1,4 @@
-static float3 Gradiant[12] =
+static float3 arrayGradiant[12] =
 {
     { 1, 1, 0 },
     { 1, -1, 0 },
@@ -17,7 +17,7 @@ static float3 Gradiant[12] =
 float dotGridGradient2D(int ix, int iy, float x, float y)
 {
     int index = frac(dot(float2(ix, iy), float2(413.23, 635.21))) * 12; //random index
-    float3 grad = Gradiant[index];
+    float3 grad = arrayGradiant[index];
 
     return dot(grad, float3(x, y, 0));
 }
@@ -25,7 +25,7 @@ float dotGridGradient2D(int ix, int iy, float x, float y)
 float dotGridGradient3D(int3 pos, float3 fract)
 {
     int index = frac(dot(pos, float3(413.23, 635.21, 463.15))) * 12; //random index
-    float3 grad = Gradiant[index];
+    float3 grad = arrayGradiant[index];
 
     return dot(grad, fract);
 }
@@ -119,4 +119,20 @@ float FractalNoise3D(float3 xyz, float frequency)
 	//gray = (gray + 1)*0.5;
     gray = clamp(gray, 0, 1);
     return gray;
+}
+
+float FractalBrownianMotion(float3 position, int octaves, float persistence, float initialFrequency, float initialAmplitude) {
+    float total = 0;
+    float frequency = initialFrequency;
+    float amplitude = initialAmplitude;
+    float maxValue = 0;  // Used for normalizing result to 0.0 - 1.0
+
+    for (int i = 0; i < octaves; i++) {
+        total += PerlinNoise3D(position * frequency, frequency);
+        maxValue += amplitude;
+        frequency *= 2;
+        amplitude *= persistence;
+    }
+
+    return total / maxValue;
 }

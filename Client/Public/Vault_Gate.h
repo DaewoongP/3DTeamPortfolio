@@ -7,11 +7,11 @@ class CMesh;
 class CModel;
 class CShader;
 class CRenderer;
-class CRigidBody;
 END
 
 BEGIN(Client)
 
+class CLightStand;
 
 class CVault_Gate final : public CGameObject
 {
@@ -34,15 +34,12 @@ public:
 	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
-	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
-	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix) override;
 
 private:
 	CShader* m_pShader = { nullptr };
 	CShader* m_pShadowShader = { nullptr };
-	CRigidBody* m_pRigidBody = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 	CModel* m_pModel = { nullptr };
 
@@ -52,7 +49,8 @@ private:
 	_float			m_fRadius = { 0.f };
 
 	_bool			m_isCheckOnce = { true }; // 한번만 상호작용 가능
-	_bool			m_isCol_with_Player = { false }; // 플레이어와 충돌 여부
+	
+	vector<CLightStand*> m_pLightStands; // 맵에 존재하는 화로들
 
 private:
 	MAPOBJECTDESC	m_ObjectDesc;
@@ -62,6 +60,7 @@ private:
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix);
 	void	Check_MinMaxPoint(_float3 vPoint);
+	void	Check_FireOn();
 
 public:
 	static CVault_Gate* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

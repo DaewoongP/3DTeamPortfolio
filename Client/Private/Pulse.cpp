@@ -48,6 +48,10 @@ HRESULT CPulse::Initialize(void* pArg)
 
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 
+	m_CollisionRequestDesc.eType = CEnemy::ATTACK_HEAVY;
+	m_CollisionRequestDesc.iDamage = 50;
+	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
+
 	return S_OK;
 }
 
@@ -62,7 +66,7 @@ void CPulse::Tick(_float fTimeDelta)
 	if (m_fLifeTime <= m_fTimeAcc)
 	{
 		m_isEnable = false;
-		m_pRigidBody->Disable_Collision("Pulse");
+		m_pRigidBody->Disable_Collision("Attack_Pulse");
 		return;
 	}
 
@@ -106,7 +110,8 @@ void CPulse::Reset(const PULSEINITDESC& ResetDesc)
 	m_fLifeTime = ResetDesc.fLifeTime;
 	m_fTimeAcc = 0.f;
 	m_isEnable = true;
-	m_pRigidBody->Enable_Collision("Pulse", this);
+
+	m_pRigidBody->Enable_Collision("Attack_Pulse", this, &m_CollisionRequestDesc);
 }
 
 HRESULT CPulse::Add_Components()
@@ -128,7 +133,7 @@ HRESULT CPulse::Add_Components()
 	RigidBodyDesc.pOwnerObject = this;
 	RigidBodyDesc.eThisCollsion = COL_MAGIC;
 	RigidBodyDesc.eCollisionFlag = COL_PLAYER;
-	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Pulse");
+	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Attack_Pulse");
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 	{
@@ -149,7 +154,6 @@ HRESULT CPulse::Add_Components()
 	}
 
 #endif // _DEBUG
-
 
 	return S_OK;
 }

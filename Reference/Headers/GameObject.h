@@ -22,6 +22,7 @@ protected:
 public:
 	CTransform* Get_Transform() const { return m_pTransform; }
 	_bool isDead() const { return m_isDead; }
+	// 주의) Obj_Dead처리가 아닙니다.
 	void Set_Dead() { m_isDead = true; }
 	
 	//모델의 영점이 발이기 때문에 Offset을 두어 중점으로 올리려 합니다.

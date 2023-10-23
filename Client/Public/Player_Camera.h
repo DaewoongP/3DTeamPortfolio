@@ -45,7 +45,9 @@ private:
 	//for. Get, Set
 public:
 	_float3 Get_CamLookXZ();
+	_float3 Get_CamLookYZ();
 	_float3 Get_CamRightXZ();
+	_float3 Get_CamRightYZ();
 
 	CTransform* Get_TransformPtr() { return m_pTransform; }
 public:

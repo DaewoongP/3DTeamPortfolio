@@ -10,6 +10,7 @@ CMeshEffect::CMeshEffect(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	m_Path[TEXTURE_PATH] = TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/T_Default_Material_Grid_M.png");
 	m_Path[ALPHA_CLIP_TEXTURE_PATH] = TEXT("../../Resources/Effects/Textures/Gradients/Default_Gradient.png");
 	m_Path[MODEL_PATH] = TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat");
+	m_Path[EMISSION_PATH] = TEXT("../../Resources/Effects/Textures/Default_Normal.png");
 }
 
 CMeshEffect::CMeshEffect(const CMeshEffect& _rhs)
@@ -55,6 +56,11 @@ CMeshEffect::CMeshEffect(const CMeshEffect& _rhs)
 	, m_strPassName(_rhs.m_strPassName)
 	, m_strCurAnim(_rhs.m_strCurAnim)
 	, m_PivotMatrix(_rhs.m_PivotMatrix)
+	, m_isEmission(_rhs.m_isEmission)
+	, m_fFrequency(_rhs.m_fFrequency)
+	, m_vRemap(_rhs.m_vRemap)
+	, m_vEmissionColor(_rhs.m_vEmissionColor)
+	, m_strEmissionChannel(_rhs.m_strEmissionChannel)
 	
 {
 	for (_uint i = 0; i < PATH_END; ++i)
@@ -78,6 +84,7 @@ HRESULT CMeshEffect::Initialize_Prototype(const _tchar* pFilePath, _uint _iLevel
 		if (0 != lstrcmp(pFilePath, TEXT("")))
 		{
 			MSG_BOX("Failed to Load MeshEffect");
+			return E_FAIL;
 		}
 	}
 
@@ -96,6 +103,14 @@ HRESULT CMeshEffect::Initialize_Prototype(const _tchar* pFilePath, _uint _iLevel
 		pGameInstance->Add_Prototype(m_iLevel
 			, ProtoTag.data()
 			, CTexture::Create(m_pDevice, m_pContext, m_Path[TEXTURE_PATH].c_str()));
+	}
+
+	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_Path[EMISSION_PATH].c_str());
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, ProtoTag.data()))
+	{
+		pGameInstance->Add_Prototype(m_iLevel
+			, ProtoTag.data()
+			, CTexture::Create(m_pDevice, m_pContext, m_Path[EMISSION_PATH].c_str()));
 	}
 
 	// 필요한 텍스처 조사하고 원본 추가하는 로직
@@ -298,6 +313,11 @@ void CMeshEffect::Set_Path(wstring wstrPath, PATH ePath)
 	m_Path[ePath] = wstrPath;
 }
 
+_bool CMeshEffect::IsEnable()
+{
+	return m_isEnble;
+}
+
 HRESULT CMeshEffect::Add_Components()
 {
 	/* For.Com_Renderer */
@@ -311,6 +331,9 @@ HRESULT CMeshEffect::Add_Components()
 	/* For.Com_MainTexture */
 	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_Path[TEXTURE_PATH].c_str()).c_str()
 		, TEXT("Com_MainTexture"), reinterpret_cast<CComponent**>(&m_pTexture)), E_FAIL);
+
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_Path[EMISSION_PATH].c_str()).c_str()
+		, TEXT("Com_EmissionTexture"), reinterpret_cast<CComponent**>(&m_pEmissionTexture)), E_FAIL);
 
 	/* For.Com_AlphaClipTexture */
 	//FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_Path[TEXTURE_PATH].c_str()).c_str()
@@ -351,11 +374,35 @@ HRESULT CMeshEffect::Setup_ShaderResources()
 	if (FAILED(m_pShader->Bind_RawValue("g_vColor", &m_vColor, sizeof(_float4))))
 		return E_FAIL;
 
+	_float fTimeAcc = pGameInstance->Get_World_TimeAcc();
+	if (FAILED(m_pShader->Bind_RawValue("g_fTimeAcc", &fTimeAcc, sizeof(fTimeAcc))))
+		return E_FAIL;
+
 	if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_MaterialTexture")))
 		return E_FAIL;
 
-	//if (FAILED(m_pClipTexture->Bind_ShaderResource(m_pShader, "g_ClipTexture")))
-	//	return E_FAIL;
+	if (FAILED(m_pShader->Bind_RawValue("g_isEmission", &m_isEmission, sizeof(m_isEmission))))
+		return E_FAIL;
+
+	if (m_isEmission)
+	{
+		if (FAILED(m_pEmissionTexture->Bind_ShaderResource(m_pShader, "g_EmissionTexture")))
+			return E_FAIL;
+		if (FAILED(m_pShader->Bind_RawValue("g_fFrequency", &m_fFrequency, sizeof(m_fFrequency))))
+			return E_FAIL;
+		if (FAILED(m_pShader->Bind_RawValue("g_vRemap", &m_vRemap, sizeof(m_vRemap))))
+			return E_FAIL;
+		if (FAILED(m_pShader->Bind_RawValue("g_vEmissionColor", &m_vEmissionColor, sizeof(m_vEmissionColor))))
+			return E_FAIL;
+
+		_int iEmissionChannel = { 3 };
+		if (m_strEmissionChannel == "Red") { iEmissionChannel = 0; }
+		else if (m_strEmissionChannel == "Green") { iEmissionChannel = 1; }
+		else if (m_strEmissionChannel == "Blue") { iEmissionChannel = 2; }
+		else if (m_strEmissionChannel == "Alpha") { iEmissionChannel = 3; }
+		if (FAILED(m_pShader->Bind_RawValue("g_iEmissionChannel", &iEmissionChannel, sizeof(_int))))
+			return E_FAIL;
+	}
 
 	_int iClipChannel = { 3 };
 	if (m_strClipChannel == "Red") { iClipChannel = 0; }
@@ -370,13 +417,6 @@ HRESULT CMeshEffect::Setup_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_RawValue("g_isFlutter", &m_isFlutter, sizeof(m_isFlutter))))
-		return E_FAIL;
-
-	_float3 vTimeAcc; 
-	vTimeAcc.x += pGameInstance->Get_World_TimeAcc();
-	vTimeAcc.y += vTimeAcc.x + 1.f;
-	vTimeAcc.z += vTimeAcc.x + 2.f;
-	if (FAILED(m_pShader->Bind_RawValue("g_vTimeAcc", &vTimeAcc, sizeof(vTimeAcc))))
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_RawValue("g_vStrength", &m_vStrength, sizeof(m_vStrength))))
@@ -419,8 +459,11 @@ HRESULT CMeshEffect::Save(const _tchar* pFilePath)
 	WriteFile(hFile, &m_fLifeTime, sizeof(m_fLifeTime), &dwByte, nullptr);
 	WriteFile(hFile, &m_eAnimType, sizeof(m_eAnimType), &dwByte, nullptr);
 	WriteFile(hFile, m_strPassName.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
-	for (auto& wstrPath : m_Path)
-		WriteFile(hFile, wstrPath.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	for (_uint i = 0; i < 3; ++i)
+	{
+		WriteFile(hFile, m_Path[i].data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	}
+
 	WriteFile(hFile, &m_isClipTexture, sizeof(_bool), &dwByte, nullptr);
 	WriteFile(hFile, &m_PivotMatrix, sizeof(_float4x4), &dwByte, nullptr);
 	WriteFile(hFile, m_strCurAnim.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
@@ -435,6 +478,13 @@ HRESULT CMeshEffect::Save(const _tchar* pFilePath)
 	WriteFile(hFile, &m_isDiffuse, sizeof(m_isDiffuse), &dwByte, nullptr);
 	WriteFile(hFile, &m_isFlutter, sizeof(m_isFlutter), &dwByte, nullptr);
 	WriteFile(hFile, &m_vStrength, sizeof(m_vStrength), &dwByte, nullptr);
+	WriteFile(hFile, m_Path[EMISSION_PATH].data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, &m_isEmission, sizeof(m_isEmission), &dwByte, nullptr);
+	WriteFile(hFile, &m_fFrequency, sizeof(m_fFrequency), &dwByte, nullptr);
+	WriteFile(hFile, &m_vRemap, sizeof(m_vRemap), &dwByte, nullptr);
+	WriteFile(hFile, &m_vEmissionColor, sizeof(m_vEmissionColor), &dwByte, nullptr);
+	WriteFile(hFile, m_strEmissionChannel.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+
 	CloseHandle(hFile);
 
 	return S_OK;
@@ -477,7 +527,7 @@ HRESULT CMeshEffect::Load(const _tchar* pFilePath)
 	ReadFile(hFile, &m_eAnimType, sizeof(m_eAnimType), &dwByte, nullptr);
 	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	m_strPassName = szBuffer;
-	for (_uint i = 0; i < PATH_END; ++i)
+	for (_uint i = 0; i < 3; ++i)
 	{
 		ReadFile(hFile, wszBuffer, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 		m_Path[i] = wszBuffer;
@@ -498,6 +548,20 @@ HRESULT CMeshEffect::Load(const _tchar* pFilePath)
 	ReadFile(hFile, &m_isDiffuse, sizeof(m_isDiffuse), &dwByte, nullptr);
 	ReadFile(hFile, &m_isFlutter, sizeof(m_isFlutter), &dwByte, nullptr);
 	ReadFile(hFile, &m_vStrength, sizeof(m_vStrength), &dwByte, nullptr);
+	ReadFile(hFile, wszBuffer, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	if (0 == dwByte)
+	{
+		CloseHandle(hFile);
+		return S_OK;
+	}
+
+	m_Path[EMISSION_PATH] = wszBuffer;
+	ReadFile(hFile, &m_isEmission, sizeof(m_isEmission), &dwByte, nullptr);
+	ReadFile(hFile, &m_fFrequency, sizeof(m_fFrequency), &dwByte, nullptr);
+	ReadFile(hFile, &m_vRemap, sizeof(m_vRemap), &dwByte, nullptr);
+	ReadFile(hFile, &m_vEmissionColor, sizeof(m_vEmissionColor), &dwByte, nullptr);
+	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	m_strEmissionChannel = szBuffer;
 	CloseHandle(hFile);
 
 	return S_OK;
@@ -533,6 +597,7 @@ void CMeshEffect::Free()
 	{
 		Safe_Release(m_pTexture);
 		Safe_Release(m_pClipTexture);
+		Safe_Release(m_pEmissionTexture);
 		Safe_Release(m_pModel);
 		Safe_Release(m_pShader);
 		Safe_Release(m_pRenderer);

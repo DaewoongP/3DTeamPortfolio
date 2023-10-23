@@ -1,6 +1,8 @@
 #include "..\Public\Modules.h"
 #include "ParticleSystem.h"
 #include "GameInstance.h"
+#include "Shader.h"
+#include "Texture.h"
 void MODULE::Save(HANDLE hFile, _ulong& dwByte)
 {
 	WriteFile(hFile, &isActivate, sizeof isActivate, &dwByte, nullptr);
@@ -532,6 +534,13 @@ HRESULT RENDERER_MODULE::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &vDeltaOffset, sizeof(vDeltaOffset), &dwByte, nullptr);
 	WriteFile(hFile, &vStartTiling, sizeof(vStartTiling), &dwByte, nullptr);
 	WriteFile(hFile, &vDeltaTiling, sizeof(vDeltaTiling), &dwByte, nullptr);
+
+	WriteFile(hFile, &isEmission, sizeof(isEmission), &dwByte, nullptr);
+	WriteFile(hFile, &fEmissionFrequency, sizeof(fEmissionFrequency), &dwByte, nullptr);
+	WriteFile(hFile, &vEmissionRemap, sizeof(vEmissionRemap), &dwByte, nullptr);
+	WriteFile(hFile, &vEmissionColor, sizeof(vEmissionColor), &dwByte, nullptr);
+	WriteFile(hFile, strEmissionChannel.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, wstrEmissionPath.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 	CloseHandle(hFile);
 	return S_OK;
 }
@@ -579,6 +588,17 @@ HRESULT RENDERER_MODULE::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &vDeltaOffset, sizeof(vDeltaOffset), &dwByte, nullptr);
 	ReadFile(hFile, &vStartTiling, sizeof(vStartTiling), &dwByte, nullptr);
 	ReadFile(hFile, &vDeltaTiling, sizeof(vDeltaTiling), &dwByte, nullptr);
+
+	ReadFile(hFile, &isEmission, sizeof(isEmission), &dwByte, nullptr);
+	ReadFile(hFile, &fEmissionFrequency, sizeof(fEmissionFrequency), &dwByte, nullptr);
+	ReadFile(hFile, &vEmissionRemap, sizeof(vEmissionRemap), &dwByte, nullptr);
+	ReadFile(hFile, &vEmissionColor, sizeof(vEmissionColor), &dwByte, nullptr);
+	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	if(true == isEmission)
+		strEmissionChannel = szBuffer;
+	ReadFile(hFile, wszBuffer, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	if (true == isEmission)
+		wstrEmissionPath = wszBuffer;
 	CloseHandle(hFile);
 	return S_OK;
 }
@@ -597,13 +617,34 @@ void RENDERER_MODULE::Restart()
 	vTililing = vStartTiling;
 }
 
-HRESULT RENDERER_MODULE::Bind_Values(CShader* pShader)
+HRESULT RENDERER_MODULE::Bind_Values(CShader* pShader, CTexture* pEmissionTexture)
 {
 	if (FAILED(pShader->Bind_RawValue("g_vOffset", &vOffset, sizeof(_float2))))
 		return E_FAIL;
 	if (FAILED(pShader->Bind_RawValue("g_vTililing", &vTililing, sizeof(_float2))))
 		return E_FAIL;
 
+	if (FAILED(pShader->Bind_RawValue("g_isEmission", &isEmission, sizeof(isEmission))))
+		return E_FAIL;
+	if (isEmission)
+	{
+		if (FAILED(pEmissionTexture->Bind_ShaderResource(pShader, "g_EmissionTexture")))
+			return E_FAIL;
+		if (FAILED(pShader->Bind_RawValue("g_fEmissionFrequency", &fEmissionFrequency, sizeof(fEmissionFrequency))))
+			return E_FAIL;
+		if (FAILED(pShader->Bind_RawValue("g_vEmissionRemap", &vEmissionRemap, sizeof(vEmissionRemap))))
+			return E_FAIL;
+		if (FAILED(pShader->Bind_RawValue("g_vEmissionColor", &vEmissionColor, sizeof(vEmissionColor))))
+			return E_FAIL;
+
+		_int iEmissionChannel = { 0 };
+		if (strEmissionChannel == "Red") { iEmissionChannel = 0; }
+		else if (strEmissionChannel == "Green") { iEmissionChannel = 1; }
+		else if (strEmissionChannel == "Blue") { iEmissionChannel = 2; }
+		else if (strEmissionChannel == "Alpha") { iEmissionChannel = 3; }
+		if (FAILED(pShader->Bind_RawValue("g_iEmissionChannel", &iEmissionChannel, sizeof(_int))))
+			return E_FAIL;
+	}
 	return S_OK;
 }
 
@@ -837,9 +878,9 @@ HRESULT ROTATION_OVER_LIFETIME_MODULE::Save(const _tchar* _pDirectoyPath)
 	CloseHandle(hFile);
 	return S_OK;
 }
-HRESULT ROTATION_OVER_LIFETIME_MODULE::Load(const _tchar* _pDirectoyPath)
+HRESULT ROTATION_OVER_LIFETIME_MODULE::Load(const _tchar* _pDirectoryPath)
 {
-	fs::path fsFilePath = _pDirectoyPath;
+	fs::path fsFilePath = _pDirectoryPath;
 	fsFilePath = fsFilePath / TEXT("RotationOverLifeTimeModule.ptc");
 	if (false == fs::exists(fsFilePath))
 		return S_OK;
@@ -1229,6 +1270,102 @@ void TEXTURE_SHEET_ANIMATION::CalculateMaxSize()
 	iMaxIndex = iWidthLength * iHeightLength - 1;
 }
 
+HRESULT NOISE_MODULE::Save(const _tchar* _pDirectoyPath)
+{
+	fs::path fsFilePath = _pDirectoyPath;
+	fsFilePath = fsFilePath / TEXT("NoiseModule.ptc");
+
+	HANDLE hFile = CreateFile(fsFilePath.wstring().data()
+		, GENERIC_WRITE
+		, 0
+		, 0
+		, CREATE_ALWAYS
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	_ulong dwByte = 0;
+
+	__super::Save(hFile, dwByte);
+
+	WriteFile(hFile, &fPersistence, sizeof fPersistence, &dwByte, nullptr);
+	WriteFile(hFile, &fFrequency, sizeof fFrequency, &dwByte, nullptr);
+	WriteFile(hFile, &fAmplitude, sizeof fAmplitude, &dwByte, nullptr);
+	WriteFile(hFile, &iNumOctaves, sizeof iNumOctaves, &dwByte, nullptr);
+	WriteFile(hFile, &vRemap, sizeof vRemap, &dwByte, nullptr);
+	WriteFile(hFile, &vPositionAmount, sizeof vPositionAmount, &dwByte, nullptr);
+	WriteFile(hFile, &vSizeAmount, sizeof vSizeAmount, &dwByte, nullptr);
+
+	CloseHandle(hFile);
+	return S_OK;
+}
+
+HRESULT NOISE_MODULE::Load(const _tchar* _pDirectoyPath)
+{
+	fs::path fsFilePath = _pDirectoyPath;
+	fsFilePath = fsFilePath / TEXT("NoiseModule.ptc");
+	if (false == fs::exists(fsFilePath))
+		return S_OK;
+
+	HANDLE hFile = CreateFile(fsFilePath.wstring().data()
+		, GENERIC_READ
+		, 0
+		, 0
+		, OPEN_EXISTING
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	_ulong dwByte = 0;
+	_char szBuffer[MAX_PATH];
+	__super::Load(hFile, dwByte);
+
+	ReadFile(hFile, &fPersistence, sizeof fPersistence, &dwByte, nullptr);
+	ReadFile(hFile, &fFrequency, sizeof fFrequency, &dwByte, nullptr);
+	ReadFile(hFile, &fAmplitude, sizeof fAmplitude, &dwByte, nullptr);
+	ReadFile(hFile, &iNumOctaves, sizeof iNumOctaves, &dwByte, nullptr);
+	ReadFile(hFile, &vRemap, sizeof vRemap, &dwByte, nullptr);
+	ReadFile(hFile, &vPositionAmount, sizeof vPositionAmount, &dwByte, nullptr);
+	ReadFile(hFile, &vSizeAmount, sizeof vSizeAmount, &dwByte, nullptr);
+
+	CloseHandle(hFile);
+	// 파티클 텍스처 시트 구현해!
+	return S_OK;
+}
+
+HRESULT NOISE_MODULE::Bind_Values(CShader* pShader)
+{
+	if (false == isActivate)
+	{
+		if (FAILED(pShader->Bind_RawValue("g_isNoiseActivated", &isActivate, sizeof(isActivate))))
+			return E_FAIL;
+
+		return S_OK;
+	}
+	if (FAILED(pShader->Bind_RawValue("g_isNoiseActivated", &isActivate, sizeof(isActivate))))
+		return E_FAIL;
+	if(FAILED(pShader->Bind_RawValue("g_fAmplitude", &fAmplitude, sizeof(fAmplitude))))
+		return E_FAIL;
+	if(FAILED(pShader->Bind_RawValue("g_fFrequency", &fFrequency, sizeof(fFrequency))))
+		return E_FAIL;
+	if(FAILED(pShader->Bind_RawValue("g_iNumOctaves", &iNumOctaves, sizeof(iNumOctaves))))
+		return E_FAIL;
+	if(FAILED(pShader->Bind_RawValue("g_fPersistence", &fPersistence, sizeof(fPersistence))))
+		return E_FAIL;
+	if(FAILED(pShader->Bind_RawValue("g_vRemap", &vRemap, sizeof(vRemap))))
+		return E_FAIL;
+	if(FAILED(pShader->Bind_RawValue("g_vPositionAmount", &vPositionAmount, sizeof(vPositionAmount))))
+		return E_FAIL;
+	if(FAILED(pShader->Bind_RawValue("g_vSizeAmount", &vSizeAmount, sizeof(vSizeAmount))))
+		return E_FAIL;
+	
+	return S_OK;
+}
+
 void PARTICLE::Restart()
 {
 	fAge = { 0.f };
@@ -1245,3 +1382,5 @@ void PARTICLE::Restart()
 	iCurIndex = { 0 };
 	isAlive = { true };
 }
+
+

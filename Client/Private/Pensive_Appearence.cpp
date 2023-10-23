@@ -44,7 +44,16 @@ void CPensive_Appearence::OnStateTick()
 {
 	if (true == m_StateMachineDesc.pOwnerModel->Is_Finish_Animation())
 	{
-		Set_StateMachine(TEXT("Idle"));
+		if (m_iAppearAnimIndex == 0)
+		{
+			Change_Animation(TEXT("Idle"));
+		}
+		else 
+		{
+			Set_StateMachine(TEXT("Idle"));
+		}
+		m_iAppearAnimIndex++;
+		
 	}
 }
 

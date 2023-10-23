@@ -28,7 +28,7 @@ public:
 		OUTFIT,
 		GEARSLOT_END
 	};
-	
+
 private:
 	explicit CMenu_Gear(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CMenu_Gear(const CMenu_Gear& rhs);
@@ -61,6 +61,9 @@ private:
 
 private:
 	CUI::UIDESC Load_File(const HANDLE hFile);
+
+public:
+	void		Set_GearTexture(vector<CItem*>* pPlayerCurItem);
 
 private:
 	CShader* m_pShaderCom = { nullptr };

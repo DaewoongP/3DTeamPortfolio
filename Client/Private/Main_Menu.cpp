@@ -366,6 +366,12 @@ void CMain_Menu::Set_Menu(_uint iIndex)
 	m_pTexts[m_iSelectedText]->Set_Clicked(true);
 }
 
+void CMain_Menu::Set_Gear(vector<CItem*>* pPlayerCurItem)
+{
+	if (nullptr != m_pGear)
+		m_pGear->Set_GearTexture(pPlayerCurItem);
+}
+
 void CMain_Menu::Set_SelectedText()
 {
 	_int iIndex = 0;
@@ -389,11 +395,17 @@ void CMain_Menu::Set_SelectedText()
 			m_eCurMenu = (MENU)m_iSelectedText;
 			m_pTexts[m_iSelectedText]->Set_Clicked(true);
 			m_pPlayerInventory->Set_Open(false);
+			if (iIndex == 0)
+			{
+				m_pGear->Set_GearTexture(m_pPlayerInventory->Get_CurItem());
+			}
 			if (iIndex == 1)
 			{
 				m_pPlayerInventory->Set_Open(true);
 				m_pPlayerInventory->Set_CurItemtype(ITEMTYPE::RESOURCE);
 			}
+
+
 		}
 		iIndex++;
 	}

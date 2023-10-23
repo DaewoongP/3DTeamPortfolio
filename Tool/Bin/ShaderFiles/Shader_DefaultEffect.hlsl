@@ -12,8 +12,17 @@ float4 g_vColor;
 float4 g_vCamPos;
 
 bool g_isFlutter = false;
-float3 g_vTimeAcc;
+float g_fTimeAcc;
 float3 g_vStrength = { 1.f, 1.f, 1.f };
+
+// For. Emission
+bool g_isEmission = { false };
+float g_fFrequency = { 1.f };
+float2 g_vRemap = { 1.f, 1.f };
+float3 g_vEmissionColor = { 1.f, 1.f, 1.f };
+int g_iEmissionChannel = { 0 };
+texture2D g_EmissionTexture;
+//////
 
 struct VS_IN
 {
@@ -39,13 +48,13 @@ void MainLogic(VS_IN In, out VS_OUT Out)
     matTWVP = mul(matTWV, g_ProjMatrix);
 
     vector vWorldPos = mul(vector(In.vPosition, 1.f), matTW);
-    if (true == g_isFlutter)
-    {
-        float fNoiseValue = PerlinNoise_3D(vWorldPos.x, vWorldPos.y, vWorldPos.z);
-        vWorldPos.x += fNoiseValue * g_vStrength.x;
-        vWorldPos.y += fNoiseValue * g_vStrength.y;
-        vWorldPos.z += fNoiseValue * g_vStrength.z;
-    }
+    //if (true == g_isFlutter)
+    //{
+    //    float fNoiseValue = PerlinNoise_3D(vWorldPos.x, vWorldPos.y, vWorldPos.z);
+    //    vWorldPos.x += fNoiseValue * g_vStrength.x;
+    //    vWorldPos.y += fNoiseValue * g_vStrength.y;
+    //    vWorldPos.z += fNoiseValue * g_vStrength.z;
+    //}
 
     Out.vPosition = mul(vWorldPos, mul(g_ViewMatrix, g_ProjMatrix));
     Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), matTW));
@@ -111,6 +120,26 @@ PS_OUT PS_MAIN(PS_IN In)
 	
     Out.vColor = vDiffuse;
     Out.vColor *= g_vColor;
+
+    if (g_isEmission)
+    {
+        float fEmissionValue = 0.f, fRemapValue = 0.f;
+        vector vEmission = g_EmissionTexture.Sample(LinearSampler, In.vTexUV);
+        float fSineTime = sin(g_fFrequency * g_fTimeAcc);
+        if (0 == g_iClipChannel)
+            fEmissionValue = vEmission.r;
+        else if (1 == g_iClipChannel)
+            fEmissionValue = vEmission.g;
+        else if (2 == g_iClipChannel)
+            fEmissionValue = vEmission.b;
+        else if (3 == g_iClipChannel)
+            fEmissionValue = vEmission.a;
+        // out1 + (val - in1) * (out2 - out1) / (in2 - in1);
+        
+        Remap_float(fSineTime, float2(-1.f, 1.f), g_vRemap, fRemapValue);
+
+        Out.vColor += fRemapValue * fEmissionValue * float4(g_vEmissionColor, 0.f);
+    }
     return Out;
 }
 
@@ -127,6 +156,25 @@ PS_OUT PS_MAIN_CLOISTER(PS_IN In)
 	
     Out.vColor = vDiffuse;
     Out.vColor *= g_vColor;
+    if (g_isEmission)
+    {
+        float fEmissionValue = 0.f, fRemapValue = 0.f;
+        vector vEmission = g_EmissionTexture.Sample(LinearSampler, In.vTexUV);
+        float fSineTime = sin(g_fFrequency * g_fTimeAcc);
+        if (0 == g_iClipChannel)
+            fEmissionValue = vEmission.r;
+        else if (1 == g_iClipChannel)
+            fEmissionValue = vEmission.g;
+        else if (2 == g_iClipChannel)
+            fEmissionValue = vEmission.b;
+        else if (3 == g_iClipChannel)
+            fEmissionValue = vEmission.a;
+        // out1 + (val - in1) * (out2 - out1) / (in2 - in1);
+
+        Remap_float(fSineTime, float2(-1.f, 1.f), g_vRemap, fRemapValue);
+
+        Out.vColor += fRemapValue * fEmissionValue * float4(g_vEmissionColor, 0.f);
+    }
     return Out;
 }
 /* 픽셀을 받고 픽셀의 색을 결정하여 리턴한다. */
@@ -140,7 +188,25 @@ PS_OUT PS_NONBLEND(PS_IN In)
 
     Out.vColor = vDiffuse;
     Out.vColor *= g_vColor;
+    if (g_isEmission)
+    {
+        float fEmissionValue = 0.f, fRemapValue = 0.f;
+        vector vEmission = g_EmissionTexture.Sample(LinearSampler, In.vTexUV);
+        float fSineTime = sin(g_fFrequency * g_fTimeAcc);
+        if (0 == g_iClipChannel)
+            fEmissionValue = vEmission.r;
+        else if (1 == g_iClipChannel)
+            fEmissionValue = vEmission.g;
+        else if (2 == g_iClipChannel)
+            fEmissionValue = vEmission.b;
+        else if (3 == g_iClipChannel)
+            fEmissionValue = vEmission.a;
+        // out1 + (val - in1) * (out2 - out1) / (in2 - in1);
 
+        Remap_float(fSineTime, float2(-1.f, 1.f), g_vRemap, fRemapValue);
+
+        Out.vColor += fRemapValue * fEmissionValue * float4(g_vEmissionColor, 0.f);
+    }
     return Out;
 }
 

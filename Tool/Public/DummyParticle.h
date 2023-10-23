@@ -31,6 +31,8 @@ public:
 	// 클라에서는 이니셜라이즈에서 경로 받아줘서 초기화 하면 됨
 	virtual HRESULT Initialize(void* _pArg) override;
 
+	void Hard_Rest();
+
 	HRESULT Render() override;
 private:
 // 파티클 텍스처 변경.
@@ -85,7 +87,7 @@ private:
 	
 	_float3 vShapeScale = { 2.f, 2.f, 2.f };
 	Quaternion vShapeQuaternion = { Quaternion() };
-
+	_bool m_isHardReset = { false };
 private:
 	class CComboBox* m_pEmitterVelocity_ComboBox = { nullptr };
 	class CComboBox* m_pShapeCombo = { nullptr };
@@ -113,6 +115,7 @@ private:
 	class CComboBox* m_pOrbitalOptionCombo = { nullptr };
 	class CComboBox* m_pRadialOptionCombo = { nullptr };
 	class CComboBox* m_pSpeedModifierOptionCombo = { nullptr };
+	class CComboBox* m_pEmissionChannelCombo = { nullptr };
 
 	class CImageFileDialog* m_pMaterialTextureIFD = { nullptr };
 	class CImageFileDialog* m_pAlphaTextureIFD = { nullptr };
@@ -120,7 +123,7 @@ private:
 	class CImageFileDialog* m_pNormalTextureIFD = { nullptr };
 	class CImageFileDialog* m_pGradientTextureIFD = { nullptr };
 	class CImageFileDialog* m_pDistortionTextureIFD = { nullptr };
-
+	class CImageFileDialog* m_pEmissionTextureIFD = { nullptr };
 	_bool m_isPrevLooping = { false };
 	list<_tchar*> m_pTags;
 

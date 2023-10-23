@@ -65,6 +65,11 @@ void CMoveStartState::OnStateTick()
 
 	Switch_Sprint();
 
+	if (*m_StateMachineDesc.pIsFlying)
+	{
+		Set_StateMachine(TEXT("Broom_Begin"));
+		return;
+	}
 }
 
 void CMoveStartState::OnStateExit()

@@ -1,7 +1,7 @@
 #include "UI_Group_Loading.h"
 #include "GameInstance.h"
 #include "UI_Back.h"
-#include "UI_Logo.h"
+#include "UI_Dissolve.h"
 
 CUI_Group_Loading::CUI_Group_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -57,13 +57,6 @@ HRESULT CUI_Group_Loading::Add_Prototype()
 
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		CUI_Back::Create(m_pDevice, m_pContext), true)))
-	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
-
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Logo"),
-		CUI_Logo::Create(m_pDevice, m_pContext), true)))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;

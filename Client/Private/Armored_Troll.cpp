@@ -21,6 +21,9 @@
 #include "Sequence_Levitate.h"
 #include "Sequence_MoveTarget.h"
 
+#include "Quest_Manager.h"
+#include "UI_Damage.h"
+
 CArmored_Troll::CArmored_Troll(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEnemy(pDevice, pContext)
 {
@@ -119,6 +122,8 @@ void CArmored_Troll::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		CMagicBall::COLLSIONREQUESTDESC* pCollisionMagicBallDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
 		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
 		_int iDamage = pCollisionMagicBallDesc->iDamage;
+
+		Print_Damage_Font(iDamage);
 
 		m_pHealth->Damaged(iDamage);
 
@@ -499,13 +504,23 @@ HRESULT CArmored_Troll::Bind_HitMatrices()
 
 void CArmored_Troll::DeathBehavior(const _float& fTimeDelta)
 {
-	m_isDead = true;
+	if (false == m_isEnterDeath)
+	{
+		CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
+		Safe_AddRef(pQuest_Manager);
+		pQuest_Manager->Clear_Quest(TEXT("Quest_Town"));
+		Safe_Release(pQuest_Manager);
+		m_isEnterDeath = true;
+		m_isDead = true;
+	}
+
 	m_fDeadTimeAcc += fTimeDelta;
 
 	if (3.5f < m_fDeadTimeAcc)
 	{
 		m_isDissolve = true;
 		m_fDissolveAmount += fTimeDelta / 1.5f; // 디졸브 값 증가
+		m_pWeapon->On_Dissolve();
 	}
 
 	if (5.5f < m_fDeadTimeAcc && m_fDissolveAmount >= 1.f)
@@ -688,6 +703,13 @@ HRESULT CArmored_Troll::Make_Intro(CSequence* pSequence)
 		CAction* pAction_Intro_4 = { nullptr };
 		if (FAILED(Create_Behavior(pAction_Intro_4)))
 			throw TEXT("Failed Create_Behavior pAction_Intro_4");
+		CAction* pAction_Intro_5 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Intro_5)))
+			throw TEXT("Failed Create_Behavior pAction_Intro_5");
+
+		CWait* pTsk_Wait = { nullptr };
+		if (FAILED(Create_Behavior(pTsk_Wait)))
+			throw TEXT("Failed Create_Behavior pTsk_Wait");
 
 		/* Set Decorators */
 
@@ -696,6 +718,8 @@ HRESULT CArmored_Troll::Make_Intro(CSequence* pSequence)
 		pAction_Intro_2->Set_Options(TEXT("Attack_Tantrum_1"), m_pModelCom, false, 0.f, true);
 		pAction_Intro_3->Set_Options(TEXT("Attack_Tantrum_2"), m_pModelCom, false, 0.f, true);
 		pAction_Intro_4->Set_Options(TEXT("Taunt_Front_4"), m_pModelCom, false, 0.f, true);
+		pAction_Intro_5->Set_Options(TEXT("Idle_Combat"), m_pModelCom, true, 0.f, true);
+		pTsk_Wait->Set_Timer(2.f);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Intro_1"), pAction_Intro_1)))
@@ -706,6 +730,11 @@ HRESULT CArmored_Troll::Make_Intro(CSequence* pSequence)
 			throw TEXT("Failed Assemble_Behavior Action_Intro_3");
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Intro_4"), pAction_Intro_4)))
 			throw TEXT("Failed Assemble_Behavior Action_Intro_4");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Intro_5"), pAction_Intro_5)))
+			throw TEXT("Failed Assemble_Behavior Action_Intro_5");
+
+		if (FAILED(pAction_Intro_5->Assemble_Behavior(TEXT("Tsk_Wait"), pTsk_Wait)))
+			throw TEXT("Failed Assemble_Behavior Tsk_Wait");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -2328,7 +2357,7 @@ void CArmored_Troll::Exit_Attack()
 	m_CollisionRequestDesc.eType = ATTACK_NONE;
 	m_CollisionRequestDesc.iDamage = 0;
 	m_pRigidBody->Disable_Collision("Enemy_Body_Attack");
-	m_pWeapon->Off_Collider_Attack(&m_CollisionRequestDesc);
+	m_pWeapon->Off_Collider_Attack();
 }
 
 CArmored_Troll* CArmored_Troll::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

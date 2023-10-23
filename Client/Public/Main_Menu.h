@@ -35,6 +35,7 @@ public:
 
 public:
 	void 	Set_Menu(_uint iIndex);
+	void	Set_Gear(vector<CItem*>* pPlayerCurItem);
 
 private:
 	HRESULT Add_Prototype();
@@ -60,8 +61,8 @@ private: // Main Frame
 
 private: // Main Group
 	CMenu_Gear*			m_pGear = { nullptr };
-	CMenu_Inventory*		m_pInventory = { nullptr };
-	CMenu_Quest*			m_pQuest = { nullptr };
+	CMenu_Inventory*	m_pInventory = { nullptr };
+	CMenu_Quest*		m_pQuest = { nullptr };
 	CMenu_Setting*		m_pSetting = { nullptr };
 
 private:
