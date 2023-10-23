@@ -52,6 +52,7 @@ public:
 	_bool Get_SSAO() { return m_isSSAO; }
 	void Play_Rain() { m_isRaining = true; }
 	void Stop_Rain() { m_isRaining = false; }
+	void Set_Night();
 
 public:
 	void Defualt_Shading();

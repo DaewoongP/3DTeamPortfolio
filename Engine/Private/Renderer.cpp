@@ -21,6 +21,11 @@
 #include "Font_Manager.h"
 #endif // _DEBUG
 
+void CRenderer::Set_Night()
+{
+	m_isNight = true;
+}
+
 void CRenderer::Defualt_Shading()
 {
 	m_isSSAO = true;
@@ -34,6 +39,7 @@ void CRenderer::Defualt_Shading()
 	m_fFadeSpeed = 0.1f;
 	m_fFadeTime = 0.f;
 	m_isRaining = false;
+	m_isNight = false;
 	if (nullptr != m_pDOF)
 		m_pDOF->Default();
 }

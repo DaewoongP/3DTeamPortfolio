@@ -17,7 +17,6 @@ CLevel_Smith::CLevel_Smith(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CLevel_Smith::Initialize()
 {
-	std::lock_guard<std::mutex> lock(mtx);
 	FAILED_CHECK_RETURN(Ready_Lights(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_Monsters(TEXT("Layer_Monster")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_NPC(TEXT("Layer_NPC")), E_FAIL);
@@ -560,6 +559,8 @@ HRESULT CLevel_Smith::Load_Dummy_NPC(const _tchar* pLayerTag)
 
 HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	HANDLE hFile = CreateFile(pObjectFilePath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 	if (INVALID_HANDLE_VALUE == hFile)
@@ -749,6 +750,8 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 
 HRESULT CLevel_Smith::Load_MapObject_Ins(const _tchar* pObjectFilePath)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	HANDLE hFile = CreateFile(pObjectFilePath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 	if (INVALID_HANDLE_VALUE == hFile)

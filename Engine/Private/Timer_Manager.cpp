@@ -145,6 +145,7 @@ void CTimer_Manager::Tick_QueryTimer(const _tchar * pTimerTag)
 
 CTimer* CTimer_Manager::Find_Timer(const _tchar* pTimerTag)
 {
+	std::lock_guard<std::mutex> lock(mtx);
 	auto		iter = find_if(m_umapTimers.begin(), m_umapTimers.end(), CTag_Finder(pTimerTag));
 
 	if (iter == m_umapTimers.end())
