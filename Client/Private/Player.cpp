@@ -218,11 +218,6 @@ HRESULT CPlayer::Initialize(void* pArg)
 	//	IN_CIRC, OUT_CIRC, INOUT_CIRC,
 	//	IN_BOUNCE, OUT_BOUNCE, INOUT_BOUNCE,
 	//	IN_BACK, OUT_BACK, INOUT_BACK,
-	for(int i = 0; i <m_vecTest_Particle.size();++i)
-	{
-		m_vecTest_Particle[i]->Play(_float3(m_pTransform->Get_Position().x, m_pTransform->Get_Position().y + 5.f, m_pTransform->Get_Position().z));
-		Test = _float3(m_pTransform->Get_Position().x, m_pTransform->Get_Position().y + 5.f, m_pTransform->Get_Position().z);
-	}
 
 	return S_OK;
 }
