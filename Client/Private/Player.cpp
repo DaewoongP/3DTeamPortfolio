@@ -151,7 +151,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
-	
+
 	if (FAILED(Ready_Camera()))
 	{
 		MSG_BOX("Failed Ready Player Camera");
@@ -166,7 +166,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	
+
 
 	m_pTransform->Set_Speed(1.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(180.f));
@@ -190,7 +190,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(25.f, 3.f, 22.5f);
 	//m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
-	m_vLevelInitPosition[LEVEL_VAULT] = _float3(161, 2 ,93);
+	m_vLevelInitPosition[LEVEL_VAULT] = _float3(161, 2, 93);
 	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(30.f, 3.f, 15.f);
 	m_vLevelInitPosition[LEVEL_SMITH] = _float3(32.f, 3.f, 25.f);
 	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(94.5f, 7.2f, 78.f);
@@ -198,10 +198,10 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	m_fTargetViewRange = 2.0f;
 
-	BEGININSTANCE;
+	/*BEGININSTANCE;
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Music/"));	
 	pGameInstance->Play_BGM(TEXT("01_Main.mp3"), 1.0f);
-	ENDINSTANCE;
+	ENDINSTANCE;*/
 
 	//m_vecEaseList.resize(CEase::EASE_END);
 
@@ -218,7 +218,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	//	IN_CIRC, OUT_CIRC, INOUT_CIRC,
 	//	IN_BOUNCE, OUT_BOUNCE, INOUT_BOUNCE,
 	//	IN_BACK, OUT_BACK, INOUT_BACK,
-	
+
 	return S_OK;
 }
 
@@ -249,7 +249,7 @@ HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 void CPlayer::Tick(_float fTimeDelta)
 {
 	BEGININSTANCE;
-	
+
 	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
 	{
 		ENDINSTANCE;
@@ -291,7 +291,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	Go_Protego(&m_ProtegoStateDesc);
 
 	Fix_Mouse();
-	//Update_Cloth(fTimeDelta);
+	Update_Cloth(fTimeDelta);
 
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
@@ -311,8 +311,8 @@ void CPlayer::Tick(_float fTimeDelta)
 	}
 
 	m_isPreLumos = m_isLumosOn;
-	for(_uint i = 0 ; i<m_vecPlayer_StateParicle.size();++i)
-	m_vecPlayer_StateParicle[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+	for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
+		m_vecPlayer_StateParicle[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
 
 	//m_pCooltime->Tick(fTimeDelta);
 	//Potion_Duration(fTimeDelta);
@@ -393,7 +393,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		if (m_pStateContext->Is_Current_State(TEXT("Protego")))
 		{
 			BEGININSTANCE;
-			_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_36443.wav") },{TEXT("playermale_35938.wav") } ,{TEXT("playermale_35067.wav") },{TEXT("playermale_27895.wav") }   };
+			_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_36443.wav") },{TEXT("playermale_35938.wav") } ,{TEXT("playermale_35067.wav") },{TEXT("playermale_27895.wav") } };
 			pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
 			ENDINSTANCE;
 		}
@@ -705,14 +705,14 @@ HRESULT CPlayer::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
-	
+
 	/* For.Com_PotionParticle */
 	m_vecPotionParticle.resize(2);
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Heal_Particle"), 
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Heal_Particle"),
 		TEXT("Com_HealParticle"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[0]))))
 	{
 		__debugbreak();
-			return E_FAIL;
+		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Maxima_Particle"),
 		TEXT("Com_MaximaParticle"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[1]))))
@@ -720,7 +720,7 @@ HRESULT CPlayer::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
-	
+
 	/* For.Com_Player_Effect */
 	//m_vecPlayer_StateParicle.resize(1);
 	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_Effect"),
@@ -803,7 +803,7 @@ HRESULT CPlayer::Add_Components()
 	RigidBodyDesc.vDebugColor = _float4(1.f, 105 / 255.f, 180 / 255.f, 1.f); // hot pink
 	RigidBodyDesc.pOwnerObject = this;
 	RigidBodyDesc.eThisCollsion = COL_PLAYER;
-	RigidBodyDesc.eCollisionFlag = COL_ENEMY_RANGE | COL_NPC_RANGE  | COL_ENEMY_ATTACK | COL_TRIGGER | COL_STATIC | COL_MAGIC;
+	RigidBodyDesc.eCollisionFlag = COL_ENEMY_RANGE | COL_NPC_RANGE | COL_ENEMY_ATTACK | COL_TRIGGER | COL_STATIC | COL_MAGIC;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Player_Default");
 
 	/* Com_RigidBody */
@@ -1435,21 +1435,10 @@ HRESULT CPlayer::Ready_MeshParts()
 {
 	_float4 vColor = _float4();
 
-	//Hat
-	if (FAILED(m_pCustomModel->Add_MeshParts(
-		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Hat_Arcane"),
-		CCustomModel::HAT)))
-	{
-		MSG_BOX("Failed Add MeshPart Hat");
-
-		return E_FAIL;
-	}
-
 	//Hair
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Hair_M_C"),
+		TEXT("Prototype_Component_MeshPart_Player_Hair"),
 		CCustomModel::HAIR)))
 	{
 		MSG_BOX("Failed Add MeshPart Hair");
@@ -1999,19 +1988,19 @@ void CPlayer::Shot_Basic_Spell()
 {
 	//Find_Target_For_Distance();
 	m_pMagicSlot->Add_Magics(m_BasicDesc_Light);
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_SHIELD), m_isPowerUp);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_SHIELD_ENEMY), COL_MAGIC, m_isPowerUp);
 }
 
 void CPlayer::Shot_Basic_Last_Spell()
 {
 	//Find_Target_For_Distance();
 	m_pMagicSlot->Add_Magics(m_BasicDesc_Heavy);
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_SHIELD), m_isPowerUp);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_SHIELD_ENEMY), COL_MAGIC, m_isPowerUp);
 }
 
 void CPlayer::Protego()
 {
-	m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_ENEMY_ATTACK | COL_MAGIC | COL_SHIELD), m_isPowerUp);
+	m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_ENEMY_ATTACK | COL_MAGIC | COL_SHIELD_ENEMY), COL_SHIELD, m_isPowerUp);
 }
 
 void CPlayer::Gravity_On()
@@ -2413,12 +2402,11 @@ HRESULT CPlayer::Bind_Notify()
 
 void CPlayer::Update_Cloth(_float fTimeDelta)
 {
-	// ���� y���� �ݴ���
 	_float3 vVelocity = m_pTransform->Get_Velocity();
 	vVelocity.y *= -1.f;
 	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(m_fClothPower * vVelocity,
 		XMMatrixInverse(nullptr, XMMatrixRotationQuaternion(m_pTransform->Get_Quaternion()))));
-	
+
 	m_pCustomModel->Tick(CCustomModel::ROBE, m_iRobeMeshIndex, fTimeDelta);
 }
 
@@ -2601,7 +2589,7 @@ void CPlayer::Finisher()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(3, m_pTarget, m_pWeapon, (COLLISIONFLAG)(COL_ENEMY | COL_SHIELD), m_isPowerUp);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(3, m_pTarget, m_pWeapon, (COLLISIONFLAG)(COL_ENEMY | COL_SHIELD_ENEMY), COL_MAGIC, m_isPowerUp);
 }
 
 void CPlayer::Stupefy()
@@ -2613,7 +2601,7 @@ void CPlayer::Stupefy()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(4, m_pTarget, m_pWeapon, COL_ENEMY, m_isPowerUp);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(4, m_pTarget, m_pWeapon, COL_ENEMY, COL_MAGIC, m_isPowerUp);
 }
 
 
@@ -2621,7 +2609,7 @@ void CPlayer::Lumos()
 {
 	if (nullptr == m_pFrncSpellToggle)
 	{
-		m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(2, this, m_pWeapon, COL_NONE, m_isPowerUp);
+		m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(2, this, m_pWeapon, COL_NONE, COL_MAGIC, m_isPowerUp);
 	}
 	else
 	{
@@ -2639,16 +2627,16 @@ void CPlayer::Finish_Animation()
 void CPlayer::Go_Roll(void* _pArg)
 {
 	if ((true == m_pPlayer_Camera->Is_Finish_Animation() &&
-			(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
-				m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
-				m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
-				m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
-				m_pStateContext->Is_Current_State(TEXT("Magic_Cast"))))
+		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+			m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
+			m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
+			m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
+			m_pStateContext->Is_Current_State(TEXT("Magic_Cast"))))
 		)
 	{
 		m_pStateContext->Set_StateMachine(TEXT("Roll"), _pArg);
 		for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
-		m_vecPlayer_StateParicle[i]->Play(m_pTransform->Get_Position());
+			m_vecPlayer_StateParicle[i]->Play(m_pTransform->Get_Position());
 
 	}
 }
@@ -2672,7 +2660,7 @@ void CPlayer::Tick_TestShake()
 {
 	RECT rc;
 	GetWindowRect(g_hWnd, &rc);
-	
+
 	ImGui::SetNextWindowPos(ImVec2(_float(rc.right) - 8.f, _float(rc.top)));
 	ImGui::SetNextWindowSize(ImVec2(300.f, 600.f));
 
@@ -2986,7 +2974,7 @@ void CPlayer::Go_Protego(void* _pArg)
 
 		m_pStateContext->Set_StateMachine(TEXT("Protego"), _pArg);
 
-		m_isCollisionEnterProtego = false;	
+		m_isCollisionEnterProtego = false;
 	}
 }
 
@@ -3032,7 +3020,7 @@ void CPlayer::Blink_End()
 void CPlayer::Healing()
 {
 	m_pPlayer_Information->fix_HP(40);
-	
+
 
 
 
@@ -3077,7 +3065,7 @@ void CPlayer::Go_Use_Item()
 		return;
 
 	CUseItemState::USEITEMDESC UseItemDesc;
-	
+
 	UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(); };
 
 	m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Add_Layer_Item"), UseItemDesc.funcPotion);
@@ -3128,10 +3116,10 @@ void CPlayer::Go_Use_Potion()
 	UseItemDesc.eItem_Id = ITEM_ID_WIGGENWELD_POTION;
 
 	UseItemDesc.funcPotion = [&] {(*this).Drink_Heal_Potion(); };
-	
-	if(UseItemDesc.eItem_Id==ITEM_ID_WIGGENWELD_POTION)
-	m_vecPotionParticle[0]->Play(m_pTransform->Get_Position());
-	
+
+	if (UseItemDesc.eItem_Id == ITEM_ID_WIGGENWELD_POTION)
+		m_vecPotionParticle[0]->Play(m_pTransform->Get_Position());
+
 	if (UseItemDesc.eItem_Id == ITEM_ID_MAXIMA_POTION)
 		m_vecPotionParticle[1]->Play(m_pTransform->Get_Position());
 
@@ -3141,7 +3129,7 @@ void CPlayer::Go_Use_Potion()
 	{
 		BEGININSTANCE;
 		_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_36445.wav") },{TEXT("playermale_28806.wav") } ,{TEXT("playermale_33405.wav") } ,{TEXT("playermale_36448.wav") } };
-		pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f,true);
+		pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
 		ENDINSTANCE;
 		m_pStateContext->Set_StateMachine(TEXT("UseItem"), &UseItemDesc);
 	}
@@ -3156,7 +3144,7 @@ void CPlayer::Shot_Magic_Spell_Button_1()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(SKILLINPUT_1, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_SHIELD), m_isPowerUp);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(SKILLINPUT_1, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_SHIELD_ENEMY), COL_MAGIC, m_isPowerUp);
 }
 
 void CPlayer::Shot_Magic_Spell_Button_2()
@@ -3168,7 +3156,7 @@ void CPlayer::Shot_Magic_Spell_Button_2()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(SKILLINPUT_2, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_SHIELD), m_isPowerUp);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(SKILLINPUT_2, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_SHIELD_ENEMY), COL_MAGIC, m_isPowerUp);
 }
 
 void CPlayer::Shot_Magic_Spell_Button_3()
@@ -3180,7 +3168,7 @@ void CPlayer::Shot_Magic_Spell_Button_3()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(SKILLINPUT_3, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_SHIELD), m_isPowerUp);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(SKILLINPUT_3, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_SHIELD_ENEMY), COL_MAGIC, m_isPowerUp);
 }
 
 void CPlayer::Clear_Target()
@@ -3200,7 +3188,7 @@ void CPlayer::Shot_Magic_Spell_Button_4()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(SKILLINPUT_4, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_SHIELD), m_isPowerUp);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(SKILLINPUT_4, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_SHIELD_ENEMY), COL_MAGIC, m_isPowerUp);
 }
 
 

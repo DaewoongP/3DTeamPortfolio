@@ -97,9 +97,13 @@
 #include "Cylinder.h"
 #include "Water.h"
 
+#pragma region Event
 #include "Event_Vault_Spawn.h"
+#include "Event_Vault_Torch.h"
+#include "Event_Enter_Vault.h"
 #include "Event_Smeade.h"
 #include "Event_Cliffside.h"
+#pragma endregion
 
 #include "Guide_Book.h"
 
@@ -275,6 +279,16 @@ HRESULT CMain0_Loader::Loading_For_Vault(LEVELID eLevelID)
 	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Spawn"),
 		CEvent_Vault_Spawn::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Event_Spawn");
+
+	/* For.Prototype_GameObject_Event_Torch */
+	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Torch"),
+		CEvent_Vault_Torch::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Event_Torch");
+		
+	/* For.Prototype_GameObject_Event_Enter_Vault */
+	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Enter_Vault"),
+		CEvent_Enter_Vault::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Event_Enter_Vault");
 
 	return S_OK;
 }
@@ -620,6 +634,11 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Cylinder"),
 			CCylinder::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Cylinder");
+
+		/* For.Prototype_GameObject_SmithToCliff_Gate_Portal */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_SmithToCliff_Gate_Portal"),
+			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Portal/Door"), eLevelID))))
+			throw TEXT("Prototype_GameObject_SmithToCliff_Gate_Portal");
 #pragma endregion
 
 #pragma region Load Player_Effect
@@ -801,7 +820,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Monster_DarkFlare_Particle"),
 			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Monster_DarkFlare/"), eLevelID))))
-			throw TEXT("Prototype_Monster_DarkFlare_Particle");
+			throw TEXT("Prototype_Monster_DarkFlare_Particle");		
 		
 		{
 			CMagicBallPool* pMagicBallPool = CMagicBallPool::GetInstance();

@@ -28,6 +28,7 @@ HRESULT CSky::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pTransform->Set_Scale(_float3(5.f, 5.f, 5.f));
+	m_vMoonPos = _float2(0.8f, 0.2f);
 
 	return S_OK;
 }
@@ -41,6 +42,10 @@ HRESULT CSky::Initialize_Level(_uint iCurrentLevelIndex)
 
 void CSky::Tick(_float fTimeDelta)
 {
+#ifdef _DEBUG
+	ADD_IMGUI([&] { this->Debug(); });
+#endif // _DEBUG
+
 	__super::Tick(fTimeDelta);
 }
 
@@ -131,11 +136,38 @@ HRESULT CSky::SetUp_ShaderResources()
 
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
-
+	_float fTimeAcc = pGameInstance->Get_World_TimeAcc();
 	Safe_Release(pGameInstance);
+
+	if (FAILED(m_pShader->Bind_RawValue("g_vMoonPos", &m_vMoonPos, sizeof(_float2))))
+		return E_FAIL;
+	if (g_iTest > 1)
+	{
+		m_isNight = true;
+	}
+	if (FAILED(m_pShader->Bind_RawValue("g_isNight", &m_isNight, sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_RawValue("g_iFrame", &m_iFrame, sizeof(_int))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_RawValue("g_fTime", &fTimeAcc, sizeof(_float))))
+		return E_FAIL;
+	m_iFrame++;
 
 	return S_OK;
 }
+
+#ifdef _DEBUG
+void CSky::Debug()
+{
+	ImGui::SetNextWindowPos(ImVec2(0.f, 800.f));
+	ImGui::SetNextWindowSize(ImVec2(300.f, 400.f));
+	ImGui::Begin("Sky");
+
+	ImGui::SliderFloat2("sky", reinterpret_cast<_float*>(&m_vMoonPos), -2.f, 2.f);
+
+	ImGui::End();
+}
+#endif // _DEBUG
 
 CSky* CSky::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

@@ -22,6 +22,11 @@
 #include "Cat.h"
 #include "Vault_Torch.h"
 #include "Owl.h"
+#include "BigBird.h"
+#include "SmithToCliff_Gate.h"
+#include "Lamppost.h"
+#include "LightStand.h"
+#include "Sancutm_Door.h"
 
 CMain1_Loader::CMain1_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -482,6 +487,31 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 		COwl::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Owl");
 
+	/* For.Prototype_GameObject_BigBird */
+	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_BigBird"),
+		CBigBird::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_BigBird");
+
+	/* For.Prototype_GameObject_SmithToCliff_Gate */
+	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_SmithToCliff_Gate"),
+		CSmithToCliff_Gate::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_SmithToCliff_Gate");
+
+	/* For.Prototype_GameObject_Lamppost */
+	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Lamppost"),
+		CLamppost::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Lamppost");
+
+	/* For.Prototype_GameObject_LightStand */
+	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_LightStand"),
+		CLightStand::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_LightStand");
+
+	/* For.Prototype_GameObject_Sancutm_Door */
+	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Sancutm_Door"),
+		CSancutm_Door::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Sancutm_Door");
+
 	HANDLE hFile = CreateFile(pMapObjectPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 	if (INVALID_HANDLE_VALUE == hFile)
@@ -534,6 +564,7 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 		wstring wsVaultGate(TEXT("Anim_Gate_Vault"));
 		wstring wsCat(TEXT("Anim_GreyCat"));
 		wstring wsOwl(TEXT("Anim_Owl"));
+		wstring wsBigBird(TEXT("Anim_BigBird"));
 
 		wstring ws(LoadDesc.wszTag);
 		size_t findIndex = ws.find(TEXT("Model_")) + 6;
@@ -552,6 +583,7 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 			0 == lstrcmp(modelName.c_str(), wsLeapingToadStools.c_str()) ||
 			0 == lstrcmp(modelName.c_str(), wsLeech.c_str()) || 
 			0 == lstrcmp(modelName.c_str(), wsGull.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsBigBird.c_str()) ||
 			0 == lstrcmp(modelName.c_str(), wsCat.c_str()))
 			modelPath += TEXT(".gcm");
 		else
@@ -567,6 +599,7 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 			0 == lstrcmp(modelName.c_str(), wsCat.c_str()) ||
 			0 == lstrcmp(modelName.c_str(), wsCliffGate.c_str()) || 
 			0 == lstrcmp(modelName.c_str(), wsOwl.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsBigBird.c_str()) ||
 			0 == lstrcmp(modelName.c_str(), wsVaultGate.c_str()))
 		{
 			if (FAILED(pGameInstance->Add_Prototype(eID, LoadDesc.wszTag,

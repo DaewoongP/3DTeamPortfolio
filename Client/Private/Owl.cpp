@@ -34,11 +34,10 @@ HRESULT COwl::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_ObjectDesc = *reinterpret_cast<MAPOBJECTDESC*>(pArg);
-	m_ObjectDesc.WorldMatrix._42 += 5.f;
 	m_pTransform->Set_WorldMatrix(m_ObjectDesc.WorldMatrix);
+	m_pTransform->Set_Speed(-7.5f);
 
-	m_pTransform->Set_Speed(-10.f);
-	m_pTransform->Set_RotationSpeed(XMConvertToRadians(180.f));
+	m_vecOriginPos = m_pTransform->Get_Position();
 
  	return S_OK;
 }
@@ -134,7 +133,7 @@ HRESULT COwl::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
-		MSG_BOX("Failed CCat Add_Component : (Com_Renderer)");
+		MSG_BOX("Failed COwl Add_Component : (Com_Renderer)");
 		__debugbreak();
 		return E_FAIL;
 	}
@@ -144,7 +143,7 @@ HRESULT COwl::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
-		MSG_BOX("Failed CCat Add_Component : (Com_Shader)");
+		MSG_BOX("Failed COwl Add_Component : (Com_Shader)");
 		__debugbreak();
 		return E_FAIL;
 	}
@@ -153,7 +152,7 @@ HRESULT COwl::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowAnimMesh"),
 		TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShader))))
 	{
-		MSG_BOX("Failed CCat Add_Component : (Com_ShadowShader)");
+		MSG_BOX("Failed COwl Add_Component : (Com_ShadowShader)");
 		__debugbreak();
 		return E_FAIL;
 	}
@@ -201,32 +200,14 @@ void COwl::Owl_Fly(_float fTimeDelta)
 {
 	m_fFlyTime += fTimeDelta;
 
-	if (false == m_isOwlTurn)
+	m_pTransform->Go_Straight(fTimeDelta);
+
+	if (20.f <= m_fFlyTime)
 	{
-		if (8.f <= m_fFlyTime)
-		{
-			m_fFlyTime = 0.f;
-			m_isOwlTurn = true;
-
-			return;
-		}
-
-		m_pTransform->Go_Straight(fTimeDelta);
+		m_pTransform->Set_Position(m_vecOriginPos);
+		m_fFlyTime = 0.f;
 	}
-
-	else
-	{
-		if (1.f <= m_fFlyTime)
-		{
-			m_fFlyTime = 0.f;
-			m_isOwlTurn = false;
-
-			return;
-		}
-
-		m_pTransform->Go_Straight(fTimeDelta);
-		m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);
-	}
+		
 }
 
 COwl* COwl::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

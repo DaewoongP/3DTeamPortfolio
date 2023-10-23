@@ -505,12 +505,6 @@
     <Filter Include="02. GameObject\02. Enemy\03. Golem">
       <UniqueIdentifier>{75e17a41-3815-4778-b3dd-847b9cc46d8b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. Golem\00. Combat">
-      <UniqueIdentifier>{9b9a0dfc-c373-4b0b-9c88-3e4ef1df5fc6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. Golem\00. Combat\Weapon">
-      <UniqueIdentifier>{f57875dd-9b97-4974-a4c8-dbc1374da1c3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\02. Enemy\05. DarkWizard">
       <UniqueIdentifier>{344e3ca3-42ef-4166-b228-a633658f314b}</UniqueIdentifier>
     </Filter>
@@ -718,54 +712,6 @@
     <Filter Include="02. GameObject\09. Item\03. Gear\Hat_Wizard">
       <UniqueIdentifier>{b3f977ca-80cc-4f4f-a762-74eb0e2a969d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\09. Item\03. Gear\Hat_DarkArts_Delux">
-      <UniqueIdentifier>{6e722ae1-b8a7-4d50-acbd-707842a7a6dc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\03. Gear\Jacket_Arcane">
-      <UniqueIdentifier>{754235f9-e76d-4699-bd54-16cb4a5c3344}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\03. Gear\Jacket_Arcane_A">
-      <UniqueIdentifier>{96ab1784-6823-4e52-af24-68eaf8cc0037}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\03. Gear\Jacket_Celtic">
-      <UniqueIdentifier>{c34b0471-10b9-4cf0-81db-6d3317fc86d5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\03. Gear\Jacket_Celtic_A">
-      <UniqueIdentifier>{f30e6931-634b-4b49-8a40-9f635dfd73c4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\03. Gear\Jacket_DarkArts_Delux">
-      <UniqueIdentifier>{a79ee72e-01a5-4cf9-bc16-c4a82394f18d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\03. Gear\Jacket_DarkArts_Delux_A">
-      <UniqueIdentifier>{a3a13b7f-f9a9-4fa4-8e9c-aaf572b9419b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\03. Gear\Jacket_DragonGrab">
-      <UniqueIdentifier>{877735a4-cfe3-46c8-b903-de4b3c980aba}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\03. Gear\Jacket_DragonGrab_A">
-      <UniqueIdentifier>{5b57907a-16b1-4e6d-9324-7c2589d21107}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\03. Gear\Pants_Arcane">
-      <UniqueIdentifier>{456b4fab-db3a-48a4-927b-a083411811cc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\03. Gear\Pants_DarkArts_Delux">
-      <UniqueIdentifier>{378228ff-e29b-42a2-a426-4d4986312892}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\03. Gear\Pants_Merlin">
-      <UniqueIdentifier>{818aced6-5af2-43ff-8bc0-e49a7fcd7537}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\03. Gear\Pants_Stealth">
-      <UniqueIdentifier>{4cbddce7-681d-4f23-8873-c3628faaa562}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\03. Gear\Boots_Arcane">
-      <UniqueIdentifier>{5be9c59e-48c5-46c9-a176-33d5a704fed0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\03. Gear\Boots_Merlin">
-      <UniqueIdentifier>{949434f2-aaa2-4ac3-96a5-72f1e46f0581}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\03. Gear\Boots_Default">
-      <UniqueIdentifier>{64872b2c-1634-4149-9324-f67ee693bb76}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\09. Item\03. Gear\Mask_Guardian">
       <UniqueIdentifier>{1d2284ef-b036-4cd2-afbf-c917da929933}</UniqueIdentifier>
     </Filter>
@@ -931,6 +877,132 @@
     <Filter Include="02. GameObject\02. Enemy\03. MapObject\Env">
       <UniqueIdentifier>{397b10fb-04a8-4524-96cf-1c1ccba12d43}</UniqueIdentifier>
     </Filter>
+    <Filter Include="07. Events\Vault\Event_Vault_Torch">
+      <UniqueIdentifier>{f1a2d051-d377-4904-b73d-968294ea2a72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject">
+      <UniqueIdentifier>{0671651e-f669-4b5e-82f4-dfb1f4480ca3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\MapObject_Ins">
+      <UniqueIdentifier>{f13444ba-2393-4bce-95bb-afa19568f604}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj">
+      <UniqueIdentifier>{d7ccccd1-f98f-4c43-b7c6-44c19a20a834}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Treasure_Chest">
+      <UniqueIdentifier>{29d2298d-e409-4ddd-ae89-545341414500}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\PotionStation">
+      <UniqueIdentifier>{e8e87625-76be-4cce-8219-8d85981baf70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\PotionStation\Camera">
+      <UniqueIdentifier>{47ad6082-1c46-48ca-91b9-645d66ca436a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Gatherer">
+      <UniqueIdentifier>{e88e5f73-5766-4d38-b329-5d4e9342c0b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Door">
+      <UniqueIdentifier>{c0f2b156-3bfd-454d-a84c-99b9be093137}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\RP_Core">
+      <UniqueIdentifier>{f8e2e068-d9cf-4946-a565-8d0e2044214d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Cliff_Gate">
+      <UniqueIdentifier>{8c4fbf71-2b03-4298-81fe-afb775f60a81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Vault_Gate">
+      <UniqueIdentifier>{ccd8f7ca-c51d-4f96-bfa8-3ffc359c5efb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Anim_Obj">
+      <UniqueIdentifier>{86c2332f-3c78-49e8-8513-4950f2cb3106}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Anim_Obj\Gull">
+      <UniqueIdentifier>{64519bb8-2a5a-4d8b-974c-39f199b49dfa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Anim_Obj\Cat">
+      <UniqueIdentifier>{b02c580a-c572-4721-bee8-44c0daa7f30e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Anim_Obj\Owl">
+      <UniqueIdentifier>{a2d0ac88-bc9d-4275-b006-47de08699d2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Env">
+      <UniqueIdentifier>{397b10fb-04a8-4524-96cf-1c1ccba12d43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Anim_Obj\BigBird">
+      <UniqueIdentifier>{ff9c3df0-5548-4afc-9001-b274864e6839}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\SmithToCliff_Gate">
+      <UniqueIdentifier>{9c8464ea-6b00-4115-af3d-5cd83bf6afc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Env\Vault_Torch">
+      <UniqueIdentifier>{a0bb4357-e447-4268-9096-a91a1d820286}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Env\Lamppost">
+      <UniqueIdentifier>{932325f7-c36e-46b5-903e-6cd0c72bef3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\LightStand">
+      <UniqueIdentifier>{b89c1f33-7332-4303-8b51-675b8608ea09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Door\Sanctum_Door">
+      <UniqueIdentifier>{e1f83ab2-f7f2-4e31-91a4-387e610fc940}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\03. Gear\Outfit_Arcane">
+      <UniqueIdentifier>{754235f9-e76d-4699-bd54-16cb4a5c3344}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\03. Gear\Outfit_Arcane_A">
+      <UniqueIdentifier>{96ab1784-6823-4e52-af24-68eaf8cc0037}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\03. Gear\Outfit_DarkArts_Delux">
+      <UniqueIdentifier>{a79ee72e-01a5-4cf9-bc16-c4a82394f18d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\03. Gear\Outfit_DarkArts_Delux_A">
+      <UniqueIdentifier>{a3a13b7f-f9a9-4fa4-8e9c-aaf572b9419b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\03. Gear\Outfit_Celtic">
+      <UniqueIdentifier>{c34b0471-10b9-4cf0-81db-6d3317fc86d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\03. Gear\Outfit_Celtic_A">
+      <UniqueIdentifier>{f30e6931-634b-4b49-8a40-9f635dfd73c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\03. Golem\Weapon">
+      <UniqueIdentifier>{f57875dd-9b97-4974-a4c8-dbc1374da1c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\05. DarkWizard\01. Female\Spawner">
+      <UniqueIdentifier>{d8aa9f2d-5837-4280-a210-59cd8efcb982}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\05. DarkWizard\02. Fly">
+      <UniqueIdentifier>{1684b91d-3598-4808-8519-dd674df0bae2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Spawn">
+      <UniqueIdentifier>{617e8b7e-9920-4531-a8d3-4c8e4045ddb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Vault\Spawn">
+      <UniqueIdentifier>{0dc22c73-a100-442f-8c3b-9fba51da41c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Vault\Enter_Vault">
+      <UniqueIdentifier>{0154d54e-706e-4c95-85dd-82155f12a0e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Sanctum">
+      <UniqueIdentifier>{28e16e8c-d636-4f9a-b935-2bd1be77a8eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Sanctum\Dragon_HP_Down">
+      <UniqueIdentifier>{9b2a539e-f6ff-415e-bcc1-c9f8c48df7bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Sanctum\Dragon_Death">
+      <UniqueIdentifier>{38e6c889-33ea-4de9-9002-264fac9c5bfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\Weapon\Head">
+      <UniqueIdentifier>{a40255d8-46b3-446f-a61c-a3f4e1694864}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\Weapon\Left_Wing">
+      <UniqueIdentifier>{aa98253f-527d-4ab2-a15d-4159a8c13a35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\Weapon\Right_Wing">
+      <UniqueIdentifier>{53674c22-ce4a-4e55-8645-9efb2e02a1e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\Weapon\Tail">
+      <UniqueIdentifier>{4b1dcaad-641e-4070-a67f-3c29d519c8d8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1037,9 +1109,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Dugbog.h">
       <Filter>02. GameObject\02. Enemy\02. Dugbog</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Golem_Combat.h">
-      <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MapObject.h">
       <Filter>02. GameObject\02. Enemy\03. MapObject</Filter>
@@ -1276,7 +1345,7 @@
       <Filter>02. GameObject\04. UI\UI\UI_Logo</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Weapon_Golem_Combat.h">
-      <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat\Weapon</Filter>
+      <Filter>02. GameObject\02. Enemy\03. Golem\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Lumos.h">
       <Filter>05. Magic\MagicBall\05. Lumos</Filter>
@@ -1583,9 +1652,6 @@
     <ClInclude Include="..\Public\Projectile_Black.h">
       <Filter>02. GameObject\02. Enemy\04. Dragon\03. Projectile_Black</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Weapon_Dragon_Head.h">
-      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Level_Static.h">
       <Filter>01. Levels\98. Static</Filter>
     </ClInclude>
@@ -1606,9 +1672,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Player_Information.h">
       <Filter>02. GameObject\03. PlayerInformation</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Event_Vault_Spawn.h">
-      <Filter>07. Events\Vault</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Gear_Item.h">
       <Filter>02. GameObject\09. Item\03. Gear</Filter>
@@ -1703,53 +1766,23 @@
     <ClInclude Include="..\Public\Hat_Wizard.h">
       <Filter>02. GameObject\09. Item\03. Gear\Hat_Wizard</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Hat_DarkArts_Delux.h">
-      <Filter>02. GameObject\09. Item\03. Gear\Hat_DarkArts_Delux</Filter>
+    <ClInclude Include="..\Public\Outfit_Arcane.h">
+      <Filter>02. GameObject\09. Item\03. Gear\Outfit_Arcane</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Jacket_Arcane.h">
-      <Filter>02. GameObject\09. Item\03. Gear\Jacket_Arcane</Filter>
+    <ClInclude Include="..\Public\Outfit_Arcane_A.h">
+      <Filter>02. GameObject\09. Item\03. Gear\Outfit_Arcane_A</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Jacket_Arcane_A.h">
-      <Filter>02. GameObject\09. Item\03. Gear\Jacket_Arcane_A</Filter>
+    <ClInclude Include="..\Public\Outfit_Celtic.h">
+      <Filter>02. GameObject\09. Item\03. Gear\Outfit_Celtic</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Jacket_Celtic.h">
-      <Filter>02. GameObject\09. Item\03. Gear\Jacket_Celtic</Filter>
+    <ClInclude Include="..\Public\Outfit_Celtic_A.h">
+      <Filter>02. GameObject\09. Item\03. Gear\Outfit_Celtic_A</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Jacket_Celtic_A.h">
-      <Filter>02. GameObject\09. Item\03. Gear\Jacket_Celtic_A</Filter>
+    <ClInclude Include="..\Public\Outfit_DarkArts_Delux.h">
+      <Filter>02. GameObject\09. Item\03. Gear\Outfit_DarkArts_Delux</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Jacket_DarkArts_Delux.h">
-      <Filter>02. GameObject\09. Item\03. Gear\Jacket_DarkArts_Delux</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Jacket_DarkArts_Delux_A.h">
-      <Filter>02. GameObject\09. Item\03. Gear\Jacket_DarkArts_Delux_A</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Jacket_DragonGrab.h">
-      <Filter>02. GameObject\09. Item\03. Gear\Jacket_DragonGrab</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Jacket_DragonGrab_A.h">
-      <Filter>02. GameObject\09. Item\03. Gear\Jacket_DragonGrab_A</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Pants_Arcane.h">
-      <Filter>02. GameObject\09. Item\03. Gear\Pants_Arcane</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Pants_DarkArts_Delux.h">
-      <Filter>02. GameObject\09. Item\03. Gear\Pants_DarkArts_Delux</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Pants_Merlin.h">
-      <Filter>02. GameObject\09. Item\03. Gear\Pants_Merlin</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Pants_Stealth.h">
-      <Filter>02. GameObject\09. Item\03. Gear\Pants_Stealth</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Boots_Arcane.h">
-      <Filter>02. GameObject\09. Item\03. Gear\Boots_Arcane</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Boots_Merlin.h">
-      <Filter>02. GameObject\09. Item\03. Gear\Boots_Merlin</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Boots_Default.h">
-      <Filter>02. GameObject\09. Item\03. Gear\Boots_Default</Filter>
+    <ClInclude Include="..\Public\Outfit_DarkArts_Delux_A.h">
+      <Filter>02. GameObject\09. Item\03. Gear\Outfit_DarkArts_Delux_A</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Mask_Guardian.h">
       <Filter>02. GameObject\09. Item\03. Gear\Mask_Guardian</Filter>
@@ -1850,6 +1883,63 @@
     <ClInclude Include="..\Public\Broom_Stick.h">
       <Filter>02. GameObject\01. Player\01. Weapon\BroomStick</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Event_Vault_Torch.h">
+      <Filter>07. Events\Vault\Event_Vault_Torch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BigBird.h">
+      <Filter>02. GameObject\03. MapObject\Anim_Obj\BigBird</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SmithToCliff_Gate.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\SmithToCliff_Gate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Vault_Torch.h">
+      <Filter>02. GameObject\03. MapObject\Env\Vault_Torch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Lamppost.h">
+      <Filter>02. GameObject\03. MapObject\Env\Lamppost</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LightStand.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\LightStand</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sancutm_Door.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\Sanctum_Door</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Golem_Combat.h">
+      <Filter>02. GameObject\02. Enemy\03. Golem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DarkWizard_Spawn.h">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\01. Female\Spawner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DarkWizard_Fly.h">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\02. Fly</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Spawn.h">
+      <Filter>07. Events\Spawn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Event_Vault_Spawn.h">
+      <Filter>07. Events\Vault\Spawn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Enter_Vault.h">
+      <Filter>07. Events\Vault\Enter_Vault</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Dragon_Hp_Down.h">
+      <Filter>07. Events\Sanctum\Dragon_HP_Down</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Dragon_Death.h">
+      <Filter>07. Events\Sanctum\Dragon_Death</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Dragon_Head.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Head</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Dragon_Left_Wing.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Left_Wing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Dragon_Tail.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Tail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Dragon_Right_Wing.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Right_Wing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1926,9 +2016,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Dugbog.cpp">
       <Filter>02. GameObject\02. Enemy\02. Dugbog</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Golem_Combat.cpp">
-      <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Action.cpp">
       <Filter>03. Behaviors\00. Action</Filter>
@@ -2165,7 +2252,7 @@
       <Filter>02. GameObject\04. UI\UI\UI_Logo</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Weapon_Golem_Combat.cpp">
-      <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat\Weapon</Filter>
+      <Filter>02. GameObject\02. Enemy\03. Golem\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Lumos.cpp">
       <Filter>05. Magic\MagicBall\05. Lumos</Filter>
@@ -2466,9 +2553,6 @@
     <ClCompile Include="..\Private\Projectile_Black.cpp">
       <Filter>02. GameObject\02. Enemy\04. Dragon\03. Projectile_Black</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Weapon_Dragon_Head.cpp">
-      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Level_Static.cpp">
       <Filter>01. Levels\98. Static</Filter>
     </ClCompile>
@@ -2477,9 +2561,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player.cpp">
       <Filter>02. GameObject\01. Player</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Event_Vault_Spawn.cpp">
-      <Filter>07. Events\Vault</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Gear_Item.cpp">
       <Filter>02. GameObject\09. Item\03. Gear</Filter>
@@ -2577,53 +2658,23 @@
     <ClCompile Include="..\Private\Hat_Wizard.cpp">
       <Filter>02. GameObject\09. Item\03. Gear\Hat_Wizard</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Hat_DarkArts_Delux.cpp">
-      <Filter>02. GameObject\09. Item\03. Gear\Hat_DarkArts_Delux</Filter>
+    <ClCompile Include="..\Private\Outfit_Arcane.cpp">
+      <Filter>02. GameObject\09. Item\03. Gear\Outfit_Arcane</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Jacket_Arcane.cpp">
-      <Filter>02. GameObject\09. Item\03. Gear\Jacket_Arcane</Filter>
+    <ClCompile Include="..\Private\Outfit_Arcane_A.cpp">
+      <Filter>02. GameObject\09. Item\03. Gear\Outfit_Arcane_A</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Jacket_Arcane_A.cpp">
-      <Filter>02. GameObject\09. Item\03. Gear\Jacket_Arcane_A</Filter>
+    <ClCompile Include="..\Private\Outfit_Celtic.cpp">
+      <Filter>02. GameObject\09. Item\03. Gear\Outfit_Celtic</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Jacket_Celtic.cpp">
-      <Filter>02. GameObject\09. Item\03. Gear\Jacket_Celtic</Filter>
+    <ClCompile Include="..\Private\Outfit_Celtic_A.cpp">
+      <Filter>02. GameObject\09. Item\03. Gear\Outfit_Celtic_A</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Jacket_Celtic_A.cpp">
-      <Filter>02. GameObject\09. Item\03. Gear\Jacket_Celtic_A</Filter>
+    <ClCompile Include="..\Private\Outfit_DarkArts_Delux.cpp">
+      <Filter>02. GameObject\09. Item\03. Gear\Outfit_DarkArts_Delux</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Jacket_DarkArts_Delux.cpp">
-      <Filter>02. GameObject\09. Item\03. Gear\Jacket_DarkArts_Delux</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Jacket_DarkArts_Delux_A.cpp">
-      <Filter>02. GameObject\09. Item\03. Gear\Jacket_DarkArts_Delux_A</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Jacket_DragonGrab.cpp">
-      <Filter>02. GameObject\09. Item\03. Gear\Jacket_DragonGrab</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Jacket_DragonGrab_A.cpp">
-      <Filter>02. GameObject\09. Item\03. Gear\Jacket_DragonGrab_A</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Pants_Arcane.cpp">
-      <Filter>02. GameObject\09. Item\03. Gear\Pants_Arcane</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Pants_DarkArts_Delux.cpp">
-      <Filter>02. GameObject\09. Item\03. Gear\Pants_DarkArts_Delux</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Pants_Merlin.cpp">
-      <Filter>02. GameObject\09. Item\03. Gear\Pants_Merlin</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Pants_Stealth.cpp">
-      <Filter>02. GameObject\09. Item\03. Gear\Pants_Stealth</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Boots_Arcane.cpp">
-      <Filter>02. GameObject\09. Item\03. Gear\Boots_Arcane</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Boots_Merlin.cpp">
-      <Filter>02. GameObject\09. Item\03. Gear\Boots_Merlin</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Boots_Default.cpp">
-      <Filter>02. GameObject\09. Item\03. Gear\Boots_Default</Filter>
+    <ClCompile Include="..\Private\Outfit_DarkArts_Delux_A.cpp">
+      <Filter>02. GameObject\09. Item\03. Gear\Outfit_DarkArts_Delux_A</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Mask_Guardian.cpp">
       <Filter>02. GameObject\09. Item\03. Gear\Mask_Guardian</Filter>
@@ -2727,6 +2778,63 @@
     <ClCompile Include="..\Private\Broom_Stick.cpp">
       <Filter>02. GameObject\01. Player\01. Weapon\BroomStick</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Event_Vault_Torch.cpp">
+      <Filter>07. Events\Vault\Event_Vault_Torch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BigBird.cpp">
+      <Filter>02. GameObject\03. MapObject\Anim_Obj\BigBird</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SmithToCliff_Gate.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\SmithToCliff_Gate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Vault_Torch.cpp">
+      <Filter>02. GameObject\03. MapObject\Env\Vault_Torch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Lamppost.cpp">
+      <Filter>02. GameObject\03. MapObject\Env\Lamppost</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LightStand.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\LightStand</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sancutm_Door.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\Sanctum_Door</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Golem_Combat.cpp">
+      <Filter>02. GameObject\02. Enemy\03. Golem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DarkWizard_Spawn.cpp">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\01. Female\Spawner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DarkWizard_Fly.cpp">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\02. Fly</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Spawn.cpp">
+      <Filter>07. Events\Spawn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Event_Vault_Spawn.cpp">
+      <Filter>07. Events\Vault\Spawn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Enter_Vault.cpp">
+      <Filter>07. Events\Vault\Enter_Vault</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Dragon_Hp_Down.cpp">
+      <Filter>07. Events\Sanctum\Dragon_HP_Down</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Dragon_Death.cpp">
+      <Filter>07. Events\Sanctum\Dragon_Death</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Dragon_Head.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Head</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Dragon_Left_Wing.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Left_Wing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Dragon_Tail.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Tail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Dragon_Right_Wing.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Right_Wing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2783,9 +2891,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMesh.hlsl">
       <Filter>97. ShaderFiles\Meshes</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMeshInstance.hlsl">
-      <Filter>97. ShaderFiles\Meshes</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ImpulseSphere.hlsl">
       <Filter>04. Effect\BoneDragon\ImpulseSphere</Filter>
     </FxCompile>
@@ -2794,6 +2899,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Projectile_White.hlsl">
       <Filter>02. GameObject\02. Enemy\04. Dragon\04. Projectile_White\Projectile_White_Effect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMeshInstance.hlsl">
+      <Filter>97. ShaderFiles\Meshes</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

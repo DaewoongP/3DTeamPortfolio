@@ -14,7 +14,7 @@ END
 
 BEGIN(Client)
 class CUI_Group_Brew;
-
+class CUI_Interaction;
 
 class CPotion_Station final : public CMapObject
 {
@@ -40,6 +40,7 @@ private:
 private:
 	class CPlayer* m_pPlayer = { nullptr };
 	class CTransform* m_pPlayerTransform = { nullptr };
+	CUI_Interaction* m_pUI_Interaction = { nullptr };
 
 private:
 	STATE m_eState = { IDLE };

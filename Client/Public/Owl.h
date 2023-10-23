@@ -45,7 +45,7 @@ private:
 
 private:
 	_float	m_fFlyTime = { 0.f };
-	_bool	m_isOwlTurn = { false };
+	_float3 m_vecOriginPos = { 0.f, 0.f, 0.f }; // 시작 위치
 
 private:
 	HRESULT Add_Components();

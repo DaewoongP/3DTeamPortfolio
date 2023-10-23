@@ -43,6 +43,9 @@ private:
 	_uint m_iTorchIndex = { 0 }; 
 	_bool	m_isSwitch = { false };
 
+private:
+	void Torch_Bright();
+
 public:
 	static CVault_Torch* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

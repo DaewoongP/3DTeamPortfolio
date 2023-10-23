@@ -56,6 +56,8 @@ void CHat_Wizard::Equipment()
 {
 	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Hat_Wizard")
 		, CCustomModel::MESHTYPE::HAT);
+	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Hair_M_C")
+		, CCustomModel::MESHTYPE::HAIR);
 }
 
 CHat_Wizard* CHat_Wizard::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)

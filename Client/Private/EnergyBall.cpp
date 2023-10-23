@@ -75,7 +75,7 @@ void CEnergyBall::Tick(_float fTimeDelta)
 	{
 		if (m_fActionProtegoTime < m_fTimeAcc)
 		{
-			m_pMagicSlot->Action_Magic_Basic(1, this, nullptr, COL_MAGIC);
+			m_pMagicSlot->Action_Magic_Basic(1, this, nullptr, COL_MAGIC, COL_SHIELD_ENEMY);
 			m_isFirst = false;
 		}
 	}
@@ -149,7 +149,7 @@ void CEnergyBall::Reset(const ENERGYBALLINITDESC& tagResetDesc)
 
 void CEnergyBall::Set_Protego_Collision(CTransform* pTransform, CEnemy::ATTACKTYPE eType) const
 {
-	if (eType & CEnemy::ATTACK_BREAK || eType & CEnemy::ATTACK_SUPERBREAK)
+	if (eType == CEnemy::ATTACK_BREAK || eType == CEnemy::ATTACK_SUPERBREAK)
 	{
 		m_isDead = true;
 	}

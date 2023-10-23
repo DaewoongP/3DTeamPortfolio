@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "UI_Group_Brew.h"
 #include "ParticleSystem.h"
+#include "UI_Interaction.h"
 
 CPotion_Station::CPotion_Station(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMapObject(pDevice, pContext)
@@ -118,13 +119,13 @@ void CPotion_Station::Tick(_float fTimeDelta)
 			m_eState = INTERACTABLE;
 		break;
 	case Client::CPotion_Station::INTERACTABLE:
-		cout << "상호작용 UI" << '\n';
+		m_pUI_Interaction->Tick(fTimeDelta);
 
 		// 거리가 멀면 상호작용 불가능해짐
 		if (fabs((m_pTransform->Get_Position() - m_pPlayerTransform->Get_Position()).Length()) >= 2.f)
 			m_eState = IDLE;
 
-		// E버튼 누르면 활성화
+		// F버튼 누르면 활성화
 		if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
 		{
 			m_pCUI_Group_Brew->Set_isOpen(true);
@@ -159,6 +160,21 @@ void CPotion_Station::Tick(_float fTimeDelta)
 void CPotion_Station::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	switch (m_eState)
+	{
+	case Client::CPotion_Station::IDLE:
+		break;
+	case Client::CPotion_Station::INTERACTABLE:
+		m_pUI_Interaction->Late_Tick(fTimeDelta);
+		break;
+	case Client::CPotion_Station::SHOW:
+		break;
+	case Client::CPotion_Station::STATE_END:
+		break;
+	default:
+		break;
+	}
 }
 
 #ifdef _DEBUG
@@ -179,6 +195,27 @@ HRESULT CPotion_Station::Add_Components()
 
 	FAILED_CHECK(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_PotFire")
 		, TEXT("Com_Particle_PotFire"), reinterpret_cast<CComponent**>(&m_pPotFire)));
+
+
+	/* Com_UI_Interaction */
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	CUI_Interaction::INTERACTIONDESC pDesc;
+	lstrcpy(pDesc.m_wszName, TEXT("포션 스테이션"));
+	lstrcpy(pDesc.m_wszFunc, TEXT("제조하기"));
+	pDesc.m_WorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+
+	m_pUI_Interaction = static_cast<CUI_Interaction*>(pGameInstance->Clone_Component(LEVEL_STATIC,
+		TEXT("Prototype_GameObject_UI_Interaction"), &pDesc));
+
+	if (m_pUI_Interaction == nullptr)
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
+		Safe_Release(pGameInstance);
 
 	return S_OK;
 }
@@ -222,4 +259,7 @@ void CPotion_Station::Free()
 		Safe_Release(m_pWaterSmoke);
 		Safe_Release(m_pPotFire);
 	}
+
+	Safe_Release(m_pUI_Interaction);
+
 }
