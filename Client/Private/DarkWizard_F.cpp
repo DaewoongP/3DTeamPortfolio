@@ -21,6 +21,11 @@
 #include "Sequence_MoveTarget.h"
 #include "Weapon_DarkWizard_Wand.h"
 
+#include "UI_Damage.h"
+
+_uint CDarkWizard_F::iNumClass = { 0 };
+_float CDarkWizard_F::fAttackCoolTime = { 0.f };
+
 CDarkWizard_F::CDarkWizard_F(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEnemy(pDevice, pContext)
 {
@@ -50,6 +55,11 @@ HRESULT CDarkWizard_F::Initialize(void* pArg)
 	if (FAILED(Add_Components_for_Shake()))
 		return E_FAIL;
 
+	if (FAILED(Make_Magics()))
+		return E_FAIL;
+
+	++iNumClass;
+
 	return S_OK;
 }
 
@@ -61,16 +71,10 @@ HRESULT CDarkWizard_F::Initialize_Level(_uint iCurrentLevelIndex)
 	if (FAILED(Make_AI()))
 		return E_FAIL;
 
-	if (FAILED(Make_Magics()))
-		return E_FAIL;
-
 	if (FAILED(Bind_HitMatrices()))
 		return E_FAIL;
 
 	if (FAILED(Make_Notifies()))
-		return E_FAIL;
-
-	if (FAILED(Make_Notifies_for_Shake()))
 		return E_FAIL;
 
 	m_pTransform->Set_Speed(10.f);
@@ -85,6 +89,8 @@ HRESULT CDarkWizard_F::Initialize_Level(_uint iCurrentLevelIndex)
 
 void CDarkWizard_F::Tick(_float fTimeDelta)
 {
+	fAttackCoolTime += fTimeDelta;
+
 	Set_Current_Target();
 
 	m_fProtegoCoolTime += fTimeDelta;
@@ -133,6 +139,8 @@ void CDarkWizard_F::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		{
 			m_CurrentTickSpells.emplace(eBuff, Action);
 		}
+
+		Print_Damage_Font(iDamage);
 
 		m_pHealth->Damaged(iDamage);
 
@@ -203,62 +211,6 @@ void CDarkWizard_F::Set_Protego_Collision(CTransform* pTransform, CEnemy::ATTACK
 	}
 }
 
-HRESULT CDarkWizard_F::Add_Components_for_Shake()
-{
-	try
-	{
-		CCamera_Shake::CAMERA_SHAKE_DESC Camera_Shake_Desc = { CCamera_Shake::CAMERA_SHAKE_DESC() };
-
-		_float fMaxDistance = { 15.0f };
-		_float fMinDistance = { 2.0f };
-
-
-		Camera_Shake_Desc.eShake_Priority = CCamera_Manager::SHAKE_PRIORITY_1;
-		Camera_Shake_Desc.isDistanceOption = true;
-		Camera_Shake_Desc.pTransform = m_pTransform;
-		Camera_Shake_Desc.Shake_Info_Desc.eEase = CEase::INOUT_EXPO;
-		Camera_Shake_Desc.Shake_Info_Desc.eShake_Axis = CCamera_Manager::SHAKE_AXIS_UP;
-		Camera_Shake_Desc.Shake_Info_Desc.eShake_Power = CCamera_Manager::SHAKE_POWER_DECRECENDO;
-		Camera_Shake_Desc.Shake_Info_Desc.eShake_Type = CCamera_Manager::SHAKE_TYPE_TRANSLATION;
-		Camera_Shake_Desc.Shake_Info_Desc.fShakeDuration = 1.0f;
-		Camera_Shake_Desc.Shake_Info_Desc.fShakePower = 0.1f;
-		Camera_Shake_Desc.Shake_Info_Desc.fShakeSpeed = 15.0f;
-		Camera_Shake_Desc.Shake_Info_Desc.vShake_Axis_Set = _float3();
-
-		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Enemy_Camera_Shake"),
-			TEXT("Com_Step_Shake"), reinterpret_cast<CComponent**>(&m_pDescendo_Shake), &Camera_Shake_Desc)))
-			throw TEXT("Com_Step_Shake");
-
-		m_pDescendo_Shake->Ready_Shake(fMaxDistance, fMinDistance, Camera_Shake_Desc.Shake_Info_Desc.fShakePower);
-	}
-	catch (const _tchar* pErrorTag)
-	{
-		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Add_Components : ");
-		wstrErrorMSG += pErrorTag;
-		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
-		__debugbreak();
-
-		return E_FAIL;
-	}
-
-	return S_OK;
-}
-
-HRESULT CDarkWizard_F::Make_Notifies_for_Shake()
-{
-	if (nullptr == m_pDescendo_Shake)
-	{
-		MSG_BOX("Failed Make_Notifies_for_Shake");
-		return E_FAIL;
-	}
-
-	function<void()> func = [&] {m_pDescendo_Shake->RandomUpAxisShake(); };
-
-	m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Descendo"), func);
-
-	return S_OK;
-}
-
 HRESULT CDarkWizard_F::Make_AI()
 {
 	BEGININSTANCE;
@@ -270,6 +222,12 @@ HRESULT CDarkWizard_F::Make_AI()
 
 		if (FAILED(m_pRootBehavior->Add_Type("fProtegoCoolTime", &m_fProtegoCoolTime)))
 			throw TEXT("Failed Add_Type fProtegoCoolTime");
+		if (FAILED(m_pRootBehavior->Add_Type("iNumClass", &iNumClass)))
+			throw TEXT("Failed Add_Type iNumClass");
+		if (FAILED(m_pRootBehavior->Add_Type("fAttackCoolTime", &fAttackCoolTime)))
+			throw TEXT("Failed Add_Type fAttackCoolTime");
+		if (FAILED(m_pRootBehavior->Add_Type("isAbleAttack", _bool())))
+			throw TEXT("Failed Add_Type isAbleAttack");
 
 		/* Make Child Behaviors */
 		CSelector* pSelector = nullptr;
@@ -351,7 +309,7 @@ HRESULT CDarkWizard_F::Make_Magics()
 		magicInitDesc.eMagicTag = PROTEGO;
 		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 0;
-		magicInitDesc.fLifeTime = 600.f;
+		magicInitDesc.fLifeTime = 3600.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 		m_MagicDesc = magicInitDesc;
 	}
@@ -384,8 +342,48 @@ HRESULT CDarkWizard_F::Make_Magics()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, LEVIOSO);
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, CONFRINGO);
+	//Skill Magic DIFFINDO
+	{
+		CMagic::MAGICDESC magicInitDesc;
+		magicInitDesc.eBuffType = BUFF_DIFFINDO;
+		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
+		magicInitDesc.eMagicType = CMagic::MT_RED;
+		magicInitDesc.eMagicTag = DIFFINDO;
+		magicInitDesc.fInitCoolTime = 0.f;
+		magicInitDesc.iDamage = 10;
+		magicInitDesc.fLifeTime = 0.8f;
+		magicInitDesc.isChase = false;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
+	_uint iOwnerType = rand() % 4 + 1;
+
+	m_pMagicSlot->Set_OwnerType(CMagic_Sound_Manager::OWNERTYPE(iOwnerType));
+
+	switch (CMagic_Sound_Manager::OWNERTYPE(iOwnerType))
+	{
+	case CMagic_Sound_Manager::OWNER_BLACKMAGIC_A:
+		m_pMagicSlot->Add_Magic_To_Skill_Slot(0, DIFFINDO);
+		m_pMagicSlot->Add_Magic_To_Skill_Slot(1, DIFFINDO);
+		m_pMagicSlot->Add_Magic_To_Skill_Slot(2, DIFFINDO);
+		break;
+
+	case CMagic_Sound_Manager::OWNER_BLACKMAGIC_B:
+	case CMagic_Sound_Manager::OWNER_BLACKMAGIC_C:
+		m_pMagicSlot->Add_Magic_To_Skill_Slot(0, CONFRINGO);
+		m_pMagicSlot->Add_Magic_To_Skill_Slot(1, CONFRINGO);
+		m_pMagicSlot->Add_Magic_To_Skill_Slot(2, CONFRINGO);
+		break;
+
+	case CMagic_Sound_Manager::OWNER_BLACKMAGIC_D:
+		m_pMagicSlot->Add_Magic_To_Skill_Slot(0, LEVIOSO);
+		m_pMagicSlot->Add_Magic_To_Skill_Slot(1, CONFRINGO);
+		m_pMagicSlot->Add_Magic_To_Skill_Slot(2, DIFFINDO);
+		break;
+
+	default:
+		break;
+	}
 
 	return S_OK;
 }
@@ -594,6 +592,7 @@ void CDarkWizard_F::DeathBehavior(const _float& fTimeDelta)
 	{
 		m_isDissolve = true;
 		m_fDissolveAmount += fTimeDelta / 1.5f; // 디졸브 값 증가
+		m_pWeapon->On_Dissolve();
 	}
 
 	if (4.f < m_fDeadTimeAcc && m_fDissolveAmount >= 1.f)
@@ -762,7 +761,6 @@ HRESULT CDarkWizard_F::Make_Alive(_Inout_ CSelector* pSelector)
 			});
 
 		/* Set Options */
-		pSelector_NormalAttack->Set_Option(2.5f);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_Hit_Combo"), pSelector_Hit_Combo)))
@@ -1039,6 +1037,38 @@ HRESULT CDarkWizard_F::Make_NormalAttack(_Inout_ CSelector* pSelector)
 					return false;
 
 				if (BUFF_STUPEFY & *pICurrentSpell)
+					return false;
+
+				return true;
+			});
+		pRandom_Attack->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_uint* pNumClass = { nullptr };
+				_float* pAttackCoolTime = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iNumClass", pNumClass)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("fAttackCoolTime", pAttackCoolTime)))
+					return false;
+
+				_float fCoolTime = _float(*pNumClass * 3.f);
+
+				if (fCoolTime < *pAttackCoolTime)
+				{
+					*pAttackCoolTime = 0.f;
+					if (FAILED(pBlackBoard->Set_Type("isAbleAttack", true)))
+						return false;
+					return true;
+				}
+
+				_bool isAbleAttack = { false };
+				if (FAILED(pBlackBoard->Get_Type("isAbleAttack", isAbleAttack)))
+					return false;
+
+				return isAbleAttack;
+			});
+		pRandom_Attack->Add_End_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				if (FAILED(pBlackBoard->Set_Type("isAbleAttack", false)))
 					return false;
 
 				return true;
@@ -1494,6 +1524,18 @@ HRESULT CDarkWizard_F::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 			throw TEXT("Failed Create_Behavior pTsk_RigidMove_Up");
 
 		/* Set Decorators */
+		pAction_Descendo1->Add_Success_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				CHealth* pHealth = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("pHealth", pHealth)))
+					return false;
+
+				Print_Damage_Font(50);
+
+				pHealth->Damaged(50);
+
+				return true;
+			});
 
 		/* Set Options */
 		pAction_Descendo1->Set_Options(TEXT("Descendo_1"), m_pModelCom);
@@ -1575,7 +1617,7 @@ void CDarkWizard_F::Cast_Protego()
 		return;
 
 	m_pHitMatrix = m_HitMatrices[2];
-	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COL_MAGIC);
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COL_MAGIC, COL_SHIELD_ENEMY);
 	m_iCurrentSpell |= BUFF_PROTEGO;
 }
 
@@ -1585,6 +1627,14 @@ void CDarkWizard_F::Cast_Confringo()
 		return;
 
 	m_CastingMagic = m_pMagicSlot->Action_Magic_Skill(1, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_NPC | COL_SHIELD));
+}
+
+void CDarkWizard_F::Cast_Diffindo()
+{
+	if (nullptr == m_pTarget)
+		return;
+
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Skill(2, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_NPC | COL_SHIELD));
 }
 
 void CDarkWizard_F::Shot_Magic()
@@ -1622,15 +1672,8 @@ void CDarkWizard_F::Free()
 {
 	__super::Free();
 
-	if (true == m_isCloned)
-	{
-		Safe_Release(m_pWeapon);
-		Safe_Release(m_pModelCom);
-		Safe_Release(m_pRenderer);
-		Safe_Release(m_pShaderCom);
-		Safe_Release(m_pRigidBody);
-		Safe_Release(m_pMagicSlot);
-		Safe_Release(m_pRootBehavior);
-		Safe_Release(m_pDescendo_Shake);
-	}
+	Safe_Release(m_pWeapon);
+	Safe_Release(m_pMagicSlot);
+
+	--iNumClass;
 }

@@ -17,6 +17,9 @@ _uint CLight_Manager::Get_CurrentLightShadowNum()
 
 const CLight::LIGHTDESC* CLight_Manager::Get_ShadowLightDesc(_uint iIndex)
 {
+	if (nullptr == m_pShadowLights[iIndex])
+		return nullptr;
+
 	return m_pShadowLights[iIndex]->Get_LightDesc();
 }
 

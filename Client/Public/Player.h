@@ -9,6 +9,10 @@
 #include "ProtegoState.h"
 #include"Blink_Effect.h"
 
+#include "Event_Enter_Vault.h"
+#include "Event_Dragon_Death.h"
+#include "Event_Dragon_Hp_Down.h"
+
 #include "Ease.h"
 
 BEGIN(Engine)
@@ -19,6 +23,7 @@ class CCustomModel;
 class CRigidBody;
 class CCoolTime;
 class CDefence;
+class CParticleSystem;
 END
 
 BEGIN(Client)
@@ -42,6 +47,10 @@ END
 BEGIN(Client)
 class CPlayer final : public CGameObject
 {
+	friend CEvent_Enter_Vault;
+	friend CEvent_Dragon_Death;
+	friend CEvent_Dragon_Hp_Down;
+
 public:
 	enum MOVETYPE
 	{

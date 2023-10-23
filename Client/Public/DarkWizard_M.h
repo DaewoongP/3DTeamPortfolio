@@ -42,10 +42,9 @@ public:
 
 private:
 	CMagicSlot* m_pMagicSlot = { nullptr };
-	CWeapon_DarkWizard_Wand* m_pWeapon = { nullptr };
-
 	CMagic::MAGICDESC m_MagicDesc;
 	CMagicBall* m_CastingMagic = { nullptr };
+	CWeapon_DarkWizard_Wand* m_pWeapon = { nullptr };
 
 	mutable _float m_fProtegoCoolTime = { 0.f };
 
@@ -76,6 +75,7 @@ private: /* 행동 묶음들 */
 	HRESULT Make_Check_Spell(_Inout_ CSelector* pSelector);
 	HRESULT Make_Protego(_Inout_ CSequence* pSequence);
 	HRESULT Make_NormalAttack(_Inout_ CSelector* pSelector);
+	HRESULT Make_Move(_Inout_ CSelector* pSelector);
 	HRESULT Make_Taunts(_Inout_ CRandomChoose* pRandomChoose);
 
 	HRESULT Make_Fly_Combo(_Inout_ CSelector* pSelector);
@@ -91,7 +91,12 @@ private: /* Notify Functions */
 	void Cast_Levioso();
 	void Cast_Protego();
 	void Cast_Confringo();
+	void Cast_Diffindo();
 	void Shot_Magic();
+
+private:
+	static _uint iNumClass;
+	static _float fAttackCoolTime; // 적군 마법사 무리의 공격 쿨타임
 
 public:
 	static CDarkWizard_M* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

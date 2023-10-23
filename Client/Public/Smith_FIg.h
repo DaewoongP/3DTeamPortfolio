@@ -12,6 +12,9 @@ END
 BEGIN(Client)
 class CUI_Interaction;
 class CScript;
+END
+
+BEGIN(Client)
 
 class CSmith_Fig final : public CGameObject
 {

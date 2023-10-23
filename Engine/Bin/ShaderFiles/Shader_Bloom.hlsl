@@ -54,15 +54,11 @@ PS_OUT PS_MAIN_WHITE(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
     
     float4 vTargetColor = g_TargetTexture.Sample(PointSampler_Clamp, In.vTexUV);
-    float fBrightness = dot(vTargetColor.rgb, g_vLuminancekey);
-    
-    if (fBrightness > 0.99f)
-    {
-        Out.vColor = float4(vTargetColor.rgb, 1.f);
-    }
-    else
+    if (0.f == vTargetColor.a)
         discard;
 
+    Out.vColor = float4(vTargetColor.rgb, 1.f);
+    
     return Out;
 }
 

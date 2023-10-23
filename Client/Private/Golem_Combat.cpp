@@ -60,7 +60,7 @@ HRESULT CGolem_Combat::Initialize_Level(_uint iCurrentLevelIndex)
 {
 	if (FAILED(Add_Components_Level(iCurrentLevelIndex)))
 		return E_FAIL;
-	
+
 	if (FAILED(Make_AI()))
 		return E_FAIL;
 
@@ -118,11 +118,11 @@ void CGolem_Combat::Late_Tick(_float fTimeDelta)
 void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionEnter(CollisionEventDesc);
-	
+
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 	wstring wstrOtherCollisionTag = CollisionEventDesc.pOtherCollisionTag;
-	
+
 	/* Collision Magic */
 	if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
 	{
@@ -131,11 +131,9 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		auto Action = pCollisionMagicBallDesc->Action;
 		_int iDamage = pCollisionMagicBallDesc->iDamage;
 
+		Print_Damage_Font(iDamage);
+
 		m_pHealth->Damaged(iDamage);
-
-		if (nullptr != m_pHitMatrix)
-			m_pUI_Damage->Add_Font(iDamage, XMVector3TransformCoord(m_pHitMatrix->Translation(), m_pTransform->Get_WorldMatrix()));
-
 
 		auto iter = m_CurrentTickSpells.find(eBuff);
 		if (iter == m_CurrentTickSpells.end() &&
@@ -154,7 +152,7 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	}
 
 	/* Collision Protego */
-	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Attack")) && 
+	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Attack")) &&
 		wstring::npos != wstrOtherCollisionTag.find(TEXT("Protego")))
 	{
 		m_isParring = true;
@@ -403,23 +401,6 @@ HRESULT CGolem_Combat::Add_Components()
 			throw TEXT("m_pUI_HP is nullptr");
 		}
 
-		CUI_DamageFont::DAMAGEFONTDESC DamageDesc;
-
-		DamageDesc.m_vColor = _float4(1.f, 1.f, 1.f, 0.f);
-		DamageDesc.m_fRotation = 0.f;
-		DamageDesc.m_vOrigin = { 0.f, 0.f };
-		DamageDesc.m_vMinScale = { 0.5f, 0.5f };
-		DamageDesc.m_vMaxScale = { 1.f, 1.f };
-
-		DamageDesc.m_fLifeTime = { 0.7f };
-		DamageDesc.m_fMoveSpeed = { 2.f };
-		DamageDesc.m_fAlphaSpeed = { 0.1f };
-		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Damage"),
-			TEXT("Com_UI_Damage"), reinterpret_cast<CComponent**>(&m_pUI_Damage), &DamageDesc)))
-		{
-			ENDINSTANCE;
-			throw TEXT("Failed m_pUI_Damage");
-		}
 		ENDINSTANCE;
 	}
 	catch (const _tchar* pErrorTag)
@@ -646,7 +627,7 @@ HRESULT CGolem_Combat::Make_Hit_Combo(_Inout_ CSelector* pSelector)
 			throw TEXT("Failed Create_Behavior pSelector_Fly_Combo");
 
 		/* Set Decorations */
-		
+
 		/* Set Options */
 
 		/* Assemble Behaviors */
@@ -816,7 +797,7 @@ HRESULT CGolem_Combat::Make_NormalAttack(_Inout_ CSelector* pSelector)
 
 				return (fAttackRange - 1.f) > fTargetDistance;
 			});
-		
+
 		/* Set Options */
 		pSequence_Attacks->Set_Option(2.f);
 		pSequence_MoveTarget->Set_Action_Options(TEXT("Move_Front"), m_pModelCom);
@@ -1399,9 +1380,18 @@ HRESULT CGolem_Combat::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 		CRigidMove* pTsk_RigidMove_Up = nullptr;
 		if (FAILED(Create_Behavior(pTsk_RigidMove_Up)))
 			throw TEXT("Failed Create_Behavior pTsk_RigidMove_Up");
-		
+
 		/* Set Decorators */
-		
+		pAction_Descendo1->Add_Success_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				CHealth* pHealth = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("pHealth", pHealth)))
+					return false;
+
+				pHealth->Damaged(50);
+
+				return true;
+			});
 
 		/* Set Options */
 		pAction_Descendo1->Set_Options(TEXT("Descendo_1"), m_pModelCom);
@@ -1455,7 +1445,7 @@ void CGolem_Combat::Enter_Light_Attack()
 	m_CollisionRequestDesc.iDamage = 5;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
 
-	if(nullptr != m_pWeapon)
+	if (nullptr != m_pWeapon)
 		m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
 }
 
@@ -1510,6 +1500,7 @@ void CGolem_Combat::DeathBehavior(const _float& fTimeDelta)
 	{
 		m_isDissolve = true;
 		m_fDissolveAmount += fTimeDelta / 1.5f; // 디졸브 값 증가
+		m_pWeapon->On_Dissolve();
 	}
 
 	if (3.f < m_fDeadTimeAcc && m_fDissolveAmount >= 1.f)
@@ -1604,10 +1595,6 @@ void CGolem_Combat::Free()
 {
 	__super::Free();
 
-	if (true == m_isCloned)
-	{
-		Safe_Release(m_pWeapon);
-		Safe_Release(m_pUI_Damage);
-		Safe_Release(m_pDescendo_Shake);
-	}
+	Safe_Release(m_pWeapon);
+	Safe_Release(m_pDescendo_Shake);
 }

@@ -22,6 +22,8 @@
 #include "Sequence_Levitate.h"
 #include "Sequence_MoveTarget.h"
 
+#include "UI_Damage.h"
+
 CDugbog::CDugbog(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEnemy(pDevice, pContext)
 {
@@ -123,6 +125,8 @@ void CDugbog::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
 		auto Action = pCollisionMagicBallDesc->Action;
 		_int iDamage = pCollisionMagicBallDesc->iDamage;
+
+		Print_Damage_Font(iDamage);
 
 		m_pHealth->Damaged(iDamage);
 
@@ -1841,6 +1845,16 @@ HRESULT CDugbog::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 			throw TEXT("Failed Create_Behavior pTsk_RigidMove_Up");
 
 		/* Set Decorators */
+		pAction_Descendo1->Add_Success_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				CHealth* pHealth = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("pHealth", pHealth)))
+					return false;
+
+				pHealth->Damaged(50);
+
+				return true;
+			});
 
 		/* Set Options */
 		pAction_Descendo1->Set_Options(TEXT("Descendo_1"), m_pModelCom, true);

@@ -17,7 +17,7 @@ CMesh_Instance::CMesh_Instance(const CMesh_Instance& rhs)
 HRESULT CMesh_Instance::Initialize_Prototype(const Engine::MESH Mesh, _float4x4 PivotMatrix, _float4x4* pInstanceMatrix, _uint iNumInstance)
 {
 	m_iNumInstance = { iNumInstance }; // 인스턴스의 개수
-
+	lstrcpy(m_szName, Mesh.szName);
 	m_iMaterialIndex = Mesh.iMaterialIndex;
 	m_iIndexCountPerInstance = Mesh.iNumFaces * 3;
 	m_iNumVertexBuffers = { 2 };

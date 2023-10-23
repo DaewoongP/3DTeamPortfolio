@@ -67,12 +67,9 @@ void CCard_Fig::Tick(_float fTimeDelta)
 	if (false == m_isSpawn)
 	{
 		BEGININSTANCE;
-		//_float3 vCameraPosition = pGameInstance->Get_CamPosition()->xyz();
-		//_float3 vCameraLook = *pGameInstance->Get_CamLook();
-		_float4x4 CameraWorldMatrix = *m_pParentWorldMatrix;//XMMatrixTranslation(vCameraPosition.x, vCameraPosition.y, vCameraPosition.z);
+		_float4x4 CameraWorldMatrix = *m_pParentWorldMatrix;
 		_float4x4 WorldMatrix = m_OffsetMatrix * CameraWorldMatrix;
 		m_pTransform->Set_WorldMatrix(WorldMatrix);
-		//m_pTransform->Set_Look(vCameraLook);
 		ENDINSTANCE;
 	}
 	else

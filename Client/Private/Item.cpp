@@ -245,75 +245,45 @@ CItem* CItem::SimpleFactory(ITEM_ID eItemID, _uint iLevel, void* pArg)
 			iLevel,
 			TEXT("Prototype_GameObject_Robe_Quidditch"), pArg));
 		break;
-	case Client::ITEM_ID_BOOTS_ARCANE:
-		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
-			iLevel,
-			TEXT("Prototype_GameObject_Boots_Arcane"), pArg));
-		break;
-	case Client::ITEM_ID_BOOTS_DEFAULT:
-		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
-			iLevel,
-			TEXT("Prototype_GameObject_Boots_Default"), pArg));
-		break;
-	case Client::ITEM_ID_BOOTS_MERLIN:
-		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
-			iLevel,
-			TEXT("Prototype_GameObject_Boots_Merlin"), pArg));
-		break;
 	case Client::ITEM_ID_HAT_ARCANE:
 		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
 			iLevel,
 			TEXT("Prototype_GameObject_Hat_Arcane"), pArg));
-		break;
-	case Client::ITEM_ID_HAT_DARTARTS_DELUX:
-		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
-			iLevel,
-			TEXT("Prototype_GameObject_Hat_DarkArts_Delux"), pArg));
 		break;
 	case Client::ITEM_ID_HAT_WIZARD:
 		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
 			iLevel,
 			TEXT("Prototype_GameObject_Hat_Wizard"), pArg));
 		break;
-	case Client::ITEM_ID_JACKET_ARCANE:
+	case Client::ITEM_ID_OUTFIT_ARCANE:
 		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
 			iLevel,
-			TEXT("Prototype_GameObject_Jacket_Arcane"), pArg));
+			TEXT("Prototype_GameObject_Outfit_Arcane"), pArg));
 		break;
-	case Client::ITEM_ID_JACKET_ARCANE_A:
+	case Client::ITEM_ID_OUTFIT_ARCANE_A:
 		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
 			iLevel,
-			TEXT("Prototype_GameObject_Jacket_Arcane_A"), pArg));
+			TEXT("Prototype_GameObject_Outfit_Arcane_A"), pArg));
 		break;
-	case Client::ITEM_ID_JACKET_CELTIC:
+	case Client::ITEM_ID_OUTFIT_CELTIC:
 		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
 			iLevel,
-			TEXT("Prototype_GameObject_Jacket_Celtic"), pArg));
+			TEXT("Prototype_GameObject_Outfit_Celtic"), pArg));
 		break;
-	case Client::ITEM_ID_JACKET_CELTIC_A:
+	case Client::ITEM_ID_OUTFIT_CELTIC_A:
 		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
 			iLevel,
-			TEXT("Prototype_GameObject_Jacket_Celtic_A"), pArg));
+			TEXT("Prototype_GameObject_Outfit_Celtic_A"), pArg));
 		break;
-	case Client::ITEM_ID_JACKET_DARKARTS_DELUX:
+	case Client::ITEM_ID_OUTFIT_DARKARTS_DELUX:
 		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
 			iLevel,
-			TEXT("Prototype_GameObject_Jacket_DarkArts_Delux"), pArg));
+			TEXT("Prototype_GameObject_Outfit_DarkArts_Delux"), pArg));
 		break;
-	case Client::ITEM_ID_JACKET_DARKARTS_DELUX_A:
+	case Client::ITEM_ID_OUTFIT_DARKARTS_DELUX_A:
 		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
 			iLevel,
-			TEXT("Prototype_GameObject_Jacket_DarkArts_Delux_A"), pArg));
-		break;
-	case Client::ITEM_ID_JACKET_DRAGONGRAB:
-		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
-			iLevel,
-			TEXT("Prototype_GameObject_Jacket_DragonGrab"), pArg));
-		break;
-	case Client::ITEM_ID_JACKET_DRAGONGRAB_A:
-		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
-			iLevel,
-			TEXT("Prototype_GameObject_Jacket_DragonGrab_A"), pArg));
+			TEXT("Prototype_GameObject_Outfit_DarkArts_Delux_A"), pArg));
 		break;
 	case Client::ITEM_ID_MASK_DEMIGUISE:
 		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
@@ -329,26 +299,6 @@ CItem* CItem::SimpleFactory(ITEM_ID eItemID, _uint iLevel, void* pArg)
 		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
 			iLevel,
 			TEXT("Prototype_GameObject_Mask_Niffler"), pArg));
-		break;
-	case Client::ITEM_ID_PANTS_ARCANE:
-		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
-			iLevel,
-			TEXT("Prototype_GameObject_Pants_Arcane"), pArg));
-		break;
-	case Client::ITEM_ID_PANTS_DARKARTS_DELUX:
-		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
-			iLevel,
-			TEXT("Prototype_GameObject_Pants_DarkArts_Delux"), pArg));
-		break;
-	case Client::ITEM_ID_PANTS_MERLIN:
-		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
-			iLevel,
-			TEXT("Prototype_GameObject_Pants_Merlin"), pArg));
-		break;
-	case Client::ITEM_ID_PANTS_STEALTH:
-		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
-			iLevel,
-			TEXT("Prototype_GameObject_Pants_Stealth"), pArg));
 		break;
 	default:
 		break;

@@ -89,6 +89,38 @@ HRESULT CLevel_Sanctum::Ready_Layer_Monsters(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+	Matrix = XMMatrixRotationY(XMConvertToRadians(41.f)) * XMMatrixTranslation(-8.1f, 2.2f, 173.7f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_DarkWizard_Spawn"), pLayerTag, TEXT("Spawn_0"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Spawn_0)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	Matrix = XMMatrixRotationY(XMConvertToRadians(-63.f)) * XMMatrixTranslation(5.6f, 1.2f, 176.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_DarkWizard_Spawn"), pLayerTag, TEXT("Spawn_1"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Spawn_1)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	Matrix = XMMatrixRotationY(XMConvertToRadians(23.f)) * XMMatrixTranslation(-4.75f, 2.45f, 171.3f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_DarkWizard_Spawn"), pLayerTag, TEXT("Spawn_2"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Spawn_2)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	Matrix = XMMatrixRotationY(XMConvertToRadians(-27.f)) * XMMatrixTranslation(2.3f, 3.2f, 171.1f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_DarkWizard_Spawn"), pLayerTag, TEXT("Spawn_3"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Spawn_3)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
 	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Sanctum.mon"));
 
 	ENDINSTANCE;

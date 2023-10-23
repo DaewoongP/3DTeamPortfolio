@@ -15,6 +15,7 @@ class CSequence;
 class CSelector;
 class CRandomChoose;
 class CCamera_Shake;
+class CParticleSystem;
 END
 
 BEGIN(Client)
@@ -23,7 +24,11 @@ class CAction;
 class CBreath;
 class CMagicSlot;
 class CEnergyBall;
+class CBreath_Effect;
 class CWeapon_Dragon_Head;
+class CWeapon_Dragon_Left_Wing;
+class CWeapon_Dragon_Right_Wing;
+class CWeapon_Dragon_Tail;
 class CImpulseSphere_Effect;
 END
 
@@ -31,10 +36,24 @@ BEGIN(Client)
 
 class CConjuredDragon final : public CEnemy
 {
+public:
+	enum BONE_TYPE { LEFT_WING, RIGHT_WING, TAIL, BONE_TYPE_END };
+	typedef struct tagDragonBoneData
+	{
+		const _float4x4* pCombinedTransformationMatrix = { nullptr };
+		// 월드 매트릭스까지 다 적용된 위치
+		_float3 vPosition;
+	}DRAGONBONEDATA;
+
 private:
 	explicit CConjuredDragon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CConjuredDragon(const CConjuredDragon& rhs);
 	virtual ~CConjuredDragon() = default;
+
+public:
+	_float Get_Current_HP_Percent() const {
+		return m_pHealth->Get_Current_HP_Percent();
+	}
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -77,6 +96,7 @@ private: /* 펄스 패턴 관련 데이터 */
 	CPulse* m_pPulse = { nullptr };
 
 private: /* 사망처리 전용 데이터 */
+	_bool m_isEnterDeath = { false };
 	_float m_fDeadTimeAcc = { 0.f };
 	/* 사망 시 돌아가는 함수 */
 	void DeathBehavior(const _float& fTimeDelta);
@@ -86,6 +106,11 @@ private:
 	_bool m_isMoveLeft = { false };
 	/* 무중력 상태에서 특정 방향으로 이동하지 못하게 만드는 함수 */
 	void Check_Air_Balance(const _float& fTimeDelta);
+
+private:
+	// 날개, 꼬리뼈의 행렬을 저장한 벡터 컨테이너
+	array<vector<DRAGONBONEDATA>, BONE_TYPE_END> m_Bones;
+	void Update_Bones();
 
 private: /* 페이즈 관련 함수 */
 	_bool m_isPhaseOne = { false };
@@ -97,7 +122,10 @@ private: /* 페이즈 관련 함수 */
 
 private:
 	CMagicSlot* m_pMagicSlot = { nullptr };
-	CWeapon_Dragon_Head* m_pWeapon = { nullptr };
+	CWeapon_Dragon_Head* m_pWeapon_Head = { nullptr };
+	CWeapon_Dragon_Left_Wing* m_pWeapon_Left_Wing = { nullptr };
+	CWeapon_Dragon_Right_Wing* m_pWeapon_Right_Wing = { nullptr };
+	CWeapon_Dragon_Tail* m_pWeapon_Tail = { nullptr };
 
 private:
 	//카메라 쉐이크 노티파이에 함수를 넣기 위한 클래스
@@ -147,6 +175,7 @@ private: /* 행동 묶음들 */
 	HRESULT Make_Ground_Attacks_Melee(_Inout_ CSequence* pSequence);
 	HRESULT Make_Ground_Attacks_Range(_Inout_ CSequence* pSequence);
 	HRESULT Make_Ground_Attack_Pulse(_Inout_ CSequence* pSequence);
+	HRESULT Make_Ground_Attack_AOE(_Inout_ CSequence* pSequence);
 
 	HRESULT Make_Ground_Charge(_Inout_ CSequence* pSequence);
 
@@ -159,8 +188,10 @@ private: /* 행동 묶음들 */
 	HRESULT Make_Air_Hover(_Inout_ CAction* pAction);
 	
 private: /* Notify Func */
+	void Exit_Attack();
 	void Shot_Fireball_Black();
 	void Shot_Fireball_White();
+	void Enter_Charge_Attack();
 	void On_Breath();
 	void Off_Breath();
 	void Action_Pulse();

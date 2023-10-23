@@ -82,6 +82,7 @@ public:
 	void Set_Gravity(_bool _isGravity);
 	void Set_Mass(_float fMass);
 	void Set_CollisionFlag(const _char* szColliderTag, PxU32 eCollisionFlag);
+	void Set_CollisionFlag(const _char* szColliderTag, PxU32 eThisCollisionFlag, PxU32 eOtherCollisionFlag);
 
 #ifdef _DEBUG
 	void Set_DebugColor(_uint iColliderIndex, _float4 _vColor) { m_Colors[iColliderIndex] = _vColor; }

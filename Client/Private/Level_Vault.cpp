@@ -6,6 +6,7 @@
 #include "Trigger_Vault.h"
 #include "Player.h"
 #include "Level_Loading.h"
+#include "Event_Enter_Vault.h"
 
 CLevel_Vault::CLevel_Vault(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CLevel(pDevice, pContext)
@@ -107,6 +108,15 @@ HRESULT CLevel_Vault::Ready_Events(const _tchar* pLayerTag)
 	if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT, TEXT("Prototype_GameObject_Event_Torch"), pLayerTag, TEXT("Event_Torch"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Event_Torch)");
+		return E_FAIL;
+	}
+	
+	CEvent_Enter_Vault::INITEVENTENTERVAULT InitEnterVaultDesc;
+	InitEnterVaultDesc.vTriggerWorldPosition = _float3(15.f, 0.f, 15.f);
+	InitEnterVaultDesc.vTriggerSize = _float3(5.f, 5.f, 5.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT, TEXT("Prototype_GameObject_Event_Enter_Vault"), pLayerTag, TEXT("Event_Enter_Vault"), &InitEnterVaultDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Event_Enter_Vault)");
 		return E_FAIL;
 	}
 

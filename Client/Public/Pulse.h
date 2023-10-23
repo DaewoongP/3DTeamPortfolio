@@ -37,6 +37,7 @@ public:
 	void Reset(const PULSEINITDESC& ResetDesc);
 
 private:
+	CEnemy::COLLISIONREQUESTDESC m_CollisionRequestDesc;
 	const CGameObject* m_pTarget = { nullptr };
 	_float m_fMoveSpeed = { 0.f };
 	_float m_fLifeTime = { 0.f };

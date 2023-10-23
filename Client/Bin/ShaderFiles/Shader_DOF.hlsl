@@ -63,14 +63,14 @@ PS_OUT PS_MAIN(PS_IN In)
     
     if (g_fFocusDistance - g_fFocusRange > fViewZ)
     {
-        Out.vColor = vTarget;
+        Out.vColor = vTarget * 0.5f;
         Out.vColor.a = saturate(1.f - (fViewZ / (g_fFocusDistance - g_fFocusRange)));
     }
     else if (g_fFocusDistance + g_fFocusRange < fViewZ)
     {
         float fMaxAtt = 30.f;
         float fMaxDistance = g_fFocusDistance + g_fFocusRange + fMaxAtt;
-        Out.vColor = vTarget;
+        Out.vColor = vTarget * 0.5f;
         // f + R ~ 100.f(특정 Z) 까지를 0~1로 정규화
         // ViewZ - (F+R) / (100.f - (f+R)) // 100.f 는 CamFar가 정석인거같은데, "사실상 보이는 위치" 로 설정하는게 맞는듯.
         Out.vColor.a = saturate((fViewZ - (g_fFocusDistance + g_fFocusRange)) / (fMaxDistance - (g_fFocusDistance + g_fFocusRange)));

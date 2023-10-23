@@ -1,3 +1,4 @@
+#include "Shader_Noise.hlsl"
 /* Sampler State */
 sampler LinearSampler = sampler_state
 {

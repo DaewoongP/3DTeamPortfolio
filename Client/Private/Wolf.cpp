@@ -119,6 +119,8 @@ void CWolf::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		auto Action = pCollisionMagicBallDesc->Action;
 		_int iDamage = pCollisionMagicBallDesc->iDamage;
 
+		Print_Damage_Font(iDamage);
+
 		m_pHealth->Damaged(iDamage);
 
 		auto iter = m_CurrentTickSpells.find(eBuff);
