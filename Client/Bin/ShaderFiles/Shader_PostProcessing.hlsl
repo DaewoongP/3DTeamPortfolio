@@ -7,10 +7,12 @@ texture2D g_HDRTexture;
 texture2D g_GlowTexture;
 texture2D g_SSAOTexture;
 texture2D g_DepthTexture;
+texture2D g_LightShaftTexture;
 texture2D g_RainTexture;
 bool g_isSSAO;
 bool g_isCircleFog;
 bool g_isFloorFog;
+bool g_isNight;
 float g_fCamFar;
 float4 g_vCamPos;
 
@@ -86,6 +88,7 @@ PS_OUT PS_MAIN(PS_IN In)
     vector vHDR = g_HDRTexture.Sample(LinearSampler, In.vTexUV);
     vector vGlow = g_GlowTexture.Sample(LinearSampler, In.vTexUV);
     vector vSSAO = g_SSAOTexture.Sample(LinearSampler, In.vTexUV);
+    vector vLightShaft = g_LightShaftTexture.Sample(LinearSampler, In.vTexUV);
     vector vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
     float fViewZ = vDepthDesc.y * g_fCamFar;
     vector vPosition;
@@ -99,10 +102,15 @@ PS_OUT PS_MAIN(PS_IN In)
     vPosition = mul(vPosition, g_ProjMatrixInv);
     vPosition = mul(vPosition, g_ViewMatrixInv);
     
+    if (true == g_isNight)
+    {
+        vLightShaft *= 0.f;
+    }
+    
     if (true == g_isSSAO)
-        Out.vColor = vHDR * vSSAO + vGlow;
+        Out.vColor = vHDR * vSSAO + vGlow + vLightShaft;
     else
-        Out.vColor = vHDR + vGlow;
+        Out.vColor = vHDR + vGlow + vLightShaft;
 
     if (true == g_isCircleFog)
     {
@@ -145,7 +153,7 @@ PS_OUT PS_MAIN(PS_IN In)
     //else
     //    fFogPower = saturate((vPosition.y - 10.f) / -10.f);
 
-    Out.vColor += g_RainTexture.Sample(LinearSampler, In.vTexUV);;
+    Out.vColor += g_RainTexture.Sample(LinearSampler, In.vTexUV);
     saturate(Out.vColor);
     
     return Out;

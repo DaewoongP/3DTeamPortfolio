@@ -40,6 +40,11 @@ private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
 
+#ifdef _DEBUG
+private:
+	void Debug();
+#endif // _DEBUG
+
 public:
 	static CSky* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

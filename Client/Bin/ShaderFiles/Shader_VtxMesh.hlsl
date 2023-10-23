@@ -216,7 +216,12 @@ PS_OUT PS_MAIN_SKY(PS_IN In)
     }
     else
     {
-        Out.vDiffuse = vDiffuse;
+        float2 vUvMoonDiff = In.vTexUV - g_vMoonPos;
+        float fMoonDot = max(0.0, 1.0 - dot(vUvMoonDiff, vUvMoonDiff));
+        Out.vDiffuse.rgb += float3(0.6, 0.6, 0.6) * pow(fMoonDot, 350.0) + vDiffuse.rgb;
+	
+	    // moon haze
+        Out.vDiffuse.rgb += float3(0.99, 0.98, 0.9) * pow(fMoonDot, 300.0);
         Out.vDiffuse.a = 1.f;
     }
     

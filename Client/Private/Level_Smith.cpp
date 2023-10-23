@@ -164,10 +164,12 @@ HRESULT CLevel_Smith::Ready_Lights()
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
 	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
-	LightDesc.vPos = _float4(45.f, 54.7f, 112.5f, 1.f);
-	LightDesc.vLookAt = _float4(82.8f, 0.f, 80.9f, 1.f);
+	LightDesc.vPos = _float4(111.7f, 71.23f, 94.81f, 1.f);
+	LightDesc.vLookAt = _float4(81.3f, 0.f, 91.3f, 1.f);
 	LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
-	// emissive랑 처리때문에 빛을 좀 더 처리해줘야함.
+	
+	LightDesc.vPos -= LightDesc.vDir * 0.5f;
+
 	LightDesc.vDiffuse = WHITEDEFAULT;
 	LightDesc.vAmbient = WHITEDEFAULT;
 	LightDesc.vSpecular = WHITEDEFAULT;

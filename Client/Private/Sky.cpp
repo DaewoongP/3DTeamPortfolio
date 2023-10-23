@@ -42,6 +42,10 @@ HRESULT CSky::Initialize_Level(_uint iCurrentLevelIndex)
 
 void CSky::Tick(_float fTimeDelta)
 {
+#ifdef _DEBUG
+	ADD_IMGUI([&] { this->Debug(); });
+#endif // _DEBUG
+
 	__super::Tick(fTimeDelta);
 }
 
@@ -147,6 +151,19 @@ HRESULT CSky::SetUp_ShaderResources()
 
 	return S_OK;
 }
+
+#ifdef _DEBUG
+void CSky::Debug()
+{
+	ImGui::SetNextWindowPos(ImVec2(0.f, 800.f));
+	ImGui::SetNextWindowSize(ImVec2(300.f, 400.f));
+	ImGui::Begin("Sky");
+
+	ImGui::SliderFloat2("sky", reinterpret_cast<_float*>(&m_vMoonPos), -2.f, 2.f);
+
+	ImGui::End();
+}
+#endif // _DEBUG
 
 CSky* CSky::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

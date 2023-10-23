@@ -94,6 +94,7 @@ private:
 	HRESULT Render_Screen();
 	HRESULT Render_ScreenRadial();
 	HRESULT Render_Rain();
+	HRESULT Render_LightShaft();
 	HRESULT Render_Fade();
 
 	HRESULT Render_UI();
@@ -144,6 +145,7 @@ private:
 	class CShader*	m_pFadeShader = { nullptr };
 	class CShader*	m_pRainShader = { nullptr };
 	class CShader*	m_pEdgeShader = { nullptr };
+	class CShader*	m_pLightShaftShader = { nullptr };
 	class CTexture*	m_pNoiseTexture = { nullptr };
 	class CTexture* m_pFadeTexture = { nullptr };
 
@@ -165,6 +167,7 @@ private:
 	_float		m_fFadeTime = { 1.f };
 	_float		m_fFadeSpeed = { 0.f };
 	_bool		m_isRaining = { false };
+	_bool		m_isNight = { false };
 	_float		m_fGlowPower = { 0.f };
 	_float		m_fHDR = { 0.f };
 
