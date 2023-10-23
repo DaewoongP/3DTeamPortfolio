@@ -1581,7 +1581,7 @@ HRESULT CPlayer::Ready_Camera()
 	CCamera::CAMERADESC CameraDesc;
 
 	CameraDesc.m_fAspect = _float(g_iWinSizeX) / _float(g_iWinSizeY);
-	CameraDesc.m_fFovY = XMConvertToRadians(110.f);
+	CameraDesc.m_fFovY = XMConvertToRadians(60.f);
 	CameraDesc.m_fNear = 0.1f;
 	CameraDesc.m_fFar = 1000.f;
 
@@ -1601,8 +1601,6 @@ HRESULT CPlayer::Ready_Camera()
 	BEGININSTANCE;
 
 	pGameInstance->Add_Camera(TEXT("Player_Camera"), (CCamera*)m_pPlayer_Camera);
-
-	pGameInstance->Add_Camera(TEXT("Other_Camera"), CPlayer_Camera::Create(m_pDevice, m_pContext, &PlayerCameraDesc));
 
 	pGameInstance->Set_Camera(TEXT("Player_Camera"));
 
