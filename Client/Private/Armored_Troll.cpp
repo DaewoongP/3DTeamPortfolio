@@ -143,10 +143,45 @@ HRESULT CArmored_Troll::Render()
 	if (FAILED(__super::SetUp_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(__super::Render()))
-	{
-		MSG_BOX("[CArmored_Troll] Failed Render");
+	if (FAILED(m_pEmissiveTexture->Bind_ShaderResource(m_pShaderCom, "g_EmissiveTexture")))
 		return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+	{
+		try /* Failed Render */
+		{
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", i)))
+				throw TEXT("Bind_BoneMatrices");
+
+			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, DIFFUSE)))
+				throw TEXT("Bind_Material Diffuse");
+			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_NormalTexture", i, NORMALS)))
+				throw TEXT("Bind_Material Normal");
+
+			if (true == m_isDissolve)
+			{
+				if (FAILED(m_pShaderCom->Begin("AnimMesh_Dissolve")))
+					return E_FAIL;
+			}
+			else
+			{
+				if (FAILED(m_pShaderCom->Begin("AnimMesh_Troll")))
+					throw TEXT("Shader Begin AnimMesh");
+			}
+
+			if (FAILED(m_pModelCom->Render(i)))
+				throw TEXT("Model Render");
+		}
+		catch (const _tchar* pErrorTag)
+		{
+			wstring wstrErrorMSG = TEXT("[CEnemy] Failed Render : ");
+			wstrErrorMSG += pErrorTag;
+			MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+
+			return E_FAIL;
+		}
 	}
 
 	return S_OK;
@@ -366,6 +401,10 @@ HRESULT CArmored_Troll::Add_Components()
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 			throw TEXT("Com_Health");
+
+		m_pEmissiveTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Armored_Troll/T_Troll_ArmoredTroll_Metal_E.dds"));
+		if (nullptr == m_pEmissiveTexture)
+			throw TEXT("EmissiveTexture");
 
 		/* For.Com_AuraEffect*/
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Monster_DarkFlare_Particle")
@@ -2395,6 +2434,7 @@ void CArmored_Troll::Free()
 		Safe_Release(m_DarkAura[i]);
 	}
 	Safe_Release(m_pWeapon);
+	Safe_Release(m_pEmissiveTexture);
 	Safe_Release(m_pStep_Shake);
 	Safe_Release(m_pHit_Shake);
 	Safe_Release(m_pDeath_Shake);
