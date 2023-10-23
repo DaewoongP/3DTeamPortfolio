@@ -176,6 +176,7 @@
     <ClInclude Include="..\Public\Broom_Break.h" />
     <ClInclude Include="..\Public\Broom_End.h" />
     <ClInclude Include="..\Public\Breath.h" />
+    <ClInclude Include="..\Public\Broom_Stick.h" />
     <ClInclude Include="..\Public\Camera_Includes.h" />
     <ClInclude Include="..\Public\Card_Fig.h" />
     <ClInclude Include="..\Public\Cat.h" />
@@ -199,7 +200,6 @@
     <ClInclude Include="..\Public\Event_Vault_Torch.h" />
     <ClInclude Include="..\Public\DarkWizard_Fly.h" />
     <ClInclude Include="..\Public\Fly_Move.h" />
-    <ClInclude Include="..\Public\Fly_Turn.h" />
     <ClInclude Include="..\public\Game_Manager.h" />
     <ClInclude Include="..\public\Gear_Item.h" />
     <ClInclude Include="..\Public\Lamppost.h" />
@@ -509,6 +509,7 @@
     <ClCompile Include="..\Private\Broom_Break.cpp" />
     <ClCompile Include="..\Private\Broom_End.cpp" />
     <ClCompile Include="..\Private\Breath.cpp" />
+    <ClCompile Include="..\Private\Broom_Stick.cpp" />
     <ClCompile Include="..\Private\Card_Fig.cpp" />
     <ClCompile Include="..\Private\Cat.cpp" />
     <ClCompile Include="..\private\ChineseChompingCabbageItem.cpp" />
@@ -530,7 +531,6 @@
     <ClCompile Include="..\Private\Event_Vault_Torch.cpp" />
     <ClCompile Include="..\Private\DarkWizard_Fly.cpp" />
     <ClCompile Include="..\Private\Fly_Move.cpp" />
-    <ClCompile Include="..\Private\Fly_Turn.cpp" />
     <ClCompile Include="..\private\Game_Manager.cpp" />
     <ClCompile Include="..\private\Gear_Item.cpp" />
     <ClCompile Include="..\Private\Lamppost.cpp" />

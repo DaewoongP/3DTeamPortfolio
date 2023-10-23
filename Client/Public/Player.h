@@ -42,6 +42,7 @@ class CWiggenweldPotion;
 class CTool;
 class CBlink_Effect;
 class CCard_Fig;
+class CBroom_Stick;
 END
 
 BEGIN(Client)
@@ -82,7 +83,7 @@ private:
 	explicit CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CPlayer(const CPlayer& rhs);
 	virtual ~CPlayer() = default;
-	
+
 public:
 	CPlayer_Information* Get_Player_Information() { return m_pPlayer_Information; }
 	_float3 Get_PlayerPos() { return m_pTransform->Get_Position(); }
@@ -110,19 +111,18 @@ public:
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix) override;
 
-
 	void Potion_Duration(_float fTimeDelta);
 	virtual void On_Maigc_Throw_Data(void* data) const override;
 	_bool Is_Action_Camera_Playing();
 
 private:
-	CShader*		m_pShader = { nullptr };
-	CShader*		m_pShadowShader = { nullptr };
-	CRenderer*		m_pRenderer = { nullptr };
-	CCustomModel*	m_pCustomModel = { nullptr }; //스테이트
-	CRigidBody*		m_pRigidBody = { nullptr };
-	CCoolTime*		m_pCooltime = { nullptr };
-	CDefence*		m_pDefence = { nullptr };
+	CShader* m_pShader = { nullptr };
+	CShader* m_pShadowShader = { nullptr };
+	CRenderer* m_pRenderer = { nullptr };
+	CCustomModel* m_pCustomModel = { nullptr }; //스테이트
+	CRigidBody* m_pRigidBody = { nullptr };
+	CCoolTime* m_pCooltime = { nullptr };
+	CDefence* m_pDefence = { nullptr };
 	CBlink_Effect* m_pBlink = { nullptr };
 	vector<CParticleSystem*> m_vecPotionParticle;
 	vector<CParticleSystem*> m_vecPlayer_StateParicle;
@@ -143,10 +143,11 @@ private:
 private:
 	_bool		m_isFixMouse = { false };
 	CStateContext* m_pStateContext = { nullptr };
-	
+
 	//평타, 실드가 이미 탑재된 마법 슬롯 
-	class CMagicSlot*	m_pMagicSlot = { nullptr };
-	CWeapon_Player_Wand*	m_pWeapon = { nullptr };
+	class CMagicSlot* m_pMagicSlot = { nullptr };
+	CWeapon_Player_Wand* m_pWeapon = { nullptr };
+	CBroom_Stick* m_pBroom = { nullptr };
 
 	//절두체 타겟 설정 완료되면 사용
 	CTransform* m_pTargetTransform = { nullptr };
@@ -164,7 +165,7 @@ private:
 	mutable _bool m_isUseProtego = { false };
 
 	LEVELID m_eLevelID = { LEVEL_END };
-	
+
 	_float3		m_vLevelInitPosition[LEVEL_END];
 	//물약 사용여부
 	_bool m_isPowerUp = { false };
@@ -177,13 +178,14 @@ private:
 	//스킬UI에 넘겨주기
 	vector<_float> m_vecCoolTimeRatio;
 
-	
+
 #pragma region 스테이트에 넘기는 변수
 
 	//카메라룩과 플레이어룩의 차이 각을 담기위한 변수(음수일 경우 오른쪽, 양수일 경우 왼쪽)
 	_float m_fLookAngle{};
+	_float m_fLookAngle_Y{};
 	//방향키 입력이 들어왔는지 확인하는 변수
-	_bool m_isDirectionKeyPressed { false };
+	_bool m_isDirectionKeyPressed{ false };
 	//타겟을 향하기위한 각 변수
 	_float m_fTargetAngle{};
 
@@ -344,6 +346,12 @@ private:
 	void Blink_End();
 
 	void Healing();
+
+	void Landing();
+
+	void Broom_Appeaer();
+	void Broom_Disappeaer();
+	void Fly_Effect();
 
 #pragma endregion
 

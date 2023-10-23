@@ -21,6 +21,9 @@ public:
     virtual void OnStateTick();
     virtual void OnStateExit();
 
+private:
+    _int m_iAppearAnimIndex = { 0 };
+
 public:
     static CPensive_Appearence* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
     virtual CComposite* Clone(void* pArg) override;

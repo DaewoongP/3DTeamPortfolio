@@ -28,6 +28,7 @@ private:
 private:
     void Action_None_Tick();
     void Go_Start();
+	void Go_Turn();
     void ActionType_Change();
 
 public:

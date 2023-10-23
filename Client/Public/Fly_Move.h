@@ -2,6 +2,10 @@
 
 #include "StateMachine.h"
 
+BEGIN(Engine)
+class CParticleSystem;
+END
+
 BEGIN(Client)
 
 class CFly_Move :
@@ -27,14 +31,15 @@ public:
     virtual void OnStateTick();
     virtual void OnStateExit();
 
-    virtual void Bind_Notify();
-
     void LookFront();
 
     void Go_Idle();
 
     void Switch_MoveType();
 
+private:
+    _tchar m_wszPostAnimationTag[MAX_PATH] = {};
+    CParticleSystem* m_pWindParticle = { nullptr };
 
 public:
     static CFly_Move* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

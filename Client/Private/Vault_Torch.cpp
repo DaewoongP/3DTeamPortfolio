@@ -1,5 +1,7 @@
 #include "..\Public\Vault_Torch.h"
+#include "Light.h"
 #include "GameInstance.h"
+#include "MagicBall.h"
 
 CVault_Torch::CVault_Torch(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMapObject(pDevice, pContext)
@@ -9,6 +11,41 @@ CVault_Torch::CVault_Torch(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 CVault_Torch::CVault_Torch(const CVault_Torch& rhs)
 	: CMapObject(rhs)
 {
+}
+
+void CVault_Torch::Switch_OnOff(_bool isValue)
+{
+	m_isSwitch = isValue;
+	BEGININSTANCE;
+	if (m_isSwitch)
+	{
+		m_pEffect->Play(m_pTransform->Get_Position() + _float3(0, 1.2f, 0));
+		if (m_pLight == nullptr)
+		{
+			CGameInstance* pGameInstance = CGameInstance::GetInstance();
+			Safe_AddRef(pGameInstance);
+			CLight::LIGHTDESC LightDesc;
+			LightDesc.eType = CLight::TYPE_POINT;
+			LightDesc.fRange = 10.f;
+			LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+			LightDesc.vAmbient = LightDesc.vDiffuse;
+			LightDesc.vSpecular = LightDesc.vDiffuse;
+			LightDesc.vPos = m_pTransform->Get_Position().TransCoord();
+			pGameInstance->Add_Light(LightDesc, &m_pLight);
+			Safe_Release(pGameInstance);
+		}
+	}
+	else 
+	{
+		m_pEffect->Stop();
+		pGameInstance->Add_InstanceLight(m_pTransform->Get_Position(), 10.f, 1.f, _float4(1,1,1,1));
+		if (m_pLight != nullptr)
+		{
+			pGameInstance->Return_Light(m_pLight);
+			m_pLight = nullptr;
+		}
+	}
+	ENDINSTANCE;
 }
 
 HRESULT CVault_Torch::Initialize_Prototype()
@@ -53,9 +90,37 @@ HRESULT CVault_Torch::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	m_pEffect->Play(m_pTransform->Get_Position() + _float3(0,1.2f,0));
-	m_pEffect->Get_MainModuleRef().fSimulationSpeed = Random_Generator(0.5f, 1.0f);
+	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+	RigidBodyDesc.isStatic = true;
+	RigidBodyDesc.isTrigger = false;
+	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
+	RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.0f, 0.f);
+	RigidBodyDesc.fStaticFriction = 0.f;
+	RigidBodyDesc.fDynamicFriction = 0.f;
+	RigidBodyDesc.fRestitution = 0.f;
+	PxSphereGeometry SphereGeometry = PxSphereGeometry(2.f);
+	RigidBodyDesc.pGeometry = &SphereGeometry;
+	RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
+	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
+	RigidBodyDesc.isGravity = false;
+	RigidBodyDesc.pOwnerObject = this;
+	RigidBodyDesc.eThisCollsion = COL_ENEMY;
+	RigidBodyDesc.eCollisionFlag = COL_MAGIC;
+	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Torch");
 
+	/* Com_RigidBody */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+	{
+		MSG_BOX("Failed CMagicBall Add_Component : (Com_RigidBody)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
+
+	m_pEffect->Stop();
+	m_pEffect->Get_MainModuleRef().fSimulationSpeed = Random_Generator(0.5f, 1.0f);
+	Switch_OnOff(true);
 	return S_OK;
 }
 
@@ -76,38 +141,12 @@ HRESULT CVault_Torch::Initialize_Level(_uint iCurrentLevelIndex)
 
 	wstring wsModelIndex = wsTorch.substr(findIndex);
 	m_iTorchIndex = stoi(wsModelIndex);
-
-	// 자체 발광 추가
-	CLight::LIGHTDESC		LightDescHork;
-	ZeroMemory(&LightDescHork, sizeof LightDescHork);
-
-	LightDescHork.eType = CLight::TYPE_POINT;
-	LightDescHork.vPos = m_pTransform->Get_Position().TransCoord();
-	LightDescHork.fRange = 10.f;
-
-	LightDescHork.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDescHork.vAmbient = WHITEDEFAULT;
-	LightDescHork.vSpecular = LightDescHork.vDiffuse;
-
-	BEGININSTANCE;
-	pGameInstance->Add_Light(LightDescHork, nullptr);
-	ENDINSTANCE;
-
 	return S_OK;
 }
 
 void CVault_Torch::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	BEGININSTANCE;
-
-	if (pGameInstance->Get_DIKeyState(DIK_Y, CInput_Device::KEY_DOWN))
-	{
-
-	}
-
-	ENDINSTANCE;
 }
 
 void CVault_Torch::Late_Tick(_float fTimeDelta)
@@ -117,12 +156,26 @@ void CVault_Torch::Late_Tick(_float fTimeDelta)
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);		
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);	
+#ifdef _DEBUG
+			m_pRenderer->Add_DebugGroup(m_pRigidBody);
+#endif // _DEBUG
 	}
 }
 
-void CVault_Torch::Torch_Bright()
+void CVault_Torch::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
+	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
+	/* Collision Magic */
+	if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
+	{
+		CMagicBall::COLLSIONREQUESTDESC* pCollisionMagicBallDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
+		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
+		if (eBuff == BUFF_CONFRINGO)
+		{
+			Switch_OnOff(true);
+		}
+	}
 }
 
 CVault_Torch* CVault_Torch::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -153,6 +206,10 @@ CGameObject* CVault_Torch::Clone(void* pArg)
 void CVault_Torch::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pEffect);
+	if (m_isCloned)
+	{
+		Safe_Release(m_pRigidBody);
+		Safe_Release(m_pEffect);
+		Safe_Release(m_pLight);
+	}
 }
