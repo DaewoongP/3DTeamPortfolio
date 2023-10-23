@@ -1,17 +1,17 @@
-#include "..\Public\Owl.h"
+#include "..\Public\BigBird.h"
 #include "GameInstance.h"
 
-COwl::COwl(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CBigBird::CBigBird(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
 }
 
-COwl::COwl(const COwl& rhs)
+CBigBird::CBigBird(const CBigBird& rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT COwl::Initialize_Prototype()
+HRESULT CBigBird::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -19,11 +19,11 @@ HRESULT COwl::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT COwl::Initialize(void* pArg)
+HRESULT CBigBird::Initialize(void* pArg)
 {
 	if (nullptr == pArg)
 	{
-		MSG_BOX("COwl Argument is NULL");
+		MSG_BOX("CBigBird Argument is NULL");
 		return E_FAIL;
 	}
 
@@ -35,41 +35,39 @@ HRESULT COwl::Initialize(void* pArg)
 
 	m_ObjectDesc = *reinterpret_cast<MAPOBJECTDESC*>(pArg);
 	m_pTransform->Set_WorldMatrix(m_ObjectDesc.WorldMatrix);
-	m_pTransform->Set_Speed(-7.5f);
+	m_pTransform->Set_RotationSpeed(XMConvertToRadians(180.f));
 
-	m_vecOriginPos = m_pTransform->Get_Position();
-
- 	return S_OK;
+	return S_OK;
 }
 
-HRESULT COwl::Initialize_Level(_uint iCurrentLevelIndex)
+HRESULT CBigBird::Initialize_Level(_uint iCurrentLevelIndex)
 {
 	/* Com_Model */
 	if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, m_ObjectDesc.wszTag,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{
-		MSG_BOX("Failed COwl Add_Component : (Com_Model)");
+		MSG_BOX("Failed CBigBird Add_Component : (Com_Model)");
 		__debugbreak();
 		return E_FAIL;
 	}
 
-	m_pModel->Set_CurrentAnimIndex(0);
+	m_pModel->Set_CurrentAnimIndex(1);
 	m_pModel->Get_Animation()->Set_Loop(true);
 
 	return S_OK;
 }
 
-void COwl::Tick(_float fTimeDelta)
+void CBigBird::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	Owl_Fly(fTimeDelta);
+	//BigBird_Run(fTimeDelta);
 
 	if (nullptr != m_pModel)
 		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 }
 
-void COwl::Late_Tick(_float fTimeDelta)
+void CBigBird::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
@@ -80,7 +78,7 @@ void COwl::Late_Tick(_float fTimeDelta)
 	}
 }
 
-HRESULT COwl::Render()
+HRESULT CBigBird::Render()
 {
 	if (FAILED(__super::Render()))
 		return E_FAIL;
@@ -106,7 +104,7 @@ HRESULT COwl::Render()
 	return S_OK;
 }
 
-HRESULT COwl::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
+HRESULT CBigBird::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
 	if (FAILED(SetUp_ShadowShaderResources(LightViewMatrix, LightProjMatrix)))
 		return E_FAIL;
@@ -127,23 +125,22 @@ HRESULT COwl::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 	return S_OK;
 }
 
-HRESULT COwl::Add_Components()
+HRESULT CBigBird::Add_Components()
 {
 	/* Com_Renderer */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
-		MSG_BOX("Failed COwl Add_Component : (Com_Renderer)");
+		MSG_BOX("Failed CBigBird Add_Component : (Com_Renderer)");
 		__debugbreak();
 		return E_FAIL;
 	}
-
 
 	/* Com_Shader */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
-		MSG_BOX("Failed COwl Add_Component : (Com_Shader)");
+		MSG_BOX("Failed CBigBird Add_Component : (Com_Shader)");
 		__debugbreak();
 		return E_FAIL;
 	}
@@ -152,7 +149,7 @@ HRESULT COwl::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowAnimMesh"),
 		TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShader))))
 	{
-		MSG_BOX("Failed COwl Add_Component : (Com_ShadowShader)");
+		MSG_BOX("Failed CBigBird Add_Component : (Com_ShadowShader)");
 		__debugbreak();
 		return E_FAIL;
 	}
@@ -160,7 +157,7 @@ HRESULT COwl::Add_Components()
 	return S_OK;
 }
 
-HRESULT COwl::SetUp_ShaderResources()
+HRESULT CBigBird::SetUp_ShaderResources()
 {
 	BEGININSTANCE;
 
@@ -178,7 +175,7 @@ HRESULT COwl::SetUp_ShaderResources()
 	return S_OK;
 }
 
-HRESULT COwl::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
+HRESULT CBigBird::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
 	BEGININSTANCE;
 
@@ -196,46 +193,38 @@ HRESULT COwl::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 L
 	return S_OK;
 }
 
-void COwl::Owl_Fly(_float fTimeDelta)
+void CBigBird::BigBird_Run(_float fTimeDelta)
 {
-	m_fFlyTime += fTimeDelta;
-
-	m_pTransform->Go_Straight(fTimeDelta);
-
-	if (20.f <= m_fFlyTime)
-	{
-		m_pTransform->Set_Position(m_vecOriginPos);
-		m_fFlyTime = 0.f;
-	}
-		
+	if(0 == m_pModel->Get_CurrentAnimIndex())
+		m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);
 }
 
-COwl* COwl::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CBigBird* CBigBird::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	COwl* pInstance = New COwl(pDevice, pContext);
+	CBigBird* pInstance = New CBigBird(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created COwl");
+		MSG_BOX("Failed to Created CBigBird");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* COwl::Clone(void* pArg)
+CGameObject* CBigBird::Clone(void* pArg)
 {
-	COwl* pInstance = New COwl(*this);
+	CBigBird* pInstance = New CBigBird(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned COwl");
+		MSG_BOX("Failed to Cloned CBigBird");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void COwl::Free()
+void CBigBird::Free()
 {
 	__super::Free();
 

@@ -105,6 +105,12 @@ HRESULT CLevel_Vault::Ready_Events(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+	if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT, TEXT("Prototype_GameObject_Event_Torch"), pLayerTag, TEXT("Event_Torch"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Event_Torch)");
+		return E_FAIL;
+	}
+	
 	CEvent_Enter_Vault::INITEVENTENTERVAULT InitEnterVaultDesc;
 	InitEnterVaultDesc.vTriggerWorldPosition = _float3(15.f, 0.f, 15.f);
 	InitEnterVaultDesc.vTriggerSize = _float3(5.f, 5.f, 5.f);
@@ -210,27 +216,11 @@ HRESULT CLevel_Vault::Load_MapObject(const _tchar* pObjectFilePath)
 		wstring modelName = ws.substr(findIndex);
 
 		// 비교해야되는 문자열
-		wstring wsTreasureChestName(TEXT("Anim_TreasureChest"));
 		wstring wsHorklump(TEXT("Anim_Horklump"));
 		wstring wsLeech(TEXT("Anim_Leech"));
 		wstring wsVaultGate(TEXT("Anim_Gate_Vault"));
 		wstring wsVaultTorch(TEXT("SM_Intro_Vault_Torch"));
-
-		//// 보물상자
-		//if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
-		//{
-		//	_tchar wszobjName[MAX_PATH] = { 0 };
-		//	_stprintf_s(wszobjName, TEXT("GameObject_Treasure_Chest_%d"), (iObjectNum));
-
-		//	if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT,
-		//		TEXT("Prototype_GameObject_Treasure_Chest"), TEXT("Layer_BackGround"),
-		//		wszobjName, &MapObjectDesc)))
-		//	{
-		//		MSG_BOX("Failed to Clone Treasure_Chest");
-		//		ENDINSTANCE;
-		//		return E_FAIL;
-		//	}
-		//}
+		wstring wsLightStand(TEXT("SM_SanctumDun_LightStand_A"));
 
 		// 채집물
 		if (0 == lstrcmp(modelName.c_str(), wsHorklump.c_str()) ||
@@ -281,6 +271,22 @@ HRESULT CLevel_Vault::Load_MapObject(const _tchar* pObjectFilePath)
 			}
 
 			++iTorchNum;
+		}
+
+		// 화로
+		else if (0 == lstrcmp(modelName.c_str(), wsLightStand.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_LightStand_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT,
+				TEXT("Prototype_GameObject_LightStand"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone LightStand");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
 		}
 
 		// 일반 맵 오브젝트

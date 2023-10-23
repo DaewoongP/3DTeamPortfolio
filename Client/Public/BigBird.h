@@ -11,7 +11,7 @@ END
 
 BEGIN(Client)
 
-class COwl final : public CGameObject
+class CBigBird final : public CGameObject
 {
 public:
 	typedef struct tagMapObjectDesc
@@ -22,9 +22,9 @@ public:
 	}MAPOBJECTDESC;
 
 private:
-	explicit COwl(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit COwl(const COwl& rhs);
-	virtual ~COwl() = default;
+	explicit CBigBird(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CBigBird(const CBigBird& rhs);
+	virtual ~CBigBird() = default;
 
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
@@ -44,17 +44,13 @@ private:
 	MAPOBJECTDESC m_ObjectDesc;
 
 private:
-	_float	m_fFlyTime = { 0.f };
-	_float3 m_vecOriginPos = { 0.f, 0.f, 0.f }; // 시작 위치
-
-private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix);
-	void Owl_Fly(_float fTimeDelta);
+	void	BigBird_Run(_float fTimeDelta);
 
 public:
-	static COwl* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
+	static CBigBird* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };
