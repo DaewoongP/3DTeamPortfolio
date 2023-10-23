@@ -61,6 +61,8 @@ void CBroom_Begin::OnStateEnter(void* _pArg)
 	default:
 		break;
 	}
+	m_StateMachineDesc.pRigidBody->Set_LinearDamping(2.f);
+	m_StateMachineDesc.pRigidBody->Set_Gravity(false);
 }
 
 void CBroom_Begin::OnStateTick()

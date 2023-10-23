@@ -13,6 +13,8 @@ BEGIN(Client)
 class CMagicBall;
 class CMagicSlot;
 class CWeapon_Fig_Wand;
+class CUI_Dissolve;
+class CScript;
 END
 
 BEGIN(Client)
@@ -24,6 +26,11 @@ public:
 	{
 		const _float4x4* pParentWorldMatrix = { nullptr };
 	}CARDFIGINITDESC;
+
+public:
+	void On_Enter_Vault_Script() { m_isEnterVault = true; }
+	void On_Dragon_Death() { m_isDragonDeath = true; }
+	void On_Dragon_Hp_Down_Script() { m_isDragonHpDown = true; }
 
 private:
 	explicit CCard_Fig(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -57,6 +64,11 @@ private:
 	vector<wstring> m_AttackTags;
 	_uint m_iCurrentTagIndex = { 0 };
 
+private: /* 피그 교수 이벤트 관련 데이터 */
+	_bool m_isEnterVault = { false };
+	_bool m_isDragonDeath = { false };
+	_bool m_isDragonHpDown = { false };
+
 private:
 	CModel* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
@@ -67,6 +79,9 @@ private:
 	CWeapon_Fig_Wand* m_pWeapon = { nullptr };
 
 	CMagicBall* m_CastingMagic = { nullptr };
+
+	CUI_Dissolve* m_pUI_Card = { nullptr };
+	vector<CScript*> m_pScripts = { nullptr };
 
 private:
 	HRESULT Make_Magics();
@@ -84,6 +99,12 @@ private: /* Notify */
 	void Cast_Bombarda();
 	void Cast_Finisher();
 	void Shot_Magic();
+
+private:
+	_bool		m_isShowCard = { false };
+
+private: // Four UI
+	void		Ready_Card_UI();
 
 public:
 	static CCard_Fig* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -38,6 +38,7 @@ public:
 	HRESULT	Set_ItemCount(vector<vector<CItem*>>& pItems);
 	_uint	Set_CurTapItem();
 	void	Update_PotionCount(const vector<vector<CTool*>>& pPotions);
+	void	Set_CurCollision();
 
 private:
 	void Update_TextCount(const vector<vector<CTool*>>& pPotions, POTIONTAP ePotionTap);

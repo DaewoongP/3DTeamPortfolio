@@ -4,6 +4,8 @@ matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D		g_DiffuseTexture;
 texture2D		g_NormalTexture;
 
+float4 g_vEmissive;
+
 float g_fCamFar;
 
 struct VS_IN
@@ -94,7 +96,8 @@ PS_OUT	PS_MAIN(PS_IN In)
 	Out.vDiffuse = vDiffuse;
     Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
-
+    Out.vEmissive = g_vEmissive;
+	
 	return Out;
 }
 

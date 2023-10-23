@@ -25,6 +25,23 @@ _float3 CPlayer_Camera::Get_CamLookXZ()
 	return vXZLook;
 }
 
+_float3 CPlayer_Camera::Get_CamLookYZ()
+{
+	BEGININSTANCE;
+
+	_float3 vXZLook{};
+
+	vXZLook = *pGameInstance->Get_CamLook();
+
+	vXZLook = XMVectorSetX(vXZLook, 0.0f);
+
+	vXZLook.Normalize();
+
+	ENDINSTANCE;
+
+	return vXZLook;
+}
+
 _float3 CPlayer_Camera::Get_CamRightXZ()	
 {
 	BEGININSTANCE;
@@ -36,6 +53,25 @@ _float3 CPlayer_Camera::Get_CamRightXZ()
 	vXZRight = *pGameInstance->Get_CamRight();
 
 	vXZRight = XMVectorSetY(vXZRight, 0.0f);
+
+	vXZRight.Normalize();
+
+	ENDINSTANCE;
+
+	return vXZRight;
+}
+
+_float3 CPlayer_Camera::Get_CamRightYZ()
+{
+	BEGININSTANCE;
+
+	_float3 vXZRight{};
+
+	_float3 vUp(0.0f, 1.0f, 0.0f);
+
+	vXZRight = *pGameInstance->Get_CamRight();
+
+	vXZRight = XMVectorSetX(vXZRight, 0.0f);
 
 	vXZRight.Normalize();
 

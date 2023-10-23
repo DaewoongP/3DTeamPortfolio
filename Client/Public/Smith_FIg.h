@@ -12,6 +12,9 @@ END
 BEGIN(Client)
 class CUI_Interaction;
 class CScript;
+END
+
+BEGIN(Client)
 
 class CSmith_Fig final : public CGameObject
 {
@@ -19,7 +22,9 @@ private:
 	enum SMITHFIGSCRIPT
 	{
 		SMITHFIGSCRIPT_POTION,
-		SMITHFIGSCRIPT_READYCOMBAT,
+		SMITHFIGSCRIPT_TOWN,
+		SMITHFIGSCRIPT_SECRET,
+		SMITHFIGSCRIPT_BONE,
 		SMITHFIGSCRIPT_END
 	};
 
@@ -53,14 +58,18 @@ private:
 	
 private:
 	void	Check_Quest();
+	void	Play_Script(_float fTimeDelta);
 
 private:
 	_bool	m_isColPlayer = { false };
+
 
 private:
 	_bool					m_isPlayScript = { false };
 	_uint					m_iScriptIndex = 0;
 	vector<CScript*>		m_pScripts;
+
+	_bool					m_isClearQuest[SMITHFIGSCRIPT_END] = { false };
 
 public:
 	static CSmith_Fig* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

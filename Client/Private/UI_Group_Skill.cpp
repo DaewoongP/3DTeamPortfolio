@@ -212,9 +212,10 @@ HRESULT CUI_Group_Skill::Read_File(const _tchar* pFilePath, KEYLIST iIndex)
 	ImageDesc.fZ = 0.f;
 	ImageDesc.fSizeX = m_pMains[iIndex]->Get_SizeXY().x;
 	ImageDesc.fSizeY = m_pMains[iIndex]->Get_SizeXY().y;
+	m_pMains[iIndex]->Add_Texture(TEXT("../../Resources/UI/Game/VFX/Textures/Noises/VFX_T_RibbonOffset_N.png"));
 
 	m_pMains[iIndex]->Set_ImageCom(ImageDesc);
-	m_pMains[iIndex]->Set_Effecttype(CUI_Effect_Back::SKILL);
+	m_pMains[iIndex]->Set_Effecttype(CUI_Effect_Back::MAINSKILL);
 	m_pMains[iIndex]->Set_ImageComShader(CUI_Image::SHADERTYPE::SKILL);
 	_uint iSize = { 0 };
 	ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);

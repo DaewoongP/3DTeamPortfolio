@@ -170,7 +170,7 @@ HRESULT CMagic_Sound_Manager::Initialize_Prototype()
 	m_szSoundTag[OWNER_PLAYER][SPELL::EXPELLIARMUS].push_back(TEXT("DarkWizardMaleD_00444-01.wav"));
 	m_szSoundTag[OWNER_PLAYER][SPELL::EXPELLIARMUS].push_back(TEXT("DarkWizardMaleD_00444-02.wav"));
 #pragma endregion
-#pragma region OWNER_PLAYER
+#pragma region OWNER_FIG
 	m_szSoundTag[OWNER_FIG][SPELL::ACCIO].push_back(TEXT("eleazarfig_00400.wav"));
 
 	m_szSoundTag[OWNER_FIG][SPELL::DEPULSO].push_back(TEXT("eleazarfig_00403.wav"));

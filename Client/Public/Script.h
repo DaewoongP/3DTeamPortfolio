@@ -52,6 +52,8 @@ private:
     _bool                   m_isRender = { false };
     _bool                   m_isFinished = { false };
 
+    _bool                   m_isCardScript = { false };
+
 public:
     static CScript* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     virtual CComponent* Clone(void* pArg) override;

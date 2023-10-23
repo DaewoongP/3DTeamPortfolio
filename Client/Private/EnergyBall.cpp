@@ -284,7 +284,7 @@ void CEnergyBall::Tick(_float fTimeDelta)
 			m_pParticle_EnergyBall_ChargeDistortion->Stop();
 			m_pParticle_EnergyBall_ChargeDarkBall->Stop();
 			m_pMeshEffect_Inner_Ball->Play(m_pTransform->Get_Position());
-			CMagicBall* pMagicBall = m_pMagicSlot->Action_Magic_Basic(1, this, nullptr, COL_MAGIC);
+			CMagicBall* pMagicBall = m_pMagicSlot->Action_Magic_Basic(1, this, nullptr, COL_MAGIC, COL_SHIELD_ENEMY);
 			static_cast<CProtego*>(pMagicBall)->Set_Scale(6.7f);
 			m_isFirst = false;
 		}
@@ -335,7 +335,7 @@ void CEnergyBall::Reset(const ENERGYBALLINITDESC& tagResetDesc)
 
 void CEnergyBall::Set_Protego_Collision(CTransform* pTransform, CEnemy::ATTACKTYPE eType) const
 {
-	if (eType & CEnemy::ATTACK_BREAK || eType & CEnemy::ATTACK_SUPERBREAK)
+	if (eType == CEnemy::ATTACK_BREAK || eType == CEnemy::ATTACK_SUPERBREAK)
 	{
 		m_isDead = true;
 	}

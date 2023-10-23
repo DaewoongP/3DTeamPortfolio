@@ -68,8 +68,8 @@ public:
 	HRESULT Add_Magic_To_Skill_Slot(_uint iSlotIndex , SPELL eSpellType);
 	HRESULT Add_Magic_To_Basic_Slot(_uint iSlotIndex , SPELL eSpellType);
 
-	CMagicBall* Action_Magic_Skill(_uint iIndex, const CGameObject* pTarget, const CGameObject* pWeaponMatrix, COLLISIONFLAG eCollisionFlag, _bool isPowerUp=false);
-	CMagicBall* Action_Magic_Basic(_uint iIndex, const CGameObject* pTarget, const CGameObject* pWeaponMatrix, COLLISIONFLAG eCollisionFlag, _bool isPowerUp=false);
+	CMagicBall* Action_Magic_Skill(_uint iIndex, const CGameObject* pTarget, const CGameObject* pWeaponMatrix, COLLISIONFLAG eCollisionFlag, COLLISIONFLAG eThisCollisionFlag = COL_TEST, _bool isPowerUp = false);
+	CMagicBall* Action_Magic_Basic(_uint iIndex, const CGameObject* pTarget, const CGameObject* pWeaponMatrix, COLLISIONFLAG eCollisionFlag, COLLISIONFLAG eThisCollisionFlag = COL_TEST, _bool isPowerUp = false);
 
 private:
 	CMagic_Sound_Manager*						m_pMagic_SoundMgr = { nullptr };

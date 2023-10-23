@@ -13,6 +13,8 @@ END
 BEGIN(Client)
 class CUI_Group_Cursor;
 class CMain_Menu;
+class CInventory;
+
 class CField_Guide final : public CGameObject
 {
 private:

@@ -52,6 +52,14 @@ void CAnimation::Set_CurrentKeyFrameIndex(CModel::BONES& Bones, _uint iKeyFrameI
 	}
 }
 
+void CAnimation::Reset()
+{
+	for (auto& iCurrentKeyFrame : m_ChannelCurrentKeyFrames)
+		iCurrentKeyFrame = 0;
+	m_pNotify->Reset();
+	m_fTimeAcc = 0.0f;
+}
+
 void CAnimation::Delete_Translation()
 {
 	for (auto& pChannel : m_Channels)

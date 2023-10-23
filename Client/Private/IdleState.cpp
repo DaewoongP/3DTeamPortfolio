@@ -59,8 +59,12 @@ void CIdleState::OnStateEnter(void* _pArg)
 
 void CIdleState::OnStateTick()
 {
+	if (*m_StateMachineDesc.pIsFlying)
+	{
+		Set_StateMachine(TEXT("Broom_Begin"));
+		return;
+	}
 	
-
 	switch (*m_StateMachineDesc.piActionType)
 	{
 	case CPlayer::ACTION_NONE:
@@ -79,10 +83,10 @@ void CIdleState::OnStateTick()
 		Action_Cmbt_Tick();
 		ActionType_Change();
 	}
-	break;
+	break; 
 	case CPlayer::ACTION_END:
 	{
-
+		
 	}
 	break;
 
@@ -189,7 +193,6 @@ void CIdleState::Go_Start()
 	{
 		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Start_Fwd_anm"));
 		Change_Animation(TEXT("Hu_BM_RF_Jog_Start_Fwd_anm"));
-		Set_StateMachine(TEXT("Move Start"));
 	}
 }
 

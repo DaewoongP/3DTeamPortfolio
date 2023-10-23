@@ -50,6 +50,8 @@ protected:
 	_float			m_fRadius = { 0.f };
 	MAPOBJECTDESC	m_ObjectDesc;
 
+	_float4			m_vEmissive;
+
 protected:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();

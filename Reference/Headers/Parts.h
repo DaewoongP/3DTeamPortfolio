@@ -39,7 +39,6 @@ public:
 
 protected:
 	PARENTMATRIXDESC m_ParentMatrixDesc;
-	_float4x4        m_CombinedWorldMatrix;
 
 public:
 	virtual CParts* Clone(void* pArg) = 0;

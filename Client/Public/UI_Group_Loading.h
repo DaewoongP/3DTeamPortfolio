@@ -4,7 +4,6 @@
 
 BEGIN(Client)
 class CUI_Back;
-class CUI_Logo;
 
 class CUI_Group_Loading final : public CGameObject
 {

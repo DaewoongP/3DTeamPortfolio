@@ -24,7 +24,14 @@
 #include "Selector_Degree.h"
 #include "UI_Group_Enemy_HP.h"
 #include "Weapon_Dragon_Head.h"
+#include "Weapon_Dragon_Left_Wing.h"
+#include "Weapon_Dragon_Right_Wing.h"
+#include "Weapon_Dragon_Tail.h"
 #include "ImpulseSphere_Effect.h"
+
+#include "Quest_Manager.h"
+#include "UI_Damage.h"
+
 CConjuredDragon::CConjuredDragon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEnemy(pDevice, pContext)
 {
@@ -145,8 +152,11 @@ HRESULT CConjuredDragon::Initialize(void* pArg)
 		return E_FAIL;
 	
 	m_pEffect_BlackSmokeIdle->Play(m_pTransform->Get_Position());
-	// 지워주세요.
-	//m_pHealth->Damaged(600);
+
+	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
+	m_CollisionRequestDesc.iDamage = 20;
+	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
+
 	return S_OK;
 }
 
@@ -208,6 +218,7 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	m_pHitMatrix = m_HitMatrices[rand() % 3];
+	Update_Bones();
 	Update_Invincible(fTimeDelta);
 	Check_Air_Balance(fTimeDelta);
 	EnergyBall_PhaseOne(fTimeDelta);
@@ -225,6 +236,10 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 
 void CConjuredDragon::Late_Tick(_float fTimeDelta)
 {
+	if (true == m_isPhaseTwo &&
+		false == m_isSpawn)
+		return;
+
 	CGameObject::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRenderer)
@@ -252,6 +267,8 @@ void CConjuredDragon::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
 		auto Action = pCollisionMagicBallDesc->Action;
 		_int iDamage = pCollisionMagicBallDesc->iDamage;
+
+		Print_Damage_Font(iDamage);
 
 		m_pHealth->Damaged(iDamage);
 
@@ -458,7 +475,15 @@ void CConjuredDragon::Update_Breath(const _float& fTimeDelta)
 
 void CConjuredDragon::DeathBehavior(const _float& fTimeDelta)
 {
-	m_isDead = true;
+	if (false == m_isEnterDeath)
+	{
+		CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
+		Safe_AddRef(pQuest_Manager);
+		pQuest_Manager->Clear_Quest(TEXT("Quest_Bone"));
+		Safe_Release(pQuest_Manager);
+		m_isEnterDeath = true;
+		m_isDead = true;
+	}
 
 	m_fDeadTimeAcc += fTimeDelta;
 	if (9.f < m_fDeadTimeAcc)
@@ -488,6 +513,18 @@ void CConjuredDragon::Check_Air_Balance(const _float& fTimeDelta)
 			return;
 
 		m_pRigidBody->Add_Force(-vCurrentVelocity * 3.f);
+	}
+}
+
+void CConjuredDragon::Update_Bones()
+{
+	for (_uint i = 0; i < BONE_TYPE_END; ++i)
+	{
+		for (auto Desc : m_Bones[i])
+		{
+			_float4x4 BoneWorldMatrix = *Desc.pCombinedTransformationMatrix * m_pModelCom->Get_PivotFloat4x4() * m_pTransform->Get_WorldMatrix();
+			Desc.vPosition = BoneWorldMatrix.Translation();
+		}
 	}
 }
 
@@ -695,6 +732,26 @@ HRESULT CConjuredDragon::Make_Notifies()
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Change_Animation"), Func)))
 		return E_FAIL;
 
+	Func = [&] { m_pWeapon_Left_Wing->On_Collider_Attack(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Enter_Left_Wing_Attack"), Func)))
+		return E_FAIL;
+
+	Func = [&] { m_pWeapon_Right_Wing->On_Collider_Attack(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Enter_Right_Wing_Attack"), Func)))
+		return E_FAIL;
+	
+	Func = [&] { m_pWeapon_Tail->On_Collider_Attack(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Enter_Tail_Attack"), Func)))
+		return E_FAIL;
+
+	Func = [&] { this->Enter_Charge_Attack(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Enter_Charge_Attack"), Func)))
+		return E_FAIL;
+
+	Func = [&] { this->Exit_Attack(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Exit_Attack"), Func)))
+		return E_FAIL;
+
 	Func = [&] { this->On_Breath(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("On_Breath"), Func)))
 		return E_FAIL;
@@ -766,6 +823,27 @@ HRESULT CConjuredDragon::Add_Components()
 
 		m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
 
+		/* For.Collider_Attack_Body */
+		RigidBodyDesc.isStatic = true;
+		RigidBodyDesc.isTrigger = true;
+		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 6.f, 0.f);
+		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, 0.f);
+		RigidBodyDesc.fStaticFriction = 0.f;
+		RigidBodyDesc.fDynamicFriction = 1.f;
+		RigidBodyDesc.fRestitution = 0.f;
+		pSphereGeometry = PxSphereGeometry(6.1f);
+		RigidBodyDesc.pGeometry = &pSphereGeometry;
+		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
+		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
+		RigidBodyDesc.pOwnerObject = this;
+		RigidBodyDesc.eThisCollsion = COL_ENEMY_ATTACK;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER;
+		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Attack_Body");
+
+		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
+			throw TEXT("Collider_Attack_Body");
+
 		/* For.MagicSlot */
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_MagicSlot"),
 			TEXT("Com_MagicSlot"), reinterpret_cast<CComponent**>(&m_pMagicSlot))))
@@ -835,7 +913,7 @@ HRESULT CConjuredDragon::Add_Components_Level(_uint iCurrentLevelIndex)
 			TEXT("Com_Pulse"), reinterpret_cast<CComponent**>(&m_pPulse), &PulseInitDesc)))
 			throw TEXT("Com_Pulse");
 
-		/* For.Com_Weapon */
+		/* For.Com_Weapon_Head */
 		const CBone* pBone = m_pModelCom->Get_Bone(TEXT("head"));
 		if (nullptr == pBone)
 			throw TEXT("pBone is nullptr");
@@ -847,10 +925,50 @@ HRESULT CConjuredDragon::Add_Components_Level(_uint iCurrentLevelIndex)
 		ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
 
 		if (FAILED(Add_Component(iCurrentLevelIndex, TEXT("Prototype_GameObject_Dragon_Head"),
-			TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
-			throw TEXT("Com_Weapon");
+			TEXT("Com_Weapon_Head"), reinterpret_cast<CComponent**>(&m_pWeapon_Head), &ParentMatrixDesc)))
+			throw TEXT("Com_Weapon_Head");
 
+		/* For.Com_Weapon_Left_Wing */
+		pBone = m_pModelCom->Get_Bone(TEXT("middleringwing_04_left"));
+		if (nullptr == pBone)
+			throw TEXT("pBone is nullptr");
 
+		ParentMatrixDesc.OffsetMatrix = _float4x4();
+		ParentMatrixDesc.PivotMatrix = m_pModelCom->Get_PivotFloat4x4();
+		ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
+		ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+
+		if (FAILED(Add_Component(iCurrentLevelIndex, TEXT("Prototype_GameObject_Weapon_Dragon_Left_Wing"),
+			TEXT("Com_Weapon_Left_Wing"), reinterpret_cast<CComponent**>(&m_pWeapon_Left_Wing), &ParentMatrixDesc)))
+			throw TEXT("Com_Weapon_Left_Wing");
+
+		/* For.Com_Weapon_Right_Wing */
+		pBone = m_pModelCom->Get_Bone(TEXT("middleringwing_04_right"));
+		if (nullptr == pBone)
+			throw TEXT("pBone is nullptr");
+
+		ParentMatrixDesc.OffsetMatrix = _float4x4();
+		ParentMatrixDesc.PivotMatrix = m_pModelCom->Get_PivotFloat4x4();
+		ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
+		ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+
+		if (FAILED(Add_Component(iCurrentLevelIndex, TEXT("Prototype_GameObject_Weapon_Dragon_Right_Wing"),
+			TEXT("Com_Weapon_Right_Wing"), reinterpret_cast<CComponent**>(&m_pWeapon_Right_Wing), &ParentMatrixDesc)))
+			throw TEXT("Com_Weapon_Right_Wing");
+
+		/* For.Com_Weapon_Tail */
+		pBone = m_pModelCom->Get_Bone_Index(178);
+		if (nullptr == pBone)
+			throw TEXT("pBone is nullptr");
+
+		ParentMatrixDesc.OffsetMatrix = _float4x4();
+		ParentMatrixDesc.PivotMatrix = m_pModelCom->Get_PivotFloat4x4();
+		ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
+		ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+
+		if (FAILED(Add_Component(iCurrentLevelIndex, TEXT("Prototype_GameObject_Weapon_Dragon_Tail"),
+			TEXT("Com_Weapon_Tail"), reinterpret_cast<CComponent**>(&m_pWeapon_Tail), &ParentMatrixDesc)))
+			throw TEXT("Com_Weapon_Tail");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -890,8 +1008,31 @@ HRESULT CConjuredDragon::Bind_HitMatrices()
 	if (nullptr == pBone)
 		return E_FAIL;
 	_float4x4 WeaponOffsetMatrix = pBone->Get_OffsetMatrix() * m_pModelCom->Get_PivotFloat4x4();
-	m_pWeapon->Set_Offset_Matrix(WeaponOffsetMatrix);
+	m_pWeapon_Head->Set_Offset_Matrix(WeaponOffsetMatrix);
 	
+	/* Setting Wing, Tail Bone Matrices */
+	DRAGONBONEDATA BoneData;
+	pBone = m_pModelCom->Get_Bone_Index(150);
+	if (nullptr == pBone)
+		return E_FAIL;
+	BoneData.pCombinedTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
+	m_Bones[LEFT_WING].push_back(BoneData);
+
+	pBone = m_pModelCom->Get_Bone_Index(151);
+	if (nullptr == pBone)
+		return E_FAIL;
+	BoneData.pCombinedTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
+	m_Bones[RIGHT_WING].push_back(BoneData);
+
+	for (_uint i = 171; i < 185; ++i)
+	{
+		pBone = m_pModelCom->Get_Bone_Index(i);
+		if (nullptr == pBone)
+			return E_FAIL;
+		BoneData.pCombinedTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
+		m_Bones[TAIL].push_back(BoneData);
+	}
+
 	return S_OK;
 }
 
@@ -1712,6 +1853,9 @@ HRESULT CConjuredDragon::Make_Ground_Attacks(_Inout_ CSequence* pSequence)
 		CSequence* pSequence_Attack_Pulse = { nullptr };
 		if (FAILED(Create_Behavior(pSequence_Attack_Pulse)))
 			throw TEXT("Failed Create_Behavior pSequence_Attack_Pulse");
+		CSequence* pSequence_Attack_AOE = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Attack_AOE)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_AOE");
 		CSequence* pSequence_Attack_Range = { nullptr };
 		if (FAILED(Create_Behavior(pSequence_Attack_Range)))
 			throw TEXT("Failed Create_Behavior pSequence_Attack_Range");
@@ -1744,13 +1888,17 @@ HRESULT CConjuredDragon::Make_Ground_Attacks(_Inout_ CSequence* pSequence)
 
 		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Pulse"), pSequence_Attack_Pulse, 0.1f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Pulse");
-		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Range"), pSequence_Attack_Range, 0.8f)))
+		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_AOE"), pSequence_Attack_AOE, 0.1f)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_AOE");
+		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Range"), pSequence_Attack_Range, 0.7f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Range");
 		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Melee"), pSequence_Attack_Melee, 0.1f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Melee");
 
 		if (FAILED(Make_Ground_Attack_Pulse(pSequence_Attack_Pulse)))
 			throw TEXT("Failed Make_Ground_Attack_Pulse");
+		if (FAILED(Make_Ground_Attack_AOE(pSequence_Attack_AOE)))
+			throw TEXT("Failed Make_Ground_Attack_AOE");
 		if (FAILED(Make_Ground_Attacks_Range(pSequence_Attack_Range)))
 			throw TEXT("Failed Make_Ground_Attacks_Range");
 		if (FAILED(Make_Ground_Attacks_Melee(pSequence_Attack_Melee)))
@@ -1956,6 +2104,61 @@ HRESULT CConjuredDragon::Make_Ground_Attack_Pulse(_Inout_ CSequence* pSequence)
 	catch (const _tchar* pErrorTag)
 	{
 		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Make_Ground_Attack_Pulse : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CConjuredDragon::Make_Ground_Attack_AOE(_Inout_ CSequence* pSequence)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		CAction* pAction_Ground_To_Fly = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Ground_To_Fly)))
+			throw TEXT("Failed Create_Behavior pAction_Ground_To_Fly");
+		CAction* pAction_Attack_AOE_1 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Attack_AOE_1)))
+			throw TEXT("Failed Create_Behavior pAction_Attack_AOE_1");
+		CAction* pAction_Attack_AOE_2 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Attack_AOE_2)))
+			throw TEXT("Failed Create_Behavior pAction_Attack_AOE_2");
+		CAction* pAction_Land = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Land)))
+			throw TEXT("Failed Create_Behavior pAction_Land");
+
+		/* Set Options */
+		pAction_Ground_To_Fly->Set_Options(TEXT("Ground_To_Fly"), m_pModelCom);
+		pAction_Attack_AOE_1->Set_Options(TEXT("Attack_AOE_1"), m_pModelCom);
+		pAction_Attack_AOE_2->Set_Options(TEXT("Attack_AOE_2"), m_pModelCom);
+		pAction_Land->Set_Options(TEXT("Landing_To_Cmbt"), m_pModelCom);
+
+		/* Assemble Behaviors */
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Ground_To_Fly"), pAction_Ground_To_Fly)))
+			throw TEXT("Failed Assemble_Behavior Action_Ground_To_Fly");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Attack_AOE_1"), pAction_Attack_AOE_1)))
+			throw TEXT("Failed Assemble_Behavior Action_Attack_AOE_1");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Attack_AOE_2"), pAction_Attack_AOE_2)))
+			throw TEXT("Failed Assemble_Behavior Action_Attack_AOE_2");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Land"), pAction_Land)))
+			throw TEXT("Failed Assemble_Behavior Action_Land");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Make_Ground_Attack_AOE : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -2519,16 +2722,20 @@ HRESULT CConjuredDragon::Make_Air_Hover(_Inout_ CAction* pAction)
 	return S_OK;
 }
 
+void CConjuredDragon::Exit_Attack()
+{
+	m_pWeapon_Left_Wing->Off_Collider_Attack();
+	m_pWeapon_Right_Wing->Off_Collider_Attack();
+	m_pWeapon_Tail->Off_Collider_Attack();
+	m_pRigidBody->Disable_Collision("Attack_Body");
+}
+
 void CConjuredDragon::Shot_Fireball_Black()
 {
 	if (nullptr == m_pTarget)
 		return;
 
-	CMagicBall* pMagicBall = m_pMagicSlot->Action_Magic_Skill(0, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_SHIELD));
-	static int _count = 0;
-	cout << ++_count << endl;
-	if (nullptr == pMagicBall)
-		return;
+	m_pMagicSlot->Action_Magic_Skill(0, m_pTarget, m_pWeapon_Head, COLLISIONFLAG(COL_PLAYER | COL_SHIELD));
 }
 
 void CConjuredDragon::Shot_Fireball_White()
@@ -2536,10 +2743,12 @@ void CConjuredDragon::Shot_Fireball_White()
 	if (nullptr == m_pTarget)
 		return;
 
-	CMagicBall* pMagicBall = m_pMagicSlot->Action_Magic_Skill(1, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_SHIELD));
-	if (nullptr == pMagicBall)
-		return;
+	m_pMagicSlot->Action_Magic_Skill(1, m_pTarget, m_pWeapon_Head, COLLISIONFLAG(COL_PLAYER | COL_SHIELD));
+}
 
+void CConjuredDragon::Enter_Charge_Attack()
+{
+	m_pRigidBody->Enable_Collision("Attack_Body", this, &m_CollisionRequestDesc);
 }
 
 void CConjuredDragon::On_Breath()
@@ -2621,7 +2830,10 @@ void CConjuredDragon::Free()
 	Safe_Release(m_pPulse);
 
 	Safe_Release(m_pMagicSlot);
-	Safe_Release(m_pWeapon);
+	Safe_Release(m_pWeapon_Head);
+	Safe_Release(m_pWeapon_Left_Wing);
+	Safe_Release(m_pWeapon_Right_Wing);
+	Safe_Release(m_pWeapon_Tail);
 
 	Safe_Release(m_pEffect_BlackSmokeIdle);
 	Safe_Release(m_pEffect_Breath);

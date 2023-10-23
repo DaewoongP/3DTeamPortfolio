@@ -21,6 +21,12 @@
 #include "Font_Manager.h"
 #endif // _DEBUG
 
+void CRenderer::Set_Night()
+{
+	m_isNight = true;
+	m_isFloorFog = true;
+}
+
 void CRenderer::Defualt_Shading()
 {
 	m_isSSAO = true;
@@ -29,11 +35,13 @@ void CRenderer::Defualt_Shading()
 	m_fRadialBlurWidth = 0.0f;
 	m_isScreenRadial = false;
 	m_isCircleFog = false;
+	m_isFloorFog = false;
 	m_isFade = false;
 	m_fRadialTimeAcc = 1.f;
 	m_fFadeSpeed = 0.1f;
 	m_fFadeTime = 0.f;
 	m_isRaining = false;
+	m_isNight = false;
 	if (nullptr != m_pDOF)
 		m_pDOF->Default();
 }
@@ -134,6 +142,9 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_EdgeHighLight"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_LightShaft"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
 	
 #ifdef _DEBUG
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
@@ -196,6 +207,8 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_EdgeHighLight"), TEXT("Target_EdgeHighLight"))))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_LightShaft"), TEXT("Target_LightShaft"))))
+		return E_FAIL;
 
 #ifdef _DEBUG
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Picking"), TEXT("Target_Picking"))))
@@ -222,15 +235,9 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Glowed"), 80.f, 400.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Rain"), 80.f, 560.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Emissive"), 80.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Edge_Diffuse"), 240.f, 80.f, 160.f, 160.f)))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Edge_Normal"), 240.f, 240.f, 160.f, 160.f)))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Edge_Depth"), 240.f, 400.f, 160.f, 160.f)))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_EdgeHighLight"), 240.f, 560.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_LightShaft"), 320.f, 160.f, 320.f, 320.f)))
 		return E_FAIL;
 
 	m_isDebugRender = false;
@@ -290,6 +297,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(m_pShadow->Render()))
 		return E_FAIL;
+	if (FAILED(m_pBloom->Render(TEXT("Target_Emissive"))))
+		return E_FAIL;
 	if (FAILED(Render_Deferred()))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Deferred"))))
@@ -301,7 +310,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_HDR()))
 		return E_FAIL;
-
+	if (FAILED(Render_LightShaft()))
+		return E_FAIL;
 	if (FAILED(Sort_Render(RENDER_GLOW)))
 		return E_FAIL;
 	if (FAILED(m_pGlow->Render(m_RenderObjects[RENDER_GLOW], m_fGlowPower)))
@@ -653,6 +663,8 @@ HRESULT CRenderer::Render_Deferred()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Specular"), m_pDeferredShader, "g_SpecularTexture")))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_WhiteSpace_Blured"), m_pDeferredShader, "g_EmissiveTexture")))
+		return E_FAIL;
 
 	if (FAILED(m_pDeferredShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
@@ -745,6 +757,8 @@ HRESULT CRenderer::Render_PostProcessing()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Depth"), m_pPostProcessingShader, "g_DepthTexture")))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_LightShaft"), m_pPostProcessingShader, "g_LightShaftTexture")))
+		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Rain"), m_pPostProcessingShader, "g_RainTexture")))
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
@@ -762,7 +776,12 @@ HRESULT CRenderer::Render_PostProcessing()
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_vCamPos", pPipeLine->Get_CamPosition(), sizeof(_float4))))
+		return E_FAIL;
 	Safe_Release(pPipeLine);
+	
+	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_isNight", &m_isNight, sizeof(_bool))))
+		return E_FAIL;
 
 	// fog
 	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_vFogColor", &m_vFogColor, sizeof(_float4))))
@@ -772,6 +791,12 @@ HRESULT CRenderer::Render_PostProcessing()
 	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_fCircleFogRadius", &m_fFogRadius, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_isCircleFog", &m_isCircleFog, sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_isFloorFog", &m_isFloorFog, sizeof(_bool))))
+		return E_FAIL;
+
+	_float fTimeAcc = CGameInstance::GetInstance()->Get_World_TimeAcc();
+	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_fTime", &fTimeAcc, sizeof(_float))))
 		return E_FAIL;
 
 	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_isSSAO", &m_isSSAO, sizeof(_bool))))
@@ -1031,6 +1056,40 @@ HRESULT CRenderer::Render_Rain()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_LightShaft()
+{
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_LightShaft"))))
+		return E_FAIL;
+
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_HDR"), m_pLightShaftShader, "g_TargetTexture")))
+		return E_FAIL;
+
+	if (FAILED(m_pLightShaftShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pLightShaftShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pLightShaftShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	const CLight::LIGHTDESC* pLightDesc = m_pLight_Manager->Get_ShadowLightDesc(0);
+	if (nullptr != pLightDesc)
+	{
+		if (FAILED(m_pLightShaftShader->Bind_RawValue("g_vLightPosition", &pLightDesc->vPos, sizeof(_float4))))
+			return E_FAIL;
+	}
+	
+	if (FAILED(m_pLightShaftShader->Begin("LightShaft")))
+		return E_FAIL;
+
+	if (FAILED(m_pRectBuffer->Render()))
+		return E_FAIL;
+
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_LightShaft"))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_Fade()
 {
 	// 화면 마지막에 그냥 띄워버리면 편함.
@@ -1188,6 +1247,10 @@ HRESULT CRenderer::Add_Components()
 	m_pEdgeShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Edge.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
 	if (nullptr == m_pEdgeShader)
 		return E_FAIL;
+	
+	m_pLightShaftShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_LightShaft.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
+	if (nullptr == m_pLightShaftShader)
+		return E_FAIL;
 
 	m_pNoiseTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Noises/VFX_T_Cloud_Noise_Tile_D.png"));
 	if (nullptr == m_pNoiseTexture)
@@ -1343,6 +1406,7 @@ void CRenderer::Free()
 	Safe_Release(m_pFadeShader);
 	Safe_Release(m_pRainShader);
 	Safe_Release(m_pEdgeShader);
+	Safe_Release(m_pLightShaftShader);
 	Safe_Release(m_pNoiseTexture);
 	Safe_Release(m_pFadeTexture);
 

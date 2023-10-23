@@ -17,6 +17,7 @@ class CStateContext_Enemy;
 class CMagicSlot;
 class CWeapon_Dragon_Head;
 class CMagicBall;
+class CVault_Torch;
 END
 
 BEGIN(Client)
@@ -55,6 +56,8 @@ public:
 		m_pMagicBall_Sword[2] = nullptr;
 	};
 	void DieMagicBall();
+	void PensiveSwitchOn();
+	void PensiveSwitchOff();
 
 private:
 	CStateContext_Enemy*	m_pStateContext = { nullptr };
@@ -64,6 +67,8 @@ private:
 	CMagicBall*				m_pMagicBall_Attack = { nullptr };
 	CMagicBall*				m_pMagicBall_Protego = { nullptr };
 	CMagicBall*				m_pMagicBall_Sword[3] = { nullptr };
+
+	vector<CVault_Torch*>			m_pTorch;
 
 private:
 	CStateMachine_Enemy::STATEMACHINEDESC m_StateMachineDesc = { CStateMachine_Enemy::STATEMACHINEDESC() };

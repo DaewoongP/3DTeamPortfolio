@@ -608,8 +608,13 @@ HRESULT CMainTool::Ready_Prototype_Object()
 		TEXT("../../Resources/GameData/ParticleData/Blink/BlinkFoot"))))
 		throw TEXT("Reserve Particle : Prototype_GameObject_Blink_SubEffect");
 
-
-
+	if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Particle"),
+		TEXT("../../Resources/GameData/ParticleData/Blink/BlinkParticle"))))
+		throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Particle");
+	/*For.Player_Hit_Particle*/
+	if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Player_Hit_Dust"),
+		TEXT("../../Resources/GameData/ParticleData/PlayerHit/HitDust"))))
+		throw TEXT("Reserve Particle : Prototype_GameObject_Player_Hit_Dust");
 
 
 #ifdef _DEBUG

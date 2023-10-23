@@ -6,14 +6,10 @@ BEGIN(Client)
 class CBroom_End :
     public CStateMachine
 {
-
 private:
     explicit CBroom_End(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
     explicit CBroom_End(const CBroom_End& rhs);
     virtual ~CBroom_End() = default;
-
-public:
-    //Get,Set
 
 public:
     virtual HRESULT Initialize_Prototype();
@@ -25,11 +21,6 @@ public:
 
     virtual void OnStateTick();
     virtual void OnStateExit();
-
-private:
-    void Go_Idle();
-
-    void Go_Loop();
 
 public:
     static CBroom_End* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

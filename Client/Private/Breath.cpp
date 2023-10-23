@@ -14,6 +14,18 @@ CBreath::CBreath(const CBreath& rhs)
 {
 }
 
+void CBreath::On_Breath()
+{
+	m_isActionBreath = true;
+	m_pRigidBody->Enable_Collision("Attack_Breath", this, &m_CollisionRequestDesc);
+}
+
+void CBreath::Off_Breath()
+{
+	m_isActionBreath = false;
+	m_pRigidBody->Disable_Collision("Attack_Breath");
+}
+
 HRESULT CBreath::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
@@ -31,6 +43,10 @@ HRESULT CBreath::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pTransform->Set_RigidBody(m_pRigidBody);
+
+	m_CollisionRequestDesc.eType = CEnemy::ATTACK_HEAVY;
+	m_CollisionRequestDesc.iDamage = 20;
+	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
 
 	return S_OK;
 }
@@ -71,20 +87,12 @@ void CBreath::Late_Tick(_float fTimeDelta)
 	Safe_Release(pGameInstance);
 }
 
-void CBreath::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
-{
-}
-
-void CBreath::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
-{
-}
-
 HRESULT CBreath::Render()
 {
-	if (FAILED(__super::Render()))
+	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(SetUp_ShaderResources()))
+	if (FAILED(__super::Render()))
 		return E_FAIL;
 
 	return S_OK;
@@ -140,7 +148,7 @@ HRESULT CBreath::Add_Components()
 	RigidBodyDesc.pOwnerObject = this;
 	RigidBodyDesc.eThisCollsion = COL_MAGIC;
 	RigidBodyDesc.eCollisionFlag = COL_PLAYER;
-	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Breath");
+	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Attack_Breath");
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 	{

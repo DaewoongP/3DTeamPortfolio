@@ -65,6 +65,9 @@ void CMainApp::Tick(_float fTimeDelta)
 
 	// 엔진의 Tick 호출
 	m_pGameInstance->Tick_Engine(fTimeDelta);
+	// 퀘스트 매니저 Tick 호출
+	m_pQuest_Manager->Tick(fTimeDelta);
+
 
 	Tick_FPS(fTimeDelta);
 
