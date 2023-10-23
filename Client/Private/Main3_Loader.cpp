@@ -28,7 +28,7 @@
 #include "StandingState.h"
 #include "UseItemState.h"
 
-//#include "Fly_Move.h"
+#include "Fly_Move.h"
 //#include "Fly_Turn.h"
 #include "Hover_Idle.h"
 #include "Hover_Move.h"
@@ -161,8 +161,6 @@ HRESULT CMain3_Loader::Loading()
 	}
 
 	hr = 0;
-
-	std::lock_guard<std::mutex> lock(mtx);
 
 	switch (m_eNextLevelID)
 	{

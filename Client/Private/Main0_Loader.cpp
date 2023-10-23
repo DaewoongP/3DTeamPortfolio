@@ -174,8 +174,6 @@ HRESULT CMain0_Loader::Loading()
 
 	hr = 0;
 
-	std::lock_guard<std::mutex> lock(mtx);
-
 	switch (m_eNextLevelID)
 	{
 	case LEVEL_LOGO:
@@ -494,22 +492,9 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 				TEXT("../../Resources/Models/Anims/Anim_GuideBook/Anim_GuideBook.dat")))))
 				throw TEXT("Prototype_Component_Model_Guide_Book");
 #pragma endregion
-
-#pragma region Load Texture
-			/* --------------Texture-------------- */
-			/* Prototype_Component_Texture_Default_Particle*/
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_Default_Particle"),
-				CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Default_Particle.png")))))
-				throw TEXT("Prototype_Component_Texture_Default_Particle");
-
-			/* Prototype_Component_Texture_Terrain */
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_Terrain"),
-				CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Tile%d.dds"), 2))))
-				throw TEXT("Prototype_Component_Texture_Terrain");
-#pragma endregion
 		}
 
-		/* Prototype_Component_Texture_Default_Particle*/
+		/* Prototype_Component_Phase*/
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Phase"),
 			CPhase::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Phase");

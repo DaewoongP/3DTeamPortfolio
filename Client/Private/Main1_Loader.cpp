@@ -502,10 +502,10 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 		CLamppost::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Lamppost");
 
-	/* For.Prototype_GameObject_LightStand */
-	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_LightStand"),
-		CLightStand::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_GameObject_LightStand");
+	///* For.Prototype_GameObject_LightStand */
+	//if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_LightStand"),
+	//	CLightStand::Create(m_pDevice, m_pContext))))
+	//	throw TEXT("Prototype_GameObject_LightStand");
 
 	/* For.Prototype_GameObject_Sancutm_Door */
 	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Sancutm_Door"),
