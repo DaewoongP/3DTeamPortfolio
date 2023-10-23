@@ -535,12 +535,6 @@
     <Filter Include="02. GameObject\02. Enemy\03. Golem">
       <UniqueIdentifier>{75e17a41-3815-4778-b3dd-847b9cc46d8b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. Golem\00. Combat">
-      <UniqueIdentifier>{9b9a0dfc-c373-4b0b-9c88-3e4ef1df5fc6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. Golem\00. Combat\Weapon">
-      <UniqueIdentifier>{f57875dd-9b97-4974-a4c8-dbc1374da1c3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\02. Enemy\05. DarkWizard">
       <UniqueIdentifier>{344e3ca3-42ef-4166-b228-a633658f314b}</UniqueIdentifier>
     </Filter>
@@ -904,6 +898,45 @@
     <Filter Include="02. GameObject\09. Item\03. Gear\Outfit_Celtic_A">
       <UniqueIdentifier>{f30e6931-634b-4b49-8a40-9f635dfd73c4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\02. Enemy\03. Golem\Weapon">
+      <UniqueIdentifier>{f57875dd-9b97-4974-a4c8-dbc1374da1c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\05. DarkWizard\01. Female\Spawner">
+      <UniqueIdentifier>{d8aa9f2d-5837-4280-a210-59cd8efcb982}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\05. DarkWizard\02. Fly">
+      <UniqueIdentifier>{1684b91d-3598-4808-8519-dd674df0bae2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Spawn">
+      <UniqueIdentifier>{617e8b7e-9920-4531-a8d3-4c8e4045ddb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Vault\Spawn">
+      <UniqueIdentifier>{0dc22c73-a100-442f-8c3b-9fba51da41c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Vault\Enter_Vault">
+      <UniqueIdentifier>{0154d54e-706e-4c95-85dd-82155f12a0e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Sanctum">
+      <UniqueIdentifier>{28e16e8c-d636-4f9a-b935-2bd1be77a8eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Sanctum\Dragon_HP_Down">
+      <UniqueIdentifier>{9b2a539e-f6ff-415e-bcc1-c9f8c48df7bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Sanctum\Dragon_Death">
+      <UniqueIdentifier>{38e6c889-33ea-4de9-9002-264fac9c5bfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\Weapon\Head">
+      <UniqueIdentifier>{a40255d8-46b3-446f-a61c-a3f4e1694864}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\Weapon\Left_Wing">
+      <UniqueIdentifier>{aa98253f-527d-4ab2-a15d-4159a8c13a35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\Weapon\Right_Wing">
+      <UniqueIdentifier>{53674c22-ce4a-4e55-8645-9efb2e02a1e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\Weapon\Tail">
+      <UniqueIdentifier>{4b1dcaad-641e-4070-a67f-3c29d519c8d8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1010,9 +1043,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Dugbog.h">
       <Filter>02. GameObject\02. Enemy\02. Dugbog</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Golem_Combat.h">
-      <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MapObject.h">
       <Filter>02. GameObject\03. MapObject</Filter>
@@ -1249,7 +1279,7 @@
       <Filter>02. GameObject\04. UI\UI\UI_Logo</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Weapon_Golem_Combat.h">
-      <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat\Weapon</Filter>
+      <Filter>02. GameObject\02. Enemy\03. Golem\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Lumos.h">
       <Filter>05. Magic\MagicBall\05. Lumos</Filter>
@@ -1559,9 +1589,6 @@
     <ClInclude Include="..\Public\Projectile_Black.h">
       <Filter>02. GameObject\02. Enemy\04. Dragon\03. Projectile_Black</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Weapon_Dragon_Head.h">
-      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Level_Static.h">
       <Filter>01. Levels\98. Static</Filter>
     </ClInclude>
@@ -1582,9 +1609,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Player_Information.h">
       <Filter>02. GameObject\03. PlayerInformation</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Event_Vault_Spawn.h">
-      <Filter>07. Events\Vault</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Gear_Item.h">
       <Filter>02. GameObject\09. Item\03. Gear</Filter>
@@ -1793,6 +1817,42 @@
     <ClInclude Include="..\Public\Magic_Sound_Manager.h">
       <Filter>05. Magic\Magic_Sound_Manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Golem_Combat.h">
+      <Filter>02. GameObject\02. Enemy\03. Golem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DarkWizard_Spawn.h">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\01. Female\Spawner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DarkWizard_Fly.h">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\02. Fly</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Spawn.h">
+      <Filter>07. Events\Spawn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Event_Vault_Spawn.h">
+      <Filter>07. Events\Vault\Spawn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Enter_Vault.h">
+      <Filter>07. Events\Vault\Enter_Vault</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Dragon_Hp_Down.h">
+      <Filter>07. Events\Sanctum\Dragon_HP_Down</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Dragon_Death.h">
+      <Filter>07. Events\Sanctum\Dragon_Death</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Dragon_Head.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Head</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Dragon_Left_Wing.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Left_Wing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Dragon_Tail.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Tail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Dragon_Right_Wing.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Right_Wing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1869,9 +1929,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Dugbog.cpp">
       <Filter>02. GameObject\02. Enemy\02. Dugbog</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Golem_Combat.cpp">
-      <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Action.cpp">
       <Filter>03. Behaviors\00. Action</Filter>
@@ -2108,7 +2165,7 @@
       <Filter>02. GameObject\04. UI\UI\UI_Logo</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Weapon_Golem_Combat.cpp">
-      <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat\Weapon</Filter>
+      <Filter>02. GameObject\02. Enemy\03. Golem\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Lumos.cpp">
       <Filter>05. Magic\MagicBall\05. Lumos</Filter>
@@ -2412,9 +2469,6 @@
     <ClCompile Include="..\Private\Projectile_Black.cpp">
       <Filter>02. GameObject\02. Enemy\04. Dragon\03. Projectile_Black</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Weapon_Dragon_Head.cpp">
-      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Level_Static.cpp">
       <Filter>01. Levels\98. Static</Filter>
     </ClCompile>
@@ -2423,9 +2477,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player.cpp">
       <Filter>02. GameObject\01. Player</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Event_Vault_Spawn.cpp">
-      <Filter>07. Events\Vault</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Gear_Item.cpp">
       <Filter>02. GameObject\09. Item\03. Gear</Filter>
@@ -2640,6 +2691,42 @@
     <ClCompile Include="..\Private\Magic_Sound_Manager.cpp">
       <Filter>05. Magic\Magic_Sound_Manager</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Golem_Combat.cpp">
+      <Filter>02. GameObject\02. Enemy\03. Golem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DarkWizard_Spawn.cpp">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\01. Female\Spawner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DarkWizard_Fly.cpp">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\02. Fly</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Spawn.cpp">
+      <Filter>07. Events\Spawn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Event_Vault_Spawn.cpp">
+      <Filter>07. Events\Vault\Spawn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Enter_Vault.cpp">
+      <Filter>07. Events\Vault\Enter_Vault</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Dragon_Hp_Down.cpp">
+      <Filter>07. Events\Sanctum\Dragon_HP_Down</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Dragon_Death.cpp">
+      <Filter>07. Events\Sanctum\Dragon_Death</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Dragon_Head.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Head</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Dragon_Left_Wing.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Left_Wing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Dragon_Tail.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Tail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Dragon_Right_Wing.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Right_Wing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2696,9 +2783,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMesh.hlsl">
       <Filter>97. ShaderFiles\Meshes</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMeshInstance.hlsl">
-      <Filter>97. ShaderFiles\Meshes</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ImpulseSphere.hlsl">
       <Filter>04. Effect\BoneDragon\ImpulseSphere</Filter>
     </FxCompile>
@@ -2707,6 +2791,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Projectile_White.hlsl">
       <Filter>02. GameObject\02. Enemy\04. Dragon\04. Projectile_White\Projectile_White_Effect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMeshInstance.hlsl">
+      <Filter>97. ShaderFiles\Meshes</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

@@ -32,26 +32,21 @@ private:
 	virtual ~CBreath() = default;
 
 public:
-	void On_Breath() {
-		m_isActionBreath = true;
-	}
-	void Off_Breath(){
-		m_isActionBreath = false;
-	}
+	void On_Breath();
+	void Off_Breath();
 
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
-	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
-	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
 
 public:
 	void Reset(const BREATHINITDESC& tagResetDesc);
 
 private:
+	CEnemy::COLLISIONREQUESTDESC m_CollisionRequestDesc;
 	_bool m_isActionBreath = { false };
 
 private:

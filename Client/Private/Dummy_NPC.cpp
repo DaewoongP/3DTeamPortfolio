@@ -307,9 +307,6 @@ HRESULT CDummy_NPC::Add_Components(const NPCINITDESC& Desc)
 				TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 				throw TEXT("Com_RigidBody");
 
-			if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
-				return E_FAIL;
-
 			/* Com_UI_Interaction */
 			CGameInstance* pGameInstance = CGameInstance::GetInstance();
 			Safe_AddRef(pGameInstance);

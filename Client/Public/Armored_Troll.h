@@ -65,6 +65,7 @@ private:
 	array<const _float4x4*, 5> m_DarkAuraBoneMatrix = { nullptr };
 
 private:
+	_bool m_isEnterDeath = { false };
 	_float m_fDeadTimeAcc = { 0.f };
 	void DeathBehavior(const _float& fTimeDelta);
 

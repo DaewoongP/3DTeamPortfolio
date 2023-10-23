@@ -57,7 +57,8 @@ void CWeapon_Armored_Troll::Late_Tick(_float fTimeDelta)
 	if (nullptr != m_pRendererCom)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
+		if(false == m_isDissolve)
+			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
 #ifdef _DEBUG
 		m_pRendererCom->Add_DebugGroup(m_pRigidBody);
 #endif // _DEBUG
@@ -117,9 +118,6 @@ HRESULT CWeapon_Armored_Troll::Render_Depth(_float4x4 LightViewMatrix, _float4x4
 	{
 		try /* Failed Render */
 		{
-			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShadowShaderCom, "g_BoneMatrices", i)))
-				throw TEXT("Bind_BoneMatrices");
-
 			if (FAILED(m_pShadowShaderCom->Begin("Shadow")))
 				throw TEXT("Shader Begin Shadow");
 
@@ -238,6 +236,9 @@ HRESULT CWeapon_Armored_Troll::Set_Shader_Resources()
 
 		if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveAmount", &m_fDissolveAmount, sizeof(_float))))
 			throw TEXT("Failed Bind_RawValue : m_fDissolveAmount");
+
+		if (FAILED(m_pDissolveTexture->Bind_ShaderResources(m_pShaderCom, "g_DissolveTexture")))
+			throw TEXT("Failed Bind_RawValue : g_DissolveTexture");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -272,9 +273,6 @@ HRESULT CWeapon_Armored_Troll::SetUp_ShadowShaderResources(_float4x4 LightViewMa
 
 		if (FAILED(m_pShadowShaderCom->Bind_Matrix("g_ProjMatrix", &LightProjMatrix)))
 			throw TEXT("Failed Bind_Matrix : g_ProjMatrix");
-
-		if (FAILED(m_pDissolveTexture->Bind_ShaderResources(m_pShaderCom, "g_DissolveTexture")))
-			throw TEXT("Failed Bind_RawValue : g_DissolveTexture");
 
 		if (FAILED(m_pShadowShaderCom->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 			throw TEXT("Failed Bind_RawValue : g_fCamFar");

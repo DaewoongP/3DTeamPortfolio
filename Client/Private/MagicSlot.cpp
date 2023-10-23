@@ -138,7 +138,7 @@ HRESULT CMagicSlot::Add_Magic_To_Basic_Slot(_uint iSlotIndex, SPELL eSpellType)
 	return S_OK;
 }
 
-CMagicBall* CMagicSlot::Action_Magic_Skill(_uint iIndex, const CGameObject* pTarget, const CGameObject* pWeaponMatrix, COLLISIONFLAG eCollisionFlag, _bool isPowerUp)
+CMagicBall* CMagicSlot::Action_Magic_Skill(_uint iIndex, const CGameObject* pTarget, const CGameObject* pWeaponMatrix, COLLISIONFLAG eCollisionFlag, COLLISIONFLAG eThisCollisionFlag, _bool isPowerUp)
 {
 
 	//if Size over = MSG / if Index Slot is nullptr, nothing
@@ -150,7 +150,7 @@ CMagicBall* CMagicSlot::Action_Magic_Skill(_uint iIndex, const CGameObject* pTar
 		}
 		
 		m_pMagic_SoundMgr->Spell_Magic(m_eOwnerType,m_MagicSlots[iIndex]->Get_SpellType(), m_fVolum);
-		return m_MagicSlots[iIndex]->Magic_Cast(pTarget, pWeaponMatrix, eCollisionFlag,isPowerUp);
+		return m_MagicSlots[iIndex]->Magic_Cast(pTarget, pWeaponMatrix, eCollisionFlag, eThisCollisionFlag, isPowerUp);
 	}
 	else if (m_MagicSlots[iIndex] == nullptr)
 	{
@@ -161,7 +161,7 @@ CMagicBall* CMagicSlot::Action_Magic_Skill(_uint iIndex, const CGameObject* pTar
 	return nullptr;
 }
 
-CMagicBall* CMagicSlot::Action_Magic_Basic(_uint iIndex, const CGameObject* pTarget, const CGameObject* pWeaponMatrix, COLLISIONFLAG eCollisionFlag, _bool isPowerUp)
+CMagicBall* CMagicSlot::Action_Magic_Basic(_uint iIndex, const CGameObject* pTarget, const CGameObject* pWeaponMatrix, COLLISIONFLAG eCollisionFlag, COLLISIONFLAG eThisCollisionFlag, _bool isPowerUp)
 {
 	//if Size over = MSG / if Index Slot is nullptr, nothing
 	if (iIndex < m_MagicEssentialSlots.size())
@@ -171,7 +171,7 @@ CMagicBall* CMagicSlot::Action_Magic_Basic(_uint iIndex, const CGameObject* pTar
 			return nullptr;
 		}
 		m_pMagic_SoundMgr->Spell_Magic(m_eOwnerType,m_MagicEssentialSlots[iIndex]->Get_SpellType(), m_fVolum);
-		return m_MagicEssentialSlots[iIndex]->Magic_Cast(pTarget, pWeaponMatrix, eCollisionFlag,isPowerUp);
+		return m_MagicEssentialSlots[iIndex]->Magic_Cast(pTarget, pWeaponMatrix, eCollisionFlag, eThisCollisionFlag, isPowerUp);
 	}
 	else if (m_MagicEssentialSlots[iIndex] == nullptr)
 	{

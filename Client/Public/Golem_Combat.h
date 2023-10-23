@@ -19,7 +19,6 @@ END
 
 BEGIN(Client)
 class CWeapon_Golem_Combat;
-class CUI_Damage;
 END
 
 BEGIN(Client)
@@ -86,7 +85,6 @@ private: /* Notify Func */
 	void Exit_Attack();
 
 private:
-	CUI_Damage* m_pUI_Damage = { nullptr };
 
 public:
 	static CGolem_Combat* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

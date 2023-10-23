@@ -42,7 +42,7 @@ public:
 	void On_Collider_Attack(CEnemy::COLLISIONREQUESTDESC* pCollisionRequestDesc) {
 		m_pRigidBody->Enable_Collision("Attack", this, pCollisionRequestDesc);
 	}
-	void Off_Collider_Attack(CEnemy::COLLISIONREQUESTDESC* pCollisionRequestDesc) {
+	void Off_Collider_Attack() {
 		m_pRigidBody->Disable_Collision("Attack");
 	}
 	void On_Dissolve() { m_isDissolve = true; }
