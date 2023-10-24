@@ -389,6 +389,7 @@ HRESULT CProtego::Reset(MAGICBALLINITDESC& InitDesc)
 	__super::Reset(InitDesc);
 
 	m_fDyingTimer = InitDesc.fLifeTime;
+	m_fScale = InitDesc.fScale;
 
 	switch (InitDesc.eMagicType)
 	{

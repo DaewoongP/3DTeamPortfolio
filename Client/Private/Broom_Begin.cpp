@@ -61,16 +61,79 @@ void CBroom_Begin::OnStateEnter(void* _pArg)
 	default:
 		break;
 	}
+	m_isAppearTrigger = true;
+	m_fTimeAcc = 0.f;
 	m_StateMachineDesc.pRigidBody->Set_LinearDamping(2.f);
 	m_StateMachineDesc.pRigidBody->Set_Gravity(false);
+
+	_float4x4 OffsetMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f)
+		* XMMatrixRotationY(XMConvertToRadians(100)) * XMMatrixRotationZ(XMConvertToRadians(110))
+		* XMMatrixTranslation(0.53f, 0.f, -0.99f);
+
+	_float4x4 RotationMatrix = XMMatrixRotationQuaternion(
+		XMQuaternionRotationAxis(XMVector3Normalize(_float3(1, 0, 0)), 1 * -30.f));
+
+	_float3 vRight = OffsetMatrix.Right();
+	_float3 vUp = OffsetMatrix.Up();
+	_float3 vLook = OffsetMatrix.Look();
+
+	vRight = XMVector3TransformNormal(vRight, RotationMatrix);
+	vUp = XMVector3TransformNormal(vUp, RotationMatrix);
+	vLook = XMVector3TransformNormal(vLook, RotationMatrix);
+
+	memcpy(&OffsetMatrix.m[0][0], &vRight, sizeof(_float3));
+	memcpy(&OffsetMatrix.m[1][0], &vUp, sizeof(_float3));
+	memcpy(&OffsetMatrix.m[2][0], &vLook, sizeof(_float3));
+
+	m_StateMachineDesc.pBroom->Set_Offset_Matrix(OffsetMatrix);
 }
 
 void CBroom_Begin::OnStateTick()
 {
-	//탑승애니메이션 끝났으면?
+	if (m_isAppearTrigger)
+	{
+		BEGININSTANCE;
+		_float fTimeDelta = pGameInstance->Get_World_Tick()*3;
+		ENDINSTANCE;
+		m_fTimeAcc += fTimeDelta;
+		if (m_fTimeAcc > 1)
+		{
+			m_isAppearTrigger = false;
+			fTimeDelta = fTimeDelta - (m_fTimeAcc - 1);
+			m_fTimeAcc = 1.f;
+
+		}
+		
+		_float4x4 pMatirx = m_StateMachineDesc.pBroom->Get_Offset_Matrix();
+		_float4x4 TempMatrix = pMatirx;
+		_float3 vRight = TempMatrix.Right();
+		_float3 vUp = TempMatrix.Up();
+		_float3 vLook = TempMatrix.Look();
+
+		//회전 해주기
+		_float4x4 RotationMatrix = XMMatrixRotationQuaternion(
+			XMQuaternionRotationAxis(XMVector3Normalize(_float3(1, 0, 0)), fTimeDelta * 30.f));
+
+		vRight = XMVector3TransformNormal(vRight, RotationMatrix);
+		vUp = XMVector3TransformNormal(vUp, RotationMatrix);
+		vLook = XMVector3TransformNormal(vLook, RotationMatrix);
+
+		//스케일 처리 해주기
+		{
+			vRight.Normalize();
+			vRight = vRight * m_fTimeAcc * 0.5f;
+			vUp.Normalize();
+			vUp = vUp * m_fTimeAcc * 0.5f;
+			vLook.Normalize();
+			vLook = vLook * m_fTimeAcc * 0.5f;
+			memcpy(&TempMatrix.m[0][0], &vRight, sizeof(_float3));
+			memcpy(&TempMatrix.m[1][0], &vUp, sizeof(_float3));
+			memcpy(&TempMatrix.m[2][0], &vLook, sizeof(_float3));
+		}
+		m_StateMachineDesc.pBroom->Set_Offset_Matrix(TempMatrix);
+	}
 	if (m_StateMachineDesc.pOwnerModel->Is_Finish_Animation())
 	{
-		//다음 상태로 진행해주세요(hover_idle)
 		Go_Hover_Idle();
 		Go_Move();
 	}

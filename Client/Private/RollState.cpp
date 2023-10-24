@@ -136,12 +136,12 @@ void CRollState::OnStateEnter(void* _pArg)
 		
 		pGameInstance->Set_Shake(
 			CCamera_Manager::SHAKE_PRIORITY_2,
-			CCamera_Manager::SHAKE_TYPE_ROTATION, 
+			CCamera_Manager::SHAKE_TYPE_TRANSLATION, 
 			CCamera_Manager::SHAKE_AXIS_LOOK,
-			CEase::IN_EXPO,
-			15.0f,
+			CEase::IN_SINE,
 			0.3f,
-			0.0003f,
+			1.5f,
+			-5.0f,
 			CCamera_Manager::SHAKE_POWER_DECRECENDO);
 	}
 
@@ -207,12 +207,12 @@ void CRollState::OnStateTick()
 
 			pGameInstance->Set_Shake(
 				CCamera_Manager::SHAKE_PRIORITY_2,
-				CCamera_Manager::SHAKE_TYPE_ROTATION,
+				CCamera_Manager::SHAKE_TYPE_TRANSLATION,
 				CCamera_Manager::SHAKE_AXIS_LOOK,
-				CEase::IN_EXPO,
-				15.0f,
-				0.3f,
-				0.0003f,
+				CEase::IN_SINE,
+				0.5f,
+				1.0f,
+				-5.0f,
 				CCamera_Manager::SHAKE_POWER_DECRECENDO);
 		}
 	}

@@ -251,7 +251,8 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 		case Client::CMagicCastingState::SPECIAL_ACTION_NONE:
 		{
 			//함수 받아와야 겠다.
-			m_StateMachineDesc.pOwnerModel->Bind_Notify(m_vecSpellActionTextList[m_iSpellActionIndex], TEXT("Ready_Spell"), pMagicCastingStateDesc->pFuncSpell);
+			m_StateMachineDesc.pOwnerModel->Bind_Notify(m_vecSpellActionTextList[m_iSpellActionIndex], TEXT("Ready_Spell"), pMagicCastingStateDesc->pFuncSpell,CModel::UPPERBODY);
+			m_StateMachineDesc.pOwnerModel->Bind_Notify(m_vecSpellActionTextList[m_iSpellActionIndex], TEXT("Ready_Spell"), pMagicCastingStateDesc->pFuncSpell, CModel::ANOTHERBODY);
 
 			//애니메이션 재생
 			Change_Animation_FlyOrNot(m_vecSpellActionTextList[m_iSpellActionIndex], false);
@@ -260,6 +261,7 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 		case Client::CMagicCastingState::SPECIAL_ACTION_DIFFINDO:
 		{
 			m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("DIFFINDO"), TEXT("Ready_Spell"), pMagicCastingStateDesc->pFuncSpell);
+			m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("DIFFINDO"), TEXT("Ready_Spell"), pMagicCastingStateDesc->pFuncSpell, CModel::ANOTHERBODY);
 
 			Change_Animation_FlyOrNot(TEXT("DIFFINDO"), false);
 		}
@@ -267,6 +269,7 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 		case Client::CMagicCastingState::SPECIAL_ACTION_AVADA_KEDAVRA:
 		{
 			m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Avada_Kedvra"), TEXT("Ready_Spell"), pMagicCastingStateDesc->pFuncSpell);
+			m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Avada_Kedvra"), TEXT("Ready_Spell"), pMagicCastingStateDesc->pFuncSpell, CModel::ANOTHERBODY);
 
 			Change_Animation_FlyOrNot(TEXT("Avada_Kedvra"), false);
 		}
@@ -274,6 +277,7 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 		case Client::CMagicCastingState::SPECIAL_ACTION_IMPERIO:
 		{
 			m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Imperio"), TEXT("Ready_Spell"), pMagicCastingStateDesc->pFuncSpell);
+			m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Imperio"), TEXT("Ready_Spell"), pMagicCastingStateDesc->pFuncSpell, CModel::ANOTHERBODY);
 
 			Change_Animation_FlyOrNot(TEXT("Imperio"), false);
 		}
@@ -281,6 +285,7 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 		case Client::CMagicCastingState::SPECIAL_ACTION_CRUCIO:
 		{
 			m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Crucio"), TEXT("Ready_Spell"), pMagicCastingStateDesc->pFuncSpell);
+			m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Crucio"), TEXT("Ready_Spell"), pMagicCastingStateDesc->pFuncSpell, CModel::ANOTHERBODY);
 
 			Change_Animation_FlyOrNot(TEXT("Crucio"), false);
 		}
@@ -290,13 +295,11 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 		default:
 			break;
 		}
-		
-
-		
 
 		*m_pisReadySpell = false;
 
 		Spell_Action_Count();
+		
 	}
 
 	if (true == *m_pisReadySpell && pMagicCastingStateDesc->iSpellType == (_uint)SPELL_FINISHER)
@@ -306,8 +309,8 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 
 		*m_pisReadySpell = false;
 	}
-
-
+	if(*m_StateMachineDesc.pIsFlying)
+		Set_StateMachine(TEXT("Hover_Move"));
 	ENDINSTANCE;
 
 }
@@ -315,9 +318,7 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 void CMagicCastingState::OnStateTick()
 {
 	Fix_Angle();
-
 	Go_Idle();
-
 }
 
 void CMagicCastingState::OnStateExit()

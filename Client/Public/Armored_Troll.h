@@ -11,6 +11,7 @@
 #include "Client_Defines.h"
 
 BEGIN(Engine)
+class CTexture;
 class CSequence;
 class CSelector;
 class CRandomChoose;
@@ -41,7 +42,9 @@ public:
 	virtual HRESULT Render() override;
 
 private:
-	CWeapon_Armored_Troll* m_pWeapon = { nullptr };
+	CTexture*				m_pEmissiveTexture = { nullptr };
+	CTexture*				m_pEyeEmissiveTexture = { nullptr };
+	CWeapon_Armored_Troll*	m_pWeapon = { nullptr };
 
 	//카메라 쉐이크 노티파이에 함수를 넣기 위한 클래스
 	CCamera_Shake* m_pStep_Shake = { nullptr };

@@ -3,6 +3,7 @@
 
 #include "Enemy.h"
 #include "Trigger.h"
+#include "Player.h"
 
 CEvent_Vault_Spawn::CEvent_Vault_Spawn(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -20,7 +21,7 @@ HRESULT CEvent_Vault_Spawn::Initialize(void* pArg)
 
 	BEGININSTANCE;
 	auto pMonsterLayer = pGameInstance->Find_Components_In_Layer(LEVEL_VAULT, TEXT("Layer_Monster"));
-	ENDINSTANCE;
+	
 	for (auto Pair : *pMonsterLayer)
 	{
 		wstring wstrObjTag = Pair.first;
@@ -32,6 +33,11 @@ HRESULT CEvent_Vault_Spawn::Initialize(void* pArg)
 			Safe_AddRef(Pair.second);
 		}
 	}
+
+	pGameInstance->Add_Timer(TEXT("Vault_CutScene_Fade_Out"),false,1.0f);
+	pGameInstance->Add_Timer(TEXT("Vault_CutScene_Play_Cutscene"),false,6.75f);
+
+	ENDINSTANCE;
 
 	return S_OK;
 }
@@ -102,36 +108,138 @@ void CEvent_Vault_Spawn::Check_Event_Spawn_2()
 
 void CEvent_Vault_Spawn::Check_Event_Spawn_3()
 {
-	if (true == m_isSpawned_3)
-		return;
+	BEGININSTANCE;
 
-	if (true == m_pSpawn_Stage_3->Is_Collision())
+	switch (m_ePensive_Spawn_Sequence)
 	{
-		for (auto iter = m_pMonsters.begin(); iter != m_pMonsters.end(); )
+	case Client::CEvent_Vault_Spawn::PENSIVESPAWN_SEQUENCE_FADE_OUT:
+	{
+		//진입시
+		if (true == m_isEnter)
 		{
-			wstring wstrObjectTag = iter->first;
-			if (wstring::npos != wstrObjectTag.find(TEXT("Pensiv")))
-			{
-				iter->second->Spawn();
-				Safe_Release(iter->second);
-				iter = m_pMonsters.erase(iter);
-				BEGININSTANCE;
+			//페이드 아웃
+			m_pRenderer->FadeOut(1.0f);
 
-				pGameInstance->Add_CutScene(TEXT("Pensive_Enter"));
-
-				ENDINSTANCE;
-			}
-			else
-				++iter;
+			//진입 표시
+			m_isEnter = false;
 		}
 
-		if (m_pSpawn_Stage_3->isDead())
-			m_isSpawned_3 = true;
+		//타이머 체크
+		if (true == pGameInstance->Check_Timer(TEXT("Vault_CutScene_Fade_Out")))
+		{
+			m_isEnter = true;
+
+			m_ePensive_Spawn_Sequence = PENSIVESPAWN_SEQUENCE_PLAY_CUTSCENE;
+			//컷씬 재생
+			pGameInstance->Add_CutScene(TEXT("Pensive_Enter"));
+			//타이머 리셋
+			pGameInstance->Reset_Timer(TEXT("Vault_CutScene_Play_Cutscene"));
+		}
 	}
+		break;
+	case Client::CEvent_Vault_Spawn::PENSIVESPAWN_SEQUENCE_PLAY_CUTSCENE:
+	{
+		//진입시
+		if (true == m_isEnter)
+		{
+			for (auto iter = m_pMonsters.begin(); iter != m_pMonsters.end(); )
+			{
+				wstring wstrObjectTag = iter->first;
+				if (wstring::npos != wstrObjectTag.find(TEXT("Pensiv")))
+				{
+					iter->second->Spawn();
+					Safe_Release(iter->second);
+					iter = m_pMonsters.erase(iter);
+				}
+				else
+					++iter;
+			}
+
+			//페이드 인
+			m_pRenderer->FadeIn(1.0f);
+			//진입 표시
+			m_isEnter = false;
+		}
+
+		//타이머 종료
+		if (true == pGameInstance->Check_Timer(TEXT("Vault_CutScene_Play_Cutscene")))
+		{
+			m_ePensive_Spawn_Sequence = PENSIVESPAWN_SEQUENCE_FADE_IN;
+
+			//타이머 리셋
+			pGameInstance->Reset_Timer(TEXT("Vault_CutScene_Fade_Out"));
+
+			m_isEnter = true;
+
+			//페이드 아웃
+			m_pRenderer->FadeOut(1.0f);
+		}
+	}
+		break;
+	case Client::CEvent_Vault_Spawn::PENSIVESPAWN_SEQUENCE_FADE_IN:
+	{
+		//진입시
+		if (true == m_isEnter)
+		{
+			//진입 표시
+			m_isEnter = false;
+		}
+
+		//타이머 체크
+		if (true == pGameInstance->Check_Timer(TEXT("Vault_CutScene_Fade_Out")))
+		{
+			m_isEnter = true;
+
+			m_ePensive_Spawn_Sequence = PENSIVESPAWN_SEQUENCE_END;
+
+			//페이드 인
+			m_pRenderer->FadeIn(1.0f);
+
+			//플레이어 위치 변경
+			CPlayer* pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+
+			pPlayer->Get_Transform()->Set_Position(_float3(162.0f, 0.0f, 98.0f));
+			pPlayer->Get_Transform()->Rotation(_float3(0.0f, 1.0f, 0.0f), XMConvertToRadians(135.0f));
+			pPlayer->Get_Player_Camera_Transform()->Rotation(_float3(0.0f, 1.0f, 0.0f), XMConvertToRadians(135.0f));
+			pPlayer->Get_Player_Camera_Transform()->Turn(_float3(0.0f, 0.0f, 1.0f), XMConvertToRadians(15.0f));
+		}
+	}
+		break;
+	case Client::CEvent_Vault_Spawn::PENSIVESPAWN_SEQUENCE_END:
+	{
+		if (true == m_isEnter)
+			break;
+
+		if (true == m_pSpawn_Stage_3->Is_Collision())
+		{
+			if (m_pSpawn_Stage_3->isDead())
+			{
+				m_isEnter = true;
+				m_ePensive_Spawn_Sequence = PENSIVESPAWN_SEQUENCE_FADE_OUT;
+				//타이머 리셋
+				pGameInstance->Reset_Timer(TEXT("Vault_CutScene_Fade_Out"));
+			}
+		}
+	}
+		break;
+	default:
+		break;
+	}
+
+	ENDINSTANCE;
+
 }
 
 HRESULT CEvent_Vault_Spawn::Add_Components()
 {
+	/* Com_Renderer */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
+		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
 	/* For.Trigger_Spawn_1 */
 	CTrigger::TRIGGERDESC TriggerDesc;
 	TriggerDesc.isCollisionToDead = true;
@@ -213,10 +321,21 @@ CEvent_Vault_Spawn* CEvent_Vault_Spawn::Clone(void* pArg)
 void CEvent_Vault_Spawn::Free()
 {
 	__super::Free();
-
+	if (true == m_isCloned)
+	{
 	Safe_Release(m_pSpawn_Stage_1);
 	Safe_Release(m_pSpawn_Stage_2);
 	Safe_Release(m_pSpawn_Stage_3);
+	Safe_Release(m_pRenderer);
 	for (auto& Pair : m_pMonsters)
 		Safe_Release(Pair.second);
+
+
+	BEGININSTANCE;
+
+	pGameInstance->Remove_Timer(TEXT("Vault_CutScene_Fade_Out"));
+	pGameInstance->Remove_Timer(TEXT("Vault_CutScene_Play_Cutscene"));
+
+	ENDINSTANCE;
+	}
 }

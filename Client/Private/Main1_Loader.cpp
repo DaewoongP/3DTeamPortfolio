@@ -27,6 +27,7 @@
 #include "Lamppost.h"
 #include "LightStand.h"
 #include "Sancutm_Door.h"
+#include "FireHouse.h"
 
 CMain1_Loader::CMain1_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -234,6 +235,7 @@ HRESULT CMain1_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+
 		__debugbreak();
 		return E_FAIL;
 	}
@@ -511,6 +513,11 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Sancutm_Door"),
 		CSancutm_Door::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Sancutm_Door");
+
+	/* For.Prototype_GameObject_FireHouse */
+	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_FireHouse"),
+		CFireHouse::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_FireHouse");
 
 	HANDLE hFile = CreateFile(pMapObjectPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 

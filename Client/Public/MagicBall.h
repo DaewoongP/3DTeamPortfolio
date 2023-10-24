@@ -37,6 +37,8 @@ public:
 		_float					fLifeTime = { 1.0f };
 		_bool					isMouseTarget = { true };
 		_float3					vTarget_Dir = {};
+		// 프로테고에서만 사용 할 것.
+		_float					fScale = { 1.f };
 	}MAGICBALLINITDESC;
 	typedef struct CollsionRequestDesc
 	{

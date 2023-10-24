@@ -70,9 +70,49 @@ void CEvent_Vault_Torch::Check_Event_On_1(_float fTimeDelta)
 	if (true == m_isOn_1)
 		return;
 
-	if (true == m_pTorch_Stage_1->Is_Collision())
+	//if (true == m_pTorch_Stage_1->Is_Collision())
+	//{
+	//	m_fStage1Time += fTimeDelta;
+
+	//	_uint iTorchIndex = (_uint)(m_fStage1Time * 10.f);
+
+	//	// 0.2 초마다 불이 켜짐
+	//	if (0 == (iTorchIndex % 2))
+	//	{
+	//		for (auto iter = m_pTorchs_1.begin(); iter != m_pTorchs_1.end();)
+	//		{
+	//			if (iTorchIndex == iter->second->Get_TorchIndex() || 
+	//				iTorchIndex + 1 == iter->second->Get_TorchIndex())
+	//			{
+	//				// 앞쪽부터 횃불 두 개를 켠다.
+	//				iter->second->Set_TorchOn(true);
+	//				Safe_Release(iter->second);
+	//				iter = m_pTorchs_1.erase(iter);
+	//			}
+
+	//			else
+	//				++iter;
+	//		}
+
+	//		if (m_pTorch_Stage_1->isDead() &&
+	//			0 == m_pTorchs_1.size())
+	//			m_isOn_1 = true;
+	//	}
+	//}
+
+	BEGININSTANCE;
+
+	if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
 	{
-		m_fStage1Time += fTimeDelta;
+		is = true;
+
+	}
+
+	ENDINSTANCE;
+
+	if (true == is)
+	{
+		m_fStage1Time += fTimeDelta * 0.25f;
 
 		_uint iTorchIndex = (_uint)(m_fStage1Time * 10.f);
 
@@ -85,7 +125,7 @@ void CEvent_Vault_Torch::Check_Event_On_1(_float fTimeDelta)
 					iTorchIndex + 1 == iter->second->Get_TorchIndex())
 				{
 					// 앞쪽부터 횃불 두 개를 켠다.
-					//iter->second->
+					iter->second->Set_TorchOn(true);
 					Safe_Release(iter->second);
 					iter = m_pTorchs_1.erase(iter);
 				}

@@ -122,7 +122,7 @@ HRESULT CPotionTap::Add_Components()
 	}
 	
 	CUI_Font::FONTDESC Desc;
-	Desc.m_vColor = _float4(0.f, 1.f, 0.f, 1.f);
+	Desc.m_vColor = _float4(1.f, 1.f, 1.f, 1.f);
 	Desc.m_fRotation = { 0.f };
 	Desc.m_vOrigin = { 0.f, 0.f };
 	Desc.m_vScale = { 0.4f, 0.4f };

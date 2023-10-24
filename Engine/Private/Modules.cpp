@@ -1321,7 +1321,6 @@ HRESULT NOISE_MODULE::Load(const _tchar* _pDirectoyPath)
 		return E_FAIL;
 
 	_ulong dwByte = 0;
-	_char szBuffer[MAX_PATH];
 	__super::Load(hFile, dwByte);
 
 	ReadFile(hFile, &fPersistence, sizeof fPersistence, &dwByte, nullptr);

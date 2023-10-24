@@ -143,10 +143,58 @@ HRESULT CArmored_Troll::Render()
 	if (FAILED(__super::SetUp_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(__super::Render()))
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		MSG_BOX("[CArmored_Troll] Failed Render");
-		return E_FAIL;
+		try /* Failed Render */
+		{
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", i)))
+				throw TEXT("Bind_BoneMatrices");
+
+			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, DIFFUSE)))
+				throw TEXT("Bind_Material Diffuse");
+			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_NormalTexture", i, NORMALS)))
+				throw TEXT("Bind_Material Normal");
+
+			if (true == m_isDissolve)
+			{
+				if (FAILED(m_pShaderCom->Begin("AnimMesh_Dissolve")))
+					return E_FAIL;
+			}
+			else if (1 == i)
+			{
+				if (FAILED(m_pEyeEmissiveTexture->Bind_ShaderResource(m_pShaderCom, "g_EmissiveTexture")))
+					return E_FAIL;
+
+				if (FAILED(m_pShaderCom->Begin("AnimMesh_Troll")))
+					throw TEXT("Shader Begin AnimMesh_Troll");
+			}
+			else if (4 == i || 7 == i)
+			{
+				if (FAILED(m_pEmissiveTexture->Bind_ShaderResource(m_pShaderCom, "g_EmissiveTexture")))
+					return E_FAIL;
+
+				if (FAILED(m_pShaderCom->Begin("AnimMesh_Troll")))
+					throw TEXT("Shader Begin AnimMesh_Troll");
+			}
+			else
+			{
+				if (FAILED(m_pShaderCom->Begin("AnimMesh")))
+					throw TEXT("Shader Begin AnimMesh");
+			}
+
+			if (FAILED(m_pModelCom->Render(i)))
+				throw TEXT("Model Render");
+		}
+		catch (const _tchar* pErrorTag)
+		{
+			wstring wstrErrorMSG = TEXT("[CEnemy] Failed Render : ");
+			wstrErrorMSG += pErrorTag;
+			MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+
+			return E_FAIL;
+		}
 	}
 
 	return S_OK;
@@ -366,6 +414,16 @@ HRESULT CArmored_Troll::Add_Components()
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 			throw TEXT("Com_Health");
+
+		/* For.EmissiveTexture */
+		m_pEmissiveTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Armored_Troll/T_Troll_ArmoredTroll_Metal_E.dds"));
+		if (nullptr == m_pEmissiveTexture)
+			throw TEXT("EmissiveTexture");
+
+		/* For.EyeEmissiveTexture */
+		m_pEyeEmissiveTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Armored_Troll/T_CorruptedSpider_Eye_D.dds"));
+		if (nullptr == m_pEyeEmissiveTexture)
+			throw TEXT("EyeEmissiveTexture");
 
 		/* For.Com_AuraEffect*/
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Monster_DarkFlare_Particle")
@@ -2395,6 +2453,8 @@ void CArmored_Troll::Free()
 		Safe_Release(m_DarkAura[i]);
 	}
 	Safe_Release(m_pWeapon);
+	Safe_Release(m_pEmissiveTexture);
+	Safe_Release(m_pEyeEmissiveTexture);
 	Safe_Release(m_pStep_Shake);
 	Safe_Release(m_pHit_Shake);
 	Safe_Release(m_pDeath_Shake);

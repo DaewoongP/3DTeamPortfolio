@@ -265,6 +265,12 @@ private:
 	// 로브 업데이트 메쉬 인덱스
 	_uint m_iRobeMeshIndex = { 0 };
 
+	_float m_fEyePlusDistanceForHover = { 0.0f };
+	//스위칭용
+	SPELL m_pFlySpell[4] = { LEVIOSO,FLIPENDO,ACCIO,DESCENDO  };
+	SPELL m_pNonFlySpell[4] = { SPELL(0) };
+	CParticleSystem* m_pWindParticle = { nullptr };
+
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
@@ -305,6 +311,9 @@ private:
 	//타겟을 정하기 위한 함수 (임시 용)
 	void Find_Target_For_Distance();
 	void Find_Target_For_ViewSpace();
+
+	//비행시 어떤 행동을 하는지에 따른 Distance;
+	void Update_Hover_Eye_Distance();
 	
 #pragma region 노티파이 사용함수
 
@@ -351,8 +360,6 @@ private:
 
 	void Landing();
 
-	void Broom_Appeaer();
-	void Broom_Disappeaer();
 	void Fly_Effect();
 
 #pragma endregion
