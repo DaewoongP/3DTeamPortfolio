@@ -583,6 +583,10 @@ HRESULT CMainTool::Ready_Prototype_Object()
 		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Flare"),
 			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Flare/"), 3)))
 			throw TEXT("Reserve Particle : Particle_Pensive_Appear_Flare");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Conjured_Step_Dust"),
+			TEXT("../../Resources/GameData/ParticleData/BoneDragon/StepDust/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Conjured_Step_Dust");
 	}
 #pragma endregion
 

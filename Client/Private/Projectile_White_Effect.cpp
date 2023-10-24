@@ -64,7 +64,7 @@ HRESULT CProjectile_White_Effect::Initialize(void* pArg)
 void CProjectile_White_Effect::Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
-	ADD_IMGUI([&] {Tick_Imgui(fTimeDelta); });
+	//ADD_IMGUI([&] {Tick_Imgui(fTimeDelta); });
 #endif // _DEBUG
 
 	__super::Tick(fTimeDelta);

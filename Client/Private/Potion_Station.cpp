@@ -153,7 +153,7 @@ void CPotion_Station::Tick(_float fTimeDelta)
 	Safe_Release(pGameInstance);
 
 #ifdef _DEBUG
-	ADD_IMGUI([&] { this->Tick_Imgui(fTimeDelta); });
+	//ADD_IMGUI([&] { this->Tick_Imgui(fTimeDelta); });
 #endif // _DEBUG
 }
 

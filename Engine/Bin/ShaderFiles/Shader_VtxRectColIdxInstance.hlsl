@@ -447,9 +447,6 @@ void VS_MainModule(VS_IN In, inout VS_OUT Out)
 	{
 		Out.vTexUV = In.vTexUV;
 	}
-
-	// UV 애니메이션
-	TilingAndOffset_float(Out.vTexUV, g_vTililing, g_vOffset, Out.vTexUV);
 }
 
 void VS_NoiseModule(VS_IN In, inout VS_OUT Out)
@@ -468,11 +465,15 @@ void VS_NoiseModule(VS_IN In, inout VS_OUT Out)
 
 void PS_MainModule(PS_IN In, inout PS_OUT Out)
 {
+	// UV 애니메이션
+	float2 OffsetUV;
+	TilingAndOffset_float(In.vTexUV, g_vTililing, g_vOffset, OffsetUV);
+
 	float4 vNormalColor = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 	float2 vGradientUV = float2(vNormalColor.r, 0);
 	float4 vGradientColor = g_GradientTexture.Sample(LinearSampler, vGradientUV);
 
-	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+	Out.vColor = g_Texture.Sample(LinearSampler, OffsetUV);
 	vector vClipTexture = g_ClipTexture.Sample(LinearSampler, In.vTexUV);
 
 	if (0 == g_iClipChannel)
@@ -501,19 +502,8 @@ void PS_MainModule(PS_IN In, inout PS_OUT Out)
 		float fEmissionValue = 0.f, fRemapValue = 0.f;
 		vector vEmission = g_EmissionTexture.Sample(LinearSampler, In.vTexUV);
 		float fSineTime = sin(g_fEmissionFrequency * In.vVelocity.w);
-		
-		if (0 == g_iEmissionChannel)
-			fEmissionValue = vEmission.r;
-		else if (1 == g_iEmissionChannel)
-			fEmissionValue = vEmission.g;
-		else if (2 == g_iEmissionChannel)
-			fEmissionValue = vEmission.b;
-		else if (3 == g_iEmissionChannel)
-			fEmissionValue = vEmission.a;
-		// out1 + (val - in1) * (out2 - out1) / (in2 - in1);
-
 		Remap_float(fSineTime, float2(-1.f, 1.f), g_vEmissionRemap, fRemapValue);
-		Out.vColor += fRemapValue * fEmissionValue * float4(g_vEmissionColor, 0.f);
+		Out.vColor += fRemapValue * vEmission * float4(g_vEmissionColor, 0.f);
 	}
 }
 void PS_TextureSheetAnimationModule(PS_IN In, inout PS_OUT Out)
