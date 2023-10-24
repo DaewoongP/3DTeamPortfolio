@@ -174,8 +174,6 @@ HRESULT CMain0_Loader::Loading()
 
 	hr = 0;
 
-	std::lock_guard<std::mutex> lock(mtx);
-
 	switch (m_eNextLevelID)
 	{
 	case LEVEL_LOGO:
@@ -494,22 +492,9 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 				TEXT("../../Resources/Models/Anims/Anim_GuideBook/Anim_GuideBook.dat")))))
 				throw TEXT("Prototype_Component_Model_Guide_Book");
 #pragma endregion
-
-#pragma region Load Texture
-			/* --------------Texture-------------- */
-			/* Prototype_Component_Texture_Default_Particle*/
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_Default_Particle"),
-				CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Default_Particle.png")))))
-				throw TEXT("Prototype_Component_Texture_Default_Particle");
-
-			/* Prototype_Component_Texture_Terrain */
-			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_Terrain"),
-				CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Tile%d.dds"), 2))))
-				throw TEXT("Prototype_Component_Texture_Terrain");
-#pragma endregion
 		}
 
-		/* Prototype_Component_Texture_Default_Particle*/
+		/* Prototype_Component_Phase*/
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Phase"),
 			CPhase::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Phase");
@@ -658,6 +643,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_WandHead_Particle")
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/WandLight"), eLevelID))))
 			throw TEXT("Prototype_GameObject_WandHead_Particle");
+
 		/*For.Player_Hit*/
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Player_Hit_Particle")
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/PlayerHit/HitParticle"), eLevelID))))
@@ -677,6 +663,18 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Landing_Light")
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Landing/LandingLight"), eLevelID))))
 			throw TEXT("Prototype_GameObject_Landing_Light");
+		
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_House_FireEffect")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/House_Fire/MainFire"), eLevelID))))
+			throw TEXT("Prototype_GameObject_House_FireEffect");
+		
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_House_Fire_Distortion")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/House_Fire/Distortion"), eLevelID))))
+			throw TEXT("Prototype_GameObject_House_Fire_Distortion");
+		
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_House_Fire_Smoke")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/House_Fire/Smoke"), eLevelID))))
+			throw TEXT("Prototype_GameObject_House_Fire_Smoke");
 
 #pragma region Potion_Effect
 
@@ -793,10 +791,6 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			CBombarda::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Bombarda");
 			
-		/* For.Prototype_GameObject_Blink_Trail */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Blink_Trail"),
-			CBlink_Effect::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_Blink_Trail");
 
 		/* For.Prototype_GameObject_Projectile_Black */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Projectile_Black"),
@@ -982,6 +976,14 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Player_Hit_Dust"),
 				TEXT("../../Resources/GameData/ParticleData/PlayerHit/HitDust/"))))
 				throw TEXT("Reserve Particle : Prototype_GameObject_Player_Hit_Dust");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_WandLine"),
+				TEXT("../../Resources/GameData/ParticleData/BasicCast/WandLine"))))
+				throw TEXT("Reserve Particle : Prototype_GameObject_WandLine");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Finisher_WandLine"),
+				TEXT("../../Resources/GameData/ParticleData/Lightning/WandLine"))))
+				throw TEXT("Reserve Particle : Prototype_GameObject_Finisher_WandLine");
 
 			/*For.Pensive_Effect*/
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Hit_Circle"),

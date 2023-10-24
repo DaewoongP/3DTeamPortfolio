@@ -80,6 +80,9 @@ HRESULT CRenderer::Initialize_Prototype()
 		TEXT("Target_Emissive"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_Bloom"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_Shade"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 1.f))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
@@ -164,6 +167,8 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Depth"))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Emissive"))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Bloom"))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Lights"), TEXT("Target_Shade"))))
 		return E_FAIL;
@@ -297,9 +302,11 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(m_pShadow->Render()))
 		return E_FAIL;
-	if (FAILED(m_pBloom->Render(TEXT("Target_Emissive"))))
+	if (FAILED(m_pBloom->Render(TEXT("Target_Bloom"))))
 		return E_FAIL;
 	if (FAILED(Render_Deferred()))
+		return E_FAIL;
+	if (FAILED(Render_NonLight()))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Deferred"))))
 		return E_FAIL;
@@ -327,10 +334,6 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;
-	if (FAILED(Render_NonLight()))
-		return E_FAIL;
-	if (FAILED(Render_Blend()))
-		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_PostProcessing"))))
 		return E_FAIL;
 #pragma endregion
@@ -338,10 +341,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 #pragma region After Effect
 	if (FAILED(Render_Distortion()))
 		return E_FAIL;
-	
 	if (FAILED(Render_RadialBlur()))
-		return E_FAIL;
-	if (FAILED(Render_EdgeHighLight()))
 		return E_FAIL;
 #pragma endregion
 
@@ -663,7 +663,9 @@ HRESULT CRenderer::Render_Deferred()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Specular"), m_pDeferredShader, "g_SpecularTexture")))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_WhiteSpace_Blured"), m_pDeferredShader, "g_EmissiveTexture")))
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_WhiteSpace_Blured"), m_pDeferredShader, "g_BloomTexture")))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Emissive"), m_pDeferredShader, "g_EmissiveTexture")))
 		return E_FAIL;
 
 	if (FAILED(m_pDeferredShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
@@ -739,6 +741,9 @@ HRESULT CRenderer::Render_HDR()
 		return E_FAIL;
 
 	if (FAILED(m_pRectBuffer->Render()))
+		return E_FAIL;
+
+	if (FAILED(Render_Blend()))
 		return E_FAIL;
 
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_HDR"))))

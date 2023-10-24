@@ -10,6 +10,9 @@
 #include "Enemy.h"
 #include "StateMachine_Enemy.h"
 
+BEGIN(Engine)
+class CTexture;
+END
 
 BEGIN(Client)
 class CWeapon_Pensive;
@@ -67,6 +70,9 @@ private:
 	CMagicBall*				m_pMagicBall_Attack = { nullptr };
 	CMagicBall*				m_pMagicBall_Protego = { nullptr };
 	CMagicBall*				m_pMagicBall_Sword[3] = { nullptr };
+
+	CTexture*				m_pEmissiveTexture_1 = { nullptr };
+	CTexture*				m_pEmissiveTexture_2 = { nullptr };
 
 	vector<CVault_Torch*>			m_pTorch;
 

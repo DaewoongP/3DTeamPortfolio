@@ -28,6 +28,7 @@
 #include "Weapon_Dragon_Left_Wing.h"
 #include "Weapon_Dragon_Right_Wing.h"
 #include "Weapon_Dragon_Tail.h"
+#include "Broom_Stick_DarkWizard.h"
 #pragma endregion Weapon
 
 #include "Camera_Shake.h"
@@ -108,8 +109,6 @@ HRESULT CMain2_Loader::Loading()
 	}
 	
 	hr = 0;
-
-	std::lock_guard<std::mutex> lock(mtx);
 
 	switch (m_eNextLevelID)
 	{
@@ -497,10 +496,20 @@ HRESULT CMain2_Loader::Loading_For_Sky(LEVELID eLevelID)
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/DarkWizard_Wand/DarkWizard_Wand.dat"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Weopon_DarkWizard_Wand");
 
-		/* For.Prototype_Component_Weapon_DarkWizard_Wand */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Weapon_DarkWizard_Wand"),
+		/* For.Prototype_GameObject_Weapon_DarkWizard_Wand */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Weapon_DarkWizard_Wand"),
 			CWeapon_DarkWizard_Wand::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Weapon_DarkWizard_Wand");
+			throw TEXT("Prototype_GameObject_Weapon_DarkWizard_Wand");
+
+		/* For.Prototype_Component_Model_Broom_Stick_DarkWizard */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Broom_Stick_DarkWizard"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/DarkWizardBroom/DarkWizardBroom.dat")))))
+			throw TEXT("Prototype_Component_Model_Broom_Stick_DarkWizard");
+
+		/* For.Prototype_GameObject_Broom_Stick_DarkWizard */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Broom_Stick_DarkWizard"),
+			CBroom_Stick_DarkWizard::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Broom_Stick_DarkWizard");
 
 		/* For.Prototype_Component_Model_DarkWizard_Fly */
 		PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));

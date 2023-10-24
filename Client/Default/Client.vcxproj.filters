@@ -511,60 +511,6 @@
     <Filter Include="02. GameObject\01. Player\01. Weapon\BroomStick">
       <UniqueIdentifier>{bf05e386-0b1d-4d1b-ad3e-6fa83f25daf2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. MapObject">
-      <UniqueIdentifier>{0671651e-f669-4b5e-82f4-dfb1f4480ca3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. MapObject\MapObject_Ins">
-      <UniqueIdentifier>{f13444ba-2393-4bce-95bb-afa19568f604}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. MapObject\Interactable_Obj">
-      <UniqueIdentifier>{d7ccccd1-f98f-4c43-b7c6-44c19a20a834}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. MapObject\Interactable_Obj\Treasure_Chest">
-      <UniqueIdentifier>{29d2298d-e409-4ddd-ae89-545341414500}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. MapObject\Interactable_Obj\PotionStation">
-      <UniqueIdentifier>{e8e87625-76be-4cce-8219-8d85981baf70}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. MapObject\Interactable_Obj\PotionStation\Camera">
-      <UniqueIdentifier>{47ad6082-1c46-48ca-91b9-645d66ca436a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. MapObject\Interactable_Obj\Gatherer">
-      <UniqueIdentifier>{e88e5f73-5766-4d38-b329-5d4e9342c0b1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. MapObject\Interactable_Obj\Door">
-      <UniqueIdentifier>{c0f2b156-3bfd-454d-a84c-99b9be093137}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. MapObject\Interactable_Obj\Door\AncientDoor_L">
-      <UniqueIdentifier>{56443a02-375f-4a90-9d44-bfd48cf55f16}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. MapObject\Interactable_Obj\Door\AncientDoor_R">
-      <UniqueIdentifier>{81c40fce-6b8e-4ad2-b3a9-4cf39725c754}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. MapObject\Interactable_Obj\RP_Core">
-      <UniqueIdentifier>{f8e2e068-d9cf-4946-a565-8d0e2044214d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. MapObject\Interactable_Obj\Cliff_Gate">
-      <UniqueIdentifier>{8c4fbf71-2b03-4298-81fe-afb775f60a81}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. MapObject\Interactable_Obj\Vault_Gate">
-      <UniqueIdentifier>{ccd8f7ca-c51d-4f96-bfa8-3ffc359c5efb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. MapObject\Anim_Obj">
-      <UniqueIdentifier>{86c2332f-3c78-49e8-8513-4950f2cb3106}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. MapObject\Anim_Obj\Gull">
-      <UniqueIdentifier>{64519bb8-2a5a-4d8b-974c-39f199b49dfa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. MapObject\Anim_Obj\Cat">
-      <UniqueIdentifier>{b02c580a-c572-4721-bee8-44c0daa7f30e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. MapObject\Anim_Obj\Owl">
-      <UniqueIdentifier>{a2d0ac88-bc9d-4275-b006-47de08699d2a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. MapObject\Env">
-      <UniqueIdentifier>{397b10fb-04a8-4524-96cf-1c1ccba12d43}</UniqueIdentifier>
-    </Filter>
     <Filter Include="07. Events\Vault\Event_Vault_Torch">
       <UniqueIdentifier>{f1a2d051-d377-4904-b73d-968294ea2a72}</UniqueIdentifier>
     </Filter>
@@ -997,6 +943,15 @@
     <Filter Include="02. GameObject\12. Water">
       <UniqueIdentifier>{1b33b363-0555-47c0-bfe6-21b18984e66b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\02. Enemy\05. DarkWizard\02. Fly\Broom_Stick">
+      <UniqueIdentifier>{523461e7-0194-4951-b840-289835dd5815}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Env\FireHouse">
+      <UniqueIdentifier>{3ff7d6fc-2dbc-4c49-8742-7a09473f52fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\08. Ncendio\Meteor">
+      <UniqueIdentifier>{97f40771-8d72-4a53-8140-5be88cc65c3c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1103,9 +1058,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Dugbog.h">
       <Filter>02. GameObject\02. Enemy\02. Dugbog</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\MapObject.h">
-      <Filter>02. GameObject\02. Enemy\03. MapObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Action.h">
       <Filter>03. Behaviors\00. Action</Filter>
@@ -1269,9 +1221,6 @@
     <ClInclude Include="..\Public\Menu_Setting.h">
       <Filter>06. Scene\Main_Menu\Setting</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\MapObject_Ins.h">
-      <Filter>02. GameObject\02. Enemy\03. MapObject\MapObject_Ins</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\MagicCastingState.h">
       <Filter>02. GameObject\01. Player\01. StateMachine\05. MagicCastingState</Filter>
     </ClInclude>
@@ -1362,9 +1311,6 @@
     <ClInclude Include="..\Public\MPBall.h">
       <Filter>02. GameObject\09. Inventory\Item\MPBall</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Treasure_Chest.h">
-      <Filter>02. GameObject\02. Enemy\03. MapObject\Interactable_Obj\Treasure_Chest</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\FocusPotion.h">
       <Filter>02. GameObject\11. Potion\FocusPotion</Filter>
     </ClInclude>
@@ -1396,9 +1342,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Ingredient.h">
       <Filter>02. GameObject\10. Item\02. Ingredient</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Item.h">
-      <Filter>02. GameObject\09. Item</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PotionTap.h">
       <Filter>02. GameObject\09. Inventory\PotionTap</Filter>
@@ -1541,26 +1484,11 @@
     <ClInclude Include="..\Public\Weapon_DarkWizard_Wand.h">
       <Filter>02. GameObject\02. Enemy\05. DarkWizard\Weapon</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Potion_Station.h">
-      <Filter>02. GameObject\02. Enemy\03. MapObject\Interactable_Obj\PotionStation</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Bombarda.h">
       <Filter>05. Magic\MagicBall\18. Bombarda</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Gatherer.h">
-      <Filter>02. GameObject\02. Enemy\03. MapObject\Interactable_Obj\Gatherer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Gull.h">
-      <Filter>02. GameObject\02. Enemy\03. MapObject\Anim_Obj\Gull</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Door.h">
-      <Filter>02. GameObject\02. Enemy\03. MapObject\Interactable_Obj\Door</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Level_Sanctum.h">
       <Filter>01. Levels\06. Sanctum%28Dragon%29</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\PotionStationCamera.h">
-      <Filter>02. GameObject\02. Enemy\03. MapObject\Interactable_Obj\PotionStation\Camera</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CraftState.h">
       <Filter>02. GameObject\01. Player\01. StateMachine\08. CraftState</Filter>
@@ -1574,12 +1502,6 @@
     <ClInclude Include="..\Public\Level_Sky.h">
       <Filter>01. Levels\05. Sky</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Cliff_Gate.h">
-      <Filter>02. GameObject\02. Enemy\03. MapObject\Interactable_Obj\Cliff_Gate</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Vault_Gate.h">
-      <Filter>02. GameObject\02. Enemy\03. MapObject\Interactable_Obj\Vault_Gate</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Wolf.h">
       <Filter>02. GameObject\02. Enemy\06. Wolf</Filter>
     </ClInclude>
@@ -1591,9 +1513,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_Store.h">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Store</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\UI_Font.h">
-      <Filter>02. GameObject\04. UI\Font\Normal</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Fly_Move.h">
       <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Fly\Move</Filter>
@@ -1661,9 +1580,6 @@
     <ClInclude Include="..\Public\UI_Interaction.h">
       <Filter>02. GameObject\05. UI\UI_Composite\UI_Interaction</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_DamageFont.h">
-      <Filter>02. GameObject\04. UI\Font\DamageFont</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Script.h">
       <Filter>08. Script</Filter>
     </ClInclude>
@@ -1720,9 +1636,6 @@
     </ClInclude>
     <ClInclude Include="..\public\Game_Manager.h">
       <Filter>09. GameManager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Cat.h">
-      <Filter>02. GameObject\02. Enemy\03. MapObject\Anim_Obj\Cat</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Breath_Effect.h">
       <Filter>04. Effect\BoneDragon\Breath_Effect</Filter>
@@ -1823,9 +1736,6 @@
     <ClInclude Include="..\Public\Guide_Book.h">
       <Filter>06. Scene\Main_Menu\Guide_Book</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Vault_Torch.h">
-      <Filter>02. GameObject\02. Enemy\03. MapObject\Env</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Event_Cliffside.h">
       <Filter>07. Events\Cliffside</Filter>
     </ClInclude>
@@ -1849,9 +1759,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Quest_Bone.h">
       <Filter>10. Quest\Bone</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Owl.h">
-      <Filter>02. GameObject\02. Enemy\03. MapObject\Anim_Obj\Owl</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\DarkWizard_F.h">
       <Filter>02. GameObject\02. Enemy\05. DarkWizard\01. Female</Filter>
@@ -1925,14 +1832,68 @@
     <ClInclude Include="..\Public\Weapon_Dragon_Right_Wing.h">
       <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Right_Wing</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_DamageFont.h">
-      <Filter>02. GameObject\05. UI\Font\DamageFont</Filter>
+    <ClInclude Include="..\Public\UI_DamageFont.h" />
+    <ClInclude Include="..\public\Item.h" />
+    <ClInclude Include="..\Public\UI_Font.h" />
+    <ClInclude Include="..\Public\Cat.h">
+      <Filter>02. GameObject\03. MapObject\Anim_Obj\Cat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Gull.h">
+      <Filter>02. GameObject\03. MapObject\Anim_Obj\Gull</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Owl.h">
+      <Filter>02. GameObject\03. MapObject\Anim_Obj\Owl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MapObject.h">
+      <Filter>02. GameObject\03. MapObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MapObject_Ins.h">
+      <Filter>02. GameObject\03. MapObject\MapObject_Ins</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cliff_Gate.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Cliff_Gate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Door.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Gatherer.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Gatherer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Potion_Station.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\PotionStation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PotionStationCamera.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\PotionStation\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Treasure_Chest.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Treasure_Chest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Vault_Gate.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Vault_Gate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Vault_Torch.h">
+      <Filter>02. GameObject\03. MapObject\Env\Vault_Torch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FireHouse.h">
+      <Filter>02. GameObject\03. MapObject\Env\FireHouse</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Item.h">
       <Filter>02. GameObject\10. Item</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_DamageFont.h">
+      <Filter>02. GameObject\05. UI\Font\DamageFont</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_Font.h">
       <Filter>02. GameObject\05. UI\Font\Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_DamageFont.h" />
+    <ClInclude Include="..\public\Item.h" />
+    <ClInclude Include="..\Public\UI_Font.h" />
+    <ClInclude Include="..\Public\Broom_Stick_DarkWizard.h">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\02. Fly\Broom_Stick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Meteor.h">
+      <Filter>05. Magic\MagicBall\08. Ncendio\Meteor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2179,9 +2140,6 @@
     <ClCompile Include="..\Private\Menu_Setting.cpp">
       <Filter>06. Scene\Main_Menu\Setting</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\MapObject_Ins.cpp">
-      <Filter>02. GameObject\02. Enemy\03. MapObject\MapObject_Ins</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\MagicCastingState.cpp">
       <Filter>02. GameObject\01. Player\01. StateMachine\05. MagicCastingState</Filter>
     </ClCompile>
@@ -2269,9 +2227,6 @@
     <ClCompile Include="..\Private\Magic.cpp">
       <Filter>05. Magic</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Treasure_Chest.cpp">
-      <Filter>02. GameObject\02. Enemy\03. MapObject\Interactable_Obj\Treasure_Chest</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\FocusPotion.cpp">
       <Filter>02. GameObject\11. Potion\FocusPotion</Filter>
     </ClCompile>
@@ -2306,9 +2261,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Ingredient.cpp">
       <Filter>02. GameObject\10. Item\02. Ingredient</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Item.cpp">
-      <Filter>02. GameObject\09. Item</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PotionTap.cpp">
       <Filter>02. GameObject\09. Inventory\PotionTap</Filter>
@@ -2448,26 +2400,11 @@
     <ClCompile Include="..\Private\Weapon_DarkWizard_Wand.cpp">
       <Filter>02. GameObject\02. Enemy\05. DarkWizard\Weapon</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Potion_Station.cpp">
-      <Filter>02. GameObject\02. Enemy\03. MapObject\Interactable_Obj\PotionStation</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Bombarda.cpp">
       <Filter>05. Magic\MagicBall\18. Bombarda</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Gatherer.cpp">
-      <Filter>02. GameObject\02. Enemy\03. MapObject\Interactable_Obj\Gatherer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Gull.cpp">
-      <Filter>02. GameObject\02. Enemy\03. MapObject\Anim_Obj\Gull</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Door.cpp">
-      <Filter>02. GameObject\02. Enemy\03. MapObject\Interactable_Obj\Door</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Level_Sanctum.cpp">
       <Filter>01. Levels\06. Sanctum%28Dragon%29</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\PotionStationCamera.cpp">
-      <Filter>02. GameObject\02. Enemy\03. MapObject\Interactable_Obj\PotionStation\Camera</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CraftState.cpp">
       <Filter>02. GameObject\01. Player\01. StateMachine\08. CraftState</Filter>
@@ -2480,12 +2417,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Level_Sky.cpp">
       <Filter>01. Levels\05. Sky</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Cliff_Gate.cpp">
-      <Filter>02. GameObject\02. Enemy\03. MapObject\Interactable_Obj\Cliff_Gate</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Vault_Gate.cpp">
-      <Filter>02. GameObject\02. Enemy\03. MapObject\Interactable_Obj\Vault_Gate</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Wolf.cpp">
       <Filter>02. GameObject\02. Enemy\06. Wolf</Filter>
@@ -2556,9 +2487,6 @@
     <ClCompile Include="..\Private\UI_Interaction.cpp">
       <Filter>02. GameObject\05. UI\UI_Composite\UI_Interaction</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_DamageFont.cpp">
-      <Filter>02. GameObject\04. UI\Font\DamageFont</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Script.cpp">
       <Filter>08. Script</Filter>
     </ClCompile>
@@ -2615,9 +2543,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Game_Manager.cpp">
       <Filter>09. GameManager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Cat.cpp">
-      <Filter>02. GameObject\02. Enemy\03. MapObject\Anim_Obj\Cat</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Breath_Effect.cpp">
       <Filter>04. Effect\BoneDragon\Breath_Effect</Filter>
@@ -2718,12 +2643,6 @@
     <ClCompile Include="..\Private\Guide_Book.cpp">
       <Filter>06. Scene\Main_Menu\Guide_Book</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\MapObject.cpp">
-      <Filter>02. GameObject\02. Enemy\03. MapObject</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Vault_Torch.cpp">
-      <Filter>02. GameObject\02. Enemy\03. MapObject\Env</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Event_Cliffside.cpp">
       <Filter>07. Events\Cliffside</Filter>
     </ClCompile>
@@ -2747,9 +2666,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Quest_Bone.cpp">
       <Filter>10. Quest\Bone</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Owl.cpp">
-      <Filter>02. GameObject\02. Enemy\03. MapObject\Anim_Obj\Owl</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\DarkWizard_F.cpp">
       <Filter>02. GameObject\02. Enemy\05. DarkWizard\01. Female</Filter>
@@ -2823,11 +2739,63 @@
     <ClCompile Include="..\Private\Weapon_Dragon_Right_Wing.cpp">
       <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Right_Wing</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_DamageFont.cpp">
-      <Filter>02. GameObject\05. UI\Font\DamageFont</Filter>
+    <ClCompile Include="..\Private\UI_DamageFont.cpp" />
+    <ClCompile Include="..\private\Item.cpp" />
+    <ClCompile Include="..\Private\Cat.cpp">
+      <Filter>02. GameObject\03. MapObject\Anim_Obj\Cat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Gull.cpp">
+      <Filter>02. GameObject\03. MapObject\Anim_Obj\Gull</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Owl.cpp">
+      <Filter>02. GameObject\03. MapObject\Anim_Obj\Owl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MapObject.cpp">
+      <Filter>02. GameObject\03. MapObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MapObject_Ins.cpp">
+      <Filter>02. GameObject\03. MapObject\MapObject_Ins</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cliff_Gate.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Cliff_Gate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Door.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Gatherer.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Gatherer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Potion_Station.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\PotionStation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PotionStationCamera.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\PotionStation\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Treasure_Chest.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Treasure_Chest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Vault_Gate.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Vault_Gate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Vault_Torch.cpp">
+      <Filter>02. GameObject\03. MapObject\Env\Vault_Torch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FireHouse.cpp">
+      <Filter>02. GameObject\03. MapObject\Env\FireHouse</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Item.cpp">
       <Filter>02. GameObject\10. Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_DamageFont.cpp" />
+    <ClCompile Include="..\private\Item.cpp" />
+    <ClCompile Include="..\Private\Broom_Stick_DarkWizard.cpp">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\02. Fly\Broom_Stick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_DamageFont.cpp">
+      <Filter>02. GameObject\05. UI\Font\DamageFont</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Meteor.cpp">
+      <Filter>05. Magic\MagicBall\08. Ncendio\Meteor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -22,6 +22,7 @@ private:
 
 public:
 	_uint Get_TorchIndex() const { return m_iTorchIndex; }
+	void  Set_TorchOn(_bool tf) { m_isTorchOn = tf; }
 	void Switch_OnOff(_bool isValue);
 
 public:
@@ -34,17 +35,24 @@ public:
 
 private:
 	CParticleSystem* m_pEffect = { nullptr };
-	CLight* m_pLight = { nullptr };
 	CRigidBody* m_pRigidBody = { nullptr };
+
+	CLight* m_pLight = { nullptr };
+	CLight* m_pLightbyTrigger = { nullptr }; // 트리거에 의한 빛
 
 private:
 	// Torch 넘버링. 구역별로 1, 2, 3 이렇게 나눠진다.
 	// 각 구역에는 총 12개의 Torch가 있다.
-	_uint m_iTorchIndex = { 0 }; 
+	_uint	m_iTorchIndex = { 0 }; 
 	_bool	m_isSwitch = { false };
 
+	_bool	m_isTorchOn = { false };  // 트리거에 의한 횃불 On
+	_bool	m_isEffectOn = { false }; // 트리거에 의한 횃불 이펙트 On
+
+	_float	m_fLightTime = { 0.f }; // 트리거에 의해 횃불이 켜질 때 빛이 켜지는 타이밍
+
 private:
-	void Torch_Bright();
+	void	Torch_On_By_Trigger(_float fTimeDelta); // 트리거에 의한 Torch 점화
 
 public:
 	static CVault_Torch* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

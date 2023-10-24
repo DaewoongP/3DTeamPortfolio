@@ -113,7 +113,7 @@ HRESULT CLevel_Smith::Ready_Layer_Monsters(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}
-	
+
 	Safe_Release(pGameInstance);
 
 	return S_OK;
@@ -161,32 +161,27 @@ HRESULT CLevel_Smith::Ready_Lights()
 	BEGININSTANCE;
 	CLight::LIGHTDESC		LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
-	++g_iTest;
-	if (g_iTest < 2)
-	{
-		LightDesc.eType = CLight::TYPE_DIRECTIONAL;
-		LightDesc.vPos = _float4(111.7f, 71.23f, 94.81f, 1.f);
-		LightDesc.vLookAt = _float4(81.3f, 0.f, 91.3f, 1.f);
-		LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
 
-		LightDesc.vPos -= LightDesc.vDir * 0.5f;
+	/*LightDesc.eType = CLight::TYPE_DIRECTIONAL;
+	LightDesc.vPos = _float4(111.7f, 71.23f, 94.81f, 1.f);
+	LightDesc.vLookAt = _float4(81.3f, 0.f, 91.3f, 1.f);
+	LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
 
-		LightDesc.vDiffuse = WHITEDEFAULT;
-		LightDesc.vAmbient = WHITEDEFAULT;
-		LightDesc.vSpecular = WHITEDEFAULT;
-	}
-	else
-	{
-		LightDesc.eType = CLight::TYPE_DIRECTIONAL;
-		LightDesc.vPos = _float4(159.7f, 81.23f, 102.81f, 1.f);
-		LightDesc.vLookAt = _float4(108.3f, 0.f, 108.3f, 1.f);
-		LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
+	LightDesc.vPos -= LightDesc.vDir * 0.5f;
 
-		LightDesc.vDiffuse = _float4(0.4f, 0.53f, 0.55f, 0.5f);
-		LightDesc.vAmbient = LightDesc.vDiffuse;
-		LightDesc.vSpecular = LightDesc.vDiffuse;
+	LightDesc.vDiffuse = WHITEDEFAULT;
+	LightDesc.vAmbient = WHITEDEFAULT;
+	LightDesc.vSpecular = WHITEDEFAULT;*/
 
-	}
+	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
+	LightDesc.vPos = _float4(159.7f, 81.23f, 102.81f, 1.f);
+	LightDesc.vLookAt = _float4(108.3f, 0.f, 108.3f, 1.f);
+	LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
+
+	LightDesc.vDiffuse = _float4(0.4f, 0.53f, 0.55f, 0.5f);
+	LightDesc.vAmbient = LightDesc.vDiffuse;
+	LightDesc.vSpecular = LightDesc.vDiffuse;
+
 
 	if (FAILED(pGameInstance->Add_Light(LightDesc, nullptr, true)))
 		return E_FAIL;
@@ -239,11 +234,8 @@ HRESULT CLevel_Smith::Ready_Shader()
 
 	CRenderer* pRenderer = static_cast<CRenderer*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer")));
 	pRenderer->Defualt_Shading();
-	if (g_iTest > 1)
-	{
-		pRenderer->Set_Night();
-	}
 
+	pRenderer->Set_Night();
 
 	Safe_Release(pRenderer);
 
@@ -627,6 +619,12 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 		wstring wsBigBird(TEXT("Anim_BigBird"));
 		wstring wsSmithToCliff(TEXT("SM_HM_Cliff_Gate"));
 		wstring wsLamppost(TEXT("SM_HM_Lamppost"));
+		wstring wsF(TEXT("SM_HM_Gen_F"));
+		wstring wsG(TEXT("SM_HM_Gen_G"));
+		wstring wsHoney(TEXT("SM_HM_Honeydukes"));
+		wstring wsQuill(TEXT("SM_HM_Quill"));
+		wstring wsTea(TEXT("SM_HM_TeaShop"));
+		wstring wsDB(TEXT("SM_HM_DB_GR"));
 
 		// 보물상자
 		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
@@ -722,6 +720,27 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 				wszobjName, &MapObjectDesc)))
 			{
 				MSG_BOX("Failed to Clone Lamppost");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}
+
+		// 불타는 집
+		else if (0 == lstrcmp(modelName.c_str(), wsF.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsG.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsHoney.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsQuill.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsTea.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsDB.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_FireHouse_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH,
+				TEXT("Prototype_GameObject_FireHouse"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone FireHouse");
 				ENDINSTANCE;
 				return E_FAIL;
 			}

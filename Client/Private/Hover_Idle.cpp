@@ -44,18 +44,16 @@ void CHover_Idle::OnStateEnter(void* _pArg)
 	
 	switch (*m_StateMachineDesc.piActionType)
 	{
-	case CPlayer::ACTION_NONE:
-	{
-		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Broom_Hover_Idle_anm"));
-		Change_Animation(TEXT("Hu_Broom_Hover_Idle_anm"));
-		break;
-	}
 	case CPlayer::ACTION_CMBT:
 	{
-		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Broom_Hover_Idle_anm"));
-		Change_Animation(TEXT("Hu_Broom_Hover_Idle_anm"));
+		Change_Animation_FlyAttack(TEXT("Hu_Broom_Hover_Idle_anm"));
 		//한쪽 팔 공격 모션 가져와서 넣어주자.
 		//Change_Animation(TEXT("Hu_Broom_Hover_Idle_anm"),2);
+		break;
+	}
+	default:
+	{
+		Change_Animation_FlyAttack(TEXT("Hu_Broom_Hover_Idle_anm"));
 		break;
 	}
 	}
@@ -96,7 +94,7 @@ void CHover_Idle::Action_None_Tick()
 	//이전에 실행되던 애니메이션이 끝나면 아이들로 바꿔줘
 	if (true == *m_StateMachineDesc.pisFinishAnimation)
 	{
-		Change_Animation(TEXT("Hu_Broom_Hover_Idle_anm"));
+		Change_Animation_FlyAttack(TEXT("Hu_Broom_Hover_Idle_anm"));
 		*m_StateMachineDesc.pisFinishAnimation = false;
 	}
 }
@@ -125,13 +123,13 @@ void CHover_Idle::Go_Turn()
 		//양수 오른쪽
 		if (m_f45Angle < (*m_StateMachineDesc.pOwnerLookAngle))
 		{
-			Change_Animation(TEXT("Hu_Broom_FlyNoStirrups_Hover_Idle_Lft_anm"));
+			Change_Animation_FlyAttack(TEXT("Hu_Broom_FlyNoStirrups_Hover_Idle_Lft_anm"));
 			static_cast<CGameObject*>(m_pOwner->Get_Owner())->Get_Transform()->Turn(_float3(0, 1, 0), pGameInstance->Get_World_Tick());
 		}
 		//음수 왼쪽
 		if (-m_f45Angle > (*m_StateMachineDesc.pOwnerLookAngle))
 		{
-			Change_Animation(TEXT("Hu_Broom_FlyNoStirrups_Hover_Idle_Rht_anm"));
+			Change_Animation_FlyAttack(TEXT("Hu_Broom_FlyNoStirrups_Hover_Idle_Rht_anm"));
 			static_cast<CGameObject*>(m_pOwner->Get_Owner())->Get_Transform()->Turn(_float3(0,1,0), -pGameInstance->Get_World_Tick());
 		}
 		ENDINSTANCE;

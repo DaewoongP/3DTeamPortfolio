@@ -3,6 +3,7 @@
 #include "Client_Defines.h"
 #include "StateContext_Enemy.h"
 #include "Quest_Manager.h"
+#include "Enemy.h"
 
 CPensive_Death::CPensive_Death(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	:CStateMachine_Enemy(_pDevice,_pContext)

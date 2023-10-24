@@ -28,7 +28,7 @@
 #include "StandingState.h"
 #include "UseItemState.h"
 
-//#include "Fly_Move.h"
+#include "Fly_Move.h"
 //#include "Fly_Turn.h"
 #include "Hover_Idle.h"
 #include "Hover_Move.h"
@@ -161,8 +161,6 @@ HRESULT CMain3_Loader::Loading()
 	}
 
 	hr = 0;
-
-	std::lock_guard<std::mutex> lock(mtx);
 
 	switch (m_eNextLevelID)
 	{
@@ -336,6 +334,15 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 	try
 	{
 #pragma region Player
+		/* For.Prototype_GameObject_Player*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Particle_Broom_Wind_Screen"),
+			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Broom/Wind_Screen/")))))
+			throw TEXT("Particle_Broom_Wind_Screen");
+
+		/* For.Prototype_GameObject_Player*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Particle_Broom_Broom_Stick"),
+			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Broom/Broom_Stick/")))))
+			throw TEXT("Particle_Broom_Broom_Stick");
 
 		/* For.Prototype_GameObject_Player*/
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Player"),
@@ -1056,7 +1063,7 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
-		__debugbreak();
+  		__debugbreak();
 		return E_FAIL;
 	}
 

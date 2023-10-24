@@ -119,11 +119,11 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	
 	m_pComponent_Manager->Late_Tick(fTimeDelta);
 
+	m_pLight_Manager->Tick(fTimeDelta);
+
 	m_pPhysX_Manager->Tick(fTimeDelta);
 
 	m_pCollision_Manager->Tick();
-
-	m_pLight_Manager->Tick(fTimeDelta);
 
 	m_pLevel_Manager->Tick(fTimeDelta);
 }

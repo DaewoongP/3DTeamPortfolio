@@ -51,6 +51,8 @@ public:
 		//논타겟 여부
 		_bool					isMouseTarget = { true };
 		_float3					vTarget_Dir = {};
+		// !!! 프로테고에서만 사용할 것. !!!
+		_float			fScale = { 1.f };
 	}MAGICDESC;
 
 public:
