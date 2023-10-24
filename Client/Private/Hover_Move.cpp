@@ -126,7 +126,7 @@ void CHover_Move::LookFront()
 			if (lstrcmp(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Lft_anm")))
 			{
 				lstrcpy(m_wszPostAnimationTag,TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Lft_anm"));
-				Change_Animation(TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Lft_anm"));
+				Change_Animation(TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Rht_anm"));
 			}
 		}
 		else if(speed>0)

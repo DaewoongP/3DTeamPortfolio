@@ -288,6 +288,8 @@ void CPlayer::Tick(_float fTimeDelta)
 	UpdateLookAngle();
 
 	Key_Input(fTimeDelta);
+
+	Update_Hover_Eye_Distance();
 	
 	//m_pStateContext->Tick(fTimeDelta)
 	Go_Protego(&m_ProtegoStateDesc);
@@ -1170,11 +1172,12 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			vAxis);
 	}
 #endif // _DEBUG
-	//조준
+	
 	if (pGameInstance->Get_DIKeyState(DIK_H, CInput_Device::KEY_DOWN))
 	{
 		m_isFlying = !m_isFlying;
 	}
+	//조준
 	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_RBUTTON, CInput_Device::KEY_PRESSING))
 	{
 		Find_Target_For_ViewSpace();
@@ -1591,6 +1594,7 @@ HRESULT CPlayer::Ready_Camera()
 	PlayerCameraDesc.pPlayerTransform = m_pTransform;
 	PlayerCameraDesc.ppTargetTransform = &m_pTargetTransform;
 	PlayerCameraDesc.IsMove = &m_isFixMouse;
+	PlayerCameraDesc.pHoverEyeDistance = &m_fEyePlusDistanceForHover;
 
 	m_pPlayer_Camera = CPlayer_Camera::Create(m_pDevice, m_pContext, &PlayerCameraDesc);
 
@@ -2611,6 +2615,41 @@ void CPlayer::Find_Target_For_ViewSpace()
 	Safe_AddRef(m_pTarget);
 
 	ENDINSTANCE;
+}
+
+void CPlayer::Update_Hover_Eye_Distance()
+{
+	_float fDistance = { 0.0f };
+
+	if (true == m_isFlying)
+	{
+		fDistance += 1.0f;
+		//호버 무브
+		if (m_pStateContext->Is_Current_State(TEXT("Hover_Move")))
+		{
+			fDistance += 1.0f;
+		}
+		//플라이 무브
+		if (m_pStateContext->Is_Current_State(TEXT("Fly_Move")))
+		{
+			fDistance += 2.0f;
+		}
+	}
+
+	BEGININSTANCE;
+
+	if (fDistance > m_fEyePlusDistanceForHover)
+	{
+		m_fEyePlusDistanceForHover += pGameInstance->Get_World_Tick() * (fDistance - m_fEyePlusDistanceForHover);
+	}
+	else if (fDistance < m_fEyePlusDistanceForHover)
+	{
+		m_fEyePlusDistanceForHover -= pGameInstance->Get_World_Tick() * (m_fEyePlusDistanceForHover - fDistance);
+	}
+
+	ENDINSTANCE;
+
+	Clamp(m_fEyePlusDistanceForHover, 0.0f, 3.0f);
 }
 
 void CPlayer::Finisher()
