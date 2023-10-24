@@ -643,6 +643,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_WandHead_Particle")
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/WandLight"), eLevelID))))
 			throw TEXT("Prototype_GameObject_WandHead_Particle");
+
 		/*For.Player_Hit*/
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Player_Hit_Particle")
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/PlayerHit/HitParticle"), eLevelID))))
@@ -778,10 +779,6 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			CBombarda::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Bombarda");
 			
-		/* For.Prototype_GameObject_Blink_Trail */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Blink_Trail"),
-			CBlink_Effect::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_Blink_Trail");
 
 		/* For.Prototype_GameObject_Projectile_Black */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Projectile_Black"),
@@ -967,6 +964,14 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Player_Hit_Dust"),
 				TEXT("../../Resources/GameData/ParticleData/PlayerHit/HitDust/"))))
 				throw TEXT("Reserve Particle : Prototype_GameObject_Player_Hit_Dust");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_WandLine"),
+				TEXT("../../Resources/GameData/ParticleData/BasicCast/WandLine"))))
+				throw TEXT("Reserve Particle : Prototype_GameObject_WandLine");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Finisher_WandLine"),
+				TEXT("../../Resources/GameData/ParticleData/Lightning/WandLine"))))
+				throw TEXT("Reserve Particle : Prototype_GameObject_Finisher_WandLine");
 
 			/*For.Pensive_Effect*/
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Hit_Circle"),

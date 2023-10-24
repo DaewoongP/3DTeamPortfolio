@@ -99,7 +99,6 @@ HRESULT CDiffindo::Initialize(void* pArg)
 	}
 	m_pTransform->Set_Speed(30);
 
-	m_ParticleVec[EFFECT_STATE_MAIN][3]->Get_Transform()->Set_Position(m_pTransform->Get_Position());	
 	Ready_Shake(30.0f, 2.0f, 0.04f);
 	return S_OK;
 }
@@ -193,6 +192,8 @@ void CDiffindo::Ready_CastMagic()
 
 	m_fTimeScalePerDitance = 30.f / _float3(m_vEndPosition - m_vStartPosition).Length();
 	m_pMeshEffect->Play(m_vStartPosition);
+	m_ParticleVec[EFFECT_STATE_MAIN][3]->Play(m_pMeshEffect->Get_Transform()->Get_Position(	));
+
 	m_pMeshEffect->Get_Transform()->LookAt(m_vEndPosition);
 	__super::Ready_CastMagic();
 
@@ -241,10 +242,16 @@ void CDiffindo::Tick_CastMagic(_float fTimeDelta)
 	m_ParticleVec[EFFECT_STATE_MAIN][1]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
 
 	m_ParticleVec[EFFECT_STATE_MAIN][2]->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
-	m_ParticleVec[EFFECT_STATE_MAIN][3]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+
 
 	_float distance =m_pMeshEffect->Get_Transform()->Get_Speed()* m_fLerpAcc;
+	
+	
+	if (distance > 5.f)
+	{
+		m_ParticleVec[EFFECT_STATE_MAIN][3]->Get_Transform()->Set_Position(m_pMeshEffect->Get_Transform()->Get_Position());
 
+	}
 	if (distance>30)
 	{
 		Do_MagicBallState_To_Next();
