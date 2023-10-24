@@ -94,12 +94,12 @@ HRESULT CLamppost::Render()
 		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 		m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
 
-		if (2 == iMeshCount)
+		/*if (2 == iMeshCount)
 		{
 			m_vEmissive = _float4(0.5f, 0.5f, 0.45f, 0.5f);
 			if (FAILED(m_pShader->Bind_RawValue("g_vBloom", &m_vEmissive, sizeof(_float4))))
 				return E_FAIL;
-		}
+		}*/
 
 		m_pShader->Begin("Mesh_No_Cull");
 
