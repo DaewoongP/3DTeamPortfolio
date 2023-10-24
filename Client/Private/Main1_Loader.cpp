@@ -135,6 +135,28 @@ HRESULT CMain1_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 
 	try /* Failed Check Add_Prototype*/
 	{
+#pragma region MapObject Prototype
+		/* For.Prototype_GameObject_Gatherer */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Gatherer"),
+			CGatherer::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Gatherer");
+
+		/* For.Prototype_GameObject_Gull */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Gull"),
+			CGull::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Gull");
+
+		/* For.Prototype_GameObject_Cliff_Gate */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Cliff_Gate"),
+			CCliff_Gate::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Cliff_Gate");
+
+		/* For.Prototype_GameObject_SmithToCliff_Gate */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_SmithToCliff_Gate"),
+			CSmithToCliff_Gate::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_SmithToCliff_Gate");
+#pragma endregion
+
 		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData0.ddd"), eLevelID)))
 			throw TEXT("Map Object");
 
@@ -158,6 +180,28 @@ HRESULT CMain1_Loader::Loading_For_Vault(LEVELID eLevelID)
 {
 	try
 	{
+#pragma region MapObject Prototype
+		/* For.Prototype_GameObject_Gatherer */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Gatherer"),
+			CGatherer::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Gatherer");
+
+		/* For.Prototype_GameObject_Vault_Gate */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Vault_Gate"),
+			CVault_Gate::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Vault_Gate");
+
+		/* For.Prototype_GameObject_Vault_Torch */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Vault_Torch"),
+			CVault_Torch::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Vault_Torch");
+
+		/* For.Prototype_GameObject_LightStand */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_LightStand"),
+			CLightStand::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_LightStand");
+#pragma endregion
+
 		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData1.ddd"), eLevelID)))
 			throw TEXT("Map Object");
 
@@ -202,6 +246,58 @@ HRESULT CMain1_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 {
 	try
 	{
+#pragma region MapObject Prototype
+		/* For.Prototype_GameObject_Treasure_Chest */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Treasure_Chest"),
+			CTreasure_Chest::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Treasure_Chest");
+
+		/* For.Prototype_GameObject_Potion_Station */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Potion_Station"),
+			CPotion_Station::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Potion_Station");
+
+		/* For.Prototype_GameObject_Gatherer */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Gatherer"),
+			CGatherer::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Gatherer");
+
+		/* For.Prototype_GameObject_Door */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Door"),
+			CDoor::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Door");
+
+		/* For.Prototype_GameObject_Cat */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Cat"),
+			CCat::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Cat");
+
+		/* For.Prototype_GameObject_Owl */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Owl"),
+			COwl::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Owl");
+
+		/* For.Prototype_GameObject_BigBird */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_BigBird"),
+			CBigBird::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_BigBird");
+
+		/* For.Prototype_GameObject_SmithToCliff_Gate */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_SmithToCliff_Gate"),
+			CSmithToCliff_Gate::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_SmithToCliff_Gate");
+
+		/* For.Prototype_GameObject_Lamppost */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Lamppost"),
+			CLamppost::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Lamppost");
+
+		/* For.Prototype_GameObject_FireHouse */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FireHouse"),
+			CFireHouse::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_FireHouse");
+#pragma endregion 
+
 		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData3.ddd"), eLevelID)))
 			throw TEXT("Map Object");
 
@@ -263,10 +359,23 @@ HRESULT CMain1_Loader::Loading_For_Sky(LEVELID eLevelID)
 	
 	return S_OK;
 }
+
 HRESULT CMain1_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 {
 	try
 	{
+#pragma region MapObject Prototype
+		/* For.Prototype_GameObject_LightStand */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_LightStand"),
+			CLightStand::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_LightStand");
+
+		/* For.Prototype_GameObject_Sancutm_Door */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Sancutm_Door"),
+			CSancutm_Door::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Sancutm_Door");
+#pragma endregion
+
 		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData4.ddd"), eLevelID)))
 			throw TEXT("Map Object");
 
@@ -437,86 +546,6 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_MapObject"),
 		CMapObject::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_MapObject");
-
-	/* For.Prototype_GameObject_Treasure_Chest */
-	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Treasure_Chest"),
-		CTreasure_Chest::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_GameObject_Treasure_Chest");
-
-	/* For.Prototype_GameObject_Potion_Station */
-	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Potion_Station"),
-		CPotion_Station::Create(m_pDevice, m_pContext, eID))))
-		throw TEXT("Prototype_GameObject_Potion_Station");
-
-	/* For.Prototype_GameObject_Gatherer */
-	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Gatherer"),
-		CGatherer::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_GameObject_Gatherer");
-
-	/* For.Prototype_GameObject_Gull */
-	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Gull"),
-		CGull::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_GameObject_Gull");
-
-	/* For.Prototype_GameObject_Door */
-	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Door"),
-		CDoor::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_GameObject_Door");
-
-	/* For.Prototype_GameObject_Cliff_Gate */
-	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Cliff_Gate"),
-		CCliff_Gate::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_GameObject_Cliff_Gate");
-
-	/* For.Prototype_GameObject_Vault_Gate */
-	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Vault_Gate"),
-		CVault_Gate::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_GameObject_Vault_Gate");
-
-	/* For.Prototype_GameObject_Cat */
-	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Cat"),
-		CCat::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_GameObject_Cat");
-
-	/* For.Prototype_GameObject_Vault_Torch */
-	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Vault_Torch"),
-		CVault_Torch::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_GameObject_Vault_Torch");
-
-	/* For.Prototype_GameObject_Owl */
-	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Owl"),
-		COwl::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_GameObject_Owl");
-
-	/* For.Prototype_GameObject_BigBird */
-	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_BigBird"),
-		CBigBird::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_GameObject_BigBird");
-
-	/* For.Prototype_GameObject_SmithToCliff_Gate */
-	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_SmithToCliff_Gate"),
-		CSmithToCliff_Gate::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_GameObject_SmithToCliff_Gate");
-
-	/* For.Prototype_GameObject_Lamppost */
-	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Lamppost"),
-		CLamppost::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_GameObject_Lamppost");
-
-	/* For.Prototype_GameObject_LightStand */
-	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_LightStand"),
-		CLightStand::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_GameObject_LightStand");
-
-	/* For.Prototype_GameObject_Sancutm_Door */
-	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Sancutm_Door"),
-		CSancutm_Door::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_GameObject_Sancutm_Door");
-
-	/* For.Prototype_GameObject_FireHouse */
-	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_FireHouse"),
-		CFireHouse::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_GameObject_FireHouse");
 
 	HANDLE hFile = CreateFile(pMapObjectPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
