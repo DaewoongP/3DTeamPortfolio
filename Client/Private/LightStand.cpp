@@ -1,6 +1,8 @@
 #include "..\Public\LightStand.h"
 #include "GameInstance.h"
 
+#include "MagicBall.h"
+
 CLightStand::CLightStand(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMapObject(pDevice, pContext)
 {
@@ -38,7 +40,7 @@ HRESULT CLightStand::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	m_pEffect->Play(m_pTransform->Get_Position() + _float3(0, 2.5f, 0));
+	m_pEffect->Stop();
 	m_pEffect->Get_MainModuleRef().fSimulationSpeed = Random_Generator(0.5f, 1.0f);
 
 	return S_OK;
@@ -55,21 +57,32 @@ HRESULT CLightStand::Initialize_Level(_uint iCurrentLevelIndex)
 		return E_FAIL;
 	}
 
-	// 자체 발광 추가
-	CLight::LIGHTDESC		LightDescHork;
-	ZeroMemory(&LightDescHork, sizeof LightDescHork);
+	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+	RigidBodyDesc.isStatic = true;
+	RigidBodyDesc.isTrigger = false;
+	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
+	RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.0f, 0.f);
+	RigidBodyDesc.fStaticFriction = 0.f;
+	RigidBodyDesc.fDynamicFriction = 0.f;
+	RigidBodyDesc.fRestitution = 0.f;
+	PxSphereGeometry SphereGeometry = PxSphereGeometry(2.f);
+	RigidBodyDesc.pGeometry = &SphereGeometry;
+	RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
+	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
+	RigidBodyDesc.isGravity = false;
+	RigidBodyDesc.pOwnerObject = this;
+	RigidBodyDesc.eThisCollsion = COL_ENEMY;
+	RigidBodyDesc.eCollisionFlag = COL_MAGIC;
+	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Torch");
 
-	LightDescHork.eType = CLight::TYPE_POINT;
-	LightDescHork.vPos = m_pTransform->Get_Position().TransCoord();
-	LightDescHork.fRange = 10.f;
-
-	LightDescHork.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDescHork.vAmbient = WHITEDEFAULT;
-	LightDescHork.vSpecular = LightDescHork.vDiffuse;
-
-	BEGININSTANCE;
-	pGameInstance->Add_Light(LightDescHork, nullptr);
-	ENDINSTANCE;
+	/* Com_RigidBody */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+	{
+		MSG_BOX("Failed CMagicBall Add_Component : (Com_RigidBody)");
+		__debugbreak();
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -87,7 +100,47 @@ void CLightStand::Late_Tick(_float fTimeDelta)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
+#ifdef _DEBUG
+		if (nullptr != m_pRigidBody)
+			m_pRenderer->Add_DebugGroup(m_pRigidBody);
+#endif // _DEBUG
 	}
+}
+
+void CLightStand::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
+{
+	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
+	/* Collision Magic */
+	if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
+	{
+		CMagicBall::COLLSIONREQUESTDESC* pCollisionMagicBallDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
+		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
+		if (eBuff == BUFF_CONFRINGO)
+		{
+			LightOn();
+		}
+	}
+}
+
+void CLightStand::LightOn()
+{
+	m_pEffect->Play(m_pTransform->Get_Position() + _float3(0, 2.5f, 0));
+
+	// 자체 발광 추가
+	CLight::LIGHTDESC		LightDescHork;
+	ZeroMemory(&LightDescHork, sizeof LightDescHork);
+	
+	LightDescHork.eType = CLight::TYPE_POINT;
+	LightDescHork.vPos = m_pTransform->Get_Position().TransCoord() + _float3(0, 2.5f, 0);
+	LightDescHork.fRange = 5.f;
+	
+	LightDescHork.vDiffuse = _float4(1.f, 1.f, 0.f, 1.f);
+	LightDescHork.vAmbient = LightDescHork.vDiffuse;
+	LightDescHork.vSpecular = LightDescHork.vDiffuse;
+	
+	BEGININSTANCE;
+	pGameInstance->Add_Light(LightDescHork, nullptr);
+	ENDINSTANCE;
 }
 
 CLightStand* CLightStand::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -120,4 +173,5 @@ void CLightStand::Free()
 	__super::Free();
 
 	Safe_Release(m_pEffect);
+	Safe_Release(m_pRigidBody);
 }

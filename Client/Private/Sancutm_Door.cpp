@@ -84,6 +84,7 @@ void CSancutm_Door::Late_Tick(_float fTimeDelta)
 
 void CSancutm_Door::Door_Action(_float fTimeDelta)
 {
+
 }
 
 CSancutm_Door* CSancutm_Door::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -23,6 +23,7 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 
 private:
+	const _float	m_fDoorTurn = { 90.f };		   // 문의 최대 회전값
 	_float			m_fDoorSpinValue = { 0.f };	   // 문이 얼만큼 회전했는지 
 
 	_bool			m_isDoorAction = { false }; // 문의 움직일지 아닐지 판단 여부

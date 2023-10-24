@@ -70,10 +70,6 @@ void CDoor::Late_Tick(_float fTimeDelta)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
-
-#ifdef _DEBUG
-		//m_pRenderer->Add_DebugGroup(m_pRigidBody);
-#endif // _DEBUG
 	}
 }
 
@@ -117,19 +113,19 @@ void CDoor::Door_Action(_float fTimeDelta)
 	if (true == m_isDoorAction)
 	{
 		if(OPEN_INSIDE == m_eCurrentState) // 안에서 열림
-			m_pTransform->Turn(_float3(0.f, 1.f, 0.f), XMConvertToRadians(DOORTURN), fTimeDelta);
+			m_pTransform->Turn(_float3(0.f, 1.f, 0.f), XMConvertToRadians(m_fDoorTurn), fTimeDelta);
 		else if(OPEN_OUTSIDE == m_eCurrentState) // 밖에서 열림
-			m_pTransform->Turn(_float3(0.f, 1.f, 0.f), XMConvertToRadians(-DOORTURN), fTimeDelta);
+			m_pTransform->Turn(_float3(0.f, 1.f, 0.f), XMConvertToRadians(-m_fDoorTurn), fTimeDelta);
 		else if (CLOSE_INSIDE == m_eCurrentState)  // 안에서 닫힘
-			m_pTransform->Turn(_float3(0.f, 1.f, 0.f), XMConvertToRadians(-DOORTURN), fTimeDelta);
+			m_pTransform->Turn(_float3(0.f, 1.f, 0.f), XMConvertToRadians(-m_fDoorTurn), fTimeDelta);
 		else if (CLOSE_OUTSIDE == m_eCurrentState) // 밖에서 닫힘
-			m_pTransform->Turn(_float3(0.f, 1.f, 0.f), XMConvertToRadians(DOORTURN), fTimeDelta);
+			m_pTransform->Turn(_float3(0.f, 1.f, 0.f), XMConvertToRadians(m_fDoorTurn), fTimeDelta);
 
 		// DOORTURN 만큼 돌았으면 회전을 멈춤
-		m_fDoorSpinValue += DOORTURN * fTimeDelta;
+		m_fDoorSpinValue += m_fDoorTurn * fTimeDelta;
 
 		// 문이 열린 상태라면 닫히고 닫힌 상태라면 그대로 다음 이벤트까지 대기
-		if (DOORTURN <= m_fDoorSpinValue)
+		if (m_fDoorTurn <= m_fDoorSpinValue)
 		{
 			if (OPEN_INSIDE == m_eCurrentState)
 			{
