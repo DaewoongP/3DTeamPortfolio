@@ -49,11 +49,11 @@ HRESULT CLamppost::Initialize_Level(_uint iCurrentLevelIndex)
 	ZeroMemory(&LightDescHork, sizeof LightDescHork);
 
 	LightDescHork.eType = CLight::TYPE_POINT;
-	LightDescHork.vPos = m_pTransform->Get_Position().TransCoord();
-	LightDescHork.fRange = 10.f;
+	LightDescHork.vPos = m_pTransform->Get_Position().TransCoord() + _float3(0.f, 2.f, 0.f);
+	LightDescHork.fRange = 5.f;
 
 	LightDescHork.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDescHork.vAmbient = WHITEDEFAULT;
+	LightDescHork.vAmbient = LightDescHork.vDiffuse;
 	LightDescHork.vSpecular = LightDescHork.vDiffuse;
 
 	BEGININSTANCE;
@@ -93,6 +93,13 @@ HRESULT CLamppost::Render()
 	{
 		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 		m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
+
+		if (2 == iMeshCount)
+		{
+			m_vEmissive = _float4(0.5f, 0.5f, 0.45f, 0.5f);
+			if (FAILED(m_pShader->Bind_RawValue("g_vBloom", &m_vEmissive, sizeof(_float4))))
+				return E_FAIL;
+		}
 
 		m_pShader->Begin("Mesh_No_Cull");
 
