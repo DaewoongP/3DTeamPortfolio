@@ -7,6 +7,7 @@ class CMesh;
 class CModel;
 class CShader;
 class CRenderer;
+class CParticleSystem;
 END
 
 BEGIN(Client)
@@ -42,6 +43,7 @@ private:
 	CShader* m_pShadowShader = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 	CModel* m_pModel = { nullptr };
+	CParticleSystem* m_pEffect = { nullptr };
 
 private:
 	// 절두체 컬링을 위해 Bounding Box를 생성 하기위한 최소, 최대 정점

@@ -27,13 +27,14 @@ void CVault_Torch::Switch_OnOff(_bool isValue)
 			CLight::LIGHTDESC LightDesc;
 			LightDesc.eType = CLight::TYPE_POINT;
 			LightDesc.fRange = 10.f;
-			LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+			LightDesc.vDiffuse = _float4(0.5f, 0.5f, 0.f, 1.f);
 			LightDesc.vAmbient = LightDesc.vDiffuse;
 			LightDesc.vSpecular = LightDesc.vDiffuse;
 			LightDesc.vPos = m_pTransform->Get_Position().TransCoord();
 			pGameInstance->Add_Light(LightDesc, &m_pLight);
 			Safe_Release(pGameInstance);
 		}
+
 	}
 	else 
 	{
@@ -52,21 +53,6 @@ HRESULT CVault_Torch::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
-
-	BEGININSTANCE;
-
-	if (nullptr == pGameInstance->Find_Prototype(LEVEL_VAULT, TEXT("Prototype_GameObject_Vault_Torch_P")))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_VAULT, TEXT("Prototype_GameObject_Vault_Torch_P")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Vault_Torch"), LEVEL_VAULT))))
-		{
-			ENDINSTANCE;
-			MSG_BOX("Failed to Create Prototype_GameObject_Vault_Torch_P");
-			return E_FAIL;
-		}
-	}
-
-	ENDINSTANCE;
 
 	return S_OK;
 }
@@ -205,7 +191,7 @@ void CVault_Torch::Torch_On_By_Trigger(_float fTimeDelta)
 		m_isEffectOn = true;
 	}	
 
-	if (nullptr == m_pLightbyTrigger && 0.2f <= m_fLightTime)
+	if (nullptr == m_pLightbyTrigger && 0.3f <= m_fLightTime)
 	{
 		m_pEffect->Get_MainModuleRef().fSimulationSpeed = Random_Generator(0.5f, 1.0f);
 

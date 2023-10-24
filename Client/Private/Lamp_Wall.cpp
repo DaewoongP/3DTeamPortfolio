@@ -1,17 +1,17 @@
-#include "..\Public\Lamppost.h"
+#include "..\Public\Lamp_Wall.h"
 #include "GameInstance.h"
 
-CLamppost::CLamppost(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CLamp_Wall::CLamp_Wall(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMapObject(pDevice, pContext)
 {
 }
 
-CLamppost::CLamppost(const CLamppost& rhs)
+CLamp_Wall::CLamp_Wall(const CLamp_Wall& rhs)
 	: CMapObject(rhs)
 {
 }
 
-HRESULT CLamppost::Initialize_Prototype()
+HRESULT CLamp_Wall::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -19,11 +19,11 @@ HRESULT CLamppost::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CLamppost::Initialize(void* pArg)
+HRESULT CLamp_Wall::Initialize(void* pArg)
 {
 	if (nullptr == pArg)
 	{
-		MSG_BOX("CLamppost Argument is NULL");
+		MSG_BOX("CLamp_Wall Argument is NULL");
 		return E_FAIL;
 	}
 
@@ -33,13 +33,13 @@ HRESULT CLamppost::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CLamppost::Initialize_Level(_uint iCurrentLevelIndex)
+HRESULT CLamp_Wall::Initialize_Level(_uint iCurrentLevelIndex)
 {
 	/* Com_Model */
 	if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, m_ObjectDesc.wszTag,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{
-		MSG_BOX("Failed CMapObject Add_Component : (Com_Model)");
+		MSG_BOX("Failed CLamp_Wall Add_Component : (Com_Model)");
 		__debugbreak();
 		return E_FAIL;
 	}
@@ -49,8 +49,8 @@ HRESULT CLamppost::Initialize_Level(_uint iCurrentLevelIndex)
 	ZeroMemory(&LightDescHork, sizeof LightDescHork);
 
 	LightDescHork.eType = CLight::TYPE_POINT;
-	LightDescHork.vPos = m_pTransform->Get_Position().TransCoord() + _float3(0.f, 2.f, 0.f);
-	LightDescHork.fRange = 5.f;
+	LightDescHork.vPos = m_pTransform->Get_Position().TransCoord();
+	LightDescHork.fRange = 10.f;
 
 	LightDescHork.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDescHork.vAmbient = LightDescHork.vDiffuse;
@@ -63,12 +63,12 @@ HRESULT CLamppost::Initialize_Level(_uint iCurrentLevelIndex)
 	return S_OK;
 }
 
-void CLamppost::Tick(_float fTimeDelta)
+void CLamp_Wall::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 }
 
-void CLamppost::Late_Tick(_float fTimeDelta)
+void CLamp_Wall::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
@@ -79,9 +79,9 @@ void CLamppost::Late_Tick(_float fTimeDelta)
 	}
 }
 
-HRESULT CLamppost::Render()
+HRESULT CLamp_Wall::Render()
 {
-	if(FAILED(__super::Render()))
+	if (FAILED(__super::Render()))
 		return E_FAIL;
 
 	if (FAILED(SetUp_ShaderResources()))
@@ -94,7 +94,7 @@ HRESULT CLamppost::Render()
 		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 		m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
 
-		/*if (2 == iMeshCount)
+		/*if (1 == iMeshCount)
 		{
 			m_vEmissive = _float4(0.5f, 0.5f, 0.45f, 0.5f);
 			if (FAILED(m_pShader->Bind_RawValue("g_vBloom", &m_vEmissive, sizeof(_float4))))
@@ -110,32 +110,32 @@ HRESULT CLamppost::Render()
 	return S_OK;
 }
 
-CLamppost* CLamppost::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CLamp_Wall* CLamp_Wall::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CLamppost* pInstance = New CLamppost(pDevice, pContext);
+	CLamp_Wall* pInstance = New CLamp_Wall(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CLamppost");
+		MSG_BOX("Failed to Created CLamp_Wall");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CLamppost::Clone(void* pArg)
+CGameObject* CLamp_Wall::Clone(void* pArg)
 {
-	CLamppost* pInstance = New CLamppost(*this);
+	CLamp_Wall* pInstance = New CLamp_Wall(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CLamppost");
+		MSG_BOX("Failed to Cloned CLamp_Wall");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CLamppost::Free()
+void CLamp_Wall::Free()
 {
 	__super::Free();
 

@@ -625,6 +625,8 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 		wstring wsQuill(TEXT("SM_HM_Quill"));
 		wstring wsTea(TEXT("SM_HM_TeaShop"));
 		wstring wsDB(TEXT("SM_HM_DB_GR"));
+		wstring wsLamp_Wall(TEXT("SM_HM_Lamp_Wall"));
+		wstring wsBonfire(TEXT("SM_HM_Bonfire"));
 
 		// 보물상자
 		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
@@ -720,6 +722,38 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 				wszobjName, &MapObjectDesc)))
 			{
 				MSG_BOX("Failed to Clone Lamppost");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}
+
+		// 상점 안 램프
+		else if (0 == lstrcmp(modelName.c_str(), wsLamp_Wall.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_Lamp_Wall_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH,
+				TEXT("Prototype_GameObject_Lamp_Wall"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone Lamp_Wall");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}
+
+		// 상점 안 벽난로 불
+		else if (0 == lstrcmp(modelName.c_str(), wsBonfire.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_Bonfire_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH,
+				TEXT("Prototype_GameObject_FireWood"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone Bonfire");
 				ENDINSTANCE;
 				return E_FAIL;
 			}

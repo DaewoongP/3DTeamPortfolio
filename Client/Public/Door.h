@@ -26,6 +26,7 @@ private:
 	CPlayer* m_pPlayer = { nullptr };			 // 플레이어 주소
 
 private:
+	const _float	m_fDoorTurn = { 90.f };		   // 문의 최대 회전값
 	_float			m_fDist_From_Player = { 0.f }; // 문과 플레이어 거리
 	_float			m_fDoorSpinValue = { 0.f };	   // 문이 얼만큼 회전했는지 
 
@@ -44,5 +45,3 @@ public:
 };
 
 END
-
-#define DOORTURN 90.f // 문 회전값

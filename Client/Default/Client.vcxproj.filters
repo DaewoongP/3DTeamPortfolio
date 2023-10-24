@@ -949,6 +949,12 @@
     <Filter Include="02. GameObject\03. MapObject\Env\FireHouse">
       <UniqueIdentifier>{3ff7d6fc-2dbc-4c49-8742-7a09473f52fd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Env\Lamp_Wall">
+      <UniqueIdentifier>{3914e668-c075-44ca-b36d-46b40b97100d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Env\FireWood">
+      <UniqueIdentifier>{c1375e26-5c15-417e-b1db-d78bebb3a69a}</UniqueIdentifier>
+    </Filter>
     <Filter Include="05. Magic\MagicBall\08. Ncendio\Meteor">
       <UniqueIdentifier>{97f40771-8d72-4a53-8140-5be88cc65c3c}</UniqueIdentifier>
     </Filter>
@@ -1793,7 +1799,7 @@
     <ClInclude Include="..\Public\LightStand.h">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\LightStand</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Sancutm_Door.h">
+    <ClInclude Include="..\Public\Sanctum_Door.h">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\Sanctum_Door</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Golem_Combat.h">
@@ -1876,6 +1882,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\FireHouse.h">
       <Filter>02. GameObject\03. MapObject\Env\FireHouse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Lamp_Wall.h">
+      <Filter>02. GameObject\03. MapObject\Env\Lamp_Wall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FireWood.h">
+      <Filter>02. GameObject\03. MapObject\Env\FireWood</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Item.h">
       <Filter>02. GameObject\10. Item</Filter>
@@ -2700,7 +2712,7 @@
     <ClCompile Include="..\Private\LightStand.cpp">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\LightStand</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Sancutm_Door.cpp">
+    <ClCompile Include="..\Private\Sanctum_Door.cpp">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\Sanctum_Door</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Golem_Combat.cpp">
@@ -2782,6 +2794,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\FireHouse.cpp">
       <Filter>02. GameObject\03. MapObject\Env\FireHouse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Lamp_Wall.cpp">
+      <Filter>02. GameObject\03. MapObject\Env\Lamp_Wall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FireWood.cpp">
+      <Filter>02. GameObject\03. MapObject\Env\FireWood</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Item.cpp">
       <Filter>02. GameObject\10. Item</Filter>

@@ -257,14 +257,14 @@ HRESULT CLevel_Sanctum::Load_MapObject(const _tchar* pObjectFilePath)
 			_tchar wszobjName[MAX_PATH] = { 0 };
 			_stprintf_s(wszobjName, TEXT("GameObject_LightStand_%d"), (iObjectNum));
 
-			/*if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM,
+			if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM,
 				TEXT("Prototype_GameObject_LightStand"), TEXT("Layer_BackGround"),
 				wszobjName, &MapObjectDesc)))
 			{
 				MSG_BOX("Failed to Clone LightStand");
 				ENDINSTANCE;
 				return E_FAIL;
-			}*/
+			}
 		}
 
 		// »ýÅÒ µµ¾î
