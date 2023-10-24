@@ -101,7 +101,7 @@ void CAction::Set_Options(const wstring& _wstrAnimationTag, CModel* _pModel,
 	m_isOneTimeAction = _isOneTimeAction;
 	m_isCheckBehavior = _isCheckBehavior;
 
-	m_pModel->Get_Animation(m_wstrAnimationTag)->Set_LerpAnim(_isLerp);
+	m_pModel->Get_Animation(m_wstrAnimationTag, eType)->Set_LerpAnim(_isLerp);
 	m_eAnimationType = eType;
 }
 

@@ -12,6 +12,7 @@ HRESULT CLevel_Sky::Initialize()
 {
 	FAILED_CHECK_RETURN(Ready_Lights(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Layer_Monster(TEXT("Layer_Monster")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Shader(), E_FAIL);
 
 	BEGININSTANCE;
@@ -66,6 +67,47 @@ HRESULT CLevel_Sky::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	{
 		MSG_BOX("Failed to Load Map Object_Ins in Level_Sky");
 
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CLevel_Sky::Ready_Layer_Monster(const _tchar* pLayerTag)
+{
+	BEGININSTANCE;
+
+	_float4x4 Matrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixTranslation(108.f, 26.f, 185.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_DarkWizard_Fly"), pLayerTag, TEXT("GameObject_DarkWizard_Fly_1"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_DarkWizard_Fly_1)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	Matrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixTranslation(98.f, 26.f, 185.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_DarkWizard_Fly"), pLayerTag, TEXT("GameObject_DarkWizard_Fly_2"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_DarkWizard_Fly_2)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	Matrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixTranslation(108.f, 26.f, 175.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_DarkWizard_Fly"), pLayerTag, TEXT("GameObject_DarkWizard_Fly_3"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_DarkWizard_Fly_3)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	Matrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixTranslation(108.f, 26.f, 165.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_DarkWizard_Fly"), pLayerTag, TEXT("GameObject_DarkWizard_Fly_4"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_DarkWizard_Fly_4)");
+		ENDINSTANCE;
 		return E_FAIL;
 	}
 

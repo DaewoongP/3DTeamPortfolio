@@ -997,6 +997,9 @@
     <Filter Include="02. GameObject\12. Water">
       <UniqueIdentifier>{1b33b363-0555-47c0-bfe6-21b18984e66b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\02. Enemy\05. DarkWizard\02. Fly\Broom_Stick">
+      <UniqueIdentifier>{523461e7-0194-4951-b840-289835dd5815}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1397,9 +1400,6 @@
     <ClInclude Include="..\Public\Ingredient.h">
       <Filter>02. GameObject\10. Item\02. Ingredient</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Item.h">
-      <Filter>02. GameObject\09. Item</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\PotionTap.h">
       <Filter>02. GameObject\09. Inventory\PotionTap</Filter>
     </ClInclude>
@@ -1592,9 +1592,6 @@
     <ClInclude Include="..\Public\UI_Store.h">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Store</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_Font.h">
-      <Filter>02. GameObject\04. UI\Font\Normal</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Fly_Move.h">
       <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Fly\Move</Filter>
     </ClInclude>
@@ -1660,9 +1657,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_Interaction.h">
       <Filter>02. GameObject\05. UI\UI_Composite\UI_Interaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\UI_DamageFont.h">
-      <Filter>02. GameObject\04. UI\Font\DamageFont</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Script.h">
       <Filter>08. Script</Filter>
@@ -1933,6 +1927,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_Font.h">
       <Filter>02. GameObject\05. UI\Font\Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_DamageFont.h" />
+    <ClInclude Include="..\public\Item.h" />
+    <ClInclude Include="..\Public\UI_Font.h" />
+    <ClInclude Include="..\Public\Broom_Stick_DarkWizard.h">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\02. Fly\Broom_Stick</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2307,9 +2307,6 @@
     <ClCompile Include="..\Private\Ingredient.cpp">
       <Filter>02. GameObject\10. Item\02. Ingredient</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Item.cpp">
-      <Filter>02. GameObject\09. Item</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\PotionTap.cpp">
       <Filter>02. GameObject\09. Inventory\PotionTap</Filter>
     </ClCompile>
@@ -2555,9 +2552,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_Interaction.cpp">
       <Filter>02. GameObject\05. UI\UI_Composite\UI_Interaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\UI_DamageFont.cpp">
-      <Filter>02. GameObject\04. UI\Font\DamageFont</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Script.cpp">
       <Filter>08. Script</Filter>
@@ -2828,6 +2822,11 @@
     </ClCompile>
     <ClCompile Include="..\private\Item.cpp">
       <Filter>02. GameObject\10. Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_DamageFont.cpp" />
+    <ClCompile Include="..\private\Item.cpp" />
+    <ClCompile Include="..\Private\Broom_Stick_DarkWizard.cpp">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\02. Fly\Broom_Stick</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
