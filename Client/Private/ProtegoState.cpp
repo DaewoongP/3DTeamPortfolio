@@ -54,7 +54,7 @@ void CProtegoState::OnStateEnter(void* _pArg)
 	{
 		//시작 애니메이션
 		//m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Protego_Start_anm"));
-		Change_Animation(TEXT("Hu_Cmbt_Protego_Start_anm"), false);
+		Change_Animation_FlyOrNot(TEXT("Hu_Cmbt_Protego_Start_anm"), false);
 		*m_StateMachineDesc.pisFinishAnimation = false;
 	}
 	//시전중에 맞았다!! 
@@ -93,8 +93,7 @@ void CProtegoState::OnStateEnter(void* _pArg)
 			case HIT_LIGHT:
 			{
 				//애니메이션 실행
-				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_anm"));
-				Change_Animation(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_anm"), false);
+				Change_Animation_FlyOrNot(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_anm"), false);
 
 				// maintimer를 0.2배속으로 0.4초동안 처리하겠다
 				pGameInstance->Set_SlowTime(TEXT("MainTimer"), 0.2f, 0.4f);
@@ -114,8 +113,7 @@ void CProtegoState::OnStateEnter(void* _pArg)
 			case HIT_HEABY:
 			{
 				//애니메이션 실행
-				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_Slide_anm"));
-				Change_Animation(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_Slide_anm"), false);
+				Change_Animation_FlyOrNot(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_Slide_anm"), false);
 				
 				fPower *= 5.0f;
 
@@ -154,12 +152,14 @@ void CProtegoState::OnStateTick()
 	{
 		*m_StateMachineDesc.pisFinishAnimation = false;
 
-		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Protego_Loop_anm"));
-		Change_Animation(TEXT("Hu_Cmbt_Protego_Loop_anm"), false);
+		Change_Animation_FlyOrNot(TEXT("Hu_Cmbt_Protego_Loop_anm"), false);
 	}
 	else if (true == *m_StateMachineDesc.pisFinishAnimation)
 	{
-		Set_StateMachine(TEXT("Idle"));
+		if (!*m_StateMachineDesc.pIsFlying)
+			Set_StateMachine(TEXT("Idle"));
+		else
+			Set_StateMachine(TEXT("Hover_Idle"));
 	}
 	//프로테고 애니메이션이 아니라면 아이들로 보냄
 	else if (false == wcscmp(m_StateMachineDesc.pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Cmbt_Protego_Start_anm")) ||
@@ -171,7 +171,10 @@ void CProtegoState::OnStateTick()
 	}
 	else
 	{
-		Set_StateMachine(TEXT("Idle"));
+		if (!*m_StateMachineDesc.pIsFlying)
+			Set_StateMachine(TEXT("Idle"));
+		else
+			Set_StateMachine(TEXT("Hover_Idle"));
 	}
 
 	BEGININSTANCE;
@@ -196,6 +199,11 @@ void CProtegoState::Bind_Notify()
 	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_Slide_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
 	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
 
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Protego_Start_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation,CModel::ANOTHERBODY);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Protego_Loop_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation, CModel::ANOTHERBODY);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_Slide_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation, CModel::ANOTHERBODY);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation, CModel::ANOTHERBODY);
+
 	function<void()> funcPointer = [&] {(*this).Stupefy(); };
 
 	//스투페파이
@@ -213,7 +221,10 @@ void CProtegoState::Go_Idle()
 		!wcscmp(m_StateMachineDesc.pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_01_Spin_anm")))
 		)
 	{
-		Set_StateMachine(TEXT("Idle"));
+		if(!*m_StateMachineDesc.pIsFlying)
+			Set_StateMachine(TEXT("Idle"));
+		else
+			Set_StateMachine(TEXT("Hover_Idle"));
 	}
 }
 
@@ -230,7 +241,7 @@ void CProtegoState::Stupefy()
 
 		pGameInstance->Reset_Timer(TEXT("Stupefy"));
 
-		Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_01_Spin_anm"), false);
+		Change_Animation_FlyOrNot(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_01_Spin_anm"), false);
 	}
 	
 	ENDINSTANCE;

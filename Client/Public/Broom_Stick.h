@@ -46,7 +46,7 @@ private:
 	CModel*				m_pModelCom = { nullptr };
 	CShader*			m_pShaderCom = { nullptr };
 	CRenderer*			m_pRendererCom = { nullptr };
-	//CParticleSystem*	m_pParticle = { nullptr };
+	CParticleSystem*	m_pParticle = { nullptr };
 private:
 	_float				AccTime = 0.f;
 	_float				DelayTime = 0.0f;

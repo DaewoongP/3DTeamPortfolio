@@ -61,13 +61,13 @@ void CHover_Move::OnStateTick()
 		{
 		case CPlayer::MOVETYPE_JOGING:
 		{
-			Change_Animation(m_wszPostAnimationTag);
+			Change_Animation_FlyAttack(m_wszPostAnimationTag);
 		}
 		break;
 
 		case CPlayer::MOVETYPE_SPRINT:
 		{
-			Change_Animation(m_wszPostAnimationTag);
+			Change_Animation_FlyAttack(m_wszPostAnimationTag);
 		}
 		break;
 		}
@@ -126,7 +126,7 @@ void CHover_Move::LookFront()
 			if (lstrcmp(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Lft_anm")))
 			{
 				lstrcpy(m_wszPostAnimationTag,TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Lft_anm"));
-				Change_Animation(TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Rht_anm"));
+				Change_Animation_FlyAttack(TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Lft_anm"));
 			}
 		}
 		else if(speed>0)
@@ -134,7 +134,7 @@ void CHover_Move::LookFront()
 			if (lstrcmp(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Rht_anm")))
 			{
 				lstrcpy(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Rht_anm"));
-				Change_Animation(TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Rht_anm"));
+				Change_Animation_FlyAttack(TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Rht_anm"));
 			}
 		}
 		else 
@@ -142,7 +142,7 @@ void CHover_Move::LookFront()
 			if (lstrcmp(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Fwd_anm")))
 			{
 				lstrcpy(m_wszPostAnimationTag, TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Fwd_anm"));
-				Change_Animation(TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Fwd_anm"));
+				Change_Animation_FlyAttack(TEXT("Hu_Broom_Flynostirrups_Hover_Fly_Fwd_anm"));
 			}
 		}
 	}
@@ -171,19 +171,18 @@ void CHover_Move::Switch_MoveType()
 		case CPlayer::MOVETYPE_WALK:
 		case CPlayer::MOVETYPE_JOGING:
 		{
-			Change_Animation(m_wszPostAnimationTag);
+			Change_Animation_FlyAttack(m_wszPostAnimationTag);
 			*m_StateMachineDesc.piMoveType = CPlayer::MOVETYPE_SPRINT;
 		}
 		break;
 		case CPlayer::MOVETYPE_SPRINT:
 		{
-			Change_Animation(m_wszPostAnimationTag);
+			Change_Animation_FlyAttack(m_wszPostAnimationTag);
 			*m_StateMachineDesc.piMoveType = CPlayer::MOVETYPE_JOGING;
 		}
 		break;
 		}
 	}
-
 	ENDINSTANCE;
 }
 

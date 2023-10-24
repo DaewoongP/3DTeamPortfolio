@@ -225,7 +225,7 @@ PS_NONBLEND_OUT PS_NONBLEND(PS_IN In)
 		vector vNormal = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 		Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
 	}
-
+	
 	return Out;
 }
 
@@ -278,7 +278,7 @@ technique11		DefaultTechnique
 	pass Default
 	{
 		SetRasterizerState(RS_Cull_None);
-		SetDepthStencilState(DSS_Alpha, 0);
+        SetDepthStencilState(DSS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
@@ -289,7 +289,7 @@ technique11		DefaultTechnique
 	pass TextureSheetAnimation
 	{
 		SetRasterizerState(RS_Cull_None);
-		SetDepthStencilState(DSS_Alpha, 0);
+        SetDepthStencilState(DSS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_TS_MAIN();
 		GeometryShader = NULL;
@@ -342,6 +342,18 @@ technique11		DefaultTechnique
 		DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
 		PixelShader = compile ps_5_0 PS_SMOKE();
 	}
+
+    pass Depth_Default
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_MAIN();
+    }
 }
 
 

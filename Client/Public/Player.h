@@ -266,6 +266,10 @@ private:
 	_uint m_iRobeMeshIndex = { 0 };
 
 	_float m_fEyePlusDistanceForHover = { 0.0f };
+	//½ºÀ§Äª¿ë
+	SPELL m_pFlySpell[4] = { LEVIOSO,FLIPENDO,ACCIO,DESCENDO  };
+	SPELL m_pNonFlySpell[4] = { SPELL(0) };
+	CParticleSystem* m_pWindParticle = { nullptr };
 
 private:
 	HRESULT Add_Components();
@@ -356,8 +360,6 @@ private:
 
 	void Landing();
 
-	void Broom_Appeaer();
-	void Broom_Disappeaer();
 	void Fly_Effect();
 
 #pragma endregion

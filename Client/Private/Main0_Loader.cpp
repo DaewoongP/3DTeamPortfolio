@@ -662,6 +662,18 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Landing_Light")
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Landing/LandingLight"), eLevelID))))
 			throw TEXT("Prototype_GameObject_Landing_Light");
+		
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_House_FireEffect")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/House_Fire/MainFire"), eLevelID))))
+			throw TEXT("Prototype_GameObject_House_FireEffect");
+		
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_House_Fire_Distortion")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/House_Fire/Distortion"), eLevelID))))
+			throw TEXT("Prototype_GameObject_House_Fire_Distortion");
+		
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_House_Fire_Smoke")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/House_Fire/Smoke"), eLevelID))))
+			throw TEXT("Prototype_GameObject_House_Fire_Smoke");
 
 #pragma region Potion_Effect
 

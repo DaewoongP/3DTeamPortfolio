@@ -32,6 +32,7 @@ private:
 
 	//카메라 방향 제한
 	_bool m_isLimit{ false };
+	bool test = { false };
 
 private:
 	void	Key_Input(_float _TimeDelta);

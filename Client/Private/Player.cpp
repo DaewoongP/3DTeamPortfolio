@@ -102,11 +102,11 @@ void CPlayer::Set_Spell_Botton(_uint _Button, SPELL _eSpell)
 	}
 
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(_Button, _eSpell);
-
+	if(!m_isFlying)
+		m_pNonFlySpell[_Button] = _eSpell;
 	m_UI_Group_Skill_01->Set_SpellTexture((CUI_Group_Skill::KEYLIST)_Button, _eSpell);
 
 	m_vecSpellCheck[_Button] = _eSpell;
-
 	return;
 }
 
@@ -194,8 +194,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_pCustomModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"), CModel::ANOTHERBODY);
 
 	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(25.f, 3.f, 22.5f);
-	//m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
-	m_vLevelInitPosition[LEVEL_VAULT] = _float3(161, 2, 93);
+	m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
+	//m_vLevelInitPosition[LEVEL_VAULT] = _float3(161, 2, 93);
 	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(30.f, 3.f, 15.f);
 	m_vLevelInitPosition[LEVEL_SMITH] = _float3(32.f, 3.f, 25.f);
 	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(94.5f, 7.2f, 78.f);
@@ -223,7 +223,10 @@ HRESULT CPlayer::Initialize(void* pArg)
 	//	IN_CIRC, OUT_CIRC, INOUT_CIRC,
 	//	IN_BOUNCE, OUT_BOUNCE, INOUT_BOUNCE,
 	//	IN_BACK, OUT_BACK, INOUT_BACK,
-
+	m_pNonFlySpell[0] = { LEVIOSO };
+	m_pNonFlySpell[1] = { FLIPENDO };
+	m_pNonFlySpell[2] = { ACCIO };
+	m_pNonFlySpell[3] = { DESCENDO };
 	return S_OK;
 }
 
@@ -321,6 +324,33 @@ void CPlayer::Tick(_float fTimeDelta)
 	//m_pCooltime->Tick(fTimeDelta);
 	//Potion_Duration(fTimeDelta);
 
+	if (m_isFlying)
+	{
+		_int iFast = (_int)m_pRigidBody->Get_Current_Velocity().Length();
+		switch (iFast)
+		{	
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+		case 6:
+		case 7:
+		case 8:
+			m_pWindParticle->Get_EmissionModuleRef().fRateOverTime = 0.f;
+			break;
+		default:
+			m_pWindParticle->Get_EmissionModuleRef().fRateOverTime = iFast * 5;
+			break;
+		}
+		m_pWindParticle->Get_Transform()->Set_Position(m_pTransform->Get_Position() +
+			m_pPlayer_Camera->Get_TransformPtr()->Get_Look() * 5);
+	}
+	else
+	{
+		m_pWindParticle->Get_EmissionModuleRef().fRateOverTime = 0.f;
+	}
 
 #ifdef _DEBUG
 	ADD_IMGUI([&] { this->Tick_TestShake(); });
@@ -500,6 +530,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		else
 		{
 			CHitState::HITSTATEDESC HitStateDesc;
+			HitStateDesc.eBuffType = pDesc->eBuffType;
 
 			if (pDesc->eMagicTag == PENSIVE_GROUND_BALL ||
 				pDesc->eMagicTag == PENSIVE_FAIL_BALL ||
@@ -906,6 +937,14 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Particle_Broom_Wind_Screen"),
+		TEXT("Com_Broom_Wind_Screen"), reinterpret_cast<CComponent**>(&m_pWindParticle))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Particle_Broom_Wind_Screen)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -1172,12 +1211,26 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			vAxis);
 	}
 #endif // _DEBUG
-	
+	//조준
 	if (pGameInstance->Get_DIKeyState(DIK_H, CInput_Device::KEY_DOWN))
 	{
 		m_isFlying = !m_isFlying;
+		if (m_isFlying)
+		{
+			for (_uint i = 0; i < 4; i++)
+			{
+				Set_Spell_Botton(i, m_pFlySpell[i]);
+			}
+		}
+		else 
+		{
+			for (_uint i = 0; i < 4; i++)
+			{
+				Set_Spell_Botton(i, m_pNonFlySpell[i]);
+			}
+		}
+		
 	}
-	//조준
 	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_RBUTTON, CInput_Device::KEY_PRESSING))
 	{
 		Find_Target_For_ViewSpace();
@@ -1651,7 +1704,7 @@ void CPlayer::UpdateLookAngle()
 
 	_float3 vNextLook{};
 	_float3 vNextLook_y{};
-	{
+	{		
 		if (pGameInstance->Get_DIKeyState(DIK_W, CInput_Device::KEY_PRESSING) ||
 			pGameInstance->Get_DIKeyState(DIK_W, CInput_Device::KEY_DOWN))
 		{
@@ -1739,10 +1792,12 @@ HRESULT CPlayer::Ready_StateMachine()
 	m_StateMachineDesc.ppTarget = &m_pTarget;
 	m_StateMachineDesc.pIsFlying = &m_isFlying;
 	m_StateMachineDesc.pRigidBody = m_pRigidBody;
+	m_StateMachineDesc.pBroom = m_pBroom;
 	m_StateMachineDesc.pCameraTransform = m_pPlayer_Camera->Get_TransformPtr();
 
 	Safe_AddRef(m_StateMachineDesc.pOwnerModel);
 	Safe_AddRef(m_StateMachineDesc.pPlayerTransform);
+	Safe_AddRef(m_StateMachineDesc.pBroom);
 
 
 	if (FAILED(m_pStateContext->Add_StateMachine(
@@ -2869,7 +2924,10 @@ void CPlayer::Key_input_Flying(_float fTimeDelta)
 			m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
 			m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
 			m_pStateContext->Is_Current_State(TEXT("Jump")) ||
-			m_pStateContext->Is_Current_State(TEXT("Move Loop"))))
+			m_pStateContext->Is_Current_State(TEXT("Move Loop"))||
+			m_pStateContext->Is_Current_State(TEXT("Fly_Move")) ||
+			m_pStateContext->Is_Current_State(TEXT("Hover_Idle")) ||
+			m_pStateContext->Is_Current_State(TEXT("Hover_Move"))))
 	{
 		m_pCustomModel->Change_Animation(TEXT("Lumos_Start"), CModel::OTHERBODY);
 		m_isLumosOn = true;
@@ -3018,10 +3076,6 @@ void CPlayer::Add_Potion()
 	m_pPlayer_Information->Add_Potion();
 }
 
-void CPlayer::Broom_Appeaer()
-{
-}
-
 void CPlayer::Drink_Heal_Potion()
 {
 	CTool* pTool = m_pPlayer_Information->Get_Healpotion();
@@ -3055,7 +3109,12 @@ void CPlayer::Go_Hit(void* _pArg)
 			m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
 			m_pStateContext->Is_Current_State(TEXT("Magic_Cast")) ||
 			m_pStateContext->Is_Current_State(TEXT("Standing")) ||
-			m_pStateContext->Is_Current_State(TEXT("Jump"))))
+			m_pStateContext->Is_Current_State(TEXT("Broom_Begin"))||
+			m_pStateContext->Is_Current_State(TEXT("Broom_Break")) ||
+			m_pStateContext->Is_Current_State(TEXT("Broom_End")) ||
+			m_pStateContext->Is_Current_State(TEXT("Fly_Move"))||
+			m_pStateContext->Is_Current_State(TEXT("Hover_Idle"))||
+			m_pStateContext->Is_Current_State(TEXT("Hover_Move"))))
 	{
 		m_pStateContext->Set_StateMachine(TEXT("Hit"), _pArg);
 	}
@@ -3115,7 +3174,10 @@ void CPlayer::Prepare_Protego()
 			m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
 			m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
 			m_pStateContext->Is_Current_State(TEXT("Magic_Cast")) ||
-			m_pStateContext->Is_Current_State(TEXT("Protego"))))
+			m_pStateContext->Is_Current_State(TEXT("Protego"))||
+			m_pStateContext->Is_Current_State(TEXT("Fly_Move")) ||
+			m_pStateContext->Is_Current_State(TEXT("Hover_Idle")) ||
+			m_pStateContext->Is_Current_State(TEXT("Hover_Move"))))
 	{
 		m_isPrepareProtego = true;
 	}
@@ -3137,6 +3199,7 @@ void CPlayer::Go_Use_Item()
 	UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(); };
 
 	m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Add_Layer_Item"), UseItemDesc.funcPotion);
+	m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Add_Layer_Item"), UseItemDesc.funcPotion,CModel::ANOTHERBODY);
 
 	UseItemDesc.eItem_Id = pTool->Get_ItemID();
 
@@ -3180,6 +3243,7 @@ void CPlayer::Go_Use_Potion()
 	UseItemDesc.funcPotion = [&] {(*this).Add_Potion(); };
 
 	m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Add_Layer_Item"), UseItemDesc.funcPotion);
+	m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Add_Layer_Item"), UseItemDesc.funcPotion, CModel::ANOTHERBODY);
 
 	UseItemDesc.eItem_Id = ITEM_ID_WIGGENWELD_POTION;
 
@@ -3294,6 +3358,7 @@ void CPlayer::Free()
 		Safe_Release(m_pDefence);
 		Safe_Release(m_pCard_Fig);
 		Safe_Release(m_pBroom);
+		Safe_Release(m_pWindParticle);
 		
 	//	Safe_Release(m_pBlink);
 
@@ -3308,6 +3373,7 @@ void CPlayer::Free()
 
 		Safe_Release(m_StateMachineDesc.pOwnerModel);
 		Safe_Release(m_StateMachineDesc.pPlayerTransform);
+		Safe_Release(m_StateMachineDesc.pBroom);
 
 		for (int i = 0; i < m_vecPotionParticle.size(); i++)
 		{
@@ -3317,7 +3383,6 @@ void CPlayer::Free()
 		{
 			Safe_Release(m_vecPlayer_StateParicle.data()[i]);
 		}
-
 
 		m_vecCoolTimeRatio.clear();
 		m_vecSpellCheck.clear();

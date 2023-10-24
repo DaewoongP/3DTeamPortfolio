@@ -45,9 +45,8 @@ void CHitState::OnStateEnter(void* _pArg)
 {
 	HITSTATEDESC* pHitStateDesc = static_cast<HITSTATEDESC*>(_pArg);
 	m_isPowerfulHit = (_bool)pHitStateDesc->iHitType;
-
 	m_pTargetTransform = (CTransform*)pHitStateDesc->pTransform;
-
+	m_eBuffType = pHitStateDesc->eBuffType;
 	Safe_AddRef(m_pTargetTransform);
 
 	*m_StateMachineDesc.pisFinishAnimation = false;
@@ -126,10 +125,6 @@ void CHitState::Set_Dir()
 
 	vPlayerLook.Normalize();
 
-
-
-
-
 	_float fTargetAngle = vPlayerLook.Dot(vTargetDir);
 
 	if (1.0f < fTargetAngle)
@@ -176,42 +171,99 @@ void CHitState::Set_Dir()
 			m_iHitDir = (_uint)HITDIR_LEFT;
 		}
 
-		switch (m_iHitDir)
+		if (!*m_StateMachineDesc.pIsFlying)
 		{
-		case Client::CHitState::HITDIR_FRONT:
-		{
-			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Bwd_anm"));
-			Change_Animation(TEXT("Hu_Rct_Hit_Bwd_anm"), false);
+			switch (m_iHitDir)
+			{
+			case Client::CHitState::HITDIR_FRONT:
+			{
+				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Bwd_anm"));
+				Change_Animation(TEXT("Hu_Rct_Hit_Bwd_anm"), false);
+			}
+			break;
+			case Client::CHitState::HITDIR_BACK:
+			{
+				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Fwd_anm"));
+				Change_Animation(TEXT("Hu_Rct_Hit_Fwd_anm"), false);
+			}
+			break;
+			case Client::CHitState::HITDIR_RIGHT:
+			{
+				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Lft_anm"));
+				Change_Animation(TEXT("Hu_Rct_Hit_Lft_anm"), false);
+			}
+			break;
+			case Client::CHitState::HITDIR_LEFT:
+			{
+				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Rht_anm"));
+				Change_Animation(TEXT("Hu_Rct_Hit_Rht_anm"), false);
+			}
+			break;
+			case Client::CHitState::HITDIR_END:
+				break;
+			default:
+				break;
+			}
 		}
-		break;
-		case Client::CHitState::HITDIR_BACK:
+		
+#pragma endregion
+	}
+	else 
+	{
+		//厚青惑怕 面倒贸府.
+		switch (m_eBuffType)
 		{
-			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Fwd_anm"));
-			Change_Animation(TEXT("Hu_Rct_Hit_Fwd_anm"), false);
-		}
-		break;
-		case Client::CHitState::HITDIR_RIGHT:
+		case Client::BUFF_NONE:
+			break;
+		case Client::BUFF_LEVIOSO:
+			m_StateMachineDesc.pRigidBody->Add_Force(_float3(0,1,0) * 10,PxForceMode::eIMPULSE,true);
+			Change_Animation(TEXT("Hu_Broom_Hover_Rct_Impact_Hvy_Bwd_anm"), false);
+			break;
+		case Client::BUFF_ACCIO:
 		{
-			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Lft_anm"));
-			Change_Animation(TEXT("Hu_Rct_Hit_Lft_anm"), false);
+			_float3 vDir = _float3(m_pTargetTransform->Get_Position() - m_StateMachineDesc.pPlayerTransform->Get_Position());
+			vDir.Normalize();
+			m_StateMachineDesc.pRigidBody->Add_Force(vDir * 10, PxForceMode::eIMPULSE, true);
+			Change_Animation(TEXT("Hu_Broom_Hover_Rct_Impact_Hvy_Fwd_anm"), false);
+			break;
 		}
-		break;
-		case Client::CHitState::HITDIR_LEFT:
-		{
-			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Rht_anm"));
-			Change_Animation(TEXT("Hu_Rct_Hit_Rht_anm"), false);
-		}
-		break;
-		case Client::CHitState::HITDIR_END:
+		case Client::BUFF_DESCENDO:
+			m_StateMachineDesc.pRigidBody->Add_Force(_float3(0, 1, 0) * -10, PxForceMode::eIMPULSE, true);
+			Change_Animation(TEXT("Hu_Broom_Hover_Rct_Impact_Hvy_Bwd_anm"), false);
+			break;
+		case Client::BUFF_FLIPENDO:
+			Change_Animation(TEXT("Hu_Broom_FlyNoStirrups_Collision_Front_hard_anm"), false);
 			break;
 		default:
+			Change_Animation(TEXT("Hu_Broom_Fly_Rct_Impact_Lht_Fwd_anm"), false); 
 			break;
 		}
-#pragma endregion
 	}
 
 	if (true == m_isPowerfulHit)
 	{
+		*m_StateMachineDesc.pIsFlying = false;
+		_float4x4 OffsetMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f)
+			* XMMatrixRotationY(XMConvertToRadians(100)) * XMMatrixRotationZ(XMConvertToRadians(110))
+			* XMMatrixTranslation(0.53f, 0.f, -0.99f);
+
+		_float4x4 RotationMatrix = XMMatrixRotationQuaternion(
+			XMQuaternionRotationAxis(XMVector3Normalize(_float3(1, 0, 0)), 1 * -30.f));
+
+		_float3 vRight = OffsetMatrix.Right();
+		_float3 vUp = OffsetMatrix.Up();
+		_float3 vLook = OffsetMatrix.Look();
+
+		vRight = XMVector3TransformNormal(vRight, RotationMatrix);
+		vUp = XMVector3TransformNormal(vUp, RotationMatrix);
+		vLook = XMVector3TransformNormal(vLook, RotationMatrix);
+
+		memcpy(&OffsetMatrix.m[0][0], &vRight, sizeof(_float3));
+		memcpy(&OffsetMatrix.m[1][0], &vUp, sizeof(_float3));
+		memcpy(&OffsetMatrix.m[2][0], &vLook, sizeof(_float3));
+
+		m_StateMachineDesc.pBroom->Set_Offset_Matrix(OffsetMatrix);
+		m_StateMachineDesc.pRigidBody->Set_Gravity(true);
 #pragma region PowerfulHitDir
 		if (fTargetAngle <= f90Radian &&
 			fTargetAngle >= -f90Radian)

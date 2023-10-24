@@ -3,6 +3,10 @@
 #include "MapObject.h"
 #include "Client_Defines.h"
 
+BEGIN(Engine)
+class CLight;
+END
+
 BEGIN(Client)
 
 class CLamppost final : public CMapObject
