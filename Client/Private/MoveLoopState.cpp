@@ -90,12 +90,6 @@ void CMoveLoopState::OnStateTick()
 		*m_StateMachineDesc.pisFinishAnimation = false;
 	}
 
-	if (*m_StateMachineDesc.piMoveType == CPlayer::MOVETYPE_SPRINT)
-	{
-	wcout << m_StateMachineDesc.pOwnerModel->Get_Animation(CModel::OTHERBODY)->Get_AnimationName() << endl;
-
-	}
-
 
 
 	BEGININSTANCE;

@@ -39,7 +39,6 @@ public:
 
 private:
     _tchar m_wszPostAnimationTag[MAX_PATH] = {};
-    CParticleSystem* m_pWindParticle = { nullptr };
 
 public:
     static CFly_Move* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

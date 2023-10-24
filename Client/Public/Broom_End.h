@@ -22,6 +22,10 @@ public:
     virtual void OnStateTick();
     virtual void OnStateExit();
 
+private:
+    _bool m_isAppearTrigger = { false };
+    _float m_fTimeAcc = { 0.f };
+
 public:
     static CBroom_End* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
     virtual CComposite* Clone(void* pArg) override;

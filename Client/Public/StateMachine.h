@@ -38,6 +38,8 @@ public:
         //하늘을 날고있는지 아닌지
         _bool* pIsFlying = { nullptr };
         CRigidBody* pRigidBody = { nullptr };
+        CGameObject* pBroom = { nullptr };
+
 
         //카메라 트렌스 폼
         CTransform* pCameraTransform = { nullptr };
@@ -63,6 +65,7 @@ public:
             if (nullptr == pCameraTransform) { return false; }
             if (nullptr == pOwnerLookAngle_Y) { return false; }
             if (nullptr == pRigidBody) { return false; }
+            if (nullptr == pBroom) { return false; }
 
             return true;
         };
@@ -95,6 +98,7 @@ protected:
 
 protected:
     void Change_Animation(const wstring& _AnimationTag, _bool _isLumos = true);
+    void Change_Animation_FlyAttack(const wstring& _AnimationTag);
     void Change_Animation_Part(const wstring& _AnimationTag, _uint iPartIndex);
     void Change_Animation_FlyOrNot(const wstring& _AnimationTag, _bool _isLumos);
 

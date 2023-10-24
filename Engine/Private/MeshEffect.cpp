@@ -245,7 +245,7 @@ void CMeshEffect::Late_Tick(_float _fTimeDelta)
 			if (true == m_isAlphaBlend)
 				m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
 			else
-				m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+				m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
 		}
 
 		if (m_isGlow)

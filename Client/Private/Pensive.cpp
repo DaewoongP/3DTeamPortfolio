@@ -224,6 +224,9 @@ void CPensive::Do_Damage(_int iDmg)
 		if (m_pHealth->Get_Current_HP() <= 0 && !m_pStateContext->Is_Current_State(TEXT("Death")))
 		{
 			DieMagicBall();
+
+			m_isDead = true;
+
 			m_pStateContext->Set_StateMachine(TEXT("Death"));
 			return;
 		}

@@ -619,6 +619,12 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 		wstring wsBigBird(TEXT("Anim_BigBird"));
 		wstring wsSmithToCliff(TEXT("SM_HM_Cliff_Gate"));
 		wstring wsLamppost(TEXT("SM_HM_Lamppost"));
+		wstring wsF(TEXT("SM_HM_Gen_F"));
+		wstring wsG(TEXT("SM_HM_Gen_G"));
+		wstring wsHoney(TEXT("SM_HM_Honeydukes"));
+		wstring wsQuill(TEXT("SM_HM_Quill"));
+		wstring wsTea(TEXT("SM_HM_TeaShop"));
+		wstring wsDB(TEXT("SM_HM_DB_GR"));
 
 		// 보물상자
 		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
@@ -714,6 +720,27 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 				wszobjName, &MapObjectDesc)))
 			{
 				MSG_BOX("Failed to Clone Lamppost");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}
+
+		// 불타는 집
+		else if (0 == lstrcmp(modelName.c_str(), wsF.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsG.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsHoney.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsQuill.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsTea.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsDB.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_FireHouse_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH,
+				TEXT("Prototype_GameObject_FireHouse"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone FireHouse");
 				ENDINSTANCE;
 				return E_FAIL;
 			}

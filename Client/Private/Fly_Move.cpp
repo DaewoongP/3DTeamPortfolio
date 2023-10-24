@@ -21,17 +21,6 @@ CFly_Move::CFly_Move(const CFly_Move& rhs)
 
 HRESULT CFly_Move::Initialize_Prototype()
 {
-	BEGININSTANCE;
-	if (nullptr == pGameInstance->Find_Prototype(0, TEXT("Particle_Broom_Wind_Screen")))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(0, TEXT("Particle_Broom_Wind_Screen")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Broom/Wind_Screen/"), 0))))
-		{
-			ENDINSTANCE;
-			return E_FAIL;
-		}
-	}
-	ENDINSTANCE;
 	return S_OK;
 }
 
@@ -43,15 +32,6 @@ HRESULT CFly_Move::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Particle_Broom_Wind_Screen"),
-		TEXT("Com_Broom_Wind_Screen"), reinterpret_cast<CComponent**>(&m_pWindParticle))))
-	{
-		MSG_BOX("Failed Add_GameObject : (Particle_Broom_Wind_Screen)");
-		__debugbreak();
-		return E_FAIL;
-	}
-
-	m_pWindParticle->Disable();
 	return S_OK;
 }
 
@@ -66,8 +46,6 @@ void CFly_Move::Late_Tick(_float fTimeDelta)
 
 void CFly_Move::OnStateEnter(void* _pArg)
 {
-	m_pWindParticle->Play(static_cast<CPlayer*>(m_pOwner->Get_Owner())->Get_Transform()->Get_Position() + 
-		static_cast<CPlayer*>(m_pOwner->Get_Owner())->Get_Transform()->Get_Look()*5);
 }
 
 void CFly_Move::OnStateTick()
@@ -76,29 +54,6 @@ void CFly_Move::OnStateTick()
 	Go_Idle();
 	Switch_MoveType();
 
-	m_pWindParticle->Get_Transform()->Set_Position(static_cast<CPlayer*>(m_pOwner->Get_Owner())->Get_Transform()->Get_Position() +
-		static_cast<CPlayer*>(m_pOwner->Get_Owner())->Get_Transform()->Get_Look() * 5);
-	
-	if (true == *m_StateMachineDesc.pisFinishAnimation)
-	{
-		switch (*m_StateMachineDesc.piMoveType)
-		{
-		case CPlayer::MOVETYPE_JOGING:
-		{
-			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_Jog_Loop_Fwd_anm"));
-			Change_Animation(TEXT("Hu_BM_Jog_Loop_Fwd_anm"));
-		}
-		break;
-
-		case CPlayer::MOVETYPE_SPRINT:
-		{
-			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_Sprint_Loop_Fwd_anm"));
-			Change_Animation(TEXT("Hu_BM_Sprint_Loop_Fwd_anm"));
-		}
-		break;
-		}
-		*m_StateMachineDesc.pisFinishAnimation = false;
-	}
 	if (!*m_StateMachineDesc.pIsFlying)
 	{
 		Set_StateMachine(TEXT("Broom_End"));
@@ -107,7 +62,7 @@ void CFly_Move::OnStateTick()
 
 void CFly_Move::OnStateExit()
 {
-	m_pWindParticle->Disable();
+	
 }
 
 void CFly_Move::LookFront()
@@ -135,7 +90,7 @@ void CFly_Move::LookFront()
 				if (lstrcmp(m_wszPostAnimationTag, TEXT("Hu_Broom_FlyNoStirrups_Fast_Lft_anm")))
 				{
 					lstrcpy(m_wszPostAnimationTag, TEXT("Hu_Broom_FlyNoStirrups_Fast_Lft_anm"));
-					Change_Animation(TEXT("Hu_Broom_FlyNoStirrups_Fast_Lft_anm"));
+					Change_Animation_FlyAttack(TEXT("Hu_Broom_FlyNoStirrups_Fast_Lft_anm"));
 				}
 			}
 			else if (speed > 0)
@@ -143,7 +98,7 @@ void CFly_Move::LookFront()
 				if (lstrcmp(m_wszPostAnimationTag, TEXT("Hu_Broom_FlyNoStirrups_Fast_Rht_anm")))
 				{
 					lstrcpy(m_wszPostAnimationTag, TEXT("Hu_Broom_FlyNoStirrups_Fast_Rht_anm"));
-					Change_Animation(TEXT("Hu_Broom_FlyNoStirrups_Fast_Rht_anm"));
+					Change_Animation_FlyAttack(TEXT("Hu_Broom_FlyNoStirrups_Fast_Rht_anm"));
 				}
 			}
 		}
@@ -154,7 +109,7 @@ void CFly_Move::LookFront()
 				if (lstrcmp(m_wszPostAnimationTag, TEXT("Hu_Broom_FlyNoStirrups_Fast_Dn_anm")))
 				{
 					lstrcpy(m_wszPostAnimationTag, TEXT("Hu_Broom_FlyNoStirrups_Fast_Dn_anm"));
-					Change_Animation(TEXT("Hu_Broom_FlyNoStirrups_Fast_Dn_anm"));
+					Change_Animation_FlyAttack(TEXT("Hu_Broom_FlyNoStirrups_Fast_Dn_anm"));
 				}
 				
 			}
@@ -163,7 +118,7 @@ void CFly_Move::LookFront()
 				if (lstrcmp(m_wszPostAnimationTag, TEXT("Hu_Broom_FlyNoStirrups_Fast_Up_anm")))
 				{
 					lstrcpy(m_wszPostAnimationTag, TEXT("Hu_Broom_FlyNoStirrups_Fast_Up_anm"));
-					Change_Animation(TEXT("Hu_Broom_FlyNoStirrups_Fast_Up_anm"));
+					Change_Animation_FlyAttack(TEXT("Hu_Broom_FlyNoStirrups_Fast_Up_anm"));
 				}
 			}
 			m_StateMachineDesc.pRigidBody->Add_Force(_float3(0, 1, 0) * speed_y * 400, PxForceMode::eFORCE, true);
@@ -238,9 +193,4 @@ CComposite* CFly_Move::Clone(void* pArg)
 void CFly_Move::Free()
 {
 	CStateMachine::Free();
-
-	if (true == m_isCloned)
-	{
-		Safe_Release(m_pWindParticle);
-	}
 }

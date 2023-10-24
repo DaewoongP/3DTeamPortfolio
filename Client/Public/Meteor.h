@@ -2,19 +2,15 @@
 #include "GameObject.h"
 #include "Client_Defines.h"
 #include "MagicBall.h"
-
-BEGIN(Engine)
-class CParticleSystem;
-class CMeshEffect;
-END
-
 BEGIN(Client)
-class CNcendio final : public CMagicBall
+
+class CMeteor :
+    public CMagicBall
 {
 private:
-	explicit CNcendio(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CNcendio(const CNcendio& rhs);
-	virtual ~CNcendio() = default;
+	explicit CMeteor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CMeteor(const CMeteor& rhs);
+	virtual ~CMeteor() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype(_uint iLevel);
@@ -45,9 +41,13 @@ private:
 	virtual HRESULT Add_RigidBody() override;
 
 public:
-	static CNcendio* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel = 0);
+	static CMeteor* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
+
+
+
+
 };
 
 END
