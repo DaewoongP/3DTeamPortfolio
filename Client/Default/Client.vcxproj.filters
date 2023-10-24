@@ -946,6 +946,9 @@
     <Filter Include="02. GameObject\03. MapObject\Env\FireHouse">
       <UniqueIdentifier>{3ff7d6fc-2dbc-4c49-8742-7a09473f52fd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05. Magic\MagicBall\08. Ncendio\Meteor">
+      <UniqueIdentifier>{97f40771-8d72-4a53-8140-5be88cc65c3c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1880,6 +1883,9 @@
     <ClInclude Include="..\Public\UI_Font.h">
       <Filter>02. GameObject\05. UI\Font\Normal</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Meteor.h">
+      <Filter>05. Magic\MagicBall\08. Ncendio\Meteor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2773,6 +2779,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_DamageFont.cpp">
       <Filter>02. GameObject\05. UI\Font\DamageFont</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Meteor.cpp">
+      <Filter>05. Magic\MagicBall\08. Ncendio\Meteor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

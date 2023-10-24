@@ -207,6 +207,7 @@
     <ClInclude Include="..\public\Gear_Item.h" />
     <ClInclude Include="..\Public\Lamppost.h" />
     <ClInclude Include="..\Public\LightStand.h" />
+    <ClInclude Include="..\Public\Meteor.h" />
     <ClInclude Include="..\Public\Quest_Bone.h" />
     <ClInclude Include="..\Public\Quest_Potion.h" />
     <ClInclude Include="..\Public\Guide_Book.h" />
@@ -541,6 +542,7 @@
     <ClCompile Include="..\private\Gear_Item.cpp" />
     <ClCompile Include="..\Private\Lamppost.cpp" />
     <ClCompile Include="..\Private\LightStand.cpp" />
+    <ClCompile Include="..\Private\Meteor.cpp" />
     <ClCompile Include="..\Private\Quest_Bone.cpp" />
     <ClCompile Include="..\Private\Quest_Potion.cpp" />
     <ClCompile Include="..\Private\Guide_Book.cpp" />
