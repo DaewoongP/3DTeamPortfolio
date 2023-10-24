@@ -218,5 +218,14 @@ void CEvent_Cliffside::Free()
 	{
 		Safe_Release(m_pCutScene_0_0);
 		Safe_Release(m_pRenderer);
+
+
+		BEGININSTANCE;
+
+		pGameInstance->Remove_Timer(TEXT("Cliffside_CutScene_Fade_Out"));
+		pGameInstance->Remove_Timer(TEXT("Cliffside_CutScene_Play"));
+
+		ENDINSTANCE;
+
 	}
 }

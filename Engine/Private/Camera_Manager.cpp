@@ -576,6 +576,8 @@ void CCamera_Manager::Play_Spline_CutScene(_float _TimeDelta)
 
 	//파이프 라인 값 변경
 	m_pPipeLine->Set_Transform(CPipeLine::D3DTS_VIEW, m_ViewMatrix);
+
+	m_pPipeLine->Set_Transform(CPipeLine::D3DTS_PROJ, XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), m_pCurrentCamera->Get_CameraDesc().m_fAspect, m_pCurrentCamera->Get_CameraDesc().m_fNear, m_pCurrentCamera->Get_CameraDesc().m_fFar));
 }
 
 void CCamera_Manager::Play_OffSetCamera(_float _TimeDelta)

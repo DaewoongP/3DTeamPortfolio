@@ -32,6 +32,9 @@ public:
 	//투영정보는 안 바꾸겠음
 	virtual void Tick(const _float& fTimeDelta);
 
+public:
+	const CAMERADESC Get_CameraDesc() const { return m_CameraDesc; }
+
 protected:
 	class CTransform*			m_pTransform = { nullptr };
 

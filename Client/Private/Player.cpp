@@ -291,6 +291,8 @@ void CPlayer::Tick(_float fTimeDelta)
 	UpdateLookAngle();
 
 	Key_Input(fTimeDelta);
+
+	Update_Hover_Eye_Distance();
 	
 	//m_pStateContext->Tick(fTimeDelta)
 	Go_Protego(&m_ProtegoStateDesc);
@@ -1635,7 +1637,7 @@ HRESULT CPlayer::Ready_Camera()
 	CCamera::CAMERADESC CameraDesc;
 
 	CameraDesc.m_fAspect = _float(g_iWinSizeX) / _float(g_iWinSizeY);
-	CameraDesc.m_fFovY = XMConvertToRadians(110.f);
+	CameraDesc.m_fFovY = XMConvertToRadians(60.f);
 	CameraDesc.m_fNear = 0.1f;
 	CameraDesc.m_fFar = 1000.f;
 
@@ -1645,6 +1647,7 @@ HRESULT CPlayer::Ready_Camera()
 	PlayerCameraDesc.pPlayerTransform = m_pTransform;
 	PlayerCameraDesc.ppTargetTransform = &m_pTargetTransform;
 	PlayerCameraDesc.IsMove = &m_isFixMouse;
+	PlayerCameraDesc.pHoverEyeDistance = &m_fEyePlusDistanceForHover;
 
 	m_pPlayer_Camera = CPlayer_Camera::Create(m_pDevice, m_pContext, &PlayerCameraDesc);
 
@@ -1655,8 +1658,6 @@ HRESULT CPlayer::Ready_Camera()
 	BEGININSTANCE;
 
 	pGameInstance->Add_Camera(TEXT("Player_Camera"), (CCamera*)m_pPlayer_Camera);
-
-	pGameInstance->Add_Camera(TEXT("Other_Camera"), CPlayer_Camera::Create(m_pDevice, m_pContext, &PlayerCameraDesc));
 
 	pGameInstance->Set_Camera(TEXT("Player_Camera"));
 
@@ -2669,6 +2670,41 @@ void CPlayer::Find_Target_For_ViewSpace()
 	Safe_AddRef(m_pTarget);
 
 	ENDINSTANCE;
+}
+
+void CPlayer::Update_Hover_Eye_Distance()
+{
+	_float fDistance = { 0.0f };
+
+	if (true == m_isFlying)
+	{
+		fDistance += 1.0f;
+		//호버 무브
+		if (m_pStateContext->Is_Current_State(TEXT("Hover_Move")))
+		{
+			fDistance += 1.0f;
+		}
+		//플라이 무브
+		if (m_pStateContext->Is_Current_State(TEXT("Fly_Move")))
+		{
+			fDistance += 2.0f;
+		}
+	}
+
+	BEGININSTANCE;
+
+	if (fDistance > m_fEyePlusDistanceForHover)
+	{
+		m_fEyePlusDistanceForHover += pGameInstance->Get_World_Tick() * (fDistance - m_fEyePlusDistanceForHover);
+	}
+	else if (fDistance < m_fEyePlusDistanceForHover)
+	{
+		m_fEyePlusDistanceForHover -= pGameInstance->Get_World_Tick() * (m_fEyePlusDistanceForHover - fDistance);
+	}
+
+	ENDINSTANCE;
+
+	Clamp(m_fEyePlusDistanceForHover, 0.0f, 3.0f);
 }
 
 void CPlayer::Finisher()

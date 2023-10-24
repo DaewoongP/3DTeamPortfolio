@@ -35,6 +35,7 @@ public:
 		CTransform* pPlayerTransform = { nullptr };
 		CTransform** ppTargetTransform = { nullptr };
 		_bool* IsMove = { nullptr };
+		_float* pHoverEyeDistance = { nullptr };
 	}PLAYERCAMERADESC;
 
 private:
@@ -96,6 +97,8 @@ private:
 	_bool* m_pisMove = { nullptr };
 
 	_bool m_isPressingTab = { false };
+
+	_float* m_pEyePlusDistanceForHover = { nullptr };
 
 private:
 	void	Mouse_Input(_float _fTimeDelta);
