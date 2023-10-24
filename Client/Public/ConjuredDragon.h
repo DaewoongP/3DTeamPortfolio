@@ -108,11 +108,6 @@ private:
 	/* 무중력 상태에서 특정 방향으로 이동하지 못하게 만드는 함수 */
 	void Check_Air_Balance(const _float& fTimeDelta);
 
-private:
-	// 날개, 꼬리뼈의 행렬을 저장한 벡터 컨테이너
-	array<vector<DRAGONBONEDATA>, BONE_TYPE_END> m_Bones;
-	void Update_Bones();
-
 private: /* 페이즈 관련 함수 */
 	_bool m_isPhaseOne = { false };
 	_bool m_isPhaseTwo = { false };
@@ -131,6 +126,8 @@ private:
 private:
 	//카메라 쉐이크 노티파이에 함수를 넣기 위한 클래스
 	CCamera_Shake* m_pEnter_Shake = { nullptr };
+	CCamera_Shake* m_pCamera_Shake_Hit_Terrain = { nullptr };
+	CCamera_Shake* m_pStep_Shake = { nullptr };
 
 private:
 	virtual HRESULT Add_Components_for_Shake();
@@ -190,6 +187,11 @@ private: /* 행동 묶음들 */
 	
 private: /* Notify Func */
 	void Exit_Attack();
+	void Enter_Left_Wing_Attack();
+	void Enter_Left_Wing_Hit_Terrain();
+	void Enter_Right_Wing_Attack();
+	void Enter_Right_Wing_Hit_Terrain();
+	void Enter_Tail_Attack();
 	void Shot_Fireball_Black();
 	void Shot_Fireball_White();
 	void Enter_Charge_Attack();

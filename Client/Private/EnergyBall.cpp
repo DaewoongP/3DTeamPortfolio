@@ -471,5 +471,7 @@ void CEnergyBall::Free()
 	Safe_Release(m_pMagicSlot);
 	Safe_Release(m_pParticle_EnergyBall_ChargeDistortion);
 	Safe_Release(m_pParticle_EnergyBall_ChargeDarkBall);
+	for (auto& Conjured : m_pMeshEffect_Conjured)
+		Safe_Release(Conjured);
 	Safe_Release(m_pMeshEffect_Inner_Ball);
 }

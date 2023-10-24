@@ -289,6 +289,6 @@ void CProjectile_White::Free()
 	__super::Free();
 
 	Safe_Release(m_pMeshEffect_Projectile_Black);
-	for (auto MeshEffect : m_pMeshEffect_SplineUp)
+	for (auto& MeshEffect : m_pMeshEffect_SplineUp)
 		Safe_Release(MeshEffect);
 }

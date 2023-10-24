@@ -134,9 +134,11 @@ HRESULT CConjuredDragon::Initialize(void* pArg)
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
+	if (FAILED(Add_Components_for_Shake()))
+		return E_FAIL;
 	if (FAILED(Add_Effects()))
 		return E_FAIL;
-	
+
 	m_pEffect_BlackSmokeIdle->Play(m_pTransform->Get_Position());
 
 	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
@@ -165,6 +167,9 @@ HRESULT CConjuredDragon::Initialize_Level(_uint iCurrentLevelIndex)
 		return E_FAIL;
 
 	if (FAILED(Make_Notifies()))
+		return E_FAIL;
+
+	if (FAILED(Make_Notifies_for_Shake()))
 		return E_FAIL;
 
 	if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
@@ -202,7 +207,6 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	m_pHitMatrix = m_HitMatrices[rand() % 3];
-	Update_Bones();
 	Update_Invincible(fTimeDelta);
 	Check_Air_Balance(fTimeDelta);
 	EnergyBall_PhaseOne(fTimeDelta);
@@ -500,18 +504,6 @@ void CConjuredDragon::Check_Air_Balance(const _float& fTimeDelta)
 	}
 }
 
-void CConjuredDragon::Update_Bones()
-{
-	for (_uint i = 0; i < BONE_TYPE_END; ++i)
-	{
-		for (auto Desc : m_Bones[i])
-		{
-			_float4x4 BoneWorldMatrix = *Desc.pCombinedTransformationMatrix * m_pModelCom->Get_PivotFloat4x4() * m_pTransform->Get_WorldMatrix();
-			Desc.vPosition = BoneWorldMatrix.Translation();
-		}
-	}
-}
-
 void CConjuredDragon::Check_Phase()
 {
 	if (true == m_isPhaseOne)
@@ -538,11 +530,31 @@ HRESULT CConjuredDragon::Add_Components_for_Shake()
 {
 	try
 	{
-		/*CCamera_Shake::CAMERA_SHAKE_DESC Camera_Shake_Desc = { CCamera_Shake::CAMERA_SHAKE_DESC() };
+		CCamera_Shake::CAMERA_SHAKE_DESC Camera_Shake_Desc = { CCamera_Shake::CAMERA_SHAKE_DESC() };
 
-		_float fMaxDistance = { 30.0f };
-		_float fMinDistance = { 2.0f };
+		_float fMaxDistance = { 60.0f };
+		_float fMinDistance = { 5.0f };
 
+		Camera_Shake_Desc.eShake_Priority = CCamera_Manager::SHAKE_PRIORITY_1;
+		Camera_Shake_Desc.isDistanceOption = true;
+		Camera_Shake_Desc.pTransform = m_pTransform;
+		Camera_Shake_Desc.Shake_Info_Desc.eEase = CEase::IN_EXPO;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Axis = CCamera_Manager::SHAKE_AXIS_UP;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Power = CCamera_Manager::SHAKE_POWER_DECRECENDO;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Type = CCamera_Manager::SHAKE_TYPE_TRANSLATION;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakeDuration = 0.2f;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakePower = 0.05f;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakeSpeed = 10.0f;
+		Camera_Shake_Desc.Shake_Info_Desc.vShake_Axis_Set = _float3();
+
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Enemy_Camera_Shake"),
+			TEXT("Com_Camera_Shake_Hit_Terrain"), reinterpret_cast<CComponent**>(&m_pCamera_Shake_Hit_Terrain), &Camera_Shake_Desc)))
+			throw TEXT("Com_Camera_Shake_Hit_Terrain");
+
+		fMaxDistance = { 60.0f };
+		fMinDistance = { 5.0f };
+
+		m_pCamera_Shake_Hit_Terrain->Ready_Shake(fMaxDistance, fMinDistance, Camera_Shake_Desc.Shake_Info_Desc.fShakePower);
 
 		Camera_Shake_Desc.eShake_Priority = CCamera_Manager::SHAKE_PRIORITY_1;
 		Camera_Shake_Desc.isDistanceOption = true;
@@ -560,7 +572,8 @@ HRESULT CConjuredDragon::Add_Components_for_Shake()
 			TEXT("Com_Step_Shake"), reinterpret_cast<CComponent**>(&m_pStep_Shake), &Camera_Shake_Desc)))
 			throw TEXT("Com_Step_Shake");
 
-		m_pStep_Shake->Ready_Shake(fMaxDistance, fMinDistance, Camera_Shake_Desc.Shake_Info_Desc.fShakePower);*/
+		m_pStep_Shake->Ready_Shake(fMaxDistance, fMinDistance, Camera_Shake_Desc.Shake_Info_Desc.fShakePower);
+
 
 	}
 	catch (const _tchar* pErrorTag)
@@ -578,7 +591,26 @@ HRESULT CConjuredDragon::Add_Components_for_Shake()
 
 HRESULT CConjuredDragon::Make_Notifies_for_Shake()
 {
-	return E_NOTIMPL;
+	function<void()> Func = [&] { m_pCamera_Shake_Hit_Terrain->RandomRightAxisShake(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Hit_Terrain"), Func)))
+		return E_FAIL;
+
+	Func = [&] {m_pStep_Shake->RandomUpAxisShake(); };
+
+	m_pModelCom->Bind_Notifies(TEXT("Enter_Camera_Shake_Step_1"), Func);
+	m_pModelCom->Bind_Notifies(TEXT("Enter_Camera_Shake_Step_2"), Func);
+
+	m_pModelCom->Bind_Notifies(TEXT("End_Camera_Shake_Step_1"), Func);
+	m_pModelCom->Bind_Notifies(TEXT("End_Camera_Shake_Step_2"), Func);
+	m_pModelCom->Bind_Notifies(TEXT("End_Camera_Shake_Step_3"), Func);
+	m_pModelCom->Bind_Notifies(TEXT("End_Camera_Shake_Step_4"), Func);
+	m_pModelCom->Bind_Notifies(TEXT("End_Camera_Shake_Step_5"), Func);
+
+	m_pModelCom->Bind_Notifies(TEXT("Loop_Camera_Shake_Step_1"), Func);
+	m_pModelCom->Bind_Notifies(TEXT("Loop_Camera_Shake_Step_2"), Func);
+	m_pModelCom->Bind_Notifies(TEXT("Loop_Camera_Shake_Step_3"), Func);
+
+	return S_OK;
 }
 
 HRESULT CConjuredDragon::Make_AI()
@@ -716,21 +748,30 @@ HRESULT CConjuredDragon::Make_Notifies()
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Change_Animation"), Func)))
 		return E_FAIL;
 
-	Func = [&] { m_pWeapon_Left_Wing->On_Collider_Attack(); };
+	Func = [&] { this->Enter_Left_Wing_Attack(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Enter_Left_Wing_Attack"), Func)))
 		return E_FAIL;
 
-	Func = [&] { m_pWeapon_Right_Wing->On_Collider_Attack(); };
+	Func = [&] { this->Enter_Left_Wing_Hit_Terrain(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Enter_Left_Wing_Hit_Terrain"), Func)))
+		return E_FAIL;
+
+	Func = [&] { this->Enter_Right_Wing_Attack(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Enter_Right_Wing_Attack"), Func)))
 		return E_FAIL;
 	
-	Func = [&] { m_pWeapon_Tail->On_Collider_Attack(); };
+	Func = [&] { this->Enter_Right_Wing_Hit_Terrain(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Enter_Right_Wing_Hit_Terrain"), Func)))
+		return E_FAIL;
+
+	Func = [&] { this->Enter_Tail_Attack(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Enter_Tail_Attack"), Func)))
 		return E_FAIL;
 
 	Func = [&] { this->Enter_Charge_Attack(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Enter_Charge_Attack"), Func)))
 		return E_FAIL;
+
 
 	Func = [&] { this->Exit_Attack(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Exit_Attack"), Func)))
@@ -996,26 +1037,14 @@ HRESULT CConjuredDragon::Bind_HitMatrices()
 	
 	/* Setting Wing, Tail Bone Matrices */
 	DRAGONBONEDATA BoneData;
-	pBone = m_pModelCom->Get_Bone_Index(150);
-	if (nullptr == pBone)
+	if (FAILED(m_pWeapon_Left_Wing->Set_Bone_Data(m_pModelCom)))
 		return E_FAIL;
-	BoneData.pCombinedTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
-	m_Bones[LEFT_WING].push_back(BoneData);
 
-	pBone = m_pModelCom->Get_Bone_Index(151);
-	if (nullptr == pBone)
+	if (FAILED(m_pWeapon_Right_Wing->Set_Bone_Data(m_pModelCom)))
 		return E_FAIL;
-	BoneData.pCombinedTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
-	m_Bones[RIGHT_WING].push_back(BoneData);
 
-	for (_uint i = 171; i < 185; ++i)
-	{
-		pBone = m_pModelCom->Get_Bone_Index(i);
-		if (nullptr == pBone)
-			return E_FAIL;
-		BoneData.pCombinedTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
-		m_Bones[TAIL].push_back(BoneData);
-	}
+	if (FAILED(m_pWeapon_Tail->Set_Bone_Data(m_pModelCom)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -1055,7 +1084,7 @@ HRESULT CConjuredDragon::Add_Effects()
 		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_BoomWispy"),
 			TEXT("Com_Pulse_BoomWispy"), reinterpret_cast<CComponent**>(&m_pEffect_Pulse_BoomWispy))))
 			throw TEXT("Com_Pulse_BoomWispy");
-
+		
 		m_pEffect_Pulse_Charge->Disable();
 		m_pEffect_Pulse_SplashWater->Disable();
 		m_pEffect_Pulse_Rock->Disable();
@@ -1968,7 +1997,7 @@ HRESULT CConjuredDragon::Make_Ground_Attacks_Melee(_Inout_ CSequence* pSequence)
 		__debugbreak();
 
 		ENDINSTANCE;
-
+		
 		return E_FAIL;
 	}
 
@@ -2714,6 +2743,31 @@ void CConjuredDragon::Exit_Attack()
 	m_pRigidBody->Disable_Collision("Attack_Body");
 }
 
+void CConjuredDragon::Enter_Left_Wing_Hit_Terrain()
+{
+	m_pWeapon_Left_Wing->Enter_Hit_Terrain();
+}
+
+void CConjuredDragon::Enter_Left_Wing_Attack()
+{ 
+	m_pWeapon_Left_Wing->On_Collider_Attack();
+}
+
+void CConjuredDragon::Enter_Right_Wing_Attack()
+{
+	m_pWeapon_Right_Wing->On_Collider_Attack();
+}
+
+void CConjuredDragon::Enter_Right_Wing_Hit_Terrain()
+{
+	m_pWeapon_Right_Wing->Enter_Hit_Terrain();
+}
+
+void CConjuredDragon::Enter_Tail_Attack()
+{
+	m_pWeapon_Tail->On_Collider_Attack();
+}
+
 void CConjuredDragon::Shot_Fireball_Black()
 {
 	if (nullptr == m_pTarget)
@@ -2763,9 +2817,8 @@ void CConjuredDragon::Action_Pulse()
 	PulseInitDesc.pTarget = m_pTarget;
 	m_pPulse->Reset(PulseInitDesc);
 
-	m_pEffect_ImpulseSphere->Play(m_vOffsetPos);
-	m_pEffect_Pulse_BoomWispy->Play(m_vOffsetPos);
-	
+	m_pEffect_ImpulseSphere->Play(m_vOffsetPos, m_pPlayer->Get_Transform()->Get_Position().y);
+	m_pEffect_Pulse_BoomWispy->Play(m_vOffsetPos);	
 }
 
 void CConjuredDragon::Pulse_Charge()

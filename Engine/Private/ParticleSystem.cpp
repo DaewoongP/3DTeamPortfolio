@@ -392,7 +392,8 @@ HRESULT CParticleSystem::Setup_ShaderResources()
 		_float fTimeAcc = pGameInstance->Get_World_TimeAcc();
 		if (FAILED(m_pShader->Bind_RawValue("g_fTime", &fTimeAcc, sizeof(_float))))
 			throw "g_fTime";
-
+		// 언제 실행할지 : 애니메이션 프레임에 맞춰서
+		// 어디에서 실행할지 : 뼈의 정점에서
 		_int iClipChannel = { 3 };
 		if (m_ShapeModuleDesc.strClipChannel == "Red") { iClipChannel = 0; }
 		else if (m_ShapeModuleDesc.strClipChannel == "Green") { iClipChannel = 1; }

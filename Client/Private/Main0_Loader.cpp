@@ -283,7 +283,7 @@ HRESULT CMain0_Loader::Loading_For_Vault(LEVELID eLevelID)
 	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Torch"),
 		CEvent_Vault_Torch::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Event_Torch");
-		
+
 	/* For.Prototype_GameObject_Event_Enter_Vault */
 	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Enter_Vault"),
 		CEvent_Enter_Vault::Create(m_pDevice, m_pContext))))
@@ -350,7 +350,7 @@ HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Spawn_Dragon"),
 			CEvent_Spawn_Dragon::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Event_Spawn_Dragon");
-			
+
 		/* For.Prototype_GameObject_Test_Particle */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MapParticle_Sanctum_CircularRocks01"),
 			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/MapParticle/Sanctum/CircularRocks01"), eLevelID))))
@@ -364,7 +364,7 @@ HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 		__debugbreak();
 		return E_FAIL;
 	}
-	
+
 	return S_OK;
 }
 
@@ -489,7 +489,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Guide_Book"),
 				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM,
-				TEXT("../../Resources/Models/Anims/Anim_GuideBook/Anim_GuideBook.dat")))))
+					TEXT("../../Resources/Models/Anims/Anim_GuideBook/Anim_GuideBook.dat")))))
 				throw TEXT("Prototype_Component_Model_Guide_Book");
 #pragma endregion
 		}
@@ -586,7 +586,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_Debug"),
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Debug.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
 			throw TEXT("Prototype_Component_Shader_Debug");
-			
+
 		/* For.Prototype_Component_Shader_Water */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_Water"),
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Water.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements))))
@@ -615,7 +615,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RadialBlur"),
 			CRadialBlur::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_RadialBlur");
-		
+
 		/* Prototype_Component_Model_Shpere */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Shpere"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat")))))
@@ -647,7 +647,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		/*For.Player_Hit*/
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Player_Hit_Particle")
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/PlayerHit/HitParticle"), eLevelID))))
-			throw TEXT("Prototype_GameObject_Player_Hit_Particle");	
+			throw TEXT("Prototype_GameObject_Player_Hit_Particle");
 
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Player_Hit_Fog")
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/PlayerHit/HitFog"), eLevelID))))
@@ -790,7 +790,11 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Bombarda"),
 			CBombarda::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Bombarda");
-			
+
+		/* For.Prototype_GameObject_Blink_Trail */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Blink_Trail"),
+			CBlink_Effect::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Blink_Trail");
 
 		/* For.Prototype_GameObject_Projectile_Black */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Projectile_Black"),
@@ -806,7 +810,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Pensive_Ground_Ball"),
 			CPensive_Ground_Ball::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Pensive_Ground_Ball");
-		
+
 		/* For.Prototype_GameObject_Pensive_Fail_Ball */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Pensive_Fail_Ball"),
 			CPensive_Fail_Ball::Create(m_pDevice, m_pContext, eLevelID))))
@@ -818,7 +822,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			throw TEXT("Prototype_GameObject_Pensive_Shouting");
 
 		/* For.Prototype_GameObject_Pensive_Sword_Throw */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Pensive_Sword_Throw"), 
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Pensive_Sword_Throw"),
 			CPensive_Sword_Throw::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Pensive_Sword_Throw");
 
@@ -829,8 +833,8 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Monster_DarkFlare_Particle"),
 			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Monster_DarkFlare/"), eLevelID))))
-			throw TEXT("Prototype_Monster_DarkFlare_Particle");		
-		
+			throw TEXT("Prototype_Monster_DarkFlare_Particle");
+
 		{
 			CMagicBallPool* pMagicBallPool = CMagicBallPool::GetInstance();
 			Safe_AddRef(pMagicBallPool);
@@ -848,7 +852,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Magic_Sound_Manager"),
 			CMagic_Sound_Manager::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Magic_Sound_Manager");
-		
+
 #pragma endregion
 
 #pragma region Load Particle
@@ -948,7 +952,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DogBog_Water_Foot"),
 				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/DogBog_Water_Foot/"), 3)))
 				throw TEXT("Reserve Particle : Particle_DogBog_Water_Foot");
-		
+
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_Dust_Hit"),
 				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Monster_Hit/Troll_Dust/"), 3)))
 				throw TEXT("Reserve Particle : Particle_Troll_Dust_Hit");
@@ -1025,6 +1029,10 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Flare"),
 				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Flare/"), 3)))
 				throw TEXT("Reserve Particle : Particle_Pensive_Appear_Flare");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Conjured_Step_Dust"),
+				TEXT("../../Resources/GameData/ParticleData/BoneDragon/StepDust/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Conjured_Step_Dust");
 		}
 #pragma endregion
 
