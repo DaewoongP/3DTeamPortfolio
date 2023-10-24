@@ -334,6 +334,15 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 	try
 	{
 #pragma region Player
+		/* For.Prototype_GameObject_Player*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Particle_Broom_Wind_Screen"),
+			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Broom/Wind_Screen/")))))
+			throw TEXT("Particle_Broom_Wind_Screen");
+
+		/* For.Prototype_GameObject_Player*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Particle_Broom_Broom_Stick"),
+			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Broom/Broom_Stick/")))))
+			throw TEXT("Particle_Broom_Broom_Stick");
 
 		/* For.Prototype_GameObject_Player*/
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Player"),

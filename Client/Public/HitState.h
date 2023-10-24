@@ -33,6 +33,7 @@ public:
     typedef struct tagHitStateDesc
     {
         _uint iHitType = { 0 };
+        BUFF_TYPE eBuffType = { BUFF_NONE };
         const CTransform* pTransform = { nullptr };
     }HITSTATEDESC;
 
@@ -63,7 +64,7 @@ private:
 
     //¿”Ω√∑Œ ∏∏µÎ
     _bool m_isPowerfulHit = { true };
-
+    BUFF_TYPE m_eBuffType = { BUFF_NONE };
     CTransform* m_pTargetTransform = { nullptr };
 
 private:
