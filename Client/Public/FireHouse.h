@@ -2,7 +2,10 @@
 #include "MapObject.h"
 #include "Client_Defines.h"
 
+#define MAX_FIRES  5
+
 BEGIN(Engine)
+class CBone;
 class CParticleSystem;
 END
 
@@ -16,7 +19,7 @@ private: // 어떤 집인지
 					HOUSE_HONEY,	// 트롤 트리거 오른쪽에 있음. HoneyDukes 라는 간판이 있다.
 					HOUSE_QUILL,	// 공원 바로 왼쪽에 있는 집
 					HOUSE_TEASHOP,	// 트롤 트리거 왼쪽에 있음. 앞에 테이블과 의자가 있다.
-					HOUSE_DB_GR,		// 가운데 다리같은 구조물이 있는 건물
+					HOUSE_DB_GR,	// 가운데 다리같은 구조물이 있는 건물 -- 
 					HOUSE_END
 	};
 
@@ -35,6 +38,10 @@ public:
 
 private:
 	HOUSETYPE m_eHouseType = { HOUSE_END };
+
+private:
+	vector<CParticleSystem*>	m_Particles;
+	vector<_uint>				m_Indices;
 
 public:
 	static CFireHouse* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
