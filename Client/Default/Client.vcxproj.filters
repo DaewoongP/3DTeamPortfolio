@@ -946,6 +946,12 @@
     <Filter Include="02. GameObject\03. MapObject\Env\FireHouse">
       <UniqueIdentifier>{3ff7d6fc-2dbc-4c49-8742-7a09473f52fd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Env\Lamp_Wall">
+      <UniqueIdentifier>{3914e668-c075-44ca-b36d-46b40b97100d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Env\FireWood">
+      <UniqueIdentifier>{c1375e26-5c15-417e-b1db-d78bebb3a69a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1880,6 +1886,9 @@
     <ClInclude Include="..\Public\FireHouse.h">
       <Filter>02. GameObject\03. MapObject\Env\FireHouse</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Lamp_Wall.h">
+      <Filter>02. GameObject\03. MapObject\Env\Lamp_Wall</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2773,6 +2782,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\FireHouse.cpp">
       <Filter>02. GameObject\03. MapObject\Env\FireHouse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Lamp_Wall.cpp">
+      <Filter>02. GameObject\03. MapObject\Env\Lamp_Wall</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
