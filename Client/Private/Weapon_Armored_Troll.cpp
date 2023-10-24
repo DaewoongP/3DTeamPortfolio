@@ -70,7 +70,10 @@ HRESULT CWeapon_Armored_Troll::Render()
 	if (FAILED(Set_Shader_Resources()))
 		return E_FAIL;
 
-	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
+	if (FAILED(m_pEmissiveTexture->Bind_ShaderResource(m_pShaderCom, "g_EmissiveTexture")))
+		return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
@@ -81,8 +84,8 @@ HRESULT CWeapon_Armored_Troll::Render()
 
 			if (false == m_isDissolve)
 			{
-				if (FAILED(m_pShaderCom->Begin("Mesh")))
-					throw TEXT("Failed Begin : Mesh");
+				if (FAILED(m_pShaderCom->Begin("Mesh_Emissive")))
+					throw TEXT("Failed Begin : Mesh_Emissive");
 			}
 			else
 			{
@@ -160,6 +163,11 @@ HRESULT CWeapon_Armored_Troll::Add_Components(void* pArg)
 		m_pDissolveTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/VFX/Textures/Noises/VFX_T_NoiseGreypack02_D.png"));
 		if (nullptr == m_pDissolveTexture)
 			throw TEXT("m_pDissolveTexture is nullptr");
+
+		/* For.EmissiveTexture */
+		m_pEmissiveTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/NonAnims/Troll_Armored_Club/T_WPN_Troll_Club07_E.dds"));
+		if (nullptr == m_pEmissiveTexture)
+			throw TEXT("EmissiveTexture");
 
 		/* For.Com_RigidBody */
 		CRigidBody::RIGIDBODYDESC RigidBodyDesc;
@@ -329,5 +337,6 @@ void CWeapon_Armored_Troll::Free()
 		Safe_Release(m_pRendererCom);
 		Safe_Release(m_pShadowShaderCom);
 		Safe_Release(m_pDissolveTexture);
+		Safe_Release(m_pEmissiveTexture);
 	}
 }

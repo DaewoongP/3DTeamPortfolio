@@ -505,13 +505,7 @@ void CEnemy::Tick_Spells()
 
 HRESULT CEnemy::Remove_GameObject(const wstring& wstrObjectTag)
 {
-	auto iter = find_if(m_RangeInEnemies.begin(), m_RangeInEnemies.end(), [&](auto& Pair)->_bool
-		{
-			if (wstring::npos != Pair.first.find(wstrObjectTag))
-				return true;
-
-			return false;
-		});
+	auto iter = m_RangeInEnemies.find(wstrObjectTag);
 
 	if (iter == m_RangeInEnemies.end())
 		return E_FAIL;

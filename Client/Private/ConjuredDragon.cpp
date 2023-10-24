@@ -46,88 +46,74 @@ HRESULT CConjuredDragon::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
+
 	BEGININSTANCE;
-	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle")))
+	try
 	{
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/BlackSmokeIdle/"), LEVEL_SANCTUM))))
+		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle")))
 		{
-			ENDINSTANCE;
-			return E_FAIL;
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle")
+				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/BlackSmokeIdle/"), LEVEL_SANCTUM))))
+				throw;
 		}
-	}
 
-	// Pulse
-	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Charge")))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Charge")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/Charge/"), LEVEL_SANCTUM))))
+		// Pulse
+		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Charge")))
 		{
-			ENDINSTANCE;
-			return E_FAIL;
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Charge")
+				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/Charge/"), LEVEL_SANCTUM))))
+				throw;
 		}
-	}
 
-	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit")))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/CircleEmit/"), LEVEL_SANCTUM))))
+		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit")))
 		{
-			ENDINSTANCE;
-			return E_FAIL;
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit")
+				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/CircleEmit/"), LEVEL_SANCTUM))))
+				throw;
 		}
-	}
 
-	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Rock")))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Rock")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/Rock/"), LEVEL_SANCTUM))))
+		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Rock")))
 		{
-			ENDINSTANCE;
-			return E_FAIL;
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Rock")
+				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/Rock/"), LEVEL_SANCTUM))))
+				throw;
 		}
-	}
 
-	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_SplashWater")))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_SplashWater")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/SplashWater/"), LEVEL_SANCTUM))))
+		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_SplashWater")))
 		{
-			ENDINSTANCE;
-			return E_FAIL;
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_SplashWater")
+				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/SplashWater/"), LEVEL_SANCTUM))))
+				throw;
 		}
-	}
 
-	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_BoomWispy")))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_BoomWispy")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/BoomWispy/"), LEVEL_SANCTUM))))
+		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_BoomWispy")))
 		{
-			ENDINSTANCE;
-			return E_FAIL;
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_BoomWispy")
+				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/BoomWispy/"), LEVEL_SANCTUM))))
+				throw;
 		}
-	}
 
-	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_ImpulseSphere_Effect")))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_ImpulseSphere_Effect"),
-			CImpulseSphere_Effect::Create(m_pDevice, m_pContext, LEVEL_SANCTUM))))
+		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_ImpulseSphere_Effect")))
 		{
-			ENDINSTANCE;
-			return E_FAIL;
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_ImpulseSphere_Effect"),
+				CImpulseSphere_Effect::Create(m_pDevice, m_pContext, LEVEL_SANCTUM))))
+				throw;
 		}
-	}
 
-	// Breath_Effect
-	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Breath_Effect")))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Breath_Effect"),
-			CBreath_Effect::Create(m_pDevice, m_pContext, LEVEL_SANCTUM))))
+		// Breath_Effect
+		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Breath_Effect")))
 		{
-			ENDINSTANCE;
-			return E_FAIL;
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Breath_Effect"),
+				CBreath_Effect::Create(m_pDevice, m_pContext, LEVEL_SANCTUM))))
+				throw;
 		}
 	}
+	catch (const std::exception&)
+	{
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+	
 
 	pGameInstance->Read_CutSceneCamera(TEXT("Dragon_Enter"),TEXT("../../Resources/GameData/CutScene/Sanctum_Dragon_Enter.cut"));
 

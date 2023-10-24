@@ -17,6 +17,7 @@ class CAction;
 class CMagicBall;
 class CMagicSlot;
 class CWeapon_DarkWizard_Wand;
+class CBroom_Stick_DarkWizard;
 END
 
 BEGIN(Client)
@@ -43,6 +44,7 @@ private:
 	CMagic::MAGICDESC m_MagicDesc;
 	CMagicBall* m_CastingMagic = { nullptr };
 	CWeapon_DarkWizard_Wand* m_pWeapon = { nullptr };
+	CBroom_Stick_DarkWizard* m_pBroom_Stick = { nullptr };
 
 private:
 	HRESULT Make_AI();
@@ -52,22 +54,30 @@ private:
 	HRESULT Add_Components_Level(_uint iCurrentLevelIndex);
 	HRESULT Bind_HitMatrices();
 
-private: /* 사망처리 전용 함수 */
-	_float m_fDeadTimeAcc = { 0.f };
-	void DeathBehavior(const _float& fTimeDelta);
+private:
+	_float3 m_vMoveTargetPosition;
 
 private: /* 행동 묶음들 */
-	HRESULT Make_Death(_Inout_ CAction* pAction);
-	HRESULT Make_Alive(_Inout_ CSelector* pSelector);
+	HRESULT Make_Check_Spell(_Inout_ CSelector* pSelector);
+	HRESULT Make_Attacks(_Inout_ CRandomChoose* pRandomChoose);
+	HRESULT Make_Move(_Inout_ CSequence* pSequence);
+
+private:
+	_bool is_Enemy(const wstring& wstrObjectTag);
+	const CGameObject* Find_Enemy(const wstring& wstrObjectTag);
+	void Update_Target();
+	void Move(const _float& fTimeDelta);
 
 private: /* Notify Functions */
-	void Attack_Light();
-	void Attack_Heavy();
+	void Cast_Levioso();
+	void Cast_Descendo();
+	void Cast_Flipendo();
+	void Cast_Arrestomomentum();
 	void Shot_Magic();
 
 private:
-	static _uint iNumClass;
-	static _float fAttackCoolTime; // 적군 마법사 무리의 공격 쿨타임
+	_uint m_iCount = 0;
+	static _int iNumClass;
 
 public:
 	static CDarkWizard_Fly* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

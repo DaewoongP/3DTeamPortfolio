@@ -113,7 +113,7 @@ HRESULT CLevel_Smith::Ready_Layer_Monsters(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}
-	
+
 	Safe_Release(pGameInstance);
 
 	return S_OK;

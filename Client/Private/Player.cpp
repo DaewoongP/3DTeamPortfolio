@@ -298,7 +298,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	Go_Protego(&m_ProtegoStateDesc);
 
 	Fix_Mouse();
-	Update_Cloth(fTimeDelta);
+	//Update_Cloth(fTimeDelta);
 
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
@@ -2092,6 +2092,17 @@ void CPlayer::Shot_Basic_Last_Spell()
 
 void CPlayer::Protego()
 {
+	CMagic::MAGICDESC magicInitDesc;
+	magicInitDesc.eBuffType = BUFF_PROTEGO;
+	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+	magicInitDesc.eMagicType = CMagic::MT_ALL;
+	magicInitDesc.eMagicTag = PROTEGO;
+	magicInitDesc.fInitCoolTime = 0.f;
+	magicInitDesc.iDamage = 0;
+	magicInitDesc.fLifeTime = 0.8f;
+	magicInitDesc.fScale = 1.8f;
+	m_pMagicSlot->Add_Magics(magicInitDesc);
+
 	m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_ENEMY_ATTACK | COL_MAGIC | COL_SHIELD_ENEMY), COL_SHIELD, m_isPowerUp);
 }
 

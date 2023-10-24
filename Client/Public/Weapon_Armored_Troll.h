@@ -58,6 +58,7 @@ private:
 	CRigidBody* m_pRigidBody = { nullptr };
 	CShader* m_pShadowShaderCom = { nullptr };
 	CTexture* m_pDissolveTexture = { nullptr };
+	CTexture* m_pEmissiveTexture = { nullptr };
 
 private:
 	HRESULT Add_Components(void* pArg);
