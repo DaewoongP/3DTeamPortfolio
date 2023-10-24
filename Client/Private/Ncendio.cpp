@@ -196,7 +196,7 @@ void CNcendio::Ready_CastMagic()
 	}
 
 	m_vEndPosition = m_CurrentTargetMatrix.Translation();
-	m_vEndPosition += m_vEndPosition *(rand() / 10 + 20) * 0.1f;
+	m_vEndPosition += m_vEndPosition * _float(rand() / 10 + 20) * 0.1f;
 	m_fTimeScalePerDitance = 100 / _float3(m_vEndPosition - m_vStartPosition).Length();
 
 	__super::Ready_CastMagic();

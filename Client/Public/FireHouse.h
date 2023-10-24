@@ -2,7 +2,7 @@
 #include "MapObject.h"
 #include "Client_Defines.h"
 
-#define MAX_FIRES  5
+#define MAX_FIRES  1
 
 BEGIN(Engine)
 class CBone;

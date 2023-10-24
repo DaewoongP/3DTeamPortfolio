@@ -323,19 +323,11 @@ void CEvent_Vault_Spawn::Free()
 	__super::Free();
 	if (true == m_isCloned)
 	{
-	Safe_Release(m_pSpawn_Stage_1);
-	Safe_Release(m_pSpawn_Stage_2);
-	Safe_Release(m_pSpawn_Stage_3);
-	Safe_Release(m_pRenderer);
+		Safe_Release(m_pSpawn_Stage_1);
+		Safe_Release(m_pSpawn_Stage_2);
+		Safe_Release(m_pSpawn_Stage_3);
+		Safe_Release(m_pRenderer);
 	for (auto& Pair : m_pMonsters)
 		Safe_Release(Pair.second);
-
-
-	BEGININSTANCE;
-
-	pGameInstance->Remove_Timer(TEXT("Vault_CutScene_Fade_Out"));
-	pGameInstance->Remove_Timer(TEXT("Vault_CutScene_Play_Cutscene"));
-
-	ENDINSTANCE;
 	}
 }

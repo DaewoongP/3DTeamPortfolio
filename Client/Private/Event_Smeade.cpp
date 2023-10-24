@@ -287,13 +287,6 @@ void CEvent_Smeade::Free()
 		Safe_Release(m_pCutSceneTest);
 		Safe_Release(m_pRenderer);
 
-		BEGININSTANCE;
-
-		pGameInstance->Remove_Timer(TEXT("Troll_Spawn_CutScene_Fade_Out"));
-		pGameInstance->Remove_Timer(TEXT("Troll_Spawn_CutScene_Play"));
-
-		ENDINSTANCE;
-
 		for (auto& Pair : m_pMonsters)
 			Safe_Release(Pair.second);
 	}

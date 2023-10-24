@@ -335,16 +335,5 @@ void CEvent_Spawn_Dragon::Free()
 
 		for (auto& Pair : m_pMonsters)
 			Safe_Release(Pair.second);
-
-
-		BEGININSTANCE;
-
-		pGameInstance->Remove_Timer(TEXT("Sanctum_CutScene_Fade_Out"));
-		pGameInstance->Remove_Timer(TEXT("Sanctum_Egg_CutScene_Play"));
-		pGameInstance->Remove_Timer(TEXT("Sanctum_Dragon_Enter_CutScene_Play"));
-		pGameInstance->Remove_Timer(TEXT("Sanctum_Dragon_Enter_Scream"));
-
-		ENDINSTANCE;
-
 	}
 }

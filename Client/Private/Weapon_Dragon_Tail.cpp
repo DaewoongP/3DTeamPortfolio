@@ -204,6 +204,7 @@ void CWeapon_Dragon_Tail::Free()
 
 	Safe_Release(m_pRigidBody);
 	Safe_Release(m_pEffect_WingAttack_TraceDarkCloud);
+	Safe_Release(m_pEffect_WingAttack_TraceDust);
 #ifdef _DEBUG
 	Safe_Release(m_pRenderer);
 #endif // _DEBUG

@@ -2880,4 +2880,8 @@ void CConjuredDragon::Free()
 	Safe_Release(m_pEffect_Pulse_SplashWater);
 	Safe_Release(m_pEffect_Pulse_BoomWispy);
 	Safe_Release(m_pEffect_ImpulseSphere);
+
+	Safe_Release(m_pEnter_Shake);
+	Safe_Release(m_pCamera_Shake_Hit_Terrain);
+	Safe_Release(m_pStep_Shake);
 }

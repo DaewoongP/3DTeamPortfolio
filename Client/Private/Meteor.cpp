@@ -115,7 +115,7 @@ void CMeteor::Ready_DrawMagic()
 
 void CMeteor::Ready_CastMagic()
 {
-	m_vEndPosition = m_CurrentTargetMatrix.Translation()* (rand()/10+20)*0.1f;
+	m_vEndPosition = m_CurrentTargetMatrix.Translation()* _float(rand() / 10 + 20) * 0.1f;
 	m_pTransform->Set_Position(m_vStartPosition);
 	m_fTimeScalePerDitance = 100 / _float3(m_vEndPosition - m_vStartPosition).Length();
 

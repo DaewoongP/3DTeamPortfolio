@@ -723,7 +723,7 @@ HRESULT CDarkWizard_Fly::Make_Attacks(_Inout_ CRandomChoose* pRandomChoose)
 			{
 				const CGameObject** ppTarget = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("cppTarget", ppTarget)))
-					return E_FAIL;
+					return false;
 
 				return nullptr != *ppTarget;
 			});

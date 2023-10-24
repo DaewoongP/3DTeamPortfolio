@@ -341,7 +341,7 @@ void CPlayer::Tick(_float fTimeDelta)
 			m_pWindParticle->Get_EmissionModuleRef().fRateOverTime = 0.f;
 			break;
 		default:
-			m_pWindParticle->Get_EmissionModuleRef().fRateOverTime = iFast * 5;
+			m_pWindParticle->Get_EmissionModuleRef().fRateOverTime = iFast * 5.f;
 			break;
 		}
 		m_pWindParticle->Get_Transform()->Set_Position(m_pTransform->Get_Position() +
