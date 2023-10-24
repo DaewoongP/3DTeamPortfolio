@@ -1826,15 +1826,6 @@
     <ClInclude Include="..\Public\Weapon_Dragon_Right_Wing.h">
       <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Right_Wing</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_DamageFont.h">
-      <Filter>02. GameObject\05. UI\Font\DamageFont</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Item.h">
-      <Filter>02. GameObject\10. Item</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\UI_Font.h">
-      <Filter>02. GameObject\05. UI\Font\Normal</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_DamageFont.h" />
     <ClInclude Include="..\public\Item.h" />
     <ClInclude Include="..\Public\UI_Font.h" />
@@ -1879,6 +1870,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\FireHouse.h">
       <Filter>02. GameObject\03. MapObject\Env\FireHouse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Item.h">
+      <Filter>02. GameObject\10. Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_DamageFont.h">
+      <Filter>02. GameObject\05. UI\Font\DamageFont</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Font.h">
+      <Filter>02. GameObject\05. UI\Font\Normal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2724,12 +2724,6 @@
     <ClCompile Include="..\Private\Weapon_Dragon_Right_Wing.cpp">
       <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Right_Wing</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_DamageFont.cpp">
-      <Filter>02. GameObject\05. UI\Font\DamageFont</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Item.cpp">
-      <Filter>02. GameObject\10. Item</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UI_DamageFont.cpp" />
     <ClCompile Include="..\private\Item.cpp" />
     <ClCompile Include="..\Private\Cat.cpp">
@@ -2773,6 +2767,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\FireHouse.cpp">
       <Filter>02. GameObject\03. MapObject\Env\FireHouse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Item.cpp">
+      <Filter>02. GameObject\10. Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_DamageFont.cpp">
+      <Filter>02. GameObject\05. UI\Font\DamageFont</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
