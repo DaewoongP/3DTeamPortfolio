@@ -25,6 +25,10 @@ public:
     void Go_Hover_Idle();
     void Go_Move();
 
+private:
+    _bool m_isAppearTrigger = { false };
+    _float m_fTimeAcc = { 0.f };
+
 public:
     static CBroom_Begin* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
     virtual CComposite* Clone(void* pArg) override;

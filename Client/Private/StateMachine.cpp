@@ -73,6 +73,7 @@ HRESULT CStateMachine::Initialize(void* pArg)
 
 	Safe_AddRef(m_StateMachineDesc.pOwnerModel);
 	Safe_AddRef(m_StateMachineDesc.pPlayerTransform);
+	Safe_AddRef(m_StateMachineDesc.pBroom);
 
 	return S_OK;
 }
@@ -95,6 +96,16 @@ void CStateMachine::Change_Animation(const wstring& _AnimationTag, _bool _isLumo
 		}
 	}
 	else
+	{
+		m_StateMachineDesc.pOwnerModel->Change_Animation(_AnimationTag, CModel::OTHERBODY);
+	}
+}
+
+void CStateMachine::Change_Animation_FlyAttack(const wstring& _AnimationTag)
+{
+	m_StateMachineDesc.pOwnerModel->Change_Animation(_AnimationTag);
+
+	if (m_StateMachineDesc.pOwnerModel->Is_Finish_Animation(CModel::OTHERBODY))
 	{
 		m_StateMachineDesc.pOwnerModel->Change_Animation(_AnimationTag, CModel::OTHERBODY);
 	}
@@ -166,6 +177,7 @@ void CStateMachine::Free()
 		{
 			Safe_Release(m_StateMachineDesc.pOwnerModel);
 			Safe_Release(m_StateMachineDesc.pPlayerTransform);
+			Safe_Release(m_StateMachineDesc.pBroom);
 		}
 	}
 }

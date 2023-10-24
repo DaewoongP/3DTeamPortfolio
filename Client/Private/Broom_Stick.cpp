@@ -32,14 +32,29 @@ HRESULT CBroom_Stick::Initialize(void* pArg)
 	if (FAILED(Add_Components(pArg)))
 		return E_FAIL;
 
-	//m_pParticle->Play(m_OffsetMatrix.Translation());
+	m_pParticle->Play(m_OffsetMatrix.Translation());
 
  	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 
-	m_OffsetMatrix = XMMatrixScaling(0.5f, 0.5f, 0.5f)
+	m_OffsetMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f)
 		* XMMatrixRotationY(XMConvertToRadians(100)) * XMMatrixRotationZ(XMConvertToRadians(110))
-		* XMMatrixTranslation(0.53f,0.f,-0.99f);
+		* XMMatrixTranslation(0.53f, 0.f, -0.99f);
+
+	_float4x4 RotationMatrix = XMMatrixRotationQuaternion(
+		XMQuaternionRotationAxis(XMVector3Normalize(_float3(1, 0, 0)), 1 * -30.f));
+
+	_float3 vRight = m_OffsetMatrix.Right();
+	_float3 vUp = m_OffsetMatrix.Up();
+	_float3 vLook = m_OffsetMatrix.Look();
+
+	vRight = XMVector3TransformNormal(vRight, RotationMatrix);
+	vUp = XMVector3TransformNormal(vUp, RotationMatrix);
+	vLook = XMVector3TransformNormal(vLook, RotationMatrix);
+
+	memcpy(&m_OffsetMatrix.m[0][0], &vRight, sizeof(_float3));
+	memcpy(&m_OffsetMatrix.m[1][0], &vUp, sizeof(_float3));
+	memcpy(&m_OffsetMatrix.m[2][0], &vLook, sizeof(_float3));
 
 	return S_OK;
 }
@@ -47,6 +62,7 @@ HRESULT CBroom_Stick::Initialize(void* pArg)
 void CBroom_Stick::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	
 	HeadParticle(fTimeDelta);
 }
 
@@ -59,7 +75,16 @@ void CBroom_Stick::Late_Tick(_float fTimeDelta)
 	CombinedWorldMatrix = m_OffsetMatrix * m_ParentMatrixDesc.OffsetMatrix * *m_ParentMatrixDesc.pCombindTransformationMatrix * m_ParentMatrixDesc.PivotMatrix *
 		  *m_ParentMatrixDesc.pParentWorldMatrix;
 	m_pTransform->Set_WorldMatrix(CombinedWorldMatrix);
+	
+	_float4x4 TempMatrix = static_cast<CGameObject*>(m_pOwner)->Get_Transform()->Get_WorldMatrix();
+	TempMatrix.m[3][0] = 0;
+	TempMatrix.m[3][1] = 0;
+	TempMatrix.m[3][2] = 0;
+	m_pParticle->Get_ShapeModuleRef().ShapeMatrix =
+		m_pParticle->Get_ShapeModuleRef().ShapeMatrixInit * TempMatrix;
+	m_pParticle->Get_Transform()->Set_Position(m_pTransform->Get_Position() /*+ m_pTransform->Get_Look()*-2*/);
 
+	m_pParticle->Late_Tick(fTimeDelta);
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 }
@@ -102,7 +127,7 @@ void CBroom_Stick::HeadParticle(_float fTimeDelta)
 {
 	if (nullptr != m_pOwner)
 	{
-		//m_pParticle->Get_Transform()->Set_Position(_float4x4(m_OffsetMatrix*m_pTransform->Get_WorldMatrix()).Translation());
+		m_pParticle->Get_Transform()->Set_Position(_float4x4(m_OffsetMatrix*m_pTransform->Get_WorldMatrix()).Translation());
 	}
 	
 }
@@ -122,6 +147,15 @@ HRESULT CBroom_Stick::Add_Components(void* pArg)
 		if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxMesh"), TEXT("Com_Shader_Mesh"),
 			(CComponent**)&m_pShaderCom, this)))
 			throw TEXT("Failed Add_Component : Com_Shader_Mesh");
+
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Particle_Broom_Broom_Stick"),
+			TEXT("Com_Broom_Broom_Stick"), reinterpret_cast<CComponent**>(&m_pParticle))))
+		{
+			MSG_BOX("Failed Add_GameObject : (Com_Broom_Broom_Stick)");
+			__debugbreak();
+			return E_FAIL;
+		}
+		
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -207,6 +241,6 @@ void CBroom_Stick::Free()
 		Safe_Release(m_pModelCom);
 		Safe_Release(m_pShaderCom);
 		Safe_Release(m_pRendererCom);
-		//Safe_Release(m_pParticle);
+		Safe_Release(m_pParticle);
 	}
 }
