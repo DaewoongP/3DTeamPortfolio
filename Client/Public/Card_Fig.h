@@ -21,6 +21,16 @@ BEGIN(Client)
 
 class CCard_Fig final : public CGameObject
 {
+private:
+	enum CARDFIGSCRIPT
+	{
+		ENTERVAULT,
+		ENTERSANCTUM,
+		CREATEDRAGON,
+		DRAGONHPDOWN,
+		CARDFIGSCRIPT_END
+	};
+
 public:
 	typedef struct tagCardFigInitDesc
 	{
@@ -46,12 +56,20 @@ public:
 	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix) override;
 
 public:
+	void		Set_ShowCard(_bool isShow = true) {
+		m_isShowCard = isShow;
+	}
+	void		Set_CreateDragon(_bool isCreate = true) {
+		m_isCreateDragon = isCreate;
+	}
+
+public:
 	void Spawn_Fig(const CGameObject* pTarget);
 
 private:
 	_float4x4 m_OffsetMatrix;
 	const _float4x4* m_pParentWorldMatrix = { nullptr };
-	
+
 	const CGameObject* m_pTarget = { nullptr };
 	_bool m_isSpawn = { false };
 	_bool m_isAction1 = { true };
@@ -66,8 +84,9 @@ private:
 
 private: /* 피그 교수 이벤트 관련 데이터 */
 	_bool m_isEnterVault = { false };
-	_bool m_isDragonDeath = { false };
+	_bool m_isCreateDragon = { false };
 	_bool m_isDragonHpDown = { false };
+	_bool m_isDragonDeath = { false };
 
 private:
 	CModel* m_pModelCom = { nullptr };
@@ -102,9 +121,15 @@ private: /* Notify */
 
 private:
 	_bool		m_isShowCard = { false };
+	_bool		m_isPlayScript = { false };
+	_uint		m_iScriptIndex = { 0 };
+
+	_bool		m_isEnterValutScriptEnd = { false };
 
 private: // Four UI
 	void		Ready_Card_UI();
+	void		Script_Finish_Check();
+	void		Play_Script(_float fTimeDelta);
 
 public:
 	static CCard_Fig* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

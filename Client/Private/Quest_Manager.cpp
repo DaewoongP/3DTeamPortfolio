@@ -23,7 +23,9 @@ void CQuest_Manager::Unlock_Quest(const _tchar* szQuestTag)
 {
 	CQuest* pQuest = Find_Quest(szQuestTag);
 
-	if (nullptr == pQuest)
+	QUESTSTATE state =pQuest->Get_State();
+
+	if (nullptr == pQuest || QUESTSTATE_CLEAR == state )
 		return;
 
 	pQuest->Set_State(QUESTSTATE::QUESTSTATE_UNLOCK);

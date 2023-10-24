@@ -7,6 +7,7 @@
 
 #include "UI_Dissolve.h"
 #include "Quest_Manager.h"
+#include "Script.h"
 
 CCard_Fig::CCard_Fig(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -81,7 +82,9 @@ void CCard_Fig::Tick(_float fTimeDelta)
 		Action(fTimeDelta);
 	}
 
-	Ready_Card_UI();
+	Play_Script(fTimeDelta);
+
+	m_pUI_Card->Set_PlayDissolve(m_isShowCard);
 
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
@@ -91,8 +94,14 @@ void CCard_Fig::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
+	if (m_isPlayScript)
+
+		m_pScripts[m_iScriptIndex]->Late_Tick(fTimeDelta);
+
 	if (false == m_isSpawn)
 		return;
+
+
 
 	if (nullptr != m_pRenderer)
 	{
@@ -351,7 +360,31 @@ HRESULT CCard_Fig::Add_Components()
 		m_pUI_Card->Load(UIDesc);
 		m_pUI_Card->Set_PlayDissolve(false);
 		//m_pUI_Card->Set_Effecttype();
+		                            
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
 
+		m_pScripts.clear();
+		_bool isCard = true;
+		CScript* pScript = static_cast<CScript*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Script"), &isCard));
+		pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Fig/Card_Fig_1_1.png"));
+		pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Fig/Card_Fig_1_2_Edit.png"));
+		m_pScripts.push_back(pScript);
+
+		pScript = static_cast<CScript*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Script"), &isCard));
+		pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Fig/Card_Fig_2.png"));
+		m_pScripts.push_back(pScript);
+
+		pScript = static_cast<CScript*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Script"), &isCard));
+		pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Fig/Card_Fig_3_1.png"));
+		pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Fig/Card_Fig_3_2.png"));
+		m_pScripts.push_back(pScript);
+
+		pScript = static_cast<CScript*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Script"), &isCard));
+		pScript->Add_Script(TEXT("../../Resources/UI/Game/Script/Fig/Card_Fig_4.png"));
+		m_pScripts.push_back(pScript);
+
+		Safe_Release(pGameInstance);
 
 	}
 	catch (const _tchar* pErrorTag)
@@ -564,6 +597,66 @@ void CCard_Fig::Ready_Card_UI()
 	m_pUI_Card->Set_PlayDissolve(m_isShowCard);
 }
 
+void CCard_Fig::Script_Finish_Check()
+{
+	if (m_pScripts[ENTERVAULT]->Is_Finished() && !m_isEnterValutScriptEnd)
+	{
+		m_pScripts[ENTERVAULT]->Set_isRender(false);
+		++m_iScriptIndex;
+		m_isEnterValutScriptEnd = true;
+		m_isPlayScript = false;
+	}
+
+	if (m_pScripts[ENTERSANCTUM]->Is_Finished())
+	{
+		m_pScripts[ENTERSANCTUM]->Set_isRender(false);
+		++m_iScriptIndex;
+	}
+
+	if (m_pScripts[CREATEDRAGON]->Is_Finished())
+	{
+		m_pScripts[CREATEDRAGON]->Set_isRender(false);
+		++m_iScriptIndex;
+	}
+
+	if (m_pScripts[DRAGONHPDOWN]->Is_Finished())
+	{
+		m_pScripts[DRAGONHPDOWN]->Set_isRender(false);
+	}
+}
+
+void CCard_Fig::Play_Script(_float fTimeDelta)
+{
+	if (m_isEnterVault)
+	{
+		m_isPlayScript = true;
+		m_isEnterVault = false;
+		m_pScripts[ENTERVAULT]->Reset_Script();
+		m_pScripts[ENTERVAULT]->Set_isRender(true);
+	}
+
+	if (m_isDragonHpDown)
+	{
+		m_isPlayScript = true;
+		m_isEnterVault = false;
+		m_pScripts[DRAGONHPDOWN]->Reset_Script();
+		m_pScripts[DRAGONHPDOWN]->Set_isRender(true);
+	}
+
+	if (m_isDragonDeath)
+	{
+		m_isPlayScript = true;
+		m_isEnterVault = false;
+		m_pScripts[m_iScriptIndex]->Reset_Script();
+		m_pScripts[m_iScriptIndex]->Set_isRender(true);
+	}
+
+	Script_Finish_Check();
+
+	if (m_isPlayScript)
+		m_pScripts[m_iScriptIndex]->Tick(fTimeDelta);
+}
+
 CCard_Fig* CCard_Fig::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CCard_Fig* pInstance = New CCard_Fig(pDevice, pContext);
@@ -603,4 +696,9 @@ void CCard_Fig::Free()
 	Safe_Release(m_pRigidBody);
 
 	Safe_Release(m_pUI_Card);
+
+	for (auto& pScript : m_pScripts)
+	{
+		Safe_Release(pScript);
+	}
 }
