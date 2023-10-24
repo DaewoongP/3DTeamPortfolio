@@ -70,49 +70,9 @@ void CEvent_Vault_Torch::Check_Event_On_1(_float fTimeDelta)
 	if (true == m_isOn_1)
 		return;
 
-	//if (true == m_pTorch_Stage_1->Is_Collision())
-	//{
-	//	m_fStage1Time += fTimeDelta;
-
-	//	_uint iTorchIndex = (_uint)(m_fStage1Time * 10.f);
-
-	//	// 0.2 초마다 불이 켜짐
-	//	if (0 == (iTorchIndex % 2))
-	//	{
-	//		for (auto iter = m_pTorchs_1.begin(); iter != m_pTorchs_1.end();)
-	//		{
-	//			if (iTorchIndex == iter->second->Get_TorchIndex() || 
-	//				iTorchIndex + 1 == iter->second->Get_TorchIndex())
-	//			{
-	//				// 앞쪽부터 횃불 두 개를 켠다.
-	//				iter->second->Set_TorchOn(true);
-	//				Safe_Release(iter->second);
-	//				iter = m_pTorchs_1.erase(iter);
-	//			}
-
-	//			else
-	//				++iter;
-	//		}
-
-	//		if (m_pTorch_Stage_1->isDead() &&
-	//			0 == m_pTorchs_1.size())
-	//			m_isOn_1 = true;
-	//	}
-	//}
-
-	BEGININSTANCE;
-
-	if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
+	if (true == m_pTorch_Stage_1->Is_Collision())
 	{
-		is = true;
-
-	}
-
-	ENDINSTANCE;
-
-	if (true == is)
-	{
-		m_fStage1Time += fTimeDelta * 0.25f;
+		m_fStage1Time += fTimeDelta;
 
 		_uint iTorchIndex = (_uint)(m_fStage1Time * 10.f);
 
@@ -162,7 +122,7 @@ void CEvent_Vault_Torch::Check_Event_On_2(_float fTimeDelta)
 					iTorchIndex + 1 == iter->second->Get_TorchIndex())
 				{
 					// 앞쪽부터 횃불 두 개를 켠다.
-					//iter->second->
+					iter->second->Set_TorchOn(true);
 					Safe_Release(iter->second);
 					iter = m_pTorchs_2.erase(iter);
 				}
@@ -186,7 +146,7 @@ HRESULT CEvent_Vault_Torch::Add_Components()
 	strcpy_s(TriggerDesc.szCollisionTag, "Trigger_Vault_Torch_On_1");
 	lstrcpy(TriggerDesc.szOtherTag, TEXT("Player_Default"));
 	TriggerDesc.vTriggerSize = _float3(3.5f, 2.5f, 3.5f);
-	TriggerDesc.vTriggerWorldPos = _float3(29.7f, -1.25f, 30.3f);
+	TriggerDesc.vTriggerWorldPos = _float3(38.1f, -1.25f, 38.1f);
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Trigger"),
 		TEXT("Trigger_Torch_On_1"), reinterpret_cast<CComponent**>(&m_pTorch_Stage_1), &TriggerDesc)))
@@ -199,7 +159,7 @@ HRESULT CEvent_Vault_Torch::Add_Components()
 	strcpy_s(TriggerDesc.szCollisionTag, "Trigger_Vault_Torch_On_2");
 	lstrcpy(TriggerDesc.szOtherTag, TEXT("Player_Default"));
 	TriggerDesc.vTriggerSize = _float3(3.5f, 2.5f, 3.5f);
-	TriggerDesc.vTriggerWorldPos = _float3(82.1f, -1.25f, 81.2f);
+	TriggerDesc.vTriggerWorldPos = _float3(86.4f, -1.25f, 86.4f);
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Trigger"),
 		TEXT("Trigger_Torch_On_2"), reinterpret_cast<CComponent**>(&m_pTorch_Stage_2), &TriggerDesc)))

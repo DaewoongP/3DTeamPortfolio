@@ -137,8 +137,8 @@ HRESULT CEvent_Vault_Spawn::Add_Components()
 	TriggerDesc.isCollisionToDead = true;
 	strcpy_s(TriggerDesc.szCollisionTag, "Trigger_Vault_Spawn_1");
 	lstrcpy(TriggerDesc.szOtherTag, TEXT("Player_Default"));
-	TriggerDesc.vTriggerSize = _float3(15.f, 15.f, 15.f);
-	TriggerDesc.vTriggerWorldPos = _float3(50.f, -3.5f, 53.f);
+	TriggerDesc.vTriggerSize = _float3(3.5f, 2.5f, 3.5f);
+	TriggerDesc.vTriggerWorldPos = _float3(41.1f, -1.25f, 41.1f);
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Trigger"),
 		TEXT("Trigger_Spawn_1"), reinterpret_cast<CComponent**>(&m_pSpawn_Stage_1), &TriggerDesc)))
@@ -151,8 +151,8 @@ HRESULT CEvent_Vault_Spawn::Add_Components()
 	TriggerDesc.isCollisionToDead = true;
 	strcpy_s(TriggerDesc.szCollisionTag, "Trigger_Vault_Spawn_2");
 	lstrcpy(TriggerDesc.szOtherTag, TEXT("Player_Default"));
-	TriggerDesc.vTriggerSize = _float3(15.f, 15.f, 15.f);
-	TriggerDesc.vTriggerWorldPos = _float3(103.f, -3.f, 104.f);
+	TriggerDesc.vTriggerSize = _float3(3.5f, 2.5f, 3.5f);
+	TriggerDesc.vTriggerWorldPos = _float3(92.1f, -1.25f, 92.1f);
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Trigger"),
 		TEXT("Trigger_Spawn_2"), reinterpret_cast<CComponent**>(&m_pSpawn_Stage_2), &TriggerDesc)))

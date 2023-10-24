@@ -34,6 +34,7 @@ void CVault_Torch::Switch_OnOff(_bool isValue)
 			pGameInstance->Add_Light(LightDesc, &m_pLight);
 			Safe_Release(pGameInstance);
 		}
+
 	}
 	else 
 	{
@@ -190,7 +191,7 @@ void CVault_Torch::Torch_On_By_Trigger(_float fTimeDelta)
 		m_isEffectOn = true;
 	}	
 
-	if (nullptr == m_pLightbyTrigger && 0.2f <= m_fLightTime)
+	if (nullptr == m_pLightbyTrigger && 0.3f <= m_fLightTime)
 	{
 		m_pEffect->Get_MainModuleRef().fSimulationSpeed = Random_Generator(0.5f, 1.0f);
 
