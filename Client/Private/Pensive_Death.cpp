@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "Client_Defines.h"
 #include "StateContext_Enemy.h"
+#include "Quest_Manager.h"
 
 CPensive_Death::CPensive_Death(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	:CStateMachine_Enemy(_pDevice,_pContext)
@@ -38,6 +39,11 @@ void CPensive_Death::OnStateEnter(void* _pArg)
 {
 	//첫 실행시 등장 애니메이션을 재생합니다.
 	Change_Animation(TEXT("Death_Start"));
+
+	CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
+	Safe_AddRef(pQuest_Manager);
+	pQuest_Manager->Clear_Quest(TEXT("Quest_Secret"));
+	Safe_Release(pQuest_Manager);
 	
 }
 

@@ -3,6 +3,8 @@
 #include "UI_Interaction.h"
 #include "Script.h"
 #include "Quest_Manager.h"
+#include "Player.h"
+#include "Card_Fig.h"
 
 CSmith_Fig::CSmith_Fig(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -394,7 +396,7 @@ void CSmith_Fig::Check_Quest()
 		{
 			m_pScripts[m_iScriptIndex]->Set_isRender(false);
 			m_isClearQuest[SMITHFIGSCRIPT_POTION] = true;
-			++m_iScriptIndex;
+			++m_iScriptIndex;			
 		};
 		Safe_Release(pQuest_Manager);
 	}
@@ -463,36 +465,47 @@ void CSmith_Fig::Play_Script(_float fTimeDelta)
 	{
 		m_pScripts[m_iScriptIndex]->Tick(fTimeDelta);
 
-		if (true == m_pScripts[SMITHFIGSCRIPT_POTION]->Is_Finished())
+		if (true == m_pScripts[SMITHFIGSCRIPT_POTION]->Is_Finished() && !m_isUnlockQuest[SMITHFIGSCRIPT_POTION])
 		{
 			CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
 			Safe_AddRef(pQuest_Manager);
 			pQuest_Manager->Unlock_Quest(TEXT("Quest_Potion"));
 			Safe_Release(pQuest_Manager);
+			m_isUnlockQuest[SMITHFIGSCRIPT_POTION] = true;
 		}
 		
-		if (true == m_pScripts[SMITHFIGSCRIPT_TOWN]->Is_Finished())
+		if (true == m_pScripts[SMITHFIGSCRIPT_TOWN]->Is_Finished() && !m_isUnlockQuest[SMITHFIGSCRIPT_TOWN])
 		{
 			CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
 			Safe_AddRef(pQuest_Manager);
 			pQuest_Manager->Unlock_Quest(TEXT("Quest_Town"));
 			Safe_Release(pQuest_Manager);
+
+			CGameInstance* pGameInstance = CGameInstance::GetInstance();
+			Safe_AddRef(pGameInstance);
+			CPlayer* pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+			static_cast<CCard_Fig*>(pPlayer->Find_Component(TEXT("Card_Fig")))->Set_ShowCard(true);
+			Safe_Release(pGameInstance);
+			m_isUnlockQuest[SMITHFIGSCRIPT_TOWN] = true;
 		}
 		
-		if (true == m_pScripts[SMITHFIGSCRIPT_SECRET]->Is_Finished())
+		if (true == m_pScripts[SMITHFIGSCRIPT_SECRET]->Is_Finished() && !m_isUnlockQuest[SMITHFIGSCRIPT_SECRET])
 		{
 			CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
 			Safe_AddRef(pQuest_Manager);
 			pQuest_Manager->Unlock_Quest(TEXT("Quest_Secret"));
 			Safe_Release(pQuest_Manager);
+			m_isUnlockQuest[SMITHFIGSCRIPT_SECRET] = true;
+
 		}
 
-		if (true == m_pScripts[SMITHFIGSCRIPT_BONE]->Is_Finished())
+		if (true == m_pScripts[SMITHFIGSCRIPT_BONE]->Is_Finished() && !m_isUnlockQuest[SMITHFIGSCRIPT_BONE])
 		{
 			CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
 			Safe_AddRef(pQuest_Manager);
 			pQuest_Manager->Unlock_Quest(TEXT("Quest_Bone"));
 			Safe_Release(pQuest_Manager);
+			m_isUnlockQuest[SMITHFIGSCRIPT_BONE] = true;
 		}
 	}
 }

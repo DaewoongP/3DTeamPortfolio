@@ -63,12 +63,12 @@ private:
 private:
 	_bool	m_isColPlayer = { false };
 
-
 private:
 	_bool					m_isPlayScript = { false };
 	_uint					m_iScriptIndex = 0;
-	vector<CScript*>		m_pScripts;
+	vector<CScript*>			m_pScripts;
 
+	_bool					m_isUnlockQuest[SMITHFIGSCRIPT_END] = { false };
 	_bool					m_isClearQuest[SMITHFIGSCRIPT_END] = { false };
 
 public:
