@@ -38,6 +38,17 @@ HRESULT CVault_Gate::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_SmithToCliff_Gate_Portal"),
+		TEXT("Com_Portal"), reinterpret_cast<CComponent**>(&m_pEffect))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_SmithToCliff_Gate_Portal)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	m_pEffect->Play(m_pTransform->Get_Position() + _float3(1.f, 2.5f, -0.25f));
+	m_pEffect->Get_MainModuleRef().fSimulationSpeed = Random_Generator(0.5f, 1.0f);
+
 	return S_OK;
 }
 
@@ -284,4 +295,5 @@ void CVault_Gate::Free()
 	Safe_Release(m_pShader);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pRenderer);
+	Safe_Release(m_pEffect);
 }
