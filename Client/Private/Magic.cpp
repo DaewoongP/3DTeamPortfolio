@@ -88,6 +88,7 @@ CMagicBall* CMagic::Magic_Cast(const CGameObject* pTarget, const CGameObject* pW
 	ballInit.vTarget_Dir = m_MagicDesc.vTarget_Dir;
 	ballInit.pTarget = pTarget;
 	ballInit.pWeapon = pWeapon;
+	ballInit.fScale = m_MagicDesc.fScale;
 	
 	if (PowerUp)
 		ballInit.iDamage *= 2;

@@ -67,6 +67,11 @@ void CMagicBall::Tick(_float fTimeDelta)
 		m_vPostPosition = m_pTransform->Get_Position();
 	}
 
+	if (m_isChase)
+	{
+		m_vEndPosition = m_CurrentTargetMatrix.Translation();
+	}
+
 	//여기서 위치를 갱신해줍니다.
 	Tick_MagicBall_State(fTimeDelta);
 

@@ -137,17 +137,17 @@ void CMenu_Quest::Quest_Check()
 	pQuest = pQuest_Manager->Find_Quest(TEXT("Quest_Town"));
 
 	if (pQuest->Get_State() != QUESTSTATE_QUESTIONMARK)
-		Set_FontState(QUEST_POTION, pQuest->Get_State());
+		Set_FontState(QUEST_TOWN, pQuest->Get_State());
 
 	pQuest = pQuest_Manager->Find_Quest(TEXT("Quest_Secret"));
 
 	if (pQuest->Get_State() != QUESTSTATE_QUESTIONMARK)
-		Set_FontState(QUEST_POTION, pQuest->Get_State());
+		Set_FontState(QUEST_SECRET, pQuest->Get_State());
 
 	pQuest = pQuest_Manager->Find_Quest(TEXT("Quest_Bone"));
 
 	if (pQuest->Get_State() != QUESTSTATE_QUESTIONMARK)
-		Set_FontState(QUEST_POTION, pQuest->Get_State());
+		Set_FontState(QUEST_BONE, pQuest->Get_State());
 
 	Safe_Release(pQuest_Manager);
 }

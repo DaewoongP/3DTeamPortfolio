@@ -8,7 +8,9 @@ class CQuest abstract : public CGameObject
 {
 public:
 	QUESTSTATE Get_State() { return m_eCurState; }
-	void Set_State(QUESTSTATE eState) { m_eCurState = eState; }
+	void Set_State(QUESTSTATE eState) {
+		m_eCurState = eState; 
+	}
 
 	virtual _bool Is_Finished() PURE;
 

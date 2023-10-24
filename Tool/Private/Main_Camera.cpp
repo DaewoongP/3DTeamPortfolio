@@ -38,6 +38,20 @@ void CMain_Camera::Tick(const _float& _TimeDelta)
 	}
 
 	CCamera::Tick(_TimeDelta);
+
+	if (CGameInstance::GetInstance()->Get_DIKeyState(DIK_8, CInput_Device::KEY_DOWN))
+	{
+		test = !test;
+	}
+
+	if (test)
+	{
+		CGameInstance::GetInstance()->Set_Transform(CPipeLine::D3DTS_PROJ, XMMatrixOrthographicLH(_float(256.f), _float(144.f), 0.1f, 1000.f));
+	}
+	else
+	{
+		CGameInstance::GetInstance()->Set_Transform(CPipeLine::D3DTS_PROJ, XMMatrixPerspectiveFovLH(m_CameraDesc.m_fFovY, m_CameraDesc.m_fAspect, m_CameraDesc.m_fNear, m_CameraDesc.m_fFar));
+	}
 }
 
 void CMain_Camera::Key_Input(_float _TimeDelta)

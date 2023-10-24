@@ -152,10 +152,53 @@ HRESULT CPensive::Render()
 	if (FAILED(__super::SetUp_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(__super::Render()))
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		MSG_BOX("[CArmored_Troll] Failed Render");
-		return E_FAIL;
+		try /* Failed Render */
+		{
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", i)))
+				throw TEXT("Bind_BoneMatrices");
+
+			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, DIFFUSE)))
+				throw TEXT("Bind_Material Diffuse");
+			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_NormalTexture", i, NORMALS)))
+				throw TEXT("Bind_Material Normal");
+
+			if (true == m_isDissolve)
+			{
+				if (FAILED(m_pShaderCom->Begin("AnimMesh_Dissolve")))
+					return E_FAIL;
+			}
+			else if (0 == i)
+			{
+				if (FAILED(m_pEmissiveTexture_1->Bind_ShaderResource(m_pShaderCom, "g_EmissiveTexture")))
+					return E_FAIL;
+
+				if (FAILED(m_pShaderCom->Begin("AnimMesh_Troll")))
+					throw TEXT("Shader Begin AnimMesh_Troll");
+			}
+			else
+			{
+				if (FAILED(m_pEmissiveTexture_2->Bind_ShaderResource(m_pShaderCom, "g_EmissiveTexture")))
+					return E_FAIL;
+
+				if (FAILED(m_pShaderCom->Begin("AnimMesh_Troll")))
+					throw TEXT("Shader Begin AnimMesh_Troll");
+			}
+
+			if (FAILED(m_pModelCom->Render(i)))
+				throw TEXT("Model Render");
+		}
+		catch (const _tchar* pErrorTag)
+		{
+			wstring wstrErrorMSG = TEXT("[CEnemy] Failed Render : ");
+			wstrErrorMSG += pErrorTag;
+			MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+
+			return E_FAIL;
+		}
 	}
 
 	return S_OK;
@@ -181,6 +224,9 @@ void CPensive::Do_Damage(_int iDmg)
 		if (m_pHealth->Get_Current_HP() <= 0 && !m_pStateContext->Is_Current_State(TEXT("Death")))
 		{
 			DieMagicBall();
+
+			m_isDead = true;
+
 			m_pStateContext->Set_StateMachine(TEXT("Death"));
 			return;
 		}
@@ -584,6 +630,13 @@ HRESULT CPensive::Add_Components()
 			TEXT("Com_MagicSlot"), reinterpret_cast<CComponent**>(&m_pMagicSlot))))
 			throw TEXT("Com_MagicSlot");
 
+		m_pEmissiveTexture_1 = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/PensivePaladin/T_GOL_TombProtector_1001_E.dds"));
+		if (nullptr == m_pEmissiveTexture_1)
+			throw TEXT("Emissive_1");
+		m_pEmissiveTexture_2 = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/PensivePaladin/T_GOL_TombProtector_1002_E.dds"));
+		if (nullptr == m_pEmissiveTexture_2)
+			throw TEXT("Emissive_1");
+
 		/* For.Com_Health */
 		CHealth::HEALTHDESC HealthDesc;
 		HealthDesc.iMaxHP = 4000;
@@ -816,6 +869,8 @@ void CPensive::Free()
 		Safe_Release(m_pDragonHead[2]);
 
 		Safe_Release(m_pStateContext);
+		Safe_Release(m_pEmissiveTexture_1);
+		Safe_Release(m_pEmissiveTexture_2);
 		Safe_Release(m_pMagicSlot);
 
 		Safe_Release(m_StateMachineDesc.pOwnerModel);

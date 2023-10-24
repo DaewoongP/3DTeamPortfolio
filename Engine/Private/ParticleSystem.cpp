@@ -267,7 +267,18 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 	m_RendererModuleDesc.Action(_fTimeDelta);
 
 	m_pBuffer->Set_DrawNum(_uint(m_Particles[ALIVE].size()));
-	m_pBuffer->Tick(m_ParticleMatrices.data(), m_pBuffer->Get_DrawNum());
+	if ("Default" == m_RendererModuleDesc.strPass ||
+		"TextureSheetAnimation" == m_RendererModuleDesc.strPass ||
+		"MotionBlur" == m_RendererModuleDesc.strPass ||
+		"Default_Depth_Disable" == m_RendererModuleDesc.strPass ||
+		"Depth_Default" == m_RendererModuleDesc.strPass)
+	{
+		m_pBuffer->Tick(m_ParticleMatrices.data(), m_pBuffer->Get_DrawNum(), true, m_pTransform->Get_WorldMatrix_Inverse());
+	}
+	else
+	{
+		m_pBuffer->Tick(m_ParticleMatrices.data(), m_pBuffer->Get_DrawNum());
+	}
 	m_EmissionModuleDesc.vPrevPos = m_EmissionModuleDesc.vCurPos;
 	Safe_Release(pGameInstance);
 
@@ -306,13 +317,14 @@ void CParticleSystem::Late_Tick(_float _fTimeDelta)
 			if ("Default" == m_RendererModuleDesc.strPass ||
 				"TextureSheetAnimation" == m_RendererModuleDesc.strPass ||
 				"MotionBlur" == m_RendererModuleDesc.strPass ||
-				"Default_Depth_Disable" == m_RendererModuleDesc.strPass)
+				"Default_Depth_Disable" == m_RendererModuleDesc.strPass ||
+				"Depth_Default" == m_RendererModuleDesc.strPass)
 			{
 				m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
 			}
 			else
 			{
-				m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+				m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
 			}
 		}
 	}
@@ -380,7 +392,8 @@ HRESULT CParticleSystem::Setup_ShaderResources()
 		_float fTimeAcc = pGameInstance->Get_World_TimeAcc();
 		if (FAILED(m_pShader->Bind_RawValue("g_fTime", &fTimeAcc, sizeof(_float))))
 			throw "g_fTime";
-
+		// 언제 실행할지 : 애니메이션 프레임에 맞춰서
+		// 어디에서 실행할지 : 뼈의 정점에서
 		_int iClipChannel = { 3 };
 		if (m_ShapeModuleDesc.strClipChannel == "Red") { iClipChannel = 0; }
 		else if (m_ShapeModuleDesc.strClipChannel == "Green") { iClipChannel = 1; }

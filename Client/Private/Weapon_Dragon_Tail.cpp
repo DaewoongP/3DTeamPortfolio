@@ -11,6 +11,68 @@ CWeapon_Dragon_Tail::CWeapon_Dragon_Tail(const CWeapon_Dragon_Tail& rhs)
 {
 }
 
+HRESULT CWeapon_Dragon_Tail::Initialize_Prototype()
+{
+	__super::Initialize_Prototype();
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDarkCloud")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDarkCloud")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/WingAttack/TraceDarkCloud/"), LEVEL_SANCTUM))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDust")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDust")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/WingAttack/TraceDust/"), LEVEL_SANCTUM))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	Safe_Release(pGameInstance);
+	return S_OK;
+}
+
+void CWeapon_Dragon_Tail::On_Collider_Attack()
+{
+	m_pEffect_WingAttack_TraceDarkCloud->Play(m_Bones[11].vPosition);
+	m_pEffect_WingAttack_TraceDust->Play(m_Bones[12].vPosition);
+	m_pRigidBody->Enable_Collision("Attack", this, &m_CollisionRequestDesc);
+}
+
+void CWeapon_Dragon_Tail::Off_Collider_Attack()
+{
+	m_pEffect_WingAttack_TraceDarkCloud->Stop();
+	m_pEffect_WingAttack_TraceDust->Stop();
+	m_pRigidBody->Disable_Collision("Attack");
+}
+
+HRESULT CWeapon_Dragon_Tail::Set_Bone_Data(CModel* pModel)
+{
+	for (_uint i = 171; i < 185; ++i)
+	{
+		const CBone* pBone = pModel->Get_Bone_Index(i);
+		if (nullptr == pBone)
+			return E_FAIL;
+		CConjuredDragon::DRAGONBONEDATA BoneData;
+		BoneData.pCombinedTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
+		m_Bones.push_back(BoneData);
+	}
+
+	return S_OK;
+}
+
 HRESULT CWeapon_Dragon_Tail::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
@@ -26,8 +88,28 @@ HRESULT CWeapon_Dragon_Tail::Initialize(void* pArg)
 	m_CollisionRequestDesc.eType = CEnemy::ATTACK_HEAVY;
 	m_CollisionRequestDesc.iDamage = 20;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
-
+	m_pEffect_WingAttack_TraceDarkCloud->Disable();
+	m_pEffect_WingAttack_TraceDust->Disable();
 	return S_OK;
+}
+
+void CWeapon_Dragon_Tail::Tick(_float fTimeDelta)
+{
+#ifdef _DEBUG
+	ADD_IMGUI([&] { Tick_Imgui(fTimeDelta); });
+#endif // _DEBUG
+	__super::Tick(fTimeDelta);
+
+	for (auto& Desc : m_Bones)
+	{
+		_float4x4 BoneWorldMatrix = *Desc.pCombinedTransformationMatrix *
+			m_ParentMatrixDesc.PivotMatrix *
+			*m_ParentMatrixDesc.pParentWorldMatrix;
+		Desc.vPosition = BoneWorldMatrix.Translation();
+	}
+	//cout_float3("Pos", m_Bones[11].vPosition);
+	m_pEffect_WingAttack_TraceDarkCloud->Get_Transform()->Set_Position(m_Bones[11].vPosition);
+	m_pEffect_WingAttack_TraceDust->Get_Transform()->Set_Position(m_Bones[12].vPosition);
 }
 
 #ifdef _DEBUG
@@ -37,6 +119,13 @@ void CWeapon_Dragon_Tail::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRenderer)
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
+}
+void CWeapon_Dragon_Tail::Tick_Imgui(_float fTimeDelta)
+{
+	CImGui_Manager::NextWindow_LeftBottom();
+	ImGui::Begin("zscvxcvsd");
+	ImGui::DragInt("sdvwef", &test, 0.1f, 0, 13);
+	ImGui::End();
 }
 #endif // _DEBUG
 
@@ -74,6 +163,14 @@ HRESULT CWeapon_Dragon_Tail::Add_Components()
 		throw TEXT("Com_Renderer");
 #endif // _DEBUG
 
+	if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDarkCloud"),
+		TEXT("Com_Particle_WingAttack_TraceDarkCloud"), reinterpret_cast<CComponent**>(&m_pEffect_WingAttack_TraceDarkCloud))))
+		throw TEXT("Com_Particle_WingAttack");
+
+	if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDust"),
+		TEXT("Com_Particle_WingAttack_TraceDust"), reinterpret_cast<CComponent**>(&m_pEffect_WingAttack_TraceDust))))
+		throw TEXT("Com_Particle_WingAttack_TraceDust");
+
 	return S_OK;
 }
 
@@ -106,6 +203,7 @@ void CWeapon_Dragon_Tail::Free()
 	__super::Free();
 
 	Safe_Release(m_pRigidBody);
+	Safe_Release(m_pEffect_WingAttack_TraceDarkCloud);
 #ifdef _DEBUG
 	Safe_Release(m_pRenderer);
 #endif // _DEBUG

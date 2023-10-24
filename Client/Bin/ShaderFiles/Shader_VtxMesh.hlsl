@@ -4,6 +4,7 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D g_DiffuseTexture;
 texture2D g_NormalTexture;
 texture2D g_DissolveTexture;
+texture2D g_EmissiveTexture;
 
 float g_fCamFar, g_fDissolveAmount;
 float2 g_vOffset;
@@ -320,6 +321,31 @@ PS_OUT PS_MAIN_DISSOLVE(PS_IN In)
     //return Out;
 }
 
+PS_OUT PS_MAIN_EMISSIVE(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+
+    vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+    vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+    vector vEmissive = g_EmissiveTexture.Sample(LinearSampler, In.vTexUV);
+    
+    float3 vNormal = vNormalDesc.xyz * 2.f - 1.f; // 0 ~ 1 -> -1 ~ 1
+    
+    float3x3 WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal.xyz, In.vNormal.xyz);
+    
+    vNormal = mul(vNormal, WorldMatrix);
+    
+    if (vDiffuse.a < 0.1f)
+        discard;
+
+    Out.vDiffuse = vDiffuse;
+    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
+    Out.vEmissive = vEmissive;
+    
+    return Out;
+}
+
 technique11 DefaultTechnique
 {
     pass Mesh
@@ -398,5 +424,18 @@ technique11 DefaultTechnique
         HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader = compile ps_5_0 PS_MAIN_DISSOLVE();
+    }
+
+    pass Mesh_Emissive
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_MAIN_EMISSIVE();
     }
 }

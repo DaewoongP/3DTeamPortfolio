@@ -116,6 +116,7 @@ HRESULT CPlayer_Camera::Initialize(void* pArg)
 
 	m_pTransform->Set_RotationSpeed(1.0f);
 
+	m_pEyePlusDistanceForHover = pCameraDesc->pHoverEyeDistance;
 	m_pisMove = pCameraDesc->IsMove;
 	m_ppTargetTransform = pCameraDesc->ppTargetTransform;
 	m_pPlayerTransform = pCameraDesc->pPlayerTransform;
@@ -310,7 +311,7 @@ void CPlayer_Camera::Eye_At_Distance()
 	//eye
 	//충돌해서 값이 있고, 최대 거리보다 길다면
 	if (0.0f != m_fEyeIntersectDistance &&
-		m_fEyeMaxDistance > m_fEyeIntersectDistance)
+		m_fEyeMaxDistance + *m_pEyePlusDistanceForHover > m_fEyeIntersectDistance)
 	{
 		//차이 구하고
 		_float fDistance = m_fEyeDistance - m_fEyeIntersectDistance;
@@ -319,10 +320,10 @@ void CPlayer_Camera::Eye_At_Distance()
 		m_fEyeDistance -= fDistance * pGameInstance->Get_World_Tick() * m_fTimeSpeed + 0.1f;
 	}
 	//같지 않다면
-	else if (m_fEyeDistance != m_fEyeMaxDistance)
+	else if (m_fEyeDistance != m_fEyeMaxDistance + *m_pEyePlusDistanceForHover)
 	{
 		//차이 구하고
-		_float fDistance = m_fEyeMaxDistance - m_fEyeDistance;
+		_float fDistance = m_fEyeMaxDistance + *m_pEyePlusDistanceForHover - m_fEyeDistance;
 
 		//더한다. 
 		m_fEyeDistance += fDistance * pGameInstance->Get_World_Tick() * m_fTimeSpeed;
@@ -332,7 +333,7 @@ void CPlayer_Camera::Eye_At_Distance()
 
 	}
 
-	Clamp(m_fEyeDistance, m_fEyeMinDistance, m_fEyeMaxDistance);
+	Clamp(m_fEyeDistance, m_fEyeMinDistance, m_fEyeMaxDistance + *m_pEyePlusDistanceForHover);
 
 	//At
 	//충돌해서 값이 있고, 최대 거리보다 길다면
@@ -370,6 +371,11 @@ void CPlayer_Camera::Update_Eye_At()
 
 	//Eye
 	_float3 vEye = m_vEyeStandard;
+
+	/*vEye.x -= m_fEyeDistance * 0.5f;
+	
+	vEye.Normalize();*/
+
 	vEye *= m_fEyeDistance;
 	vEye = vEye.Transform(vEye, m_pTransform->Get_WorldMatrix());
 

@@ -119,7 +119,6 @@ HRESULT CMagicSlot::Add_Magic_To_Skill_Slot(_uint iSlotIndex, SPELL eSpellType)
 
 	m_MagicSlots[iSlotIndex] = m_Magics[eSpellType];
 	Safe_AddRef(m_MagicSlots[iSlotIndex]);
-
 	return S_OK;
 }
 

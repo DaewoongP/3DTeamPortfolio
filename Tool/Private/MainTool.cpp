@@ -583,6 +583,10 @@ HRESULT CMainTool::Ready_Prototype_Object()
 		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Flare"),
 			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Flare/"), 3)))
 			throw TEXT("Reserve Particle : Particle_Pensive_Appear_Flare");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Conjured_Step_Dust"),
+			TEXT("../../Resources/GameData/ParticleData/BoneDragon/StepDust/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Conjured_Step_Dust");
 	}
 #pragma endregion
 
@@ -615,6 +619,19 @@ HRESULT CMainTool::Ready_Prototype_Object()
 	if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Player_Hit_Dust"),
 		TEXT("../../Resources/GameData/ParticleData/PlayerHit/HitDust"))))
 		throw TEXT("Reserve Particle : Prototype_GameObject_Player_Hit_Dust");
+
+	/*For.Player_BasicCast_Particle*/
+	if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_WandLine"),
+		TEXT("../../Resources/GameData/ParticleData/BasicCast/WandLine"))))
+		throw TEXT("Reserve Particle : Prototype_GameObject_WandLine");
+	/*For.Player_DiffindoLine_Particle*/
+	if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_DiffindoLine"),
+		TEXT("../../Resources/GameData/ParticleData/Diffindo/Cast_Line"))))
+		throw TEXT("Reserve Particle : Prototype_GameObject_DiffindoLine");
+	/*For.Player_Crusio_Particle*/
+	if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Finisher_WandLine"),
+		TEXT("../../Resources/GameData/ParticleData/Lightning/WandLine"))))
+		throw TEXT("Reserve Particle : Prototype_GameObject_Finisher_WandLine");
 
 
 #ifdef _DEBUG

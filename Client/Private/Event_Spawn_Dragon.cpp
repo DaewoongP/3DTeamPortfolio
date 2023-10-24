@@ -5,6 +5,7 @@
 #include "Trigger.h"
 
 #include "Player.h"
+#include "Card_Fig.h"
 
 CEvent_Spawn_Dragon::CEvent_Spawn_Dragon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -232,6 +233,7 @@ void CEvent_Spawn_Dragon::Check_Event_Spawn_Dragon()
 
 			//플레이어 위치 변경
 			CPlayer* pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+			static_cast<CCard_Fig*>(pPlayer->Find_Component(TEXT("Card_Fig")))->Set_CreateDragon();
 
 			pPlayer->Get_Transform()->Set_Position(_float3(-43.170f,-33.315f,108.198f));
 			pPlayer->Get_Transform()->Rotation(_float3(0.0f,1.0f,0.0f), XMConvertToRadians(45.0f));
@@ -333,5 +335,16 @@ void CEvent_Spawn_Dragon::Free()
 
 		for (auto& Pair : m_pMonsters)
 			Safe_Release(Pair.second);
+
+
+		BEGININSTANCE;
+
+		pGameInstance->Remove_Timer(TEXT("Sanctum_CutScene_Fade_Out"));
+		pGameInstance->Remove_Timer(TEXT("Sanctum_Egg_CutScene_Play"));
+		pGameInstance->Remove_Timer(TEXT("Sanctum_Dragon_Enter_CutScene_Play"));
+		pGameInstance->Remove_Timer(TEXT("Sanctum_Dragon_Enter_Scream"));
+
+		ENDINSTANCE;
+
 	}
 }

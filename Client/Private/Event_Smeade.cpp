@@ -4,6 +4,8 @@
 #include "Enemy.h"
 #include "Trigger.h"
 
+#include "Player.h"
+
 CEvent_Smeade::CEvent_Smeade(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -146,6 +148,14 @@ void CEvent_Smeade::Check_Event_Spawn_Troll()
 
 			//페이드 인
 			m_pRenderer->FadeIn(1.0f);
+
+			//플레이어 위치 변경
+			CPlayer* pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+
+			pPlayer->Get_Transform()->Set_Position(_float3(115.0f, 9.0f, 120.0f));
+			pPlayer->Get_Transform()->Rotation(_float3(0.0f, 1.0f, 0.0f), -XMConvertToRadians(90.0f));
+			pPlayer->Get_Player_Camera_Transform()->Rotation(_float3(0.0f, 1.0f, 0.0f), -XMConvertToRadians(90.0f));
+			//pPlayer->Get_Player_Camera_Transform()->Turn(_float3(0.0f, 0.0f, 1.0f), XMConvertToRadians(15.0f));
 		}
 	}
 		break;
@@ -276,6 +286,13 @@ void CEvent_Smeade::Free()
 		Safe_Release(m_pSpawn_Troll);
 		Safe_Release(m_pCutSceneTest);
 		Safe_Release(m_pRenderer);
+
+		BEGININSTANCE;
+
+		pGameInstance->Remove_Timer(TEXT("Troll_Spawn_CutScene_Fade_Out"));
+		pGameInstance->Remove_Timer(TEXT("Troll_Spawn_CutScene_Play"));
+
+		ENDINSTANCE;
 
 		for (auto& Pair : m_pMonsters)
 			Safe_Release(Pair.second);

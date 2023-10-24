@@ -43,6 +43,7 @@ public:
 
 private:
 	CTexture*				m_pEmissiveTexture = { nullptr };
+	CTexture*				m_pEyeEmissiveTexture = { nullptr };
 	CWeapon_Armored_Troll*	m_pWeapon = { nullptr };
 
 	//카메라 쉐이크 노티파이에 함수를 넣기 위한 클래스

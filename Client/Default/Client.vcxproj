@@ -177,6 +177,7 @@
     <ClInclude Include="..\Public\Broom_End.h" />
     <ClInclude Include="..\Public\Breath.h" />
     <ClInclude Include="..\Public\Broom_Stick.h" />
+    <ClInclude Include="..\Public\Broom_Stick_DarkWizard.h" />
     <ClInclude Include="..\Public\Camera_Includes.h" />
     <ClInclude Include="..\Public\Card_Fig.h" />
     <ClInclude Include="..\Public\Cat.h" />
@@ -209,6 +210,7 @@
     <ClInclude Include="..\Public\Lamppost.h" />
     <ClInclude Include="..\Public\Lamp_Wall.h" />
     <ClInclude Include="..\Public\LightStand.h" />
+    <ClInclude Include="..\Public\Meteor.h" />
     <ClInclude Include="..\Public\Quest_Bone.h" />
     <ClInclude Include="..\Public\Quest_Potion.h" />
     <ClInclude Include="..\Public\Guide_Book.h" />
@@ -515,6 +517,7 @@
     <ClCompile Include="..\Private\Broom_End.cpp" />
     <ClCompile Include="..\Private\Breath.cpp" />
     <ClCompile Include="..\Private\Broom_Stick.cpp" />
+    <ClCompile Include="..\Private\Broom_Stick_DarkWizard.cpp" />
     <ClCompile Include="..\Private\Card_Fig.cpp" />
     <ClCompile Include="..\Private\Cat.cpp" />
     <ClCompile Include="..\private\ChineseChompingCabbageItem.cpp" />
@@ -545,6 +548,7 @@
     <ClCompile Include="..\Private\Lamppost.cpp" />
     <ClCompile Include="..\Private\Lamp_Wall.cpp" />
     <ClCompile Include="..\Private\LightStand.cpp" />
+    <ClCompile Include="..\Private\Meteor.cpp" />
     <ClCompile Include="..\Private\Quest_Bone.cpp" />
     <ClCompile Include="..\Private\Quest_Potion.cpp" />
     <ClCompile Include="..\Private\Guide_Book.cpp" />
