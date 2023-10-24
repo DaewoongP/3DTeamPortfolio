@@ -5,15 +5,15 @@ BEGIN(Client)
 
 class CLightStand;
 
-class CSancutm_Door final : public CMapObject
+class CSanctum_Door final : public CMapObject
 {
 private: // 왼쪽문 오른쪽문 구분
 	enum DOORTYPE {LEFTDOOR, RIGHTDOOR, DOOR_END};
 
 private:
-	explicit CSancutm_Door(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CSancutm_Door(const CSancutm_Door& rhs);
-	virtual ~CSancutm_Door() = default;
+	explicit CSanctum_Door(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CSanctum_Door(const CSanctum_Door& rhs);
+	virtual ~CSanctum_Door() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -31,13 +31,14 @@ private:
 	vector<CLightStand*>	m_pLightStands;		// 화로 모음
 
 private:
-	DOORTYPE		m_eCurrentState = { DOOR_END }; // 문의 종류
+	DOORTYPE		m_eDoorType = { DOOR_END }; // 문의 종류
 
 private:
-	void Door_Action(_float fTimeDelta);
+	void Check_FireOn();					// 화로에 불이 붙었는지 확인하는 함수
+	void Door_Action(_float fTimeDelta);	// 조건에 따라 문이 열리는 함수
 
 public:
-	static CSancutm_Door* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CSanctum_Door* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };

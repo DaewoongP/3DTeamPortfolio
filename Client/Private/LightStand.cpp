@@ -118,6 +118,7 @@ void CLightStand::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		if (eBuff == BUFF_CONFRINGO)
 		{
 			LightOn();
+			m_isFireOn = true;
 		}
 	}
 }

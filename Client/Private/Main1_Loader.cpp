@@ -26,7 +26,7 @@
 #include "SmithToCliff_Gate.h"
 #include "Lamppost.h"
 #include "LightStand.h"
-#include "Sancutm_Door.h"
+#include "Sanctum_Door.h"
 #include "FireHouse.h"
 
 CMain1_Loader::CMain1_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -372,7 +372,7 @@ HRESULT CMain1_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 
 		/* For.Prototype_GameObject_Sancutm_Door */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Sancutm_Door"),
-			CSancutm_Door::Create(m_pDevice, m_pContext))))
+			CSanctum_Door::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Sancutm_Door");
 #pragma endregion
 

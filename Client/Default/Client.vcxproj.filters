@@ -1787,7 +1787,7 @@
     <ClInclude Include="..\Public\LightStand.h">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\LightStand</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Sancutm_Door.h">
+    <ClInclude Include="..\Public\Sanctum_Door.h">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\Sanctum_Door</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Golem_Combat.h">
@@ -2685,7 +2685,7 @@
     <ClCompile Include="..\Private\LightStand.cpp">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\LightStand</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Sancutm_Door.cpp">
+    <ClCompile Include="..\Private\Sanctum_Door.cpp">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\Sanctum_Door</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Golem_Combat.cpp">
