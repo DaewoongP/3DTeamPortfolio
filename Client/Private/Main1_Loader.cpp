@@ -29,6 +29,7 @@
 #include "Sanctum_Door.h"
 #include "FireHouse.h"
 #include "Lamp_Wall.h"
+#include "FireWood.h"
 
 CMain1_Loader::CMain1_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -302,6 +303,11 @@ HRESULT CMain1_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Lamp_Wall"),
 			CLamp_Wall::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Lamp_Wall");
+
+		/* For.Prototype_GameObject_FireWood */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FireWood"),
+			CFireWood::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_FireWood");
 #pragma endregion 
 
 		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData3.ddd"), eLevelID)))

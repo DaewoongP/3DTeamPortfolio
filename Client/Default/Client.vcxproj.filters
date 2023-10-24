@@ -1889,6 +1889,9 @@
     <ClInclude Include="..\Public\Lamp_Wall.h">
       <Filter>02. GameObject\03. MapObject\Env\Lamp_Wall</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\FireWood.h">
+      <Filter>02. GameObject\03. MapObject\Env\FireWood</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2785,6 +2788,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Lamp_Wall.cpp">
       <Filter>02. GameObject\03. MapObject\Env\Lamp_Wall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FireWood.cpp">
+      <Filter>02. GameObject\03. MapObject\Env\FireWood</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
