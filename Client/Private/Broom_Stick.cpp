@@ -87,12 +87,12 @@ void CBroom_Stick::Late_Tick(_float fTimeDelta)
 	m_pParticle->Get_ShapeModuleRef().ShapeMatrix =
 		m_pParticle->Get_ShapeModuleRef().ShapeMatrixInit * TempMatrix;
 	m_pParticle->Get_Transform()->Set_Position(m_pTransform->Get_Position() + m_pTransform->Get_Look()* + 3);
-	m_pParticle->Get_EmissionModuleRef().fRateOverDistance = (_int)(m_pPlayerRigidBody->Get_Current_Velocity().Length());
+	m_pParticle->Get_EmissionModuleRef().fRateOverDistance = m_pPlayerRigidBody->Get_Current_Velocity().Length();
 
 	m_pParticle_Local->Get_ShapeModuleRef().ShapeMatrix =
 		m_pParticle_Local->Get_ShapeModuleRef().ShapeMatrixInit * TempMatrix;
 	m_pParticle_Local->Get_Transform()->Set_Position(m_pTransform->Get_Position() + m_pTransform->Get_Look()* + 3);
-	m_pParticle_Local->Get_EmissionModuleRef().fRateOverTime = (_int)(m_pPlayerRigidBody->Get_Current_Velocity().Length());
+	m_pParticle_Local->Get_EmissionModuleRef().fRateOverTime = m_pPlayerRigidBody->Get_Current_Velocity().Length();
 
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
