@@ -334,6 +334,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;
+	if (FAILED(Render_Blend()))
+		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_PostProcessing"))))
 		return E_FAIL;
 #pragma endregion
@@ -741,9 +743,6 @@ HRESULT CRenderer::Render_HDR()
 		return E_FAIL;
 
 	if (FAILED(m_pRectBuffer->Render()))
-		return E_FAIL;
-
-	if (FAILED(Render_Blend()))
 		return E_FAIL;
 
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_HDR"))))
@@ -1181,7 +1180,7 @@ HRESULT CRenderer::Sort_Render(RENDERGROUP eGroup)
 
 	Safe_Release(pPipeLine);
 
-	m_RenderObjects[RENDER_BLEND].sort([vCamPos](const CGameObject* pSour, const CGameObject* pDest) {
+	m_RenderObjects[eGroup].sort([vCamPos](const CGameObject* pSour, const CGameObject* pDest) {
 		_float3 vSourPos = pSour->Get_Transform()->Get_Position();
 		_float3 vDestPos = pDest->Get_Transform()->Get_Position();
 
