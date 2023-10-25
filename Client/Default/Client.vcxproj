@@ -172,6 +172,7 @@
     <ClInclude Include="..\Public\BeastBalloon_B.h" />
     <ClInclude Include="..\Public\BeastBalloon_C.h" />
     <ClInclude Include="..\Public\BeastBalloon_D.h" />
+    <ClInclude Include="..\public\Balloon_Timer.h" />
     <ClInclude Include="..\Public\BigBird.h" />
     <ClInclude Include="..\Public\Blink_Effect.h" />
     <ClInclude Include="..\Public\Bombarda.h" />
@@ -519,6 +520,7 @@
     <ClCompile Include="..\Private\BeastBalloon_B.cpp" />
     <ClCompile Include="..\Private\BeastBalloon_C.cpp" />
     <ClCompile Include="..\Private\BeastBalloon_D.cpp" />
+    <ClCompile Include="..\private\Balloon_Timer.cpp" />
     <ClCompile Include="..\Private\BigBird.cpp" />
     <ClCompile Include="..\Private\Blink_Effect.cpp" />
     <ClCompile Include="..\Private\Bombarda.cpp" />

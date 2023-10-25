@@ -979,6 +979,9 @@
     <Filter Include="02. GameObject\13. FlyGameManager\BeastBalloon_D">
       <UniqueIdentifier>{89a3939a-d554-4657-a639-c807b979c7cf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\13. ScoreBalloon\TimerUI">
+      <UniqueIdentifier>{db006da7-9b7e-4cfa-a0df-7e494c87c54c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1955,6 +1958,9 @@
     <ClInclude Include="..\Public\BeastBalloon_D.h">
       <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_D</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Balloon_Timer.h">
+      <Filter>02. GameObject\13. ScoreBalloon\TimerUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2885,6 +2891,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\BeastBalloon_D.cpp">
       <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_D</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Balloon_Timer.cpp">
+      <Filter>02. GameObject\13. ScoreBalloon\TimerUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
