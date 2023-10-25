@@ -334,8 +334,6 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;
-	if (FAILED(Render_Blend()))
-		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_PostProcessing"))))
 		return E_FAIL;
 #pragma endregion
@@ -743,6 +741,9 @@ HRESULT CRenderer::Render_HDR()
 		return E_FAIL;
 
 	if (FAILED(m_pRectBuffer->Render()))
+		return E_FAIL;
+
+	if (FAILED(Render_Blend()))
 		return E_FAIL;
 
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_HDR"))))
