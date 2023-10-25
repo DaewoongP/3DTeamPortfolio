@@ -2,6 +2,8 @@
 #include "GameInstance.h"
 #include "Level_Loading.h"
 
+#include "LightStand.h"
+
 CCliff_Gate::CCliff_Gate(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -37,6 +39,16 @@ HRESULT CCliff_Gate::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_SmithToCliff_Gate_Portal"),
+		TEXT("Com_Portal"), reinterpret_cast<CComponent**>(&m_pEffect))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_SmithToCliff_Gate_Portal)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	m_pEffect->Stop();
+
 	return S_OK;
 }
 
@@ -54,29 +66,20 @@ HRESULT CCliff_Gate::Initialize_Level(_uint iCurrentLevelIndex)
 	m_pModel->Set_CurrentAnimIndex(0);
 	m_pModel->Get_Animation(0)->Set_Loop(false);
 
-	// 리지드 바디 초기화
-	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
-	RigidBodyDesc.isStatic = true;
-	RigidBodyDesc.isTrigger = true;
-	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
-	RigidBodyDesc.eConstraintFlag = CRigidBody::All;
-	RigidBodyDesc.fStaticFriction = 1.f;
-	RigidBodyDesc.fDynamicFriction = 1.f;
-	RigidBodyDesc.fRestitution = 0.f;
-	PxSphereGeometry MyGeometry = PxSphereGeometry(8.f);
-	RigidBodyDesc.pGeometry = &MyGeometry;
-	RigidBodyDesc.pOwnerObject = this;
-	RigidBodyDesc.vDebugColor = _float4(0.f, 1.f, 0.f, 1.f);
-	RigidBodyDesc.eThisCollsion = COL_STATIC;
-	RigidBodyDesc.eCollisionFlag = COL_PLAYER;
-	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Cliff_Gate");
+	// 화로 탐색
+	BEGININSTANCE;
+	auto pBackGroundLayer = pGameInstance->Find_Components_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_BackGround"));
+	ENDINSTANCE;
 
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
-		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+	for (auto Pair : *pBackGroundLayer)
 	{
-		MSG_BOX("Failed CCliff_Gate Add_Component : (Com_RigidBody)");
-		__debugbreak();
-		return E_FAIL;
+		wstring wsObjTag = Pair.first;
+
+		if (wstring::npos != wsObjTag.find(TEXT("LightStand")))
+		{
+			m_pLightStands.push_back(static_cast<CLightStand*>(Pair.second));
+			Safe_AddRef(Pair.second);
+		}
 	}
 
 	return S_OK;
@@ -86,58 +89,24 @@ void CCliff_Gate::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	BEGININSTANCE;
-
-	// 충돌중인 상태에서 특정 키(레파로)를 누르면 애니메이션 동작
-	if (pGameInstance->Get_DIKeyState(DIK_R, CInput_Device::KEY_DOWN) && true == m_isCol_with_Player)
-	{
-		m_isCheckOnce = false;
-	}
+	// 화로에 불 다 붙으면 문열림
+	Check_FireOn();
 
 	if(false == m_isCheckOnce)
 		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	else
 		m_pModel->Play_Animation(0, CModel::UPPERBODY, m_pTransform);
-
-	ENDINSTANCE;
 }
 
 void CCliff_Gate::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	BEGININSTANCE;
-
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
-#ifdef _DEBUG
-		m_pRenderer->Add_DebugGroup(m_pRigidBody);
-#endif // _DEBUG
 	}
-
-	ENDINSTANCE;
-}
-
-void CCliff_Gate::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
-{
-	wstring wsCollisionTag = CollisionEventDesc.pOtherCollisionTag;
-	wstring wsPlayer(TEXT("Player_Default"));
-
-	// 플레이어와 충돌했다면 활성화
-	if (0 == lstrcmp(wsCollisionTag.c_str(), wsPlayer.c_str()))
-		m_isCol_with_Player = true;
-}
-
-void CCliff_Gate::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
-{
-	wstring wsCollisionTag = CollisionEventDesc.pOtherCollisionTag;
-	wstring wsPlayer(TEXT("Player_Default"));
-
-	// 플레이어와 충돌이 끝났다면 비활성화
-	if (0 == lstrcmp(wsCollisionTag.c_str(), wsPlayer.c_str()))
-		m_isCol_with_Player = false;
 }
 
 HRESULT CCliff_Gate::Render()
@@ -272,6 +241,25 @@ void CCliff_Gate::Check_MinMaxPoint(_float3 vPoint)
 		m_vMaxPoint.z = vPoint.z;
 }
 
+void CCliff_Gate::Check_FireOn()
+{
+	if (false == m_isCheckOnce)
+		return;
+
+	_uint iFireOn = m_pLightStands.size();
+	_uint iCheckFireOn = 0;
+
+	// 화로가 전부 켜졌는지 확인
+	for (auto& iter : m_pLightStands)
+	{
+		if (true == iter->Get_FireOn())
+			++iCheckFireOn;
+	}
+
+	if (iFireOn == iCheckFireOn)
+		m_isCheckOnce = false;
+}
+
 CCliff_Gate* CCliff_Gate::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CCliff_Gate* pInstance = New CCliff_Gate(pDevice, pContext);
@@ -301,7 +289,10 @@ void CCliff_Gate::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pRigidBody);
+	for (auto& iter : m_pLightStands)
+		Safe_Release(iter);
+
+	Safe_Release(m_pEffect);
 	Safe_Release(m_pShadowShader);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pModel);

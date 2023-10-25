@@ -157,6 +157,11 @@ HRESULT CMain1_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_SmithToCliff_Gate"),
 			CSmithToCliff_Gate::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_SmithToCliff_Gate");
+
+		/* For.Prototype_GameObject_LightStand */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_LightStand"),
+			CLightStand::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_LightStand");
 #pragma endregion
 
 		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData0.ddd"), eLevelID)))

@@ -66,6 +66,7 @@ HRESULT CVault_Gate::Initialize_Level(_uint iCurrentLevelIndex)
 	m_pModel->Set_CurrentAnimIndex(0);
 	m_pModel->Get_Animation(0)->Set_Loop(false);
 
+	// È­·Î Å½»ö
 	BEGININSTANCE;
 	auto pBackGroundLayer = pGameInstance->Find_Components_In_Layer(LEVEL_VAULT, TEXT("Layer_BackGround"));
 	ENDINSTANCE;
