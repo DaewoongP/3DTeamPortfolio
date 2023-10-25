@@ -200,7 +200,7 @@ void CVault_Torch::Torch_On_By_Trigger(_float fTimeDelta)
 		CLight::LIGHTDESC LightDesc;
 		LightDesc.eType = CLight::TYPE_POINT;
 		LightDesc.fRange = 10.f;
-		LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+		LightDesc.vDiffuse = _float4(1.f, (166.f / 255.f), (76.f / 255.f), 1.f);
 		LightDesc.vAmbient = LightDesc.vDiffuse;
 		LightDesc.vSpecular = LightDesc.vDiffuse;
 		LightDesc.vPos = m_pTransform->Get_Position().TransCoord();
