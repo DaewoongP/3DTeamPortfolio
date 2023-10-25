@@ -136,6 +136,13 @@ HRESULT CLevel_Cliffside::Ready_Events(const _tchar* pLayerTag)
 		MSG_BOX("Failed Add_GameObject : (Event_Cliffside)");
 		return E_FAIL;
 	}
+	
+	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, 
+		TEXT("Prototype_GameObject_Event_Cliffside_Next_Level"), pLayerTag, TEXT("Event_Cliffside_Next_Level"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Event_Cliffside_Next_Level)");
+		return E_FAIL;
+	}
 
 	ENDINSTANCE;
 
@@ -213,6 +220,7 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 		wstring wsGull(TEXT("Anim_Gull"));
 		wstring wsCliffGate(TEXT("Anim_Gate_Reparo"));
 		wstring wsSmithToCliff(TEXT("SM_HM_Cliff_Gate"));
+		wstring wsLightStand(TEXT("SM_SanctumDun_LightStand_A"));
 
 		// 채집물
 		if (0 == lstrcmp(modelName.c_str(), wsAshwinderEggs.c_str()) ||
@@ -274,6 +282,22 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 				wszobjName, &MapObjectDesc)))
 			{
 				MSG_BOX("Failed to Clone SmithToCliff_Gate");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}
+
+		// 화로
+		else if (0 == lstrcmp(modelName.c_str(), wsLightStand.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_LightStand_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE,
+				TEXT("Prototype_GameObject_LightStand"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone LightStand");
 				ENDINSTANCE;
 				return E_FAIL;
 			}

@@ -66,6 +66,7 @@ HRESULT CVault_Gate::Initialize_Level(_uint iCurrentLevelIndex)
 	m_pModel->Set_CurrentAnimIndex(0);
 	m_pModel->Get_Animation(0)->Set_Loop(false);
 
+	// 화로 탐색
 	BEGININSTANCE;
 	auto pBackGroundLayer = pGameInstance->Find_Components_In_Layer(LEVEL_VAULT, TEXT("Layer_BackGround"));
 	ENDINSTANCE;
@@ -91,7 +92,7 @@ void CVault_Gate::Tick(_float fTimeDelta)
 	// 화로에 불 다 붙으면 문열림
 	Check_FireOn();
 
-	if (false == m_isCheckOnce)
+	if (true == m_isCheckOnce)
 		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	else
 		m_pModel->Play_Animation(0, CModel::UPPERBODY, m_pTransform);
@@ -242,7 +243,7 @@ void CVault_Gate::Check_MinMaxPoint(_float3 vPoint)
 
 void CVault_Gate::Check_FireOn()
 {
-	if (false == m_isCheckOnce)
+	if (true == m_isCheckOnce)
 		return;
 
 	_uint iFireOn = m_pLightStands.size();
@@ -256,7 +257,7 @@ void CVault_Gate::Check_FireOn()
 	}
 
 	if (iFireOn == iCheckFireOn)
-		m_isCheckOnce = false;
+		m_isCheckOnce = true;
 }
 
 CVault_Gate* CVault_Gate::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

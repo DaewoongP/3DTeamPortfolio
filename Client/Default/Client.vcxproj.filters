@@ -958,6 +958,18 @@
     <Filter Include="05. Magic\MagicBall\08. Ncendio\Meteor">
       <UniqueIdentifier>{97f40771-8d72-4a53-8140-5be88cc65c3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="07. Events\Cliffside\Event_Cliffside">
+      <UniqueIdentifier>{845740ad-58bc-488d-8592-72c639b6d61c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Cliffside\Event_Cliffside_Next_Level">
+      <UniqueIdentifier>{545bbce7-132f-40de-883e-672dad5d9745}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Vault\Event_Vault_Next_Level">
+      <UniqueIdentifier>{c961ace7-5bb6-45e0-ae70-f02e2a9776b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Smeade\Event_Smeade_Next_Level">
+      <UniqueIdentifier>{ff487640-9204-48ee-99ce-1bfd06459d06}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\13. FlyGameManager">
       <UniqueIdentifier>{3b00833f-14ab-4e76-913b-384667efaaba}</UniqueIdentifier>
     </Filter>
@@ -1736,9 +1748,6 @@
     <ClInclude Include="..\public\Projectile_White_Effect.h">
       <Filter>02. GameObject\02. Enemy\04. Dragon\04. Projectile_White\Projectile_White_Effect</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Event_Cliffside.h">
-      <Filter>07. Events\Cliffside</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\House_Elf.h">
       <Filter>02. GameObject\07. NPC\House_Elf</Filter>
     </ClInclude>
@@ -1930,6 +1939,18 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_Font.h">
       <Filter>02. GameObject\05. UI\Font\Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Cliffside.h">
+      <Filter>07. Events\Cliffside\Event_Cliffside</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Cliffside_Next_Level.h">
+      <Filter>07. Events\Cliffside\Event_Cliffside_Next_Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Vault_Next_Level.h">
+      <Filter>07. Events\Vault\Event_Vault_Next_Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Smeade_Next_Level.h">
+      <Filter>07. Events\Smeade\Event_Smeade_Next_Level</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\FlyGameManager.h">
       <Filter>02. GameObject\13. FlyGameManager</Filter>
@@ -2694,9 +2715,6 @@
     <ClCompile Include="..\private\Projectile_White_Effect.cpp">
       <Filter>02. GameObject\02. Enemy\04. Dragon\04. Projectile_White\Projectile_White_Effect</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Event_Cliffside.cpp">
-      <Filter>07. Events\Cliffside</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\House_Elf.cpp">
       <Filter>02. GameObject\07. NPC\House_Elf</Filter>
     </ClCompile>
@@ -2879,6 +2897,18 @@
     </ClCompile>
     <ClCompile Include="..\private\Item.cpp">
       <Filter>02. GameObject\10. Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Cliffside.cpp">
+      <Filter>07. Events\Cliffside\Event_Cliffside</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Cliffside_Next_Level.cpp">
+      <Filter>07. Events\Cliffside\Event_Cliffside_Next_Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Vault_Next_Level.cpp">
+      <Filter>07. Events\Vault\Event_Vault_Next_Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Smeade_Next_Level.cpp">
+      <Filter>07. Events\Smeade\Event_Smeade_Next_Level</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\FlyGameManager.cpp">
       <Filter>02. GameObject\13. FlyGameManager</Filter>

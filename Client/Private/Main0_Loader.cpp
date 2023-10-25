@@ -104,6 +104,9 @@
 #include "Event_Smeade.h"
 #include "Event_Cliffside.h"
 #include "Event_Spawn_Dragon.h"
+#include "Event_Cliffside_Next_Level.h"
+#include "Event_Vault_Next_Level.h"
+#include "Event_Smeade_Next_Level.h"
 #pragma endregion
 
 #include "Guide_Book.h"
@@ -249,6 +252,11 @@ HRESULT CMain0_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Cliffside"),
 			CEvent_Cliffside::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Event_Cliffside");
+
+		/* For.Prototype_GameObject_Event_Cliffside_Next_Level */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Cliffside_Next_Level"),
+			CEvent_Cliffside_Next_Level::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Event_Cliffside_Next_Level");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -294,6 +302,11 @@ HRESULT CMain0_Loader::Loading_For_Vault(LEVELID eLevelID)
 		CEvent_Enter_Vault::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Event_Enter_Vault");
 
+	/* For.Prototype_GameObject_Event_Vault_Next_Level */
+	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Vault_Next_Level"),
+		CEvent_Vault_Next_Level::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Event_Vault_Next_Level");
+
 	return S_OK;
 }
 
@@ -313,6 +326,11 @@ HRESULT CMain0_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Smeade"),
 		CEvent_Smeade::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Event_Smeade");
+
+	/* For.Prototype_GameObject_Event_Smeade_Next_Level */
+	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Smeade_Next_Level"),
+		CEvent_Smeade_Next_Level::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Event_Smeade_Next_Level");
 
 	ENDINSTANCE;
 

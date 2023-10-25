@@ -228,6 +228,13 @@ HRESULT CLevel_Smith::Ready_Event(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, 
+		TEXT("Prototype_GameObject_Event_Smeade_Next_Level"), pLayerTag, TEXT("Event_Smeade_Next_Level"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Event_Smeade_Next_Level)");
+		return E_FAIL;
+	}
+
 	ENDINSTANCE;
 
 	return S_OK;

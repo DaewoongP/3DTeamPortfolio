@@ -199,6 +199,8 @@
     <ClInclude Include="..\Public\Door.h" />
     <ClInclude Include="..\Public\Dummy_NPC.h" />
     <ClInclude Include="..\Public\Event_Cliffside.h" />
+    <ClInclude Include="..\Public\Event_Cliffside_Next_Level.h" />
+    <ClInclude Include="..\Public\Event_Smeade_Next_Level.h" />
     <ClInclude Include="..\Public\Event_Spawn_Darkwizard.h" />
     <ClInclude Include="..\Public\Event_Spawn_Dragon.h" />
     <ClInclude Include="..\Public\Event_Dragon_Death.h" />
@@ -206,6 +208,7 @@
     <ClInclude Include="..\Public\Event_Enter_Vault.h" />
     <ClInclude Include="..\Public\Event_Spawn.h" />
     <ClInclude Include="..\Public\Event_Smeade.h" />
+    <ClInclude Include="..\Public\Event_Vault_Next_Level.h" />
     <ClInclude Include="..\Public\Event_Vault_Torch.h" />
     <ClInclude Include="..\Public\DarkWizard_Fly.h" />
     <ClInclude Include="..\Public\FireHouse.h" />
@@ -546,6 +549,8 @@
     <ClCompile Include="..\Private\Door.cpp" />
     <ClCompile Include="..\Private\Dummy_NPC.cpp" />
     <ClCompile Include="..\Private\Event_Cliffside.cpp" />
+    <ClCompile Include="..\Private\Event_Cliffside_Next_Level.cpp" />
+    <ClCompile Include="..\Private\Event_Smeade_Next_Level.cpp" />
     <ClCompile Include="..\Private\Event_Spawn_Darkwizard.cpp" />
     <ClCompile Include="..\Private\Event_Spawn_Dragon.cpp" />
     <ClCompile Include="..\Private\Event_Dragon_Death.cpp" />
@@ -553,6 +558,7 @@
     <ClCompile Include="..\Private\Event_Enter_Vault.cpp" />
     <ClCompile Include="..\Private\Event_Spawn.cpp" />
     <ClCompile Include="..\Private\Event_Smeade.cpp" />
+    <ClCompile Include="..\Private\Event_Vault_Next_Level.cpp" />
     <ClCompile Include="..\Private\Event_Vault_Torch.cpp" />
     <ClCompile Include="..\Private\DarkWizard_Fly.cpp" />
     <ClCompile Include="..\Private\FireHouse.cpp" />
