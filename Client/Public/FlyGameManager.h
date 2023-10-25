@@ -3,6 +3,11 @@
 
 BEGIN(Client)
 class CRacer;
+class CScoreBalloon;
+class CBeastBalloon_A;
+class CBeastBalloon_B;
+class CBeastBalloon_C;
+class CBeastBalloon_D;
 END
 
 BEGIN(Client)
@@ -22,6 +27,9 @@ private:
     virtual ~CFlyGameManager() = default;
 
 public:
+    void Add_Score(_uint iNumber,_uint iScore);
+
+public:
     virtual HRESULT Initialize_Prototype();
     virtual HRESULT Initialize(void* pArg);
     virtual void Tick(_float fTimeDelta);
@@ -31,9 +39,13 @@ private:
     HRESULT Add_Components();
 
 private:
+    void Find_Racer_Parent(_uint iLevel, const _tchar* wszLayerTag);
+
+private:
     vector<CRacer*>         m_pRacerGroup = {};
     vector<CGameObject*>    m_pRacerOwnerGroup = {};
     vector<_uint>           m_pScoreGroup = {};
+    //풍선 vector 만들어주기
 
 private:
     //게임 진행시간임.

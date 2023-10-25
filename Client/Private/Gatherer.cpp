@@ -526,8 +526,11 @@ void CGatherer::Free()
 	__super::Free();
 
 	if (m_GatheringType == CGatherer::HORKLUMP)
+	{
 		Safe_Release(m_pLight_Horklump);
-
+		m_pLight_Horklump = nullptr;
+	}
+	
 	Safe_Release(m_pPlayer);
 	Safe_Release(m_pPlayerInformation);
 

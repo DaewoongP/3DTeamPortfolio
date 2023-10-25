@@ -14,10 +14,20 @@ BEGIN(Client)
 
 class CRacer final : public CGameObject
 {
+public:
+	enum RACERTYPE {RACER_ENEMY,RACER_PLAYER,RACER_END};
+	typedef struct RacerInitDesc {
+		RACERTYPE eRacerType = { RACER_END };
+		_uint	  iRacerNumber = { 0 };
+	}RACERINITDESC;
+
 private:
 	explicit CRacer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CRacer(const CRacer& rhs);
 	virtual ~CRacer() = default;
+
+public:
+	void Add_Score(_uint iScore);
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -32,6 +42,11 @@ private:
 
 private:
 	CRigidBody*			m_pRigidBody = { nullptr };
+
+private:
+	RACERTYPE	m_eRacerType = { RACER_END };
+	_uint		m_iRacerNumber = { 0 };
+
 
 public:
 	static CRacer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

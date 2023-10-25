@@ -52,7 +52,6 @@ void CBeastBalloon_A::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	SCOREDESC ScoreDesc;
 	ScoreDesc.Score = m_iScore;
 	ScoreDesc.wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-
 	//매니저에게 전달한 후 
 
 	// 내가 부딪혔다는 사실을 갱신한다.
