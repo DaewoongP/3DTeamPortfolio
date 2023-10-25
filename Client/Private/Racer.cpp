@@ -99,6 +99,5 @@ void CRacer::Free()
 	if (m_isCloned)
 	{
 		Safe_Release(m_pRigidBody);
-		Safe_Release(m_pParent);
 	}
 }

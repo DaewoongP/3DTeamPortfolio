@@ -7,6 +7,10 @@ class CRigidbody;
 END
 
 BEGIN(Client)
+class CFlyGameManager;
+END
+
+BEGIN(Client)
 
 class CRacer final : public CGameObject
 {
@@ -27,8 +31,7 @@ private:
 	HRESULT Add_Components();
 
 private:
-	CRigidBody*		m_pRigidBody = { nullptr };
-	CGameObject*	m_pParent = { nullptr };
+	CRigidBody*			m_pRigidBody = { nullptr };
 
 public:
 	static CRacer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -26,12 +26,23 @@ HRESULT CFlyGameManager::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
+	m_fGameTimer = 180.f;
+
 	return S_OK;
 }
 
 void CFlyGameManager::Tick(_float fTimeDelta)
 {
-	CComposite::Tick(fTimeDelta);
+	if (m_isGameContinue)
+	{
+		m_fGameTimer -= fTimeDelta;
+		if (m_fGameTimer < 0)
+		{
+			m_isGameContinue = false;
+		}
+	}
+	
+	__super::Tick(fTimeDelta);
 }
 
 void CFlyGameManager::Late_Tick(_float fTimeDelta)
@@ -41,9 +52,7 @@ void CFlyGameManager::Late_Tick(_float fTimeDelta)
 
 HRESULT CFlyGameManager::Add_Components()
 {
-	CHealth::HEALTHDESC HealthDesc;
-
-	HealthDesc.iMaxHP = 100;
+	
 
 	/* Com_Health */
 	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
