@@ -27,7 +27,7 @@ void CVault_Torch::Switch_OnOff(_bool isValue)
 			CLight::LIGHTDESC LightDesc;
 			LightDesc.eType = CLight::TYPE_POINT;
 			LightDesc.fRange = 10.f;
-			LightDesc.vDiffuse = _float4(0.5f, 0.5f, 0.f, 1.f);
+			LightDesc.vDiffuse = _float4(1.f, (166.f / 255.f), (76.f / 255.f), 1.f);
 			LightDesc.vAmbient = LightDesc.vDiffuse;
 			LightDesc.vSpecular = LightDesc.vDiffuse;
 			LightDesc.vPos = m_pTransform->Get_Position().TransCoord();
