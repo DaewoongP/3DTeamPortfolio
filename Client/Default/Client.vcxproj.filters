@@ -964,8 +964,20 @@
     <Filter Include="02. GameObject\13. FlyGameManager\Racer">
       <UniqueIdentifier>{83891048-7011-45b0-a313-93d35a148860}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\13. ScoreBalloon">
+    <Filter Include="02. GameObject\13. FlyGameManager\ScoreBalloon">
       <UniqueIdentifier>{3bd866b0-5d68-4133-8231-5dc234dff144}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\BeastBalloon_A">
+      <UniqueIdentifier>{12d2a149-e462-4ac2-892b-ffbae4bf33bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\BeastBalloon_B">
+      <UniqueIdentifier>{940914ac-14b0-4129-93af-044bb7b69f19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\BeastBalloon_C">
+      <UniqueIdentifier>{15e9de0d-5ad1-4de6-a172-371ed90493c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\BeastBalloon_D">
+      <UniqueIdentifier>{89a3939a-d554-4657-a639-c807b979c7cf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1929,7 +1941,19 @@
       <Filter>02. GameObject\13. FlyGameManager\Racer</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ScoreBalloon.h">
-      <Filter>02. GameObject\13. ScoreBalloon</Filter>
+      <Filter>02. GameObject\13. FlyGameManager\ScoreBalloon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_A.h">
+      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_A</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_B.h">
+      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_B</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_C.h">
+      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_C</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_D.h">
+      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2848,7 +2872,19 @@
       <Filter>02. GameObject\13. FlyGameManager\Racer</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ScoreBalloon.cpp">
-      <Filter>02. GameObject\13. ScoreBalloon</Filter>
+      <Filter>02. GameObject\13. FlyGameManager\ScoreBalloon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_A.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_A</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_B.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_B</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_C.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_C</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_D.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
