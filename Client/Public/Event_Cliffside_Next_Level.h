@@ -16,7 +16,7 @@ private:
 	virtual ~CEvent_Cliffside_Next_Level() = default;
 
 public:
-	_bool Get_Level_Change() const { return m_isCheck; }
+	_bool Get_Level_Change() const { return m_isCheck; } // 플레이어와 충돌하면 true를 반환
 
 public:
 	virtual HRESULT Initialize(void* pArg) override;

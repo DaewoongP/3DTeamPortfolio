@@ -106,6 +106,7 @@
 #include "Event_Spawn_Dragon.h"
 #include "Event_Cliffside_Next_Level.h"
 #include "Event_Vault_Next_Level.h"
+#include "Event_Smeade_Next_Level.h"
 #pragma endregion
 
 #include "Guide_Book.h"
@@ -325,6 +326,11 @@ HRESULT CMain0_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Smeade"),
 		CEvent_Smeade::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Event_Smeade");
+
+	/* For.Prototype_GameObject_Event_Smeade_Next_Level */
+	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Smeade_Next_Level"),
+		CEvent_Smeade_Next_Level::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Event_Smeade_Next_Level");
 
 	ENDINSTANCE;
 

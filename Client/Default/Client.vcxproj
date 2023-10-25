@@ -194,6 +194,7 @@
     <ClInclude Include="..\Public\Dummy_NPC.h" />
     <ClInclude Include="..\Public\Event_Cliffside.h" />
     <ClInclude Include="..\Public\Event_Cliffside_Next_Level.h" />
+    <ClInclude Include="..\Public\Event_Smeade_Next_Level.h" />
     <ClInclude Include="..\Public\Event_Spawn_Darkwizard.h" />
     <ClInclude Include="..\Public\Event_Spawn_Dragon.h" />
     <ClInclude Include="..\Public\Event_Dragon_Death.h" />
@@ -534,6 +535,7 @@
     <ClCompile Include="..\Private\Dummy_NPC.cpp" />
     <ClCompile Include="..\Private\Event_Cliffside.cpp" />
     <ClCompile Include="..\Private\Event_Cliffside_Next_Level.cpp" />
+    <ClCompile Include="..\Private\Event_Smeade_Next_Level.cpp" />
     <ClCompile Include="..\Private\Event_Spawn_Darkwizard.cpp" />
     <ClCompile Include="..\Private\Event_Spawn_Dragon.cpp" />
     <ClCompile Include="..\Private\Event_Dragon_Death.cpp" />
