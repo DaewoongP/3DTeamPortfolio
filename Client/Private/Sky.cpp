@@ -24,6 +24,8 @@ HRESULT CSky::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	m_isNight = *static_cast<_bool*>(pArg);
+
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
@@ -137,7 +139,7 @@ HRESULT CSky::SetUp_ShaderResources()
 
 	if (FAILED(m_pShader->Bind_RawValue("g_vMoonPos", &m_vMoonPos, sizeof(_float2))))
 		return E_FAIL;
-	m_isNight = true;
+	
 	if (FAILED(m_pShader->Bind_RawValue("g_isNight", &m_isNight, sizeof(_bool))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_RawValue("g_iFrame", &m_iFrame, sizeof(_int))))

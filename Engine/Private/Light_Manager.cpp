@@ -151,6 +151,8 @@ HRESULT CLight_Manager::Render_Lights(CShader* pShader, CVIBuffer_Rect* pVIBuffe
 
 HRESULT CLight_Manager::Return_Light(CLight* pLight)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	Safe_Release(pLight);
 
 	if (nullptr == pLight)
@@ -181,6 +183,8 @@ HRESULT CLight_Manager::Update_ShadowMatrix(_uint iShadowIndex, CLight::LIGHTDES
 
 CLight* CLight_Manager::Create_Light(const CLight::LIGHTDESC& LightDesc)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	CLight* pLight = { nullptr };
 
 	if (m_LightPool.empty())

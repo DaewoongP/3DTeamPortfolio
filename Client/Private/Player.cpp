@@ -378,8 +378,6 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
-		if (nullptr != m_pTarget)
-			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_EDGEHIGHLIGHT, m_pTarget);
 #ifdef _DEBUG
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
 #endif // _DEBUG
