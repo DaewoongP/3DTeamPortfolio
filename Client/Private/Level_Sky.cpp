@@ -3,6 +3,7 @@
 
 #include "MapObject.h"
 #include "MapObject_Ins.h"
+#include "ScoreBalloon.h"
 
 CLevel_Sky::CLevel_Sky(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
@@ -68,6 +69,21 @@ HRESULT CLevel_Sky::Ready_Layer_BackGround(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+	for (_uint i = 0; i < 50; ++i)
+	{
+		wstring Tag = TEXT("GameObject_Balloon_") + to_wstring(i);
+
+		CScoreBalloon::BALLOONINITDESC InitDesc;
+		InitDesc.iScore = 100;
+		InitDesc.vPosition = _float3(GetRandomFloat(87.f, 143.f), GetRandomFloat(10.f, 30.f), GetRandomFloat(84.f, 236.f));
+		if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_Balloon"), pLayerTag, Tag.c_str(), &InitDesc)))
+		{
+			MSG_BOX("Failed Add_GameObject : (GameObject_Balloon)");
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
 	ENDINSTANCE;
 
 	return S_OK;
@@ -97,14 +113,6 @@ HRESULT CLevel_Sky::Ready_Layer_Monster(const _tchar* pLayerTag)
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_DarkWizard_Fly"), pLayerTag, TEXT("GameObject_DarkWizard_Fly_3"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_DarkWizard_Fly_3)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-
-	Matrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixTranslation(108.f, 26.f, 165.f);
-	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_DarkWizard_Fly"), pLayerTag, TEXT("GameObject_DarkWizard_Fly_4"), &Matrix)))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_DarkWizard_Fly_4)");
 		ENDINSTANCE;
 		return E_FAIL;
 	}

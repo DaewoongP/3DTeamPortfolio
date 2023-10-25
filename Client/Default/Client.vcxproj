@@ -266,6 +266,7 @@
     <ClInclude Include="..\Public\Robe_Beast.h" />
     <ClInclude Include="..\Public\Robe_Quidditch.h" />
     <ClInclude Include="..\Public\Sanctum_Door.h" />
+    <ClInclude Include="..\Public\ScoreBalloon.h" />
     <ClInclude Include="..\Public\Script.h" />
     <ClInclude Include="..\Public\SmithToCliff_Gate.h" />
     <ClInclude Include="..\Public\Smith_FIg.h" />
@@ -604,6 +605,7 @@
     <ClCompile Include="..\Private\Robe_Beast.cpp" />
     <ClCompile Include="..\Private\Robe_Quidditch.cpp" />
     <ClCompile Include="..\Private\Sanctum_Door.cpp" />
+    <ClCompile Include="..\Private\ScoreBalloon.cpp" />
     <ClCompile Include="..\Private\Script.cpp" />
     <ClCompile Include="..\Private\SmithToCliff_Gate.cpp" />
     <ClCompile Include="..\Private\Smith_FIg.cpp" />

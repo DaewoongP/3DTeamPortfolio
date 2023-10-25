@@ -112,8 +112,6 @@ void CDarkWizard_F::Late_Tick(_float fTimeDelta)
 
 void CDarkWizard_F::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	__super::OnCollisionEnter(CollisionEventDesc);
-
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 	wstring wstrOtherCollisionTag = CollisionEventDesc.pOtherCollisionTag;
