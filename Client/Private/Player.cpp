@@ -453,6 +453,11 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			break;
 			case CEnemy::ATTACK_LIGHT:
 			{
+				for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
+				{
+					m_vecPlayer_StateParicle[i]->Play(pDesc->pEnemyTransform->Get_Position());
+				}
+
 				BEGININSTANCE;
 				_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_24397.wav") },{TEXT("playermale_99996.wav") } ,{TEXT("playermale_35941.wav")},{TEXT("playermale_99995.wav") } };
 				pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
@@ -469,6 +474,11 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			break;
 			case CEnemy::ATTACK_HEAVY:
 			{
+				for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
+				{
+					m_vecPlayer_StateParicle[i]->Play(pDesc->pEnemyTransform->Get_Position());
+				}
+
 				BEGININSTANCE;
 				_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_25735.wav") },{TEXT("playermale_99991.wav") } ,{TEXT("playermale_99992.wav") },{TEXT("playermale_99993.wav") } };
 				pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
@@ -487,10 +497,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			HitStateDesc.pTransform = pDesc->pEnemyTransform;
 
 			Go_Hit(&HitStateDesc);
-			for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
-			{
-				m_vecPlayer_StateParicle[i]->Play(pDesc->pEnemyTransform->Get_Position());
-			}
+			
 
 			//ü�� ����
 			m_pPlayer_Information->fix_HP((pDesc->iDamage) * -1);
@@ -527,6 +534,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		//Hit
 		else
 		{
+
 			CHitState::HITSTATEDESC HitStateDesc;
 			HitStateDesc.eBuffType = pDesc->eBuffType;
 
@@ -761,7 +769,7 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 	
-	m_vecPlayer_StateParicle.resize(2);
+	m_vecPlayer_StateParicle.resize(3);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Player_Hit_Particle"),
 		TEXT("Com_Player_HitParticle"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[0]))))
 	{
@@ -774,6 +782,14 @@ HRESULT CPlayer::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Player_Hit_Circle"),
+		TEXT("Com_Player_Hit_Circle"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[2]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
 
 	/* For.Com_Player_Effect */
 	//m_vecPlayer_StateParicle.resize(1);
