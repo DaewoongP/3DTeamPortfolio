@@ -137,6 +137,8 @@ void CGameInstance::Clear_LevelResources(_uint iLevelIndex)
 
 void CGameInstance::Clear_Resources()
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, , TEXT("Camera_Manager NULL"));
 	NULL_CHECK_RETURN_MSG(m_pTimer_Manager, , TEXT("Timer_Manager NULL"));
 

@@ -970,6 +970,48 @@
     <Filter Include="07. Events\Smeade\Event_Smeade_Next_Level">
       <UniqueIdentifier>{ff487640-9204-48ee-99ce-1bfd06459d06}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager">
+      <UniqueIdentifier>{3b00833f-14ab-4e76-913b-384667efaaba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\Racer">
+      <UniqueIdentifier>{83891048-7011-45b0-a313-93d35a148860}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\Balloons">
+      <UniqueIdentifier>{08e42436-be57-4278-b8fc-a101a9a19b43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\Balloons\ScoreBalloon">
+      <UniqueIdentifier>{3bd866b0-5d68-4133-8231-5dc234dff144}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\Balloons\BeastBalloon_D">
+      <UniqueIdentifier>{108603a3-871d-4704-97cb-73142879efeb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\Balloons\BeastBalloon_C">
+      <UniqueIdentifier>{86af1627-0477-4f89-a890-5a54b95adb47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\Balloons\BeastBalloon_B">
+      <UniqueIdentifier>{92945985-b710-4618-b835-b57cb4d50594}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\Balloons\BeastBalloon_A">
+      <UniqueIdentifier>{56e0d28a-9dea-44bc-b131-86c4a4daabd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\ScoreBalloon">
+      <UniqueIdentifier>{3bd866b0-5d68-4133-8231-5dc234dff144}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\BeastBalloon_A">
+      <UniqueIdentifier>{12d2a149-e462-4ac2-892b-ffbae4bf33bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\BeastBalloon_B">
+      <UniqueIdentifier>{940914ac-14b0-4129-93af-044bb7b69f19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\BeastBalloon_C">
+      <UniqueIdentifier>{15e9de0d-5ad1-4de6-a172-371ed90493c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\BeastBalloon_D">
+      <UniqueIdentifier>{89a3939a-d554-4657-a639-c807b979c7cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. ScoreBalloon\TimerUI">
+      <UniqueIdentifier>{db006da7-9b7e-4cfa-a0df-7e494c87c54c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1934,6 +1976,47 @@
     <ClInclude Include="..\Public\Event_Smeade_Next_Level.h">
       <Filter>07. Events\Smeade\Event_Smeade_Next_Level</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\FlyGameManager.h">
+      <Filter>02. GameObject\13. FlyGameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Racer.h">
+      <Filter>02. GameObject\13. FlyGameManager\Racer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ScoreBalloon.h">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ScoreBalloon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_A.h">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\BeastBalloon_A</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_B.h">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\BeastBalloon_B</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_C.h">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\BeastBalloon_C</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_D.h">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\BeastBalloon_D</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Balloon.h">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons</Filter>
+    </ClInclude>
+      <Filter>02. GameObject\13. FlyGameManager\ScoreBalloon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_A.h">
+      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_A</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_B.h">
+      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_B</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_C.h">
+      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_C</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_D.h">
+      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_D</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Balloon_Timer.h">
+      <Filter>02. GameObject\13. ScoreBalloon\TimerUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2852,6 +2935,47 @@
     </ClCompile>
     <ClCompile Include="..\Private\Event_Smeade_Next_Level.cpp">
       <Filter>07. Events\Smeade\Event_Smeade_Next_Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FlyGameManager.cpp">
+      <Filter>02. GameObject\13. FlyGameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Racer.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Racer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ScoreBalloon.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ScoreBalloon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_A.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\BeastBalloon_A</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_B.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\BeastBalloon_B</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_C.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\BeastBalloon_C</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_D.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\BeastBalloon_D</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Balloon.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons</Filter>
+    </ClCompile>
+      <Filter>02. GameObject\13. FlyGameManager\ScoreBalloon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_A.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_A</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_B.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_B</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_C.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_C</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_D.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_D</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Balloon_Timer.cpp">
+      <Filter>02. GameObject\13. ScoreBalloon\TimerUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

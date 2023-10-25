@@ -917,6 +917,8 @@ HRESULT CModel::Ready_Animations()
 //���� �� �ִϸ��̼��� ��ȯ
 HRESULT CModel::Convert_Animations_GCM()
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	if (m_isExportedTool)
 		Release_FileDatas_GCM();
 	else
@@ -1541,6 +1543,8 @@ HRESULT CModel::Ready_Animations_GCM()
 
 HRESULT CModel::Ready_File_Animation(ANIMTYPE eType, const _tchar* pAnimationFilePath)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	HANDLE hFile = CreateFile(pAnimationFilePath,
 		GENERIC_READ,
 		0,
@@ -1674,6 +1678,8 @@ HRESULT CModel::Release_TempAnimVec(vector<ANIMATION>* AnimVec)
 
 HRESULT CModel::Write_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	m_isExportedTool = true;
 	_tchar szPath[MAX_PATH] = TEXT("../../Resources/Models/Anims/");
 	lstrcat(szPath, pModelFilePath);
