@@ -98,17 +98,17 @@ void CCliff_Gate::Tick(_float fTimeDelta)
 		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	else
 		m_pModel->Play_Animation(0, CModel::UPPERBODY, m_pTransform);
-}
-
-void CCliff_Gate::Late_Tick(_float fTimeDelta)
-{
-	__super::Late_Tick(fTimeDelta);
 
 	if (m_pModel->Is_Finish_Animation() && false == m_isEffectOn)
 	{
 		m_pEffect->Play(m_pTransform->Get_Position() + _float3(0.f, 1.875f, 0.f));
 		m_isEffectOn = true;
-	}		
+	}
+}
+
+void CCliff_Gate::Late_Tick(_float fTimeDelta)
+{
+	__super::Late_Tick(fTimeDelta);	
 
 	if (nullptr != m_pRenderer)
 	{
@@ -230,23 +230,6 @@ HRESULT CCliff_Gate::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _flo
 	ENDINSTANCE;
 
 	return S_OK;
-}
-
-void CCliff_Gate::Check_MinMaxPoint(_float3 vPoint)
-{
-	if (m_vMinPoint.x > vPoint.x)
-		m_vMinPoint.x = vPoint.x;
-	if (m_vMinPoint.y > vPoint.y)
-		m_vMinPoint.y = vPoint.y;
-	if (m_vMinPoint.z > vPoint.z)
-		m_vMinPoint.z = vPoint.z;
-
-	if (m_vMaxPoint.x < vPoint.x)
-		m_vMaxPoint.x = vPoint.x;
-	if (m_vMaxPoint.y < vPoint.y)
-		m_vMaxPoint.y = vPoint.y;
-	if (m_vMaxPoint.z < vPoint.z)
-		m_vMaxPoint.z = vPoint.z;
 }
 
 void CCliff_Gate::Check_FireOn()

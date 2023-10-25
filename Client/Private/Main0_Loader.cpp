@@ -104,6 +104,7 @@
 #include "Event_Smeade.h"
 #include "Event_Cliffside.h"
 #include "Event_Spawn_Dragon.h"
+#include "Event_Cliffside_Next_Level.h"
 #pragma endregion
 
 #include "Guide_Book.h"
@@ -249,6 +250,11 @@ HRESULT CMain0_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Cliffside"),
 			CEvent_Cliffside::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Event_Cliffside");
+
+		///* For.Prototype_GameObject_Event_Cliffside_Next_Level */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Cliffside_Next_Level"),
+		//	CEvent_Cliffside_Next_Level::Create(m_pDevice, m_pContext))))
+		//	throw TEXT("Prototype_GameObject_Event_Cliffside_Next_Level");
 	}
 	catch (const _tchar* pErrorTag)
 	{

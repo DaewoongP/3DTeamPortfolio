@@ -4,6 +4,8 @@
 
 BEGIN(Client)
 
+class CEvent_Cliffside_Next_Level;
+
 class CLevel_Cliffside final : public CLevel
 {
 private:
@@ -21,6 +23,9 @@ private:
 	HRESULT Ready_Layer_NPC(const _tchar* pLayerTag);
 	HRESULT Ready_Events(const _tchar* pLayerTag);
 	HRESULT Ready_Shader();
+
+private:
+	CEvent_Cliffside_Next_Level* m_pGo_HogSmeade = { nullptr };
 
 private:
 	HRESULT Load_MapObject(const _tchar* pObjectFilePath);
