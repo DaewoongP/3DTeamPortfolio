@@ -964,6 +964,9 @@
     <Filter Include="02. GameObject\13. FlyGameManager\Racer">
       <UniqueIdentifier>{83891048-7011-45b0-a313-93d35a148860}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\13. ScoreBalloon">
+      <UniqueIdentifier>{3bd866b0-5d68-4133-8231-5dc234dff144}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1925,6 +1928,9 @@
     <ClInclude Include="..\Public\Racer.h">
       <Filter>02. GameObject\13. FlyGameManager\Racer</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ScoreBalloon.h">
+      <Filter>02. GameObject\13. ScoreBalloon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2840,6 +2846,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Racer.cpp">
       <Filter>02. GameObject\13. FlyGameManager\Racer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ScoreBalloon.cpp">
+      <Filter>02. GameObject\13. ScoreBalloon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

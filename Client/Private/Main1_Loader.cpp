@@ -31,6 +31,8 @@
 #include "Lamp_Wall.h"
 #include "FireWood.h"
 
+#include "ScoreBalloon.h"
+
 CMain1_Loader::CMain1_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
 	, m_pContext(pContext)
@@ -360,6 +362,16 @@ HRESULT CMain1_Loader::Loading_For_Sky(LEVELID eLevelID)
 
 		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins5.ddd"), eLevelID)))
 			throw TEXT("Map Object_Ins");
+
+		/* For.Prototype_Component_Model_Balloon */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Balloon"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Balloon/Balloon.dat")))))
+			throw TEXT("Prototype_Component_Model_Balloon");
+
+		/* For.Prototype_GameObject_Balloon */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Balloon"),
+			CScoreBalloon::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Balloon");
 	}
 	catch (const _tchar* pErrorTag)
 	{

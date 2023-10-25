@@ -1,5 +1,6 @@
 #include "Card_Fig.h"
-#include "GameInstance.h"
+
+#include "Client_GameInstance_Functions.h"
 
 #include "MagicSlot.h"
 #include "MagicBall.h"
@@ -8,6 +9,10 @@
 #include "UI_Dissolve.h"
 #include "Quest_Manager.h"
 #include "Script.h"
+
+#include "Action.h"
+#include "LookAt.h"
+#include "RigidMove.h"
 
 CCard_Fig::CCard_Fig(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -39,6 +44,9 @@ HRESULT CCard_Fig::Initialize(void* pArg)
 		return E_FAIL;
 
 	if (FAILED(Make_Notifies()))
+		return E_FAIL;
+
+	if (FAILED(Make_AI()))
 		return E_FAIL;
 
 	if (nullptr != pArg)
@@ -76,11 +84,8 @@ void CCard_Fig::Tick(_float fTimeDelta)
 		m_pTransform->Set_WorldMatrix(WorldMatrix);
 		ENDINSTANCE;
 	}
-	else
-	{
-		Jump_Up(fTimeDelta);
-		Action(fTimeDelta);
-	}
+
+	Jump_Up(fTimeDelta);
 
 	Play_Script(fTimeDelta);
 
@@ -92,8 +97,6 @@ void CCard_Fig::Tick(_float fTimeDelta)
 
 void CCard_Fig::Late_Tick(_float fTimeDelta)
 {
-	__super::Late_Tick(fTimeDelta);
-
 	if (m_isPlayScript)
 
 		m_pScripts[m_iScriptIndex]->Late_Tick(fTimeDelta);
@@ -101,7 +104,7 @@ void CCard_Fig::Late_Tick(_float fTimeDelta)
 	if (false == m_isSpawn)
 		return;
 
-
+	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRenderer)
 	{
@@ -200,6 +203,150 @@ void CCard_Fig::Spawn_Fig(const CGameObject* pTarget)
 	m_isSpawn = true;
 }
 
+HRESULT CCard_Fig::Make_AI()
+{
+	BEGININSTANCE;
+
+	try
+	{
+		/* Add Types */
+		if (FAILED(m_pRootBehavior->Add_Type("pTransform", m_pTransform)))
+			throw TEXT("Failed Add_Type pTransform");
+		if (FAILED(m_pRootBehavior->Add_Type("pModel", m_pModelCom)))
+			throw TEXT("Failed Add_Type pModel");
+		if (FAILED(m_pRootBehavior->Add_Type("pRigidBody", m_pRigidBody)))
+			throw TEXT("Failed Add_Type pRigidBody");
+
+		if (FAILED(m_pRootBehavior->Add_Type("isSpawn", &m_isSpawn)))
+			throw TEXT("Failed Add_Type isSpawn");
+		if (FAILED(m_pRootBehavior->Add_Type("isJump", &m_isJump)))
+			throw TEXT("Failed Add_Type isJump");
+		if (FAILED(m_pRootBehavior->Add_Type("isChangeAnimation", &m_isChangeAnimation)))
+			throw TEXT("Failed Add_Type isChangeAnimation");
+		if (FAILED(m_pRootBehavior->Add_Type("cppTarget", &m_pTarget)))
+			throw TEXT("Failed Add_Type cppTarget");
+
+		/* Create Child Behaviors */
+		CSequence* pSequence = { nullptr };
+		if (FAILED(Create_Behavior(pSequence)))
+			throw TEXT("Failed Create_Behavior pSequence");
+
+		CAction* pAction_Jump = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Jump)))
+			throw TEXT("Failed Create_Behavior pAction_Jump");
+		CAction* pAction_Land = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Land)))
+			throw TEXT("Failed Create_Behavior pAction_Land");
+		CAction* pAction_Attack_1 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Attack_1)))
+			throw TEXT("Failed Create_Behavior pAction_Attack_1");
+		CAction* pAction_Attack_2 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Attack_2)))
+			throw TEXT("Failed Create_Behavior pAction_Attack_2");
+		CAction* pAction_Attack_3 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Attack_3)))
+			throw TEXT("Failed Create_Behavior pAction_Attack_3");
+		CAction* pAction_Jump_Out = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Jump_Out)))
+			throw TEXT("Failed Create_Behavior pAction_Jump_Out");
+
+		CLookAt* pTsk_LookAt_1 = { nullptr };
+		if (FAILED(Create_Behavior(pTsk_LookAt_1)))
+			throw TEXT("Failed Create_Behavior pTsk_LookAt_1");
+		CLookAt* pTsk_LookAt_2 = { nullptr };
+		if (FAILED(Create_Behavior(pTsk_LookAt_2)))
+			throw TEXT("Failed Create_Behavior pTsk_LookAt_2");
+		CLookAt* pTsk_LookAt_3 = { nullptr };
+		if (FAILED(Create_Behavior(pTsk_LookAt_3)))
+			throw TEXT("Failed Create_Behavior pTsk_LookAt_3");
+
+		/* Set Decorators */
+		pSequence->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsSpawn = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isSpawn", pIsSpawn)))
+					return false;
+
+				return true == *pIsSpawn;
+			});
+		pAction_Jump_Out->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsJump = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isJump", pIsJump)))
+					return false;
+
+				*pIsJump = true;
+
+				return true;
+			});
+		pAction_Jump_Out->Add_Success_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsSpawn = { nullptr };
+				_bool* pIsJump = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isSpawn", pIsSpawn)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("isJump", pIsJump)))
+					return false;
+
+				*pIsSpawn = false;
+				*pIsJump = false;
+
+				return true;
+			});
+
+		/* Set Options */
+		pAction_Jump->Set_Options(TEXT("Jump_Down_Run"), m_pModelCom);
+		pAction_Land->Set_Options(TEXT("Soft"), m_pModelCom);
+		pAction_Attack_1->Set_Options(TEXT("Attack_Cast_Crucio"), m_pModelCom);
+		pAction_Attack_2->Set_Options(TEXT("Attack_Cast_Bombarda"), m_pModelCom);
+		pAction_Attack_3->Set_Options(TEXT("Attack_Cast_Finisher"), m_pModelCom);
+		pAction_Jump_Out->Set_Options(TEXT("Spawn_Out"), m_pModelCom);
+
+		pTsk_LookAt_1->Set_Option(m_pTransform);
+		pTsk_LookAt_2->Set_Option(m_pTransform);
+		pTsk_LookAt_3->Set_Option(m_pTransform);
+		
+		/* Assemble Behaviors */
+		if (FAILED(m_pRootBehavior->Assemble_Behavior(TEXT("pSequence"), pSequence)))
+			throw TEXT("Failed Assemble_Behavior pSequence");
+
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Jump"), pAction_Jump)))
+			throw TEXT("Failed Assemble_Behavior Action_Jump");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Land"), pAction_Land)))
+			throw TEXT("Failed Assemble_Behavior Action_Land");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Attack_1"), pAction_Attack_1)))
+			throw TEXT("Failed Assemble_Behavior Action_Attack_1");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Attack_2"), pAction_Attack_2)))
+			throw TEXT("Failed Assemble_Behavior Action_Attack_2");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Attack_3"), pAction_Attack_3)))
+			throw TEXT("Failed Assemble_Behavior Action_Attack_3");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Jump_Out"), pAction_Jump_Out)))
+			throw TEXT("Failed Assemble_Behavior Action_Jump_Out");
+
+		if (FAILED(pAction_Attack_1->Assemble_Behavior(TEXT("pTsk_LookAt_1"), pTsk_LookAt_1)))
+			throw TEXT("Failed Assemble_Behavior pTsk_LookAt_1");
+		if (FAILED(pAction_Attack_2->Assemble_Behavior(TEXT("pTsk_LookAt_2"), pTsk_LookAt_2)))
+			throw TEXT("Failed Assemble_Behavior pTsk_LookAt_2");
+		if (FAILED(pAction_Attack_3->Assemble_Behavior(TEXT("pTsk_LookAt_3"), pTsk_LookAt_3)))
+			throw TEXT("Failed Assemble_Behavior pTsk_LookAt_3");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CCard_Fig] Failed Make_AI : ");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
 HRESULT CCard_Fig::Make_Magics()
 {
 	//Skill Magic CRUCIO
@@ -269,6 +416,18 @@ HRESULT CCard_Fig::Make_Notifies()
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Shot_Magic"), Func)))
 		return E_FAIL;
 
+	Func = [&] { (*this).On_Gravity(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("On_Gravity"), Func)))
+		return E_FAIL;
+
+	Func = [&] { (*this).Off_Gravity(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Off_Gravity"), Func)))
+		return E_FAIL;
+
+	Func = [&] { (*this).Change_Animation(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Change_Animation"), Func)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -290,6 +449,11 @@ HRESULT CCard_Fig::Add_Components()
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 			TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 			throw TEXT("Com_Shader");
+
+		/* For.Com_RootBehavior */
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RootBehavior"),
+			TEXT("Com_RootBehavior"), reinterpret_cast<CComponent**>(&m_pRootBehavior))))
+			throw TEXT("Com_RootBehavior");
 
 		/* For.Com_ShadowShader */
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowAnimMesh"),
@@ -478,56 +642,9 @@ HRESULT CCard_Fig::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float
 	return S_OK;
 }
 
-void CCard_Fig::Action(const _float& fTimeDelta)
-{
-	if (true == m_isAction1)
-	{
-		m_pModelCom->Change_Animation(TEXT("Jump_Down_Run"));
-		m_pRigidBody->Set_Gravity(false);
-		m_isAction1 = false;
-	}
-
-	if (m_pModelCom->Is_Finish_Animation())
-	{
-		if (false == m_isAction2)
-		{
-			m_pModelCom->Change_Animation(TEXT("Soft"));
-			m_pRigidBody->Set_Gravity(true);
-			m_isAction2 = true;
-		}
-		else
-		{
-			if (false == m_isAction3)
-			{
-				m_pModelCom->Change_Animation(m_AttackTags[m_iCurrentTagIndex++]);
-				m_iCurrentTagIndex = (m_iCurrentTagIndex == m_AttackTags.size()) ? 0 : m_iCurrentTagIndex;
-				m_isAction3 = true;
-			}
-			else
-			{
-				if (false == m_isAction4)
-				{
-					m_pRigidBody->Set_Gravity(false);
-					m_pModelCom->Change_Animation(TEXT("Spawn_Out"));
-					m_isAction4 = true;
-				}
-				else
-				{
-					m_pRigidBody->Set_Gravity(true);
-					m_isAction1 = true;
-					m_isAction2 = false;
-					m_isAction3 = false;
-					m_isAction4 = false;
-					m_isSpawn = false;
-				}
-			}
-		}
-	}
-}
-
 void CCard_Fig::Jump_Up(const _float& fTimeDelta)
 {
-	if (false == m_isAction4)
+	if (false == m_isJump)
 	{
 		m_fTimeAcc = 0.f;
 		return;
@@ -579,6 +696,18 @@ void CCard_Fig::Cast_Finisher()
 void CCard_Fig::Shot_Magic()
 {
 	m_CastingMagic->Do_MagicBallState_To_Next();
+}
+
+void CCard_Fig::On_Gravity()
+{
+	if (nullptr != m_pRigidBody)
+		m_pRigidBody->Set_Gravity(true);
+}
+
+void CCard_Fig::Off_Gravity()
+{
+	if (nullptr != m_pRigidBody)
+		m_pRigidBody->Set_Gravity(false);
 }
 
 void CCard_Fig::Ready_Card_UI()
@@ -694,6 +823,7 @@ void CCard_Fig::Free()
 	Safe_Release(m_pMagicSlot);
 	Safe_Release(m_pWeapon);
 	Safe_Release(m_pRigidBody);
+	Safe_Release(m_pRootBehavior);
 
 	Safe_Release(m_pUI_Card);
 

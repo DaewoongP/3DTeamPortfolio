@@ -83,8 +83,9 @@ HRESULT CLevel_Cliffside::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
+	_bool isNight = false;
 	FAILED_CHECK_RETURN(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, 
-		TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky")), E_FAIL)
+		TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"), &isNight), E_FAIL)
 		
 	FAILED_CHECK_RETURN(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE,
 		TEXT("Prototype_GameObject_Water"), pLayerTag, TEXT("GameObject_Water")), E_FAIL)
@@ -99,11 +100,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_BackGround(const _tchar* pLayerTag)
 
 HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 {
-	BEGININSTANCE;
-
 	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Cliff.mon"));
-
-	ENDINSTANCE;
 
 	return S_OK;
 }
@@ -148,7 +145,7 @@ HRESULT CLevel_Cliffside::Ready_Shader()
 	CRenderer* pRenderer = static_cast<CRenderer*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer")));
 	pRenderer->Defualt_Shading();
 
-
+	pRenderer->Set_Fog(true, _float4(1.f, 1.f, 1.f, 1.f), _float3(40.5f, 0.f, 63.7f), 40.f);
 
 	Safe_Release(pRenderer);
 

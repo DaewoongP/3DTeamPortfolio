@@ -1,6 +1,7 @@
 #include "..\Public\Level_Manager.h"
 #include "Level.h"
 #include "Camera_Manager.h"
+#include "TexturePool.h"
 #include "GameInstance.h"
 
 IMPLEMENT_SINGLETON(CLevel_Manager)
@@ -26,7 +27,9 @@ HRESULT CLevel_Manager::Open_Level(_uint iLevelIndex, CLevel* pNewLevel)
 	// 이전 레벨에서 사용되던 자원을 날린다.
 	if (nullptr != m_pCurrentLevel)
 	{
+		std::lock_guard<std::mutex> lock(mtx);
 		pGameInstance->Clear_LevelResources(m_iLevelIndex);
+		CTexturePool::GetInstance()->Clear_Textures();
 	}
 
 	// 현재레벨과 다음레벨 교체
