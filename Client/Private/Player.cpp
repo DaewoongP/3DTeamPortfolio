@@ -346,6 +346,14 @@ void CPlayer::Tick(_float fTimeDelta)
 		}
 		m_pWindParticle->Get_Transform()->Set_Position(m_pTransform->Get_Position() +
 			m_pPlayer_Camera->Get_TransformPtr()->Get_Look() * 5);
+
+		_float4x4 TempMatrix = m_pTransform->Get_WorldMatrix();
+		TempMatrix.m[3][0] = 0;
+		TempMatrix.m[3][1] = 0;
+		TempMatrix.m[3][2] = 0;
+
+		m_pWindParticle->Get_ShapeModuleRef().ShapeMatrix =
+			m_pWindParticle->Get_ShapeModuleRef().ShapeMatrixInit * TempMatrix;
 	}
 	else
 	{
@@ -817,21 +825,6 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
 		throw TEXT("Com_Weapon");
 
-	pBone = m_pCustomModel->Get_Bone_Index(46);
-	if (nullptr == pBone)
-		throw TEXT("pBone is nullptr");
-
-	CBroom_Stick::CWEAPON_PLAYER_BROOM_DESC ParentMatrixDesc2;
-	ParentMatrixDesc2.ParentMatrixDesc.OffsetMatrix = pBone->Get_OffsetMatrix();
-	ParentMatrixDesc2.ParentMatrixDesc.PivotMatrix = m_pCustomModel->Get_PivotFloat4x4();
-	ParentMatrixDesc2.ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
-	ParentMatrixDesc2.ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
-	//뼈 바인딩해주기
-	if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Weapon_Player_Broom"),
-		TEXT("Com_Broom"), reinterpret_cast<CComponent**>(&m_pBroom), &ParentMatrixDesc2)))
-		throw TEXT("Com_Broom");
-	
-
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_MagicSlot"),
 		TEXT("Com_MagicSlot"), reinterpret_cast<CComponent**>(&m_pMagicSlot))))
 	{
@@ -872,6 +865,21 @@ HRESULT CPlayer::Add_Components()
 
 	m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
 	m_pRigidBody->Get_RigidBodyActor()->setAngularDamping(1.f);
+
+	pBone = m_pCustomModel->Get_Bone_Index(46);
+	if (nullptr == pBone)
+		throw TEXT("pBone is nullptr");
+
+	CBroom_Stick::CWEAPON_PLAYER_BROOM_DESC ParentMatrixDesc2;
+	ParentMatrixDesc2.ParentMatrixDesc.OffsetMatrix = pBone->Get_OffsetMatrix();
+	ParentMatrixDesc2.ParentMatrixDesc.PivotMatrix = m_pCustomModel->Get_PivotFloat4x4();
+	ParentMatrixDesc2.ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
+	ParentMatrixDesc2.ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+	ParentMatrixDesc2.pPlayerRigidBody = m_pRigidBody;
+	//뼈 바인딩해주기
+	if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Weapon_Player_Broom"),
+		TEXT("Com_Broom"), reinterpret_cast<CComponent**>(&m_pBroom), &ParentMatrixDesc2)))
+		throw TEXT("Com_Broom");
 
 	/* Com_Player_Information */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Player_Information"),
@@ -1049,7 +1057,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = LUMOS;
-		magicInitDesc.fInitCoolTime = 5.f;
+		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 0;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 30.f;
@@ -1194,6 +1202,11 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	BEGININSTANCE;
 
 #ifdef _DEBUG
+	if (pGameInstance->Get_DIKeyState(DIK_P, CInput_Device::KEY_DOWN))
+	{
+		m_pRigidBody->Add_Force(_float3(0, 1, 0) * 60, PxForceMode::eIMPULSE, true);
+	}
+	
 	if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))
 	{
 		_float3 vAxis = _float3(m_fx, m_fy, m_fz);

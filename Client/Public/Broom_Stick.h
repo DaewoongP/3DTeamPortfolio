@@ -27,6 +27,7 @@ public:
 	typedef struct tagCWeapon_Player_BroomDesc
 	{
 		PARENTMATRIXDESC ParentMatrixDesc;
+		CRigidBody* pPlayerRigidBody = { nullptr };
 	}CWEAPON_PLAYER_BROOM_DESC;
 private:
 	explicit CBroom_Stick(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -40,19 +41,18 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-	void HeadParticle(_float fTimeDelta);
 
 private:
 	CModel*				m_pModelCom = { nullptr };
 	CShader*			m_pShaderCom = { nullptr };
 	CRenderer*			m_pRendererCom = { nullptr };
 	CParticleSystem*	m_pParticle = { nullptr };
+	CParticleSystem*	m_pParticle_Local = { nullptr };
+	
+	CRigidBody*			m_pPlayerRigidBody = { nullptr };
 private:
 	_float				AccTime = 0.f;
 	_float				DelayTime = 0.0f;
-
-private:
-	void Tick_Debug();
 
 private:
 	HRESULT Add_Components(void* pArg);

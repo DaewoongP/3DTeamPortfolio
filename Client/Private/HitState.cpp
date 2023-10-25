@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "Client_Defines.h"
 #include "StateContext.h"
+#include "Player.h"
 
 CHitState::CHitState(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	:CStateMachine(_pDevice, _pContext)
@@ -59,12 +60,10 @@ void CHitState::OnStateEnter(void* _pArg)
 void CHitState::OnStateTick()
 {
 	BEGININSTANCE;
-
 	if (pGameInstance->Get_DIKeyState(DIK_I, CInput_Device::KEY_DOWN))
 	{
 		Go_Idle();
 	}
-
 	ENDINSTANCE;
 
 	Hit_Tick();
@@ -86,6 +85,12 @@ void CHitState::Bind_Notify()
 	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Rct_Hit_Rht_anm"),TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
 	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Rct_Hit_Lft_anm"),TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
 
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Broom_Hover_Rct_Impact_Hvy_Bwd_anm"),TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Broom_Hover_Rct_Impact_Hvy_Fwd_anm"),TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Broom_Hover_Rct_Impact_Hvy_Bwd_anm"),TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Broom_FlyNoStirrups_Collision_Front_hard_anm"),TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Broom_Fly_Rct_Impact_Lht_Fwd_anm"),TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
+
 	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_Fwd_01_anm"),TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
 	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_01_anm"),TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
 
@@ -98,7 +103,10 @@ void CHitState::Bind_Notify()
 
 void CHitState::Go_Idle()
 {
-	Set_StateMachine(TEXT("Idle"));
+	if (!*m_StateMachineDesc.pIsFlying)
+		Set_StateMachine(TEXT("Idle"));
+	else
+		Set_StateMachine(TEXT("Hover_Move"));
 }
 
 void CHitState::Go_Standing()
@@ -205,40 +213,43 @@ void CHitState::Set_Dir()
 				break;
 			}
 		}
-		
+		else
+		{
+			//厚青惑怕 面倒贸府.
+			switch (m_eBuffType)
+			{
+			case Client::BUFF_LEVIOSO:
+				*m_StateMachineDesc.pisFinishAnimation = false;
+				static_cast<CPlayer*>(m_StateMachineDesc.pPlayerTransform->Get_Owner())->AddForce_Impulse(_float3(0, 1, 0), 60.f);
+				Change_Animation(TEXT("Hu_Broom_Hover_Rct_Impact_Hvy_Bwd_anm"), false);
+				break;
+			case Client::BUFF_ACCIO:
+			{
+				*m_StateMachineDesc.pisFinishAnimation = false;
+				_float3 vDir = _float3(m_pTargetTransform->Get_Position() - m_StateMachineDesc.pPlayerTransform->Get_Position());
+				vDir.Normalize();
+				static_cast<CPlayer*>(m_StateMachineDesc.pPlayerTransform->Get_Owner())->AddForce_Impulse(vDir, 60.f);
+				Change_Animation(TEXT("Hu_Broom_Hover_Rct_Impact_Hvy_Fwd_anm"), false);
+				break;
+			}
+			case Client::BUFF_DESCENDO:
+				*m_StateMachineDesc.pisFinishAnimation = false;
+				static_cast<CPlayer*>(m_StateMachineDesc.pPlayerTransform->Get_Owner())->AddForce_Impulse(_float3(0, 1, 0), -60.f);
+				Change_Animation(TEXT("Hu_Broom_Hover_Rct_Impact_Hvy_Bwd_anm"), false);
+				break;
+			case Client::BUFF_FLIPENDO:
+				*m_StateMachineDesc.pisFinishAnimation = false;
+				Change_Animation(TEXT("Hu_Broom_FlyNoStirrups_Collision_Front_hard_anm"), false);
+				break;
+			default:
+				*m_StateMachineDesc.pisFinishAnimation = false;
+				Change_Animation(TEXT("Hu_Broom_Fly_Rct_Impact_Lht_Fwd_anm"), false);
+				break;
+			}
+		}
 #pragma endregion
 	}
-	else 
-	{
-		//厚青惑怕 面倒贸府.
-		switch (m_eBuffType)
-		{
-		case Client::BUFF_NONE:
-			break;
-		case Client::BUFF_LEVIOSO:
-			m_StateMachineDesc.pRigidBody->Add_Force(_float3(0,1,0) * 10,PxForceMode::eIMPULSE,true);
-			Change_Animation(TEXT("Hu_Broom_Hover_Rct_Impact_Hvy_Bwd_anm"), false);
-			break;
-		case Client::BUFF_ACCIO:
-		{
-			_float3 vDir = _float3(m_pTargetTransform->Get_Position() - m_StateMachineDesc.pPlayerTransform->Get_Position());
-			vDir.Normalize();
-			m_StateMachineDesc.pRigidBody->Add_Force(vDir * 10, PxForceMode::eIMPULSE, true);
-			Change_Animation(TEXT("Hu_Broom_Hover_Rct_Impact_Hvy_Fwd_anm"), false);
-			break;
-		}
-		case Client::BUFF_DESCENDO:
-			m_StateMachineDesc.pRigidBody->Add_Force(_float3(0, 1, 0) * -10, PxForceMode::eIMPULSE, true);
-			Change_Animation(TEXT("Hu_Broom_Hover_Rct_Impact_Hvy_Bwd_anm"), false);
-			break;
-		case Client::BUFF_FLIPENDO:
-			Change_Animation(TEXT("Hu_Broom_FlyNoStirrups_Collision_Front_hard_anm"), false);
-			break;
-		default:
-			Change_Animation(TEXT("Hu_Broom_Fly_Rct_Impact_Lht_Fwd_anm"), false); 
-			break;
-		}
-	}
+	
 
 	if (true == m_isPowerfulHit)
 	{

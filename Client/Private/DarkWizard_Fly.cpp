@@ -807,8 +807,8 @@ _bool CDarkWizard_Fly::is_Enemy(const wstring& wstrObjectTag)
 	if (wstring::npos != wstrObjectTag.find(TEXT("Player")))
 		return true;
 
-	if (wstring::npos != wstrObjectTag.find(TEXT("Enemy_Body")))
-		return true;
+	/*if (wstring::npos != wstrObjectTag.find(TEXT("Enemy_Body")))
+		return true;*/
 
 	return false;
 }
