@@ -76,6 +76,12 @@ void CEvent_Cliffside_Next_Level::Check_Event(_float fTimeDelta)
 
 	if (true == m_pNext_Level->Is_Collision())
 	{
+		if (nullptr == m_pCliff_Gate)
+		{
+			MSG_BOX("Failed to Find Cliff_Gate");
+			return;
+		}
+
 		_bool isGateOpen = m_pCliff_Gate->Get_GateOpen();
 
 		if(true == isGateOpen)

@@ -105,6 +105,7 @@
 #include "Event_Cliffside.h"
 #include "Event_Spawn_Dragon.h"
 #include "Event_Cliffside_Next_Level.h"
+#include "Event_Vault_Next_Level.h"
 #pragma endregion
 
 #include "Guide_Book.h"
@@ -299,6 +300,11 @@ HRESULT CMain0_Loader::Loading_For_Vault(LEVELID eLevelID)
 	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Enter_Vault"),
 		CEvent_Enter_Vault::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Event_Enter_Vault");
+
+	///* For.Prototype_GameObject_Event_Vault_Next_Level */
+	//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Vault_Next_Level"),
+	//	CEvent_Vault_Next_Level::Create(m_pDevice, m_pContext))))
+	//	throw TEXT("Prototype_GameObject_Event_Vault_Next_Level");
 
 	return S_OK;
 }

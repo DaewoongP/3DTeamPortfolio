@@ -4,6 +4,8 @@
 
 BEGIN(Client)
 
+class CEvent_Vault_Next_Level;
+
 class CLevel_Vault final : public CLevel
 {
 private:
@@ -21,6 +23,9 @@ private:
 	HRESULT Ready_Events(const _tchar* pLayerTag);
 	HRESULT Ready_Lights();
 	HRESULT Ready_Shader();
+
+private:
+	CEvent_Vault_Next_Level* m_pGo_HogSmeade = { nullptr };
 
 private:
 	HRESULT Load_MapObject(const _tchar* pObjectFilePath);

@@ -964,6 +964,9 @@
     <Filter Include="07. Events\Cliffside\Event_Cliffside_Next_Level">
       <UniqueIdentifier>{545bbce7-132f-40de-883e-672dad5d9745}</UniqueIdentifier>
     </Filter>
+    <Filter Include="07. Events\Vault\Event_Vault_Next_Level">
+      <UniqueIdentifier>{c961ace7-5bb6-45e0-ae70-f02e2a9776b9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1922,6 +1925,9 @@
     <ClInclude Include="..\Public\Event_Cliffside_Next_Level.h">
       <Filter>07. Events\Cliffside\Event_Cliffside_Next_Level</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Event_Vault_Next_Level.h">
+      <Filter>07. Events\Vault\Event_Vault_Next_Level</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2834,6 +2840,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Event_Cliffside_Next_Level.cpp">
       <Filter>07. Events\Cliffside\Event_Cliffside_Next_Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Vault_Next_Level.cpp">
+      <Filter>07. Events\Vault\Event_Vault_Next_Level</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
