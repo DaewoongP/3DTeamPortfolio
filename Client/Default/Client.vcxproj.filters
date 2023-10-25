@@ -958,6 +958,12 @@
     <Filter Include="05. Magic\MagicBall\08. Ncendio\Meteor">
       <UniqueIdentifier>{97f40771-8d72-4a53-8140-5be88cc65c3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager">
+      <UniqueIdentifier>{3b00833f-14ab-4e76-913b-384667efaaba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\Racer">
+      <UniqueIdentifier>{83891048-7011-45b0-a313-93d35a148860}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\13. ScoreBalloon">
       <UniqueIdentifier>{3bd866b0-5d68-4133-8231-5dc234dff144}</UniqueIdentifier>
     </Filter>
@@ -1916,6 +1922,12 @@
     <ClInclude Include="..\Public\UI_Font.h">
       <Filter>02. GameObject\05. UI\Font\Normal</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\FlyGameManager.h">
+      <Filter>02. GameObject\13. FlyGameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Racer.h">
+      <Filter>02. GameObject\13. FlyGameManager\Racer</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\ScoreBalloon.h">
       <Filter>02. GameObject\13. ScoreBalloon</Filter>
     </ClInclude>
@@ -2828,6 +2840,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Item.cpp">
       <Filter>02. GameObject\10. Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FlyGameManager.cpp">
+      <Filter>02. GameObject\13. FlyGameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Racer.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Racer</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ScoreBalloon.cpp">
       <Filter>02. GameObject\13. ScoreBalloon</Filter>
