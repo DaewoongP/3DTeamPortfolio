@@ -360,7 +360,8 @@ private:
 
 	void Healing();
 
-	void Landing();
+	void Landing(); 
+	void Landing_DisMount();
 
 	void Fly_Effect();
 

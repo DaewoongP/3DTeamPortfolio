@@ -204,6 +204,7 @@
     <ClInclude Include="..\Public\DarkWizard_Fly.h" />
     <ClInclude Include="..\Public\FireHouse.h" />
     <ClInclude Include="..\Public\FireWood.h" />
+    <ClInclude Include="..\Public\FlyGameManager.h" />
     <ClInclude Include="..\Public\Fly_Move.h" />
     <ClInclude Include="..\public\Game_Manager.h" />
     <ClInclude Include="..\public\Gear_Item.h" />
@@ -260,6 +261,7 @@
     <ClInclude Include="..\public\Quest_Manager.h" />
     <ClInclude Include="..\public\Quest_Save_Fig.h" />
     <ClInclude Include="..\Public\Quest_Secret.h" />
+    <ClInclude Include="..\Public\Racer.h" />
     <ClInclude Include="..\public\Robe_Arcane.h" />
     <ClInclude Include="..\Public\Robe_DarkArts.h" />
     <ClInclude Include="..\Public\Robe_DarkArts_Delux.h" />
@@ -542,6 +544,7 @@
     <ClCompile Include="..\Private\DarkWizard_Fly.cpp" />
     <ClCompile Include="..\Private\FireHouse.cpp" />
     <ClCompile Include="..\Private\FireWood.cpp" />
+    <ClCompile Include="..\Private\FlyGameManager.cpp" />
     <ClCompile Include="..\Private\Fly_Move.cpp" />
     <ClCompile Include="..\private\Game_Manager.cpp" />
     <ClCompile Include="..\private\Gear_Item.cpp" />
@@ -598,6 +601,7 @@
     <ClCompile Include="..\private\Quest_Manager.cpp" />
     <ClCompile Include="..\private\Quest_Save_Fig.cpp" />
     <ClCompile Include="..\Private\Quest_Secret.cpp" />
+    <ClCompile Include="..\Private\Racer.cpp" />
     <ClCompile Include="..\private\Robe_Arcane.cpp" />
     <ClCompile Include="..\Private\Robe_DarkArts.cpp" />
     <ClCompile Include="..\Private\Robe_DarkArts_Delux.cpp" />

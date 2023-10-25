@@ -372,12 +372,8 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
 	{
 		ENDINSTANCE;
-
 		return;
 	}
-
-	ENDINSTANCE;
-
 	__super::Late_Tick(fTimeDelta);
 
 	//m_pStateContext->Late_Tick(fTimeDelta);
@@ -386,8 +382,6 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
-		if (nullptr != m_pTarget)
-			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_EDGEHIGHLIGHT, m_pTarget);
 #ifdef _DEBUG
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
 #endif // _DEBUG
@@ -403,6 +397,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 			Safe_Release(m_pTarget);
 			m_pTargetTransform = nullptr;
 			m_pTarget = nullptr;
+			ENDINSTANCE;
 			return;
 		}
 
@@ -410,6 +405,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 		if (nullptr != pEnemy)
 			pEnemy->Get_UI_Enemy_HP()->Late_Tick(fTimeDelta);
 	}
+	ENDINSTANCE;
 }
 
 void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
@@ -2505,6 +2501,7 @@ HRESULT CPlayer::Bind_Notify()
 
 			return E_FAIL;
 		}
+		funcNotify = [&] {(*this).Landing_DisMount(); };
 		//Land
 		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Broom_Dismount_2Jog_anm"), TEXT("Land_Run"), funcNotify, CModel::ANIMTYPE(0))))
 		{
@@ -2529,7 +2526,6 @@ void CPlayer::Update_Cloth(_float fTimeDelta)
 void CPlayer::Find_Target_For_Distance()
 {
 	BEGININSTANCE;
-
 	if (nullptr != m_pTarget || pGameInstance->Get_DIMouseState(CInput_Device::DIMK_RBUTTON, CInput_Device::KEY_PRESSING))
 	{
 		ENDINSTANCE;
@@ -2537,7 +2533,6 @@ void CPlayer::Find_Target_For_Distance()
 	}
 
 	unordered_map<const _tchar*, CComponent*>* pLayer = pGameInstance->Find_Components_In_Layer(m_eLevelID, TEXT("Layer_Monster"));
-
 	if (nullptr == pLayer)
 	{
 		ENDINSTANCE;
@@ -2545,8 +2540,6 @@ void CPlayer::Find_Target_For_Distance()
 	}
 
 	_float fMinDistance = { 50.0f };
-
-
 	CGameObject* pTarget = { nullptr };
 
 	for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
@@ -3093,6 +3086,11 @@ void CPlayer::Drink_Potion()
 void CPlayer::Landing()
 {
 	m_pStateContext->Set_StateMachine(TEXT("Idle"));
+}
+
+void CPlayer::Landing_DisMount()
+{
+	m_pStateContext->Set_StateMachine(TEXT("Move Loop"));
 }
 
 void CPlayer::Add_Potion()
