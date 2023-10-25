@@ -79,6 +79,8 @@ HRESULT CCliff_Gate::Initialize_Level(_uint iCurrentLevelIndex)
 		{
 			m_pLightStands.push_back(static_cast<CLightStand*>(Pair.second));
 			Safe_AddRef(Pair.second);
+
+			++m_iLightStandsCnt;
 		}
 	}
 
@@ -101,6 +103,12 @@ void CCliff_Gate::Tick(_float fTimeDelta)
 void CCliff_Gate::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	if (m_pModel->Is_Finish_Animation() && false == m_isEffectOn)
+	{
+		m_pEffect->Play(m_pTransform->Get_Position() + _float3(0.f, 1.875f, 0.f));
+		m_isEffectOn = true;
+	}		
 
 	if (nullptr != m_pRenderer)
 	{
@@ -246,17 +254,18 @@ void CCliff_Gate::Check_FireOn()
 	if (false == m_isCheckOnce)
 		return;
 
-	_uint iFireOn = m_pLightStands.size();
-	_uint iCheckFireOn = 0;
+	_uint iFireOn = 0;
 
 	// 화로가 전부 켜졌는지 확인
 	for (auto& iter : m_pLightStands)
 	{
 		if (true == iter->Get_FireOn())
-			++iCheckFireOn;
+		{
+			++iFireOn;
+		}
 	}
 
-	if (iFireOn == iCheckFireOn)
+	if (m_iLightStandsCnt == iFireOn)
 		m_isCheckOnce = false;
 }
 
@@ -291,6 +300,8 @@ void CCliff_Gate::Free()
 
 	for (auto& iter : m_pLightStands)
 		Safe_Release(iter);
+
+	m_pLightStands.clear();
 
 	Safe_Release(m_pEffect);
 	Safe_Release(m_pShadowShader);

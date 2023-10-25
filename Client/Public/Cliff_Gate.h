@@ -52,7 +52,11 @@ private:
 	_float			m_fRadius = { 0.f };
 
 	_bool			m_isCheckOnce = { true }; // 한번만 상호작용 가능
+	_bool			m_isEffectOn = { false }; // 이펙트 한 번만 켜주기
+
 	_float			m_fTimeAcc = { 0.f };
+
+	_uint			m_iLightStandsCnt = 0;  // 화로의 개수
 
 	vector<CLightStand*> m_pLightStands; // 맵에 존재하는 화로들
 
