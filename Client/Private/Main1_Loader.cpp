@@ -31,7 +31,14 @@
 #include "Lamp_Wall.h"
 #include "FireWood.h"
 
+#pragma region Balloons
 #include "ScoreBalloon.h"
+#include "BeastBalloon_A.h"
+#include "BeastBalloon_B.h"
+#include "BeastBalloon_C.h"
+#include "BeastBalloon_D.h"
+#pragma endregion
+
 
 CMain1_Loader::CMain1_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -368,10 +375,50 @@ HRESULT CMain1_Loader::Loading_For_Sky(LEVELID eLevelID)
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Balloon/Balloon.dat")))))
 			throw TEXT("Prototype_Component_Model_Balloon");
 
+		/* For.Prototype_Component_Model_BeastBalloon_A */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_BeastBalloon_A"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/BeastBalloon_A/BeastBalloon_A.dat")))))
+			throw TEXT("Prototype_Component_Model_BeastBalloon_A");
+
+		/* For.Prototype_Component_Model_BeastBalloon_B */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_BeastBalloon_B"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/BeastBalloon_B/BeastBalloon_B.dat")))))
+			throw TEXT("Prototype_Component_Model_BeastBalloon_B");
+
+		/* For.Prototype_Component_Model_BeastBalloon_C */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_BeastBalloon_C"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/BeastBalloon_C/BeastBalloon_C.dat")))))
+			throw TEXT("Prototype_Component_Model_BeastBalloon_C");
+
+		/* For.Prototype_Component_Model_BeastBalloon_D */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_BeastBalloon_D"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/BeastBalloon_D/BeastBalloon_D.dat")))))
+			throw TEXT("Prototype_Component_Model_BeastBalloon_D");
+
 		/* For.Prototype_GameObject_Balloon */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Balloon"),
 			CScoreBalloon::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Balloon");
+
+		/* For.Prototype_GameObject_BeastBalloon_A */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_BeastBalloon_A"),
+			CBeastBalloon_A::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_BeastBalloon_A");
+
+		/* For.Prototype_GameObject_BeastBalloon_B */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_BeastBalloon_B"),
+			CBeastBalloon_B::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_BeastBalloon_B");
+
+		/* For.Prototype_GameObject_BeastBalloon_C */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_BeastBalloon_C"),
+			CBeastBalloon_C::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_BeastBalloon_C");
+
+		/* For.Prototype_GameObject_BeastBalloon_D */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_BeastBalloon_D"),
+			CBeastBalloon_D::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_BeastBalloon_D");
 	}
 	catch (const _tchar* pErrorTag)
 	{

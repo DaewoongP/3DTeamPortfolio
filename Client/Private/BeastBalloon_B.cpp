@@ -1,18 +1,18 @@
-#include "..\Public\ScoreBalloon.h"
+#include "..\Public\BeastBalloon_B.h"
 
 #include "GameInstance.h"
 
-CScoreBalloon::CScoreBalloon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CBeastBalloon_B::CBeastBalloon_B(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CBalloon(pDevice, pContext)
 {
 }
 
-CScoreBalloon::CScoreBalloon(const CScoreBalloon& rhs)
+CBeastBalloon_B::CBeastBalloon_B(const CBeastBalloon_B& rhs)
 	: CBalloon(rhs)
 {
 }
 
-HRESULT CScoreBalloon::Initialize(void* pArg)
+HRESULT CBeastBalloon_B::Initialize(void* pArg)
 {
 	NULL_CHECK_RETURN(pArg, E_FAIL);
 
@@ -25,64 +25,64 @@ HRESULT CScoreBalloon::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CScoreBalloon::Initialize_Level(_uint iCurrentLevelIndex)
+HRESULT CBeastBalloon_B::Initialize_Level(_uint iCurrentLevelIndex)
 {
 	if (FAILED(Add_Components_Level(iCurrentLevelIndex)))
 		return E_FAIL;
 
-	if(FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
+	if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-void CScoreBalloon::Tick(_float fTimeDelta)
+void CBeastBalloon_B::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 }
 
-void CScoreBalloon::Late_Tick(_float fTimeDelta)
+void CBeastBalloon_B::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 }
 
-void CScoreBalloon::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
+void CBeastBalloon_B::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	// 부딪 힌 대상의 정보를 가져와서 
 	SCOREDESC ScoreDesc;
 	ScoreDesc.Score = m_iScore;
 	ScoreDesc.wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	
+
 	//매니저에게 전달한 후 
-	
+
 	// 내가 부딪혔다는 사실을 갱신한다.
 	m_isDead = true;
 }
 
-HRESULT CScoreBalloon::Render()
+HRESULT CBeastBalloon_B::Render()
 {
 	if (FAILED(m_pEmissiveTexture->Bind_ShaderResource(m_pShader, "g_EmissiveTexture")))
 		return E_FAIL;
-	
+
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-HRESULT CScoreBalloon::Add_Components()
+HRESULT CBeastBalloon_B::Add_Components()
 {
 	if (FAILED(__super::Add_Components()))
 	{
-		MSG_BOX("[CScoreBalloon] Failed __super::Add_Components()");
+		MSG_BOX("[CBeastBalloon_B] Failed __super::Add_Components()");
 		return E_FAIL;
 	}
 
 	/* For.EmissiveTexture */
-	m_pEmissiveTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/NonAnims/Balloon/T_HM_Zonkos_Balloon_05_E.dds"));
+	m_pEmissiveTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/NonAnims/BeastBalloon_B/T_HM_Beast_Balloons_D.dds"));
 	if (nullptr == m_pEmissiveTexture)
 	{
-		MSG_BOX("[CScoreBalloon] Failed Clone Component : EmissiveTexture");
+		MSG_BOX("[CBeastBalloon_B] Failed Clone Component : EmissiveTexture");
 		return E_FAIL;
 	}
 
@@ -108,53 +108,53 @@ HRESULT CScoreBalloon::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 	{
-		MSG_BOX("[CScoreBalloon] Failed Add_Components : Com_RigidBody");
+		MSG_BOX("[CBeastBalloon_B] Failed Add_Components : Com_RigidBody");
 		return E_FAIL;
 	}
 
 	return S_OK;
 }
 
-HRESULT CScoreBalloon::Add_Components_Level(_uint iCurrentLevelIndex)
+HRESULT CBeastBalloon_B::Add_Components_Level(_uint iCurrentLevelIndex)
 {
 	/* Com_Model */
-	if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, TEXT("Prototype_Component_Model_Balloon"),
+	if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, TEXT("Prototype_Component_Model_BeastBalloon_B"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 	{
-		MSG_BOX("[CScoreBalloon] Failed Add_Components_Level : Com_Model");
+		MSG_BOX("[CBeastBalloon_B] Failed Add_Components_Level : Com_Model");
 		return E_FAIL;
 	}
 
 	return S_OK;
 }
 
-CScoreBalloon* CScoreBalloon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CBeastBalloon_B* CBeastBalloon_B::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CScoreBalloon* pInstance = New CScoreBalloon(pDevice, pContext);
+	CBeastBalloon_B* pInstance = New CBeastBalloon_B(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CScoreBalloon");
+		MSG_BOX("Failed to Created CBeastBalloon_B");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CScoreBalloon::Clone(void* pArg)
+CGameObject* CBeastBalloon_B::Clone(void* pArg)
 {
-	CScoreBalloon* pInstance = New CScoreBalloon(*this);
+	CBeastBalloon_B* pInstance = New CBeastBalloon_B(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CScoreBalloon");
+		MSG_BOX("Failed to Cloned CBeastBalloon_B");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CScoreBalloon::Free()
+void CBeastBalloon_B::Free()
 {
 	__super::Free();
 

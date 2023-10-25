@@ -915,7 +915,8 @@ void CDarkWizard_Fly::Cast_Arrestomomentum()
 
 void CDarkWizard_Fly::Shot_Magic()
 {
-	m_CastingMagic->Do_MagicBallState_To_Next();
+	if(nullptr != m_CastingMagic)
+		m_CastingMagic->Do_MagicBallState_To_Next();
 }
 
 CDarkWizard_Fly* CDarkWizard_Fly::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

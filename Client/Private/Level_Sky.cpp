@@ -69,14 +69,22 @@ HRESULT CLevel_Sky::Ready_Layer_BackGround(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+	wstring wstrPrototypes[5];
+	wstrPrototypes[0] = TEXT("Prototype_GameObject_Balloon");
+	wstrPrototypes[1] = TEXT("Prototype_GameObject_BeastBalloon_A");
+	wstrPrototypes[2] = TEXT("Prototype_GameObject_BeastBalloon_B");
+	wstrPrototypes[3] = TEXT("Prototype_GameObject_BeastBalloon_C");
+	wstrPrototypes[4] = TEXT("Prototype_GameObject_BeastBalloon_D");
+
 	for (_uint i = 0; i < 50; ++i)
 	{
 		wstring Tag = TEXT("GameObject_Balloon_") + to_wstring(i);
-
+		_int j = rand() % 5;
 		CScoreBalloon::BALLOONINITDESC InitDesc;
 		InitDesc.iScore = 100;
-		InitDesc.vPosition = _float3(GetRandomFloat(87.f, 143.f), GetRandomFloat(10.f, 30.f), GetRandomFloat(84.f, 236.f));
-		if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_Balloon"), pLayerTag, Tag.c_str(), &InitDesc)))
+		InitDesc.WorldMatrix = XMMatrixTranslation(GetRandomFloat(77.f, 153.f), GetRandomFloat(10.f, 30.f), GetRandomFloat(74.f, 246.f));
+		InitDesc.vScale = _float3(3.f, 3.f, 3.f);
+		if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, wstrPrototypes[j].c_str(), pLayerTag, Tag.c_str(), &InitDesc)))
 		{
 			MSG_BOX("Failed Add_GameObject : (GameObject_Balloon)");
 			ENDINSTANCE;

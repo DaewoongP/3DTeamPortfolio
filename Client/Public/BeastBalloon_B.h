@@ -8,12 +8,12 @@ END
 
 BEGIN(Client)
 
-class CScoreBalloon final : public CBalloon
+class CBeastBalloon_B final : public CBalloon
 {
 private:
-	explicit CScoreBalloon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CScoreBalloon(const CScoreBalloon& rhs);
-	virtual ~CScoreBalloon() = default;
+	explicit CBeastBalloon_B(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CBeastBalloon_B(const CBeastBalloon_B& rhs);
+	virtual ~CBeastBalloon_B() = default;
 
 public:
 	virtual HRESULT Initialize(void* pArg) override;
@@ -31,7 +31,7 @@ private:
 	HRESULT Add_Components_Level(_uint iCurrentLevelIndex);
 
 public:
-	static CScoreBalloon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CBeastBalloon_B* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };
