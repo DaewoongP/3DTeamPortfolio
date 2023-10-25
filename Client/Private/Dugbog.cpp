@@ -1955,8 +1955,8 @@ void CDugbog::Free()
 		for (_uint i = 0; i < m_DarkAura.size(); i++)
 		{
 			Safe_Release(m_DarkAura[i]);
-			Safe_Release(m_pDescendo_Shake);
 		}
+		Safe_Release(m_pDescendo_Shake);
 	}
 	__super::Free();
 }

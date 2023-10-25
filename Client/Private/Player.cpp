@@ -193,11 +193,11 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_pCustomModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"), CModel::OTHERBODY);
 	m_pCustomModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"), CModel::ANOTHERBODY);
 
-	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(25.f, 3.f, 22.5f);
+	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(29.f, 2.7f, 26.f);
 	m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
 	//m_vLevelInitPosition[LEVEL_VAULT] = _float3(161, 2, 93);
 	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(30.f, 3.f, 15.f);
-	m_vLevelInitPosition[LEVEL_SMITH] = _float3(32.f, 3.f, 25.f);
+	m_vLevelInitPosition[LEVEL_SMITH] = _float3(32.f, 0.8f, 25.f);
 	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(94.5f, 7.2f, 78.f);
 	m_vLevelInitPosition[LEVEL_SKY] = _float3(88.8f, 12.5f, 69.8f);
 
@@ -233,6 +233,11 @@ HRESULT CPlayer::Initialize(void* pArg)
 HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 {
 	m_pTransform->Set_Position(m_vLevelInitPosition[iCurrentLevelIndex]);
+	m_pTransform->Rotation(_float3(0.0f, 1.0f, 0.0f), 0.0f);
+
+	m_pPlayer_Camera->Get_TransformPtr()->Set_Position(XMVectorSetY(m_pTransform->Get_Position(), m_pTransform->Get_Position().y + 1.2f));
+	m_pPlayer_Camera->Get_TransformPtr()->Rotation(_float3(0.0f, 1.0f, 0.0f), 0.0f);
+
 	m_eLevelID = (LEVELID)iCurrentLevelIndex;
 	m_pRigidBody->Clear_Force(PxForceMode::eVELOCITY_CHANGE);
 	/*if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
@@ -1485,6 +1490,14 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		//m_pPlayer_Information->Get_Inventory()->Add_Item(pItem, pItem->Get_Type());
 		if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
 		{
+			m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::ENDURUS_POTION);
+			m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::FOCUS_POTION);
+			m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::HEALTH_POTION);
+			m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::INVISIBILITY_POTION);
+			m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::MANDRAKE);
+			m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::MAXIMA_POTION);
+			m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::THUNDERBREW_POTION);
+			m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::TENTACULAR);
 			m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_ASHWINDER_EGGS);
 			m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_DITTANY_LEAVES);
 			m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_DUGBOG_TONGUE);
@@ -3249,7 +3262,7 @@ void CPlayer::Go_Use_Item()
 
 void CPlayer::Go_Use_Potion()
 {
-	CUseItemState::USEITEMDESC UseItemDesc;
+	/*CUseItemState::USEITEMDESC UseItemDesc;
 
 	UseItemDesc.funcPotion = [&] {(*this).Add_Potion(); };
 
@@ -3275,7 +3288,7 @@ void CPlayer::Go_Use_Potion()
 		pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
 		ENDINSTANCE;
 		m_pStateContext->Set_StateMachine(TEXT("UseItem"), &UseItemDesc);
-	}
+	}*/
 }
 
 void CPlayer::Shot_Magic_Spell_Button_1()
