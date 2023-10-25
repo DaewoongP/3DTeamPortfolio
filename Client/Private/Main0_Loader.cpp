@@ -252,10 +252,10 @@ HRESULT CMain0_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 			CEvent_Cliffside::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Event_Cliffside");
 
-		///* For.Prototype_GameObject_Event_Cliffside_Next_Level */
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Cliffside_Next_Level"),
-		//	CEvent_Cliffside_Next_Level::Create(m_pDevice, m_pContext))))
-		//	throw TEXT("Prototype_GameObject_Event_Cliffside_Next_Level");
+		/* For.Prototype_GameObject_Event_Cliffside_Next_Level */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Cliffside_Next_Level"),
+			CEvent_Cliffside_Next_Level::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Event_Cliffside_Next_Level");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -301,10 +301,10 @@ HRESULT CMain0_Loader::Loading_For_Vault(LEVELID eLevelID)
 		CEvent_Enter_Vault::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Event_Enter_Vault");
 
-	///* For.Prototype_GameObject_Event_Vault_Next_Level */
-	//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Vault_Next_Level"),
-	//	CEvent_Vault_Next_Level::Create(m_pDevice, m_pContext))))
-	//	throw TEXT("Prototype_GameObject_Event_Vault_Next_Level");
+	/* For.Prototype_GameObject_Event_Vault_Next_Level */
+	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Vault_Next_Level"),
+		CEvent_Vault_Next_Level::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Event_Vault_Next_Level");
 
 	return S_OK;
 }

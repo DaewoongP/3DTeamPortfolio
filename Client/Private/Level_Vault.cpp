@@ -8,8 +8,6 @@
 #include "Level_Loading.h"
 #include "Event_Enter_Vault.h"
 
-#include "Event_Vault_Next_Level.h"
-
 CLevel_Vault::CLevel_Vault(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CLevel(pDevice, pContext)
 {
@@ -26,19 +24,6 @@ HRESULT CLevel_Vault::Initialize()
 	BEGININSTANCE;
 	pGameInstance->Reset_World_TimeAcc();
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
-
-	//auto pMapObjectLayer = pGameInstance->Find_Components_In_Layer(LEVEL_VAULT, TEXT("Layer_Event"));
-	//for (auto Pair : *pMapObjectLayer)
-	//{
-	//	wstring wstrObjTag = Pair.first;
-	//	// 레벨 넘기는 이벤트를 찾는다.
-	//	if (wstring::npos != wstrObjTag.find(TEXT("Vault_Next_Level")))
-	//	{
-	//		m_pGo_HogSmeade = static_cast<CEvent_Vault_Next_Level*>(Pair.second);
-	//		Safe_AddRef(m_pGo_HogSmeade);
-	//	}
-	//}
-
 	ENDINSTANCE;
 
     return S_OK;
@@ -64,15 +49,6 @@ void CLevel_Vault::Tick(_float fTimeDelta)
 	{
 		pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_SMITH));
 	}
-
-	//// 이벤트로부터 호그스미드로 이동해야한다는 신호를 받음
-	//if (nullptr != m_pGo_HogSmeade)
-	//{
-	//	if (true == m_pGo_HogSmeade->Get_Level_Change())
-	//	{
-	//		pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_SMITH));
-	//	}
-	//}	
 
 	ENDINSTANCE;
 
@@ -144,12 +120,12 @@ HRESULT CLevel_Vault::Ready_Events(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT,
+	if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT,
 		TEXT("Prototype_GameObject_Event_Vault_Next_Level"), pLayerTag, TEXT("Event_Vault_Next_Level"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Event_Vault_Next_Level)");
 		return E_FAIL;
-	}*/
+	}
 
 	ENDINSTANCE;
 
@@ -588,6 +564,4 @@ CLevel_Vault* CLevel_Vault::Create(ID3D11Device* pDevice, ID3D11DeviceContext* p
 void CLevel_Vault::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pGo_HogSmeade);
 }

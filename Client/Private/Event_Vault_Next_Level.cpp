@@ -26,7 +26,7 @@ HRESULT CEvent_Vault_Next_Level::Initialize(void* pArg)
 	for (auto Pair : *pMapObjectLayer)
 	{
 		wstring wstrObjTag = Pair.first;
-		// Cliff_Gate를 찾는다.
+		// Vault_Gate를 찾는다.
 		if (wstring::npos != wstrObjTag.find(TEXT("Vault_Gate")))
 		{
 			m_pVault_Gate = static_cast<CVault_Gate*>(Pair.second);
