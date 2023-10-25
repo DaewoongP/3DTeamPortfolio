@@ -1370,7 +1370,8 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			_tchar szVoiceTag[3][MAX_PATH] = { {TEXT("playermale_34286.wav") },{TEXT("playermale_23883.wav") } ,{TEXT("playermale_32104.wav") } };
 			pGameInstance->Play_Sound(szVoiceTag[rand() % 3], CSound_Manager::SOUND_VOICE, 0.7f, true);
 			ENDINSTANCE;
-			m_pCard_Fig->Spawn_Fig(m_pTarget);
+			if(nullptr != m_pCard_Fig)
+				m_pCard_Fig->Spawn_Fig(m_pTarget);
 		}
 
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_FINISHER;

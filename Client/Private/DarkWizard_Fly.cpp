@@ -123,8 +123,6 @@ void CDarkWizard_Fly::Late_Tick(_float fTimeDelta)
 
 void CDarkWizard_Fly::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	__super::OnCollisionEnter(CollisionEventDesc);
-
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrOtherCollisionTag = CollisionEventDesc.pOtherCollisionTag;
 
@@ -379,7 +377,7 @@ HRESULT CDarkWizard_Fly::Add_Components()
 		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
 		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.f, 0.f);
 		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
-		PxSphereGeometry pSphereGeomatry = PxSphereGeometry(0.8f);
+		PxSphereGeometry pSphereGeomatry = PxSphereGeometry(0.4f);
 		RigidBodyDesc.pGeometry = &pSphereGeomatry;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body");
 		RigidBodyDesc.eThisCollsion = COL_ENEMY;

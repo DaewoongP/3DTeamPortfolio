@@ -75,7 +75,7 @@ HRESULT CDugbog::Initialize_Level(_uint iCurrentLevelIndex)
 		return E_FAIL;
 
 	if (FAILED(Make_Notifies_for_Shake()))
-		return E_FAIL;
+		return E_FAIL; 
 
 	if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
 		return E_FAIL;
@@ -89,7 +89,7 @@ HRESULT CDugbog::Initialize_Level(_uint iCurrentLevelIndex)
 
 void CDugbog::Tick(_float fTimeDelta)
 {
-	Set_Current_Target();
+	/*Set_Current_Target();
 
 	__super::Tick(fTimeDelta);
 
@@ -99,22 +99,21 @@ void CDugbog::Tick(_float fTimeDelta)
 
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
-	
+
 	for (_uint i = 0; i < m_DarkAura.size(); i++)
 	{
-		m_DarkAura[i]->Get_Transform()->Set_Position(m_DarkAuraBoneMatrix[i]->Translation());
-	}
+		if(nullptr != m_DarkAura[i])
+			m_DarkAura[i]->Get_Transform()->Set_Position(m_DarkAuraBoneMatrix[i]->Translation());
+	}*/
 }
 
 void CDugbog::Late_Tick(_float fTimeDelta)
 {
-	__super::Late_Tick(fTimeDelta);
+	//__super::Late_Tick(fTimeDelta);
 }
 
 void CDugbog::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	__super::OnCollisionEnter(CollisionEventDesc);
-
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 
@@ -242,7 +241,7 @@ HRESULT CDugbog::Make_Notifies_for_Shake()
 	function<void()> func = [&] {m_pDescendo_Shake->RandomUpAxisShake(); };
 
 	m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Descendo"), func);
-	
+
 	return S_OK;
 }
 
@@ -958,7 +957,7 @@ HRESULT CDugbog::Make_Check_Spell(_Inout_ CSelector* pSelector)
 
 		/* Set_Options */
 		pSequence_Levitate->Set_Option(6.f, 1.2f);
-		
+
 		/* Levioso */
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Levitate"), pSequence_Levitate)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Levitate");
@@ -1820,7 +1819,7 @@ HRESULT CDugbog::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 		if (nullptr == pSequence)
 			throw TEXT("Parameter pSequence is nullptr");
 
-		if(FAILED(__super::Make_Fly_Descendo(pSequence)))
+		if (FAILED(__super::Make_Fly_Descendo(pSequence)))
 			throw TEXT("Failed __super Make_Fly_Descendo");
 
 		/* Create Child Behaviors */
@@ -1850,6 +1849,8 @@ HRESULT CDugbog::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 				CHealth* pHealth = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("pHealth", pHealth)))
 					return false;
+
+				Print_Damage_Font(50);
 
 				pHealth->Damaged(50);
 
@@ -1950,13 +1951,10 @@ CGameObject* CDugbog::Clone(void* pArg)
 
 void CDugbog::Free()
 {
-	if (m_isCloned)
-	{
-		for (_uint i = 0; i < m_DarkAura.size(); i++)
-		{
-			Safe_Release(m_DarkAura[i]);
-			Safe_Release(m_pDescendo_Shake);
-		}
-	}
+	for (_uint i = 0; i < m_DarkAura.size(); i++)
+		Safe_Release(m_DarkAura[i]);
+
+	Safe_Release(m_pDescendo_Shake);
+
 	__super::Free();
 }

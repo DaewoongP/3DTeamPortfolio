@@ -103,7 +103,6 @@ protected:
 
 	_bool m_isSpawn = { false };
 	_bool m_isParring = { false };
-	_bool m_isOnGround = { false };
 	_bool m_isHitCombo = { false };
 	_bool m_isDissolve = { false };
 	_bool m_isHitAttack = { false };
