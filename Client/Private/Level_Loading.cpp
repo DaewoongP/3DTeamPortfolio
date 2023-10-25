@@ -156,9 +156,11 @@ void CLevel_Loading::Tick(_float fTimeDelta)
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-
-	pGameInstance->Clear_Resources();
-
+	{
+		std::lock_guard<std::mutex> lock(mtx);
+		pGameInstance->Clear_Resources();
+	}
+	
 	CLevel* pLevel = { nullptr };
 
 	if (false == m_isStaticLoaded)
