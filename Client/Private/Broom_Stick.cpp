@@ -127,7 +127,7 @@ void CBroom_Stick::HeadParticle(_float fTimeDelta)
 {
 	if (nullptr != m_pOwner)
 	{
-		m_pParticle->Get_Transform()->Set_Position(_float4x4(m_OffsetMatrix*m_pTransform->Get_WorldMatrix()).Translation());
+		//m_pParticle->Get_Transform()->Set_Position(_float4x4(m_OffsetMatrix*m_pTransform->Get_WorldMatrix()).Translation());
 	}
 	
 }
