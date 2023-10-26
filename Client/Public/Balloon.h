@@ -11,6 +11,10 @@ class CTexture;
 END
 
 BEGIN(Client)
+class CBalloon_Timer;
+END
+
+BEGIN(Client)
 
 class CBalloon abstract : public CGameObject
 {
@@ -55,6 +59,7 @@ protected:
 	CShader* m_pShadowShader = { nullptr };
 	CRigidBody* m_pRigidBody = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
+	CBalloon_Timer* m_pTimer = { nullptr };
 
 protected:
 	_int m_iScore = { 0 };

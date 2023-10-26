@@ -130,6 +130,14 @@ HRESULT CBalloon::Add_Components()
 		MSG_BOX("CLoadBalloon Failed Clone Component : Com_Renderer");
 		return E_FAIL;
 	}
+	
+	/* Com_Timer */
+	if (FAILED(CComposite::Add_Component(LEVEL_SKY, TEXT("Prototype_GameObject_Balloon_Timer"),
+		TEXT("Com_Timer"), reinterpret_cast<CComponent**>(&m_pTimer))))
+	{
+		MSG_BOX("CBalloon Failed Clone Component : Com_Timer");
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -179,4 +187,5 @@ void CBalloon::Free()
 	Safe_Release(m_pShadowShader);
 	Safe_Release(m_pRigidBody);
 	Safe_Release(m_pRenderer);
+	Safe_Release(m_pTimer);
 }

@@ -43,6 +43,12 @@ void CLevel_Cliffside::Tick(_float fTimeDelta)
 		}
 	}
 
+	if (true == m_isNextLevel)
+	{
+		pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_SMITH));
+	}
+
+#ifdef _DEBUG
 	if (pGameInstance->Get_DIKeyState(DIK_LSHIFT))
 	{
 		if (pGameInstance->Get_DIKeyState(DIK_BACKSPACE, CInput_Device::KEY_DOWN))
@@ -50,7 +56,8 @@ void CLevel_Cliffside::Tick(_float fTimeDelta)
 			pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_SMITH));
 		}
 	}
-	
+#endif // _DEBUG
+
 	ENDINSTANCE;
 
 #ifdef _DEBUG

@@ -3,8 +3,9 @@
 #include "Client_Defines.h"
 
 BEGIN(Engine)
+class CShader;
 class CRenderer;
-class CVIBuffer_Rect;
+class CVIBuffer_Point_Instance;
 END
 
 BEGIN(Client)
@@ -23,7 +24,9 @@ public:
 	virtual HRESULT Render() override;
 
 private:
-	_float4x4	m_ViewMatrix, m_ProjMatrix;
+	CShader*					m_pShader = { nullptr };
+	CRenderer*					m_pRenderer = { nullptr };
+	CVIBuffer_Point_Instance*	m_pBuffer = { nullptr };
 
 private:
 	HRESULT Add_Components();
