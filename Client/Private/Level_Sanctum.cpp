@@ -84,12 +84,12 @@ HRESULT CLevel_Sanctum::Ready_Layer_Monsters(const _tchar* pLayerTag)
 	BEGININSTANCE;
 
 	_float4x4 Matrix = XMMatrixTranslation(-34.f, -33.f, 129.f);
-	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_ConjuredDragon"), pLayerTag, TEXT("GameObject_ConjuredDragon"), &Matrix)))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_ConjuredDragon)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_ConjuredDragon"), pLayerTag, TEXT("GameObject_ConjuredDragon"), &Matrix)))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (GameObject_ConjuredDragon)");
+	//	ENDINSTANCE;
+	//	return E_FAIL;
+	//}
 
 	Matrix = XMMatrixRotationY(XMConvertToRadians(41.f)) * XMMatrixTranslation(-8.1f, 2.2f, 173.7f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_DarkWizard_Spawn"), pLayerTag, TEXT("Spawn_0"), &Matrix)))

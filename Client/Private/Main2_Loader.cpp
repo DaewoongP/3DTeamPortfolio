@@ -414,25 +414,25 @@ HRESULT CMain2_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 			CWeapon_Dragon_Head::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Dragon_Head");
 
-		/* For.Prototype_GameObject_Weapon_Dragon_Left_Wing */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Weapon_Dragon_Left_Wing"),
-			CWeapon_Dragon_Left_Wing::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Weapon_Dragon_Left_Wing");
+		///* For.Prototype_GameObject_Weapon_Dragon_Left_Wing */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Weapon_Dragon_Left_Wing"),
+		//	CWeapon_Dragon_Left_Wing::Create(m_pDevice, m_pContext))))
+		//	throw TEXT("Prototype_GameObject_Weapon_Dragon_Left_Wing");
 
-		/* For.Prototype_GameObject_Weapon_Dragon_Right_Wing */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Weapon_Dragon_Right_Wing"),
-			CWeapon_Dragon_Right_Wing::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Weapon_Dragon_Right_Wing");
+		///* For.Prototype_GameObject_Weapon_Dragon_Right_Wing */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Weapon_Dragon_Right_Wing"),
+		//	CWeapon_Dragon_Right_Wing::Create(m_pDevice, m_pContext))))
+		//	throw TEXT("Prototype_GameObject_Weapon_Dragon_Right_Wing");
 
-		/* For.Prototype_GameObject_Weapon_Dragon_Tail */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Weapon_Dragon_Tail"),
-			CWeapon_Dragon_Tail::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Weapon_Dragon_Tail");
+		///* For.Prototype_GameObject_Weapon_Dragon_Tail */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Weapon_Dragon_Tail"),
+		//	CWeapon_Dragon_Tail::Create(m_pDevice, m_pContext))))
+		//	throw TEXT("Prototype_GameObject_Weapon_Dragon_Tail");
 
-		/* For.Prototype_GameObject_ConjuredDragon */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_ConjuredDragon"),
-			CConjuredDragon::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_ConjuredDragon");
+		///* For.Prototype_GameObject_ConjuredDragon */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_ConjuredDragon"),
+		//	CConjuredDragon::Create(m_pDevice, m_pContext))))
+		//	throw TEXT("Prototype_GameObject_ConjuredDragon");
 
 		/* For.Prototype_Component_Model_Weopon_DarkWizard_Wand */
 		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));

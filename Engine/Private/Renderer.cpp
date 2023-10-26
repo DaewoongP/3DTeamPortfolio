@@ -507,6 +507,7 @@ HRESULT CRenderer::Render_NonBlend()
 			pGameObject->Render();
 
 		Safe_Release(pGameObject);
+		int a = 0;
 	}
 
 	m_RenderObjects[RENDER_NONBLEND].clear();

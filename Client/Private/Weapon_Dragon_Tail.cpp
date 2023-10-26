@@ -96,7 +96,7 @@ HRESULT CWeapon_Dragon_Tail::Initialize(void* pArg)
 void CWeapon_Dragon_Tail::Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
-	ADD_IMGUI([&] { Tick_Imgui(fTimeDelta); });
+	//ADD_IMGUI([&] { Tick_Imgui(fTimeDelta); });
 #endif // _DEBUG
 	__super::Tick(fTimeDelta);
 

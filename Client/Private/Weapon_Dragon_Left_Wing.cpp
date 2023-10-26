@@ -13,14 +13,17 @@ CWeapon_Dragon_Left_Wing::CWeapon_Dragon_Left_Wing(const CWeapon_Dragon_Left_Win
 
 void CWeapon_Dragon_Left_Wing::On_Collider_Attack()
 {
-	m_pEffect_WingAttack_TraceDarkCloud->Play(m_Bones[0].vPosition);
+	if (nullptr != m_pEffect_WingAttack_TraceDarkCloud)
+		m_pEffect_WingAttack_TraceDarkCloud->Play(m_Bones[0].vPosition);
 	m_pRigidBody->Enable_Collision("Attack", this, &m_CollisionRequestDesc);
 }
 
 void CWeapon_Dragon_Left_Wing::Off_Collider_Attack()
 {
-	m_pEffect_WingAttack_TraceDarkCloud->Stop();
-	m_pEffect_WingAttack_TraceRocks->Stop();
+	if (nullptr != m_pEffect_WingAttack_TraceDarkCloud)
+		m_pEffect_WingAttack_TraceDarkCloud->Stop();
+	if (nullptr != m_pEffect_WingAttack_TraceRocks)
+		m_pEffect_WingAttack_TraceRocks->Stop();
 	m_pRigidBody->Disable_Collision("Attack");
 }
 
@@ -41,7 +44,8 @@ HRESULT CWeapon_Dragon_Left_Wing::Set_Bone_Data(CModel* pModel)
 
 void CWeapon_Dragon_Left_Wing::Enter_Hit_Terrain()
 {
-	m_pEffect_WingAttack_TraceRocks->Play(m_Bones[0].vPosition);
+	if (nullptr != m_pEffect_WingAttack_TraceRocks)
+		m_pEffect_WingAttack_TraceRocks->Play(m_Bones[0].vPosition);
 }
 
 HRESULT CWeapon_Dragon_Left_Wing::Initialize_Prototype()
@@ -51,27 +55,27 @@ HRESULT CWeapon_Dragon_Left_Wing::Initialize_Prototype()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDarkCloud")))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDarkCloud")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/WingAttack/TraceDarkCloud/"), LEVEL_SANCTUM))))
-		{
-			__debugbreak();
-			ENDINSTANCE;
-			return E_FAIL;
-		}
-	}
+	//if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDarkCloud")))
+	//{
+	//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDarkCloud")
+	//		, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/WingAttack/TraceDarkCloud/"), LEVEL_SANCTUM))))
+	//	{
+	//		__debugbreak();
+	//		ENDINSTANCE;
+	//		return E_FAIL;
+	//	}
+	//}
 
-	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceRocks")))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceRocks")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/WingAttack/TraceRocks/"), LEVEL_SANCTUM))))
-		{
-			__debugbreak();
-			ENDINSTANCE;
-			return E_FAIL;
-		}
-	}
+	//if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceRocks")))
+	//{
+	//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceRocks")
+	//		, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/WingAttack/TraceRocks/"), LEVEL_SANCTUM))))
+	//	{
+	//		__debugbreak();
+	//		ENDINSTANCE;
+	//		return E_FAIL;
+	//	}
+	//}
 
 	Safe_Release(pGameInstance);
 	return S_OK;
@@ -93,8 +97,10 @@ HRESULT CWeapon_Dragon_Left_Wing::Initialize(void* pArg)
 	m_CollisionRequestDesc.iDamage = 10;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
 
-	m_pEffect_WingAttack_TraceDarkCloud->Disable();
-	m_pEffect_WingAttack_TraceRocks->Disable();
+	if (nullptr != m_pEffect_WingAttack_TraceDarkCloud)
+		m_pEffect_WingAttack_TraceDarkCloud->Disable();
+	if(nullptr != m_pEffect_WingAttack_TraceRocks)
+		m_pEffect_WingAttack_TraceRocks->Disable();
 
 	return S_OK;
 }
@@ -115,8 +121,10 @@ void CWeapon_Dragon_Left_Wing::Tick(_float fTimeDelta)
 	}
 
 	// 날개 공격 이펙트 달기.
-	m_pEffect_WingAttack_TraceDarkCloud->Get_Transform()->Set_Position(m_Bones[0].vPosition);
-	m_pEffect_WingAttack_TraceRocks->Get_Transform()->Set_Position(m_Bones[0].vPosition);
+	if (nullptr != m_pEffect_WingAttack_TraceDarkCloud)
+		m_pEffect_WingAttack_TraceDarkCloud->Get_Transform()->Set_Position(m_Bones[0].vPosition);
+	if (nullptr != m_pEffect_WingAttack_TraceRocks)
+		m_pEffect_WingAttack_TraceRocks->Get_Transform()->Set_Position(m_Bones[0].vPosition);
 }
 
 #ifdef _DEBUG
@@ -170,13 +178,13 @@ HRESULT CWeapon_Dragon_Left_Wing::Add_Components()
 		throw TEXT("Com_Renderer");
 #endif // _DEBUG
 
-	if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDarkCloud"),
-		TEXT("Com_Particle_WingAttack_TraceDarkCloud"), reinterpret_cast<CComponent**>(&m_pEffect_WingAttack_TraceDarkCloud))))
-		throw TEXT("Com_Particle_WingAttack");
+	//if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDarkCloud"),
+	//	TEXT("Com_Particle_WingAttack_TraceDarkCloud"), reinterpret_cast<CComponent**>(&m_pEffect_WingAttack_TraceDarkCloud))))
+	//	throw TEXT("Com_Particle_WingAttack");
 
-	if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceRocks"),
+	/*if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceRocks"),
 		TEXT("Com_Particle_WingAttack_TraceRocks"), reinterpret_cast<CComponent**>(&m_pEffect_WingAttack_TraceRocks))))
-		throw TEXT("Com_Particle_WingAttack_TraceRocks");
+		throw TEXT("Com_Particle_WingAttack_TraceRocks");*/
 
 	return S_OK;
 }
