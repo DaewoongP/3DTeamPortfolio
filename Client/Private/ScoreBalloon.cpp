@@ -22,6 +22,8 @@ HRESULT CScoreBalloon::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	m_pTransform->Set_RigidBody(m_pRigidBody);
+
 	return S_OK;
 }
 
@@ -72,12 +74,6 @@ HRESULT CScoreBalloon::Render()
 
 HRESULT CScoreBalloon::Add_Components()
 {
-	if (FAILED(__super::Add_Components()))
-	{
-		MSG_BOX("[CScoreBalloon] Failed __super::Add_Components()");
-		return E_FAIL;
-	}
-
 	/* For.EmissiveTexture */
 	m_pEmissiveTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/NonAnims/Balloon/T_HM_Zonkos_Balloon_05_E.dds"));
 	if (nullptr == m_pEmissiveTexture)

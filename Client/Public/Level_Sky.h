@@ -17,6 +17,8 @@ public:
 private:
 	HRESULT Ready_Layer_BackGround(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Monster(const _tchar* pLayerTag);
+	// 테스트 코드 PR전 지울 것.
+	HRESULT Ready_Layer_Balloon(const _tchar* pLayerTag);
 	HRESULT Ready_Lights();
 	HRESULT Ready_Shader();
 

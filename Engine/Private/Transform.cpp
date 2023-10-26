@@ -176,6 +176,13 @@ HRESULT CTransform::Initialize(void* pArg)
 
 void CTransform::Tick(_float fTimeDelta)
 {
+	if (true == isnan(m_WorldMatrix.Right().x))
+	{
+		m_WorldMatrix._11 = 1.f; m_WorldMatrix._12 = 0.f; m_WorldMatrix._13 = 0.f; m_WorldMatrix._14 = 0.f;
+		m_WorldMatrix._21 = 0.f; m_WorldMatrix._22 = 1.f; m_WorldMatrix._23 = 0.f; m_WorldMatrix._24 = 0.f;
+		m_WorldMatrix._31 = 0.f; m_WorldMatrix._32 = 0.f; m_WorldMatrix._33 = 1.f; m_WorldMatrix._34 = 0.f;
+	}
+
 	m_vVelocity = (Get_Position() - m_vPrePosition) * 60.f; // 60frame 기준 고정 속도처리
 	m_vPrePosition = Get_Position();
 

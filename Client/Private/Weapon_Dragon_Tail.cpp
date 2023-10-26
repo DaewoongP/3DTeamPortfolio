@@ -13,6 +13,8 @@ CWeapon_Dragon_Tail::CWeapon_Dragon_Tail(const CWeapon_Dragon_Tail& rhs)
 
 HRESULT CWeapon_Dragon_Tail::Initialize_Prototype()
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	__super::Initialize_Prototype();
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();

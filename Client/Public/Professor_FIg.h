@@ -32,6 +32,11 @@ private:
 	virtual ~CProfessor_Fig() = default;
 
 public:
+	void Spawn() {
+		m_isSpawn = true;
+	}
+
+public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
@@ -65,6 +70,7 @@ private:
 
 	_bool m_isChangeAnimation = { false };
 	_bool m_isRangeInEnemy = { false };
+	_bool m_isSpawn = { false };
 
 	CMagicBall* m_CastingMagic = { nullptr };
 

@@ -1386,9 +1386,9 @@ HRESULT CGolem_Combat::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 				if (FAILED(pBlackBoard->Get_Type("pHealth", pHealth)))
 					return false;
 
-				Print_Damage_Font(50);
+				Print_Damage_Font(200);
 
-				pHealth->Damaged(50);
+				pHealth->Damaged(200);
 
 				return true;
 			});

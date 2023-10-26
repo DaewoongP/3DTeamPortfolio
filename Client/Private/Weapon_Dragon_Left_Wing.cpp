@@ -46,6 +46,8 @@ void CWeapon_Dragon_Left_Wing::Enter_Hit_Terrain()
 
 HRESULT CWeapon_Dragon_Left_Wing::Initialize_Prototype()
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	__super::Initialize_Prototype();
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();

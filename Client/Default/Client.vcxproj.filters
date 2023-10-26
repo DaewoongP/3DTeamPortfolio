@@ -988,6 +988,9 @@
     <Filter Include="02. GameObject\13. FlyGameManager\Balloons\ABCD">
       <UniqueIdentifier>{d1c24aee-579f-46e7-b851-1319e0c3ec24}</UniqueIdentifier>
     </Filter>
+    <Filter Include="07. Events\Sanctum\Enter_Sanctum">
+      <UniqueIdentifier>{aa5de3f7-03ce-47a3-92fe-c1f77c90f4d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1799,12 +1802,6 @@
     <ClInclude Include="..\Public\Magic_Sound_Manager.h">
       <Filter>05. Magic\Magic_Sound_Manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Event_Spawn_Dragon.h">
-      <Filter>07. Events\Sanctum</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Event_Spawn_Darkwizard.h">
-      <Filter>07. Events\Sanctum</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Broom_Stick.h">
       <Filter>02. GameObject\01. Player\01. Weapon\BroomStick</Filter>
     </ClInclude>
@@ -1964,18 +1961,6 @@
     <ClInclude Include="..\Public\Balloon.h">
       <Filter>02. GameObject\13. FlyGameManager\Balloons</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\BeastBalloon_A.h">
-      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_A</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\BeastBalloon_B.h">
-      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_B</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\BeastBalloon_C.h">
-      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_C</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\BeastBalloon_D.h">
-      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_D</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Balloon_Timer.h">
       <Filter>02. GameObject\13. FlyGameManager\Balloons\Timer</Filter>
     </ClInclude>
@@ -1990,6 +1975,22 @@
     </ClInclude>
     <ClInclude Include="..\Public\BeastBalloon_D.h">
       <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_A.h" />
+    <ClInclude Include="..\Public\BeastBalloon_B.h" />
+    <ClInclude Include="..\Public\BeastBalloon_C.h" />
+    <ClInclude Include="..\Public\BeastBalloon_D.h" />
+    <ClInclude Include="..\Public\Event_Enter_Sanctum.h">
+      <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Spawn_Dragon_2.h">
+      <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Spawn_Darkwizard.h">
+      <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Spawn_Dragon.h">
+      <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2766,12 +2767,6 @@
     <ClCompile Include="..\Private\Magic_Sound_Manager.cpp">
       <Filter>05. Magic\Magic_Sound_Manager</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Event_Spawn_Dragon.cpp">
-      <Filter>07. Events\Sanctum</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Event_Spawn_Darkwizard.cpp">
-      <Filter>07. Events\Sanctum</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Broom_Stick.cpp">
       <Filter>02. GameObject\01. Player\01. Weapon\BroomStick</Filter>
     </ClCompile>
@@ -2922,18 +2917,6 @@
     <ClCompile Include="..\Private\Balloon.cpp">
       <Filter>02. GameObject\13. FlyGameManager\Balloons</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\BeastBalloon_A.cpp">
-      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_A</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\BeastBalloon_B.cpp">
-      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_B</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\BeastBalloon_C.cpp">
-      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_C</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\BeastBalloon_D.cpp">
-      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_D</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Balloon_Timer.cpp">
       <Filter>02. GameObject\13. FlyGameManager\Balloons\Timer</Filter>
     </ClCompile>
@@ -2948,6 +2931,22 @@
     </ClCompile>
     <ClCompile Include="..\Private\BeastBalloon_D.cpp">
       <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_A.cpp" />
+    <ClCompile Include="..\Private\BeastBalloon_B.cpp" />
+    <ClCompile Include="..\Private\BeastBalloon_C.cpp" />
+    <ClCompile Include="..\Private\BeastBalloon_D.cpp" />
+    <ClCompile Include="..\Private\Event_Enter_Sanctum.cpp">
+      <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Spawn_Darkwizard.cpp">
+      <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Spawn_Dragon.cpp">
+      <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Spawn_Dragon_2.cpp">
+      <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
