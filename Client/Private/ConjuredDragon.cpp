@@ -39,93 +39,98 @@ CConjuredDragon::CConjuredDragon(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 
 CConjuredDragon::CConjuredDragon(const CConjuredDragon& rhs)
 	: CEnemy(rhs)
+	, m_iLevel(rhs.m_iLevel)
 {
 }
 
-HRESULT CConjuredDragon::Initialize_Prototype()
+HRESULT CConjuredDragon::Initialize_Prototype(_uint iLevel)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
+
+	m_iLevel = iLevel;
 
 	BEGININSTANCE;
 	try
 	{
-		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle")))
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle")))
 		{
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle")
-				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/BlackSmokeIdle/"), LEVEL_SANCTUM))))
+			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle")
+				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/BlackSmokeIdle/"), m_iLevel))))
 				throw;
 		}
 
 		// Pulse
-		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Charge")))
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_Charge")))
 		{
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Charge")
-				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/Charge/"), LEVEL_SANCTUM))))
+			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_Charge")
+				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/Charge/"), m_iLevel))))
 				throw;
 		}
 
-		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit")))
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit")))
 		{
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit")
-				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/CircleEmit/"), LEVEL_SANCTUM))))
+			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit")
+				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/CircleEmit/"), m_iLevel))))
 				throw;
 		}
 
-		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Rock")))
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_Rock")))
 		{
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Rock")
-				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/Rock/"), LEVEL_SANCTUM))))
+			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_Rock")
+				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/Rock/"), m_iLevel))))
 				throw;
 		}
 
-		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_SplashWater")))
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_SplashWater")))
 		{
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_SplashWater")
-				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/SplashWater/"), LEVEL_SANCTUM))))
+			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_SplashWater")
+				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/SplashWater/"), m_iLevel))))
 				throw;
 		}
 
-		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_BoomWispy")))
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_BoomWispy")))
 		{
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_BoomWispy")
-				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/BoomWispy/"), LEVEL_SANCTUM))))
+			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_BoomWispy")
+				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/BoomWispy/"), m_iLevel))))
 				throw;
 		}
 
-		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_ImpulseSphere_Effect")))
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_ImpulseSphere_Effect")))
 		{
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_ImpulseSphere_Effect"),
-				CImpulseSphere_Effect::Create(m_pDevice, m_pContext, LEVEL_SANCTUM))))
+			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_ImpulseSphere_Effect"),
+				CImpulseSphere_Effect::Create(m_pDevice, m_pContext, m_iLevel))))
 				throw;
 		}
 
 		// Breath_Effect
-		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Breath_Effect")))
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Breath_Effect")))
 		{
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Breath_Effect"),
-				CBreath_Effect::Create(m_pDevice, m_pContext, LEVEL_SANCTUM))))
+			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Breath_Effect"),
+				CBreath_Effect::Create(m_pDevice, m_pContext, m_iLevel))))
 				throw;
 		}
 
-		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_DragonInvin")))
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_DragonInvin")))
 		{
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_DragonInvin")
-				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/DragonInvin/"), LEVEL_SANCTUM))))
+			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_DragonInvin")
+				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/DragonInvin/"), m_iLevel))))
 				throw;
 		}
 
-		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_DragonInvinMesh")))
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_DragonInvinMesh")))
 		{
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_DragonInvinMesh")
-				, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/DragonInvin/DragonInvin.ME"), LEVEL_SANCTUM))))
+			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_DragonInvinMesh")
+				, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/DragonInvin/DragonInvin.ME"), m_iLevel))))
 				throw;
 		}
 
-		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_InvinBreakDust")))
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_InvinBreakDust")))
 		{
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_InvinBreakDust")
-				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/InvinBreakDust/"), LEVEL_SANCTUM))))
+			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_InvinBreakDust")
+				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/InvinBreakDust/"), m_iLevel))))
 				throw;
 		}
 	}
@@ -1126,47 +1131,47 @@ HRESULT CConjuredDragon::Add_Effects()
 {
 	try /* Check Add_Components */
 	{
-		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_ImpulseSphere_Effect"),
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_ImpulseSphere_Effect"),
 			TEXT("Com_ImpulseSphere_Effect"), reinterpret_cast<CComponent**>(&m_pEffect_ImpulseSphere))))
 			throw TEXT("Com_ImpulseSphere_Effect");
 
-		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Breath_Effect"),
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Breath_Effect"),
 			TEXT("Com_Breath_Effect"), reinterpret_cast<CComponent**>(&m_pEffect_Breath))))
 			throw TEXT("Com_Breath_Effect");
 
-		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle"),
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle"),
 			TEXT("Com_BlackSmokeIdle"), reinterpret_cast<CComponent**>(&m_pEffect_BlackSmokeIdle))))
 			throw TEXT("Com_BlackSmokeIdle");
 
-		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Charge"),
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_Charge"),
 			TEXT("Com_Pulse_Charge"), reinterpret_cast<CComponent**>(&m_pEffect_Pulse_Charge))))
 			throw TEXT("Com_Pulse_Charge");
 
-		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_SplashWater"),
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_SplashWater"),
 			TEXT("Com_Pulse_SplashWater"), reinterpret_cast<CComponent**>(&m_pEffect_Pulse_SplashWater))))
 			throw TEXT("Com_Pulse_SplashWater");
 
-		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Rock"),
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_Rock"),
 			TEXT("Com_Pulse_Rock"), reinterpret_cast<CComponent**>(&m_pEffect_Pulse_Rock))))
 			throw TEXT("Com_Pulse_Rock");
 
-		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit"),
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit"),
 			TEXT("Com_Pulse_CircleEmit"), reinterpret_cast<CComponent**>(&m_pEffect_Pulse_CircleEmit))))
 			throw TEXT("Com_Pulse_CircleEmit");
 
-		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_BoomWispy"),
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_BoomWispy"),
 			TEXT("Com_Pulse_BoomWispy"), reinterpret_cast<CComponent**>(&m_pEffect_Pulse_BoomWispy))))
 			throw TEXT("Com_Pulse_BoomWispy");
 
-		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_DragonInvin"),
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_DragonInvin"),
 			TEXT("Com_DragonInvin"), reinterpret_cast<CComponent**>(&m_pEffect_DragonInvin))))
 			throw TEXT("Com_DragonInvin");
 
-		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_DragonInvinMesh"),
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_DragonInvinMesh"),
 			TEXT("Com_DragonInvinMesh"), reinterpret_cast<CComponent**>(&m_pEffect_DragonInvinMesh))))
 			throw TEXT("Com_DragonInvinMesh");
 
-		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_InvinBreakDust"),
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_InvinBreakDust"),
 			TEXT("Com_Particle_InvinBreakDust"), reinterpret_cast<CComponent**>(&m_pEffect_InvinBreakDust))))
 			throw TEXT("Com_Particle_InvinBreakDust");
 
@@ -2944,11 +2949,11 @@ void CConjuredDragon::Pulse_Stop_Charge()
 	m_pEffect_Pulse_CircleEmit->Stop();
 }
 
-CConjuredDragon* CConjuredDragon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CConjuredDragon* CConjuredDragon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)
 {
 	CConjuredDragon* pInstance = New CConjuredDragon(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize_Prototype(iLevel)))
 	{
 		MSG_BOX("Failed to Created CConjuredDragon");
 		Safe_Release(pInstance);

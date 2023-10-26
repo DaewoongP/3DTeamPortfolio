@@ -58,7 +58,7 @@ public:
 	}
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
+	HRESULT Initialize_Prototype(_uint iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
@@ -72,6 +72,9 @@ public:
 	void Tick_Imgui(_float fTimeDelta);
 	
 #endif // _DEBUG
+
+private:
+	_uint m_iLevel = { 0 };
 
 private:
 	/* 무적 게이지. 100 까지 차면 무적이 됨 */
@@ -217,7 +220,7 @@ private: /* Notify Func */
 	void Pulse_Stop_Charge();
 
 public:
-	static CConjuredDragon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CConjuredDragon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
 	virtual CConjuredDragon* Clone(void* pArg) override;
 	virtual void Free() override;
 };

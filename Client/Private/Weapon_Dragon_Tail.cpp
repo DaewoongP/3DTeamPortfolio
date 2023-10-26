@@ -8,20 +8,25 @@ CWeapon_Dragon_Tail::CWeapon_Dragon_Tail(ID3D11Device* pDevice, ID3D11DeviceCont
 
 CWeapon_Dragon_Tail::CWeapon_Dragon_Tail(const CWeapon_Dragon_Tail& rhs)
 	: CParts(rhs)
+	, m_iLevel(rhs.m_iLevel)
 {
 }
 
-HRESULT CWeapon_Dragon_Tail::Initialize_Prototype()
+HRESULT CWeapon_Dragon_Tail::Initialize_Prototype(_uint iLevel)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	__super::Initialize_Prototype();
+
+	m_iLevel = iLevel;
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDarkCloud")))
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDarkCloud")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDarkCloud")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/WingAttack/TraceDarkCloud/"), LEVEL_SANCTUM))))
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDarkCloud")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/WingAttack/TraceDarkCloud/"), m_iLevel))))
 		{
 			__debugbreak();
 			ENDINSTANCE;
@@ -29,10 +34,10 @@ HRESULT CWeapon_Dragon_Tail::Initialize_Prototype()
 		}
 	}
 
-	if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDust")))
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDust")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDust")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/WingAttack/TraceDust/"), LEVEL_SANCTUM))))
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDust")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/WingAttack/TraceDust/"), m_iLevel))))
 		{
 			__debugbreak();
 			ENDINSTANCE;
@@ -163,22 +168,22 @@ HRESULT CWeapon_Dragon_Tail::Add_Components()
 		throw TEXT("Com_Renderer");
 #endif // _DEBUG
 
-	if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDarkCloud"),
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDarkCloud"),
 		TEXT("Com_Particle_WingAttack_TraceDarkCloud"), reinterpret_cast<CComponent**>(&m_pEffect_WingAttack_TraceDarkCloud))))
 		throw TEXT("Com_Particle_WingAttack");
 
-	if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDust"),
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDust"),
 		TEXT("Com_Particle_WingAttack_TraceDust"), reinterpret_cast<CComponent**>(&m_pEffect_WingAttack_TraceDust))))
 		throw TEXT("Com_Particle_WingAttack_TraceDust");
 
 	return S_OK;
 }
 
-CWeapon_Dragon_Tail* CWeapon_Dragon_Tail::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CWeapon_Dragon_Tail* CWeapon_Dragon_Tail::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)
 {
 	CWeapon_Dragon_Tail* pInstance = New CWeapon_Dragon_Tail(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize_Prototype(iLevel)))
 	{
 		MSG_BOX("Failed to Created CWeapon_Dragon_Tail");
 		Safe_Release(pInstance);

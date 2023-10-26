@@ -8,6 +8,7 @@ CWeapon_Dragon_Left_Wing::CWeapon_Dragon_Left_Wing(ID3D11Device* pDevice, ID3D11
 
 CWeapon_Dragon_Left_Wing::CWeapon_Dragon_Left_Wing(const CWeapon_Dragon_Left_Wing& rhs)
 	: CParts(rhs)
+	, m_iLevel(rhs.m_iLevel)
 {
 }
 
@@ -48,35 +49,39 @@ void CWeapon_Dragon_Left_Wing::Enter_Hit_Terrain()
 		m_pEffect_WingAttack_TraceRocks->Play(m_Bones[0].vPosition);
 }
 
-HRESULT CWeapon_Dragon_Left_Wing::Initialize_Prototype()
+HRESULT CWeapon_Dragon_Left_Wing::Initialize_Prototype(_uint iLevel)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	__super::Initialize_Prototype();
+
+	m_iLevel = iLevel;
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	//if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDarkCloud")))
-	//{
-	//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDarkCloud")
-	//		, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/WingAttack/TraceDarkCloud/"), LEVEL_SANCTUM))))
-	//	{
-	//		__debugbreak();
-	//		ENDINSTANCE;
-	//		return E_FAIL;
-	//	}
-	//}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDarkCloud")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDarkCloud")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/WingAttack/TraceDarkCloud/"), m_iLevel))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
 
-	//if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceRocks")))
-	//{
-	//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceRocks")
-	//		, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/WingAttack/TraceRocks/"), LEVEL_SANCTUM))))
-	//	{
-	//		__debugbreak();
-	//		ENDINSTANCE;
-	//		return E_FAIL;
-	//	}
-	//}
-
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_WingAttack_TraceRocks")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_WingAttack_TraceRocks")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/WingAttack/TraceRocks/"), m_iLevel))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	
 	Safe_Release(pGameInstance);
 	return S_OK;
 }
@@ -178,22 +183,22 @@ HRESULT CWeapon_Dragon_Left_Wing::Add_Components()
 		throw TEXT("Com_Renderer");
 #endif // _DEBUG
 
-	//if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDarkCloud"),
-	//	TEXT("Com_Particle_WingAttack_TraceDarkCloud"), reinterpret_cast<CComponent**>(&m_pEffect_WingAttack_TraceDarkCloud))))
-	//	throw TEXT("Com_Particle_WingAttack");
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDarkCloud"),
+		TEXT("Com_Particle_WingAttack_TraceDarkCloud"), reinterpret_cast<CComponent**>(&m_pEffect_WingAttack_TraceDarkCloud))))
+		throw TEXT("Com_Particle_WingAttack");
 
-	/*if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_WingAttack_TraceRocks"),
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_WingAttack_TraceRocks"),
 		TEXT("Com_Particle_WingAttack_TraceRocks"), reinterpret_cast<CComponent**>(&m_pEffect_WingAttack_TraceRocks))))
-		throw TEXT("Com_Particle_WingAttack_TraceRocks");*/
+		throw TEXT("Com_Particle_WingAttack_TraceRocks");
 
 	return S_OK;
 }
 
-CWeapon_Dragon_Left_Wing* CWeapon_Dragon_Left_Wing::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CWeapon_Dragon_Left_Wing* CWeapon_Dragon_Left_Wing::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)
 {
 	CWeapon_Dragon_Left_Wing* pInstance = New CWeapon_Dragon_Left_Wing(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize_Prototype(iLevel)))
 	{
 		MSG_BOX("Failed to Created CWeapon_Dragon_Left_Wing");
 		Safe_Release(pInstance);
