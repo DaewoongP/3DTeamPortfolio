@@ -1497,9 +1497,16 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		m_isFixMouse = false;
 	}
 
+	if (true == m_isTabNext)
+	{			
+		m_isFixMouse = true;
+	}
+
+	m_isTabNext = false;
+
 	if (pGameInstance->Get_DIKeyState(DIK_TAB, CInput_Device::KEY_UP))
 	{
-		m_isFixMouse = true;
+		m_isTabNext = true;
 	}
 
 	//½ºÅ³ÅÇ
@@ -1838,12 +1845,6 @@ void CPlayer::Update_CoolTime()
 			magicInitDesc = m_MagicDescs[i];
 
 			magicInitDesc.fInitCoolTime = m_CoolTimeDesc.fBuffValue;
-
-			//°ãÄ£´Ù¸é
-			if (0.0 < m_DemegeDesc.fBuffValueAcc)
-			{
-				magicInitDesc.iDamage = m_MagicDescs[i].iDamage * (_int)m_DemegeDesc.fBuffValue;
-			}
 			
 			m_pMagicSlot->Add_Magics(magicInitDesc);
 		}
@@ -1852,21 +1853,11 @@ void CPlayer::Update_CoolTime()
 
 		magicInitDesc.fInitCoolTime = m_CoolTimeDesc.fBuffValue;
 
-		if (0.0 < m_DemegeDesc.fBuffValueAcc)
-		{
-			magicInitDesc.iDamage = m_BasicDesc_Light.iDamage * (_int)m_DemegeDesc.fBuffValue;
-		}
-
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 
 		magicInitDesc = m_BasicDesc_Heavy;
 
 		magicInitDesc.fInitCoolTime = m_CoolTimeDesc.fBuffValue;
-
-		if (0.0 < m_DemegeDesc.fBuffValueAcc)
-		{
-			magicInitDesc.iDamage = m_BasicDesc_Heavy.iDamage * (_int)m_DemegeDesc.fBuffValue;
-		}
 
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -1885,30 +1876,14 @@ void CPlayer::Update_CoolTime()
 
 			magicInitDesc = m_MagicDescs[i];
 
-			//°ãÄ£´Ù¸é
-			if (0.0 < m_DemegeDesc.fBuffValueAcc)
-			{
-				magicInitDesc.iDamage = m_MagicDescs[i].iDamage * (_int)m_DemegeDesc.fBuffValue;
-			}
-
 			m_pMagicSlot->Add_Magics(magicInitDesc);
 		}
 
 		magicInitDesc = m_BasicDesc_Light;
 
-		if (0.0 < m_DemegeDesc.fBuffValueAcc)
-		{
-			magicInitDesc.iDamage = m_BasicDesc_Light.iDamage * (_int)m_DemegeDesc.fBuffValue;
-		}
-
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 
 		magicInitDesc = m_BasicDesc_Heavy;
-
-		if (0.0 < m_DemegeDesc.fBuffValueAcc)
-		{
-			magicInitDesc.iDamage = m_BasicDesc_Heavy.iDamage * (_int)m_DemegeDesc.fBuffValue;
-		}
 
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -1942,95 +1917,13 @@ void CPlayer::Update_Demege()
 	{
 		m_DemegeDesc.fBuffValueAcc = m_DemegeDesc.fBuffValueTime;
 
-		CMagic::MAGICDESC magicInitDesc = { CMagic::MAGICDESC() };
-
-		for (size_t i = 0; i < SPELL_END; i++)
-		{
-			if (SPELL_END == m_MagicDescs[i].eMagicTag)
-			{
-				continue;
-			}
-
-			magicInitDesc = m_MagicDescs[i];
-
-			magicInitDesc.iDamage = m_MagicDescs[i].iDamage * (_int)m_DemegeDesc.fBuffValue;
-
-			//°ãÄ£´Ù¸é
-			if (0.0 < m_CoolTimeDesc.fBuffValueAcc)
-			{
-				magicInitDesc.fInitCoolTime = m_CoolTimeDesc.fBuffValue;
-			}
-
-			m_pMagicSlot->Add_Magics(magicInitDesc);
-		}
-
-		magicInitDesc = m_BasicDesc_Light;
-
-		magicInitDesc.iDamage = m_BasicDesc_Light.iDamage * (_int)m_DemegeDesc.fBuffValue;
-
-		//°ãÄ£´Ù¸é
-		if (0.0 < m_CoolTimeDesc.fBuffValueAcc)
-		{
-			magicInitDesc.fInitCoolTime = m_CoolTimeDesc.fBuffValue;
-		}
-
-		m_pMagicSlot->Add_Magics(magicInitDesc);
-
-		magicInitDesc = m_BasicDesc_Heavy;
-
-		magicInitDesc.iDamage = m_BasicDesc_Heavy.iDamage * (_int)m_DemegeDesc.fBuffValue;
-
-		//°ãÄ£´Ù¸é
-		if (0.0 < m_CoolTimeDesc.fBuffValueAcc)
-		{
-			magicInitDesc.fInitCoolTime = m_CoolTimeDesc.fBuffValue;
-		}
-
-		m_pMagicSlot->Add_Magics(magicInitDesc);
+		m_isPowerUp = true;
 	}
 
 	//¿ø·¡ ±¸Á¶Ã¼ ´ëÀÔ
 	if (true == m_DemegeDesc.isFinish)
 	{
-		CMagic::MAGICDESC magicInitDesc = { CMagic::MAGICDESC() };
-
-		for (size_t i = 0; i < SPELL_END; i++)
-		{
-			if (SPELL_END == m_MagicDescs[i].eMagicTag)
-			{
-				continue;
-			}
-
-			magicInitDesc = m_MagicDescs[i];
-
-			//°ãÄ£´Ù¸é
-			if (0.0 < m_CoolTimeDesc.fBuffValueAcc)
-			{
-				magicInitDesc.fInitCoolTime = m_CoolTimeDesc.fBuffValue;
-			}
-
-			m_pMagicSlot->Add_Magics(magicInitDesc);
-		}
-
-		magicInitDesc = m_BasicDesc_Light;
-
-		//°ãÄ£´Ù¸é
-		if (0.0 < m_CoolTimeDesc.fBuffValueAcc)
-		{
-			magicInitDesc.fInitCoolTime = m_CoolTimeDesc.fBuffValue;
-		}
-
-		m_pMagicSlot->Add_Magics(magicInitDesc);
-
-		magicInitDesc = m_BasicDesc_Heavy;
-
-		//°ãÄ£´Ù¸é
-		if (0.0 < m_CoolTimeDesc.fBuffValueAcc)
-		{
-			magicInitDesc.fInitCoolTime = m_CoolTimeDesc.fBuffValue;
-		}
-
-		m_pMagicSlot->Add_Magics(magicInitDesc);
+		m_isPowerUp = false;
 	}
 }
 
@@ -2472,8 +2365,8 @@ void CPlayer::Protego()
 	magicInitDesc.eMagicTag = PROTEGO;
 	magicInitDesc.fInitCoolTime = 0.f;
 	magicInitDesc.iDamage = 0;
-	magicInitDesc.fLifeTime = 0.8f;
-	magicInitDesc.fScale = 1.8f;
+	magicInitDesc.fLifeTime = 1.5f;
+	magicInitDesc.fScale = 1.0f;
 	m_pMagicSlot->Add_Magics(magicInitDesc);
 
 	m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_ENEMY_ATTACK | COL_MAGIC | COL_SHIELD_ENEMY), COL_SHIELD, m_isPowerUp);

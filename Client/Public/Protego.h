@@ -71,7 +71,7 @@ private: /* For. Component */
 private:
 	_float4 m_vColor1 = { 1.f, 1.f, 1.f, 1.f };
 	_float4 m_vColor2 = { 1.f, 1.f, 1.f, 1.f };
-	_float m_fScale = { 2.3f };
+	_float m_fScale = { 1.0f };	
 	_float m_fEnterDuration = { 0.1f };
 	_float m_fExitDuration = { 0.1f };
 	_float m_fRimPower = { 2.1f };

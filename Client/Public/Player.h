@@ -295,6 +295,8 @@ private:
 	POTIONBUFVALUEDESC m_DefensiveDesc = { POTIONBUFVALUEDESC() };
 	POTIONBUFVALUEDESC m_CoolTimeDesc = { POTIONBUFVALUEDESC() };
 
+	_bool m_isTabNext = { false };
+
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();

@@ -46,6 +46,11 @@ HRESULT CEvent_Spawn_Dragon::Initialize(void* pArg)
 	pGameInstance->Add_Timer(TEXT("Sanctum_Dragon_Enter_CutScene_Play"), false, 8.7f);
 	pGameInstance->Add_Timer(TEXT("Sanctum_Dragon_Enter_Scream"), false, 5.333f);
 
+	pGameInstance->Add_Timer(TEXT("Sanctum_Egg_CutScene_Play_2_FadeOut"), true, 2.8f);
+	pGameInstance->Add_Timer(TEXT("Sanctum_Egg_CutScene_Play_2_FadeIn"), true, 3.0f);
+	pGameInstance->Add_Timer(TEXT("Sanctum_Egg_CutScene_Play_3_FadeOut"), true, 5.83f);
+	pGameInstance->Add_Timer(TEXT("Sanctum_Egg_CutScene_Play_3_FadeIn"), true, 6.03f);
+
 	ENDINSTANCE;
 	
 	return S_OK;
@@ -90,6 +95,11 @@ void CEvent_Spawn_Dragon::Check_Event_Spawn_Dragon()
 			pGameInstance->Add_CutScene(TEXT("Sanctum_Egg"));
 			//타이머 리셋
 			pGameInstance->Reset_Timer(TEXT("Sanctum_Egg_CutScene_Play"));
+
+			pGameInstance->Reset_Timer(TEXT("Sanctum_Egg_CutScene_Play_2_FadeOut"));
+			pGameInstance->Reset_Timer(TEXT("Sanctum_Egg_CutScene_Play_2_FadeIn"));
+			pGameInstance->Reset_Timer(TEXT("Sanctum_Egg_CutScene_Play_3_FadeOut"));
+			pGameInstance->Reset_Timer(TEXT("Sanctum_Egg_CutScene_Play_3_FadeIn"));
 		}
 	}
 		break;
@@ -102,6 +112,30 @@ void CEvent_Spawn_Dragon::Check_Event_Spawn_Dragon()
 			m_pRenderer->FadeIn(1.0f);
 			//진입 표시
 			m_isEnter = false;
+		}
+
+		if (false == m_isEgg[0] && true == pGameInstance->Check_Timer(TEXT("Sanctum_Egg_CutScene_Play_2_FadeOut")))
+		{
+			m_pRenderer->FadeOut(5.0f);
+			m_isEgg[0] = true;
+		}
+
+		if (false == m_isEgg[1] && true == pGameInstance->Check_Timer(TEXT("Sanctum_Egg_CutScene_Play_2_FadeIn")))
+		{
+			m_pRenderer->FadeIn(5.0f);
+			m_isEgg[1] = true;
+		}
+
+		if (false == m_isEgg[2] && true == pGameInstance->Check_Timer(TEXT("Sanctum_Egg_CutScene_Play_3_FadeOut")))
+		{
+			m_pRenderer->FadeOut(5.0f);
+			m_isEgg[2] = true;
+		}
+
+		if (false == m_isEgg[3] && true == pGameInstance->Check_Timer(TEXT("Sanctum_Egg_CutScene_Play_3_FadeIn")))
+		{
+			m_pRenderer->FadeIn(5.0f);
+			m_isEgg[3] = true;
 		}
 
 		//타이머 종료
