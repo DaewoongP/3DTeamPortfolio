@@ -659,6 +659,11 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Portal/Door"), eLevelID))))
 			throw TEXT("Prototype_GameObject_SmithToCliff_Gate_Portal");
 
+		/* For.Prototype_GameObject_Vault_Gate_Portal */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Vault_Gate_Portal"),
+			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Portal/Vault_Door"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Vault_Gate_Portal");
+
 		/* For.Prototype_GameObject_LightStand_Fire */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_LightStand_Fire"),
 			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/LightStand_Fire"), eLevelID))))

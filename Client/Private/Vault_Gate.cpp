@@ -38,15 +38,15 @@ HRESULT CVault_Gate::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_SmithToCliff_Gate_Portal"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Vault_Gate_Portal"),
 		TEXT("Com_Portal"), reinterpret_cast<CComponent**>(&m_pEffect))))
 	{
-		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_SmithToCliff_Gate_Portal)");
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Vault_Gate_Portal)");
 		__debugbreak();
 		return E_FAIL;
 	}
 
-	m_pEffect->Play(m_pTransform->Get_Position() + _float3(1.f, 2.5f, -0.25f));
+	m_pEffect->Play(m_pTransform->Get_Position() + _float3(2.f, 3.75f, -0.5f));
 	m_pEffect->Get_MainModuleRef().fSimulationSpeed = Random_Generator(0.5f, 1.0f);
 
 	return S_OK;
