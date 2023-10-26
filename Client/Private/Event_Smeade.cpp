@@ -3,10 +3,10 @@
 
 #include "Enemy.h"
 #include "Trigger.h"
-
 #include "Player.h"
 
 #include "Armored_Troll.h"
+#include "FireHouse.h"
 
 CEvent_Smeade::CEvent_Smeade(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -33,6 +33,19 @@ HRESULT CEvent_Smeade::Initialize(void* pArg)
 		if (wstring::npos != wstrObjTag.find(TEXT("Troll")))
 		{
 			m_pMonsters.emplace(wstrObjTag, static_cast<CEnemy*>(Pair.second));
+			Safe_AddRef(Pair.second);
+		}
+	}
+
+	// 파이어 하우스 처리
+	auto pMapLayer = pGameInstance->Find_Components_In_Layer(LEVEL_SMITH, TEXT("Layer_BackGround"));
+
+	for (auto Pair : *pMapLayer)
+	{
+		wstring wstrObjTag = Pair.first;
+		if (wstring::npos != wstrObjTag.find(TEXT("FireHouse")))
+		{
+			m_pFireHouse.push_back(static_cast<CFireHouse*>(Pair.second));
 			Safe_AddRef(Pair.second);
 		}
 	}
@@ -101,6 +114,7 @@ void CEvent_Smeade::Check_Event_Spawn_Troll()
 				wstring wstrObjectTag = iter->first;
 				if (wstring::npos != wstrObjectTag.find(TEXT("Troll")))
 				{
+					// 여기서 트롤의 무기 렌더링 처리
 					static_cast<CArmored_Troll*>(iter->second)->Set_Weapon_Render(true);
 					iter->second->Spawn();
 					Safe_Release(iter->second);
@@ -109,6 +123,13 @@ void CEvent_Smeade::Check_Event_Spawn_Troll()
 				else
 					++iter;
 			}
+
+			// 컷신에 맞춰 집에 불 
+			/*for (auto& iter : m_pFireHouse)
+			{
+				iter->Set_FireOn();
+			}*/
+
 			//페이드 인
 			m_pRenderer->FadeIn(1.0f);
 			//타이머 리셋
@@ -292,5 +313,8 @@ void CEvent_Smeade::Free()
 
 		for (auto& Pair : m_pMonsters)
 			Safe_Release(Pair.second);
+
+		for (auto& iter : m_pFireHouse)
+			Safe_Release(iter);
 	}
 }
