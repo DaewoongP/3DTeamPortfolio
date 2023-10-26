@@ -55,6 +55,93 @@ HRESULT CMapObject_Ins::Initialize_Level(_uint iCurrentLevelIndex)
 		return E_FAIL;
 	}
 
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	// 리지드 바디 초기화
+	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+	RigidBodyDesc.isStatic = true;
+	RigidBodyDesc.isTrigger = false;
+	RigidBodyDesc.eConstraintFlag = CRigidBody::All;
+	RigidBodyDesc.fStaticFriction = 1.f;
+	RigidBodyDesc.fDynamicFriction = 1.f;
+	RigidBodyDesc.fRestitution = 0.f;
+	RigidBodyDesc.pOwnerObject = this;
+	RigidBodyDesc.vDebugColor = _float4(0.f, 0.f, 0.f, 1.f);
+	RigidBodyDesc.eThisCollsion = COL_STATIC;
+	RigidBodyDesc.eCollisionFlag = COL_ITEM;
+	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Instance");
+
+	vector<CMesh_Instance*> Meshes = m_pModel->Get_Meshes();
+	vector<_float3> Vertices;
+	vector<PxU32> Indices;
+	_float4x4 WorldMatrix = m_pTransform->Get_WorldMatrix();
+
+	for (auto& pMesh : Meshes)
+	{
+		vector<_float3> MeshVertices = pMesh->Get_VertexPositions();
+		vector<_float4x4> InstanceMatries = pMesh->Get_InstanceMatrices();
+
+		_uint iIndex = { 0 };
+		for (auto& InstanceMatrix : InstanceMatries)
+		{
+			Vertices.clear();
+			Indices.clear();
+
+			for (auto& MeshVetex : MeshVertices)
+			{
+				_float3 vInstanceVertex = XMVector3TransformCoord(MeshVetex, InstanceMatrix);
+				_float3 vWorldVertex = XMVector3TransformCoord(vInstanceVertex, WorldMatrix);
+				Vertices.push_back(vWorldVertex);
+			}
+
+			vector<PxU32> MeshIndices = pMesh->Get_Indices();
+
+			for (size_t i = 0; i < MeshIndices.size(); ++i)
+			{
+				Indices.push_back(MeshIndices[i]);
+			}
+
+			// 피직스 메쉬 생성
+			PxTriangleMeshDesc TriangleMeshDesc;
+			TriangleMeshDesc.points.count = Vertices.size();
+			TriangleMeshDesc.points.stride = sizeof(_float3);
+			TriangleMeshDesc.points.data = Vertices.data();
+
+			TriangleMeshDesc.triangles.count = Indices.size() / 3;
+			TriangleMeshDesc.triangles.stride = 3 * sizeof(PxU32);
+			TriangleMeshDesc.triangles.data = Indices.data();
+
+			PxTolerancesScale PxScale;
+			PxCookingParams PxParams(PxScale);
+			PxDefaultMemoryOutputStream DefaultWriteBuffer;
+			if (!PxCookTriangleMesh(PxParams, TriangleMeshDesc, DefaultWriteBuffer))
+			{
+				MSG_BOX("Failed Create Triangle Mesh");
+				return E_FAIL;
+			}
+
+			PxPhysics* pPhysX = pGameInstance->Get_Physics();
+
+			PxDefaultMemoryInputData DefaultReadBuffer(DefaultWriteBuffer.getData(), DefaultWriteBuffer.getSize());
+			PxTriangleMeshGeometry TriangleMeshGeoMetry = PxTriangleMeshGeometry(pPhysX->createTriangleMesh(DefaultReadBuffer));
+			RigidBodyDesc.pGeometry = &TriangleMeshGeoMetry;
+			wstring randstr = TEXT("Com_RigidBody") + Generate_HashtagW();
+			/* Com_RigidBody */
+			CComponent* pRigidBody = { nullptr };
+			if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+				randstr.c_str(), reinterpret_cast<CComponent**>(&pRigidBody), &RigidBodyDesc)))
+			{
+				MSG_BOX("Failed CMapObject Add_Component : (Com_RigidBody)");
+				__debugbreak();
+				return E_FAIL;
+			}
+
+			m_RigidBodys.push_back(pRigidBody);
+		}
+	}
+
+	Safe_Release(pGameInstance);
+
 	return S_OK;
 }
 
@@ -71,6 +158,13 @@ void CMapObject_Ins::Late_Tick(_float fTimeDelta)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
+
+#ifdef _DEBUG
+		for (auto& pRigidBody : m_RigidBodys)
+		{
+			m_pRenderer->Add_DebugGroup(pRigidBody);
+		}
+#endif // _DEBUG
 	}
 }
 
@@ -238,6 +332,10 @@ CGameObject* CMapObject_Ins::Clone(void* pArg)
 void CMapObject_Ins::Free()
 {
 	__super::Free();
+
+	for (auto& pRigidBody : m_RigidBodys)
+		Safe_Release(pRigidBody);
+	m_RigidBodys.clear();
 
 	Safe_Release(m_pShadowShader);
 	Safe_Release(m_pShader);
