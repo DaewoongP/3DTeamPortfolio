@@ -293,7 +293,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	Key_Input(fTimeDelta);
 
 	Update_Hover_Eye_Distance();
-	
+
 	//m_pStateContext->Tick(fTimeDelta)
 	Go_Protego(&m_ProtegoStateDesc);
 
@@ -318,9 +318,16 @@ void CPlayer::Tick(_float fTimeDelta)
 	}
 
 	m_isPreLumos = m_isLumosOn;
-	for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
-		m_vecPlayer_StateParicle[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
 
+	for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
+	{
+		m_vecPlayer_StateParicle[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+	}
+
+	for (_uint i = 0; i < m_vecMeshEffect.size(); ++i)
+	{
+		m_vecMeshEffect[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+	}
 	//m_pCooltime->Tick(fTimeDelta);
 	//Potion_Duration(fTimeDelta);
 
@@ -755,20 +762,45 @@ HRESULT CPlayer::Add_Components()
 	}
 
 	/* For.Com_PotionParticle */
-	m_vecPotionParticle.resize(2);
+	m_vecPotionParticle.resize(5);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Heal_Particle"),
 		TEXT("Com_HealParticle"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[0]))))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Maxima_Particle"),
-		TEXT("Com_MaximaParticle"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[1]))))
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Heal_Ground"),
+		TEXT("Com_Heal_Ground"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[1]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Heal_After_Particle"),
+		TEXT("Com_Heal_After_Particle"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[2]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Heal_After_Particle2"),
+		TEXT("Com_Heal_After_Particle2"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[3]))))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
 	
+	
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Maxima_Particle"),
+		TEXT("Com_MaximaParticle"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[4]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	
+
+
+
 	m_vecPlayer_StateParicle.resize(3);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Player_Hit_Particle"),
 		TEXT("Com_Player_HitParticle"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[0]))))
@@ -790,31 +822,16 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
+	
 
-	/* For.Com_Player_Effect */
-	//m_vecPlayer_StateParicle.resize(1);
-	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_Effect"),
-	//	TEXT("Com_Blink_Effect"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[0]))))
-	//{
-	//__debugbreak();
-	//	return E_FAIL;
-	//}
-	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_SubEffect"),
-	//	TEXT("Com_Blink_Effect"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[0]))))
-	//{
-	//	__debugbreak();
-	//	return E_FAIL;
-	//}
-	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_Disotrtion"),
-	//	TEXT("Com_Blink_Effect"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[1]))))
-	//{
-	//	__debugbreak();
-	//	return E_FAIL;
-	//}
-
-
-
-
+	m_vecMeshEffect.resize(1);
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Potion_Distortoin"),
+		TEXT("Com_Potion_Distortoin"), reinterpret_cast<CComponent**>(&m_vecMeshEffect[0]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Potion_Distortion)");
+		__debugbreak();
+		return E_FAIL;
+	}
 
 	const CBone* pBone = m_pCustomModel->Get_Bone(TEXT("SKT_RightHand"));
 	if (nullptr == pBone)
@@ -3275,10 +3292,18 @@ void CPlayer::Go_Use_Potion()
 	UseItemDesc.funcPotion = [&] {(*this).Drink_Heal_Potion(); };
 
 	if (UseItemDesc.eItem_Id == ITEM_ID_WIGGENWELD_POTION)
-		m_vecPotionParticle[0]->Play(m_pTransform->Get_Position());
+	{
+		//m_vecPotionParticle[0]->Play(m_pTransform->Get_Position());
+		//m_vecPotionParticle[1]->Play(m_pTransform->Get_Position());
+		//m_vecPotionParticle[2]->Play(m_pTransform->Get_Position());
+		for(_uint i = 0 ; i<4;++i)
+			m_vecPotionParticle[i]->Play(m_pTransform->Get_Position());
+
+		m_vecMeshEffect[0]->Play(m_pTransform->Get_Position());
+	}
 
 	if (UseItemDesc.eItem_Id == ITEM_ID_MAXIMA_POTION)
-		m_vecPotionParticle[1]->Play(m_pTransform->Get_Position());
+		m_vecPotionParticle[2]->Play(m_pTransform->Get_Position());
 
 
 	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
