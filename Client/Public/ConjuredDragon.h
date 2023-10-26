@@ -85,6 +85,13 @@ private:
 	_float m_fInvinRatio = { 1.f };
 
 	void Update_Invincible(const _float& fTimeDelta);
+	
+private:
+	void Play_Death_Color();
+	void Death_Color(const _float& fTimeDelta);
+	_bool m_isDeathColor = { false };
+	_float m_fDeathColorRatio = { 0.f };
+	_bool m_isIncreaseColor = { true };
 
 private: /* 구체 패턴 관련 데이터 */
 	CEnergyBall* m_pEnergyBall = { nullptr };
@@ -141,6 +148,7 @@ private:
 	CCamera_Shake* m_pCamera_Shake_Hit_Terrain = { nullptr };
 	CCamera_Shake* m_pStep_Shake = { nullptr };
 	CCamera_Shake* m_pPulse_Shake = { nullptr };
+	CCamera_Shake* m_pDeath_Shake = { nullptr };
 
 private:
 	virtual HRESULT Add_Components_for_Shake();
@@ -159,7 +167,9 @@ private: // For. Effect
 	CParticleSystem* m_pEffect_Pulse_BoomWispy = { nullptr };
 	CParticleSystem* m_pEffect_DragonInvin = { nullptr };
 	CParticleSystem* m_pEffect_InvinBreakDust = { nullptr };
+	CParticleSystem* m_pEffect_DeathWhiteBall[5] = { nullptr };
 	CMeshEffect* m_pEffect_DragonInvinMesh = { nullptr };
+	CMeshEffect* m_pEffect_MeshEffect_DeathWhiteBall = { nullptr };
 
 private:
 	HRESULT Make_AI();
@@ -218,6 +228,9 @@ private: /* Notify Func */
 	void Action_Pulse();
 	void Pulse_Charge();
 	void Pulse_Stop_Charge();
+	void Death_Enter();
+	void Death_Exit();
+	void Struggle();
 
 public:
 	static CConjuredDragon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
