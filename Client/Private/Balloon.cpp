@@ -31,6 +31,7 @@ HRESULT CBalloon::Initialize(void* pArg)
 	m_iScore = pInitDesc->iScore;
 	m_pTransform->Set_WorldMatrix(XMMatrixTranslation(pInitDesc->vPosition.x, pInitDesc->vPosition.y, pInitDesc->vPosition.z));
 	m_pTransform->Set_Scale(pInitDesc->vScale);
+	m_isColliderOn = true;
 	m_isDead = true;
 	return S_OK;
 }
@@ -38,7 +39,15 @@ HRESULT CBalloon::Initialize(void* pArg)
 void CBalloon::Tick(_float fTimeDelta)
 {
 	if (true == m_isDead)
+	{
+		if (m_isColliderOn)
+		{
+			m_isColliderOn = false;
+			m_pRigidBody->Disable_Collision("Body");
+		}
 		return;
+	}
+		
 
 	__super::Tick(fTimeDelta);
 	m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);

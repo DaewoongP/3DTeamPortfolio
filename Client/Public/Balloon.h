@@ -39,7 +39,10 @@ public:
 		m_iScore = InitDesc.iScore;
 		m_pTransform->Set_Position(InitDesc.vPosition);
 		m_pTransform->Set_Scale(InitDesc.vScale);
+		m_fForce = InitDesc.fForce;
 		m_isDead = false;
+		m_isColliderOn = true;
+		m_pRigidBody->Enable_Collision("Body", this, nullptr);
 	}
 
 protected:
@@ -66,6 +69,7 @@ protected:
 	_int			m_iScore = { 0 };
 	BALLOONTYPE		m_eBallonActionType = { TYPE_NONE };
 	_float			m_fForce = { 20.f };
+	_bool			m_isColliderOn = { false };
 
 protected:
 	HRESULT Add_Components();

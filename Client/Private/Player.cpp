@@ -223,10 +223,10 @@ HRESULT CPlayer::Initialize(void* pArg)
 	//	IN_CIRC, OUT_CIRC, INOUT_CIRC,
 	//	IN_BOUNCE, OUT_BOUNCE, INOUT_BOUNCE,
 	//	IN_BACK, OUT_BACK, INOUT_BACK,
-	m_pNonFlySpell[0] = { LEVIOSO };
-	m_pNonFlySpell[1] = { FLIPENDO };
-	m_pNonFlySpell[2] = { ACCIO };
-	m_pNonFlySpell[3] = { DESCENDO };
+	m_pFlySpell[0] = { LEVIOSO };
+	m_pFlySpell[1] = { FLIPENDO };
+	m_pFlySpell[2] = { ACCIO };
+	m_pFlySpell[3] = { DESCENDO };
 	return S_OK;
 }
 
@@ -354,6 +354,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 		m_pWindParticle->Get_ShapeModuleRef().ShapeMatrix =
 			m_pWindParticle->Get_ShapeModuleRef().ShapeMatrixInit * TempMatrix;
+		m_pRenderer->Set_ScreenRadial(true,2.f, iFast*0.002f);
 	}
 	else
 	{

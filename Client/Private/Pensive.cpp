@@ -219,7 +219,7 @@ void CPensive::Set_Protego_Collision(CTransform* pTransform, ATTACKTYPE eType) c
 void CPensive::Do_Damage(_int iDmg)
 {
 	m_pHealth->Damaged(iDmg);
-	if (m_isAttackAble)
+	if(m_isSpawn && !m_isDead)
 	{
 		if (m_pHealth->Get_Current_HP() <= 0 && !m_pStateContext->Is_Current_State(TEXT("Death")))
 		{
@@ -235,15 +235,18 @@ void CPensive::Do_Damage(_int iDmg)
 		{
 			m_iPhase = 2;
 		}
-		m_iGroogyStack += iDmg;
-		if (m_iGroogyStack > 400)
+		if (m_isAttackAble)
 		{
-			m_iGroogyStack = 0;
-			m_pRenderer->Set_ScreenRadial(true, 0.2f, 0.2f);
-			ADD_DECREASE_LIGHT(m_pTransform->Get_Position(), 100.f, 0.6f, m_vLightColor);
-			DieMagicBall();
-			m_pStateContext->Set_StateMachine(TEXT("Groogy"));
-			m_pModelCom->Change_Animation(TEXT("Stun_Start"));
+			m_iGroogyStack += iDmg;
+			if (m_iGroogyStack > 400)
+			{
+				m_iGroogyStack = 0;
+				m_pRenderer->Set_ScreenRadial(true, 0.2f, 0.2f);
+				ADD_DECREASE_LIGHT(m_pTransform->Get_Position(), 100.f, 0.6f, m_vLightColor);
+				DieMagicBall();
+				m_pStateContext->Set_StateMachine(TEXT("Groogy"));
+				m_pModelCom->Change_Animation(TEXT("Stun_Start"));
+			}
 		}
 	}
 }

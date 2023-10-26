@@ -31,7 +31,7 @@ void CFlyGameManager::ReplaceBallon()
 			initDesc.iScore = rand() % 5;
 			_float fTempscale = Random_Generator(0.5f, 2.f);
 			initDesc.vScale = _float3(fTempscale, fTempscale, fTempscale);
-			initDesc.fForce = GetRandomFloat(60.f, 100.f);
+			initDesc.fForce = GetRandomFloat(40.f, 60.f);
 			_float3 vTempPosition = {};
 			//근처에 레이서가 없도록 해줍니다.
 			_bool isFound = { true };
