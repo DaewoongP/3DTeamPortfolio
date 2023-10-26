@@ -17,6 +17,8 @@ CEvent_Vault_Torch::CEvent_Vault_Torch(const CEvent_Vault_Torch& rhs)
 HRESULT CEvent_Vault_Torch::Initialize(void* pArg)
 {
 	FAILED_CHECK_RETURN(Add_Components(), E_FAIL);
+	
+	std::lock_guard<std::mutex> lock(mtx);
 
 	std::lock_guard<std::mutex> lock(mtx);
 

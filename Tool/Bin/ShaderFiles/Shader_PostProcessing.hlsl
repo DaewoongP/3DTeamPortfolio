@@ -124,7 +124,9 @@ PS_OUT PS_MAIN(PS_IN In)
         }
         else
         {
-            fFogPower = saturate((g_fCircleFogRadius - fDistance) / -20.f);
+            fFogPower = saturate((g_fCircleFogRadius - fDistance) / -70.f);
+            fFogPower = FractionalBrownianMotion(float3(fFogPower, fFogPower, fFogPower));
+
         }
         
         Out.vColor = lerp(Out.vColor, g_vFogColor, fFogPower);

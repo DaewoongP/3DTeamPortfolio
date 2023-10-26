@@ -18,6 +18,7 @@ protected:
 	virtual ~CLevel() = default;
 
 public:
+	void Set_NextLevel() { m_isNextLevel = true; }
 	_bool Is_Loading() const { return m_isLoadingLevel; }
 
 public:
@@ -30,6 +31,7 @@ protected:
 	ID3D11DeviceContext*	m_pContext = { nullptr };
 
 protected:
+	_bool					m_isNextLevel = { false };
 	_bool					m_isLoadingLevel = { false };
 
 public:

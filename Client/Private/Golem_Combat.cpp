@@ -117,8 +117,6 @@ void CGolem_Combat::Late_Tick(_float fTimeDelta)
 
 void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	__super::OnCollisionEnter(CollisionEventDesc);
-
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 	wstring wstrOtherCollisionTag = CollisionEventDesc.pOtherCollisionTag;
@@ -1387,6 +1385,8 @@ HRESULT CGolem_Combat::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 				CHealth* pHealth = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("pHealth", pHealth)))
 					return false;
+
+				Print_Damage_Font(50);
 
 				pHealth->Damaged(50);
 

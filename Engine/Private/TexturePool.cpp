@@ -24,7 +24,7 @@ CTexture* CTexturePool::Reuse_Texture(ID3D11Device* pDevice, ID3D11DeviceContext
 	return (*TexturePair).second;
 }
 
-void CTexturePool::Free()
+HRESULT CTexturePool::Clear_Textures()
 {
 	for (auto& TexturePair : m_Textures)
 	{
@@ -32,4 +32,11 @@ void CTexturePool::Free()
 	}
 
 	m_Textures.clear();
+
+	return S_OK;
+}
+
+void CTexturePool::Free()
+{
+	Clear_Textures();
 }
