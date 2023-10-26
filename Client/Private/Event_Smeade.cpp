@@ -6,6 +6,8 @@
 
 #include "Player.h"
 
+#include "Armored_Troll.h"
+
 CEvent_Smeade::CEvent_Smeade(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -99,6 +101,7 @@ void CEvent_Smeade::Check_Event_Spawn_Troll()
 				wstring wstrObjectTag = iter->first;
 				if (wstring::npos != wstrObjectTag.find(TEXT("Troll")))
 				{
+					static_cast<CArmored_Troll*>(iter->second)->Set_Weapon_Render(true);
 					iter->second->Spawn();
 					Safe_Release(iter->second);
 					iter = m_pMonsters.erase(iter);
