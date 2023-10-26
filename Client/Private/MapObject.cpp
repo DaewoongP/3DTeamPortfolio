@@ -52,8 +52,8 @@ HRESULT CMapObject::Initialize_Level(_uint iCurrentLevelIndex)
 		return E_FAIL;
 	}
 
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
+	BEGININSTANCE;
+
 	// 리지드 바디 초기화
 	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
 	RigidBodyDesc.isStatic = true;
@@ -135,8 +135,6 @@ HRESULT CMapObject::Initialize_Level(_uint iCurrentLevelIndex)
 		m_RigidBodys.push_back(pRigidBody);
 	}
 
-	Safe_Release(pGameInstance);
-
 	m_vCenterPoint = (m_vMaxPoint + m_vMinPoint) * 0.5f;
 	m_fRadius = Vector3::Distance(m_vMaxPoint, m_vCenterPoint);
 
@@ -189,7 +187,7 @@ HRESULT CMapObject::Render()
 		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 		m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
 
-		if (wcswcs(Meshes[iMeshCount]->Get_MeshName(), TEXT("Glass")))
+		if (wcswcs(Meshes[iMeshCount]->Get_MeshName(), TEXT("EXT_Glass")))
 		{
 			m_vEmissive = _float4(0.5f, 0.5f, 0.45f, 0.5f);
 			if (FAILED(m_pShader->Bind_RawValue("g_vBloom", &m_vEmissive, sizeof(_float4))))
