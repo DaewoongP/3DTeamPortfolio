@@ -135,6 +135,8 @@ HRESULT CMapObject::Initialize_Level(_uint iCurrentLevelIndex)
 		m_RigidBodys.push_back(pRigidBody);
 	}
 
+	ENDINSTANCE;
+
 	m_vCenterPoint = (m_vMaxPoint + m_vMinPoint) * 0.5f;
 	m_fRadius = Vector3::Distance(m_vMaxPoint, m_vCenterPoint);
 

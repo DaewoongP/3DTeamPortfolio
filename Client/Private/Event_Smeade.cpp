@@ -216,8 +216,8 @@ HRESULT CEvent_Smeade::Add_Components()
 	TriggerDesc.isCollisionToDead = true;
 	strcpy_s(TriggerDesc.szCollisionTag, "Trigger_Spawn_Troll");
 	lstrcpy(TriggerDesc.szOtherTag, TEXT("Player_Default"));
-	TriggerDesc.vTriggerSize = _float3(15.f, 15.f, 15.f);
-	TriggerDesc.vTriggerWorldPos = _float3(125.f, 2.f, 110.f);
+	TriggerDesc.vTriggerSize = _float3(4.f, 1.f, 1.f);
+	TriggerDesc.vTriggerWorldPos = _float3(126.f, 8.5f, 96.2f);
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Trigger"),
 		TEXT("Trigger_Spawn_Troll"), reinterpret_cast<CComponent**>(&m_pSpawn_Troll), &TriggerDesc)))
