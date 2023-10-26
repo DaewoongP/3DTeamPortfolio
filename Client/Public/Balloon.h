@@ -69,6 +69,9 @@ protected:
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix);
 
+private:
+	HRESULT Make_Timer();
+
 public:
 	virtual void Free() override;
 };

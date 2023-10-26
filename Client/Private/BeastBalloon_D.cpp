@@ -71,12 +71,6 @@ HRESULT CBeastBalloon_D::Render()
 
 HRESULT CBeastBalloon_D::Add_Components()
 {
-	if (FAILED(__super::Add_Components()))
-	{
-		MSG_BOX("[CBeastBalloon_D] Failed __super::Add_Components()");
-		return E_FAIL;
-	}
-
 	/* For.EmissiveTexture */
 	m_pEmissiveTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/NonAnims/BeastBalloon_D/T_HM_Beast_Balloons_D.dds"));
 	if (nullptr == m_pEmissiveTexture)

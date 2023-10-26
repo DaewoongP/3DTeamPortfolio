@@ -14,22 +14,33 @@ CBalloon_Timer::CBalloon_Timer(const CBalloon_Timer& rhs)
 
 HRESULT CBalloon_Timer::Initialize(void* pArg)
 {
+	NULL_CHECK_RETURN(pArg, E_FAIL);
+
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	return S_OK;
-}
+	BALLOONTIMERDESC TimerDesc = *static_cast<BALLOONTIMERDESC*>(pArg);
 
-void CBalloon_Timer::Tick(_float fTimeDelta)
-{
+	m_pTransform->Set_Scale(_float3(TimerDesc.vScale.x, TimerDesc.vScale.y, 0.f));
+	m_vInitPosition = TimerDesc.vPosition;
+	m_fTime = TimerDesc.fTime;
+
+	return S_OK;
 }
 
 void CBalloon_Timer::Late_Tick(_float fTimeDelta)
 {
-	m_pRenderer->Add_RenderGroup(CRenderer::RENDER_UI, this);
+	m_fTimeAcc += fTimeDelta;
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	m_pTransform->Set_Position(XMVectorLerp(m_vInitPosition, pGameInstance->Get_CamPosition()->xyz(), 0.35f));
+	Safe_Release(pGameInstance);
+
+	if (m_fTimeAcc <= m_fTime)
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
 }
 
 HRESULT CBalloon_Timer::Render()
@@ -53,9 +64,10 @@ HRESULT CBalloon_Timer::Add_Components()
 	FAILED_CHECK(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxPointInstance"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader)));
 
+	_uint iNum = 1;
 	/* For.Com_Buffer */
 	FAILED_CHECK(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Point_Instance"),
-		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pBuffer)));
+		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pBuffer), &iNum));
 
 	return S_OK;
 }
@@ -70,6 +82,8 @@ HRESULT CBalloon_Timer::SetUp_ShaderResources()
 	FAILED_CHECK(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ)));
 
 	FAILED_CHECK(m_pShader->Bind_RawValue("g_vCamPosition", pGameInstance->Get_CamPosition(), sizeof(_float4)));
+	_float fRatio = m_fTimeAcc / m_fTime;
+	FAILED_CHECK(m_pShader->Bind_RawValue("g_fTimeRatio", &fRatio, sizeof(_float)));
 
 	Safe_Release(pGameInstance);
 
@@ -98,6 +112,7 @@ CGameObject* CBalloon_Timer::Clone(void* pArg)
 		MSG_BOX("Failed to Cloned CBalloon_Timer");
 		Safe_Release(pInstance);
 	}
+
 	return pInstance;
 }
 

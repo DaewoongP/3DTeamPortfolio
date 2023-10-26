@@ -5,6 +5,10 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 vector g_vCamPosition;
 texture2D g_Texture;
 
+//timer
+float g_fTimeRatio;
+float g_PI = acos(-1);
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -108,9 +112,108 @@ PS_OUT PS_MAIN_TIMER(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
     
+    //단위원으로 변경하기 위해 값 변경
+    float2 uv = float2((In.vTexUV.x - 0.5f) * 2.f, (In.vTexUV.y - 0.5f) * -2.f);
+
+    // 현재 픽셀의 각도
+    float fAngle = 0.f;
     
+    float fTime = g_PI * 2.f * g_fTimeRatio;
     
-    Out.vColor = float4(1.f, 1.f, 1.f, 1.f);
+    float4 vCurrentColor = float4(1.f, 1.f, 1.f, 1.f);
+    
+    // 원의 방정식
+    float fCircle = pow(uv.x, 2.f) + pow(uv.y, 2.f);
+    if (fCircle <= 1.f &&
+        fCircle > 0.2f)
+    {
+        // 1사분면
+        if (fTime < g_PI * 0.5f)
+        {
+            if (uv.x > 0.f &&
+                uv.y > 0.f)
+            {
+                fAngle = atan(uv.x / uv.y);
+                
+                if (fTime > fAngle)
+                {
+                    discard;
+                }
+            }
+        }
+        // 2사분면
+        else if (fTime < g_PI)
+        {
+            // 1사분면 삭제
+            if (uv.x > 0.f &&
+                uv.y > 0.f)
+                discard;
+            
+            if (uv.x > 0.f &&
+                uv.y < 0.f)
+            {
+                fAngle = atan(uv.y / uv.x * -1.f);
+                
+                if (fTime - g_PI * 0.5f > fAngle)
+                {
+                    discard;
+                }
+            }
+        }
+        else if (fTime < g_PI * 1.5f)
+        { 
+            // 1사분면 삭제
+            if (uv.x > 0.f &&
+                uv.y > 0.f)
+                discard;
+            // 2사분면 삭제
+            if (uv.x > 0.f &&
+                uv.y < 0.f)
+                discard;
+                
+            if (uv.x < 0.f &&
+                uv.y < 0.f)
+            {
+                fAngle = atan(uv.x / uv.y);
+                
+                if (fTime - g_PI > fAngle)
+                {
+                    discard;
+                }
+            }
+        }
+        else if (fTime < g_PI * 2.f)
+        {
+            // 1사분면 삭제
+            if (uv.x > 0.f &&
+                uv.y > 0.f)
+                discard;
+            // 2사분면 삭제
+            if (uv.x > 0.f &&
+                uv.y < 0.f)
+                discard;
+            // 3사분면 삭제
+            if (uv.x < 0.f &&
+                uv.y < 0.f)
+                discard;
+                
+            if (uv.x < 0.f &&
+                uv.y > 0.f)
+            {
+                fAngle = atan(uv.y / uv.x * -1.f);
+                
+                if (fTime - g_PI * 1.5f > fAngle)
+                {
+                    discard;
+                }
+            }
+        }
+    }
+    else
+        discard;
+    
+    vCurrentColor.gb *= 1.f - g_fTimeRatio;
+    Out.vColor = vCurrentColor;
     
     return Out;
 }
@@ -134,7 +237,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_MAIN();
