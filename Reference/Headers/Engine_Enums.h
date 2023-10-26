@@ -26,6 +26,7 @@ namespace Engine
 		COL_ITEM			= 1 << 9,
 		COL_SHIELD			= 1 << 10,
 		COL_SHIELD_ENEMY	= 1 << 11,
+		COL_BALLOON			= 1 << 12,
 		COL_RACER			= 1 << 13,
 		// COL~~ = 1 << 12,
 		// ... 계속 추가해주시면 됩니다!! 숫자만 계속 증가시켜주세요

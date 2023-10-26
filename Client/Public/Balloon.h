@@ -20,9 +20,9 @@ public:
 	typedef struct tagBalloonInitDesc
 	{
 		_int iScore = { 0 };
-		_float4x4 WorldMatrix;
+		_float fForce = { 20.f };
+		_float3 vPosition;
 		_float3 vScale;
-		BALLOONTYPE eType;
 	}BALLOONINITDESC;
 
 	typedef struct tagScoreDesc
@@ -33,8 +33,13 @@ public:
 	}SCOREDESC;
 
 public:
-	_float3 Get_Position() {
-		return m_pTransform->Get_Position();
+	_float3 Get_Position() { return m_pTransform->Get_Position(); }
+	void	ResetBallon(BALLOONINITDESC InitDesc)
+	{
+		m_iScore = InitDesc.iScore;
+		m_pTransform->Set_Position(InitDesc.vPosition);
+		m_pTransform->Set_Scale(InitDesc.vScale);
+		m_isDead = false;
 	}
 
 protected:
@@ -48,6 +53,7 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix) override;
+	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 
 protected:
 	CModel* m_pModelCom = { nullptr };
@@ -57,7 +63,9 @@ protected:
 	CRenderer* m_pRenderer = { nullptr };
 
 protected:
-	_int m_iScore = { 0 };
+	_int			m_iScore = { 0 };
+	BALLOONTYPE		m_eBallonActionType = { TYPE_NONE };
+	_float			m_fForce = { 20.f };
 
 protected:
 	HRESULT Add_Components();

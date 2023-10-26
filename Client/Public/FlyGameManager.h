@@ -3,11 +3,7 @@
 
 BEGIN(Client)
 class CRacer;
-class CScoreBalloon;
-class CBeastBalloon_A;
-class CBeastBalloon_B;
-class CBeastBalloon_C;
-class CBeastBalloon_D;
+class CBalloon;
 END
 
 BEGIN(Client)
@@ -28,6 +24,8 @@ private:
 
 public:
     void Add_Score(_uint iNumber,_uint iScore);
+    void ReplaceBallon();
+    void Racer_AddForce(_uint iNumber, _uint eType, _float fForce);
 
 public:
     virtual HRESULT Initialize_Prototype();
@@ -45,7 +43,10 @@ private:
     vector<CRacer*>         m_pRacerGroup = {};
     vector<CGameObject*>    m_pRacerOwnerGroup = {};
     vector<_uint>           m_pScoreGroup = {};
-    //풍선 vector 만들어주기
+
+    //풀같은 존재인데, 따로 클래스 팔 이유가 없어보여서 내부에 생성함.
+    vector<CBalloon*>        m_pAllBalloonGroup = {};
+    vector<wstring>          m_wszBalloonComponentTag = {};
 
 private:
     //게임 진행시간임.
