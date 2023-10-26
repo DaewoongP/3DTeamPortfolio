@@ -39,10 +39,15 @@ void CMain_Camera::Tick(const _float& _TimeDelta)
 
 	CCamera::Tick(_TimeDelta);
 
-	if (CGameInstance::GetInstance()->Get_DIKeyState(DIK_8, CInput_Device::KEY_DOWN))
+
+	if (CGameInstance::GetInstance()->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_PRESSING))
 	{
-		test = !test;
+		if (CGameInstance::GetInstance()->Get_DIKeyState(DIK_8, CInput_Device::KEY_DOWN))
+		{
+			test = !test;
+		}
 	}
+	
 
 	if (test)
 	{

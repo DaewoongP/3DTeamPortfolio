@@ -20,6 +20,8 @@ HRESULT CEvent_Vault_Torch::Initialize(void* pArg)
 	
 	std::lock_guard<std::mutex> lock(mtx);
 
+	std::lock_guard<std::mutex> lock(mtx);
+
 	BEGININSTANCE;
 	auto pMapObjectLayer = pGameInstance->Find_Components_In_Layer(LEVEL_VAULT, TEXT("Layer_BackGround"));
 	ENDINSTANCE;

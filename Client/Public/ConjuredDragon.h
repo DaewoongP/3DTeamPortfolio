@@ -16,6 +16,7 @@ class CSelector;
 class CRandomChoose;
 class CCamera_Shake;
 class CParticleSystem;
+class CMeshEffect;
 END
 
 BEGIN(Client)
@@ -57,7 +58,7 @@ public:
 	}
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
+	HRESULT Initialize_Prototype(_uint iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
@@ -66,11 +67,22 @@ public:
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
 
+#ifdef _DEBUG
+public:
+	void Tick_Imgui(_float fTimeDelta);
+	
+#endif // _DEBUG
+
+private:
+	_uint m_iLevel = { 0 };
+
 private:
 	/* 무적 게이지. 100 까지 차면 무적이 됨 */
 	_float m_fInvincibleGauge = { 0.f };
 	_bool m_isInvincible = { false };
 	_bool m_isBreakInvincible = { false };
+	_float3 m_vEmissiveStrength = { 0.f, 0.f, 0.f };
+	_float m_fInvinRatio = { 1.f };
 
 	void Update_Invincible(const _float& fTimeDelta);
 
@@ -128,6 +140,7 @@ private:
 	CCamera_Shake* m_pEnter_Shake = { nullptr };
 	CCamera_Shake* m_pCamera_Shake_Hit_Terrain = { nullptr };
 	CCamera_Shake* m_pStep_Shake = { nullptr };
+	CCamera_Shake* m_pPulse_Shake = { nullptr };
 
 private:
 	virtual HRESULT Add_Components_for_Shake();
@@ -144,6 +157,9 @@ private: // For. Effect
 	CParticleSystem* m_pEffect_Pulse_Rock = { nullptr };
 	CParticleSystem* m_pEffect_Pulse_SplashWater= { nullptr };
 	CParticleSystem* m_pEffect_Pulse_BoomWispy = { nullptr };
+	CParticleSystem* m_pEffect_DragonInvin = { nullptr };
+	CParticleSystem* m_pEffect_InvinBreakDust = { nullptr };
+	CMeshEffect* m_pEffect_DragonInvinMesh = { nullptr };
 
 private:
 	HRESULT Make_AI();
@@ -192,6 +208,8 @@ private: /* Notify Func */
 	void Enter_Right_Wing_Attack();
 	void Enter_Right_Wing_Hit_Terrain();
 	void Enter_Tail_Attack();
+	void Enter_Invin();
+	void Exit_Invin();
 	void Shot_Fireball_Black();
 	void Shot_Fireball_White();
 	void Enter_Charge_Attack();
@@ -202,7 +220,7 @@ private: /* Notify Func */
 	void Pulse_Stop_Charge();
 
 public:
-	static CConjuredDragon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CConjuredDragon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
 	virtual CConjuredDragon* Clone(void* pArg) override;
 	virtual void Free() override;
 };
