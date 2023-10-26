@@ -100,12 +100,22 @@ HRESULT CLamppost::Render()
 			if (FAILED(m_pShader->Bind_RawValue("g_vBloom", &m_vEmissive, sizeof(_float4))))
 				return E_FAIL;
 		}
+		else
+		{
+			m_vEmissive = _float4(0.f, 0.f, 0.f, 0.f);
+			if (FAILED(m_pShader->Bind_RawValue("g_vBloom", &m_vEmissive, sizeof(_float4))))
+				return E_FAIL;
+		}
 
 		m_pShader->Begin("Mesh_No_Cull");
 
 		if (FAILED(m_pModel->Render(iMeshCount)))
 			return E_FAIL;
 	}
+
+	m_vEmissive = _float4(0.f, 0.f, 0.f, 0.f);
+	if (FAILED(m_pShader->Bind_RawValue("g_vBloom", &m_vEmissive, sizeof(_float4))))
+		return E_FAIL;
 
 	return S_OK;
 }
