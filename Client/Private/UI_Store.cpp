@@ -8,6 +8,9 @@
 #include "UI_Group_Cursor.h"
 #include "UI_Slot.h"
 #include "Item.h"
+#include "Player.h"
+#include "Inventory.h"
+
 CUI_Store::CUI_Store(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -62,14 +65,32 @@ HRESULT CUI_Store::Initialize(void* pArg)
 	Ready_DefaultTexture();
 	Set_Item();
 	m_isOpen = false;
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	m_pInventory = static_cast<CInventory*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Inventory"), TEXT("GameObject_Inventory")));
+	Safe_AddRef(m_pInventory);
+	Safe_Release(pGameInstance);
+
 	return S_OK;
 }
 void CUI_Store::Tick(_float fTimeDelta)
 {
-	if (false == m_isOpen)
+	if (false == m_isOpen) 
+	{
+		m_isSetGold = true;
 		return;
+	}
 
 	__super::Tick(fTimeDelta);
+
+
+	if (m_isSetGold)
+	{
+		m_pGoldFont->Set_Text(to_wstring(m_pInventory->Get_Gold()));
+		m_isSetGold = false;
+	}
 
 	for (_uint i = 0; i < m_pSlots.size(); ++i)
 	{
@@ -78,6 +99,8 @@ void CUI_Store::Tick(_float fTimeDelta)
 			if (false == m_pItems[i]->Buy())
 				cout << "아이템 구입 실패" << '\n';
 			cout << "구입 성공" << '\n';
+
+			m_pGoldFont->Set_Text(to_wstring(m_pInventory->Get_Gold()));
 		}
 	}
 }
@@ -375,6 +398,24 @@ HRESULT CUI_Store::Ready_DefaultTexture()
 		return E_FAIL;
 	}
 
+	CUI_Font::FONTDESC Desc;
+	Desc.m_vColor = _float4(1.f, 1.f, 1.f, 1.f);
+	Desc.m_fRotation = { 0.f };
+	Desc.m_vOrigin = { 0.f, 0.f };
+	Desc.m_vScale = { 0.4f, 0.4f };
+	Desc.m_vPos = { 440.f, 260.f };
+	wstring wstrNCount = TEXT("");
+
+	lstrcpy(Desc.m_pText, wstrNCount.c_str());
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Font"),
+		TEXT("Com_UI_GoldFont"), reinterpret_cast<CComponent**>(&m_pGoldFont), &Desc)))
+	{
+		MSG_BOX("Com_CUI_Store : Failed Clone Component (Com_UI_Back_Default)");
+		Safe_Release(pGameInstance);
+		__debugbreak();
+		return E_FAIL;
+	}
+
 	Safe_Release(pGameInstance);
 
 	return S_OK;
@@ -459,5 +500,6 @@ void CUI_Store::Free()
 			Safe_Release(pItem);
 		}
 		m_pItems.clear();
+		Safe_Release(m_pInventory);
 	}
 }

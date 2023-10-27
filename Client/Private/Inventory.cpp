@@ -32,6 +32,8 @@ HRESULT CInventory::Initialize(void* pArg)
 	Add_Components();
 
 	Setting_Item(ITEM_ID::ITEM_ID_ROBE_QUDDITCH);
+	Setting_Item(ITEM_ID::ITEM_ID_MASK_GUARDIAN);
+	Setting_Item(ITEM_ID::ITEM_ID_OUTFIT_ARCANE);
 
 	//BEGININSTANCE;
 
@@ -174,6 +176,13 @@ _bool CInventory::Add_Item(CItem* pItem, ITEMTYPE eType)
 
 	Safe_Release(pGameInstance);
 
+	CIngredient* pIngredient = dynamic_cast<CIngredient*>(pItem);
+	if (nullptr != pIngredient)
+	{
+		cout << pIngredient->Get_Ingredient() << '\n';
+		m_ResourcesCount[pIngredient->Get_Ingredient()]++;
+	}
+
 	if (eType < RESOURCE)
 	{
 		if (m_pItems[eType].size() >= iGearMax)
@@ -191,12 +200,6 @@ _bool CInventory::Add_Item(CItem* pItem, ITEMTYPE eType)
 		m_pUI_Inventory[eType]->Set_ResourceInventoryItem(m_pItems[eType], &m_ResourcesCount);
 	}
 
-	CIngredient* pIngredient = dynamic_cast<CIngredient*>(pItem);
-	if (nullptr != pIngredient)
-	{
-		cout << pIngredient->Get_Ingredient() << '\n';
-		m_ResourcesCount[pIngredient->Get_Ingredient()]++;
-	}
 
 	return true;
 }

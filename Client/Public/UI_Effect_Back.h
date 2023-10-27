@@ -38,6 +38,9 @@ public:
 	void Set_Clicked(_bool isClicked = false);
 	void Set_Texture(CTexture* pTexture);
 	void Set_ImageCom(CUI_Image::IMAGEDESC desc, _bool isChild = false);
+	void Set_ImageCom_Size(_float2 fXY) {
+		m_pImageCom->Set_Size(fXY);
+	}
 	void Set_ImageCom_Z(_float fZ) {
 		m_pImageCom->Set_Z(fZ);
 	}
