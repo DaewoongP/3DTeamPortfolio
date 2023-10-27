@@ -964,7 +964,7 @@ HRESULT CConjuredDragon::Add_Components()
 		lstrcpy(Desc.wszObjectName, TEXT("Bone Dragon"));
 
 		BEGININSTANCE;
-		m_pUI_HP = dynamic_cast<CUI_Group_Enemy_HP*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"), &Desc));
+		m_pUI_HP = static_cast<CUI_Group_Enemy_HP*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"), &Desc));
 		ENDINSTANCE;
 		if (nullptr == m_pUI_HP)
 			throw TEXT("m_pUI_HP is nullptr");

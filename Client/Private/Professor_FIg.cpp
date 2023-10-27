@@ -63,7 +63,7 @@ HRESULT CProfessor_Fig::Initialize(void* pArg)
 	BEGININSTANCE;
 	if (nullptr == m_pPlayer)
 	{
-		m_pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+		m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
 	}
 	ENDINSTANCE;
 

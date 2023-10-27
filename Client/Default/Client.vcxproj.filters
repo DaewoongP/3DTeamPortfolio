@@ -265,9 +265,6 @@
     <Filter Include="02. GameObject\01. Player\01. StateMachine\08. CraftState">
       <UniqueIdentifier>{d5efb67c-1189-46bb-bd77-8c0dcdb658ba}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Levels\05. Sky">
-      <UniqueIdentifier>{8daaa0f5-8eda-4c23-b5f9-f4ec1e89c6c1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Levels\98. Static">
       <UniqueIdentifier>{3494d13e-3cfe-40db-a8ee-e89e7a07f613}</UniqueIdentifier>
     </Filter>
@@ -1002,6 +999,9 @@
     </Filter>
     <Filter Include="07. Events\Smeade\Event_Smeade">
       <UniqueIdentifier>{890fa528-9c0c-4d93-93e2-6289c8ea4852}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\05. Sky">
+      <UniqueIdentifier>{8daaa0f5-8eda-4c23-b5f9-f4ec1e89c6c1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

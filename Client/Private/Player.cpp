@@ -405,7 +405,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 			return;
 		}
 
-		CEnemy* pEnemy = dynamic_cast<CEnemy*>(m_pTarget);
+		CEnemy* pEnemy = static_cast<CEnemy*>(m_pTarget);
 		if (nullptr != pEnemy)
 			pEnemy->Get_UI_Enemy_HP()->Late_Tick(fTimeDelta);
 	}
@@ -2831,14 +2831,14 @@ void CPlayer::Find_Target_For_Distance()
 
 		_float3 vPlayerPos = m_pTransform->Get_Position();
 
-		_float3 vMonsterPos = dynamic_cast<CGameObject*>(iter->second)->Get_Transform()->Get_Position();
+		_float3 vMonsterPos = static_cast<CGameObject*>(iter->second)->Get_Transform()->Get_Position();
 
 		_float fDistance = XMVectorGetX(XMVector3Length(vPlayerPos - vMonsterPos));
 
 		if (fMinDistance > fDistance)
 		{
 			fMinDistance = fDistance;
-			pTarget = dynamic_cast<CGameObject*>(iter->second);
+			pTarget = static_cast<CGameObject*>(iter->second);
 		}
 	}
 

@@ -14,7 +14,7 @@ CStateMachine_Enemy::CStateMachine_Enemy(const CStateMachine_Enemy& rhs)
 
 HRESULT CStateMachine_Enemy::Set_StateMachine(const _tchar* _pTag)
 {
-	if (FAILED(dynamic_cast<CStateContext_Enemy*>(m_pOwner)->Set_StateMachine(_pTag)))
+	if (FAILED(static_cast<CStateContext_Enemy*>(m_pOwner)->Set_StateMachine(_pTag)))
 	{
 		MSG_BOX("Failed Set StateMachine");
 		return E_FAIL;

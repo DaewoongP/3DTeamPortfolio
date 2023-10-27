@@ -52,6 +52,12 @@ void CLevel_Smith::Tick(_float fTimeDelta)
 		}
 	}
 
+	if (true == m_isNextLevel)
+	{
+		pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVELID)m_iNextLevelIndex));
+	}
+
+#ifdef _DEBUG
 	if (pGameInstance->Get_DIKeyState(DIK_LSHIFT))
 	{
 		if (pGameInstance->Get_DIKeyState(DIK_7, CInput_Device::KEY_DOWN))
@@ -71,6 +77,7 @@ void CLevel_Smith::Tick(_float fTimeDelta)
 			pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_SANCTUM));
 		}
 	}
+#endif // _DEBUG
 
 	ENDINSTANCE;
 
@@ -181,26 +188,30 @@ HRESULT CLevel_Smith::Ready_Lights()
 	CLight::LIGHTDESC		LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
-	/*LightDesc.eType = CLight::TYPE_DIRECTIONAL;
-	LightDesc.vPos = _float4(111.7f, 71.23f, 94.81f, 1.f);
-	LightDesc.vLookAt = _float4(81.3f, 0.f, 91.3f, 1.f);
-	LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
+	if (false == g_isNight)
+	{
+		LightDesc.eType = CLight::TYPE_DIRECTIONAL;
+		LightDesc.vPos = _float4(111.7f, 71.23f, 94.81f, 1.f);
+		LightDesc.vLookAt = _float4(81.3f, 0.f, 91.3f, 1.f);
+		LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
 
-	LightDesc.vPos -= LightDesc.vDir * 0.5f;
+		LightDesc.vPos -= LightDesc.vDir * 0.5f;
 
-	LightDesc.vDiffuse = WHITEDEFAULT;
-	LightDesc.vAmbient = WHITEDEFAULT;
-	LightDesc.vSpecular = WHITEDEFAULT;*/
+		LightDesc.vDiffuse = WHITEDEFAULT;
+		LightDesc.vAmbient = WHITEDEFAULT;
+		LightDesc.vSpecular = WHITEDEFAULT;
+	}
+	else
+	{
+		LightDesc.eType = CLight::TYPE_DIRECTIONAL;
+		LightDesc.vPos = _float4(159.7f, 81.23f, 102.81f, 1.f);
+		LightDesc.vLookAt = _float4(108.3f, 0.f, 108.3f, 1.f);
+		LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
 
-	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
-	LightDesc.vPos = _float4(159.7f, 81.23f, 102.81f, 1.f);
-	LightDesc.vLookAt = _float4(108.3f, 0.f, 108.3f, 1.f);
-	LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
-
-	LightDesc.vDiffuse = _float4(0.4f, 0.53f, 0.55f, 0.5f);
-	LightDesc.vAmbient = LightDesc.vDiffuse;
-	LightDesc.vSpecular = LightDesc.vDiffuse;
-
+		LightDesc.vDiffuse = _float4(0.4f, 0.53f, 0.55f, 0.5f);
+		LightDesc.vAmbient = LightDesc.vDiffuse;
+		LightDesc.vSpecular = LightDesc.vDiffuse;
+	}
 
 	if (FAILED(pGameInstance->Add_Light(LightDesc, nullptr, true)))
 		return E_FAIL;
@@ -261,7 +272,8 @@ HRESULT CLevel_Smith::Ready_Shader()
 	CRenderer* pRenderer = static_cast<CRenderer*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer")));
 	pRenderer->Defualt_Shading();
 
-	pRenderer->Set_Night();
+	if (true == g_isNight)
+		pRenderer->Set_Night();
 
 	Safe_Release(pRenderer);
 
