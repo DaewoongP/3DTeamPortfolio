@@ -554,9 +554,9 @@ void CUI_Group_SkillTap::Drag_Slot()
 			m_pCursor->Set_Image(m_SkillTextures[m_eSlectedSkill]);
 			CUI_Image::IMAGEDESC ImageDesc;
 			ImageDesc.vCombinedXY = _float2(0.f, 0.f);
-			ImageDesc.fX = 0.f;
-			ImageDesc.fY = 0.f;
-			ImageDesc.fZ = 0.0f;
+			//ImageDesc.fX = 0.f;
+			//ImageDesc.fY = 0.f;
+			//ImageDesc.fZ = 0.0f;
 			ImageDesc.fSizeX = 96.f;
 			ImageDesc.fSizeY = 96.f;
 			m_pCursor->Set_ImageDesc(ImageDesc, true);

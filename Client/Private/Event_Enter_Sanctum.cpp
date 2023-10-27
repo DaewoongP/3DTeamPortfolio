@@ -2,7 +2,9 @@
 #include "GameInstance.h"
 
 #include "Enemy.h"
+#include "Player.h"
 #include "Trigger.h"
+#include "Card_Fig.h"
 #include "LightStand.h"
 #include "Sanctum_Door.h"
 
@@ -20,6 +22,15 @@ HRESULT CEvent_Enter_Sanctum::Initialize(void* pArg)
 {
 	/* Set Monsters */
 	BEGININSTANCE;
+
+	CPlayer* pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+	if (nullptr == pPlayer)
+	{
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+	m_pCard_Fig = pPlayer->m_pCard_Fig;
+	Safe_AddRef(m_pCard_Fig);
 
 	auto pMonsterLayer = pGameInstance->Find_Components_In_Layer(LEVEL_SANCTUM, TEXT("Layer_Monster"));
 
@@ -116,6 +127,7 @@ void CEvent_Enter_Sanctum::Check_Monsters_Are_Death()
 			Safe_Release(*iter);
 			iter = m_pDoors.erase(iter);
 		}
+		m_pCard_Fig->On_Enter_Sanctum_Script();
 		m_isDoorOpen = true;
 	}
 }
@@ -149,6 +161,8 @@ CEvent_Enter_Sanctum* CEvent_Enter_Sanctum::Clone(void* pArg)
 void CEvent_Enter_Sanctum::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pCard_Fig);
 
 	for (auto& Pair : m_pMonsters)
 		Safe_Release(Pair.second);

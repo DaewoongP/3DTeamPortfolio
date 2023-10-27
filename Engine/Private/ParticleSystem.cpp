@@ -357,6 +357,7 @@ void CParticleSystem::Play(_float3 vPosition)
 void CParticleSystem::Stop()
 {
 	m_isStop = true;
+	m_EmissionModuleDesc.vPrevPos = m_EmissionModuleDesc.vCurPos;
 }
 HRESULT CParticleSystem::Setup_ShaderResources()
 {

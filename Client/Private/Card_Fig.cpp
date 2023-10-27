@@ -9,6 +9,7 @@
 #include "UI_Dissolve.h"
 #include "Quest_Manager.h"
 #include "Script.h"
+#include "UI_Card.h"
 
 #include "Action.h"
 #include "LookAt.h"
@@ -90,6 +91,8 @@ void CCard_Fig::Tick(_float fTimeDelta)
 	Play_Script(fTimeDelta);
 
 	m_pUI_Card->Set_PlayDissolve(m_isShowCard);
+	if (m_isShowCard)
+		m_pUI_Card->Tick(fTimeDelta);
 
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
@@ -98,8 +101,10 @@ void CCard_Fig::Tick(_float fTimeDelta)
 void CCard_Fig::Late_Tick(_float fTimeDelta)
 {
 	if (m_isPlayScript)
-
 		m_pScripts[m_iScriptIndex]->Late_Tick(fTimeDelta);
+
+	if (m_isShowCard)
+		m_pUI_Card->Late_Tick(fTimeDelta);
 
 	if (false == m_isSpawn)
 		return;
@@ -508,12 +513,10 @@ HRESULT CCard_Fig::Add_Components()
 			return E_FAIL;
 		}
 
-		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Dissolve"),
-			TEXT("Com_UI_Card"), reinterpret_cast<CComponent**>(&m_pUI_Card))))
-		{
-			MSG_BOX("Failed Card_Fiog Add_Component : (Com_UI_Card)");
-			return E_FAIL;
-		}
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+		m_pUI_Card = static_cast<CUI_Dissolve*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Dissolve")));
+
 		CUI::UIDESC UIDesc;
 		UIDesc.vCombinedXY = { 0.f, 0.f };
 		UIDesc.fX = { 50.f };
@@ -527,8 +530,7 @@ HRESULT CCard_Fig::Add_Components()
 		m_pUI_Card->Set_PlayDissolve(false);
 		//m_pUI_Card->Set_Effecttype();
 		                            
-		CGameInstance* pGameInstance = CGameInstance::GetInstance();
-		Safe_AddRef(pGameInstance);
+
 
 		m_pScripts.clear();
 		_bool isCard = true;
@@ -737,10 +739,10 @@ void CCard_Fig::Script_Finish_Check()
 		m_isPlayScript = false;
 	}
 
-	if (m_pScripts[ENTERSANCTUM]->Is_Finished() && !m_isCreateDragonScriptEnd)
+	if (m_pScripts[ENTERSANCTUM]->Is_Finished() && !m_isEnterSanctumScriptEnd)
 	{
 		m_pScripts[ENTERSANCTUM]->Set_isRender(false);
-		m_isCreateDragonScriptEnd = true;
+		m_isEnterSanctumScriptEnd = true;
 		m_isPlayScript = false;
 	}
 
@@ -769,6 +771,16 @@ void CCard_Fig::Play_Script(_float fTimeDelta)
 		m_pScripts[ENTERVAULT]->Set_isRender(true);
 		m_iScriptIndex = ENTERVAULT;
 	}
+
+	if (m_isEnterSanctum)
+	{
+		m_isPlayScript = true;
+		m_isCreateDragon = false;
+		m_pScripts[ENTERSANCTUM]->Reset_Script();
+		m_pScripts[ENTERSANCTUM]->Set_isRender(true);
+		m_iScriptIndex = ENTERSANCTUM;
+	}
+
 
 	if (m_isCreateDragon)
 	{

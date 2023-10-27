@@ -57,9 +57,9 @@ PS_OUT PS_MAIN(PS_IN In)
     float sampleLength = 0.01;
     float4 color = float4(0.f, 0.f, 0.f, 0.f);
 
-    float illuminationDecay = 0.1f;
+    float illuminationDecay = 0.05f;
     float4 shaftColor = float4(0.98, 0.98, 1.0, 1.0);
-    float illumination = 0.1f;
+    float illumination = 0.2f;
 
     for (int i = 0; i < SAMPLING; ++i)
     {

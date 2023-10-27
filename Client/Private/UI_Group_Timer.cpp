@@ -93,8 +93,8 @@ HRESULT CUI_Group_Timer::Add_Components()
 
 	CUI::UIDESC UIDesc;
 	UIDesc.vCombinedXY = { 0.f, 0.f };
-	UIDesc.fX = { 640.f };
-	UIDesc.fY = { 360.f };
+	UIDesc.fX = { 530.f };
+	UIDesc.fY = { 30.f };
 	UIDesc.fZ = { 0.8f };
 	UIDesc.fSizeX = { 64.f };
 	UIDesc.fSizeY = { 64.f };
@@ -120,7 +120,7 @@ HRESULT CUI_Group_Timer::Add_Fonts(void* pArg)
 	else
 		lstrcpy(Desc.m_pText, TEXT(""));
 
-	Desc.m_vPos = { 640.f, 50.f };
+	Desc.m_vPos = { 30.f, 0.f };
 	Desc.m_vColor = _float4(1.f, 1.f, 1.f, 1.f);
 	Desc.m_fRotation = { 0.f };
 	Desc.m_vOrigin = { 0.f, 0.f };

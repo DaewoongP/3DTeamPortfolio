@@ -502,6 +502,7 @@ void CMenu_Gear::Set_GearTexture(vector<CItem*>* pPlayerCurItem)
 		else
 		{
 			m_pSlotIcons[iIndex]->Set_Texture((*pPlayerCurItem)[iIndex]->Get_UITexture());
+			m_pSlotIcons[iIndex]->Set_ImageCom_Size(_float2(90.f, 90.f));
 			m_pSlotIcons[iIndex]->Set_ImageCom_Z(0.035f);
 		}
 
