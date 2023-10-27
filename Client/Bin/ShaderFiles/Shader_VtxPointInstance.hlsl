@@ -215,7 +215,7 @@ PS_OUT PS_MAIN_TIMER(PS_IN In)
     else
         discard;
     
-    vCurrentColor.gb *= 1.f - g_fTimeRatio;
+    vCurrentColor *= float4(g_fTimeRatio, 1.f - g_fTimeRatio, 0.f, 1.f);
     Out.vColor = vCurrentColor;
     
     return Out;

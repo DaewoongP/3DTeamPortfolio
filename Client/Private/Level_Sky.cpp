@@ -187,6 +187,8 @@ HRESULT CLevel_Sky::Ready_Shader()
 
 	CRenderer* pRenderer = static_cast<CRenderer*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer")));
 	pRenderer->Defualt_Shading();
+	pRenderer->Get_Dof()->Set_FocusRange(200.f);
+	pRenderer->Get_Dof()->Set_FocusDistance(10.f);
 
 	Safe_Release(pRenderer);
 

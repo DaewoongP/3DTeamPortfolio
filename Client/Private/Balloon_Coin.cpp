@@ -13,7 +13,7 @@ CBalloon_Coin::CBalloon_Coin(const CBalloon_Coin& rhs)
 
 void CBalloon_Coin::Reset(_float3 vPosition, COIN eCoinType)
 {
-	m_vInitPosition = vPosition;
+	m_pTransform->Set_Position(vPosition + _float3(0.f, 1.f, 0.f));
 	m_eCoinColor = eCoinType;
 }
 
@@ -32,19 +32,14 @@ HRESULT CBalloon_Coin::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pTransform->Set_Scale(_float3(CoinDesc.vScale.x, CoinDesc.vScale.y, 0.f));
-	m_vInitPosition = CoinDesc.vPosition;
+	m_pTransform->Set_Position(CoinDesc.vPosition + _float3(0.f, 1.f, 0.f));
+	m_fTime = 0.05f;
 
-	m_fTime = 0.1f;
 	return S_OK;
 }
 
 void CBalloon_Coin::Tick(_float fTimeDelta)
 {
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-	m_pTransform->Set_Position(XMVectorLerp(m_vInitPosition, pGameInstance->Get_CamPosition()->xyz(), 0.35f));
-	Safe_Release(pGameInstance);
-
 	m_fTimeAcc += fTimeDelta;
 
 	__super::Tick(fTimeDelta);
@@ -54,7 +49,7 @@ void CBalloon_Coin::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
+	m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
 }
 
 HRESULT CBalloon_Coin::Render()
