@@ -27,6 +27,7 @@ void CEvent_Smeade_Next_Level::Tick(_float fTimeDelta)
 
 	Check_Event_Cliff(fTimeDelta);
 	Check_Event_Sanctum(fTimeDelta);
+	Check_Event_Sky(fTimeDelta);
 }
 
 void CEvent_Smeade_Next_Level::Late_Tick(_float fTimeDelta)
@@ -60,6 +61,18 @@ HRESULT CEvent_Smeade_Next_Level::Add_Components()
 		TEXT("Trigger_Hogsmeade_Next_Level2"), reinterpret_cast<CComponent**>(&m_pNext_Level_Sanctum), &TriggerDesc)))
 	{
 		MSG_BOX("CEvent_Smeade_Next_Level Failed Add_Components : Trigger_Hogsmeade_Next_Level2");
+		return E_FAIL;
+	}
+
+	/* For.Trigger_Hogsmeade_Next_Level3 */
+	strcpy_s(TriggerDesc.szCollisionTag, "Trigger_Hogsmeade_Next_Level_Sky");
+	TriggerDesc.vTriggerSize = _float3(1.f, 1.f, 1.f);
+	TriggerDesc.vTriggerWorldPos = _float3(29.5f, 3.5f, 70.f);
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Trigger"),
+		TEXT("Trigger_Hogsmeade_Next_Level3"), reinterpret_cast<CComponent**>(&m_pNext_Level_Sky), &TriggerDesc)))
+	{
+		MSG_BOX("CEvent_Smeade_Next_Level Failed Add_Components : Trigger_Hogsmeade_Next_Level3");
 		return E_FAIL;
 	}
 
@@ -97,6 +110,22 @@ void CEvent_Smeade_Next_Level::Check_Event_Sanctum(_float fTimeDelta)
 	}
 }
 
+void CEvent_Smeade_Next_Level::Check_Event_Sky(_float fTimeDelta)
+{
+	if (true == m_isCheck_Sky)
+		return;
+
+	if (true == m_pNext_Level_Sky->Is_Collision())
+	{
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+		pGameInstance->Get_CurrentLevel()->Set_NextLevel(LEVEL_SKY);
+		Safe_Release(pGameInstance);
+
+		m_isCheck_Sky = true;
+	}
+}
+
 CEvent_Smeade_Next_Level* CEvent_Smeade_Next_Level::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CEvent_Smeade_Next_Level* pInstance = New CEvent_Smeade_Next_Level(pDevice, pContext);
@@ -130,4 +159,5 @@ void CEvent_Smeade_Next_Level::Free()
 
 	Safe_Release(m_pNext_Level_Cliff);
 	Safe_Release(m_pNext_Level_Sanctum);
+	Safe_Release(m_pNext_Level_Sky);
 }

@@ -193,6 +193,7 @@
     <ClInclude Include="..\Public\Client_Enum.h" />
     <ClInclude Include="..\Public\ConjuredDragon.h" />
     <ClInclude Include="..\public\CraftState.h" />
+    <ClInclude Include="..\Public\Crowd.h" />
     <ClInclude Include="..\Public\Cylinder.h" />
     <ClInclude Include="..\Public\DarkWizard_F.h" />
     <ClInclude Include="..\Public\DarkWizard_M.h" />
@@ -549,6 +550,7 @@
     <ClCompile Include="..\Private\Cliff_Gate.cpp" />
     <ClCompile Include="..\Private\ConjuredDragon.cpp" />
     <ClCompile Include="..\private\CraftState.cpp" />
+    <ClCompile Include="..\Private\Crowd.cpp" />
     <ClCompile Include="..\Private\Cylinder.cpp" />
     <ClCompile Include="..\Private\DarkWizard_F.cpp" />
     <ClCompile Include="..\Private\DarkWizard_M.cpp" />

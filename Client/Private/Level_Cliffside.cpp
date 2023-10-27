@@ -185,6 +185,7 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 	}
 
 	_uint iObjectNum = 0;
+	_uint iGullIndex = 0;
 
 	DWORD    dwByte = 0;
 
@@ -250,7 +251,7 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 		else if (0 == lstrcmp(modelName.c_str(), wsGull.c_str()))
 		{
 			_tchar wszobjName[MAX_PATH] = { 0 };
-			_stprintf_s(wszobjName, TEXT("GameObject_Gull_%d"), (iObjectNum));
+			_stprintf_s(wszobjName, TEXT("GameObject_Gull_%d"), (iGullIndex));
 
 			if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE,
 				TEXT("Prototype_GameObject_Gull"), TEXT("Layer_BackGround"),
@@ -260,6 +261,8 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 				ENDINSTANCE;
 				return E_FAIL;
 			}
+
+			++iGullIndex;
 		}
 
 		// 절벽 게이트
