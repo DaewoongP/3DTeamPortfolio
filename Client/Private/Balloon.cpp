@@ -1,6 +1,7 @@
 #include "..\Public\Balloon.h"
-
+#include "FlyGameManager.h"
 #include "GameInstance.h"
+#include "Racer.h"
 #include "Balloon_Timer.h"
 
 CBalloon::CBalloon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -23,15 +24,16 @@ HRESULT CBalloon::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 
 	BALLOONINITDESC* pInitDesc = static_cast<BALLOONINITDESC*>(pArg);
 
 	m_iScore = pInitDesc->iScore;
-	m_pTransform->Set_WorldMatrix(pInitDesc->WorldMatrix);
+	m_pTransform->Set_WorldMatrix(XMMatrixTranslation(pInitDesc->vPosition.x, pInitDesc->vPosition.y, pInitDesc->vPosition.z));
 	m_pTransform->Set_Scale(pInitDesc->vScale);
+	m_isColliderOn = true;
+	m_isDead = true;
 
 	// balloon timer 생성
 	// 트랜스폼 필요해요 ㅠ
@@ -42,13 +44,19 @@ HRESULT CBalloon::Initialize(void* pArg)
 
 void CBalloon::Tick(_float fTimeDelta)
 {
-	if (true == m_pTimer->Is_Finished())
-	{
-		m_isDead = true;
-	}
+	// if (true == m_pTimer->Is_Finished())
+	// {
+	// 	if (m_isColliderOn)
+	// 	{
+	// 		m_isColliderOn = false;
+	// 		m_pRigidBody->Disable_Collision("Body");
+	// 	}
+	// 	return;
+	// 	m_isDead = true;
+	// }
+		
 
 	__super::Tick(fTimeDelta);
-
 	m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);
 }
 
@@ -106,6 +114,24 @@ HRESULT CBalloon::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMat
 	}
 
 	return S_OK;
+}
+
+void CBalloon::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
+{
+	CFlyGameManager* pMgr = static_cast<CFlyGameManager*>(m_pOwner);
+	if (pMgr == nullptr)
+		return;
+
+	CRacer::COLLSIONREQUESTDESC* racerInfo = static_cast<CRacer::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
+	if (racerInfo == nullptr)
+		return;
+
+	pMgr->Add_Score(racerInfo->iRacerNumber,m_iScore);
+	pMgr->ReplaceBallon();
+	pMgr->Racer_AddForce(racerInfo->iRacerNumber,m_eBallonActionType, m_fForce);
+
+	m_isDead = true;
+	__super::OnCollisionEnter(CollisionEventDesc);
 }
 
 HRESULT CBalloon::Add_Components()

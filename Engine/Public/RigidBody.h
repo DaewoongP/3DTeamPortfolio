@@ -106,6 +106,8 @@ public:
 
 	void Put_To_Sleep() const;
 	void Add_Force(const _float3 & _vForce, PxForceMode::Enum _eMode = PxForceMode::eFORCE, _bool _bAutowake = true) const;
+	void Add_Force_OtherCall(const _float3& _vForce);
+	
 	void Add_Torque(const _float3& _vTorque, PxForceMode::Enum _eMode = PxForceMode::eFORCE, _bool _bAutowake = true) const;
 	void Clear_Force(PxForceMode::Enum _eMode = PxForceMode::eFORCE) const;
 	void Clear_Torque(PxForceMode::Enum _eMode = PxForceMode::eFORCE) const;
@@ -128,11 +130,17 @@ private:
 	_bool							m_isStatic = { false };
 	_bool							m_isKinematic = { false };
 
+private:
+	/*For. Impulse*/
+	_bool							m_isImpulse = { false };
+	_float3							m_vImpulseForce = { _float3(0,0,0) };
+
 #ifdef _DEBUG
 private:
 	vector<CShader*>				m_Shaders;
 	vector<CComponent*>				m_Debug_Renders;
 	vector<_float4>					m_Colors;
+
 #endif // _DEBUG
 
 private:

@@ -81,7 +81,7 @@ void CBroom_End::OnStateTick()
 
 		//회전 해주기
 		_float4x4 RotationMatrix = XMMatrixRotationQuaternion(
-			XMQuaternionRotationAxis(XMVector3Normalize(_float3(1, 0, 0)), fTimeDelta * -30.f));
+			XMQuaternionRotationAxis(XMVector3Normalize(_float3(1, 0, 0)), fTimeDelta * -10.f));
 
 		vRight = XMVector3TransformNormal(vRight, RotationMatrix);
 		vUp = XMVector3TransformNormal(vUp, RotationMatrix);

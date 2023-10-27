@@ -109,6 +109,11 @@
 #include "Event_Smeade_Next_Level.h"
 #pragma endregion
 
+#pragma region Event
+#include "Racer.h"
+#include "FlyGameManager.h"
+#pragma endregion
+
 #include "Guide_Book.h"
 
 #ifdef _DEBUG
@@ -339,6 +344,30 @@ HRESULT CMain0_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 
 HRESULT CMain0_Loader::Loading_For_Sky(LEVELID eLevelID)
 {
+	if (nullptr == m_pGameInstance)
+		return E_FAIL;
+
+	try
+	{
+		/* For.Prototype_GameObject_Racer */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Racer"),
+			CRacer::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Racer");
+
+		/* For.Prototype_GameObject_FlyGameManager */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FlyGameManager"),
+			CFlyGameManager::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_FlyGameManager");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -663,6 +692,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_LightStand_Fire"),
 			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/LightStand_Fire"), eLevelID))))
 			throw TEXT("Prototype_GameObject_LightStand_Fire");
+		
 #pragma endregion
 
 #pragma region Load Player_Effect

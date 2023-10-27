@@ -22,15 +22,15 @@ HRESULT CBeastBalloon_B::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	m_pTransform->Set_RigidBody(m_pRigidBody);
+	m_eBallonActionType = CBalloon::TYPE_FORWARD;
+
 	return S_OK;
 }
 
 HRESULT CBeastBalloon_B::Initialize_Level(_uint iCurrentLevelIndex)
 {
 	if (FAILED(Add_Components_Level(iCurrentLevelIndex)))
-		return E_FAIL;
-
-	if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
 		return E_FAIL;
 
 	return S_OK;
@@ -44,18 +44,6 @@ void CBeastBalloon_B::Tick(_float fTimeDelta)
 void CBeastBalloon_B::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-}
-
-void CBeastBalloon_B::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
-{
-	// 부딪 힌 대상의 정보를 가져와서 
-	SCOREDESC ScoreDesc;
-	ScoreDesc.Score = m_iScore;
-	ScoreDesc.wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	//매니저에게 전달한 후 
-
-	// 내가 부딪혔다는 사실을 갱신한다.
-	m_isDead = true;
 }
 
 HRESULT CBeastBalloon_B::Render()
@@ -95,8 +83,8 @@ HRESULT CBeastBalloon_B::Add_Components()
 	RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
 	RigidBodyDesc.vDebugColor = _float4(0.f, 0.f, 1.f, 1.f);
 	RigidBodyDesc.pOwnerObject = this;
-	RigidBodyDesc.eThisCollsion = COL_STATIC;
-	RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_ENEMY;
+	RigidBodyDesc.eThisCollsion = COL_BALLOON;
+	RigidBodyDesc.eCollisionFlag = COL_RACER;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Body");
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))

@@ -43,7 +43,7 @@ HRESULT CBroom_Stick::Initialize(void* pArg)
 		* XMMatrixTranslation(0.53f, 0.f, -0.99f);
 
 	_float4x4 RotationMatrix = XMMatrixRotationQuaternion(
-		XMQuaternionRotationAxis(XMVector3Normalize(_float3(1, 0, 0)), 1 * -30.f));
+		XMQuaternionRotationAxis(XMVector3Normalize(_float3(1, 0, 0)), 1 * -10.f));
 
 	_float3 vRight = m_OffsetMatrix.Right();
 	_float3 vUp = m_OffsetMatrix.Up();

@@ -100,7 +100,7 @@ public:
 
 	void Set_Spell_Botton(_uint _Button, SPELL _eSpell);
 
-	void AddForce_Impulse(_float3 vAxis,_float fForce) { m_pRigidBody->Add_Force(vAxis * fForce, PxForceMode::eIMPULSE, true); }
+	void AddForce_Impulse(_float3 vfForce) { m_pRigidBody->Add_Force_OtherCall(vfForce); }
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
