@@ -1,8 +1,9 @@
 #include "..\Public\Level_Sky.h"
 #include "GameInstance.h"
-
+#include "Level_Loading.h"
 #include "MapObject.h"
 #include "MapObject_Ins.h"
+#include "ScoreBalloon.h"
 
 CLevel_Sky::CLevel_Sky(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
@@ -13,6 +14,7 @@ HRESULT CLevel_Sky::Initialize()
 	FAILED_CHECK_RETURN(Ready_Lights(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_Monster(TEXT("Layer_Monster")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_FlyGame(TEXT("Layer_BackGround")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Shader(), E_FAIL);
 
 	BEGININSTANCE;
@@ -39,6 +41,14 @@ void CLevel_Sky::Tick(_float fTimeDelta)
 		}
 	}
 
+	if (pGameInstance->Get_DIKeyState(DIK_LSHIFT))
+	{
+		if (pGameInstance->Get_DIKeyState(DIK_BACKSPACE, CInput_Device::KEY_DOWN))
+		{
+			pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_SMITH));
+		}
+	}
+
 	ENDINSTANCE;
 
 #ifdef _DEBUG
@@ -50,11 +60,9 @@ HRESULT CLevel_Sky::Ready_Layer_BackGround(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SKY, TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Sky) in Level_Sky");
-		return E_FAIL;
-	}
+	_bool isNight = false;
+	FAILED_CHECK_RETURN(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SKY,
+		TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"), &isNight), E_FAIL)
 
 	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData5.ddd"))))
 	{
@@ -79,7 +87,7 @@ HRESULT CLevel_Sky::Ready_Layer_Monster(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 
-	_float4x4 Matrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixTranslation(108.f, 26.f, 185.f);
+	_float4x4 Matrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixTranslation(128.f, 26.f, 205.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_DarkWizard_Fly"), pLayerTag, TEXT("GameObject_DarkWizard_Fly_1"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_DarkWizard_Fly_1)");
@@ -87,7 +95,7 @@ HRESULT CLevel_Sky::Ready_Layer_Monster(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	Matrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixTranslation(98.f, 26.f, 185.f);
+	Matrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixTranslation(68.f, 26.f, 205.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_DarkWizard_Fly"), pLayerTag, TEXT("GameObject_DarkWizard_Fly_2"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_DarkWizard_Fly_2)");
@@ -95,7 +103,7 @@ HRESULT CLevel_Sky::Ready_Layer_Monster(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	Matrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixTranslation(108.f, 26.f, 175.f);
+	Matrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixTranslation(128.f, 26.f, 165.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_DarkWizard_Fly"), pLayerTag, TEXT("GameObject_DarkWizard_Fly_3"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_DarkWizard_Fly_3)");
@@ -103,10 +111,42 @@ HRESULT CLevel_Sky::Ready_Layer_Monster(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	Matrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixTranslation(108.f, 26.f, 165.f);
+	Matrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixTranslation(68.f, 26.f, 165.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_DarkWizard_Fly"), pLayerTag, TEXT("GameObject_DarkWizard_Fly_4"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_DarkWizard_Fly_4)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	Matrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixTranslation(68.f, 26.f, 205.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_DarkWizard_Fly"), pLayerTag, TEXT("GameObject_DarkWizard_Fly_5"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_DarkWizard_Fly_5)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	Matrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixTranslation(168.f, 26.f, 165);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_DarkWizard_Fly"), pLayerTag, TEXT("GameObject_DarkWizard_Fly_6"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_DarkWizard_Fly_6)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	Matrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixTranslation(68.f, 26.f, 205.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_DarkWizard_Fly"), pLayerTag, TEXT("GameObject_DarkWizard_Fly_7"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_DarkWizard_Fly_7)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	Matrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixTranslation(168.f, 26.f, 205.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_DarkWizard_Fly"), pLayerTag, TEXT("GameObject_DarkWizard_Fly_8"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_DarkWizard_Fly_8)");
 		ENDINSTANCE;
 		return E_FAIL;
 	}
@@ -152,6 +192,19 @@ HRESULT CLevel_Sky::Ready_Shader()
 
 	ENDINSTANCE;
 
+	return S_OK;
+}
+
+HRESULT CLevel_Sky::Ready_FlyGame(const _tchar* pLayerTag)
+{
+	BEGININSTANCE;
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_FlyGameManager"), pLayerTag, TEXT("GameObject_FlyGameManager"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_FlyGameManager)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+	ENDINSTANCE;
 	return S_OK;
 }
 

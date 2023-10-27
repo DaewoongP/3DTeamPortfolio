@@ -20,7 +20,7 @@
 #include "UI_Group_Enemy_HP.h"
 
 #include "Card_Fig.h"
-#include "Magic.h"
+
 
 #include "UI_Group_Skill.h"
 #include "UI_Group_SkillTap.h"
@@ -193,12 +193,9 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_pCustomModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"), CModel::OTHERBODY);
 	m_pCustomModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"), CModel::ANOTHERBODY);
 
-	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(25.f, 3.f, 22.5f);
+	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(29.f, 2.7f, 26.f);
 	m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
-	//m_vLevelInitPosition[LEVEL_VAULT] = _float3(161, 2, 93);
-	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(30.f, 3.f, 15.f);
-	m_vLevelInitPosition[LEVEL_SMITH] = _float3(32.f, 3.f, 25.f);
-	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(94.5f, 7.2f, 78.f);
+	m_vLevelInitPosition[LEVEL_SMITH] = _float3(32.f, 0.8f, 25.f);
 	m_vLevelInitPosition[LEVEL_SKY] = _float3(88.8f, 12.5f, 69.8f);
 
 	m_fTargetViewRange = 2.0f;
@@ -208,31 +205,24 @@ HRESULT CPlayer::Initialize(void* pArg)
 	pGameInstance->Play_BGM(TEXT("01_Main.mp3"), 1.0f);
 	ENDINSTANCE;*/
 
-	//m_vecEaseList.resize(CEase::EASE_END);
-
-	//m_vecEaseList[CEase::IN_QUAD] = New ("IN_QUAD");
-
-	//IN_QUAD, OUT_QUAD, INOUT_QUAD_,
-	//	IN_SINE, OUT_SINE, INOUT_SINE,
-	//	IN_QUINT, OUT_QUINT, INOUT_QUINT,
-	//	IN_QUART, OUT_QUART, INOUT_QUART,
-	//	NONE_LINEAR, IN_LINEAR, OUT_LINEAR, INOUT_LINEAR,
-	//	IN_EXPO, OUT_EXPO, INOUT_EXPO,
-	//	IN_ELASTIC, OUT_ELASTIC, INOUT_ELASTIC,
-	//	IN_CUBIC, OUT_CUBIC, INOUT_CUBIC,
-	//	IN_CIRC, OUT_CIRC, INOUT_CIRC,
-	//	IN_BOUNCE, OUT_BOUNCE, INOUT_BOUNCE,
-	//	IN_BACK, OUT_BACK, INOUT_BACK,
 	m_pNonFlySpell[0] = { LEVIOSO };
 	m_pNonFlySpell[1] = { FLIPENDO };
 	m_pNonFlySpell[2] = { ACCIO };
 	m_pNonFlySpell[3] = { DESCENDO };
+
+	Init_PotionBuffValue();
+
 	return S_OK;
 }
 
 HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 {
 	m_pTransform->Set_Position(m_vLevelInitPosition[iCurrentLevelIndex]);
+	m_pTransform->Rotation(_float3(0.0f, 1.0f, 0.0f), 0.0f);
+
+	m_pPlayer_Camera->Get_TransformPtr()->Set_Position(XMVectorSetY(m_pTransform->Get_Position(), m_pTransform->Get_Position().y + 1.2f));
+	m_pPlayer_Camera->Get_TransformPtr()->Rotation(_float3(0.0f, 1.0f, 0.0f), 0.0f);
+
 	m_eLevelID = (LEVELID)iCurrentLevelIndex;
 	m_pRigidBody->Clear_Force(PxForceMode::eVELOCITY_CHANGE);
 	/*if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
@@ -271,6 +261,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	{
 		m_isUseProtego = false;
 	}
+	Update_Init_PotionBuffValue();
 
 	//스킬 쿨 갱신용도
 	Update_Skill_CoolTime();
@@ -293,18 +284,23 @@ void CPlayer::Tick(_float fTimeDelta)
 	Key_Input(fTimeDelta);
 
 	Update_Hover_Eye_Distance();
-	
+
 	//m_pStateContext->Tick(fTimeDelta)
 	Go_Protego(&m_ProtegoStateDesc);
 
 	Fix_Mouse();
-	//Update_Cloth(fTimeDelta);
+	Update_Cloth(fTimeDelta);
+
+
 
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::OTHERBODY);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::ANOTHERBODY);
 
+	Update_CoolTime();
+	Update_Demege();
+	Update_Defensive();
 
 	if (nullptr != m_pFrncSpellToggle)
 	{
@@ -318,9 +314,16 @@ void CPlayer::Tick(_float fTimeDelta)
 	}
 
 	m_isPreLumos = m_isLumosOn;
-	for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
-		m_vecPlayer_StateParicle[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
 
+	for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
+	{
+		m_vecPlayer_StateParicle[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+	}
+
+	for (_uint i = 0; i < m_vecMeshEffect.size(); ++i)
+	{
+		m_vecMeshEffect[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+	}
 	//m_pCooltime->Tick(fTimeDelta);
 	//Potion_Duration(fTimeDelta);
 
@@ -346,6 +349,15 @@ void CPlayer::Tick(_float fTimeDelta)
 		}
 		m_pWindParticle->Get_Transform()->Set_Position(m_pTransform->Get_Position() +
 			m_pPlayer_Camera->Get_TransformPtr()->Get_Look() * 5);
+
+		_float4x4 TempMatrix = m_pTransform->Get_WorldMatrix();
+		TempMatrix.m[3][0] = 0;
+		TempMatrix.m[3][1] = 0;
+		TempMatrix.m[3][2] = 0;
+
+		m_pWindParticle->Get_ShapeModuleRef().ShapeMatrix =
+			m_pWindParticle->Get_ShapeModuleRef().ShapeMatrixInit * TempMatrix;
+		m_pRenderer->Set_ScreenRadial(true,2.f, iFast*0.002f);
 	}
 	else
 	{
@@ -364,12 +376,8 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
 	{
 		ENDINSTANCE;
-
 		return;
 	}
-
-	ENDINSTANCE;
-
 	__super::Late_Tick(fTimeDelta);
 
 	//m_pStateContext->Late_Tick(fTimeDelta);
@@ -378,8 +386,6 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
-		if (nullptr != m_pTarget)
-			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_EDGEHIGHLIGHT, m_pTarget);
 #ifdef _DEBUG
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
 #endif // _DEBUG
@@ -395,6 +401,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 			Safe_Release(m_pTarget);
 			m_pTargetTransform = nullptr;
 			m_pTarget = nullptr;
+			ENDINSTANCE;
 			return;
 		}
 
@@ -402,6 +409,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 		if (nullptr != pEnemy)
 			pEnemy->Get_UI_Enemy_HP()->Late_Tick(fTimeDelta);
 	}
+	ENDINSTANCE;
 }
 
 void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
@@ -455,6 +463,11 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			break;
 			case CEnemy::ATTACK_LIGHT:
 			{
+				for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
+				{
+					m_vecPlayer_StateParicle[i]->Play(pDesc->pEnemyTransform->Get_Position());
+				}
+
 				BEGININSTANCE;
 				_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_24397.wav") },{TEXT("playermale_99996.wav") } ,{TEXT("playermale_35941.wav")},{TEXT("playermale_99995.wav") } };
 				pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
@@ -471,6 +484,11 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			break;
 			case CEnemy::ATTACK_HEAVY:
 			{
+				for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
+				{
+					m_vecPlayer_StateParicle[i]->Play(pDesc->pEnemyTransform->Get_Position());
+				}
+
 				BEGININSTANCE;
 				_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_25735.wav") },{TEXT("playermale_99991.wav") } ,{TEXT("playermale_99992.wav") },{TEXT("playermale_99993.wav") } };
 				pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
@@ -489,16 +507,21 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			HitStateDesc.pTransform = pDesc->pEnemyTransform;
 
 			Go_Hit(&HitStateDesc);
-			for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
+			
+
+			_int iDamege = pDesc->iDamage;
+
+			if (0.0f < m_DefensiveDesc.fBuffValueAcc)
 			{
-				m_vecPlayer_StateParicle[i]->Play(pDesc->pEnemyTransform->Get_Position());
+				iDamege -= (_int)m_DefensiveDesc.fBuffValue;
 			}
 
-			//체占쏙옙 占쏙옙占쏙옙
-			m_pPlayer_Information->fix_HP((pDesc->iDamage) * -1);
+			if (0 > iDamege)
+			{
+				iDamege = 0;
+			}
 
-
-
+			m_pPlayer_Information->fix_HP(iDamege * -1);
 		}
 	}
 	else if (wstring::npos != wstrCollisionTag.find(TEXT("Magic_Ball")))
@@ -529,6 +552,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		//Hit
 		else
 		{
+
 			CHitState::HITSTATEDESC HitStateDesc;
 			HitStateDesc.eBuffType = pDesc->eBuffType;
 
@@ -553,8 +577,20 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 			Go_Hit(&HitStateDesc);
 
+			_int iDamege = pDesc->iDamage;
+
+			if (0.0f < m_DefensiveDesc.fBuffValueAcc)
+			{
+				iDamege -= (_int)m_DefensiveDesc.fBuffValue;
+			}
+			
+			if (0 > iDamege)
+			{
+				iDamege = 0;
+			}
+
 			//체력 수정
-			m_pPlayer_Information->fix_HP((pDesc->iDamage) * -1);
+			m_pPlayer_Information->fix_HP(iDamege * -1);
 		}
 	}
 }
@@ -749,21 +785,46 @@ HRESULT CPlayer::Add_Components()
 	}
 
 	/* For.Com_PotionParticle */
-	m_vecPotionParticle.resize(2);
+	m_vecPotionParticle.resize(5);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Heal_Particle"),
 		TEXT("Com_HealParticle"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[0]))))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Maxima_Particle"),
-		TEXT("Com_MaximaParticle"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[1]))))
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Heal_Ground"),
+		TEXT("Com_Heal_Ground"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[1]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Heal_After_Particle"),
+		TEXT("Com_Heal_After_Particle"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[2]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Heal_After_Particle2"),
+		TEXT("Com_Heal_After_Particle2"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[3]))))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
 	
-	m_vecPlayer_StateParicle.resize(2);
+	
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Maxima_Particle"),
+		TEXT("Com_MaximaParticle"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[4]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	
+
+
+
+	m_vecPlayer_StateParicle.resize(3);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Player_Hit_Particle"),
 		TEXT("Com_Player_HitParticle"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[0]))))
 	{
@@ -777,30 +838,23 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
-	/* For.Com_Player_Effect */
-	//m_vecPlayer_StateParicle.resize(1);
-	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_Effect"),
-	//	TEXT("Com_Blink_Effect"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[0]))))
-	//{
-	//__debugbreak();
-	//	return E_FAIL;
-	//}
-	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_SubEffect"),
-	//	TEXT("Com_Blink_Effect"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[0]))))
-	//{
-	//	__debugbreak();
-	//	return E_FAIL;
-	//}
-	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_Disotrtion"),
-	//	TEXT("Com_Blink_Effect"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[1]))))
-	//{
-	//	__debugbreak();
-	//	return E_FAIL;
-	//}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Player_Hit_Circle"),
+		TEXT("Com_Player_Hit_Circle"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[2]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
 
+	
 
-
-
+	m_vecMeshEffect.resize(1);
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Potion_Distortoin"),
+		TEXT("Com_Potion_Distortoin"), reinterpret_cast<CComponent**>(&m_vecMeshEffect[0]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Potion_Distortion)");
+		__debugbreak();
+		return E_FAIL;
+	}
 
 	const CBone* pBone = m_pCustomModel->Get_Bone(TEXT("SKT_RightHand"));
 	if (nullptr == pBone)
@@ -816,21 +870,6 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Weapon_Player_Wand"),
 		TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
 		throw TEXT("Com_Weapon");
-
-	pBone = m_pCustomModel->Get_Bone_Index(46);
-	if (nullptr == pBone)
-		throw TEXT("pBone is nullptr");
-
-	CBroom_Stick::CWEAPON_PLAYER_BROOM_DESC ParentMatrixDesc2;
-	ParentMatrixDesc2.ParentMatrixDesc.OffsetMatrix = pBone->Get_OffsetMatrix();
-	ParentMatrixDesc2.ParentMatrixDesc.PivotMatrix = m_pCustomModel->Get_PivotFloat4x4();
-	ParentMatrixDesc2.ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
-	ParentMatrixDesc2.ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
-	//뼈 바인딩해주기
-	if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Weapon_Player_Broom"),
-		TEXT("Com_Broom"), reinterpret_cast<CComponent**>(&m_pBroom), &ParentMatrixDesc2)))
-		throw TEXT("Com_Broom");
-	
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_MagicSlot"),
 		TEXT("Com_MagicSlot"), reinterpret_cast<CComponent**>(&m_pMagicSlot))))
@@ -872,6 +911,21 @@ HRESULT CPlayer::Add_Components()
 
 	m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
 	m_pRigidBody->Get_RigidBodyActor()->setAngularDamping(1.f);
+
+	pBone = m_pCustomModel->Get_Bone_Index(46);
+	if (nullptr == pBone)
+		throw TEXT("pBone is nullptr");
+
+	CBroom_Stick::CWEAPON_PLAYER_BROOM_DESC ParentMatrixDesc2;
+	ParentMatrixDesc2.ParentMatrixDesc.OffsetMatrix = pBone->Get_OffsetMatrix();
+	ParentMatrixDesc2.ParentMatrixDesc.PivotMatrix = m_pCustomModel->Get_PivotFloat4x4();
+	ParentMatrixDesc2.ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
+	ParentMatrixDesc2.ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+	ParentMatrixDesc2.pPlayerRigidBody = m_pRigidBody;
+	//뼈 바인딩해주기
+	if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Weapon_Player_Broom"),
+		TEXT("Com_Broom"), reinterpret_cast<CComponent**>(&m_pBroom), &ParentMatrixDesc2)))
+		throw TEXT("Com_Broom");
 
 	/* Com_Player_Information */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Player_Information"),
@@ -1007,6 +1061,8 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.fLifeTime = 1.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
+	
+	m_MagicDescs[LEVIOSO] = magicInitDesc;
 
 	{
 		magicInitDesc.eBuffType = BUFF_CONFRINGO;
@@ -1020,6 +1076,8 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
+	m_MagicDescs[CONFRINGO] = magicInitDesc;
+
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
@@ -1031,6 +1089,8 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.fLifeTime = 3.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
+
+	m_MagicDescs[FINISHER] = magicInitDesc;
 
 	{
 		magicInitDesc.eBuffType = BUFF_NCENDIO;
@@ -1044,17 +1104,21 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
+	m_MagicDescs[NCENDIO] = magicInitDesc;
+
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = LUMOS;
-		magicInitDesc.fInitCoolTime = 5.f;
+		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 0;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 30.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
+
+	m_MagicDescs[LUMOS] = magicInitDesc;
 
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
@@ -1068,6 +1132,8 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
+	m_MagicDescs[ARRESTOMOMENTUM] = magicInitDesc;
+
 	{
 		magicInitDesc.eBuffType = BUFF_ACCIO;
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
@@ -1079,6 +1145,8 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.fLifeTime = 1.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
+
+	m_MagicDescs[ACCIO] = magicInitDesc;
 
 	{
 		magicInitDesc.eBuffType = BUFF_DESCENDO;
@@ -1092,6 +1160,8 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
+	m_MagicDescs[DESCENDO] = magicInitDesc;
+
 	{
 		magicInitDesc.eBuffType = BUFF_FLIPENDO;
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
@@ -1103,6 +1173,8 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.fLifeTime = 0.3f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
+
+	m_MagicDescs[FLIPENDO] = magicInitDesc;
 
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
@@ -1116,6 +1188,8 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
+	m_MagicDescs[EXPELLIARMUS] = magicInitDesc;
+
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_CURSE;
@@ -1127,6 +1201,8 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
+
+	m_MagicDescs[IMPERIO] = magicInitDesc;
 
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
@@ -1140,6 +1216,8 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
+	m_MagicDescs[CRUCIO] = magicInitDesc;
+
 	{
 		magicInitDesc.eBuffType = BUFF_STUPEFY;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
@@ -1151,6 +1229,8 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
+
+	m_MagicDescs[STUPEFY] = magicInitDesc;
 
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
@@ -1164,6 +1244,8 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
+	m_MagicDescs[DIFFINDO] = magicInitDesc;
+
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
@@ -1175,6 +1257,8 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
+
+	m_MagicDescs[BOMBARDA] = magicInitDesc;
 
 
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(2, LUMOS);
@@ -1194,6 +1278,11 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	BEGININSTANCE;
 
 #ifdef _DEBUG
+	if (pGameInstance->Get_DIKeyState(DIK_P, CInput_Device::KEY_DOWN))
+	{
+		m_pRigidBody->Add_Force(_float3(0, 1, 0) * 60, PxForceMode::eIMPULSE, true);
+	}
+	
 	if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))
 	{
 		_float3 vAxis = _float3(m_fx, m_fy, m_fz);
@@ -1370,7 +1459,8 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			_tchar szVoiceTag[3][MAX_PATH] = { {TEXT("playermale_34286.wav") },{TEXT("playermale_23883.wav") } ,{TEXT("playermale_32104.wav") } };
 			pGameInstance->Play_Sound(szVoiceTag[rand() % 3], CSound_Manager::SOUND_VOICE, 0.7f, true);
 			ENDINSTANCE;
-			m_pCard_Fig->Spawn_Fig(m_pTarget);
+			if(nullptr != m_pCard_Fig)
+				m_pCard_Fig->Spawn_Fig(m_pTarget);
 		}
 
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_FINISHER;
@@ -1419,12 +1509,29 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	}
 
 
-	if (pGameInstance->Get_DIKeyState(DIK_GRAVE, CInput_Device::KEY_DOWN))
+	if (pGameInstance->Get_DIKeyState(DIK_GRAVE, CInput_Device::KEY_DOWN) || pGameInstance->Get_DIKeyState(DIK_T, CInput_Device::KEY_DOWN))
 	{
 		if (true == m_isFixMouse)
 			m_isFixMouse = false;
 		else
 			m_isFixMouse = true;
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_TAB, CInput_Device::KEY_DOWN))
+	{
+		m_isFixMouse = false;
+	}
+
+	if (true == m_isTabNext)
+	{			
+		m_isFixMouse = true;
+	}
+
+	m_isTabNext = false;
+
+	if (pGameInstance->Get_DIKeyState(DIK_TAB, CInput_Device::KEY_UP))
+	{
+		m_isTabNext = true;
 	}
 
 	//스킬탭
@@ -1485,6 +1592,14 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		//m_pPlayer_Information->Get_Inventory()->Add_Item(pItem, pItem->Get_Type());
 		if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
 		{
+			m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::ENDURUS_POTION);
+			m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::FOCUS_POTION);
+			m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::HEALTH_POTION);
+			m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::INVISIBILITY_POTION);
+			m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::MANDRAKE);
+			m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::MAXIMA_POTION);
+			m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::THUNDERBREW_POTION);
+			m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::TENTACULAR);
 			m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_ASHWINDER_EGGS);
 			m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_DITTANY_LEAVES);
 			m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_DUGBOG_TONGUE);
@@ -1694,6 +1809,182 @@ HRESULT CPlayer::Ready_MagicDesc()
 
 void CPlayer::MagicTestTextOutput()
 {
+}
+
+void CPlayer::Init_PotionBuffValue()
+{
+	m_DemegeDesc.fBuffValue = 2.0f;
+	m_DemegeDesc.fBuffValueTime = 15.0f;
+	m_DefensiveDesc.fBuffValue = 50.0f;
+	m_DefensiveDesc.fBuffValueTime = 15.0f;
+	m_CoolTimeDesc.fBuffValue = 1.0f;
+	m_CoolTimeDesc.fBuffValueTime = 15.0f;
+}
+
+void CPlayer::Update_Init_PotionBuffValue()
+{
+	m_DemegeDesc.isStart = false;
+	m_DemegeDesc.isFinish = false;
+	m_DefensiveDesc.isStart = false;
+	m_DefensiveDesc.isFinish = false;
+	m_CoolTimeDesc.isStart = false;
+	m_CoolTimeDesc.isFinish = false;
+}
+
+void CPlayer::Update_CoolTime()
+{
+	BEGININSTANCE;
+
+	if (0.0f < m_CoolTimeDesc.fBuffValueAcc)
+	{
+		m_CoolTimeDesc.fBuffValuePreAcc = m_CoolTimeDesc.fBuffValueAcc;
+		m_CoolTimeDesc.fBuffValueAcc -= pGameInstance->Get_World_Tick();
+	}
+
+	ENDINSTANCE;
+
+	//0.0f에 도달 했을때, 이전 값이 초기화 되지 않은 양수라면
+	if (0.0f > m_CoolTimeDesc.fBuffValueAcc && 0.0f < m_CoolTimeDesc.fBuffValuePreAcc)
+	{
+		//초기화 하고
+		m_CoolTimeDesc.fBuffValuePreAcc = m_CoolTimeDesc.fBuffValueAcc = 0.0f;
+
+		//끝났음을 알림
+		m_CoolTimeDesc.isFinish = true;
+	}
+
+	//쿨타임 스팰 쿨타임 바꾸기, 시간감소
+	if (true == m_CoolTimeDesc.isStart)
+	{
+		m_CoolTimeDesc.fBuffValueAcc = m_CoolTimeDesc.fBuffValueTime;
+
+		CMagic::MAGICDESC magicInitDesc = { CMagic::MAGICDESC() };
+
+		for (size_t i = 0; i < SPELL_END; i++)
+		{
+			if (SPELL_END == m_MagicDescs[i].eMagicTag)
+			{
+				continue;
+			}
+
+			magicInitDesc = m_MagicDescs[i];
+
+			magicInitDesc.fInitCoolTime = m_CoolTimeDesc.fBuffValue;
+			
+			m_pMagicSlot->Add_Magics(magicInitDesc);
+		}
+
+		magicInitDesc = m_BasicDesc_Light;
+
+		magicInitDesc.fInitCoolTime = m_CoolTimeDesc.fBuffValue;
+
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+
+		magicInitDesc = m_BasicDesc_Heavy;
+
+		magicInitDesc.fInitCoolTime = m_CoolTimeDesc.fBuffValue;
+
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
+	//원래 구조체 대입
+	if (true == m_CoolTimeDesc.isFinish)
+	{
+		CMagic::MAGICDESC magicInitDesc = { CMagic::MAGICDESC() };
+
+		for (size_t i = 0; i < SPELL_END; i++)
+		{
+			if (SPELL_END == m_MagicDescs[i].eMagicTag)
+			{
+				continue;
+			}
+
+			magicInitDesc = m_MagicDescs[i];
+
+			m_pMagicSlot->Add_Magics(magicInitDesc);
+		}
+
+		magicInitDesc = m_BasicDesc_Light;
+
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+
+		magicInitDesc = m_BasicDesc_Heavy;
+
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+}
+
+void CPlayer::Update_Demege()
+{
+	//기본 스팰, 스팰 공격력 바꾸기, 시간 감소
+	BEGININSTANCE;
+
+	if (0.0f < m_DemegeDesc.fBuffValueAcc)
+	{
+		m_DemegeDesc.fBuffValuePreAcc = m_DemegeDesc.fBuffValueAcc;
+		m_DemegeDesc.fBuffValueAcc -= pGameInstance->Get_World_Tick();
+	}
+
+	ENDINSTANCE;
+
+	//0.0f에 도달 했을때, 이전 값이 초기화 되지 않은 양수라면
+	if (0.0f > m_DemegeDesc.fBuffValueAcc && 0.0f < m_DemegeDesc.fBuffValuePreAcc)
+	{
+		//초기화 하고
+		m_DemegeDesc.fBuffValuePreAcc = m_DemegeDesc.fBuffValueAcc = 0.0f;
+
+		//끝났음을 알림
+		m_DemegeDesc.isFinish = true;
+	}
+
+	//쿨타임 스팰 공격력 바꾸기, 시간감소
+	if (true == m_DemegeDesc.isStart)
+	{
+		m_DemegeDesc.fBuffValueAcc = m_DemegeDesc.fBuffValueTime;
+
+		m_isPowerUp = true;
+	}
+
+	//원래 구조체 대입
+	if (true == m_DemegeDesc.isFinish)
+	{
+		m_isPowerUp = false;
+	}
+}
+
+void CPlayer::Update_Defensive()
+{
+	//시간 감소
+	BEGININSTANCE;
+
+	if (0.0f < m_DefensiveDesc.fBuffValueAcc)
+	{
+		m_DefensiveDesc.fBuffValuePreAcc = m_DefensiveDesc.fBuffValueAcc;
+		m_DefensiveDesc.fBuffValueAcc -= pGameInstance->Get_World_Tick();
+	}
+
+	ENDINSTANCE;
+
+	//0.0f에 도달 했을때, 이전 값이 초기화 되지 않은 양수라면
+	if (0.0f >= m_DefensiveDesc.fBuffValueAcc && 0.0f < m_DefensiveDesc.fBuffValuePreAcc)
+	{
+		//초기화 하고
+		m_DefensiveDesc.fBuffValuePreAcc = m_DefensiveDesc.fBuffValueAcc = 0.0f;
+
+		//끝났음을 알림
+		m_DefensiveDesc.isFinish = true;
+	}
+
+	//쿨타임 스팰 공격력 바꾸기, 시간감소
+	if (true == m_DefensiveDesc.isStart)
+	{
+		m_DefensiveDesc.fBuffValueAcc = m_DefensiveDesc.fBuffValueTime;
+	}
+
+	//원래 구조체 대입
+	if (true == m_DefensiveDesc.isFinish)
+	{
+	}
 }
 
 void CPlayer::UpdateLookAngle()
@@ -2099,8 +2390,8 @@ void CPlayer::Protego()
 	magicInitDesc.eMagicTag = PROTEGO;
 	magicInitDesc.fInitCoolTime = 0.f;
 	magicInitDesc.iDamage = 0;
-	magicInitDesc.fLifeTime = 0.8f;
-	magicInitDesc.fScale = 1.8f;
+	magicInitDesc.fLifeTime = 1.5f;
+	magicInitDesc.fScale = 1.0f;
 	m_pMagicSlot->Add_Magics(magicInitDesc);
 
 	m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_ENEMY_ATTACK | COL_MAGIC | COL_SHIELD_ENEMY), COL_SHIELD, m_isPowerUp);
@@ -2466,13 +2757,13 @@ HRESULT CPlayer::Bind_Notify()
 		}
 
 
-		funcNotify = [&] { (*this).Add_Layer_Item(); };
+		/*funcNotify = [&] { (*this).Add_Layer_Item(); };
 		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Add_Layer_Item"), funcNotify,ePartType)))
 		{
 			MSG_BOX("Failed Bind_Notify");
 
 			return E_FAIL;
-		}
+		}*/
 
 
 		funcNotify = [&] { (*this).Stupefy(); };
@@ -2492,6 +2783,7 @@ HRESULT CPlayer::Bind_Notify()
 
 			return E_FAIL;
 		}
+		funcNotify = [&] {(*this).Landing_DisMount(); };
 		//Land
 		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Broom_Dismount_2Jog_anm"), TEXT("Land_Run"), funcNotify, CModel::ANIMTYPE(0))))
 		{
@@ -2506,8 +2798,8 @@ HRESULT CPlayer::Bind_Notify()
 void CPlayer::Update_Cloth(_float fTimeDelta)
 {
 	_float3 vVelocity = m_pTransform->Get_Velocity();
-	vVelocity.y *= -1.f;
-	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(m_fClothPower * vVelocity,
+	
+	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(m_fClothPower * vVelocity * -1.f,
 		XMMatrixInverse(nullptr, XMMatrixRotationQuaternion(m_pTransform->Get_Quaternion()))));
 
 	m_pCustomModel->Tick(CCustomModel::ROBE, m_iRobeMeshIndex, fTimeDelta);
@@ -2516,7 +2808,6 @@ void CPlayer::Update_Cloth(_float fTimeDelta)
 void CPlayer::Find_Target_For_Distance()
 {
 	BEGININSTANCE;
-
 	if (nullptr != m_pTarget || pGameInstance->Get_DIMouseState(CInput_Device::DIMK_RBUTTON, CInput_Device::KEY_PRESSING))
 	{
 		ENDINSTANCE;
@@ -2524,7 +2815,6 @@ void CPlayer::Find_Target_For_Distance()
 	}
 
 	unordered_map<const _tchar*, CComponent*>* pLayer = pGameInstance->Find_Components_In_Layer(m_eLevelID, TEXT("Layer_Monster"));
-
 	if (nullptr == pLayer)
 	{
 		ENDINSTANCE;
@@ -2532,8 +2822,6 @@ void CPlayer::Find_Target_For_Distance()
 	}
 
 	_float fMinDistance = { 50.0f };
-
-
 	CGameObject* pTarget = { nullptr };
 
 	for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
@@ -2966,7 +3254,8 @@ void CPlayer::Go_MagicCast(void* _pArg)
 {
 	Find_Target_For_Distance();
 
-	if (m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+	if (true == m_isFixMouse && (
+		m_pStateContext->Is_Current_State(TEXT("Idle")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
@@ -2974,7 +3263,7 @@ void CPlayer::Go_MagicCast(void* _pArg)
 		m_pStateContext->Is_Current_State(TEXT("Hover_Idle")) ||
 		m_pStateContext->Is_Current_State(TEXT("Hover_Move")) ||
 		m_pStateContext->Is_Current_State(TEXT("Fly_Move"))
-		)
+		))
 	{
 		if (nullptr != m_pTarget)
 		{
@@ -3064,12 +3353,12 @@ _uint CPlayer::Special_Action(_uint _iButton)
 	return iSpecial_Action_Spell;
 }
 
-void CPlayer::Add_Layer_Item()
+void CPlayer::Add_Layer_Item(void* pArg)
 {
 	CTool* pTool = m_pPlayer_Information->Get_PotionTap()->Get_CurTool();
 	if (nullptr == pTool)
 		return;
-	pTool->CreateTool();
+	pTool->CreateTool(pArg);
 }
 
 void CPlayer::Drink_Potion()
@@ -3080,6 +3369,11 @@ void CPlayer::Drink_Potion()
 void CPlayer::Landing()
 {
 	m_pStateContext->Set_StateMachine(TEXT("Idle"));
+}
+
+void CPlayer::Landing_DisMount()
+{
+	m_pStateContext->Set_StateMachine(TEXT("Move Loop"));
 }
 
 void CPlayer::Add_Potion()
@@ -3207,7 +3501,6 @@ void CPlayer::Go_Use_Item()
 
 	CUseItemState::USEITEMDESC UseItemDesc;
 
-	UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(); };
 
 	m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Add_Layer_Item"), UseItemDesc.funcPotion);
 	m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Add_Layer_Item"), UseItemDesc.funcPotion,CModel::ANOTHERBODY);
@@ -3216,18 +3509,45 @@ void CPlayer::Go_Use_Item()
 
 	switch (UseItemDesc.eItem_Id)
 	{
-	case Client::ITEM_ID_WIGGENWELD_POTION:
+	case Client::ITEM_ID_WIGGENWELD_POTION:	//회복 물약
 	{
-		UseItemDesc.funcPotion = [&] {(*this).Healing(); };
+		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(nullptr); };
+		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
 	}
 	break;
-	case Client::ITEM_ID_EDURUS_POTION:
-	case Client::ITEM_ID_FOCUS_POTION:
-	case Client::ITEM_ID_MAXIMA_POTION:
-	case Client::ITEM_ID_INVISIBILITY_POTION:
-	case Client::ITEM_ID_THUNDERBEW_POTION:
+	case Client::ITEM_ID_EDURUS_POTION:	//방어 물약
+	{
+		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(&m_DefensiveDesc.isStart); };
+		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
+	}
+	break;
+	case Client::ITEM_ID_FOCUS_POTION:	//쿨타임 물약
+	{
+		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(&m_CoolTimeDesc.isStart); };
+		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
+	}
+	break;
+	case Client::ITEM_ID_MAXIMA_POTION:	//공격력 물약
+	{
+		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(&m_DemegeDesc.isStart); };
+		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
+	}
+	break;
+	case Client::ITEM_ID_INVISIBILITY_POTION://투명 물약
+	{
+		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(nullptr); };
+		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
+	}
+	break;
+	case Client::ITEM_ID_THUNDERBEW_POTION: //번개구름 물약
+	{
+		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(nullptr); };
+		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
+	}
+	break;
 	case Client::ITEM_ID_FELIX_FELICIS_POTION:
 	{
+		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(nullptr); };
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
 	}
 	break;
@@ -3249,7 +3569,7 @@ void CPlayer::Go_Use_Item()
 
 void CPlayer::Go_Use_Potion()
 {
-	CUseItemState::USEITEMDESC UseItemDesc;
+	/*CUseItemState::USEITEMDESC UseItemDesc;
 
 	UseItemDesc.funcPotion = [&] {(*this).Add_Potion(); };
 
@@ -3261,10 +3581,18 @@ void CPlayer::Go_Use_Potion()
 	UseItemDesc.funcPotion = [&] {(*this).Drink_Heal_Potion(); };
 
 	if (UseItemDesc.eItem_Id == ITEM_ID_WIGGENWELD_POTION)
-		m_vecPotionParticle[0]->Play(m_pTransform->Get_Position());
+	{
+		//m_vecPotionParticle[0]->Play(m_pTransform->Get_Position());
+		//m_vecPotionParticle[1]->Play(m_pTransform->Get_Position());
+		//m_vecPotionParticle[2]->Play(m_pTransform->Get_Position());
+		for(_uint i = 0 ; i<4;++i)
+			m_vecPotionParticle[i]->Play(m_pTransform->Get_Position());
+
+		m_vecMeshEffect[0]->Play(m_pTransform->Get_Position());
+	}
 
 	if (UseItemDesc.eItem_Id == ITEM_ID_MAXIMA_POTION)
-		m_vecPotionParticle[1]->Play(m_pTransform->Get_Position());
+		m_vecPotionParticle[2]->Play(m_pTransform->Get_Position());
 
 
 	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
@@ -3275,7 +3603,7 @@ void CPlayer::Go_Use_Potion()
 		pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
 		ENDINSTANCE;
 		m_pStateContext->Set_StateMachine(TEXT("UseItem"), &UseItemDesc);
-	}
+	}*/
 }
 
 void CPlayer::Shot_Magic_Spell_Button_1()
@@ -3394,7 +3722,12 @@ void CPlayer::Free()
 		{
 			Safe_Release(m_vecPlayer_StateParicle.data()[i]);
 		}
+		for (auto& pMeshEffect : m_vecMeshEffect)
+		{
+			Safe_Release(pMeshEffect);
+		}
 
+		m_vecMeshEffect.clear();
 		m_vecCoolTimeRatio.clear();
 		m_vecSpellCheck.clear();
 	}

@@ -7,6 +7,7 @@
 #include "Trigger.h"
 #include "Dummy_NPC.h"
 #include "House_Elf.h"
+#include "FlyMan.h"
 
 #include "Cat.h"
 
@@ -51,17 +52,24 @@ void CLevel_Smith::Tick(_float fTimeDelta)
 		}
 	}
 
-	if (pGameInstance->Get_DIKeyState(DIK_F8, CInput_Device::KEY_DOWN))
+	if (pGameInstance->Get_DIKeyState(DIK_LSHIFT))
 	{
-		pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE));
-	}
-	if (pGameInstance->Get_DIKeyState(DIK_F10, CInput_Device::KEY_DOWN))
-	{
-		pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_VAULT));
-	}
-	if (pGameInstance->Get_DIKeyState(DIK_F11, CInput_Device::KEY_DOWN))
-	{
-		pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_SANCTUM));
+		if (pGameInstance->Get_DIKeyState(DIK_7, CInput_Device::KEY_DOWN))
+		{
+			pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE));
+		}
+		if (pGameInstance->Get_DIKeyState(DIK_8, CInput_Device::KEY_DOWN))
+		{
+			pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_VAULT));
+		}
+		if (pGameInstance->Get_DIKeyState(DIK_9, CInput_Device::KEY_DOWN))
+		{
+			pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_SKY));
+		}
+		if (pGameInstance->Get_DIKeyState(DIK_0, CInput_Device::KEY_DOWN))
+		{
+			pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_SANCTUM));
+		}
 	}
 
 	ENDINSTANCE;
@@ -76,11 +84,9 @@ HRESULT CLevel_Smith::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SMITH, TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Sky) in Level_Smith");
-		return E_FAIL;
-	}
+	//_bool isNight = true;
+	FAILED_CHECK_RETURN(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SMITH,
+		TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"), &g_isNight), E_FAIL)
 
 	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData3.ddd"))))
 	{
@@ -144,6 +150,19 @@ HRESULT CLevel_Smith::Ready_Layer_NPC(const _tchar* pLayerTag)
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Smith_Fig"), pLayerTag, TEXT("GameObject_Smith_Fig"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Smith_Fig)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	CFlyMan::FLYMANINITDESC FlymanInitDesc;
+#ifdef _DEBUG
+	FlymanInitDesc.isCheckPosition = true;
+#endif // _DEBUG
+	FlymanInitDesc.wstrAnimationTag = TEXT("Hu_Broom_Hover_Idle_anm");
+	FlymanInitDesc.WorldMatrix = XMMatrixRotationY(XMConvertToRadians(145.5f)) * XMMatrixTranslation(29.8f, 4.8f, 69.9f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_FlyMan"), pLayerTag, TEXT("GameObject_FlyMan"), &FlymanInitDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_FlyMan)");
 		ENDINSTANCE;
 		return E_FAIL;
 	}
@@ -220,6 +239,13 @@ HRESULT CLevel_Smith::Ready_Event(const _tchar* pLayerTag)
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Event_Smeade"), pLayerTag, TEXT("Event_Smeade"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Event_Smeade)");
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, 
+		TEXT("Prototype_GameObject_Event_Smeade_Next_Level"), pLayerTag, TEXT("Event_Smeade_Next_Level"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Event_Smeade_Next_Level)");
 		return E_FAIL;
 	}
 

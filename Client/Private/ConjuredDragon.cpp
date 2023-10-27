@@ -39,72 +39,98 @@ CConjuredDragon::CConjuredDragon(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 
 CConjuredDragon::CConjuredDragon(const CConjuredDragon& rhs)
 	: CEnemy(rhs)
+	, m_iLevel(rhs.m_iLevel)
 {
 }
 
-HRESULT CConjuredDragon::Initialize_Prototype()
+HRESULT CConjuredDragon::Initialize_Prototype(_uint iLevel)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
+
+	m_iLevel = iLevel;
 
 	BEGININSTANCE;
 	try
 	{
-		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle")))
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle")))
 		{
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle")
-				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/BlackSmokeIdle/"), LEVEL_SANCTUM))))
+			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle")
+				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/BlackSmokeIdle/"), m_iLevel))))
 				throw;
 		}
 
 		// Pulse
-		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Charge")))
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_Charge")))
 		{
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Charge")
-				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/Charge/"), LEVEL_SANCTUM))))
+			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_Charge")
+				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/Charge/"), m_iLevel))))
 				throw;
 		}
 
-		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit")))
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit")))
 		{
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit")
-				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/CircleEmit/"), LEVEL_SANCTUM))))
+			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit")
+				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/CircleEmit/"), m_iLevel))))
 				throw;
 		}
 
-		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Rock")))
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_Rock")))
 		{
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Rock")
-				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/Rock/"), LEVEL_SANCTUM))))
+			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_Rock")
+				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/Rock/"), m_iLevel))))
 				throw;
 		}
 
-		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_SplashWater")))
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_SplashWater")))
 		{
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_SplashWater")
-				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/SplashWater/"), LEVEL_SANCTUM))))
+			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_SplashWater")
+				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/SplashWater/"), m_iLevel))))
 				throw;
 		}
 
-		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_BoomWispy")))
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_BoomWispy")))
 		{
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_BoomWispy")
-				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/BoomWispy/"), LEVEL_SANCTUM))))
+			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_BoomWispy")
+				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/BoomWispy/"), m_iLevel))))
 				throw;
 		}
 
-		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_ImpulseSphere_Effect")))
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_ImpulseSphere_Effect")))
 		{
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_ImpulseSphere_Effect"),
-				CImpulseSphere_Effect::Create(m_pDevice, m_pContext, LEVEL_SANCTUM))))
+			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_ImpulseSphere_Effect"),
+				CImpulseSphere_Effect::Create(m_pDevice, m_pContext, m_iLevel))))
 				throw;
 		}
 
 		// Breath_Effect
-		if (nullptr == pGameInstance->Find_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Breath_Effect")))
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Breath_Effect")))
 		{
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Breath_Effect"),
-				CBreath_Effect::Create(m_pDevice, m_pContext, LEVEL_SANCTUM))))
+			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Breath_Effect"),
+				CBreath_Effect::Create(m_pDevice, m_pContext, m_iLevel))))
+				throw;
+		}
+
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_DragonInvin")))
+		{
+			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_DragonInvin")
+				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/DragonInvin/"), m_iLevel))))
+				throw;
+		}
+
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_DragonInvinMesh")))
+		{
+			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_DragonInvinMesh")
+				, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/DragonInvin/DragonInvin.ME"), m_iLevel))))
+				throw;
+		}
+
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_InvinBreakDust")))
+		{
+			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_InvinBreakDust")
+				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/InvinBreakDust/"), m_iLevel))))
 				throw;
 		}
 	}
@@ -113,9 +139,9 @@ HRESULT CConjuredDragon::Initialize_Prototype()
 		ENDINSTANCE;
 		return E_FAIL;
 	}
-	
 
-	pGameInstance->Read_CutSceneCamera(TEXT("Dragon_Enter"),TEXT("../../Resources/GameData/CutScene/Sanctum_Dragon_Enter.cut"));
+
+	pGameInstance->Read_CutSceneCamera(TEXT("Dragon_Enter"), TEXT("../../Resources/GameData/CutScene/Sanctum_Dragon_Enter.cut"));
 
 	ENDINSTANCE;
 
@@ -180,6 +206,10 @@ HRESULT CConjuredDragon::Initialize_Level(_uint iCurrentLevelIndex)
 
 void CConjuredDragon::Tick(_float fTimeDelta)
 {
+#ifdef _DEBUG
+	ADD_IMGUI([&] {Tick_Imgui(fTimeDelta); });
+#endif // _DEBUG
+
 	/* 행동 테스트용 코드 입네다 */
 	BEGININSTANCE;
 	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_PRESSING))
@@ -188,6 +218,15 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 		{
 			m_isSpawn = true;
 			//pGameInstance->Add_CutScene(TEXT("Dragon_Enter"));
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
+			m_isBreakInvincible = true;
+
+		if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN))
+		{
+			m_fInvincibleGauge = 100.f;
+			m_isInvincible = false;
 		}
 	}
 	ENDINSTANCE;
@@ -217,6 +256,9 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 	m_vOffsetPos = m_pTransform->Get_Position();
 	m_vOffsetPos.y += 10.f;
 	m_pEffect_BlackSmokeIdle->Get_Transform()->Set_Position(m_vOffsetPos);
+
+	m_pEffect_DragonInvin->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+	m_pEffect_DragonInvinMesh->Get_Transform()->Set_Position(m_vOffsetPos);
 
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
@@ -308,39 +350,44 @@ HRESULT CConjuredDragon::Render()
 	if (FAILED(__super::SetUp_ShaderResources()))
 		return E_FAIL;
 
+	FAILED_CHECK(m_pShaderCom->Bind_RawValue("g_vEmissiveStrength", &m_vEmissiveStrength, sizeof(m_vEmissiveStrength)));
+	FAILED_CHECK(m_pShaderCom->Bind_RawValue("g_fInvinRatio", &m_fInvinRatio, sizeof(m_fInvinRatio)));
+
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
+	//3 wing 4 body
+	/* Failed Render */
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
 		if (0 == i || 2 == i)
 			continue;
-		//3 wing 4 body
-		try /* Failed Render */
+
+		FAILED_CHECK(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", i));
+		string strPass = "AnimMesh_DragonInvin";
+		/*if (2 == i)
 		{
-			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", i)))
-				throw TEXT("Bind_BoneMatrices");
-
-			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, DIFFUSE)))
-				throw TEXT("Bind_Material Diffuse");
-
-			if (FAILED(m_pShaderCom->Begin("AnimMesh")))
-				throw TEXT("Shader Begin AnimMesh");
-
-			if (FAILED(m_pModelCom->Render(i)))
-				throw TEXT("Model Render");
-		}
-		catch (const _tchar* pErrorTag)
-		{
-			wstring wstrErrorMSG = TEXT("[CEnemy] Failed Render : ");
-			wstrErrorMSG += pErrorTag;
-			MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
-
-			return E_FAIL;
-		}
+			FAILED_CHECK(m_pModelCom->Bind_Material(m_pShaderCom, "g_EmissiveTexture", i, EMISSIVE));
+			strPass = "AnimMesh_DragonInvin";
+		}*/
+		FAILED_CHECK(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, DIFFUSE));
+		FAILED_CHECK(m_pShaderCom->Begin(strPass.data()));
+		FAILED_CHECK(m_pModelCom->Render(i));
 	}
 
 	return S_OK;
 }
+#ifdef _DEBUG
+void CConjuredDragon::Tick_Imgui(_float fTimeDelta)
+{
+	CImGui_Manager::NextWindow_LeftBottom();
+	ImGui::Begin("Emissive Color");
+	ImGui::DragFloat3("m_vEmissiveStrength", (_float*)&m_vEmissiveStrength, 0.01f, 0.f, 1.f);
+	ImGui::DragFloat("m_fInvinRatio", (_float*)&m_fInvinRatio, 0.01f, 0.f, 1.f);
+	ImGui::End();
+}
+#endif // _DEBUG
+
+
 
 void CConjuredDragon::Update_Invincible(const _float& fTimeDelta)
 {
@@ -402,11 +449,11 @@ void CConjuredDragon::EnergyBall_PhaseFinal(const _float& fTimeDelta)
 	_float3 vRight = m_pTransform->Get_Right();
 
 	_float fDirection = _float(rand() % 2 - 1);
-	_float fData = 5.f * fDirection;
+	_float fData = 8.f * fDirection;
 	vPosition += vLook * fData + vLook * GetRandomFloat(0.f, 2.f) * fData;
 
 	fDirection = _float(rand() % 2 - 1);
-	fData = 5.f * fDirection;
+	fData = 8.f * fDirection;
 	vPosition += vRight * fData + vRight * GetRandomFloat(0.f, 2.f) * fData;
 
 	vPosition.y += 5.f;
@@ -575,6 +622,26 @@ HRESULT CConjuredDragon::Add_Components_for_Shake()
 		m_pStep_Shake->Ready_Shake(fMaxDistance, fMinDistance, Camera_Shake_Desc.Shake_Info_Desc.fShakePower);
 
 
+		
+		Camera_Shake_Desc.eShake_Priority = CCamera_Manager::SHAKE_PRIORITY_1;
+		Camera_Shake_Desc.isDistanceOption = true;
+		Camera_Shake_Desc.pTransform = m_pTransform;
+		Camera_Shake_Desc.Shake_Info_Desc.eEase = CEase::IN_EXPO;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Axis = CCamera_Manager::SHAKE_AXIS_UP;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Power = CCamera_Manager::SHAKE_POWER_DECRECENDO;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Type = CCamera_Manager::SHAKE_TYPE_TRANSLATION;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakeDuration = 0.5f;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakePower = 0.05f;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakeSpeed = 10.0f;
+		Camera_Shake_Desc.Shake_Info_Desc.vShake_Axis_Set = _float3();
+
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Enemy_Camera_Shake"),
+			TEXT("Com_Step_Shake"), reinterpret_cast<CComponent**>(&m_pPulse_Shake), &Camera_Shake_Desc)))
+			throw TEXT("Com_Step_Shake");
+
+		m_pPulse_Shake->Ready_Shake(fMaxDistance, fMinDistance, Camera_Shake_Desc.Shake_Info_Desc.fShakePower);
+
+
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -591,25 +658,28 @@ HRESULT CConjuredDragon::Add_Components_for_Shake()
 
 HRESULT CConjuredDragon::Make_Notifies_for_Shake()
 {
-	function<void()> Func = [&] { m_pCamera_Shake_Hit_Terrain->RandomRightAxisShake(); };
-	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Hit_Terrain"), Func)))
-		return E_FAIL;
+	function<void()> Func;
+
+	Func = [&] { m_pCamera_Shake_Hit_Terrain->RandomRightAxisShake(); };
+	FAILED_CHECK(m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Hit_Terrain"), Func));
 
 	Func = [&] {m_pStep_Shake->RandomUpAxisShake(); };
 
-	m_pModelCom->Bind_Notifies(TEXT("Enter_Camera_Shake_Step_1"), Func);
-	m_pModelCom->Bind_Notifies(TEXT("Enter_Camera_Shake_Step_2"), Func);
+	FAILED_CHECK(m_pModelCom->Bind_Notifies(TEXT("Enter_Camera_Shake_Step_1"), Func));
+	FAILED_CHECK(m_pModelCom->Bind_Notifies(TEXT("Enter_Camera_Shake_Step_2"), Func));
+	
+	FAILED_CHECK(m_pModelCom->Bind_Notifies(TEXT("End_Camera_Shake_Step_1"), Func));
+	FAILED_CHECK(m_pModelCom->Bind_Notifies(TEXT("End_Camera_Shake_Step_2"), Func));
+	FAILED_CHECK(m_pModelCom->Bind_Notifies(TEXT("End_Camera_Shake_Step_3"), Func));
+	FAILED_CHECK(m_pModelCom->Bind_Notifies(TEXT("End_Camera_Shake_Step_4"), Func));
+	FAILED_CHECK(m_pModelCom->Bind_Notifies(TEXT("End_Camera_Shake_Step_5"), Func));
+	
+	FAILED_CHECK(m_pModelCom->Bind_Notifies(TEXT("Loop_Camera_Shake_Step_1"), Func));
+	FAILED_CHECK(m_pModelCom->Bind_Notifies(TEXT("Loop_Camera_Shake_Step_2"), Func));
+	FAILED_CHECK(m_pModelCom->Bind_Notifies(TEXT("Loop_Camera_Shake_Step_3"), Func));
 
-	m_pModelCom->Bind_Notifies(TEXT("End_Camera_Shake_Step_1"), Func);
-	m_pModelCom->Bind_Notifies(TEXT("End_Camera_Shake_Step_2"), Func);
-	m_pModelCom->Bind_Notifies(TEXT("End_Camera_Shake_Step_3"), Func);
-	m_pModelCom->Bind_Notifies(TEXT("End_Camera_Shake_Step_4"), Func);
-	m_pModelCom->Bind_Notifies(TEXT("End_Camera_Shake_Step_5"), Func);
-
-	m_pModelCom->Bind_Notifies(TEXT("Loop_Camera_Shake_Step_1"), Func);
-	m_pModelCom->Bind_Notifies(TEXT("Loop_Camera_Shake_Step_2"), Func);
-	m_pModelCom->Bind_Notifies(TEXT("Loop_Camera_Shake_Step_3"), Func);
-
+	Func = [&] {m_pPulse_Shake->RandomUpAxisShake(); };
+	FAILED_CHECK(m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Pulse"), Func));
 	return S_OK;
 }
 
@@ -759,7 +829,7 @@ HRESULT CConjuredDragon::Make_Notifies()
 	Func = [&] { this->Enter_Right_Wing_Attack(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Enter_Right_Wing_Attack"), Func)))
 		return E_FAIL;
-	
+
 	Func = [&] { this->Enter_Right_Wing_Hit_Terrain(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Enter_Right_Wing_Hit_Terrain"), Func)))
 		return E_FAIL;
@@ -796,13 +866,21 @@ HRESULT CConjuredDragon::Make_Notifies()
 	Func = [&] { this->Shot_Fireball_Black(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Shot_Fireball_Black"), Func)))
 		return E_FAIL;
-	
+
 	Func = [&] { this->Pulse_Charge(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Pulse_Charge"), Func)))
 		return E_FAIL;
 
 	Func = [&] { this->Pulse_Stop_Charge(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Pulse_Stop_Charge"), Func)))
+		return E_FAIL;
+
+	Func = [&] { this->Enter_Invin(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Enter_Invin"), Func)))
+		return E_FAIL;
+
+	Func = [&] { this->Exit_Invin(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Exit_Invin"), Func)))
 		return E_FAIL;
 
 	return S_OK;
@@ -1034,7 +1112,7 @@ HRESULT CConjuredDragon::Bind_HitMatrices()
 		return E_FAIL;
 	_float4x4 WeaponOffsetMatrix = pBone->Get_OffsetMatrix() * m_pModelCom->Get_PivotFloat4x4();
 	m_pWeapon_Head->Set_Offset_Matrix(WeaponOffsetMatrix);
-	
+
 	/* Setting Wing, Tail Bone Matrices */
 	DRAGONBONEDATA BoneData;
 	if (FAILED(m_pWeapon_Left_Wing->Set_Bone_Data(m_pModelCom)))
@@ -1053,42 +1131,57 @@ HRESULT CConjuredDragon::Add_Effects()
 {
 	try /* Check Add_Components */
 	{
-		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_ImpulseSphere_Effect"),
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_ImpulseSphere_Effect"),
 			TEXT("Com_ImpulseSphere_Effect"), reinterpret_cast<CComponent**>(&m_pEffect_ImpulseSphere))))
 			throw TEXT("Com_ImpulseSphere_Effect");
 
-		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Breath_Effect"),
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Breath_Effect"),
 			TEXT("Com_Breath_Effect"), reinterpret_cast<CComponent**>(&m_pEffect_Breath))))
 			throw TEXT("Com_Breath_Effect");
 
-		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle"),
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_BlackSmokeIdle"),
 			TEXT("Com_BlackSmokeIdle"), reinterpret_cast<CComponent**>(&m_pEffect_BlackSmokeIdle))))
 			throw TEXT("Com_BlackSmokeIdle");
 
-		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Charge"),
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_Charge"),
 			TEXT("Com_Pulse_Charge"), reinterpret_cast<CComponent**>(&m_pEffect_Pulse_Charge))))
 			throw TEXT("Com_Pulse_Charge");
 
-		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_SplashWater"),
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_SplashWater"),
 			TEXT("Com_Pulse_SplashWater"), reinterpret_cast<CComponent**>(&m_pEffect_Pulse_SplashWater))))
 			throw TEXT("Com_Pulse_SplashWater");
-		
-		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_Rock"),
+
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_Rock"),
 			TEXT("Com_Pulse_Rock"), reinterpret_cast<CComponent**>(&m_pEffect_Pulse_Rock))))
 			throw TEXT("Com_Pulse_Rock");
 
-		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit"),
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit"),
 			TEXT("Com_Pulse_CircleEmit"), reinterpret_cast<CComponent**>(&m_pEffect_Pulse_CircleEmit))))
 			throw TEXT("Com_Pulse_CircleEmit");
 
-		if (FAILED(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_Pulse_BoomWispy"),
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_BoomWispy"),
 			TEXT("Com_Pulse_BoomWispy"), reinterpret_cast<CComponent**>(&m_pEffect_Pulse_BoomWispy))))
 			throw TEXT("Com_Pulse_BoomWispy");
-		
+
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_DragonInvin"),
+			TEXT("Com_DragonInvin"), reinterpret_cast<CComponent**>(&m_pEffect_DragonInvin))))
+			throw TEXT("Com_DragonInvin");
+
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_DragonInvinMesh"),
+			TEXT("Com_DragonInvinMesh"), reinterpret_cast<CComponent**>(&m_pEffect_DragonInvinMesh))))
+			throw TEXT("Com_DragonInvinMesh");
+
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_InvinBreakDust"),
+			TEXT("Com_Particle_InvinBreakDust"), reinterpret_cast<CComponent**>(&m_pEffect_InvinBreakDust))))
+			throw TEXT("Com_Particle_InvinBreakDust");
+
 		m_pEffect_Pulse_Charge->Disable();
 		m_pEffect_Pulse_SplashWater->Disable();
 		m_pEffect_Pulse_Rock->Disable();
 		m_pEffect_Pulse_CircleEmit->Disable();
+		m_pEffect_DragonInvin->Disable();
+		m_pEffect_InvinBreakDust->Disable();
+		m_pEffect_DragonInvinMesh->Stop();
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -1160,7 +1253,7 @@ HRESULT CConjuredDragon::Make_NonSpawn(CRandomChoose* pRandomChoose)
 	}
 
 	ENDINSTANCE;
-	
+
 	return S_OK;
 }
 
@@ -1866,9 +1959,9 @@ HRESULT CConjuredDragon::Make_Ground_Attacks(_Inout_ CSequence* pSequence)
 		CSequence* pSequence_Attack_Pulse = { nullptr };
 		if (FAILED(Create_Behavior(pSequence_Attack_Pulse)))
 			throw TEXT("Failed Create_Behavior pSequence_Attack_Pulse");
-		CSequence* pSequence_Attack_AOE = { nullptr };
+		/*CSequence* pSequence_Attack_AOE = { nullptr };
 		if (FAILED(Create_Behavior(pSequence_Attack_AOE)))
-			throw TEXT("Failed Create_Behavior pSequence_Attack_AOE");
+			throw TEXT("Failed Create_Behavior pSequence_Attack_AOE");*/
 		CSequence* pSequence_Attack_Range = { nullptr };
 		if (FAILED(Create_Behavior(pSequence_Attack_Range)))
 			throw TEXT("Failed Create_Behavior pSequence_Attack_Range");
@@ -1901,8 +1994,8 @@ HRESULT CConjuredDragon::Make_Ground_Attacks(_Inout_ CSequence* pSequence)
 
 		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Pulse"), pSequence_Attack_Pulse, 0.1f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Pulse");
-		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_AOE"), pSequence_Attack_AOE, 0.1f)))
-			throw TEXT("Failed Assemble_Behavior Sequence_Attack_AOE");
+		/*if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_AOE"), pSequence_Attack_AOE, 0.1f)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_AOE");*/
 		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Range"), pSequence_Attack_Range, 0.7f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Range");
 		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Melee"), pSequence_Attack_Melee, 0.1f)))
@@ -1910,8 +2003,8 @@ HRESULT CConjuredDragon::Make_Ground_Attacks(_Inout_ CSequence* pSequence)
 
 		if (FAILED(Make_Ground_Attack_Pulse(pSequence_Attack_Pulse)))
 			throw TEXT("Failed Make_Ground_Attack_Pulse");
-		if (FAILED(Make_Ground_Attack_AOE(pSequence_Attack_AOE)))
-			throw TEXT("Failed Make_Ground_Attack_AOE");
+		/*if (FAILED(Make_Ground_Attack_AOE(pSequence_Attack_AOE)))
+			throw TEXT("Failed Make_Ground_Attack_AOE");*/
 		if (FAILED(Make_Ground_Attacks_Range(pSequence_Attack_Range)))
 			throw TEXT("Failed Make_Ground_Attacks_Range");
 		if (FAILED(Make_Ground_Attacks_Melee(pSequence_Attack_Melee)))
@@ -1997,7 +2090,7 @@ HRESULT CConjuredDragon::Make_Ground_Attacks_Melee(_Inout_ CSequence* pSequence)
 		__debugbreak();
 
 		ENDINSTANCE;
-		
+
 		return E_FAIL;
 	}
 
@@ -2749,7 +2842,7 @@ void CConjuredDragon::Enter_Left_Wing_Hit_Terrain()
 }
 
 void CConjuredDragon::Enter_Left_Wing_Attack()
-{ 
+{
 	m_pWeapon_Left_Wing->On_Collider_Attack();
 }
 
@@ -2766,6 +2859,27 @@ void CConjuredDragon::Enter_Right_Wing_Hit_Terrain()
 void CConjuredDragon::Enter_Tail_Attack()
 {
 	m_pWeapon_Tail->On_Collider_Attack();
+}
+
+void CConjuredDragon::Enter_Invin()
+{
+	m_pEffect_DragonInvin->Get_VelocityOverLifetimeModuleRef().fRadial = 0.f;
+	m_pEffect_DragonInvin->Play(m_pTransform->Get_Position());
+	m_pEffect_DragonInvinMesh->Play(m_vOffsetPos);
+	m_pPulse_Shake->RandomRightAxisShake();
+	m_pRenderer->Set_ScreenRadial(true, 0.5f, 0.2f);
+	m_vEmissiveStrength.x = 0.22f;
+}
+
+void CConjuredDragon::Exit_Invin()
+{
+	m_pEffect_DragonInvin->Stop();
+	m_pEffect_DragonInvin->Get_VelocityOverLifetimeModuleRef().fRadial = 100.f;
+	m_pEffect_DragonInvinMesh->Stop();
+	m_pEffect_InvinBreakDust->Play(m_vOffsetPos);
+	m_pPulse_Shake->RandomRightAxisShake();
+	m_pRenderer->Set_ScreenRadial(true, 0.5f, 0.2f);
+	m_vEmissiveStrength.x = 0.f;
 }
 
 void CConjuredDragon::Shot_Fireball_Black()
@@ -2793,7 +2907,7 @@ void CConjuredDragon::On_Breath()
 {
 	if (nullptr != m_pBreath)
 		m_pBreath->On_Breath();
-	
+
 	m_pEffect_Breath->Play(&m_vHeadPosition, &m_vTargetPosition, -34.f);
 }
 
@@ -2803,7 +2917,7 @@ void CConjuredDragon::Off_Breath()
 		m_pBreath->Off_Breath();
 
 	m_pEffect_Breath->Stop();
-}
+}                                                     
 
 void CConjuredDragon::Action_Pulse()
 {
@@ -2818,11 +2932,14 @@ void CConjuredDragon::Action_Pulse()
 	m_pPulse->Reset(PulseInitDesc);
 
 	m_pEffect_ImpulseSphere->Play(m_vOffsetPos, m_pPlayer->Get_Transform()->Get_Position().y);
-	m_pEffect_Pulse_BoomWispy->Play(m_vOffsetPos);	
+	m_pEffect_Pulse_BoomWispy->Play(m_vOffsetPos);
+	m_pPulse_Shake->RandomRightAxisShake();
+	m_pRenderer->Set_ScreenRadial(true, 0.5f, 0.2f);
 }
 
 void CConjuredDragon::Pulse_Charge()
 {
+	m_pRenderer->Set_ScreenRadial(true, 0.1f, 1.f);
 	m_pEffect_Pulse_Charge->Play(m_vOffsetPos);
 }
 
@@ -2832,11 +2949,11 @@ void CConjuredDragon::Pulse_Stop_Charge()
 	m_pEffect_Pulse_CircleEmit->Stop();
 }
 
-CConjuredDragon* CConjuredDragon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CConjuredDragon* CConjuredDragon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)
 {
 	CConjuredDragon* pInstance = New CConjuredDragon(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize_Prototype(iLevel)))
 	{
 		MSG_BOX("Failed to Created CConjuredDragon");
 		Safe_Release(pInstance);
@@ -2862,8 +2979,8 @@ void CConjuredDragon::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pBreath);
 	Safe_Release(m_pEnergyBall);
+	Safe_Release(m_pBreath);
 	Safe_Release(m_pPulse);
 
 	Safe_Release(m_pMagicSlot);
@@ -2880,8 +2997,12 @@ void CConjuredDragon::Free()
 	Safe_Release(m_pEffect_Pulse_SplashWater);
 	Safe_Release(m_pEffect_Pulse_BoomWispy);
 	Safe_Release(m_pEffect_ImpulseSphere);
+	Safe_Release(m_pEffect_DragonInvin);
+	Safe_Release(m_pEffect_InvinBreakDust);
+	Safe_Release(m_pEffect_DragonInvinMesh);
 
 	Safe_Release(m_pEnter_Shake);
 	Safe_Release(m_pCamera_Shake_Hit_Terrain);
 	Safe_Release(m_pStep_Shake);
+	Safe_Release(m_pPulse_Shake);
 }

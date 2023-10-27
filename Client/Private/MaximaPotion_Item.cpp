@@ -34,6 +34,9 @@ HRESULT CMaximaPotion_Item::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	m_Clone_Desc.pIsStartTiming = static_cast<_bool*>(pArg);
+
+
 	return S_OK;
 }
 
@@ -55,12 +58,20 @@ HRESULT CMaximaPotion_Item::Render()
 void CMaximaPotion_Item::Use(_float3 vPlayPos)
 {
 	__super::Use(vPlayPos);
+
+	m_pPlayer->DamageTiming();
+
+#ifdef _DEBUG
+	
 	cout << "강해졌어요" << endl;
+
+#endif // _DEBUG
+
 	// 메쉬 올리기.
 	//m_pPlayerInformation->Get_Health()->Heal(m_fRecoveryAmount);
 }
 
-void CMaximaPotion_Item::CreateTool()
+void CMaximaPotion_Item::CreateTool(void* pArg)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	_uint iLevelIndex = pGameInstance->Get_CurrentLevelIndex();
@@ -71,7 +82,7 @@ void CMaximaPotion_Item::CreateTool()
 		iLevelIndex,
 		TEXT("Prototype_GameObject_MaximaPotion"),
 		TEXT("Layer_BackGround"),
-		Generate_HashtagW().c_str())))
+		Generate_HashtagW().c_str(), pArg)))
 	{
 		__debugbreak();
 		Safe_Release(pGameInstance);

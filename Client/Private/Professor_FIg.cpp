@@ -1,6 +1,6 @@
 #include "Professor_Fig.h"
-#include "GameInstance.h"
-#include "PhysXConverter.h"
+
+#include "Client_GameInstance_Functions.h"
 
 #include "Player.h"
 #include "Action.h"
@@ -255,11 +255,13 @@ HRESULT CProfessor_Fig::Make_AI()
 		if (FAILED(m_pRootBehavior->Add_Type("pModel", m_pModelCom)))
 			throw TEXT("Failed Add_Type pModel");
 		if (FAILED(m_pRootBehavior->Add_Type("isRangeInEnemy", &m_isRangeInEnemy)))
-			throw TEXT("Failed Add_Type pModel"); 
+			throw TEXT("Failed Add_Type pModel");
 		if (FAILED(m_pRootBehavior->Add_Type("isChangeAnimation", &m_isChangeAnimation)))
 			throw TEXT("Failed Add_Type isChangeAnimation");
 		if (FAILED(m_pRootBehavior->Add_Type("isFinishCombat", &m_isFinishCombat)))
 			throw TEXT("Failed Add_Type isFinishCombat");
+		if (FAILED(m_pRootBehavior->Add_Type("isSpawn", &m_isSpawn)))
+			throw TEXT("Failed Add_Type isSpawn");
 
 		if (FAILED(m_pRootBehavior->Add_Type("fTargetDistance", _float())))
 			throw TEXT("Failed Add_Type fTargetDistance");
@@ -272,20 +274,40 @@ HRESULT CProfessor_Fig::Make_AI()
 			throw TEXT("Failed Add_Type cppTarget");
 #pragma endregion //Add_Types
 
-		CSelector* pSelector = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
-		if (nullptr == pSelector)
-			throw TEXT("pSelector is nullptr");
+		/* Craete Child Behaviors */
+		CSelector* pSelector = { nullptr };
+		if (FAILED(Create_Behavior(pSelector)))
+			throw TEXT("Failed Create_Behavior pSelector");
 
-		CSelector* pSelector_NonCombat = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
-		if (nullptr == pSelector_NonCombat)
-			throw TEXT("pSelector_NonCombat is nullptr");
-		CSelector* pSelector_Combat = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
-		if (nullptr == pSelector_Combat)
-			throw TEXT("pSelector_Combat is nullptr");
+		CAction* pAction_Break = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Break)))
+			throw TEXT("Failed Create_Behavior pAction_Break");
+		CSelector* pSelector_NonCombat = { nullptr };
+		if (FAILED(Create_Behavior(pSelector_NonCombat)))
+			throw TEXT("Failed Create_Behavior pSelector_NonCombat");
+		CSelector* pSelector_Combat = { nullptr };
+		if (FAILED(Create_Behavior(pSelector_Combat)))
+			throw TEXT("Failed Create_Behavior pSelector_Combat");
 
+		/* Set Decorators */
+		pAction_Break->Add_Decorator([&](CBlackBoard* pBlackBaord)->_bool
+			{
+				_bool* pIsSpawn = { nullptr };
+				if (FAILED(pBlackBaord->Get_Type("isSpawn", pIsSpawn)))
+					return false;
+
+				return false == *pIsSpawn;
+			});
+
+		/* Set Options */
+		pAction_Break->Set_Options(TEXT("Idle_Combat_Show"), m_pModelCom);
+
+		/* Assemble Behaviors */
 		if (FAILED(m_pRootBehavior->Assemble_Behavior(TEXT("Selector"), pSelector)))
 			throw TEXT("Failed Assemble_Behavior Selector");
 
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Action_Break"), pAction_Break)))
+			throw TEXT("Failed Assemble_Behavior Action_Break");
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_NonCombat"), pSelector_NonCombat)))
 			throw TEXT("Failed Assemble_Behavior Selector_NonCombat");
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_Combat"), pSelector_Combat)))
@@ -658,37 +680,38 @@ HRESULT CProfessor_Fig::Make_Turns(_Inout_ CSequence* pSequence)
 	try /* Failed Check Make_Turns */
 	{
 		/* Make Child Behaviors */
-		CCheck_Degree* pTsk_Check_Degree = dynamic_cast<CCheck_Degree*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Degree")));
-		if (nullptr == pTsk_Check_Degree)
-			throw TEXT("pTsk_Check_Degree is nullptr");
-		CSelector_Degree* pSelector_Degree = dynamic_cast<CSelector_Degree*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector_Degree")));
-		if (nullptr == pSelector_Degree)
-			throw TEXT("pSelector_Choose_Degree is nullptr");
+		CCheck_Degree* pTsk_Check_Degree = { nullptr };
+		if (FAILED(Create_Behavior(pTsk_Check_Degree)))
+			throw TEXT("Failed Create_Behavior pTsk_Check_Degree");
+		CSelector_Degree* pSelector_Degree = { nullptr };
+		if (FAILED(Create_Behavior(pSelector_Degree)))
+			throw TEXT("Failed Create_Behavior pSelector_Degree");
 
-		CAction* pAction_Right_45 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_45)
-			throw TEXT("pAction_Right_45 is nullptr");
-		CAction* pAction_Left_45 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_45)
-			throw TEXT("pAction_Left_45 is nullptr");
-		CAction* pAction_Left_90 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_90)
-			throw TEXT("pAction_Left_90 is nullptr");
-		CAction* pAction_Right_90 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_90)
-			throw TEXT("pAction_Right_90 is nullptr");
-		CAction* pAction_Left_135 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_135)
-			throw TEXT("pAction_Left_135 is nullptr");
-		CAction* pAction_Right_135 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_135)
-			throw TEXT("pAction_Right_135 is nullptr");
-		CAction* pAction_Left_180 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_180)
-			throw TEXT("pAction_Left_180 is nullptr");
-		CAction* pAction_Right_180 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_180)
-			throw TEXT("pAction_Right_180 is nullptr");
+		CAction* pAction_Right_45 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Right_45)))
+			throw TEXT("Failed Create_Behavior pAction_Right_45");
+		CAction* pAction_Left_45 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Left_45)))
+			throw TEXT("Failed Create_Behavior pAction_Left_45");
+		CAction* pAction_Left_90 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Left_90)))
+			throw TEXT("Failed Create_Behavior pAction_Left_90");
+		CAction* pAction_Right_90 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Right_90)))
+			throw TEXT("Failed Create_Behavior pAction_Right_90");
+		CAction* pAction_Left_135 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Left_135)))
+			throw TEXT("Failed Create_Behavior pAction_Left_135");
+		CAction* pAction_Right_135 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Right_135)))
+			throw TEXT("Failed Create_Behavior pAction_Right_135");
+		CAction* pAction_Left_180 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Left_180)))
+			throw TEXT("Failed Create_Behavior pAction_Left_180");
+		CAction* pAction_Right_180 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Right_180)))
+			throw TEXT("Failed Create_Behavior pAction_Right_180");
+
 		/* Set Decorations */
 
 		/* Set Options */
@@ -753,9 +776,9 @@ HRESULT CProfessor_Fig::Make_Non_Combat(_Inout_ CSelector* pSelector)
 			throw TEXT("Parameter pSelector is nullptr");
 
 		/* Make Child Behaviors */
-		CSequence* pSequence_Turns = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Turns)
-			throw TEXT("pSequence_Turns is nullptr");
+		CSequence* pSequence_Turns = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Turns)))
+			throw TEXT("Failed Create_Behavior pSequence_Turns");
 
 		/* Set Decorations */
 		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -814,18 +837,18 @@ HRESULT CProfessor_Fig::Make_Combat(_Inout_ CSelector* pSelector)
 			throw TEXT("Parameter pSelector is nullptr");
 
 		/* Make Child Behaviors */
-		CSequence* pSequence_Attack_Degree = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_Degree)
-			throw TEXT("pSequence_Attack_Degree is nullptr");
-		CSequence* pSequence_Attack_Combo1 = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_Combo1)
-			throw TEXT("pSequence_Attack_Combo1 is nullptr");
-		CAction* pAction_Levioso = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Levioso)
-			throw TEXT("pAction_Levioso is nullptr");
-		CAction* pAction_Protego = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Protego)
-			throw TEXT("pAction_Protego is nullptr");
+		CSequence* pSequence_Attack_Degree = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Attack_Degree)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Degree");
+		CSequence* pSequence_Attack_Combo1 = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Attack_Combo1)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Combo1");
+		CAction* pAction_Levioso = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Levioso)))
+			throw TEXT("Failed Create_Behavior pAction_Levioso");
+		CAction* pAction_Protego = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Protego)))
+			throw TEXT("Failed Create_Behavior pAction_Protego");
 
 		/* Set Decorations */
 		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -884,18 +907,18 @@ HRESULT CProfessor_Fig::Make_Attack_Combo1(_Inout_ CSequence* pSequence)
 			throw TEXT("Parameter pSequence is nullptr");
 
 		/* Make Child Behaviors */
-		CSequence_Attack* pAttack_Combo1 = dynamic_cast<CSequence_Attack*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Attack")));
-		if (nullptr == pAttack_Combo1)
-			throw TEXT("pAttack_Combo1 is nullptr");
-		CSequence_Attack* pAttack_Combo2 = dynamic_cast<CSequence_Attack*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Attack")));
-		if (nullptr == pAttack_Combo2)
-			throw TEXT("pAttack_Combo2 is nullptr");
-		CSequence_Attack* pAttack_Combo3 = dynamic_cast<CSequence_Attack*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Attack")));
-		if (nullptr == pAttack_Combo3)
-			throw TEXT("pAttack_Combo3 is nullptr");
-		CSequence_Attack* pAttack_Combo4 = dynamic_cast<CSequence_Attack*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Attack")));
-		if (nullptr == pAttack_Combo4)
-			throw TEXT("pAttack_Combo4 is nullptr");
+		CSequence_Attack* pAttack_Combo1 = { nullptr };
+		if (FAILED(Create_Behavior(pAttack_Combo1)))
+			throw TEXT("Failed Create_Behavior pAttack_Combo1");
+		CSequence_Attack* pAttack_Combo2 = { nullptr };
+		if (FAILED(Create_Behavior(pAttack_Combo2)))
+			throw TEXT("Failed Create_Behavior pAttack_Combo2");
+		CSequence_Attack* pAttack_Combo3 = { nullptr };
+		if (FAILED(Create_Behavior(pAttack_Combo3)))
+			throw TEXT("Failed Create_Behavior pAttack_Combo3");
+		CSequence_Attack* pAttack_Combo4 = { nullptr };
+		if (FAILED(Create_Behavior(pAttack_Combo4)))
+			throw TEXT("Failed Create_Behavior pAttack_Combo4");
 
 		/* Set Decorations */
 
@@ -943,37 +966,37 @@ HRESULT CProfessor_Fig::Make_Attack_Degree(_Inout_ CSequence* pSequence)
 	try /* Failed Check Make_Attack_Degree */
 	{
 		/* Make Child Behaviors */
-		CCheck_Degree* pTsk_Check_Degree = dynamic_cast<CCheck_Degree*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Degree")));
-		if (nullptr == pTsk_Check_Degree)
-			throw TEXT("pTsk_Check_Degree is nullptr");
-		CSelector_Degree* pSelector_Degree = dynamic_cast<CSelector_Degree*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector_Degree")));
-		if (nullptr == pSelector_Degree)
-			throw TEXT("pSelector_Choose_Degree is nullptr");
+		CCheck_Degree* pTsk_Check_Degree = { nullptr };
+		if (FAILED(Create_Behavior(pTsk_Check_Degree)))
+			throw TEXT("Failed Create_Behavior pTsk_Check_Degree");
+		CSelector_Degree* pSelector_Degree = { nullptr };
+		if (FAILED(Create_Behavior(pSelector_Degree)))
+			throw TEXT("Failed Create_Behavior pSelector_Degree");
 
-		CAction* pAction_Right_45 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_45)
-			throw TEXT("pAction_Right_45 is nullptr");
-		CAction* pAction_Left_45 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_45)
-			throw TEXT("pAction_Left_45 is nullptr");
-		CAction* pAction_Left_90 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_90)
-			throw TEXT("pAction_Left_90 is nullptr");
-		CAction* pAction_Right_90 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_90)
-			throw TEXT("pAction_Right_90 is nullptr");
-		CAction* pAction_Left_135 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_135)
-			throw TEXT("pAction_Left_135 is nullptr");
-		CAction* pAction_Right_135 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_135)
-			throw TEXT("pAction_Right_135 is nullptr");
-		CAction* pAction_Left_180 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_180)
-			throw TEXT("pAction_Left_180 is nullptr");
-		CAction* pAction_Right_180 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_180)
-			throw TEXT("pAction_Right_180 is nullptr");
+		CAction* pAction_Right_45 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Right_45)))
+			throw TEXT("Failed Create_Behavior pAction_Right_45");
+		CAction* pAction_Left_45 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Left_45)))
+			throw TEXT("Failed Create_Behavior pAction_Left_45");
+		CAction* pAction_Left_90 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Left_90)))
+			throw TEXT("Failed Create_Behavior pAction_Left_90");
+		CAction* pAction_Right_90 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Right_90)))
+			throw TEXT("Failed Create_Behavior pAction_Right_90");
+		CAction* pAction_Left_135 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Left_135)))
+			throw TEXT("Failed Create_Behavior pAction_Left_135");
+		CAction* pAction_Right_135 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Right_135)))
+			throw TEXT("Failed Create_Behavior pAction_Right_135");
+		CAction* pAction_Left_180 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Left_180)))
+			throw TEXT("Failed Create_Behavior pAction_Left_180");
+		CAction* pAction_Right_180 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Right_180)))
+			throw TEXT("Failed Create_Behavior pAction_Right_180");
 		/* Set Decorations */
 
 		/* Set Options */
@@ -1102,6 +1125,7 @@ void CProfessor_Fig::Tick_Script(_float fTimeDelta)
 			Safe_AddRef(pQuest_Manager);
 			pQuest_Manager->Clear_Quest(TEXT("Quest_Save_Fig"));
 			Safe_Release(pQuest_Manager);
+			g_isNight = true;
 		}
 	}
 }
@@ -1142,16 +1166,13 @@ void CProfessor_Fig::Free()
 {
 	__super::Free();
 
-	if (true == m_isCloned)
-	{
-		Safe_Release(m_pModelCom);
-		Safe_Release(m_pShaderCom);
-		Safe_Release(m_pShadowShaderCom);
-		Safe_Release(m_pRenderer);
-		Safe_Release(m_pMagicSlot);
-		Safe_Release(m_pRigidBody);
-		Safe_Release(m_pRootBehavior);
-		Safe_Release(m_pWeapon);
-		Safe_Release(m_pScript);
-	}
+	Safe_Release(m_pRootBehavior);
+	Safe_Release(m_pModelCom);
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pShadowShaderCom);
+	Safe_Release(m_pRenderer);
+	Safe_Release(m_pMagicSlot);
+	Safe_Release(m_pRigidBody);
+	Safe_Release(m_pWeapon);
+	Safe_Release(m_pScript);
 }

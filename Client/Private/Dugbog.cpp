@@ -84,6 +84,20 @@ HRESULT CDugbog::Initialize_Level(_uint iCurrentLevelIndex)
 	m_DarkAuraBoneMatrix[1] = m_pModelCom->Get_Bone_Index(21)->Get_CombinedTransformationMatrixPtr();
 	m_DarkAuraBoneMatrix[2] = m_pModelCom->Get_Bone_Index(98)->Get_CombinedTransformationMatrixPtr();
 
+	BEGININSTANCE;
+
+	auto pNPCLayer = pGameInstance->Find_Components_In_Layer(iCurrentLevelIndex, TEXT("Layer_NPC"));
+
+	for (auto Pair : *pNPCLayer)
+	{
+		wstring wstrObjTag = Pair.first;
+
+		if (wstring::npos != wstrObjTag.find(TEXT("Professor_Fig")))
+			m_RangeInEnemies.emplace(wstrObjTag, static_cast<CGameObject*>(Pair.second));
+	}
+
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
@@ -99,10 +113,11 @@ void CDugbog::Tick(_float fTimeDelta)
 
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
-	
+
 	for (_uint i = 0; i < m_DarkAura.size(); i++)
 	{
-		m_DarkAura[i]->Get_Transform()->Set_Position(m_DarkAuraBoneMatrix[i]->Translation());
+		if(nullptr != m_DarkAura[i])
+			m_DarkAura[i]->Get_Transform()->Set_Position(m_DarkAuraBoneMatrix[i]->Translation());
 	}
 }
 
@@ -113,8 +128,6 @@ void CDugbog::Late_Tick(_float fTimeDelta)
 
 void CDugbog::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	__super::OnCollisionEnter(CollisionEventDesc);
-
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 
@@ -147,18 +160,6 @@ void CDugbog::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			m_isHitAttack = true;
 
 		m_iCurrentSpell |= eBuff;
-	}
-
-	/* Collision Player Fig */
-	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
-	{
-		if (false == IsEnemy(wstrObjectTag))
-			return;
-
-		m_isSpawn = true;
-		auto iter = m_RangeInEnemies.find(wstrObjectTag);
-		if (iter == m_RangeInEnemies.end())
-			m_RangeInEnemies.emplace(wstrObjectTag, CollisionEventDesc.pOtherOwner);
 	}
 }
 
@@ -242,7 +243,7 @@ HRESULT CDugbog::Make_Notifies_for_Shake()
 	function<void()> func = [&] {m_pDescendo_Shake->RandomUpAxisShake(); };
 
 	m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Descendo"), func);
-	
+
 	return S_OK;
 }
 
@@ -398,26 +399,6 @@ HRESULT CDugbog::Add_Components()
 
 		m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
 
-		/* For.Collider Enemy_Range */
-		RigidBodyDesc.isStatic = true;
-		RigidBodyDesc.isTrigger = true;
-		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
-		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.5f, 0.f);
-		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, 0.f);
-		RigidBodyDesc.fStaticFriction = 0.f;
-		RigidBodyDesc.fDynamicFriction = 1.f;
-		RigidBodyDesc.fRestitution = 0.f;
-		PxSphereGeometry pSphereGeomatry2 = PxSphereGeometry(7.f);
-		RigidBodyDesc.pGeometry = &pSphereGeomatry2;
-		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
-		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
-		RigidBodyDesc.pOwnerObject = this;
-		RigidBodyDesc.eThisCollsion = COL_ENEMY_RANGE;
-		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
-		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Range");
-		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
-			throw TEXT("Failed Create_Collider");
-
 		/* For.Collider Enemy_Attack_Body */
 		RigidBodyDesc.isStatic = true;
 		RigidBodyDesc.isTrigger = true;
@@ -428,7 +409,7 @@ HRESULT CDugbog::Add_Components()
 		RigidBodyDesc.fDynamicFriction = 1.f;
 		RigidBodyDesc.fRestitution = 0.f;
 		PxSphereGeometry pSphereGeomatry3 = PxSphereGeometry(1.f);
-		RigidBodyDesc.pGeometry = &pSphereGeomatry2;
+		RigidBodyDesc.pGeometry = &pSphereGeomatry3;
 		RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
 		RigidBodyDesc.pOwnerObject = this;
@@ -547,18 +528,12 @@ HRESULT CDugbog::Make_Idle_Break(_Inout_ CRandomChoose* pRandomChoose)
 			throw TEXT("Parameter pRandomChoose is nullptr");
 
 		/* Create Child Behaviors */
-		CAction* pAction_Hide_1 = nullptr;
-		if (FAILED(Create_Behavior(pAction_Hide_1)))
-			throw TEXT("Failed Create_Behavior pAction_Hide_1");
-		CAction* pAction_Hide_2 = nullptr;
-		if (FAILED(Create_Behavior(pAction_Hide_2)))
-			throw TEXT("Failed Create_Behavior pAction_Hide_2");
-		CAction* pAction_Hide_3 = nullptr;
-		if (FAILED(Create_Behavior(pAction_Hide_3)))
-			throw TEXT("Failed Create_Behavior pAction_Hide_3");
-		CAction* pAction_Hide_4 = nullptr;
-		if (FAILED(Create_Behavior(pAction_Hide_4)))
-			throw TEXT("Failed Create_Behavior pAction_Hide_4");
+		CAction* pAction_1 = nullptr;
+		if (FAILED(Create_Behavior(pAction_1)))
+			throw TEXT("Failed Create_Behavior pAction_1");
+		CAction* pAction_2 = nullptr;
+		if (FAILED(Create_Behavior(pAction_2)))
+			throw TEXT("Failed Create_Behavior pAction_2");
 
 		/* Set Decoretors */
 		pRandomChoose->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -575,20 +550,14 @@ HRESULT CDugbog::Make_Idle_Break(_Inout_ CRandomChoose* pRandomChoose)
 			});
 
 		/* Set Options */
-		pAction_Hide_1->Set_Options(TEXT("Hide_1"), m_pModelCom);
-		pAction_Hide_2->Set_Options(TEXT("Hide_2"), m_pModelCom);
-		pAction_Hide_3->Set_Options(TEXT("Hide_3"), m_pModelCom);
-		pAction_Hide_4->Set_Options(TEXT("Hide_4"), m_pModelCom);
+		pAction_1->Set_Options(TEXT("Taunt_1"), m_pModelCom);
+		pAction_2->Set_Options(TEXT("Taunt_2"), m_pModelCom);
 
 		/* Assemble Behaviors */
-		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Hide_1"), pAction_Hide_1, 0.25f)))
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Hide_1"), pAction_1, 0.5f)))
 			throw TEXT("Failed Assemble_Behavior Action_Hide_1");
-		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Hide_2"), pAction_Hide_2, 0.25f)))
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Hide_2"), pAction_2, 0.5f)))
 			throw TEXT("Failed Assemble_Behavior Action_Hide_2");
-		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Hide_3"), pAction_Hide_3, 0.25f)))
-			throw TEXT("Failed Assemble_Behavior Action_Hide_3");
-		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Hide_4"), pAction_Hide_4, 0.25f)))
-			throw TEXT("Failed Assemble_Behavior Action_Hide_4");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -958,7 +927,7 @@ HRESULT CDugbog::Make_Check_Spell(_Inout_ CSelector* pSelector)
 
 		/* Set_Options */
 		pSequence_Levitate->Set_Option(6.f, 1.2f);
-		
+
 		/* Levioso */
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Levitate"), pSequence_Levitate)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Levitate");
@@ -1820,7 +1789,7 @@ HRESULT CDugbog::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 		if (nullptr == pSequence)
 			throw TEXT("Parameter pSequence is nullptr");
 
-		if(FAILED(__super::Make_Fly_Descendo(pSequence)))
+		if (FAILED(__super::Make_Fly_Descendo(pSequence)))
 			throw TEXT("Failed __super Make_Fly_Descendo");
 
 		/* Create Child Behaviors */
@@ -1851,7 +1820,9 @@ HRESULT CDugbog::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 				if (FAILED(pBlackBoard->Get_Type("pHealth", pHealth)))
 					return false;
 
-				pHealth->Damaged(50);
+				Print_Damage_Font(200);
+
+				pHealth->Damaged(200);
 
 				return true;
 			});
@@ -1950,13 +1921,10 @@ CGameObject* CDugbog::Clone(void* pArg)
 
 void CDugbog::Free()
 {
-	if (m_isCloned)
-	{
-		for (_uint i = 0; i < m_DarkAura.size(); i++)
-		{
-			Safe_Release(m_DarkAura[i]);
-			Safe_Release(m_pDescendo_Shake);
-		}
-	}
+	for (_uint i = 0; i < m_DarkAura.size(); i++)
+		Safe_Release(m_DarkAura[i]);
+
+	Safe_Release(m_pDescendo_Shake);
+
 	__super::Free();
 }

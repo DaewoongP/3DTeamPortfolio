@@ -1,9 +1,11 @@
 #include "Level_Sanctum.h"
 #include"GameInstance.h"
 
+#include "Level_Loading.h"
 #include"MapObject.h"
 #include"MapObject_Ins.h"
 #include"Player.h"
+#include "Event_Spawn.h"
 
 CLevel_Sanctum::CLevel_Sanctum(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) : CLevel(pDevice, pContext)
 {
@@ -42,6 +44,14 @@ void CLevel_Sanctum::Tick(_float fTimeDelta)
 		}
 	}
 
+	if (pGameInstance->Get_DIKeyState(DIK_LSHIFT))
+	{
+		if (pGameInstance->Get_DIKeyState(DIK_BACKSPACE, CInput_Device::KEY_DOWN))
+		{
+			pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_SMITH));
+		}
+	}
+
 	ENDINSTANCE;
 
 #ifdef _DEBUG
@@ -54,11 +64,9 @@ HRESULT CLevel_Sanctum::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SANCTUM, TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Sky)");
-		return E_FAIL;
-	}
+	_bool isNight = true;
+	FAILED_CHECK_RETURN(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SANCTUM,
+		TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"), &isNight), E_FAIL)
 
 	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData4.ddd"))))
 	{
@@ -123,7 +131,7 @@ HRESULT CLevel_Sanctum::Ready_Layer_Monsters(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	//Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Sanctum.mon"));
+	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Sanctum.mon"));
 
 	ENDINSTANCE;
 
@@ -170,9 +178,41 @@ HRESULT CLevel_Sanctum::Ready_Events(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_Event_Enter_Sanctum"), pLayerTag, TEXT("Event_Enter_Sanctum"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Event_Enter_Sanctum)");
+		return E_FAIL;
+	}
+
+	CEvent_Spawn::INITEVENTSPAWN InitSpawnDesc;
+	InitSpawnDesc.eMonsterLevel = LEVEL_SANCTUM;
+	InitSpawnDesc.wstrSpawnEnemyComponentTag = TEXT("Round_1");
+	InitSpawnDesc.vTriggerWorldPosition = _float3(1.7f, 0.f, 41.1f);
+	InitSpawnDesc.vTriggerSize = _float3(10.f, 10.f, 3.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_Event_Spawn"), pLayerTag, TEXT("Event_Spawn_DarkWizard_1"), &InitSpawnDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Event_Spawn_DarkWizard_1)");
+		return E_FAIL;
+	}
+
+	InitSpawnDesc.wstrSpawnEnemyComponentTag = TEXT("Round_2");
+	InitSpawnDesc.vTriggerWorldPosition = _float3(1.7f, 0.f, 73.8f);
+	InitSpawnDesc.vTriggerSize = _float3(10.f, 10.f, 3.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_Event_Spawn"), pLayerTag, TEXT("Event_Spawn_DarkWizard_2"), &InitSpawnDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Event_Spawn_DarkWizard_2)");
+		return E_FAIL;
+	}
+
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_Event_Spawn_Dragon"), pLayerTag, TEXT("Event_Spawn_Dragon"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Event_Spawn_Dragon)");
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_Event_Spawn_Dragon_2"), pLayerTag, TEXT("Event_Spawn_Dragon_2"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Event_Spawn_Dragon_2)");
 		return E_FAIL;
 	}
 

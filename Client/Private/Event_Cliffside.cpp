@@ -3,6 +3,7 @@
 
 #include "Enemy.h"
 #include "Trigger.h"
+#include "Professor_FIg.h"
 
 CEvent_Cliffside::CEvent_Cliffside(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -22,6 +23,38 @@ HRESULT CEvent_Cliffside::Initialize(void* pArg)
 
 	pGameInstance->Add_Timer(TEXT("Cliffside_CutScene_Fade_Out"),false,1.0f);
 	pGameInstance->Add_Timer(TEXT("Cliffside_CutScene_Play"),false,4.0f);
+
+	/* Set Monsters */
+	auto pMonsterLayer = pGameInstance->Find_Components_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"));
+
+	for (auto Pair : *pMonsterLayer)
+	{
+		wstring wstrObjTag = Pair.first;
+
+		if (wstring::npos != wstrObjTag.find(TEXT("Spawn")))
+		{
+			m_pMonsters.emplace(wstrObjTag, static_cast<CEnemy*>(Pair.second));
+			Safe_AddRef(Pair.second);
+		}
+	}
+
+	/* Set NPC */
+	auto pNPCLayer = pGameInstance->Find_Components_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_NPC"));
+
+	for (auto Pair : *pNPCLayer)
+	{
+		wstring wstrObjTag = Pair.first;
+
+		if (wstring::npos != wstrObjTag.find(TEXT("Professor_Fig")))
+		{
+			CProfessor_Fig* pFig = dynamic_cast<CProfessor_Fig*>(Pair.second);
+			if (nullptr == pFig)
+				continue;
+
+			m_pFig = pFig;
+			Safe_AddRef(m_pFig);
+		}
+	}
 
 	ENDINSTANCE;
 
@@ -117,6 +150,11 @@ void CEvent_Cliffside::Check_Event_Play_CutScene_0_0()
 
 			//페이드 인
 			m_pRenderer->FadeIn(1.0f);
+
+			for (auto& Pair : m_pMonsters)
+				Pair.second->Spawn();
+
+			m_pFig->Spawn();
 		}
 	}
 		break;
@@ -218,5 +256,10 @@ void CEvent_Cliffside::Free()
 	{
 		Safe_Release(m_pCutScene_0_0);
 		Safe_Release(m_pRenderer);
+
+		for (auto& Pair : m_pMonsters)
+			Safe_Release(Pair.second);
+
+		Safe_Release(m_pFig);
 	}
 }

@@ -45,10 +45,20 @@ void CLevel_Vault::Tick(_float fTimeDelta)
 		}
 	}
 
-	if (pGameInstance->Get_DIKeyState(DIK_BACKSPACE, CInput_Device::KEY_DOWN))
+	if (true == m_isNextLevel)
 	{
-		pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_SMITH));
+		pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVELID(m_iNextLevelIndex)));
 	}
+
+#ifdef _DEBUG
+	if (pGameInstance->Get_DIKeyState(DIK_LSHIFT))
+	{
+		if (pGameInstance->Get_DIKeyState(DIK_BACKSPACE, CInput_Device::KEY_DOWN))
+		{
+			pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_SMITH));
+		}
+	}
+#endif // _DEBUG
 
 	ENDINSTANCE;
 
@@ -70,11 +80,9 @@ HRESULT CLevel_Vault::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_VAULT, TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Sky)");
-		return E_FAIL;
-	}
+	_bool isNight = false;
+	FAILED_CHECK_RETURN(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_VAULT,
+		TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"), &isNight), E_FAIL)
 
 	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData1.ddd"))))
 	{
@@ -117,6 +125,13 @@ HRESULT CLevel_Vault::Ready_Events(const _tchar* pLayerTag)
 	if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT, TEXT("Prototype_GameObject_Event_Enter_Vault"), pLayerTag, TEXT("Event_Enter_Vault"), &InitEnterVaultDesc)))
 	{
 		MSG_BOX("Failed Add_GameObject : (Event_Enter_Vault)");
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT,
+		TEXT("Prototype_GameObject_Event_Vault_Next_Level"), pLayerTag, TEXT("Event_Vault_Next_Level"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Event_Vault_Next_Level)");
 		return E_FAIL;
 	}
 

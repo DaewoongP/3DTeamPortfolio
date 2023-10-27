@@ -172,6 +172,7 @@ void CPensive_Fail_Ball::Ready_CastMagic()
 
 void CPensive_Fail_Ball::Ready_Dying()
 {
+	m_pRenderer->Set_ScreenRadial(true, 0.2f, 0.1f);
 	m_pMeshEffect->SetJustActionStop(true);
 	for (int i = 0; i < m_TrailVec[EFFECT_STATE_HIT].size(); i++)
 	{

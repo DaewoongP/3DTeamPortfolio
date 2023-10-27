@@ -71,7 +71,7 @@ void CBroom_Begin::OnStateEnter(void* _pArg)
 		* XMMatrixTranslation(0.53f, 0.f, -0.99f);
 
 	_float4x4 RotationMatrix = XMMatrixRotationQuaternion(
-		XMQuaternionRotationAxis(XMVector3Normalize(_float3(1, 0, 0)), 1 * -30.f));
+		XMQuaternionRotationAxis(XMVector3Normalize(_float3(1, 0, 0)), 1 * -10.f));
 
 	_float3 vRight = OffsetMatrix.Right();
 	_float3 vUp = OffsetMatrix.Up();
@@ -112,7 +112,7 @@ void CBroom_Begin::OnStateTick()
 
 		//회전 해주기
 		_float4x4 RotationMatrix = XMMatrixRotationQuaternion(
-			XMQuaternionRotationAxis(XMVector3Normalize(_float3(1, 0, 0)), fTimeDelta * 30.f));
+			XMQuaternionRotationAxis(XMVector3Normalize(_float3(1, 0, 0)), fTimeDelta * 10.f));
 
 		vRight = XMVector3TransformNormal(vRight, RotationMatrix);
 		vUp = XMVector3TransformNormal(vUp, RotationMatrix);

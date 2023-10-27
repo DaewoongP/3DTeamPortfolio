@@ -34,6 +34,9 @@ HRESULT CFocusPotion_Item::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	m_Clone_Desc.pIsStartTiming = static_cast<_bool*>(pArg);
+
+
 	return S_OK;
 }
 
@@ -56,12 +59,20 @@ void CFocusPotion_Item::Use(_float3 vPlayPos)
 {
 	__super::Use(vPlayPos);
 
+	m_pPlayer->FocusTiming();
+
+#ifdef _DEBUG
+	
 	cout << "집중하고 있어요" << endl;
+
+#endif // _DEBUG
+
+
 	// 메쉬 올리기.
 	//m_pPlayerInformation->Get_Health()->Heal(m_fRecoveryAmount);
 }
 
-void CFocusPotion_Item::CreateTool()
+void CFocusPotion_Item::CreateTool(void* pArg)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	_uint iLevelIndex = pGameInstance->Get_CurrentLevelIndex();
@@ -72,7 +83,7 @@ void CFocusPotion_Item::CreateTool()
 		iLevelIndex,
 		TEXT("Prototype_GameObject_FocusPotion"),
 		TEXT("Layer_BackGround"),
-		Generate_HashtagW().c_str())))
+		Generate_HashtagW().c_str(), pArg)))
 	{
 		__debugbreak();
 		Safe_Release(pGameInstance);

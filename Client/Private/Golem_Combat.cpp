@@ -117,8 +117,6 @@ void CGolem_Combat::Late_Tick(_float fTimeDelta)
 
 void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	__super::OnCollisionEnter(CollisionEventDesc);
-
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 	wstring wstrOtherCollisionTag = CollisionEventDesc.pOtherCollisionTag;
@@ -497,6 +495,16 @@ HRESULT CGolem_Combat::Make_Death(_Inout_ CSequence* pSequence)
 				}
 
 				return false;
+			});
+		pAction_Death_Ground->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				Set_Dead();
+				return true;
+			});
+		pAction_Knockback->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				Set_Dead();
+				return true;
 			});
 
 		// Set Options 
@@ -1388,7 +1396,9 @@ HRESULT CGolem_Combat::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 				if (FAILED(pBlackBoard->Get_Type("pHealth", pHealth)))
 					return false;
 
-				pHealth->Damaged(50);
+				Print_Damage_Font(200);
+
+				pHealth->Damaged(200);
 
 				return true;
 			});

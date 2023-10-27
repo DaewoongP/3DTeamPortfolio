@@ -190,9 +190,6 @@ void CTreasure_Chest::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 
 HRESULT CTreasure_Chest::Render()
 {
-	if (FAILED(__super::Render()))
-		return E_FAIL;
-
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 

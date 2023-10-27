@@ -27,7 +27,7 @@ private:
 public:
 	typedef struct tagCEdurusPotion_ItemCloneDesc : public tagToolCloneDesc
 	{
-		// 아무것도 없어도 일단 만들어놓기.
+		_bool* pIsStartTiming = { nullptr };
 	}CLONE_DESC;
 
 private:
@@ -44,7 +44,10 @@ public:
 
 public:
 	virtual void Use(_float3 vPlayPos) override;
-	virtual void CreateTool() override;
+	virtual void CreateTool(void* pArg) override;
+
+private:
+	CLONE_DESC m_Clone_Desc = { CLONE_DESC() };
 
 public:
 	static CEdurusPotion_Item* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
