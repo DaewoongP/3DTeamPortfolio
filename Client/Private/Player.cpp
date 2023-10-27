@@ -295,6 +295,8 @@ void CPlayer::Tick(_float fTimeDelta)
 
 
 
+
+
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::OTHERBODY);
@@ -3292,6 +3294,8 @@ void CPlayer::Go_MagicCast(void* _pArg)
 		}
 
 		m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), _pArg);
+
+		m_pPlayer_Information->Stack_Finisher();
 	}
 }
 
@@ -3399,6 +3403,12 @@ void CPlayer::Drink_Heal_Potion()
 
 void CPlayer::Go_Protego(void* _pArg)
 {
+	if (m_pStateContext->Is_Current_State(TEXT("Hit")))
+	{
+		m_isPrepareProtego = false;
+		m_isCollisionEnterProtego = false;
+	}
+
 	if (true == m_isPrepareProtego && true == m_isCollisionEnterProtego)
 	{
 		Find_Target_For_Distance();
