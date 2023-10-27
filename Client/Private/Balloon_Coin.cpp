@@ -11,8 +11,10 @@ CBalloon_Coin::CBalloon_Coin(const CBalloon_Coin& rhs)
 {
 }
 
-void CBalloon_Coin::Reset()
+void CBalloon_Coin::Reset(_float3 vPosition, COIN eCoinType)
 {
+	m_pTransform->Set_Position(vPosition + _float3(0.f, 1.f, 0.f));
+	m_eCoinColor = eCoinType;
 }
 
 HRESULT CBalloon_Coin::Initialize(void* pArg)
@@ -30,13 +32,16 @@ HRESULT CBalloon_Coin::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pTransform->Set_Scale(_float3(CoinDesc.vScale.x, CoinDesc.vScale.y, 0.f));
-	m_pTransform->Set_Position(CoinDesc.vPosition);
+	m_pTransform->Set_Position(CoinDesc.vPosition + _float3(0.f, 1.f, 0.f));
+	m_fTime = 0.05f;
 
 	return S_OK;
 }
 
 void CBalloon_Coin::Tick(_float fTimeDelta)
 {
+	m_fTimeAcc += fTimeDelta;
+
 	__super::Tick(fTimeDelta);
 }
 
@@ -74,28 +79,12 @@ HRESULT CBalloon_Coin::Add_Components()
 		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pBuffer), &iNum));
 
 	m_iCoinMaxIndex = 10;
-
-	switch (m_eCoinColor)
-	{
-	case Client::CBalloon_Coin::COIN_BLACK:
-		m_pTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Coin/BlackStarCoin_%d.png"), m_iCoinMaxIndex);
-		break;
-	case Client::CBalloon_Coin::COIN_BRONZE:
-		m_pTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Coin/BronzeStarCoin_%d.png"), m_iCoinMaxIndex);
-		break;
-	case Client::CBalloon_Coin::COIN_SILVER:
-		m_pTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Coin/SilverStarCoin_%d.png"), m_iCoinMaxIndex);
-		break;
-	case Client::CBalloon_Coin::COIN_GOLD:
-		m_pTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Coin/GoldStarCoin_%d.png"), m_iCoinMaxIndex);
-		break;
-	case Client::CBalloon_Coin::COIN_RAINBOW:
-		m_pTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Coin/RainbowStarCoin_%d.png"), m_iCoinMaxIndex);
-		break;
-	default:
-		MSG_BOX("Coin Failed");
-		break;
-	}
+	m_Textures.reserve(COIN_END);
+	m_Textures.push_back(CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Coin/BlackStarCoin_%d.png"), m_iCoinMaxIndex));
+	m_Textures.push_back(CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Coin/BronzeStarCoin_%d.png"), m_iCoinMaxIndex));
+	m_Textures.push_back(CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Coin/SilverStarCoin_%d.png"), m_iCoinMaxIndex));
+	m_Textures.push_back(CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Coin/GoldStarCoin_%d.png"), m_iCoinMaxIndex));
+	m_Textures.push_back(CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Coin/RainbowStarCoin_%d.png"), m_iCoinMaxIndex));
 
 	return S_OK;
 }
@@ -110,9 +99,14 @@ HRESULT CBalloon_Coin::SetUp_ShaderResources()
 	FAILED_CHECK(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ)));
 
 	FAILED_CHECK(m_pShader->Bind_RawValue("g_vCamPosition", pGameInstance->Get_CamPosition(), sizeof(_float4)));
-	FAILED_CHECK(m_pTexture->Bind_ShaderResource(m_pShader, "g_Texture", m_iCoinIndex));
+	FAILED_CHECK(m_Textures[m_eCoinColor]->Bind_ShaderResource(m_pShader, "g_Texture", m_iCoinIndex));
 
-	++m_iCoinIndex;
+	if (m_fTimeAcc > m_fTime)
+	{
+		m_fTimeAcc = 0.f;
+		++m_iCoinIndex;
+	}
+		
 	if (m_iCoinIndex >= m_iCoinMaxIndex)
 		m_iCoinIndex = 0;
 
@@ -153,6 +147,12 @@ void CBalloon_Coin::Free()
 
 	Safe_Release(m_pShader);
 	Safe_Release(m_pBuffer);
-	Safe_Release(m_pTexture);
 	Safe_Release(m_pRenderer);
+
+	for (auto& pTexture : m_Textures)
+	{
+		Safe_Release(pTexture);
+	}
+
+	m_Textures.clear();
 }

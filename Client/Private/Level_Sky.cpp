@@ -21,6 +21,7 @@ HRESULT CLevel_Sky::Initialize()
 	pGameInstance->Reset_World_TimeAcc();
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
 	ENDINSTANCE;
+	
 
 	return S_OK;
 }
@@ -75,6 +76,31 @@ HRESULT CLevel_Sky::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	{
 		MSG_BOX("Failed to Load Map Object_Ins in Level_Sky");
 
+		return E_FAIL;
+	}
+	
+	_float4x4 Matrix = XMMatrixTranslation(30.f, 35.f, 210.f);
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_FireWorks"), pLayerTag, TEXT("FireWork"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_FireWorks)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	Matrix = XMMatrixTranslation(50.f, 37.f, 167.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_FireWorks"), pLayerTag, TEXT("FireWork2"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_FireWorks2)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	Matrix = XMMatrixTranslation(60.f, 40.f, 180.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_FireWorks"), pLayerTag, TEXT("FireWork3"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_FireWorks3)");
+		ENDINSTANCE;
 		return E_FAIL;
 	}
 
@@ -187,8 +213,8 @@ HRESULT CLevel_Sky::Ready_Shader()
 
 	CRenderer* pRenderer = static_cast<CRenderer*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer")));
 	pRenderer->Defualt_Shading();
-
-
+	pRenderer->Get_Dof()->Set_FocusRange(200.f);
+	pRenderer->Get_Dof()->Set_FocusDistance(10.f);
 
 	Safe_Release(pRenderer);
 

@@ -3517,6 +3517,14 @@ void CPlayer::Go_Use_Item()
 	case Client::ITEM_ID_WIGGENWELD_POTION:	//회복 물약
 	{
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
+
+		for (_uint i = 0; i < 4; ++i)
+		{
+			m_vecPotionParticle[i]->Play(m_pTransform->Get_Position());
+			m_vecMeshEffect[0]->Play(m_pTransform->Get_Position());
+		}
+		
+
 	}
 	break;
 	case Client::ITEM_ID_EDURUS_POTION:	//방어 물약
@@ -3567,6 +3575,7 @@ void CPlayer::Go_Use_Item()
 
 void CPlayer::Go_Use_Potion()
 {
+	
 	/*CUseItemState::USEITEMDESC UseItemDesc;
 
 	UseItemDesc.funcPotion = [&] {(*this).Add_Potion(); };
@@ -3578,16 +3587,7 @@ void CPlayer::Go_Use_Potion()
 
 	UseItemDesc.funcPotion = [&] {(*this).Drink_Heal_Potion(); };
 
-	if (UseItemDesc.eItem_Id == ITEM_ID_WIGGENWELD_POTION)
-	{
-		//m_vecPotionParticle[0]->Play(m_pTransform->Get_Position());
-		//m_vecPotionParticle[1]->Play(m_pTransform->Get_Position());
-		//m_vecPotionParticle[2]->Play(m_pTransform->Get_Position());
-		for(_uint i = 0 ; i<4;++i)
-			m_vecPotionParticle[i]->Play(m_pTransform->Get_Position());
-
-		m_vecMeshEffect[0]->Play(m_pTransform->Get_Position());
-	}
+	
 
 	if (UseItemDesc.eItem_Id == ITEM_ID_MAXIMA_POTION)
 		m_vecPotionParticle[2]->Play(m_pTransform->Get_Position());
