@@ -12,6 +12,7 @@
 
 BEGIN(Engine)
 class CTexture;
+class CParticleSystem;
 END
 
 BEGIN(Client)
@@ -43,13 +44,16 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
+	HRESULT SetUp_ShaderResources();
 
 public:
 	virtual void Set_Protego_Collision(CTransform* pTransform, ATTACKTYPE eType) const;
 	void		 Set_AttackAble_True() { m_isAttackAble = true; }
 	void		 Set_AttackAble_False() { m_isAttackAble = false; }
-	void		 Set_Turnable_True() { m_isTurnAble = true; }
-	void		 Set_Turnable_False() { m_isTurnAble = false; }
+	void		 Set_Turnable_True() { m_isTurnAble = true; m_isEmmisivePowerAdd = true; m_fEmissivePower = 0; }
+	void		 Set_Turnable_False() { m_isTurnAble = false; m_isEmmisivePowerAdd = false; }
+	void		 Set_EmmisivePower_Add() { m_isEmmisivePowerAdd = true; m_fEmissivePower = 0;}
+	void		 Set_EmmisivePower_Minus() { m_isEmmisivePowerAdd = false; }
 	void		 Do_Damage(_int iDmg);
 	void ResetMagicBall() { 
 		m_pMagicBall_Attack = nullptr;
@@ -74,6 +78,8 @@ private:
 	CTexture*				m_pEmissiveTexture_1 = { nullptr };
 	CTexture*				m_pEmissiveTexture_2 = { nullptr };
 
+	CParticleSystem*		m_pSkillDistotionParticle = { nullptr };
+
 	vector<CVault_Torch*>			m_pTorch;
 
 private:
@@ -84,10 +90,13 @@ private:
 	_uint m_iAttackType = { ATTACK_END };
 	_bool m_isAttackAble = { false };
 	_bool m_isTurnAble = { false };
+	_bool m_isEmmisivePowerAdd = { false };
 	CMagic::MAGICDESC		m_ProtegoInitDesc[3] = {};
 	_float4x4 m_SwordOffsetMatrix[3] = {};
 	_float4x4 m_AttackPosition = {};
 	_uint	  m_iGroogyStack = { 0 };
+
+	_float	  m_fEmissivePower = { 0.f };
 
 	_float4 m_vLightColor = {};
 	CLight* m_pLight = { nullptr };

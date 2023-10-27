@@ -692,6 +692,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_LightStand_Fire"),
 			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/LightStand_Fire"), eLevelID))))
 			throw TEXT("Prototype_GameObject_LightStand_Fire");
+		
 #pragma endregion
 
 #pragma region Load Player_Effect

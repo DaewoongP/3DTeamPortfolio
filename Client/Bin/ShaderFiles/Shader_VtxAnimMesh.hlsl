@@ -20,6 +20,8 @@ float g_fTimeAcc;
 
 float4 g_vEmissive;
 
+float g_fEmissivePower;
+
 float IsIn_Range(float fMin, float fMax, float fValue)
 {
     return (fMin <= fValue) && (fMax >= fValue);
@@ -326,6 +328,33 @@ PS_OUT PS_MAIN_TROLL(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_MAIN_PENSIVE(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+
+    vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+    
+    vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+    vector vEmissive = g_EmissiveTexture.Sample(LinearSampler, In.vTexUV);
+    // 텍스처의 노말값은 -1~1로 출력을 못하기때문에 0~1로 정규화되어 있다. 따라서 강제적으로 변환해줘야함.
+    float3 vNormal = vNormalDesc.xyz * 2.f - 1.f;
+
+    float3x3 WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal.xyz, In.vNormal.xyz);
+
+    vEmissive.rgba = vEmissive.rgra * g_fEmissivePower;
+    
+    vNormal = mul(vNormal, WorldMatrix);
+    if (vDiffuse.a < 0.1f)
+        discard;
+
+    Out.vDiffuse = vDiffuse;
+    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
+    Out.vEmissive = vEmissive;
+
+    return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass AnimMesh
@@ -448,5 +477,18 @@ technique11 DefaultTechnique
         HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader = compile ps_5_0 PS_MAIN_TROLL();
+    }
+
+    pass Pensive
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_MAIN_PENSIVE();
     }
 }
