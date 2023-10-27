@@ -31,7 +31,7 @@ private:
 	CVIBuffer_Point_Instance*		m_pBuffer = { nullptr };
 
 private:
-	HRESULT Add_Component();
+	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
 
 public:

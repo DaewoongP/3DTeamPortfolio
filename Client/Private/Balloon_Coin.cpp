@@ -16,6 +16,9 @@ HRESULT CBalloon_Coin::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	if (FAILED(Add_Components()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -25,19 +28,17 @@ void CBalloon_Coin::Tick(_float fTimeDelta)
 
 void CBalloon_Coin::Late_Tick(_float fTimeDelta)
 {
+	m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
 }
 
 HRESULT CBalloon_Coin::Render()
 {
+	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
+
 	return S_OK;
 }
 
-HRESULT CBalloon_Coin::Add_Component()
-{
-	return S_OK;
-}
-
-HRESULT CBalloon_Coin::SetUp_ShaderResources()
+HRESULT CBalloon_Coin::Add_Components()
 {
 	/* For.Com_Renderer */
 	FAILED_CHECK(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
@@ -58,6 +59,11 @@ HRESULT CBalloon_Coin::SetUp_ShaderResources()
 	m_Textures.push_back(CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Coin/GoldStarCoin_%d.png"), 10));
 	m_Textures.push_back(CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Coin/RainbowStarCoin_%d.png"), 10));
 
+	return S_OK;
+}
+
+HRESULT CBalloon_Coin::SetUp_ShaderResources()
+{
 	return S_OK;
 }
 
