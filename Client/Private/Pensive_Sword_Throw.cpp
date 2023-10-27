@@ -189,6 +189,7 @@ void CPensive_Sword_Throw::Ready_CastMagic()
 
 void CPensive_Sword_Throw::Ready_Dying()
 {
+	m_pRenderer->Set_ScreenRadial(true, 0.2f, 0.1f);
 	for (int i = 0; i < m_TrailVec[EFFECT_STATE_HIT].size(); i++)
 	{
 		m_TrailVec[EFFECT_STATE_HIT].data()[i]->Enable(m_pMeshEffect->Get_Transform()->Get_Position());

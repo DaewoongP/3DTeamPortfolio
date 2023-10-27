@@ -362,17 +362,17 @@ void CMagicBall::Ready_Dying()
 	{
 		for (int i = 0; i < m_TrailVec[EFFECT_STATE_HIT].size(); i++)
 		{
-			m_TrailVec[EFFECT_STATE_HIT].data()[i]->Enable(m_CurrentTargetMatrix.Translation());
+			m_TrailVec[EFFECT_STATE_HIT].data()[i]->Enable(m_pTransform->Get_Position());
 		}
 		for (int i = 0; i < m_ParticleVec[EFFECT_STATE_HIT].size(); i++)
 		{
-			m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Enable(m_CurrentTargetMatrix.Translation());
-			m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Play(m_CurrentTargetMatrix.Translation());
+			m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Enable(m_pTransform->Get_Position());
+			m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Play(m_pTransform->Get_Position());
 		}
 		for (int i = 0; i < m_MeshEffectVec[EFFECT_STATE_HIT].size(); i++)
 		{
 			
-			m_MeshEffectVec[EFFECT_STATE_HIT].data()[i]->Play(m_CurrentTargetMatrix.Translation());
+			m_MeshEffectVec[EFFECT_STATE_HIT].data()[i]->Play(m_pTransform->Get_Position());
 			//m_MeshEffectVec[EFFECT_STATE_HIT].data()[i]->Get_Transform()->Set_Position(m_MeshEffectVec[EFFECT_STATE_HIT].data()[i]->Get_Transform()->Get_Position() * m_pTargetWorldMatrix->Translation());
 
 		}

@@ -82,8 +82,8 @@ void CPhysX_Manager::Tick(_float fTimeDelta)
 	m_pPhysxScene->fetchResults(true);
 }
 
-_bool CPhysX_Manager::RayCast(_float3 vOrigin, _float3 vDir, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist)
-{
+_bool CPhysX_Manager::RayCast(_float3 vOrigin, _float3 vDir, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist, const _tchar* pObjectTag)
+{// 트리거는 레이 캐스팅 안됩니다!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 막아놨어요 필요없어서 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	vDir.Normalize();
 
 	PxRaycastHit rayhit;
@@ -91,9 +91,25 @@ _bool CPhysX_Manager::RayCast(_float3 vOrigin, _float3 vDir, _float fMaxDist, _I
 
 	_bool isCollision = m_pPhysxScene->raycast(PhysXConverter::ToPxVec3(vOrigin), PhysXConverter::ToPxVec3(vDir),
 		fMaxDist, buf);
-	
+
 	if (true == isCollision)
 	{
+		if (nullptr != buf.block.shape)
+		{
+			CRigidBody::COLLISIONDATADESC* CollisionData = static_cast<CRigidBody::COLLISIONDATADESC*>(buf.block.shape->userData);
+
+			if (nullptr != pObjectTag &&
+				nullptr != CollisionData &&
+				nullptr != CollisionData->pOwnerObject &&
+				!lstrcmp(pObjectTag, CollisionData->pOwnerObject->Get_Tag()))
+			{
+				_float fValue = 0.03f;
+				_bool isObjectColled = RayCast(vOrigin + vDir * fValue, vDir, fMaxDist, pHitPosition, pDist, pObjectTag);
+				*pDist += vDir.Length() * fValue;
+				return isObjectColled;
+			}
+		}
+
 		if (nullptr != pHitPosition)
 		{
 			*pHitPosition = PhysXConverter::ToXMFLOAT3(buf.block.position);
@@ -108,7 +124,7 @@ _bool CPhysX_Manager::RayCast(_float3 vOrigin, _float3 vDir, _float fMaxDist, _I
 	return isCollision;
 }
 
-_bool CPhysX_Manager::Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist)
+_bool CPhysX_Manager::Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist, const _tchar* pCollisionTag)
 {
 	CCalculator* pCalculator = CCalculator::GetInstance();
 	Safe_AddRef(pCalculator);
@@ -122,7 +138,7 @@ _bool CPhysX_Manager::Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _f
 
 	Safe_Release(pCalculator);
 	
-	return RayCast(vRayPos.xyz(), vRayDir.xyz(), fMaxDist, pHitPosition, pDist);
+	return RayCast(vRayPos.xyz(), vRayDir.xyz(), fMaxDist, pHitPosition, pDist, pCollisionTag);
 }
 
 PxScene* CPhysX_Manager::Create_Scene()

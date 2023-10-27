@@ -220,7 +220,7 @@ void CHitState::Set_Dir()
 			{
 			case Client::BUFF_LEVIOSO:
 				*m_StateMachineDesc.pisFinishAnimation = false;
-				static_cast<CPlayer*>(m_StateMachineDesc.pPlayerTransform->Get_Owner())->AddForce_Impulse(_float3(0, 1, 0), 60.f);
+				static_cast<CPlayer*>(m_StateMachineDesc.pPlayerTransform->Get_Owner())->AddForce_Impulse(_float3(0, 1, 0)* 60.f);
 				Change_Animation(TEXT("Hu_Broom_Hover_Rct_Impact_Hvy_Bwd_anm"), false);
 				break;
 			case Client::BUFF_ACCIO:
@@ -228,13 +228,13 @@ void CHitState::Set_Dir()
 				*m_StateMachineDesc.pisFinishAnimation = false;
 				_float3 vDir = _float3(m_pTargetTransform->Get_Position() - m_StateMachineDesc.pPlayerTransform->Get_Position());
 				vDir.Normalize();
-				static_cast<CPlayer*>(m_StateMachineDesc.pPlayerTransform->Get_Owner())->AddForce_Impulse(vDir, 60.f);
+				static_cast<CPlayer*>(m_StateMachineDesc.pPlayerTransform->Get_Owner())->AddForce_Impulse(vDir*60.f);
 				Change_Animation(TEXT("Hu_Broom_Hover_Rct_Impact_Hvy_Fwd_anm"), false);
 				break;
 			}
 			case Client::BUFF_DESCENDO:
 				*m_StateMachineDesc.pisFinishAnimation = false;
-				static_cast<CPlayer*>(m_StateMachineDesc.pPlayerTransform->Get_Owner())->AddForce_Impulse(_float3(0, 1, 0), -60.f);
+				static_cast<CPlayer*>(m_StateMachineDesc.pPlayerTransform->Get_Owner())->AddForce_Impulse(_float3(0, 1, 0)* -60.f);
 				Change_Animation(TEXT("Hu_Broom_Hover_Rct_Impact_Hvy_Bwd_anm"), false);
 				break;
 			case Client::BUFF_FLIPENDO:

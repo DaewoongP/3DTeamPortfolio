@@ -64,7 +64,6 @@ void CCamera_Debug::Tick(_float fTimeDelta)
 	pGameInstance->Set_CameraFar(1000.f);
 	pGameInstance->Set_Transform(CPipeLine::D3DTS_VIEW, m_pTransform->Get_WorldMatrix_Inverse());
 	pGameInstance->Set_Transform(CPipeLine::D3DTS_PROJ, XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), _float(g_iWinSizeX) / g_iWinSizeY, m_fCameraNear, 1000.f));
-
 	Safe_Release(pGameInstance);
 
 	__super::Tick(fTimeDelta);

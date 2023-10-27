@@ -32,6 +32,7 @@
 #include "FireWood.h"
 
 #pragma region Balloons
+#include "Balloon_Timer.h"
 #include "ScoreBalloon.h"
 #include "BeastBalloon_A.h"
 #include "BeastBalloon_B.h"
@@ -424,6 +425,11 @@ HRESULT CMain1_Loader::Loading_For_Sky(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_BeastBalloon_D"),
 			CBeastBalloon_D::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_BeastBalloon_D");
+		
+		/* For.Prototype_GameObject_Balloon_Timer */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Balloon_Timer"),
+			CBalloon_Timer::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Balloon_Timer");
 	}
 	catch (const _tchar* pErrorTag)
 	{

@@ -1,6 +1,8 @@
 #include "..\Public\Balloon.h"
-
+#include "FlyGameManager.h"
 #include "GameInstance.h"
+#include "Racer.h"
+#include "Balloon_Timer.h"
 
 CBalloon::CBalloon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -22,37 +24,51 @@ HRESULT CBalloon::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 
 	BALLOONINITDESC* pInitDesc = static_cast<BALLOONINITDESC*>(pArg);
 
 	m_iScore = pInitDesc->iScore;
-	m_pTransform->Set_WorldMatrix(pInitDesc->WorldMatrix);
+	m_pTransform->Set_WorldMatrix(XMMatrixTranslation(pInitDesc->vPosition.x, pInitDesc->vPosition.y, pInitDesc->vPosition.z));
 	m_pTransform->Set_Scale(pInitDesc->vScale);
+	m_isColliderOn = true;
+	m_isDead = true;
+
+	// balloon timer 생성
+	// 트랜스폼 필요해요 ㅠ
+	FAILED_CHECK_RETURN(Make_Timer(), E_FAIL);
 
 	return S_OK;
 }
 
 void CBalloon::Tick(_float fTimeDelta)
 {
-	if (true == m_isDead)
+	m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);
+
+	if (true == m_isColliderOn &&
+		true == m_isDead)
 	{
-		// 여기서 알아서 하세요//
-		// 리셋 불리기 전까지 행동하지마.
+		m_isColliderOn = false;
+		m_pRigidBody->Disable_Collision("Body");
+	}
+
+	if (true == m_pTimer->Is_Finished())
+	{
+		m_isDead = true;
+		m_pRigidBody->Disable_Collision("Body");
 		return;
 	}
 
 	__super::Tick(fTimeDelta);
-
-	m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);
 }
 
 void CBalloon::Late_Tick(_float fTimeDelta)
 {
 	if (true == m_isDead)
 		return;
+
+	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRenderer)
 	{
@@ -103,6 +119,24 @@ HRESULT CBalloon::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMat
 	return S_OK;
 }
 
+void CBalloon::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
+{
+	CFlyGameManager* pMgr = static_cast<CFlyGameManager*>(m_pOwner);
+	if (pMgr == nullptr)
+		return;
+
+	CRacer::COLLSIONREQUESTDESC* racerInfo = static_cast<CRacer::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
+	if (racerInfo == nullptr)
+		return;
+
+	pMgr->Add_Score(racerInfo->iRacerNumber,m_iScore);
+	pMgr->ReplaceBallon();
+	pMgr->Racer_AddForce(racerInfo->iRacerNumber,m_eBallonActionType, m_fForce);
+
+	m_isDead = true;
+	__super::OnCollisionEnter(CollisionEventDesc);
+}
+
 HRESULT CBalloon::Add_Components()
 {
 	/* Com_Shader */
@@ -128,6 +162,7 @@ HRESULT CBalloon::Add_Components()
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
 		MSG_BOX("CLoadBalloon Failed Clone Component : Com_Renderer");
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -170,6 +205,25 @@ HRESULT CBalloon::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4
 	return S_OK;
 }
 
+HRESULT CBalloon::Make_Timer()
+{
+	CBalloon_Timer::BALLOONTIMERDESC BalloonTimerDesc;
+	BalloonTimerDesc.fTime = 10.f * (rand() % 10);
+	BalloonTimerDesc.vScale = _float2(10.f, 10.f);
+	BalloonTimerDesc.vPosition = m_pTransform->Get_Position();
+
+	/* Com_Timer */
+	if (FAILED(CComposite::Add_Component(LEVEL_SKY, TEXT("Prototype_GameObject_Balloon_Timer"),
+		TEXT("Com_Timer"), reinterpret_cast<CComponent**>(&m_pTimer), &BalloonTimerDesc)))
+	{
+		MSG_BOX("CBalloon Failed Clone Component : Com_Timer");
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
 void CBalloon::Free()
 {
 	__super::Free();
@@ -179,4 +233,5 @@ void CBalloon::Free()
 	Safe_Release(m_pShadowShader);
 	Safe_Release(m_pRigidBody);
 	Safe_Release(m_pRenderer);
+	Safe_Release(m_pTimer);
 }
