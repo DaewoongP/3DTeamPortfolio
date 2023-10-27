@@ -133,10 +133,10 @@ void CEvent_Smeade::Check_Event_Spawn_Troll()
 			}
 
 			// 컷신에 맞춰 집에 불 
-			/*for (auto& iter : m_pFireHouse)
+			for (auto& iter : m_pFireHouse)
 			{
 				iter->Set_FireOn();
-			}*/
+			}
 
 			//페이드 인
 			m_pRenderer->FadeIn(1.0f);
