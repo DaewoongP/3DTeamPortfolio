@@ -335,9 +335,9 @@ PS_OUT PS_MAIN_DRAGON_INVIN(PS_IN In)
     PS_OUT Out = (PS_OUT)0;
 
     vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+
     vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
     vector vEmissive = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-
     // 텍스처의 노말값은 -1~1로 출력을 못하기때문에 0~1로 정규화되어 있다. 따라서 강제적으로 변환해줘야함.
     float3 vNormal = vNormalDesc.xyz * 2.f - 1.f;
 
@@ -351,7 +351,9 @@ PS_OUT PS_MAIN_DRAGON_INVIN(PS_IN In)
     Out.vDiffuse = lerp(vDark, vDiffuse, g_fInvinRatio);
     Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
-    Out.vEmissive = float4(vEmissive * g_vEmissiveStrength, 0.f);
+    Out.vEmissive = float4(vEmissive.rgb * g_vEmissiveStrength, 0.f);
+
+    return Out;
 }
 
 PS_OUT PS_MAIN_PENSIVE(PS_IN In)
