@@ -79,7 +79,7 @@ HRESULT CLevel_Sky::Ready_Layer_BackGround(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 	
-	_float4x4 Matrix = XMMatrixTranslation(30.f, 26.f, 210.f);
+	_float4x4 Matrix = XMMatrixTranslation(30.f, 35.f, 210.f);
 
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_FireWorks"), pLayerTag, TEXT("FireWork"), &Matrix)))
 	{
@@ -88,7 +88,7 @@ HRESULT CLevel_Sky::Ready_Layer_BackGround(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	Matrix = XMMatrixTranslation(50.f, 20.f, 167.f);
+	Matrix = XMMatrixTranslation(50.f, 37.f, 167.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_FireWorks"), pLayerTag, TEXT("FireWork2"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_FireWorks2)");
@@ -96,7 +96,13 @@ HRESULT CLevel_Sky::Ready_Layer_BackGround(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-
+	Matrix = XMMatrixTranslation(60.f, 40.f, 180.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_FireWorks"), pLayerTag, TEXT("FireWork3"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_FireWorks3)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
 
 	ENDINSTANCE;
 
