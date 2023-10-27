@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "Racer.h"
 #include "Balloon_Timer.h"
+#include "Balloon_Coin.h"
 
 CBalloon::CBalloon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -220,6 +221,20 @@ HRESULT CBalloon::Make_Timer()
 		__debugbreak();
 		return E_FAIL;
 	}
+	
+	CBalloon_Coin::COINDESC CoinDesc;
+	CoinDesc.eCoinColorType = CBalloon_Coin::COIN_RAINBOW;
+	CoinDesc.vScale = _float2(20.f, 20.f);
+	CoinDesc.vPosition = m_pTransform->Get_Position();
+
+	/* Com_Coin */
+	if (FAILED(CComposite::Add_Component(LEVEL_SKY, TEXT("Prototype_GameObject_Balloon_Coin"),
+		TEXT("Com_Coin"), reinterpret_cast<CComponent**>(&m_pCoin), &CoinDesc)))
+	{
+		MSG_BOX("CBalloon Failed Clone Component : Com_Coin");
+		__debugbreak();
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -234,4 +249,5 @@ void CBalloon::Free()
 	Safe_Release(m_pRigidBody);
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pTimer);
+	Safe_Release(m_pCoin);
 }

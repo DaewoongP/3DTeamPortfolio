@@ -115,6 +115,7 @@
 #pragma endregion
 
 #pragma region Event
+#include "Balloon_Coin.h"
 #include "Racer.h"
 #include "FlyGameManager.h"
 #pragma endregion
@@ -358,6 +359,11 @@ HRESULT CMain0_Loader::Loading_For_Sky(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Racer"),
 			CRacer::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Racer");
+		
+		/* For.Prototype_GameObject_Balloon_Coin */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Balloon_Coin"),
+			CBalloon_Coin::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Balloon_Coin");
 
 		/* For.Prototype_GameObject_FlyGameManager */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FlyGameManager"),
