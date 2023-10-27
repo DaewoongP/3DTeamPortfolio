@@ -223,10 +223,10 @@ HRESULT CPlayer::Initialize(void* pArg)
 	//	IN_CIRC, OUT_CIRC, INOUT_CIRC,
 	//	IN_BOUNCE, OUT_BOUNCE, INOUT_BOUNCE,
 	//	IN_BACK, OUT_BACK, INOUT_BACK,
-	m_pNonFlySpell[0] = { LEVIOSO };
-	m_pNonFlySpell[1] = { FLIPENDO };
-	m_pNonFlySpell[2] = { ACCIO };
-	m_pNonFlySpell[3] = { DESCENDO };
+	m_pFlySpell[0] = { LEVIOSO };
+	m_pFlySpell[1] = { FLIPENDO };
+	m_pFlySpell[2] = { ACCIO };
+	m_pFlySpell[3] = { DESCENDO };
 	return S_OK;
 }
 
@@ -353,6 +353,15 @@ void CPlayer::Tick(_float fTimeDelta)
 		}
 		m_pWindParticle->Get_Transform()->Set_Position(m_pTransform->Get_Position() +
 			m_pPlayer_Camera->Get_TransformPtr()->Get_Look() * 5);
+
+		_float4x4 TempMatrix = m_pTransform->Get_WorldMatrix();
+		TempMatrix.m[3][0] = 0;
+		TempMatrix.m[3][1] = 0;
+		TempMatrix.m[3][2] = 0;
+
+		m_pWindParticle->Get_ShapeModuleRef().ShapeMatrix =
+			m_pWindParticle->Get_ShapeModuleRef().ShapeMatrixInit * TempMatrix;
+		m_pRenderer->Set_ScreenRadial(true,2.f, iFast*0.002f);
 	}
 	else
 	{
@@ -371,12 +380,8 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
 	{
 		ENDINSTANCE;
-
 		return;
 	}
-
-	ENDINSTANCE;
-
 	__super::Late_Tick(fTimeDelta);
 
 	//m_pStateContext->Late_Tick(fTimeDelta);
@@ -400,6 +405,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 			Safe_Release(m_pTarget);
 			m_pTargetTransform = nullptr;
 			m_pTarget = nullptr;
+			ENDINSTANCE;
 			return;
 		}
 
@@ -407,6 +413,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 		if (nullptr != pEnemy)
 			pEnemy->Get_UI_Enemy_HP()->Late_Tick(fTimeDelta);
 	}
+	ENDINSTANCE;
 }
 
 void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
@@ -848,21 +855,6 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
 		throw TEXT("Com_Weapon");
 
-	pBone = m_pCustomModel->Get_Bone_Index(46);
-	if (nullptr == pBone)
-		throw TEXT("pBone is nullptr");
-
-	CBroom_Stick::CWEAPON_PLAYER_BROOM_DESC ParentMatrixDesc2;
-	ParentMatrixDesc2.ParentMatrixDesc.OffsetMatrix = pBone->Get_OffsetMatrix();
-	ParentMatrixDesc2.ParentMatrixDesc.PivotMatrix = m_pCustomModel->Get_PivotFloat4x4();
-	ParentMatrixDesc2.ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
-	ParentMatrixDesc2.ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
-	//뼈 바인딩해주기
-	if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Weapon_Player_Broom"),
-		TEXT("Com_Broom"), reinterpret_cast<CComponent**>(&m_pBroom), &ParentMatrixDesc2)))
-		throw TEXT("Com_Broom");
-	
-
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_MagicSlot"),
 		TEXT("Com_MagicSlot"), reinterpret_cast<CComponent**>(&m_pMagicSlot))))
 	{
@@ -903,6 +895,21 @@ HRESULT CPlayer::Add_Components()
 
 	m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
 	m_pRigidBody->Get_RigidBodyActor()->setAngularDamping(1.f);
+
+	pBone = m_pCustomModel->Get_Bone_Index(46);
+	if (nullptr == pBone)
+		throw TEXT("pBone is nullptr");
+
+	CBroom_Stick::CWEAPON_PLAYER_BROOM_DESC ParentMatrixDesc2;
+	ParentMatrixDesc2.ParentMatrixDesc.OffsetMatrix = pBone->Get_OffsetMatrix();
+	ParentMatrixDesc2.ParentMatrixDesc.PivotMatrix = m_pCustomModel->Get_PivotFloat4x4();
+	ParentMatrixDesc2.ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
+	ParentMatrixDesc2.ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+	ParentMatrixDesc2.pPlayerRigidBody = m_pRigidBody;
+	//뼈 바인딩해주기
+	if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Weapon_Player_Broom"),
+		TEXT("Com_Broom"), reinterpret_cast<CComponent**>(&m_pBroom), &ParentMatrixDesc2)))
+		throw TEXT("Com_Broom");
 
 	/* Com_Player_Information */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Player_Information"),
@@ -1080,7 +1087,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = LUMOS;
-		magicInitDesc.fInitCoolTime = 5.f;
+		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 0;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 30.f;
@@ -1225,6 +1232,11 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	BEGININSTANCE;
 
 #ifdef _DEBUG
+	if (pGameInstance->Get_DIKeyState(DIK_P, CInput_Device::KEY_DOWN))
+	{
+		m_pRigidBody->Add_Force(_float3(0, 1, 0) * 60, PxForceMode::eIMPULSE, true);
+	}
+	
 	if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))
 	{
 		_float3 vAxis = _float3(m_fx, m_fy, m_fz);
@@ -1401,7 +1413,8 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			_tchar szVoiceTag[3][MAX_PATH] = { {TEXT("playermale_34286.wav") },{TEXT("playermale_23883.wav") } ,{TEXT("playermale_32104.wav") } };
 			pGameInstance->Play_Sound(szVoiceTag[rand() % 3], CSound_Manager::SOUND_VOICE, 0.7f, true);
 			ENDINSTANCE;
-			m_pCard_Fig->Spawn_Fig(m_pTarget);
+			if(nullptr != m_pCard_Fig)
+				m_pCard_Fig->Spawn_Fig(m_pTarget);
 		}
 
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_FINISHER;
@@ -2523,6 +2536,7 @@ HRESULT CPlayer::Bind_Notify()
 
 			return E_FAIL;
 		}
+		funcNotify = [&] {(*this).Landing_DisMount(); };
 		//Land
 		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Broom_Dismount_2Jog_anm"), TEXT("Land_Run"), funcNotify, CModel::ANIMTYPE(0))))
 		{
@@ -2547,7 +2561,6 @@ void CPlayer::Update_Cloth(_float fTimeDelta)
 void CPlayer::Find_Target_For_Distance()
 {
 	BEGININSTANCE;
-
 	if (nullptr != m_pTarget || pGameInstance->Get_DIMouseState(CInput_Device::DIMK_RBUTTON, CInput_Device::KEY_PRESSING))
 	{
 		ENDINSTANCE;
@@ -2555,7 +2568,6 @@ void CPlayer::Find_Target_For_Distance()
 	}
 
 	unordered_map<const _tchar*, CComponent*>* pLayer = pGameInstance->Find_Components_In_Layer(m_eLevelID, TEXT("Layer_Monster"));
-
 	if (nullptr == pLayer)
 	{
 		ENDINSTANCE;
@@ -2563,8 +2575,6 @@ void CPlayer::Find_Target_For_Distance()
 	}
 
 	_float fMinDistance = { 50.0f };
-
-
 	CGameObject* pTarget = { nullptr };
 
 	for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
@@ -3111,6 +3121,11 @@ void CPlayer::Drink_Potion()
 void CPlayer::Landing()
 {
 	m_pStateContext->Set_StateMachine(TEXT("Idle"));
+}
+
+void CPlayer::Landing_DisMount()
+{
+	m_pStateContext->Set_StateMachine(TEXT("Move Loop"));
 }
 
 void CPlayer::Add_Potion()

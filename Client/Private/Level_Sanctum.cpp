@@ -1,6 +1,7 @@
 #include "Level_Sanctum.h"
 #include"GameInstance.h"
 
+#include "Level_Loading.h"
 #include"MapObject.h"
 #include"MapObject_Ins.h"
 #include"Player.h"
@@ -39,6 +40,14 @@ void CLevel_Sanctum::Tick(_float fTimeDelta)
 		else
 		{
 			pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
+		}
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_LSHIFT))
+	{
+		if (pGameInstance->Get_DIKeyState(DIK_BACKSPACE, CInput_Device::KEY_DOWN))
+		{
+			pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_SMITH));
 		}
 	}
 

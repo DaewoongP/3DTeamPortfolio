@@ -138,11 +138,11 @@ HRESULT CMesh_Instance::Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _flo
 			_float4 vRight = pVertices[i].vRight;
 			InstanceMatrix.Right(vRight.xyz());
 			_float4 vUp = pVertices[i].vUp;
-			InstanceMatrix.Right(vUp.xyz());
+			InstanceMatrix.Up(vUp.xyz());
 			_float4 vLook = pVertices[i].vLook;
-			InstanceMatrix.Right(vLook.xyz());
+			InstanceMatrix.Look(vLook.xyz());
 			_float4 vPos = pVertices[i].vTranslation;
-			InstanceMatrix.Right(vPos.xyz());
+			InstanceMatrix.Translation(vPos.xyz());
 
 			m_InstanceMatrixVec.push_back(InstanceMatrix);
 		}

@@ -48,7 +48,7 @@ void CBroom_End::OnStateEnter(void* _pArg)
 
 	m_isAppearTrigger = true;
 	m_fTimeAcc = 0.f;
-	//m_StateMachineDesc.pRigidBody->Set_LinearDamping(0.1f);
+	m_StateMachineDesc.pRigidBody->Set_LinearDamping(0.1f);
 	m_StateMachineDesc.pRigidBody->Set_Gravity(true);
 
 	_float4x4 OffsetMatrix = XMMatrixScaling(0.5001f, 0.5001f, 0.5001f)
@@ -81,7 +81,7 @@ void CBroom_End::OnStateTick()
 
 		//회전 해주기
 		_float4x4 RotationMatrix = XMMatrixRotationQuaternion(
-			XMQuaternionRotationAxis(XMVector3Normalize(_float3(1, 0, 0)), fTimeDelta * -30.f));
+			XMQuaternionRotationAxis(XMVector3Normalize(_float3(1, 0, 0)), fTimeDelta * -10.f));
 
 		vRight = XMVector3TransformNormal(vRight, RotationMatrix);
 		vUp = XMVector3TransformNormal(vUp, RotationMatrix);
@@ -106,8 +106,8 @@ void CBroom_End::OnStateTick()
 	//애니메이션이 끝났을 경우
 	if (m_StateMachineDesc.pOwnerModel->Is_Finish_Animation())
 	{
-		Set_StateMachine(TEXT("Idle"));
-		Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));
+		Set_StateMachine(TEXT("Move Loop"));
+		Change_Animation(TEXT("Hu_BM_Sprint_Loop_Fwd_anm"));
 	}
 }
 

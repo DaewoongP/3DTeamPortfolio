@@ -1007,6 +1007,9 @@ void CDummyParticle::Load_After()
 	m_pThetaModeCombo->Update_Current_Item(m_ShapeModuleDesc.strThetaMode);
 	m_pClipChannelCombo->Update_Current_Item(m_ShapeModuleDesc.strClipChannel);
 	m_pPassComboBox->Update_Current_Item(m_RendererModuleDesc.strPass);
+	m_pSizeXEaseCombo->Update_Current_Item(m_SizeOverLifeTimeModuleDesc.eEaseX);
+	m_pSizeYEaseCombo->Update_Current_Item(m_SizeOverLifeTimeModuleDesc.eEaseY);
+	m_pSizeZEaseCombo->Update_Current_Item(m_SizeOverLifeTimeModuleDesc.eEaseZ);
 	//m_pColorEaseCombo->Update_Current_Item(M_)
 	//m_pSizeXEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingX", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
 	//m_pSizeYEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingY", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);

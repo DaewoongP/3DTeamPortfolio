@@ -30,6 +30,9 @@ private:
 	virtual ~CWeapon_Armored_Troll() = default;
 
 public:
+	void Set_Render(_bool tf) { m_isRender = true; }
+
+public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
@@ -49,6 +52,7 @@ public:
 
 private:
 	_bool m_isDissolve = { false };
+	_bool m_isRender = { false };
 	_float m_fDissolveAmount = { 0.f };
 
 private:

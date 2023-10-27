@@ -101,6 +101,8 @@ public:
 
 	void Set_Spell_Botton(_uint _Button, SPELL _eSpell);
 
+	void AddForce_Impulse(_float3 vfForce) { m_pRigidBody->Add_Force_OtherCall(vfForce); }
+
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
@@ -360,7 +362,8 @@ private:
 
 	void Healing();
 
-	void Landing();
+	void Landing(); 
+	void Landing_DisMount();
 
 	void Fly_Effect();
 

@@ -133,6 +133,9 @@ protected:
 	string m_strEmissionChannel = { "Red" };
 
 protected:
+	_float m_fRimPower = 1.f;
+
+protected:
 	CModel* m_pModel = { nullptr };
 	CTexture* m_pTexture = { nullptr };
 	CTexture* m_pClipTexture = { nullptr };

@@ -33,6 +33,7 @@ HRESULT CBroom_Stick::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pParticle->Play(m_OffsetMatrix.Translation());
+	m_pParticle_Local->Play(m_OffsetMatrix.Translation());
 
  	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
@@ -42,7 +43,7 @@ HRESULT CBroom_Stick::Initialize(void* pArg)
 		* XMMatrixTranslation(0.53f, 0.f, -0.99f);
 
 	_float4x4 RotationMatrix = XMMatrixRotationQuaternion(
-		XMQuaternionRotationAxis(XMVector3Normalize(_float3(1, 0, 0)), 1 * -30.f));
+		XMQuaternionRotationAxis(XMVector3Normalize(_float3(1, 0, 0)), 1 * -10.f));
 
 	_float3 vRight = m_OffsetMatrix.Right();
 	_float3 vUp = m_OffsetMatrix.Up();
@@ -55,6 +56,11 @@ HRESULT CBroom_Stick::Initialize(void* pArg)
 	memcpy(&m_OffsetMatrix.m[0][0], &vRight, sizeof(_float3));
 	memcpy(&m_OffsetMatrix.m[1][0], &vUp, sizeof(_float3));
 	memcpy(&m_OffsetMatrix.m[2][0], &vLook, sizeof(_float3));
+	
+	m_pPlayerRigidBody = pCweapon_Player_Broom_Desc->pPlayerRigidBody;
+	Safe_AddRef(m_pPlayerRigidBody);
+	m_pParticle->Get_EmissionModuleRef().fRateOverTime = 0;
+	m_pParticle_Local->Get_EmissionModuleRef().fRateOverTime = 0;
 
 	return S_OK;
 }
@@ -62,8 +68,6 @@ HRESULT CBroom_Stick::Initialize(void* pArg)
 void CBroom_Stick::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	
-	HeadParticle(fTimeDelta);
 }
 
 void CBroom_Stick::Late_Tick(_float fTimeDelta)
@@ -82,9 +86,14 @@ void CBroom_Stick::Late_Tick(_float fTimeDelta)
 	TempMatrix.m[3][2] = 0;
 	m_pParticle->Get_ShapeModuleRef().ShapeMatrix =
 		m_pParticle->Get_ShapeModuleRef().ShapeMatrixInit * TempMatrix;
-	m_pParticle->Get_Transform()->Set_Position(m_pTransform->Get_Position() /*+ m_pTransform->Get_Look()*-2*/);
+	m_pParticle->Get_Transform()->Set_Position(m_pTransform->Get_Position() + m_pTransform->Get_Look()* + 3);
+	m_pParticle->Get_EmissionModuleRef().fRateOverDistance = m_pPlayerRigidBody->Get_Current_Velocity().Length();
 
-	m_pParticle->Late_Tick(fTimeDelta);
+	m_pParticle_Local->Get_ShapeModuleRef().ShapeMatrix =
+		m_pParticle_Local->Get_ShapeModuleRef().ShapeMatrixInit * TempMatrix;
+	m_pParticle_Local->Get_Transform()->Set_Position(m_pTransform->Get_Position() + m_pTransform->Get_Look()* + 3);
+	m_pParticle_Local->Get_EmissionModuleRef().fRateOverTime = m_pPlayerRigidBody->Get_Current_Velocity().Length();
+
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 }
@@ -123,15 +132,6 @@ HRESULT CBroom_Stick::Render()
 	return S_OK;
 }
 
-void CBroom_Stick::HeadParticle(_float fTimeDelta)
-{
-	if (nullptr != m_pOwner)
-	{
-		//m_pParticle->Get_Transform()->Set_Position(_float4x4(m_OffsetMatrix*m_pTransform->Get_WorldMatrix()).Translation());
-	}
-	
-}
-
 HRESULT CBroom_Stick::Add_Components(void* pArg)
 {
 	try /* Check Add_Components */
@@ -152,6 +152,14 @@ HRESULT CBroom_Stick::Add_Components(void* pArg)
 			TEXT("Com_Broom_Broom_Stick"), reinterpret_cast<CComponent**>(&m_pParticle))))
 		{
 			MSG_BOX("Failed Add_GameObject : (Com_Broom_Broom_Stick)");
+			__debugbreak();
+			return E_FAIL;
+		}
+
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Particle_Broom_Broom_Stick_Local"),
+			TEXT("Com_Broom_Stick_Local"), reinterpret_cast<CComponent**>(&m_pParticle_Local))))
+		{
+			MSG_BOX("Failed Add_GameObject : (Com_Broom_Stick_Local)");
 			__debugbreak();
 			return E_FAIL;
 		}
@@ -242,5 +250,7 @@ void CBroom_Stick::Free()
 		Safe_Release(m_pShaderCom);
 		Safe_Release(m_pRendererCom);
 		Safe_Release(m_pParticle);
+		Safe_Release(m_pParticle_Local);
+		Safe_Release(m_pPlayerRigidBody);
 	}
 }

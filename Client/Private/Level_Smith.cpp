@@ -51,17 +51,24 @@ void CLevel_Smith::Tick(_float fTimeDelta)
 		}
 	}
 
-	if (pGameInstance->Get_DIKeyState(DIK_F8, CInput_Device::KEY_DOWN))
+	if (pGameInstance->Get_DIKeyState(DIK_LSHIFT))
 	{
-		pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE));
-	}
-	if (pGameInstance->Get_DIKeyState(DIK_F10, CInput_Device::KEY_DOWN))
-	{
-		pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_VAULT));
-	}
-	if (pGameInstance->Get_DIKeyState(DIK_F11, CInput_Device::KEY_DOWN))
-	{
-		pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_SANCTUM));
+		if (pGameInstance->Get_DIKeyState(DIK_7, CInput_Device::KEY_DOWN))
+		{
+			pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE));
+		}
+		if (pGameInstance->Get_DIKeyState(DIK_8, CInput_Device::KEY_DOWN))
+		{
+			pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_VAULT));
+		}
+		if (pGameInstance->Get_DIKeyState(DIK_9, CInput_Device::KEY_DOWN))
+		{
+			pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_SKY));
+		}
+		if (pGameInstance->Get_DIKeyState(DIK_0, CInput_Device::KEY_DOWN))
+		{
+			pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_SANCTUM));
+		}
 	}
 
 	ENDINSTANCE;
@@ -76,9 +83,9 @@ HRESULT CLevel_Smith::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	_bool isNight = true;
+	//_bool isNight = true;
 	FAILED_CHECK_RETURN(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SMITH,
-		TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"), &isNight), E_FAIL)
+		TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"), &g_isNight), E_FAIL)
 
 	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData3.ddd"))))
 	{
@@ -218,6 +225,13 @@ HRESULT CLevel_Smith::Ready_Event(const _tchar* pLayerTag)
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Event_Smeade"), pLayerTag, TEXT("Event_Smeade"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Event_Smeade)");
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, 
+		TEXT("Prototype_GameObject_Event_Smeade_Next_Level"), pLayerTag, TEXT("Event_Smeade_Next_Level"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Event_Smeade_Next_Level)");
 		return E_FAIL;
 	}
 

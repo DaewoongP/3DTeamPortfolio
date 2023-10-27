@@ -32,6 +32,9 @@ private:
 	explicit CArmored_Troll(const CArmored_Troll& rhs);
 	virtual ~CArmored_Troll() = default;
 
+public: // ½É¾¾ Ãß°¡
+	void Set_Weapon_Render(_bool tf);
+
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
@@ -40,6 +43,7 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
+	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix) override;
 
 private:
 	CTexture*				m_pEmissiveTexture = { nullptr };

@@ -1,6 +1,7 @@
 #include "Pensive_Idle.h"
 #include "GameInstance.h"
 #include "Client_Defines.h"
+#include "Pensive.h"
 #include "StateContext_Enemy.h"
 
 CPensive_Idle::CPensive_Idle(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
@@ -56,39 +57,38 @@ void CPensive_Idle::OnStateTick(_float fTimeDelta)
 	
 	if (result)
 	{	
-		_uint AttackAction = _uint(m_fActionSetTimer / m_fMaxChangeTimer * 10);
-		cout << AttackAction << endl;
-		*m_StateMachineDesc.pAttackType = AttackAction;
-		switch (AttackAction)
+		m_iActionIndex++;
+		if (m_iActionIndex == CPensive::ATTACK_END)
 		{
-		case 0:
-		case 1:
-		case 2:
-		case 3: //ÇØ¸Ó
+			m_iActionIndex = 0;
+		}
+		switch (m_iActionIndex)
+		{
+		case CPensive::ATTACK_HAMMER:
 			if (*m_StateMachineDesc.pPhase == 2)
 			{
 				Change_Animation(TEXT("Attack_Mace"));
 				Set_StateMachine(TEXT("Physical_Attack"));
+				*m_StateMachineDesc.pAttackType = CPensive::ATTACK_HAMMER;
 				break;
 			}
-			break;
-		case 4: // ¶¥¹â±â
+		case CPensive::ATTACK_GROUND: // ¶¥¹â±â
 			Change_Animation(TEXT("Attack_Ground"));
 			Set_StateMachine(TEXT("Physical_Attack"));
+			*m_StateMachineDesc.pAttackType = CPensive::ATTACK_GROUND;
 			break;
-		case 5:
-		case 6:
-		case 7:
-		case 8: // ¼Òµå
+		case CPensive::ATTACK_SWORD: // ¼Òµå
 			if (*m_StateMachineDesc.pPhase == 2)
 			{
 				Change_Animation(TEXT("Attack_Meteor"));
 				Set_StateMachine(TEXT("Physical_Attack"));
+				*m_StateMachineDesc.pAttackType = CPensive::ATTACK_SWORD;
 				break;
 			}
-		case 9: // ¿ø±â¿Á
+		case CPensive::ATTACK_ORB: // ¿ø±â¿Á
 			Change_Animation(TEXT("Attack_Orb_Start"));
 			Set_StateMachine(TEXT("Orb_Attack"));
+			*m_StateMachineDesc.pAttackType = CPensive::ATTACK_ORB;
 			break;
 		default:
 			break;

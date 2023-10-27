@@ -26,6 +26,7 @@ private:
     _float m_fMaxChangeTimer = { 1.f };
     _float m_fActionTimer    = { 0.0f };
     _float m_fActionSetTimer = { 0.0f };
+    _uint  m_iActionIndex = { 0 };
 
 public:
     static CPensive_Idle* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

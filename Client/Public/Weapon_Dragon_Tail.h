@@ -30,7 +30,7 @@ private:
 	virtual ~CWeapon_Dragon_Tail() = default;
 
 public:
-	HRESULT Initialize_Prototype();
+	HRESULT Initialize_Prototype(_uint iLevel);
 	void On_Collider_Attack();
 	void Off_Collider_Attack();
 	HRESULT Set_Bone_Data(CModel* pModel);
@@ -44,6 +44,7 @@ public:
 #endif // _DEBUG
 
 private:
+	_uint m_iLevel = { 0 };
 	vector<CConjuredDragon::DRAGONBONEDATA> m_Bones;
 	CEnemy::COLLISIONREQUESTDESC m_CollisionRequestDesc;
 
@@ -60,7 +61,7 @@ private:
 	HRESULT Add_Components();
 
 public:
-	static CWeapon_Dragon_Tail* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CWeapon_Dragon_Tail* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
 	virtual CWeapon_Dragon_Tail* Clone(void* pArg) override;
 	virtual void Free() override;
 };

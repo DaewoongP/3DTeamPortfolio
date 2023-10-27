@@ -183,8 +183,6 @@ HRESULT CLight_Manager::Update_ShadowMatrix(_uint iShadowIndex, CLight::LIGHTDES
 
 CLight* CLight_Manager::Create_Light(const CLight::LIGHTDESC& LightDesc)
 {
-	std::lock_guard<std::mutex> lock(mtx);
-
 	CLight* pLight = { nullptr };
 
 	if (m_LightPool.empty())
