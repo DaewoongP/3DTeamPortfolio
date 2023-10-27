@@ -530,7 +530,7 @@ void CGatherer::Free()
 		Safe_Release(m_pLight_Horklump);
 		m_pLight_Horklump = nullptr;
 	}
-	
+
 	Safe_Release(m_pPlayer);
 	Safe_Release(m_pPlayerInformation);
 

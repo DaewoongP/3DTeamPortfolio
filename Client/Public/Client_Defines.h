@@ -6,6 +6,8 @@ namespace Client
 	const unsigned int g_iWinSizeY = 720;
 
 	const float g_fFrame = 60.f;
+
+    _bool g_isNight = false;
 }
 
 extern HINSTANCE g_hInst;

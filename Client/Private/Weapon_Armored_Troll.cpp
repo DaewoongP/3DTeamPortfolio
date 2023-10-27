@@ -67,6 +67,10 @@ void CWeapon_Armored_Troll::Late_Tick(_float fTimeDelta)
 
 HRESULT CWeapon_Armored_Troll::Render()
 {
+	// 심씨 추가. 스폰되어야 랜더링 되게 넣어둠
+	if (false == m_isRender)
+		return __super::Render();
+
 	if (FAILED(Set_Shader_Resources()))
 		return E_FAIL;
 
@@ -112,6 +116,10 @@ HRESULT CWeapon_Armored_Troll::Render()
 
 HRESULT CWeapon_Armored_Troll::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
+	// 심씨 추가. 스폰되어야 랜더링 되게 넣어둠
+	if (false == m_isRender)
+		return S_OK;
+
 	if (FAILED(SetUp_ShadowShaderResources(LightViewMatrix, LightProjMatrix)))
 		return E_FAIL;
 

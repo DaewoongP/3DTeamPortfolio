@@ -29,6 +29,9 @@ private:
 	virtual ~CFireHouse() = default;
 
 public:
+	void Set_FireOn() { m_isFireOn = true; }
+
+public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
@@ -41,7 +44,14 @@ private:
 
 private:
 	vector<CParticleSystem*>	m_Particles;
+	vector<_float3>				m_FirePosition;		// 불의 위치
 	vector<_uint>				m_Indices;
+
+private:
+	_bool	m_isFireOn = { false };
+
+private:
+	void	FireOn();	// 불이야!
 
 public:
 	static CFireHouse* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

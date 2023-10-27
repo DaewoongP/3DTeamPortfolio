@@ -150,6 +150,7 @@ void CTransform::Set_Position(_float3 _vPosition)
 	memcpy(&m_WorldMatrix.m[3][0], &_vPosition, sizeof(_float3));
 
 	m_ubTransformChanged |= CHANGEFLAG::TRANSLATION;
+
 }
 
 void CTransform::Set_WorldMatrix(_float4x4 _WorldMatrix)

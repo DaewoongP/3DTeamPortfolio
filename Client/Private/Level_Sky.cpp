@@ -15,6 +15,7 @@ HRESULT CLevel_Sky::Initialize()
 	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_Monster(TEXT("Layer_Monster")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_Balloon(TEXT("Layer_Balloon")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_FlyGame(TEXT("Layer_BackGround")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Shader(), E_FAIL);
 
 	BEGININSTANCE;
@@ -184,7 +185,6 @@ HRESULT CLevel_Sky::Ready_Layer_Balloon(const _tchar* pLayerTag)
 	}
 
 	ENDINSTANCE;
-
 	return S_OK;
 }
 
@@ -224,6 +224,19 @@ HRESULT CLevel_Sky::Ready_Shader()
 
 	ENDINSTANCE;
 
+	return S_OK;
+}
+
+HRESULT CLevel_Sky::Ready_FlyGame(const _tchar* pLayerTag)
+{
+	BEGININSTANCE;
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_FlyGameManager"), pLayerTag, TEXT("GameObject_FlyGameManager"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_FlyGameManager)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+	ENDINSTANCE;
 	return S_OK;
 }
 

@@ -3,8 +3,10 @@
 
 #include "Enemy.h"
 #include "Trigger.h"
-
 #include "Player.h"
+
+#include "Armored_Troll.h"
+#include "FireHouse.h"
 
 CEvent_Smeade::CEvent_Smeade(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -35,12 +37,33 @@ HRESULT CEvent_Smeade::Initialize(void* pArg)
 		}
 	}
 
+	// 파이어 하우스 처리
+	auto pMapLayer = pGameInstance->Find_Components_In_Layer(LEVEL_SMITH, TEXT("Layer_BackGround"));
+
+	for (auto Pair : *pMapLayer)
+	{
+		wstring wstrObjTag = Pair.first;
+		if (wstring::npos != wstrObjTag.find(TEXT("FireHouse")))
+		{
+			m_pFireHouse.push_back(static_cast<CFireHouse*>(Pair.second));
+			Safe_AddRef(Pair.second);
+		}
+	}
+
 	//컷씬 준비
 	pGameInstance->Read_CutSceneCamera(TEXT("Troll_Enter"), TEXT("../../Resources/GameData/CutScene/Troll_Enter.cut"));
 
 	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Fade_Out"), false, 1.0f);
 	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play"), false, 14.428f);
 
+	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play_2_FadeOut"), true, 9.466f);
+	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play_2_FadeIn"), true, 9.666f);
+
+	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play_3_FadeOut"), true, 10.866f);
+	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play_3_FadeIn"), true, 11.066f);
+
+	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play_4_Scream"), true, 13.3f);
+	
 	ENDINSTANCE;
 	
 	return S_OK;
@@ -99,6 +122,8 @@ void CEvent_Smeade::Check_Event_Spawn_Troll()
 				wstring wstrObjectTag = iter->first;
 				if (wstring::npos != wstrObjectTag.find(TEXT("Troll")))
 				{
+					// 여기서 트롤의 무기 렌더링 처리
+					static_cast<CArmored_Troll*>(iter->second)->Set_Weapon_Render(true);
 					iter->second->Spawn();
 					Safe_Release(iter->second);
 					iter = m_pMonsters.erase(iter);
@@ -106,14 +131,51 @@ void CEvent_Smeade::Check_Event_Spawn_Troll()
 				else
 					++iter;
 			}
+
+			// 컷신에 맞춰 집에 불 
+			/*for (auto& iter : m_pFireHouse)
+			{
+				iter->Set_FireOn();
+			}*/
+
 			//페이드 인
 			m_pRenderer->FadeIn(1.0f);
 			//타이머 리셋
 			pGameInstance->Reset_Timer(TEXT("Troll_Spawn_CutScene_Play"));
+			pGameInstance->Reset_Timer(TEXT("Troll_Spawn_CutScene_Play_2_FadeOut"));
+			pGameInstance->Reset_Timer(TEXT("Troll_Spawn_CutScene_Play_2_FadeIn"));
+			pGameInstance->Reset_Timer(TEXT("Troll_Spawn_CutScene_Play_3_FadeOut"));
+			pGameInstance->Reset_Timer(TEXT("Troll_Spawn_CutScene_Play_3_FadeIn"));
+			pGameInstance->Reset_Timer(TEXT("Troll_Spawn_CutScene_Play_4_Scream"));
 			//진입 표시
 			m_isEnter = false;
 			//컷씬 재생
 			pGameInstance->Add_CutScene(TEXT("Troll_Enter"));
+		}
+		
+		if (true == pGameInstance->Check_Timer(TEXT("Troll_Spawn_CutScene_Play_2_FadeOut")))
+		{
+			m_pRenderer->FadeOut(5.0f);
+		}
+
+		if (true == pGameInstance->Check_Timer(TEXT("Troll_Spawn_CutScene_Play_2_FadeIn")))
+		{
+			m_pRenderer->FadeIn(5.0f);
+		}
+
+		if (true == pGameInstance->Check_Timer(TEXT("Troll_Spawn_CutScene_Play_3_FadeOut")))
+		{
+			m_pRenderer->FadeOut(5.0f);
+		}
+
+		if (true == pGameInstance->Check_Timer(TEXT("Troll_Spawn_CutScene_Play_3_FadeIn")))
+		{
+			m_pRenderer->FadeIn(5.0f);
+		}
+
+		if (true == pGameInstance->Check_Timer(TEXT("Troll_Spawn_CutScene_Play_4_Scream")))
+		{
+			m_pRenderer->Set_ScreenRadial(false, 1.0f, 0.2f);
 		}
 
 		//타이머 종료
@@ -138,6 +200,8 @@ void CEvent_Smeade::Check_Event_Spawn_Troll()
 			//진입 표시
 			m_isEnter = false;
 		}
+
+		
 
 		//타이머 체크
 		if (true == pGameInstance->Check_Timer(TEXT("Troll_Spawn_CutScene_Fade_Out")))
@@ -216,8 +280,8 @@ HRESULT CEvent_Smeade::Add_Components()
 	TriggerDesc.isCollisionToDead = true;
 	strcpy_s(TriggerDesc.szCollisionTag, "Trigger_Spawn_Troll");
 	lstrcpy(TriggerDesc.szOtherTag, TEXT("Player_Default"));
-	TriggerDesc.vTriggerSize = _float3(15.f, 15.f, 15.f);
-	TriggerDesc.vTriggerWorldPos = _float3(125.f, 2.f, 110.f);
+	TriggerDesc.vTriggerSize = _float3(4.f, 1.f, 1.f);
+	TriggerDesc.vTriggerWorldPos = _float3(126.f, 8.5f, 96.2f);
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Trigger"),
 		TEXT("Trigger_Spawn_Troll"), reinterpret_cast<CComponent**>(&m_pSpawn_Troll), &TriggerDesc)))
@@ -289,5 +353,8 @@ void CEvent_Smeade::Free()
 
 		for (auto& Pair : m_pMonsters)
 			Safe_Release(Pair.second);
+
+		for (auto& iter : m_pFireHouse)
+			Safe_Release(iter);
 	}
 }

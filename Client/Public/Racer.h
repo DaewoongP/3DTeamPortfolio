@@ -7,10 +7,6 @@ class CRigidbody;
 END
 
 BEGIN(Client)
-class CFlyGameManager;
-END
-
-BEGIN(Client)
 
 class CRacer final : public CGameObject
 {
@@ -21,13 +17,17 @@ public:
 		_uint	  iRacerNumber = { 0 };
 	}RACERINITDESC;
 
+	typedef struct CollsionRequestDesc
+	{
+		RACERTYPE	eRacerType = { RACER_END };
+		_uint		iRacerNumber = { 0 };
+	}COLLSIONREQUESTDESC;
+
+
 private:
 	explicit CRacer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CRacer(const CRacer& rhs);
-	virtual ~CRacer() = default;
-
-public:
-	void Add_Score(_uint iScore);
+	virtual ~CRacer() = default;;
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -42,11 +42,13 @@ private:
 
 private:
 	CRigidBody*			m_pRigidBody = { nullptr };
+	CRenderer*			m_pRenderer = { nullptr };
 
 private:
 	RACERTYPE	m_eRacerType = { RACER_END };
 	_uint		m_iRacerNumber = { 0 };
 
+	COLLSIONREQUESTDESC m_CollisionRequestDesc = {};
 
 public:
 	static CRacer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

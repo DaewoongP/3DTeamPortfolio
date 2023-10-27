@@ -29,7 +29,7 @@ public:
 
 public:
 	virtual void Use(_float3 vPlayPos) override;
-	virtual void CreateTool() override;
+	virtual void CreateTool(void* pArg) override;
 private:
 	HRESULT Add_Components();
 

@@ -135,7 +135,7 @@ void CLightStand::LightOn()
 	LightDescHork.vPos = m_pTransform->Get_Position().TransCoord() + _float3(0, 2.5f, 0);
 	LightDescHork.fRange = 5.f;
 	
-	LightDescHork.vDiffuse = _float4(1.f, 1.f, 0.f, 1.f);
+	LightDescHork.vDiffuse = _float4(1.f, (166.f / 255.f), (76.f / 255.f), 1.f);
 	LightDescHork.vAmbient = LightDescHork.vDiffuse;
 	LightDescHork.vSpecular = LightDescHork.vDiffuse;
 	

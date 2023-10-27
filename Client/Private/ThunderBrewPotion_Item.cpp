@@ -61,7 +61,7 @@ void CThunderBrewPotion_Item::Use(_float3 vPlayPos)
 	//m_pPlayerInformation->Get_Health()->Heal(m_fRecoveryAmount);
 }
 
-void CThunderBrewPotion_Item::CreateTool()
+void CThunderBrewPotion_Item::CreateTool(void* pArg)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	_uint iLevelIndex = pGameInstance->Get_CurrentLevelIndex();
@@ -72,7 +72,7 @@ void CThunderBrewPotion_Item::CreateTool()
 		iLevelIndex,
 		TEXT("Prototype_GameObject_ThunderBrewPotion"),
 		TEXT("Layer_BackGround"),
-		Generate_HashtagW().c_str())))
+		Generate_HashtagW().c_str(), pArg)))
 	{
 		__debugbreak();
 		Safe_Release(pGameInstance);

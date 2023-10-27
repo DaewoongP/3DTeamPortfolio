@@ -8,6 +8,7 @@
 #include "MagicBall.h"
 #include "Vault_Torch.h"
 #include "Layer.h"
+#include "ParticleSystem.h"
 
 CPensive::CPensive(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEnemy(pDevice, pContext)
@@ -102,6 +103,7 @@ HRESULT CPensive::Initialize_Level(_uint iCurrentLevelIndex)
 	}
 	PensiveSwitchOff();
 	Safe_Release(pLayer);
+	m_pSkillDistotionParticle->Play(m_pTransform->Get_Position());
 	return S_OK;
 }
 
@@ -119,6 +121,42 @@ void CPensive::Tick(_float fTimeDelta)
 
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+
+	if (m_isEmmisivePowerAdd)
+	{
+		_float fMultify = 0;
+		switch (m_iAttackType)
+		{
+		case ATTACK_HAMMER:
+			fMultify = 0.7f;
+			break;
+		case ATTACK_GROUND:
+			fMultify = 0.7f;
+			break;
+		case ATTACK_SWORD:
+			fMultify = 1.0f;
+			break;
+		case ATTACK_ORB:
+			fMultify = 0.24f;
+			break;
+		case ATTACK_SCREAM:
+			fMultify = 0.24f;
+			break;
+		default:
+			fMultify = 0.2f;
+			break;
+		}
+		m_fEmissivePower += fTimeDelta * fMultify;
+	}
+	else 
+	{
+		m_fEmissivePower -= fTimeDelta;
+		if (m_fEmissivePower < 0)
+			m_fEmissivePower = 0;
+	}
+	m_pSkillDistotionParticle->Get_EmissionModuleRef().fRateOverTime = m_fEmissivePower * 10;
+	m_pSkillDistotionParticle->Get_MainModuleRef().vStartSizeRange.x = m_fEmissivePower * 20;
+	m_pSkillDistotionParticle->Get_MainModuleRef().vStartSizeRange.y = m_fEmissivePower * 40;
 }
 
 void CPensive::Late_Tick(_float fTimeDelta)
@@ -149,7 +187,7 @@ void CPensive::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 HRESULT CPensive::Render()
 {
-	if (FAILED(__super::SetUp_ShaderResources()))
+	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
@@ -176,16 +214,16 @@ HRESULT CPensive::Render()
 				if (FAILED(m_pEmissiveTexture_1->Bind_ShaderResource(m_pShaderCom, "g_EmissiveTexture")))
 					return E_FAIL;
 
-				if (FAILED(m_pShaderCom->Begin("AnimMesh_Troll")))
-					throw TEXT("Shader Begin AnimMesh_Troll");
+				if (FAILED(m_pShaderCom->Begin("Pensive")))
+					throw TEXT("Shader Begin Pensive");
 			}
 			else
 			{
 				if (FAILED(m_pEmissiveTexture_2->Bind_ShaderResource(m_pShaderCom, "g_EmissiveTexture")))
 					return E_FAIL;
 
-				if (FAILED(m_pShaderCom->Begin("AnimMesh_Troll")))
-					throw TEXT("Shader Begin AnimMesh_Troll");
+				if (FAILED(m_pShaderCom->Begin("Pensive")))
+					throw TEXT("Shader Begin Pensive");
 			}
 
 			if (FAILED(m_pModelCom->Render(i)))
@@ -204,6 +242,16 @@ HRESULT CPensive::Render()
 	return S_OK;
 }
 
+HRESULT CPensive::SetUp_ShaderResources()
+{
+	if (FAILED(__super::SetUp_ShaderResources()))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fEmissivePower", &m_fEmissivePower, sizeof(_float))))
+		throw TEXT("Failed Bind_RawValue : m_fEmissivePower");
+	return S_OK;
+}
+
 void CPensive::Set_Protego_Collision(CTransform* pTransform, ATTACKTYPE eType) const
 {
 	if (eType == ATTACK_BREAK ||
@@ -219,7 +267,7 @@ void CPensive::Set_Protego_Collision(CTransform* pTransform, ATTACKTYPE eType) c
 void CPensive::Do_Damage(_int iDmg)
 {
 	m_pHealth->Damaged(iDmg);
-	if (m_isAttackAble)
+	if(m_isSpawn && !m_isDead)
 	{
 		if (m_pHealth->Get_Current_HP() <= 0 && !m_pStateContext->Is_Current_State(TEXT("Death")))
 		{
@@ -235,15 +283,18 @@ void CPensive::Do_Damage(_int iDmg)
 		{
 			m_iPhase = 2;
 		}
-		m_iGroogyStack += iDmg;
-		if (m_iGroogyStack > 400)
+		if (m_isAttackAble)
 		{
-			m_iGroogyStack = 0;
-			m_pRenderer->Set_ScreenRadial(true, 0.2f, 0.2f);
-			ADD_DECREASE_LIGHT(m_pTransform->Get_Position(), 100.f, 0.6f, m_vLightColor);
-			DieMagicBall();
-			m_pStateContext->Set_StateMachine(TEXT("Groogy"));
-			m_pModelCom->Change_Animation(TEXT("Stun_Start"));
+			m_iGroogyStack += iDmg;
+			if (m_iGroogyStack > 400)
+			{
+				m_iGroogyStack = 0;
+				m_pRenderer->Set_ScreenRadial(true, 0.2f, 0.2f);
+				ADD_DECREASE_LIGHT(m_pTransform->Get_Position(), 100.f, 0.6f, m_vLightColor);
+				DieMagicBall();
+				m_pStateContext->Set_StateMachine(TEXT("Groogy"));
+				m_pModelCom->Change_Animation(TEXT("Stun_Start"));
+			}
 		}
 	}
 }
@@ -426,6 +477,14 @@ HRESULT CPensive::Make_Notifies()
 
 	Func = [&] {(*this).PensiveSwitchOff(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Torch_Off"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Set_EmmisivePower_Add(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("EmmisiverPower_Add"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Set_EmmisivePower_Minus(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("EmmisiverPower_Minus"), Func)))
 		return E_FAIL;
 	
 	return S_OK;
@@ -823,6 +882,16 @@ HRESULT CPensive::Add_Components_Level(_uint iCurrentLevelIndex)
 			__debugbreak();
 			return E_FAIL;
 		}
+
+		if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, TEXT("Particle_Pensive_Skill_Distotion"),
+			TEXT("Com_Pensive_Skill_Distotion"), reinterpret_cast<CComponent**>(&m_pSkillDistotionParticle))))
+		{
+			wstring wstrErrorMSG = TEXT("[CPensive] Failed Add_Components_Level : ");
+			wstrErrorMSG += TEXT("Com_Pensive_Skill_Distotion");
+			MSG_BOX(wstrErrorMSG.c_str());
+			__debugbreak();
+			return E_FAIL;
+		}
 	}
 	
 	return S_OK;
@@ -872,6 +941,8 @@ void CPensive::Free()
 		Safe_Release(m_pEmissiveTexture_1);
 		Safe_Release(m_pEmissiveTexture_2);
 		Safe_Release(m_pMagicSlot);
+
+		Safe_Release(m_pSkillDistotionParticle);
 
 		Safe_Release(m_StateMachineDesc.pOwnerModel);
 		Safe_Release(m_StateMachineDesc.pTarget);
