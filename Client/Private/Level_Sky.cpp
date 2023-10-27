@@ -21,6 +21,7 @@ HRESULT CLevel_Sky::Initialize()
 	pGameInstance->Reset_World_TimeAcc();
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
 	ENDINSTANCE;
+	
 
 	return S_OK;
 }
@@ -77,6 +78,16 @@ HRESULT CLevel_Sky::Ready_Layer_BackGround(const _tchar* pLayerTag)
 
 		return E_FAIL;
 	}
+
+	_float4x4 Matrix = XMMatrixTranslation(0.f, 0.f, 0.f);
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_FireWorks"), pLayerTag, TEXT("FireWork"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_FireWorks)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
 
 	ENDINSTANCE;
 

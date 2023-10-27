@@ -40,6 +40,7 @@
 #include "BeastBalloon_D.h"
 #pragma endregion
 
+#include"FireWorks.h"
 
 CMain1_Loader::CMain1_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -430,7 +431,13 @@ HRESULT CMain1_Loader::Loading_For_Sky(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Balloon_Timer"),
 			CBalloon_Timer::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Balloon_Timer");
+
+		/* Prototype_GameObject_FireWorks */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FireWorks"),
+			CFireWorks::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_FireWorks");
 	}
+
 	catch (const _tchar* pErrorTag)
 	{
 		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");

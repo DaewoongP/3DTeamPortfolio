@@ -55,6 +55,7 @@
 #include "Pulse.h"
 #include "RadialBlur.h"
 #include "Projectile_White_Effect.h"
+#include"FireWorks.h"
 #pragma endregion Effects
 
 #pragma region Magic
@@ -342,6 +343,8 @@ HRESULT CMain0_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 		CEvent_Smeade_Next_Level::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Event_Smeade_Next_Level");
 
+	
+
 	ENDINSTANCE;
 
 	return S_OK;
@@ -363,7 +366,10 @@ HRESULT CMain0_Loader::Loading_For_Sky(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FlyGameManager"),
 			CFlyGameManager::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_FlyGameManager");
+	
 	}
+
+
 	catch (const _tchar* pErrorTag)
 	{
 		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
@@ -417,6 +423,9 @@ HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Projectile_White_Effect"),
 			CProjectile_White_Effect::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Projectile_White_Effect");
+
+		
+
 
 		/* For.Prototype_GameObject_Event_Spawn */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Spawn"),
