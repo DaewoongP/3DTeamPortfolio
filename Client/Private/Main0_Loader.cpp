@@ -430,7 +430,7 @@ HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 
 		/* For.Prototype_GameObject_Event_Spawn_Dragon */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Spawn_Dragon"),
-			CEvent_Spawn_Dragon::Create(m_pDevice, m_pContext))))
+			CEvent_Spawn_Dragon::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Event_Spawn_Dragon");
 
 		/* For.Prototype_GameObject_Event_Spawn_Dragon_2 */
@@ -442,6 +442,22 @@ HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MapParticle_Sanctum_CircularRocks01"),
 			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/MapParticle/Sanctum/CircularRocks01"), eLevelID))))
 			throw TEXT("Prototype_GameObject_MapParticle_Sanctum_CircularRocks01");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg01"),
+			CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/SummonRituals/DarkWizardSpawnToConjuredDragonEgg01.ME"), eLevelID))))
+			throw TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg01");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg02"),
+			CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/SummonRituals/DarkWizardSpawnToConjuredDragonEgg02.ME"), eLevelID))))
+			throw TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg02");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg03"),
+			CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/SummonRituals/DarkWizardSpawnToConjuredDragonEgg03.ME"), eLevelID))))
+			throw TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg03");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg04"),
+			CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/SummonRituals/DarkWizardSpawnToConjuredDragonEgg04.ME"), eLevelID))))
+			throw TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg04");
 	}
 	catch (const _tchar* pErrorTag)
 	{
