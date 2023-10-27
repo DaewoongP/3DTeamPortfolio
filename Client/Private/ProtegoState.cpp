@@ -57,13 +57,17 @@ void CProtegoState::OnStateEnter(void* _pArg)
 		Change_Animation_FlyOrNot(TEXT("Hu_Cmbt_Protego_Start_anm"), false);
 		*m_StateMachineDesc.pisFinishAnimation = false;
 	}
-	//시전중에 맞았다!! 
+	//시전중에 맞았다!!	`
 	else
 	{
 		PROTEGOSTATEDESC* ProtegoStateDesc = static_cast<PROTEGOSTATEDESC*>(_pArg);
 
 		if (nullptr == ProtegoStateDesc->pTransform)
+		{
+			Change_Animation_FlyOrNot(TEXT("Hu_Cmbt_Protego_Start_anm"), false);
+			*m_StateMachineDesc.pisFinishAnimation = false;
 			return;
+		}
 
 		m_StateMachineDesc.pPlayerTransform->LookAt(ProtegoStateDesc->pTransform->Get_Position(), true);
 
