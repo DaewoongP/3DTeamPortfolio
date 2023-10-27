@@ -10,23 +10,27 @@ class CRigidBody;
 END
 
 BEGIN(Client)
+class CBroom_Stick_DarkWizard;
+END
 
-class CJammin final : public CGameObject
+BEGIN(Client)
+
+class CFlyMan final : public CGameObject
 {
 public:
-	typedef struct tagElfInitDesc
+	typedef struct tagFlyManInitDesc
 	{
 		_float4x4 WorldMatrix;
 		wstring wstrAnimationTag = { TEXT("") };
 #ifdef _DEBUG
 		_bool isCheckPosition = { false };
 #endif // _DEBUG
-	}ELFINITDESC;
+	}FLYMANINITDESC;
 
 private:
-	explicit CJammin(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CJammin(const CJammin& rhs);
-	virtual ~CJammin() = default;
+	explicit CFlyMan(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CFlyMan(const CFlyMan& rhs);
+	virtual ~CFlyMan() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -49,13 +53,15 @@ private:
 	CShader* m_pShadowShaderCom = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 
+	CBroom_Stick_DarkWizard* m_pBroom_Stick = { nullptr };
+
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix);
 
 public:
-	static CJammin* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CFlyMan* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };

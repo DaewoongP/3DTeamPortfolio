@@ -151,8 +151,6 @@ HRESULT CLight_Manager::Render_Lights(CShader* pShader, CVIBuffer_Rect* pVIBuffe
 
 HRESULT CLight_Manager::Return_Light(CLight* pLight)
 {
-	std::lock_guard<std::mutex> lock(mtx);
-
 	Safe_Release(pLight);
 
 	if (nullptr == pLight)

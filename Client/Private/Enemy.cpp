@@ -37,10 +37,10 @@ HRESULT CEnemy::Initialize(void* pArg)
 		m_pTransform->Set_Position(_float3(_float(rand() % 5) + 20.f, 2.f, 20.f - _float(rand() % 5)));
 
 	BEGININSTANCE;
+
 	if (nullptr == m_pPlayer)
-	{
 		m_pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
-	}
+
 	ENDINSTANCE;
 
 	if (nullptr == m_pPlayer)
@@ -203,6 +203,8 @@ HRESULT CEnemy::Make_AI()
 			throw TEXT("Failed Add_Type isHitCombo");
 		if (FAILED(m_pRootBehavior->Add_Type("isHitAttack", &m_isHitAttack)))
 			throw TEXT("Failed Add_Type isHitAttack");
+		if (FAILED(m_pRootBehavior->Add_Type("isRangeInEnemy", &m_isRangeInEnemy)))
+			throw TEXT("Failed Add_Type isRangeInEnemy");
 		if (FAILED(m_pRootBehavior->Add_Type("iCurrentSpell", &m_iCurrentSpell)))
 			throw TEXT("Failed Add_Type iCurrentSpell");
 		if (FAILED(m_pRootBehavior->Add_Type("isChangeAnimation", &m_isChangeAnimation)))
@@ -445,6 +447,8 @@ void CEnemy::Set_Current_Target()
 		return;
 
 	_float3 vPosition = m_pTransform->Get_Position();
+
+	m_pTarget = nullptr;
 
 	for (auto& Pair : m_RangeInEnemies)
 	{

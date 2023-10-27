@@ -21,7 +21,9 @@ HRESULT CScoreBalloon::Initialize(void* pArg)
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
+
 	m_pTransform->Set_RigidBody(m_pRigidBody);
+
 	return S_OK;
 }
 

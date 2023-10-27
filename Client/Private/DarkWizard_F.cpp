@@ -58,7 +58,11 @@ HRESULT CDarkWizard_F::Initialize(void* pArg)
 	if (FAILED(Make_Magics()))
 		return E_FAIL;
 
+	_float3 vPosition = m_pTransform->Get_Position();
+	vPosition.y += 5.f;
+	m_pTransform->Set_Position(vPosition);
 	++iNumClass;
+	m_pRigidBody->Set_Gravity(false);
 
 	return S_OK;
 }
@@ -75,6 +79,9 @@ HRESULT CDarkWizard_F::Initialize_Level(_uint iCurrentLevelIndex)
 		return E_FAIL;
 
 	if (FAILED(Make_Notifies()))
+		return E_FAIL;
+
+	if (FAILED(Make_Notifies_for_Shake()))
 		return E_FAIL;
 
 	m_pTransform->Set_Speed(10.f);
@@ -99,6 +106,10 @@ void CDarkWizard_F::Tick(_float fTimeDelta)
 
 	m_pHitMatrix = m_HitMatrices[2];
 
+	m_pEffect_LandingFlame->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+	m_pEffect_LandingFog->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+	m_pEffect_LandingLight->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+
 	Tick_Spells();
 
 	if (nullptr != m_pModelCom)
@@ -107,7 +118,20 @@ void CDarkWizard_F::Tick(_float fTimeDelta)
 
 void CDarkWizard_F::Late_Tick(_float fTimeDelta)
 {
-	__super::Late_Tick(fTimeDelta);
+	CGameObject::Late_Tick(fTimeDelta);
+
+	if (false == m_isShow)
+		return;
+
+	if (nullptr != m_pRenderer)
+	{
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		if (false == m_isDissolve)
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
+#ifdef _DEBUG
+		m_pRenderer->Add_DebugGroup(m_pRigidBody);
+#endif // _DEBUG
+	}
 }
 
 void CDarkWizard_F::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
@@ -157,7 +181,6 @@ void CDarkWizard_F::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		if (false == IsEnemy(wstrObjectTag))
 			return;
 
-		m_isSpawn = true;
 		auto iter = m_RangeInEnemies.find(wstrObjectTag);
 		if (iter == m_RangeInEnemies.end())
 			m_RangeInEnemies.emplace(wstrObjectTag, CollisionEventDesc.pOtherOwner);
@@ -209,6 +232,62 @@ void CDarkWizard_F::Set_Protego_Collision(CTransform* pTransform, CEnemy::ATTACK
 	}
 }
 
+HRESULT CDarkWizard_F::Add_Components_for_Shake()
+{
+	try
+	{
+		CCamera_Shake::CAMERA_SHAKE_DESC Camera_Shake_Desc = { CCamera_Shake::CAMERA_SHAKE_DESC() };
+
+		_float fMaxDistance = { 15.0f };
+		_float fMinDistance = { 2.0f };
+
+
+		Camera_Shake_Desc.eShake_Priority = CCamera_Manager::SHAKE_PRIORITY_1;
+		Camera_Shake_Desc.isDistanceOption = true;
+		Camera_Shake_Desc.pTransform = m_pTransform;
+		Camera_Shake_Desc.Shake_Info_Desc.eEase = CEase::INOUT_EXPO;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Axis = CCamera_Manager::SHAKE_AXIS_UP;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Power = CCamera_Manager::SHAKE_POWER_DECRECENDO;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Type = CCamera_Manager::SHAKE_TYPE_TRANSLATION;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakeDuration = 1.0f;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakePower = 0.1f;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakeSpeed = 15.0f;
+		Camera_Shake_Desc.Shake_Info_Desc.vShake_Axis_Set = _float3();
+
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Enemy_Camera_Shake"),
+			TEXT("Com_Step_Shake"), reinterpret_cast<CComponent**>(&m_pDescendo_Shake), &Camera_Shake_Desc)))
+			throw TEXT("Com_Step_Shake");
+
+		m_pDescendo_Shake->Ready_Shake(fMaxDistance, fMinDistance, Camera_Shake_Desc.Shake_Info_Desc.fShakePower);
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Add_Components : ");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
+
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CDarkWizard_F::Make_Notifies_for_Shake()
+{
+	if (nullptr == m_pDescendo_Shake)
+	{
+		MSG_BOX("Failed Make_Notifies_for_Shake");
+		return E_FAIL;
+	}
+
+	function<void()> func = [&] {m_pDescendo_Shake->RandomUpAxisShake(); };
+
+	m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Descendo"), func);
+
+	return S_OK;
+}
+
 HRESULT CDarkWizard_F::Make_AI()
 {
 	BEGININSTANCE;
@@ -224,6 +303,8 @@ HRESULT CDarkWizard_F::Make_AI()
 			throw TEXT("Failed Add_Type iNumClass");
 		if (FAILED(m_pRootBehavior->Add_Type("fAttackCoolTime", &fAttackCoolTime)))
 			throw TEXT("Failed Add_Type fAttackCoolTime");
+		if (FAILED(m_pRootBehavior->Add_Type("isFinishSpawn", &m_isFinishSpawn)))
+			throw TEXT("Failed Add_Type isFinishSpawn");
 		if (FAILED(m_pRootBehavior->Add_Type("isAbleAttack", _bool())))
 			throw TEXT("Failed Add_Type isAbleAttack");
 
@@ -232,6 +313,9 @@ HRESULT CDarkWizard_F::Make_AI()
 		if (FAILED(Create_Behavior(pSelector)))
 			throw TEXT("Failed Create_Behavior pSelector");
 
+		CRandomChoose* pRandom_Spawn = { nullptr };
+		if (FAILED(Create_Behavior(pRandom_Spawn)))
+			throw TEXT("Failed Create_Behavior pRandom_Spawn");
 		CSelector* pSelector_Death = nullptr;
 		if (FAILED(Create_Behavior(pSelector_Death)))
 			throw TEXT("Failed Create_Behavior pSelector_Death");
@@ -255,11 +339,15 @@ HRESULT CDarkWizard_F::Make_AI()
 		if (FAILED(m_pRootBehavior->Assemble_Behavior(TEXT("Selector"), pSelector)))
 			throw TEXT("Failed Assemble_Behavior Selector");
 
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Random_Spawn"), pRandom_Spawn)))
+			throw TEXT("Failed Assemble_Behavior Random_Spawn");
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_Death"), pSelector_Death)))
 			throw TEXT("Failed Assemble_Behavior Selector_Death");
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_Alive"), pSelector_Alive)))
 			throw TEXT("Failed Assemble_Behavior Selector_Alive");
 
+		if (FAILED(Make_Spawn(pRandom_Spawn)))
+			throw TEXT("Failed Make_Spawn");
 		if (FAILED(Make_Death(pSelector_Death)))
 			throw TEXT("Failed Make_Death");
 		if (FAILED(Make_Alive(pSelector_Alive)))
@@ -436,6 +524,14 @@ HRESULT CDarkWizard_F::Make_Notifies()
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Off_Gravity"), Func)))
 		return E_FAIL;
 
+	Func = [&] {(*this).Play_Effect_1(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Play_Effect_1"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Play_Effect_2(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Play_Effect_2"), Func)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -547,6 +643,22 @@ HRESULT CDarkWizard_F::Add_Components_Level(_uint iCurrentLevelIndex)
 		if (FAILED(Add_Component(iCurrentLevelIndex, TEXT("Prototype_Component_Weapon_DarkWizard_Wand"),
 			TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
 			throw TEXT("Com_Weapon");
+
+		if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, TEXT("Prototype_Component_Particle_LandingFlame"),
+			TEXT("Com_LandingFlame"), reinterpret_cast<CComponent**>(&m_pEffect_LandingFlame))))
+			throw TEXT("Com_LandingFlame");
+
+		if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, TEXT("Prototype_Component_Particle_LandingFog"),
+			TEXT("Com_LandingFog"), reinterpret_cast<CComponent**>(&m_pEffect_LandingFog))))
+			throw TEXT("Com_LandingFog");
+
+		if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, TEXT("Prototype_Component_Particle_LandingLight"),
+			TEXT("Com_LandingLight"), reinterpret_cast<CComponent**>(&m_pEffect_LandingLight))))
+			throw TEXT("Com_LandingLight");
+
+		m_pEffect_LandingFlame->Disable();
+		m_pEffect_LandingFog->Disable();
+		m_pEffect_LandingLight->Disable();
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -595,6 +707,79 @@ void CDarkWizard_F::DeathBehavior(const _float& fTimeDelta)
 
 	if (4.f < m_fDeadTimeAcc && m_fDissolveAmount >= 1.f)
 		Set_ObjEvent(OBJ_DEAD);
+}
+
+HRESULT CDarkWizard_F::Make_Spawn(CRandomChoose* pRandomChoose)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pRandomChoose)
+			throw TEXT("Parameter pRandomChoose is nullptr");
+
+		/* Create Child Behaviors */
+		CAction* pAction_Spawn_1 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Spawn_1)))
+			throw TEXT("Failed Create_Behavior pAction_Spawn_1");
+		CAction* pAction_Spawn_2 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Spawn_2)))
+			throw TEXT("Failed Create_Behavior pAction_Spawn_2");
+		CAction* pAction_Spawn_3 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Spawn_3)))
+			throw TEXT("Failed Create_Behavior pAction_Spawn_3");
+
+		/* Set Decorators */
+		pRandomChoose->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsSpawn = { nullptr };
+				_bool* pIsFinishSpawn = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isSpawn", pIsSpawn)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("isFinishSpawn", pIsFinishSpawn)))
+					return false;
+
+				return false == *pIsFinishSpawn && *pIsSpawn;
+			});
+		pRandomChoose->Add_Success_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsFinishSpawn = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isFinishSpawn", pIsFinishSpawn)))
+					return false;
+
+				*pIsFinishSpawn = true;
+
+				return true;
+			});
+
+		/* Set Options */
+		pAction_Spawn_1->Set_Options(TEXT("Spawn_1"), m_pModelCom);
+		pAction_Spawn_2->Set_Options(TEXT("Spawn_2"), m_pModelCom);
+		pAction_Spawn_3->Set_Options(TEXT("Spawn_3"), m_pModelCom);
+
+		/* Assemble Behaviors */
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Spawn_1"), pAction_Spawn_1, 0.33f)))
+			throw TEXT("Failed Assemble_Behavior Action_Spawn_1");
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Spawn_2"), pAction_Spawn_2, 0.33f)))
+			throw TEXT("Failed Assemble_Behavior Action_Spawn_2");
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Spawn_3"), pAction_Spawn_3, 0.34f)))
+			throw TEXT("Failed Assemble_Behavior Action_Spawn_3");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CDarkWizard_M] Failed Make_Spawn : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
 }
 
 HRESULT CDarkWizard_F::Make_Death(_Inout_ CSelector* pSelector)
@@ -1437,23 +1622,6 @@ HRESULT CDarkWizard_F::Make_Air_Hit(_Inout_ CSequence* pSequence)
 		pAction_Knockback->Set_Options(TEXT("Knockback_Back"), m_pModelCom);
 		pAction_Splat->Set_Options(TEXT("Splat_Back"), m_pModelCom);
 		pAction_GetUp->Set_Options(TEXT("Getup_Back"), m_pModelCom);
-		pAction_Hit_1->Add_Exit_Condition([&](CBlackBoard* pBlackBoard)->_bool
-			{
-				_bool* pIsOnGround = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("isOnGround", pIsOnGround)))
-					return false;
-				if (true == *pIsOnGround)
-					int i = 0;
-				return *pIsOnGround;
-			});
-		pAction_Knockback->Add_Exit_Condition([&](CBlackBoard* pBlackBoard)->_bool
-			{
-				_bool* pIsOnGround = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("isOnGround", pIsOnGround)))
-					return false;
-
-				return *pIsOnGround;
-			});
 
 		/* Assemble Childs */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Selector_AirHit"), pSelector_AirHit)))
@@ -1528,9 +1696,9 @@ HRESULT CDarkWizard_F::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 				if (FAILED(pBlackBoard->Get_Type("pHealth", pHealth)))
 					return false;
 
-				Print_Damage_Font(50);
+				Print_Damage_Font(200);
 
-				pHealth->Damaged(50);
+				pHealth->Damaged(200);
 
 				return true;
 			});
@@ -1640,6 +1808,19 @@ void CDarkWizard_F::Shot_Magic()
 	m_CastingMagic->Do_MagicBallState_To_Next();
 }
 
+void CDarkWizard_F::Play_Effect_1()
+{
+	m_pRigidBody->Set_Gravity(true);
+	m_pEffect_LandingFog->Play(m_pTransform->Get_Position());
+	m_pEffect_LandingLight->Play(m_pTransform->Get_Position());
+}
+
+void CDarkWizard_F::Play_Effect_2()
+{
+	m_isShow = true;
+	m_pEffect_LandingFlame->Play(m_pTransform->Get_Position());
+}
+
 CDarkWizard_F* CDarkWizard_F::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CDarkWizard_F* pInstance = New CDarkWizard_F(pDevice, pContext);
@@ -1672,6 +1853,11 @@ void CDarkWizard_F::Free()
 
 	Safe_Release(m_pWeapon);
 	Safe_Release(m_pMagicSlot);
+	Safe_Release(m_pDescendo_Shake);
+
+	Safe_Release(m_pEffect_LandingFlame);
+	Safe_Release(m_pEffect_LandingFog);
+	Safe_Release(m_pEffect_LandingLight);
 
 	--iNumClass;
 }

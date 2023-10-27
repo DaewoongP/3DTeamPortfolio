@@ -496,6 +496,16 @@ HRESULT CGolem_Combat::Make_Death(_Inout_ CSequence* pSequence)
 
 				return false;
 			});
+		pAction_Death_Ground->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				Set_Dead();
+				return true;
+			});
+		pAction_Knockback->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				Set_Dead();
+				return true;
+			});
 
 		// Set Options 
 		function<void(const _float&)> Func = [&](const _float& fTimeDelta) { this->DeathBehavior(fTimeDelta); };
@@ -1386,9 +1396,9 @@ HRESULT CGolem_Combat::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 				if (FAILED(pBlackBoard->Get_Type("pHealth", pHealth)))
 					return false;
 
-				Print_Damage_Font(50);
+				Print_Damage_Font(200);
 
-				pHealth->Damaged(50);
+				pHealth->Damaged(200);
 
 				return true;
 			});

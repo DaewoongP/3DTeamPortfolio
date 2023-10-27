@@ -3,13 +3,12 @@
 #include "Client_Defines.h"
 
 BEGIN(Engine)
-
 class CRenderer;
-
 END
 
 BEGIN(Client)
 class CTrigger;
+class CProfessor_Fig;
 END
 
 BEGIN(Client)
@@ -38,9 +37,14 @@ private:
 	//ÄÆ¾À
 	CTrigger* m_pCutScene_0_0 = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
+
 private:
 	_bool m_isEnter = { false };
 	CLIFFSIDE_SEQUENCE m_eCliffside_Sequence = { CLIFFSIDE_SEQUENCE_END };
+
+private: /* For.Spwan Monster, NPC */
+	_umap<wstring, CEnemy*> m_pMonsters;
+	CProfessor_Fig* m_pFig = { nullptr };
 	
 private:
 	void Check_Event_Play_CutScene_0_0();

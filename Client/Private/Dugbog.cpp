@@ -75,7 +75,7 @@ HRESULT CDugbog::Initialize_Level(_uint iCurrentLevelIndex)
 		return E_FAIL;
 
 	if (FAILED(Make_Notifies_for_Shake()))
-		return E_FAIL; 
+		return E_FAIL;
 
 	if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
 		return E_FAIL;
@@ -84,12 +84,26 @@ HRESULT CDugbog::Initialize_Level(_uint iCurrentLevelIndex)
 	m_DarkAuraBoneMatrix[1] = m_pModelCom->Get_Bone_Index(21)->Get_CombinedTransformationMatrixPtr();
 	m_DarkAuraBoneMatrix[2] = m_pModelCom->Get_Bone_Index(98)->Get_CombinedTransformationMatrixPtr();
 
+	BEGININSTANCE;
+
+	auto pNPCLayer = pGameInstance->Find_Components_In_Layer(iCurrentLevelIndex, TEXT("Layer_NPC"));
+
+	for (auto Pair : *pNPCLayer)
+	{
+		wstring wstrObjTag = Pair.first;
+
+		if (wstring::npos != wstrObjTag.find(TEXT("Professor_Fig")))
+			m_RangeInEnemies.emplace(wstrObjTag, static_cast<CGameObject*>(Pair.second));
+	}
+
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
 void CDugbog::Tick(_float fTimeDelta)
 {
-	/*Set_Current_Target();
+	Set_Current_Target();
 
 	__super::Tick(fTimeDelta);
 
@@ -104,12 +118,12 @@ void CDugbog::Tick(_float fTimeDelta)
 	{
 		if(nullptr != m_DarkAura[i])
 			m_DarkAura[i]->Get_Transform()->Set_Position(m_DarkAuraBoneMatrix[i]->Translation());
-	}*/
+	}
 }
 
 void CDugbog::Late_Tick(_float fTimeDelta)
 {
-	//__super::Late_Tick(fTimeDelta);
+	__super::Late_Tick(fTimeDelta);
 }
 
 void CDugbog::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
@@ -146,18 +160,6 @@ void CDugbog::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			m_isHitAttack = true;
 
 		m_iCurrentSpell |= eBuff;
-	}
-
-	/* Collision Player Fig */
-	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
-	{
-		if (false == IsEnemy(wstrObjectTag))
-			return;
-
-		m_isSpawn = true;
-		auto iter = m_RangeInEnemies.find(wstrObjectTag);
-		if (iter == m_RangeInEnemies.end())
-			m_RangeInEnemies.emplace(wstrObjectTag, CollisionEventDesc.pOtherOwner);
 	}
 }
 
@@ -397,26 +399,6 @@ HRESULT CDugbog::Add_Components()
 
 		m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
 
-		/* For.Collider Enemy_Range */
-		RigidBodyDesc.isStatic = true;
-		RigidBodyDesc.isTrigger = true;
-		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
-		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.5f, 0.f);
-		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, 0.f);
-		RigidBodyDesc.fStaticFriction = 0.f;
-		RigidBodyDesc.fDynamicFriction = 1.f;
-		RigidBodyDesc.fRestitution = 0.f;
-		PxSphereGeometry pSphereGeomatry2 = PxSphereGeometry(7.f);
-		RigidBodyDesc.pGeometry = &pSphereGeomatry2;
-		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
-		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
-		RigidBodyDesc.pOwnerObject = this;
-		RigidBodyDesc.eThisCollsion = COL_ENEMY_RANGE;
-		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
-		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Range");
-		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
-			throw TEXT("Failed Create_Collider");
-
 		/* For.Collider Enemy_Attack_Body */
 		RigidBodyDesc.isStatic = true;
 		RigidBodyDesc.isTrigger = true;
@@ -427,7 +409,7 @@ HRESULT CDugbog::Add_Components()
 		RigidBodyDesc.fDynamicFriction = 1.f;
 		RigidBodyDesc.fRestitution = 0.f;
 		PxSphereGeometry pSphereGeomatry3 = PxSphereGeometry(1.f);
-		RigidBodyDesc.pGeometry = &pSphereGeomatry2;
+		RigidBodyDesc.pGeometry = &pSphereGeomatry3;
 		RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
 		RigidBodyDesc.pOwnerObject = this;
@@ -546,18 +528,12 @@ HRESULT CDugbog::Make_Idle_Break(_Inout_ CRandomChoose* pRandomChoose)
 			throw TEXT("Parameter pRandomChoose is nullptr");
 
 		/* Create Child Behaviors */
-		CAction* pAction_Hide_1 = nullptr;
-		if (FAILED(Create_Behavior(pAction_Hide_1)))
-			throw TEXT("Failed Create_Behavior pAction_Hide_1");
-		CAction* pAction_Hide_2 = nullptr;
-		if (FAILED(Create_Behavior(pAction_Hide_2)))
-			throw TEXT("Failed Create_Behavior pAction_Hide_2");
-		CAction* pAction_Hide_3 = nullptr;
-		if (FAILED(Create_Behavior(pAction_Hide_3)))
-			throw TEXT("Failed Create_Behavior pAction_Hide_3");
-		CAction* pAction_Hide_4 = nullptr;
-		if (FAILED(Create_Behavior(pAction_Hide_4)))
-			throw TEXT("Failed Create_Behavior pAction_Hide_4");
+		CAction* pAction_1 = nullptr;
+		if (FAILED(Create_Behavior(pAction_1)))
+			throw TEXT("Failed Create_Behavior pAction_1");
+		CAction* pAction_2 = nullptr;
+		if (FAILED(Create_Behavior(pAction_2)))
+			throw TEXT("Failed Create_Behavior pAction_2");
 
 		/* Set Decoretors */
 		pRandomChoose->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -574,20 +550,14 @@ HRESULT CDugbog::Make_Idle_Break(_Inout_ CRandomChoose* pRandomChoose)
 			});
 
 		/* Set Options */
-		pAction_Hide_1->Set_Options(TEXT("Hide_1"), m_pModelCom);
-		pAction_Hide_2->Set_Options(TEXT("Hide_2"), m_pModelCom);
-		pAction_Hide_3->Set_Options(TEXT("Hide_3"), m_pModelCom);
-		pAction_Hide_4->Set_Options(TEXT("Hide_4"), m_pModelCom);
+		pAction_1->Set_Options(TEXT("Taunt_1"), m_pModelCom);
+		pAction_2->Set_Options(TEXT("Taunt_2"), m_pModelCom);
 
 		/* Assemble Behaviors */
-		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Hide_1"), pAction_Hide_1, 0.25f)))
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Hide_1"), pAction_1, 0.5f)))
 			throw TEXT("Failed Assemble_Behavior Action_Hide_1");
-		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Hide_2"), pAction_Hide_2, 0.25f)))
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Hide_2"), pAction_2, 0.5f)))
 			throw TEXT("Failed Assemble_Behavior Action_Hide_2");
-		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Hide_3"), pAction_Hide_3, 0.25f)))
-			throw TEXT("Failed Assemble_Behavior Action_Hide_3");
-		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Hide_4"), pAction_Hide_4, 0.25f)))
-			throw TEXT("Failed Assemble_Behavior Action_Hide_4");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -1850,9 +1820,9 @@ HRESULT CDugbog::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 				if (FAILED(pBlackBoard->Get_Type("pHealth", pHealth)))
 					return false;
 
-				Print_Damage_Font(50);
+				Print_Damage_Font(200);
 
-				pHealth->Damaged(50);
+				pHealth->Damaged(200);
 
 				return true;
 			});

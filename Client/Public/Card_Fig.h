@@ -65,13 +65,13 @@ public:
 	}
 
 public:
-	void Spawn_Fig(const CGameObject* pTarget);
+	void Spawn_Fig(CGameObject* pTarget);
 
 private:
 	_float4x4 m_OffsetMatrix;
 	const _float4x4* m_pParentWorldMatrix = { nullptr };
 
-	const CGameObject* m_pTarget = { nullptr };
+	CGameObject* m_pTarget = { nullptr };
 	_bool m_isSpawn = { false };
 	_bool m_isJump = { false };
 	_bool m_isChangeAnimation = { false };

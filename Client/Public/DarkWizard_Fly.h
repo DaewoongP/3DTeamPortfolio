@@ -14,6 +14,7 @@ END
 
 BEGIN(Client)
 class CAction;
+class CBalloon;
 class CMagicBall;
 class CMagicSlot;
 class CWeapon_DarkWizard_Wand;
@@ -55,6 +56,11 @@ private:
 	HRESULT Bind_HitMatrices();
 
 private:
+	_bool m_isCollisionEnemy = { false };
+	_float3 m_vCollisionTargetPosition;
+	_float m_fBounceTimeAcc = { 0.f };
+
+	CBalloon* m_pTargetBalloon = { nullptr };
 	_float3 m_vMoveTargetPosition;
 
 private: /* Çàµ¿ ¹­À½µé */
@@ -66,7 +72,12 @@ private:
 	_bool is_Enemy(const wstring& wstrObjectTag);
 	const CGameObject* Find_Enemy(const wstring& wstrObjectTag);
 	void Update_Target();
+	void Update_BalloonTarget_Near();
+	void Update_BalloonTarget_Middle();
+	void Update_BalloonTarget_Far();
+	void Update_BalloonTarget_Player();
 	void Move(const _float& fTimeDelta);
+	void Bounce_Off(const _float& fTimeDelta);
 
 private: /* Notify Functions */
 	void Cast_Levioso();
@@ -76,7 +87,7 @@ private: /* Notify Functions */
 	void Shot_Magic();
 
 private:
-	_uint m_iCount = 0;
+	_int m_iMy_Number = { 0 };
 	static _int iNumClass;
 
 public:

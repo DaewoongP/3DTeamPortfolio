@@ -194,12 +194,14 @@ HRESULT CCard_Fig::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMa
 	return S_OK;
 }
 
-void CCard_Fig::Spawn_Fig(const CGameObject* pTarget)
+void CCard_Fig::Spawn_Fig(CGameObject* pTarget)
 {
 	if (nullptr == pTarget)
 		return;
 
+	Safe_Release(m_pTarget);
 	m_pTarget = pTarget;
+	Safe_AddRef(m_pTarget);
 	m_isSpawn = true;
 }
 
@@ -826,6 +828,8 @@ void CCard_Fig::Free()
 	Safe_Release(m_pRootBehavior);
 
 	Safe_Release(m_pUI_Card);
+
+	Safe_Release(m_pTarget);
 
 	for (auto& pScript : m_pScripts)
 	{
