@@ -2798,8 +2798,8 @@ HRESULT CPlayer::Bind_Notify()
 void CPlayer::Update_Cloth(_float fTimeDelta)
 {
 	_float3 vVelocity = m_pTransform->Get_Velocity();
-	
-	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(m_fClothPower * vVelocity * -1.f,
+	vVelocity.y *= -1.f;
+	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(m_fClothPower * vVelocity,
 		XMMatrixInverse(nullptr, XMMatrixRotationQuaternion(m_pTransform->Get_Quaternion()))));
 
 	m_pCustomModel->Tick(CCustomModel::ROBE, m_iRobeMeshIndex, fTimeDelta);

@@ -71,7 +71,7 @@ HRESULT CLevel_Static::Ready_Layer_UI(const _tchar* pLayerTag)
 		TEXT("Prototype_GameObject_UI_Farming"), pLayerTag, TEXT("GameObject_UI_Farming")), E_FAIL);
 
 
-	CUI_Group_Score::UISCOREDESC ScoreDesc;
+	/*CUI_Group_Score::UISCOREDESC ScoreDesc;
 	ZEROMEM(&ScoreDesc);
 	lstrcpy(ScoreDesc.wszFirstName, TEXT("ÇÃ·¹ÀÌ¾î"));
 	lstrcpy(ScoreDesc.wszSecondName, TEXT("¾Ç´ç1"));
@@ -84,7 +84,7 @@ HRESULT CLevel_Static::Ready_Layer_UI(const _tchar* pLayerTag)
 	lstrcpy(ScoreDesc.wszNinthName, TEXT("¾Ç´ç8"));
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC,
-		TEXT("Prototype_GameObject_UI_Score"), pLayerTag, TEXT("GameObject_UI_Score"), &ScoreDesc), E_FAIL);
+		TEXT("Prototype_GameObject_UI_Score"), pLayerTag, TEXT("GameObject_UI_Score"), &ScoreDesc), E_FAIL);*/
 
 	return S_OK;
 }
