@@ -8,6 +8,7 @@ namespace Client
 	const float g_fFrame = 60.f;
 
     _bool g_isNight = false;
+    _bool g_isPensiveDead = false;
 }
 
 extern HINSTANCE g_hInst;

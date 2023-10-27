@@ -193,8 +193,8 @@ _bool CInventory::Add_Item(CItem* pItem, ITEMTYPE eType)
 	}
 	else if (RESOURCE == eType)
 	{
-		if (m_pItems[eType].size() >= iResourceMax)
-			return false;
+		/*if (m_pItems[eType].size() >= iResourceMax)
+			return false;*/
 		pFarming->Play(pItem);
 		m_pItems[eType].push_back(pItem);
 		m_pUI_Inventory[eType]->Set_ResourceInventoryItem(m_pItems[eType], &m_ResourcesCount);
@@ -239,8 +239,8 @@ _bool CInventory::Add_Item(ITEM_ID eItemID, _uint iLevel, void* pArg)
 	{
 		if (m_pItems[eCurType].size() / iResourceMax >= 1.f)
 		{
-			Safe_Release(pItem);
-			return false;
+			/*Safe_Release(pItem);
+			return false;*/
 		}
 	}
 	else
