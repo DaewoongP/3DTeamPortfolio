@@ -195,10 +195,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(29.f, 2.7f, 26.f);
 	m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
-	//m_vLevelInitPosition[LEVEL_VAULT] = _float3(161, 2, 93);
-	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(30.f, 3.f, 15.f);
 	m_vLevelInitPosition[LEVEL_SMITH] = _float3(32.f, 0.8f, 25.f);
-	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(94.5f, 7.2f, 78.f);
 	m_vLevelInitPosition[LEVEL_SKY] = _float3(88.8f, 12.5f, 69.8f);
 
 	m_fTargetViewRange = 2.0f;
@@ -208,21 +205,6 @@ HRESULT CPlayer::Initialize(void* pArg)
 	pGameInstance->Play_BGM(TEXT("01_Main.mp3"), 1.0f);
 	ENDINSTANCE;*/
 
-	//m_vecEaseList.resize(CEase::EASE_END);
-
-	//m_vecEaseList[CEase::IN_QUAD] = New ("IN_QUAD");
-
-	//IN_QUAD, OUT_QUAD, INOUT_QUAD_,
-	//	IN_SINE, OUT_SINE, INOUT_SINE,
-	//	IN_QUINT, OUT_QUINT, INOUT_QUINT,
-	//	IN_QUART, OUT_QUART, INOUT_QUART,
-	//	NONE_LINEAR, IN_LINEAR, OUT_LINEAR, INOUT_LINEAR,
-	//	IN_EXPO, OUT_EXPO, INOUT_EXPO,
-	//	IN_ELASTIC, OUT_ELASTIC, INOUT_ELASTIC,
-	//	IN_CUBIC, OUT_CUBIC, INOUT_CUBIC,
-	//	IN_CIRC, OUT_CIRC, INOUT_CIRC,
-	//	IN_BOUNCE, OUT_BOUNCE, INOUT_BOUNCE,
-	//	IN_BACK, OUT_BACK, INOUT_BACK,
 	m_pNonFlySpell[0] = { LEVIOSO };
 	m_pNonFlySpell[1] = { FLIPENDO };
 	m_pNonFlySpell[2] = { ACCIO };
@@ -302,7 +284,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	Key_Input(fTimeDelta);
 
 	Update_Hover_Eye_Distance();
-	
+
 	//m_pStateContext->Tick(fTimeDelta)
 	Go_Protego(&m_ProtegoStateDesc);
 
@@ -332,9 +314,16 @@ void CPlayer::Tick(_float fTimeDelta)
 	}
 
 	m_isPreLumos = m_isLumosOn;
-	for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
-		m_vecPlayer_StateParicle[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
 
+	for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
+	{
+		m_vecPlayer_StateParicle[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+	}
+
+	for (_uint i = 0; i < m_vecMeshEffect.size(); ++i)
+	{
+		m_vecMeshEffect[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+	}
 	//m_pCooltime->Tick(fTimeDelta);
 	//Potion_Duration(fTimeDelta);
 
@@ -360,6 +349,15 @@ void CPlayer::Tick(_float fTimeDelta)
 		}
 		m_pWindParticle->Get_Transform()->Set_Position(m_pTransform->Get_Position() +
 			m_pPlayer_Camera->Get_TransformPtr()->Get_Look() * 5);
+
+		_float4x4 TempMatrix = m_pTransform->Get_WorldMatrix();
+		TempMatrix.m[3][0] = 0;
+		TempMatrix.m[3][1] = 0;
+		TempMatrix.m[3][2] = 0;
+
+		m_pWindParticle->Get_ShapeModuleRef().ShapeMatrix =
+			m_pWindParticle->Get_ShapeModuleRef().ShapeMatrixInit * TempMatrix;
+		m_pRenderer->Set_ScreenRadial(true,2.f, iFast*0.002f);
 	}
 	else
 	{
@@ -378,12 +376,8 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
 	{
 		ENDINSTANCE;
-
 		return;
 	}
-
-	ENDINSTANCE;
-
 	__super::Late_Tick(fTimeDelta);
 
 	//m_pStateContext->Late_Tick(fTimeDelta);
@@ -392,8 +386,6 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
-		if (nullptr != m_pTarget)
-			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_EDGEHIGHLIGHT, m_pTarget);
 #ifdef _DEBUG
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
 #endif // _DEBUG
@@ -409,6 +401,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 			Safe_Release(m_pTarget);
 			m_pTargetTransform = nullptr;
 			m_pTarget = nullptr;
+			ENDINSTANCE;
 			return;
 		}
 
@@ -416,6 +409,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 		if (nullptr != pEnemy)
 			pEnemy->Get_UI_Enemy_HP()->Late_Tick(fTimeDelta);
 	}
+	ENDINSTANCE;
 }
 
 void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
@@ -469,6 +463,11 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			break;
 			case CEnemy::ATTACK_LIGHT:
 			{
+				for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
+				{
+					m_vecPlayer_StateParicle[i]->Play(pDesc->pEnemyTransform->Get_Position());
+				}
+
 				BEGININSTANCE;
 				_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_24397.wav") },{TEXT("playermale_99996.wav") } ,{TEXT("playermale_35941.wav")},{TEXT("playermale_99995.wav") } };
 				pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
@@ -485,6 +484,11 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			break;
 			case CEnemy::ATTACK_HEAVY:
 			{
+				for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
+				{
+					m_vecPlayer_StateParicle[i]->Play(pDesc->pEnemyTransform->Get_Position());
+				}
+
 				BEGININSTANCE;
 				_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_25735.wav") },{TEXT("playermale_99991.wav") } ,{TEXT("playermale_99992.wav") },{TEXT("playermale_99993.wav") } };
 				pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
@@ -503,10 +507,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			HitStateDesc.pTransform = pDesc->pEnemyTransform;
 
 			Go_Hit(&HitStateDesc);
-			for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
-			{
-				m_vecPlayer_StateParicle[i]->Play(pDesc->pEnemyTransform->Get_Position());
-			}
+			
 
 			_float iDamege = pDesc->iDamage;
 
@@ -552,6 +553,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		//Hit
 		else
 		{
+
 			CHitState::HITSTATEDESC HitStateDesc;
 			HitStateDesc.eBuffType = pDesc->eBuffType;
 
@@ -784,21 +786,46 @@ HRESULT CPlayer::Add_Components()
 	}
 
 	/* For.Com_PotionParticle */
-	m_vecPotionParticle.resize(2);
+	m_vecPotionParticle.resize(5);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Heal_Particle"),
 		TEXT("Com_HealParticle"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[0]))))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Maxima_Particle"),
-		TEXT("Com_MaximaParticle"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[1]))))
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Heal_Ground"),
+		TEXT("Com_Heal_Ground"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[1]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Heal_After_Particle"),
+		TEXT("Com_Heal_After_Particle"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[2]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Heal_After_Particle2"),
+		TEXT("Com_Heal_After_Particle2"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[3]))))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
 	
-	m_vecPlayer_StateParicle.resize(2);
+	
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Maxima_Particle"),
+		TEXT("Com_MaximaParticle"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[4]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	
+
+
+
+	m_vecPlayer_StateParicle.resize(3);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Player_Hit_Particle"),
 		TEXT("Com_Player_HitParticle"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[0]))))
 	{
@@ -812,30 +839,23 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
-	/* For.Com_Player_Effect */
-	//m_vecPlayer_StateParicle.resize(1);
-	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_Effect"),
-	//	TEXT("Com_Blink_Effect"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[0]))))
-	//{
-	//__debugbreak();
-	//	return E_FAIL;
-	//}
-	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_SubEffect"),
-	//	TEXT("Com_Blink_Effect"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[0]))))
-	//{
-	//	__debugbreak();
-	//	return E_FAIL;
-	//}
-	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Blink_Disotrtion"),
-	//	TEXT("Com_Blink_Effect"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[1]))))
-	//{
-	//	__debugbreak();
-	//	return E_FAIL;
-	//}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Player_Hit_Circle"),
+		TEXT("Com_Player_Hit_Circle"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[2]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
 
+	
 
-
-
+	m_vecMeshEffect.resize(1);
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Potion_Distortoin"),
+		TEXT("Com_Potion_Distortoin"), reinterpret_cast<CComponent**>(&m_vecMeshEffect[0]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Potion_Distortion)");
+		__debugbreak();
+		return E_FAIL;
+	}
 
 	const CBone* pBone = m_pCustomModel->Get_Bone(TEXT("SKT_RightHand"));
 	if (nullptr == pBone)
@@ -851,21 +871,6 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Weapon_Player_Wand"),
 		TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
 		throw TEXT("Com_Weapon");
-
-	pBone = m_pCustomModel->Get_Bone_Index(46);
-	if (nullptr == pBone)
-		throw TEXT("pBone is nullptr");
-
-	CBroom_Stick::CWEAPON_PLAYER_BROOM_DESC ParentMatrixDesc2;
-	ParentMatrixDesc2.ParentMatrixDesc.OffsetMatrix = pBone->Get_OffsetMatrix();
-	ParentMatrixDesc2.ParentMatrixDesc.PivotMatrix = m_pCustomModel->Get_PivotFloat4x4();
-	ParentMatrixDesc2.ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
-	ParentMatrixDesc2.ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
-	//뼈 바인딩해주기
-	if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Weapon_Player_Broom"),
-		TEXT("Com_Broom"), reinterpret_cast<CComponent**>(&m_pBroom), &ParentMatrixDesc2)))
-		throw TEXT("Com_Broom");
-	
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_MagicSlot"),
 		TEXT("Com_MagicSlot"), reinterpret_cast<CComponent**>(&m_pMagicSlot))))
@@ -907,6 +912,21 @@ HRESULT CPlayer::Add_Components()
 
 	m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
 	m_pRigidBody->Get_RigidBodyActor()->setAngularDamping(1.f);
+
+	pBone = m_pCustomModel->Get_Bone_Index(46);
+	if (nullptr == pBone)
+		throw TEXT("pBone is nullptr");
+
+	CBroom_Stick::CWEAPON_PLAYER_BROOM_DESC ParentMatrixDesc2;
+	ParentMatrixDesc2.ParentMatrixDesc.OffsetMatrix = pBone->Get_OffsetMatrix();
+	ParentMatrixDesc2.ParentMatrixDesc.PivotMatrix = m_pCustomModel->Get_PivotFloat4x4();
+	ParentMatrixDesc2.ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
+	ParentMatrixDesc2.ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+	ParentMatrixDesc2.pPlayerRigidBody = m_pRigidBody;
+	//뼈 바인딩해주기
+	if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Weapon_Player_Broom"),
+		TEXT("Com_Broom"), reinterpret_cast<CComponent**>(&m_pBroom), &ParentMatrixDesc2)))
+		throw TEXT("Com_Broom");
 
 	/* Com_Player_Information */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Player_Information"),
@@ -1092,7 +1112,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = LUMOS;
-		magicInitDesc.fInitCoolTime = 5.f;
+		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 0;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 30.f;
@@ -1259,6 +1279,11 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	BEGININSTANCE;
 
 #ifdef _DEBUG
+	if (pGameInstance->Get_DIKeyState(DIK_P, CInput_Device::KEY_DOWN))
+	{
+		m_pRigidBody->Add_Force(_float3(0, 1, 0) * 60, PxForceMode::eIMPULSE, true);
+	}
+	
 	if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))
 	{
 		_float3 vAxis = _float3(m_fx, m_fy, m_fz);
@@ -1435,7 +1460,8 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			_tchar szVoiceTag[3][MAX_PATH] = { {TEXT("playermale_34286.wav") },{TEXT("playermale_23883.wav") } ,{TEXT("playermale_32104.wav") } };
 			pGameInstance->Play_Sound(szVoiceTag[rand() % 3], CSound_Manager::SOUND_VOICE, 0.7f, true);
 			ENDINSTANCE;
-			m_pCard_Fig->Spawn_Fig(m_pTarget);
+			if(nullptr != m_pCard_Fig)
+				m_pCard_Fig->Spawn_Fig(m_pTarget);
 		}
 
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_FINISHER;
@@ -2758,6 +2784,7 @@ HRESULT CPlayer::Bind_Notify()
 
 			return E_FAIL;
 		}
+		funcNotify = [&] {(*this).Landing_DisMount(); };
 		//Land
 		if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Broom_Dismount_2Jog_anm"), TEXT("Land_Run"), funcNotify, CModel::ANIMTYPE(0))))
 		{
@@ -2782,7 +2809,6 @@ void CPlayer::Update_Cloth(_float fTimeDelta)
 void CPlayer::Find_Target_For_Distance()
 {
 	BEGININSTANCE;
-
 	if (nullptr != m_pTarget || pGameInstance->Get_DIMouseState(CInput_Device::DIMK_RBUTTON, CInput_Device::KEY_PRESSING))
 	{
 		ENDINSTANCE;
@@ -2790,7 +2816,6 @@ void CPlayer::Find_Target_For_Distance()
 	}
 
 	unordered_map<const _tchar*, CComponent*>* pLayer = pGameInstance->Find_Components_In_Layer(m_eLevelID, TEXT("Layer_Monster"));
-
 	if (nullptr == pLayer)
 	{
 		ENDINSTANCE;
@@ -2798,8 +2823,6 @@ void CPlayer::Find_Target_For_Distance()
 	}
 
 	_float fMinDistance = { 50.0f };
-
-
 	CGameObject* pTarget = { nullptr };
 
 	for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
@@ -3349,6 +3372,11 @@ void CPlayer::Landing()
 	m_pStateContext->Set_StateMachine(TEXT("Idle"));
 }
 
+void CPlayer::Landing_DisMount()
+{
+	m_pStateContext->Set_StateMachine(TEXT("Move Loop"));
+}
+
 void CPlayer::Add_Potion()
 {
 	m_pPlayer_Information->Add_Potion();
@@ -3554,10 +3582,18 @@ void CPlayer::Go_Use_Potion()
 	UseItemDesc.funcPotion = [&] {(*this).Drink_Heal_Potion(); };
 
 	if (UseItemDesc.eItem_Id == ITEM_ID_WIGGENWELD_POTION)
-		m_vecPotionParticle[0]->Play(m_pTransform->Get_Position());
+	{
+		//m_vecPotionParticle[0]->Play(m_pTransform->Get_Position());
+		//m_vecPotionParticle[1]->Play(m_pTransform->Get_Position());
+		//m_vecPotionParticle[2]->Play(m_pTransform->Get_Position());
+		for(_uint i = 0 ; i<4;++i)
+			m_vecPotionParticle[i]->Play(m_pTransform->Get_Position());
+
+		m_vecMeshEffect[0]->Play(m_pTransform->Get_Position());
+	}
 
 	if (UseItemDesc.eItem_Id == ITEM_ID_MAXIMA_POTION)
-		m_vecPotionParticle[1]->Play(m_pTransform->Get_Position());
+		m_vecPotionParticle[2]->Play(m_pTransform->Get_Position());
 
 
 	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&

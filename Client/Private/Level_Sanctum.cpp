@@ -1,6 +1,7 @@
 #include "Level_Sanctum.h"
 #include"GameInstance.h"
 
+#include "Level_Loading.h"
 #include"MapObject.h"
 #include"MapObject_Ins.h"
 #include"Player.h"
@@ -42,6 +43,14 @@ void CLevel_Sanctum::Tick(_float fTimeDelta)
 		}
 	}
 
+	if (pGameInstance->Get_DIKeyState(DIK_LSHIFT))
+	{
+		if (pGameInstance->Get_DIKeyState(DIK_BACKSPACE, CInput_Device::KEY_DOWN))
+		{
+			pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_SMITH));
+		}
+	}
+
 	ENDINSTANCE;
 
 #ifdef _DEBUG
@@ -54,11 +63,9 @@ HRESULT CLevel_Sanctum::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SANCTUM, TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Sky)");
-		return E_FAIL;
-	}
+	_bool isNight = true;
+	FAILED_CHECK_RETURN(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SANCTUM,
+		TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"), &isNight), E_FAIL)
 
 	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData4.ddd"))))
 	{

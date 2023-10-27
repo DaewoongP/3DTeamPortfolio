@@ -123,8 +123,6 @@ void CDarkWizard_Fly::Late_Tick(_float fTimeDelta)
 
 void CDarkWizard_Fly::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	__super::OnCollisionEnter(CollisionEventDesc);
-
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrOtherCollisionTag = CollisionEventDesc.pOtherCollisionTag;
 
@@ -379,7 +377,7 @@ HRESULT CDarkWizard_Fly::Add_Components()
 		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
 		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.f, 0.f);
 		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
-		PxSphereGeometry pSphereGeomatry = PxSphereGeometry(0.8f);
+		PxSphereGeometry pSphereGeomatry = PxSphereGeometry(0.4f);
 		RigidBodyDesc.pGeometry = &pSphereGeomatry;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body");
 		RigidBodyDesc.eThisCollsion = COL_ENEMY;
@@ -807,8 +805,8 @@ _bool CDarkWizard_Fly::is_Enemy(const wstring& wstrObjectTag)
 	if (wstring::npos != wstrObjectTag.find(TEXT("Player")))
 		return true;
 
-	if (wstring::npos != wstrObjectTag.find(TEXT("Enemy_Body")))
-		return true;
+	/*if (wstring::npos != wstrObjectTag.find(TEXT("Enemy_Body")))
+		return true;*/
 
 	return false;
 }
@@ -917,7 +915,8 @@ void CDarkWizard_Fly::Cast_Arrestomomentum()
 
 void CDarkWizard_Fly::Shot_Magic()
 {
-	m_CastingMagic->Do_MagicBallState_To_Next();
+	if(nullptr != m_CastingMagic)
+		m_CastingMagic->Do_MagicBallState_To_Next();
 }
 
 CDarkWizard_Fly* CDarkWizard_Fly::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

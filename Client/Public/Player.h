@@ -24,6 +24,7 @@ class CRigidBody;
 class CCoolTime;
 class CDefence;
 class CParticleSystem;
+class CMeshEffect;
 END
 
 BEGIN(Client)
@@ -111,6 +112,8 @@ public:
 	void Set_Spell_Botton(_uint _Button, SPELL _eSpell);
 
 	void Set_Fix_Mouse(_bool _Fix_Mouse) { m_isFixMouse = _Fix_Mouse; }
+	void AddForce_Impulse(_float3 vfForce) { m_pRigidBody->Add_Force_OtherCall(vfForce); }
+
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
@@ -145,6 +148,7 @@ private:
 	vector<CParticleSystem*> m_vecPotionParticle;
 	vector<CParticleSystem*> m_vecPlayer_StateParicle;
 	vector<CParticleSystem*> m_vecTest_Particle;
+	vector<CMeshEffect*> m_vecMeshEffect;
 	_float3 Test = { 0.f,0.f,0.f };
 private: /* Card Fig 전용 데이터 */
 	CCard_Fig* m_pCard_Fig = { nullptr };
@@ -395,7 +399,8 @@ private:
 
 	void Healing();
 
-	void Landing();
+	void Landing(); 
+	void Landing_DisMount();
 
 	void Fly_Effect();
 

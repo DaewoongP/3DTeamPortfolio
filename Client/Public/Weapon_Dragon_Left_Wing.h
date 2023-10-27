@@ -37,7 +37,7 @@ public:
 	void Enter_Hit_Terrain();
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
+	HRESULT Initialize_Prototype(_uint iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 #ifdef _DEBUG
@@ -46,6 +46,7 @@ public:
 #endif // _DEBUG
 
 private:
+	_uint m_iLevel = { 0 };
 	vector<CConjuredDragon::DRAGONBONEDATA> m_Bones;
 	CEnemy::COLLISIONREQUESTDESC m_CollisionRequestDesc;
 
@@ -63,7 +64,7 @@ private:
 	HRESULT Add_Components();
 
 public:
-	static CWeapon_Dragon_Left_Wing* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CWeapon_Dragon_Left_Wing* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
 	virtual CWeapon_Dragon_Left_Wing* Clone(void* pArg) override;
 	virtual void Free() override;
 };

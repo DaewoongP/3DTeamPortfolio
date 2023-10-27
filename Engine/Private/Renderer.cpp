@@ -507,6 +507,7 @@ HRESULT CRenderer::Render_NonBlend()
 			pGameObject->Render();
 
 		Safe_Release(pGameObject);
+		int a = 0;
 	}
 
 	m_RenderObjects[RENDER_NONBLEND].clear();
@@ -1181,7 +1182,7 @@ HRESULT CRenderer::Sort_Render(RENDERGROUP eGroup)
 
 	Safe_Release(pPipeLine);
 
-	m_RenderObjects[RENDER_BLEND].sort([vCamPos](const CGameObject* pSour, const CGameObject* pDest) {
+	m_RenderObjects[eGroup].sort([vCamPos](const CGameObject* pSour, const CGameObject* pDest) {
 		_float3 vSourPos = pSour->Get_Transform()->Get_Position();
 		_float3 vDestPos = pDest->Get_Transform()->Get_Position();
 

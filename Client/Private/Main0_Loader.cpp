@@ -104,6 +104,14 @@
 #include "Event_Smeade.h"
 #include "Event_Cliffside.h"
 #include "Event_Spawn_Dragon.h"
+#include "Event_Cliffside_Next_Level.h"
+#include "Event_Vault_Next_Level.h"
+#include "Event_Smeade_Next_Level.h"
+#pragma endregion
+
+#pragma region Event
+#include "Racer.h"
+#include "FlyGameManager.h"
 #pragma endregion
 
 #include "Guide_Book.h"
@@ -249,6 +257,11 @@ HRESULT CMain0_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Cliffside"),
 			CEvent_Cliffside::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Event_Cliffside");
+
+		/* For.Prototype_GameObject_Event_Cliffside_Next_Level */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Cliffside_Next_Level"),
+			CEvent_Cliffside_Next_Level::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Event_Cliffside_Next_Level");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -294,6 +307,11 @@ HRESULT CMain0_Loader::Loading_For_Vault(LEVELID eLevelID)
 		CEvent_Enter_Vault::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Event_Enter_Vault");
 
+	/* For.Prototype_GameObject_Event_Vault_Next_Level */
+	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Vault_Next_Level"),
+		CEvent_Vault_Next_Level::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Event_Vault_Next_Level");
+
 	return S_OK;
 }
 
@@ -314,6 +332,11 @@ HRESULT CMain0_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 		CEvent_Smeade::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Event_Smeade");
 
+	/* For.Prototype_GameObject_Event_Smeade_Next_Level */
+	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Smeade_Next_Level"),
+		CEvent_Smeade_Next_Level::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Event_Smeade_Next_Level");
+
 	ENDINSTANCE;
 
 	return S_OK;
@@ -321,6 +344,30 @@ HRESULT CMain0_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 
 HRESULT CMain0_Loader::Loading_For_Sky(LEVELID eLevelID)
 {
+	if (nullptr == m_pGameInstance)
+		return E_FAIL;
+
+	try
+	{
+		/* For.Prototype_GameObject_Racer */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Racer"),
+			CRacer::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Racer");
+
+		/* For.Prototype_GameObject_FlyGameManager */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FlyGameManager"),
+			CFlyGameManager::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_FlyGameManager");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -641,10 +688,16 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Portal/Door"), eLevelID))))
 			throw TEXT("Prototype_GameObject_SmithToCliff_Gate_Portal");
 
+		/* For.Prototype_GameObject_Vault_Gate_Portal */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Vault_Gate_Portal"),
+			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Portal/Vault_Door"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Vault_Gate_Portal");
+
 		/* For.Prototype_GameObject_LightStand_Fire */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_LightStand_Fire"),
 			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/LightStand_Fire"), eLevelID))))
 			throw TEXT("Prototype_GameObject_LightStand_Fire");
+		
 #pragma endregion
 
 #pragma region Load Player_Effect
@@ -662,6 +715,9 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Player_Hit_Fog")
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/PlayerHit/HitFog"), eLevelID))))
 			throw TEXT("Prototype_GameObject_Player_Hit_Fog");
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Player_Hit_Circle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/PlayerHit/HitCircle"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Player_Hit_Circle");
 
 #pragma endregion
 
@@ -688,14 +744,30 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 
 #pragma region Potion_Effect
 
-		/*For_Player_WandHeadLight*/
+		/*For_Player_Potion*/
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Heal_Particle")
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/Wiggenweld"), eLevelID))))
 			throw TEXT("Prototype_GameObject_Heal_Particle");
 
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Heal_After_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/Wig_After"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Heal_After_Particle");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Heal_After_Particle2")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/Wig_After2"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Heal_After_Particle2");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Heal_Ground")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/Wig_Ground"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Heal_Ground");
+
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Maxima_Particle")
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/Maxima"), eLevelID))))
 			throw TEXT("Prototype_GameObject_Maxima_Particle");
+		
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Potion_Distortoin")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Potion/Potion_Distortion.ME"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Potion_Distortoin");
 
 #pragma endregion
 
@@ -986,6 +1058,10 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Particle"),
 				TEXT("../../Resources/GameData/ParticleData/Blink/BlinkParticle/"))))
 				throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Particle");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Ring"),
+				TEXT("../../Resources/GameData/ParticleData/Blink/BlinkRing"))))
+				throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Ring");
 
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Player_Hit_Dust"),
 				TEXT("../../Resources/GameData/ParticleData/PlayerHit/HitDust/"))))

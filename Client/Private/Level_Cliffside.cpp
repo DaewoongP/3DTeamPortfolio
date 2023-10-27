@@ -42,11 +42,22 @@ void CLevel_Cliffside::Tick(_float fTimeDelta)
 			pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
 		}
 	}
-	if (pGameInstance->Get_DIKeyState(DIK_BACKSPACE, CInput_Device::KEY_DOWN))
+
+	if (true == m_isNextLevel)
 	{
 		pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_SMITH));
 	}
-	
+
+#ifdef _DEBUG
+	if (pGameInstance->Get_DIKeyState(DIK_LSHIFT))
+	{
+		if (pGameInstance->Get_DIKeyState(DIK_BACKSPACE, CInput_Device::KEY_DOWN))
+		{
+			pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_SMITH));
+		}
+	}
+#endif // _DEBUG
+
 	ENDINSTANCE;
 
 #ifdef _DEBUG
@@ -83,8 +94,9 @@ HRESULT CLevel_Cliffside::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
+	_bool isNight = false;
 	FAILED_CHECK_RETURN(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, 
-		TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky")), E_FAIL)
+		TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"), &isNight), E_FAIL)
 		
 	FAILED_CHECK_RETURN(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE,
 		TEXT("Prototype_GameObject_Water"), pLayerTag, TEXT("GameObject_Water")), E_FAIL)
@@ -99,11 +111,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_BackGround(const _tchar* pLayerTag)
 
 HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 {
-	BEGININSTANCE;
-
-	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Cliff.mon"));
-
-	ENDINSTANCE;
+	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Cliffside.mon"));
 
 	return S_OK;
 }
@@ -135,6 +143,13 @@ HRESULT CLevel_Cliffside::Ready_Events(const _tchar* pLayerTag)
 		MSG_BOX("Failed Add_GameObject : (Event_Cliffside)");
 		return E_FAIL;
 	}
+	
+	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, 
+		TEXT("Prototype_GameObject_Event_Cliffside_Next_Level"), pLayerTag, TEXT("Event_Cliffside_Next_Level"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Event_Cliffside_Next_Level)");
+		return E_FAIL;
+	}
 
 	ENDINSTANCE;
 
@@ -148,7 +163,7 @@ HRESULT CLevel_Cliffside::Ready_Shader()
 	CRenderer* pRenderer = static_cast<CRenderer*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer")));
 	pRenderer->Defualt_Shading();
 
-
+	pRenderer->Set_Fog(true, _float4(1.f, 1.f, 1.f, 1.f), _float3(40.5f, 0.f, 63.7f), 40.f);
 
 	Safe_Release(pRenderer);
 
@@ -212,6 +227,7 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 		wstring wsGull(TEXT("Anim_Gull"));
 		wstring wsCliffGate(TEXT("Anim_Gate_Reparo"));
 		wstring wsSmithToCliff(TEXT("SM_HM_Cliff_Gate"));
+		wstring wsLightStand(TEXT("SM_SanctumDun_LightStand_A"));
 
 		// 채집물
 		if (0 == lstrcmp(modelName.c_str(), wsAshwinderEggs.c_str()) ||
@@ -273,6 +289,22 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 				wszobjName, &MapObjectDesc)))
 			{
 				MSG_BOX("Failed to Clone SmithToCliff_Gate");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}
+
+		// 화로
+		else if (0 == lstrcmp(modelName.c_str(), wsLightStand.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_LightStand_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE,
+				TEXT("Prototype_GameObject_LightStand"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone LightStand");
 				ENDINSTANCE;
 				return E_FAIL;
 			}

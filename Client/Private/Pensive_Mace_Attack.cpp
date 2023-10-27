@@ -190,6 +190,7 @@ void CPensive_Mace_Attack::Ready_CastMagic()
 
 void CPensive_Mace_Attack::Ready_Dying()
 {
+	m_pRenderer->Set_ScreenRadial(true, 0.2f, 0.1f);
 	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_HIT].size(); i++)
 	{
 		m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Enable((_float4x4(XMMatrixTranslation(0, 2, 0)) * m_pMeshEffect->Get_Transform()->Get_WorldMatrix()).Translation());

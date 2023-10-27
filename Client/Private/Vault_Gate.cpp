@@ -38,15 +38,15 @@ HRESULT CVault_Gate::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_SmithToCliff_Gate_Portal"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Vault_Gate_Portal"),
 		TEXT("Com_Portal"), reinterpret_cast<CComponent**>(&m_pEffect))))
 	{
-		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_SmithToCliff_Gate_Portal)");
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Vault_Gate_Portal)");
 		__debugbreak();
 		return E_FAIL;
 	}
 
-	m_pEffect->Play(m_pTransform->Get_Position() + _float3(1.f, 2.5f, -0.25f));
+	m_pEffect->Play(m_pTransform->Get_Position() + _float3(2.f, 3.75f, -0.5f));
 	m_pEffect->Get_MainModuleRef().fSimulationSpeed = Random_Generator(0.5f, 1.0f);
 
 	return S_OK;
@@ -66,6 +66,7 @@ HRESULT CVault_Gate::Initialize_Level(_uint iCurrentLevelIndex)
 	m_pModel->Set_CurrentAnimIndex(0);
 	m_pModel->Get_Animation(0)->Set_Loop(false);
 
+	// 화로 탐색
 	BEGININSTANCE;
 	auto pBackGroundLayer = pGameInstance->Find_Components_In_Layer(LEVEL_VAULT, TEXT("Layer_BackGround"));
 	ENDINSTANCE;
@@ -91,7 +92,7 @@ void CVault_Gate::Tick(_float fTimeDelta)
 	// 화로에 불 다 붙으면 문열림
 	Check_FireOn();
 
-	if (false == m_isCheckOnce)
+	if (true == m_isCheckOnce)
 		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	else
 		m_pModel->Play_Animation(0, CModel::UPPERBODY, m_pTransform);
@@ -242,7 +243,7 @@ void CVault_Gate::Check_MinMaxPoint(_float3 vPoint)
 
 void CVault_Gate::Check_FireOn()
 {
-	if (false == m_isCheckOnce)
+	if (true == m_isCheckOnce)
 		return;
 
 	_uint iFireOn = m_pLightStands.size();
@@ -256,7 +257,7 @@ void CVault_Gate::Check_FireOn()
 	}
 
 	if (iFireOn == iCheckFireOn)
-		m_isCheckOnce = false;
+		m_isCheckOnce = true;
 }
 
 CVault_Gate* CVault_Gate::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

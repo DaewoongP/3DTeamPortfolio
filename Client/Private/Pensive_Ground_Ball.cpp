@@ -169,6 +169,7 @@ void CPensive_Ground_Ball::Ready_DrawMagic()
 
 void CPensive_Ground_Ball::Ready_CastMagic()
 {
+	m_pRenderer->Set_ScreenRadial(true, 0.2f, 0.1f);
 	m_pTransform->Set_Position(m_vStartPosition);
 	m_pTransform->LookAt(m_vEndPosition);
 	m_fTimeScalePerDitance = 100.f / _float3(m_vEndPosition - m_vStartPosition).Length();

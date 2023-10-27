@@ -615,6 +615,11 @@ HRESULT CMainTool::Ready_Prototype_Object()
 	if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Particle"),
 		TEXT("../../Resources/GameData/ParticleData/Blink/BlinkParticle"))))
 		throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Particle");
+
+	if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Ring"),
+		TEXT("../../Resources/GameData/ParticleData/Blink/BlinkRing"))))
+		throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Ring");
+
 	/*For.Player_Hit_Particle*/
 	if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Player_Hit_Dust"),
 		TEXT("../../Resources/GameData/ParticleData/PlayerHit/HitDust"))))

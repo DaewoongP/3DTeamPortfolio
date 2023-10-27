@@ -30,6 +30,9 @@ private:
 	virtual ~CVault_Gate() = default;
 
 public:
+	_bool Get_GateOpen() const { return m_isCheckOnce; }
+
+public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
@@ -50,7 +53,7 @@ private:
 	_float3			m_vMinPoint, m_vMaxPoint, m_vCenterPoint;
 	_float			m_fRadius = { 0.f };
 
-	_bool			m_isCheckOnce = { true }; // 한번만 상호작용 가능
+	_bool			m_isCheckOnce = { false }; // 한번만 상호작용 가능
 	
 	vector<CLightStand*> m_pLightStands; // 맵에 존재하는 화로들
 

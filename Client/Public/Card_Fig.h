@@ -7,6 +7,7 @@ class CModel;
 class CShader;
 class CRenderer;
 class CRigidBody;
+class CRootBehavior;
 END
 
 BEGIN(Client)
@@ -72,10 +73,8 @@ private:
 
 	const CGameObject* m_pTarget = { nullptr };
 	_bool m_isSpawn = { false };
-	_bool m_isAction1 = { true };
-	_bool m_isAction2 = { false };
-	_bool m_isAction3 = { false };
-	_bool m_isAction4 = { false };
+	_bool m_isJump = { false };
+	_bool m_isChangeAnimation = { false };
 
 	_float m_fTimeAcc = { 0.f };
 
@@ -96,6 +95,7 @@ private:
 	CMagicSlot* m_pMagicSlot = { nullptr };
 	CRigidBody* m_pRigidBody = { nullptr };
 	CWeapon_Fig_Wand* m_pWeapon = { nullptr };
+	CRootBehavior* m_pRootBehavior = { nullptr };
 
 	CMagicBall* m_CastingMagic = { nullptr };
 
@@ -103,6 +103,7 @@ private:
 	vector<CScript*> m_pScripts = { nullptr };
 
 private:
+	HRESULT Make_AI();
 	HRESULT Make_Magics();
 	HRESULT Make_Notifies();
 	HRESULT Add_Components();
@@ -110,10 +111,12 @@ private:
 	HRESULT SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix);
 
 private:
-	void Action(const _float& fTimeDelta);
 	void Jump_Up(const _float& fTimeDelta);
 
 private: /* Notify */
+	void Change_Animation() {
+		m_isChangeAnimation = true;
+	}
 	void Cast_Crucio();
 	void Cast_Bombarda();
 	void Cast_Finisher();
@@ -125,6 +128,10 @@ private:
 	_uint		m_iScriptIndex = { 0 };
 
 	_bool		m_isEnterValutScriptEnd = { false };
+
+private:
+	void On_Gravity();
+	void Off_Gravity();
 
 private: // Four UI
 	void		Ready_Card_UI();

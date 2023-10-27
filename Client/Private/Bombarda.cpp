@@ -164,6 +164,13 @@ void CBombarda::Tick(_float fTimeDelta)
 	if (m_pWeaponWorldMatrix != nullptr)
 		m_CurrentWeaponMatrix = (*m_pWeaponOffsetMatrix) * (*m_pWeaponWorldMatrix);
 	Tick_MagicBall_State(fTimeDelta);
+
+	m_fDyingTimer -= fTimeDelta;
+	if (m_fDyingTimer < 0 && (m_eMagicBallState < MAGICBALL_STATE_DYING))
+	{
+		Set_MagicBallState(MAGICBALL_STATE_DYING);
+	}
+
 	CGameObject::Tick(fTimeDelta);
 }
 

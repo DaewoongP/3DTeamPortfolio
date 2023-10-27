@@ -18,6 +18,7 @@ END
 BEGIN(Client)
 class CEnemy;
 class CTrigger;
+class CFireHouse;
 END
 
 BEGIN(Client)
@@ -58,6 +59,10 @@ private: /* 몬스터 스폰 관련 */
 	_umap<wstring, CEnemy*> m_pMonsters;
 	_bool m_isSpawned_Troll = { false };
 	void Check_Event_Spawn_Troll();
+
+private: // 집에 불 이펙트 띄위기
+	vector<CFireHouse*> m_pFireHouse;
+	_bool m_isFireOn = { false };
 
 private:
 	_bool m_isPlayTestCutScene = { false };

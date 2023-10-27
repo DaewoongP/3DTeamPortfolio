@@ -61,6 +61,7 @@ CMeshEffect::CMeshEffect(const CMeshEffect& _rhs)
 	, m_vRemap(_rhs.m_vRemap)
 	, m_vEmissionColor(_rhs.m_vEmissionColor)
 	, m_strEmissionChannel(_rhs.m_strEmissionChannel)
+	, m_fRimPower(_rhs.m_fRimPower)
 	
 {
 	for (_uint i = 0; i < PATH_END; ++i)
@@ -420,6 +421,9 @@ HRESULT CMeshEffect::Setup_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_RawValue("g_vStrength", &m_vStrength, sizeof(m_vStrength))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_RawValue("g_fRimPower", &m_fRimPower, sizeof(m_fRimPower))))
 		return E_FAIL;
 
 	return S_OK;

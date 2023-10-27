@@ -318,7 +318,8 @@ void CParticleSystem::Late_Tick(_float _fTimeDelta)
 				"TextureSheetAnimation" == m_RendererModuleDesc.strPass ||
 				"MotionBlur" == m_RendererModuleDesc.strPass ||
 				"Default_Depth_Disable" == m_RendererModuleDesc.strPass ||
-				"Depth_Default" == m_RendererModuleDesc.strPass)
+				"Depth_Default" == m_RendererModuleDesc.strPass ||
+				"Depth_Alpha" == m_RendererModuleDesc.strPass)
 			{
 				m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
 			}
