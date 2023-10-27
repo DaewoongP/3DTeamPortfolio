@@ -1228,6 +1228,14 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_CircularRocks02"),
 				TEXT("../../Resources/GameData/ParticleData/MapParticle/CircularRocks02/"), 2)))
 				throw TEXT("Reserve Particle : Particle_CircularRocks02");
+				
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Balloon_Spread"),
+				TEXT("../../Resources/GameData/ParticleData/Balloon/Spread/"), 30)))
+				throw TEXT("Reserve Particle : Particle_Balloon_Spread");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Balloon_Line"),
+				TEXT("../../Resources/GameData/ParticleData/Balloon/Line/"), 30)))
+				throw TEXT("Reserve Particle : Particle_Balloon_Line");
 		}
 #pragma endregion
 
