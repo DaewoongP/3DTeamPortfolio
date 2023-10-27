@@ -166,7 +166,7 @@ HRESULT CLevel_Smith::Ready_Layer_NPC(const _tchar* pLayerTag)
 	FlymanInitDesc.isCheckPosition = true;
 #endif // _DEBUG
 	FlymanInitDesc.wstrAnimationTag = TEXT("Hu_Broom_Hover_Idle_anm");
-	FlymanInitDesc.WorldMatrix = XMMatrixRotationY(XMConvertToRadians(145.5f)) * XMMatrixTranslation(29.8f, 4.8f, 69.9f);
+	FlymanInitDesc.WorldMatrix = XMMatrixTranslation(29.8f, 4.8f, 69.9f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_FlyMan"), pLayerTag, TEXT("GameObject_FlyMan"), &FlymanInitDesc)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_FlyMan)");

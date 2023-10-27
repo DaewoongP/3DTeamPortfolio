@@ -24,6 +24,7 @@ private:
 private:
 	HRESULT Load_MapObject(const _tchar* pObjectFilePath);
 	HRESULT Load_MapObject_Ins(const _tchar* pObjectFilePath);
+	HRESULT Load_Monsters(const wstring& wstrMonsterFilePath);
 
 public:
 	static CLevel_Sky* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
