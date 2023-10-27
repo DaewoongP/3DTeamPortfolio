@@ -21,7 +21,7 @@ HRESULT CEvent_Spawn::Initialize(void* pArg)
 		MSG_BOX("[CEvent_Spawn] pArg is nullptr");
 		return E_FAIL;
 	}
-	INITEVENTSPAWM* pInitDesc = reinterpret_cast<INITEVENTSPAWM*>(pArg);
+	INITEVENTSPAWN* pInitDesc = reinterpret_cast<INITEVENTSPAWN*>(pArg);
 
 	FAILED_CHECK_RETURN(Add_Components(*pInitDesc), E_FAIL);
 
@@ -70,7 +70,7 @@ void CEvent_Spawn::Check_Event_Spawn()
 	}
 }
 
-HRESULT CEvent_Spawn::Add_Components(const INITEVENTSPAWM& InitDesc)
+HRESULT CEvent_Spawn::Add_Components(const INITEVENTSPAWN& InitDesc)
 {
 	/* For.Trigger_Spawn */
 	CTrigger::TRIGGERDESC TriggerDesc;

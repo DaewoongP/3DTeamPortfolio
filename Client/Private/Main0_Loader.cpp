@@ -39,6 +39,8 @@
 #include "UI_Store.h"
 #include "UI_Interaction.h"
 #include "Script.h"
+#include "UI_Group_Score.h"
+#include "UI_Group_Timer.h"
 #pragma endregion UI
 
 #pragma region Effects
@@ -98,12 +100,15 @@
 #include "Water.h"
 
 #pragma region Event
+#include "Event_Spawn.h"
+#include "Event_Enter_Sanctum.h"
 #include "Event_Vault_Spawn.h"
 #include "Event_Vault_Torch.h"
 #include "Event_Enter_Vault.h"
 #include "Event_Smeade.h"
 #include "Event_Cliffside.h"
 #include "Event_Spawn_Dragon.h"
+#include "Event_Spawn_Dragon_2.h"
 #include "Event_Cliffside_Next_Level.h"
 #include "Event_Vault_Next_Level.h"
 #include "Event_Smeade_Next_Level.h"
@@ -378,6 +383,21 @@ HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 
 	try /* Failed Check Loading_For_Sanctum Add_Prototype*/
 	{
+		/* For.Prototype_Component_Particle_LandingFlame */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Particle_LandingFlame"),
+			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Landing/LandingFlame/")))))
+			throw TEXT("Prototype_Component_Particle_LandingFlame");
+
+		/* For.Prototype_Component_Particle_LandingFog */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Particle_LandingFog"),
+			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Landing/LandingFog/")))))
+			throw TEXT("Prototype_Component_Particle_LandingFog");
+
+		/* For.Prototype_Component_Particle_LandingLight */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Particle_LandingLight"),
+			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Landing/LandingLight/")))))
+			throw TEXT("Prototype_Component_Particle_LandingLight");
+
 		/* Prototype_GameObject_EnergyBall */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_EnergyBall"),
 			CEnergyBall::Create(m_pDevice, m_pContext))))
@@ -398,10 +418,25 @@ HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 			CProjectile_White_Effect::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Projectile_White_Effect");
 
+		/* For.Prototype_GameObject_Event_Spawn */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Spawn"),
+			CEvent_Spawn::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Event_Spawn");
+
+		/* For.Prototype_GameObject_Event_Enter_Sanctum */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Enter_Sanctum"),
+			CEvent_Enter_Sanctum::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Event_Enter_Sanctum");
+
 		/* For.Prototype_GameObject_Event_Spawn_Dragon */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Spawn_Dragon"),
 			CEvent_Spawn_Dragon::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Event_Spawn_Dragon");
+
+		/* For.Prototype_GameObject_Event_Spawn_Dragon_2 */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Spawn_Dragon_2"),
+			CEvent_Spawn_Dragon_2::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Event_Spawn_Dragon_2");
 
 		/* For.Prototype_GameObject_Test_Particle */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MapParticle_Sanctum_CircularRocks01"),
@@ -532,6 +567,14 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Script"),
 				CScript::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_GameObject_Script");
+
+
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Timer"),
+				CUI_Group_Timer::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_UI_Timer");
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Score"),
+				CUI_Group_Score::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_UI_Score");
 #pragma endregion
 
 #pragma region Guide_Book
@@ -1119,6 +1162,50 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Conjured_Step_Dust"),
 				TEXT("../../Resources/GameData/ParticleData/BoneDragon/StepDust/"), 3)))
 				throw TEXT("Reserve Particle : Particle_Conjured_Step_Dust");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Conjured_FallDown_Dust_01"),
+				TEXT("../../Resources/GameData/ParticleData/Misc/FallDownDust01/"), 1)))
+				throw TEXT("Reserve Particle : Particle_Conjured_FallDown_Dust_01");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Conjured_FallDown_Dust_02"),
+				TEXT("../../Resources/GameData/ParticleData/Misc/FallDownDust02/"), 1)))
+				throw TEXT("Reserve Particle : Particle_Conjured_FallDown_Dust_02");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Blue"),
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Blue/"), 2)))
+				throw TEXT("Reserve Particle : Particle_DestroyProtego_Blue");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Purple"),
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Purple/"), 2)))
+				throw TEXT("Reserve Particle : Particle_DestroyProtego_Purple");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Red"),
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Red/"), 2)))
+				throw TEXT("Reserve Particle : Particle_DestroyProtego_Red");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Yellow"),
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Yellow/"), 2)))
+				throw TEXT("Reserve Particle : Particle_DestroyProtego_Yellow");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Blue2"),
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Blue2/"), 2)))
+				throw TEXT("Reserve Particle : Particle_DestroyProtego_Blue2");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Purple2"),
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Purple2/"), 2)))
+				throw TEXT("Reserve Particle : Particle_DestroyProtego_Purple2");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Red2"),
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Red2/"), 2)))
+				throw TEXT("Reserve Particle : Particle_DestroyProtego_Red2");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Yellow2"),
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Yellow2/"), 2)))
+				throw TEXT("Reserve Particle : Particle_DestroyProtego_Yellow2");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_CircularRocks02"),
+				TEXT("../../Resources/GameData/ParticleData/MapParticle/CircularRocks02/"), 2)))
+				throw TEXT("Reserve Particle : Particle_CircularRocks02");
 		}
 #pragma endregion
 

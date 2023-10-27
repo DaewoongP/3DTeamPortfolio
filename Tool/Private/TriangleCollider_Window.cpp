@@ -23,7 +23,7 @@ HRESULT CTriangleCollider_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSi
 	BEGININSTANCE
 
 		m_pTriangleColMesh =
-		dynamic_cast<CTriangleColMesh*>(
+		static_cast<CTriangleColMesh*>(
 			pGameInstance->Clone_Component(LEVEL_TOOL,
 				TEXT("Prototype_GameObject_TriangleColMesh")));
 
@@ -188,7 +188,7 @@ void CTriangleCollider_Window::AddModel_Button()
 		m_pTriangleColMesh->Add_Model_Component(m_vecModelList_t[m_iModelIndex].c_str());
 		lstrcpy(m_wszCurrentDummyModelTag, m_vecModelList_t[m_iModelIndex].c_str());
 		m_pTriangleColMesh->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
-		CModel* pCurrentModel = dynamic_cast<CModel*>(m_pTriangleColMesh->Find_Component(TEXT("Com_Model")));
+		CModel* pCurrentModel = static_cast<CModel*>(m_pTriangleColMesh->Find_Component(TEXT("Com_Model")));
 	}
 }
 

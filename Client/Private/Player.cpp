@@ -289,7 +289,9 @@ void CPlayer::Tick(_float fTimeDelta)
 	Go_Protego(&m_ProtegoStateDesc);
 
 	Fix_Mouse();
-	//Update_Cloth(fTimeDelta);
+	Update_Cloth(fTimeDelta);
+
+
 
 
 
@@ -405,7 +407,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 			return;
 		}
 
-		CEnemy* pEnemy = dynamic_cast<CEnemy*>(m_pTarget);
+		CEnemy* pEnemy = static_cast<CEnemy*>(m_pTarget);
 		if (nullptr != pEnemy)
 			pEnemy->Get_UI_Enemy_HP()->Late_Tick(fTimeDelta);
 	}
@@ -509,7 +511,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			Go_Hit(&HitStateDesc);
 			
 
-			_float iDamege = pDesc->iDamage;
+			_int iDamege = pDesc->iDamage;
 
 			if (0.0f < m_DefensiveDesc.fBuffValueAcc)
 			{
@@ -521,8 +523,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 				iDamege = 0;
 			}
 
-			//Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
-			m_pPlayer_Information->fix_HP((iDamege) * -1);
+			m_pPlayer_Information->fix_HP(iDamege * -1);
 		}
 	}
 	else if (wstring::npos != wstrCollisionTag.find(TEXT("Magic_Ball")))
@@ -578,7 +579,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 			Go_Hit(&HitStateDesc);
 
-			_float iDamege = pDesc->iDamage;
+			_int iDamege = pDesc->iDamage;
 
 			if (0.0f < m_DefensiveDesc.fBuffValueAcc)
 			{
@@ -591,7 +592,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			}
 
 			//Ã¼·Â ¼öÁ¤
-			m_pPlayer_Information->fix_HP((iDamege) * -1);
+			m_pPlayer_Information->fix_HP(iDamege * -1);
 		}
 	}
 }
@@ -2832,14 +2833,14 @@ void CPlayer::Find_Target_For_Distance()
 
 		_float3 vPlayerPos = m_pTransform->Get_Position();
 
-		_float3 vMonsterPos = dynamic_cast<CGameObject*>(iter->second)->Get_Transform()->Get_Position();
+		_float3 vMonsterPos = static_cast<CGameObject*>(iter->second)->Get_Transform()->Get_Position();
 
 		_float fDistance = XMVectorGetX(XMVector3Length(vPlayerPos - vMonsterPos));
 
 		if (fMinDistance > fDistance)
 		{
 			fMinDistance = fDistance;
-			pTarget = dynamic_cast<CGameObject*>(iter->second);
+			pTarget = static_cast<CGameObject*>(iter->second);
 		}
 	}
 
@@ -3723,7 +3724,12 @@ void CPlayer::Free()
 		{
 			Safe_Release(m_vecPlayer_StateParicle.data()[i]);
 		}
+		for (auto& pMeshEffect : m_vecMeshEffect)
+		{
+			Safe_Release(pMeshEffect);
+		}
 
+		m_vecMeshEffect.clear();
 		m_vecCoolTimeRatio.clear();
 		m_vecSpellCheck.clear();
 	}

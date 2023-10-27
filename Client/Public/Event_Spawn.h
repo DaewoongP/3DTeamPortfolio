@@ -29,7 +29,7 @@ public:
 		LEVELID eMonsterLevel = LEVEL_END;
 		_float3 vTriggerSize;
 		_float3 vTriggerWorldPosition;
-	}INITEVENTSPAWM;
+	}INITEVENTSPAWN;
 
 private:
 	explicit CEvent_Spawn(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -50,7 +50,7 @@ private:
 	void Check_Event_Spawn();
 
 private:
-	HRESULT Add_Components(const INITEVENTSPAWM& InitDesc);
+	HRESULT Add_Components(const INITEVENTSPAWN& InitDesc);
 
 public:
 	static CEvent_Spawn* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

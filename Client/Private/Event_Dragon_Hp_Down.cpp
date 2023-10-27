@@ -23,7 +23,7 @@ HRESULT CEvent_Dragon_Hp_Down::Initialize(void* pArg)
 	if (LEVEL_SANCTUM != LevelID)
 		return E_FAIL;
 
-	CPlayer* pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+	CPlayer* pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
 	if (nullptr == pPlayer)
 	{
 		ENDINSTANCE;
@@ -32,7 +32,7 @@ HRESULT CEvent_Dragon_Hp_Down::Initialize(void* pArg)
 	m_pCard_Fig = pPlayer->m_pCard_Fig;
 	Safe_AddRef(m_pCard_Fig);
 
-	m_pDragon = dynamic_cast<CConjuredDragon*>(pGameInstance->Find_Component_In_Layer(LEVEL_SANCTUM, TEXT("Layer_Monster"), TEXT("GameObject_ConjuredDragon")));
+	m_pDragon = static_cast<CConjuredDragon*>(pGameInstance->Find_Component_In_Layer(LEVEL_SANCTUM, TEXT("Layer_Monster"), TEXT("GameObject_ConjuredDragon")));
 	if (nullptr == m_pDragon)
 	{
 		ENDINSTANCE;

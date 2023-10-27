@@ -127,10 +127,24 @@ HRESULT CConjuredDragon::Initialize_Prototype(_uint iLevel)
 				throw;
 		}
 
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_MeshEffect_DeathWhiteBall")))
+		{
+			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_MeshEffect_DeathWhiteBall")
+				, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/DeathWhiteBall/DeathWhiteBall.ME"), m_iLevel))))
+				throw;
+		}
+		
 		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_InvinBreakDust")))
 		{
 			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_InvinBreakDust")
 				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/InvinBreakDust/"), m_iLevel))))
+				throw;
+		}
+
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_DeathWhiteBall")))
+		{
+			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_DeathWhiteBall")
+				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/DeathWhiteBall/"), m_iLevel))))
 				throw;
 		}
 	}
@@ -139,7 +153,6 @@ HRESULT CConjuredDragon::Initialize_Prototype(_uint iLevel)
 		ENDINSTANCE;
 		return E_FAIL;
 	}
-
 
 	pGameInstance->Read_CutSceneCamera(TEXT("Dragon_Enter"), TEXT("../../Resources/GameData/CutScene/Sanctum_Dragon_Enter.cut"));
 
@@ -228,6 +241,21 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 			m_fInvincibleGauge = 100.f;
 			m_isInvincible = false;
 		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
+		{
+			m_isFinish = true;
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_5, CInput_Device::KEY_DOWN))
+		{
+			m_pRenderer->FadeIn(1.f, _float4(1.f, 1.f, 1.f, 1.f));
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_6, CInput_Device::KEY_DOWN))
+		{
+			m_pRenderer->FadeOut(1.f, _float4(1.f, 1.f, 1.f, 1.f));
+		}
 	}
 	ENDINSTANCE;
 	/* ========================= */
@@ -251,6 +279,7 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 	EnergyBall_PhaseOne(fTimeDelta);
 	EnergyBall_PhaseFinal(fTimeDelta);
 	Update_Breath(fTimeDelta);
+	Death_Color(fTimeDelta);
 
 	// 이펙트에 필요한 정보들 업데이트.
 	m_vOffsetPos = m_pTransform->Get_Position();
@@ -398,6 +427,41 @@ void CConjuredDragon::Update_Invincible(const _float& fTimeDelta)
 	m_fInvincibleGauge = (m_fInvincibleGauge > 100.f) ? 100.f : m_fInvincibleGauge;
 }
 
+void CConjuredDragon::Play_Death_Color()
+{
+	m_isDeathColor = true;
+}
+
+void CConjuredDragon::Death_Color(const _float& fTimeDelta)
+{
+	if (false == m_isDeathColor)
+		return;
+
+	if (true == m_isIncreaseColor)
+	{
+		m_fDeathColorRatio += fTimeDelta * 2.f;
+		m_vEmissiveStrength.x = Lerp(0.f, 0.22f, m_fDeathColorRatio);
+
+		if (m_fDeathColorRatio >= 1.f)
+		{
+			m_isIncreaseColor = false;
+			m_fDeathColorRatio = 1.f;
+		}
+	}
+	else
+	{
+		m_fDeathColorRatio -= fTimeDelta * 2.f;
+		m_vEmissiveStrength.x = Lerp(0.f, 0.22f, m_fDeathColorRatio);
+
+		if (m_fDeathColorRatio <= 0.f)
+		{
+			m_isDeathColor = false;
+			m_isIncreaseColor = true;
+			m_fDeathColorRatio = 0.f;
+		}
+	}
+}
+
 void CConjuredDragon::EnergyBall_PhaseOne(const _float& fTimeDelta)
 {
 	if (false == m_isPhaseOne ||
@@ -449,11 +513,11 @@ void CConjuredDragon::EnergyBall_PhaseFinal(const _float& fTimeDelta)
 	_float3 vRight = m_pTransform->Get_Right();
 
 	_float fDirection = _float(rand() % 2 - 1);
-	_float fData = 5.f * fDirection;
+	_float fData = 8.f * fDirection;
 	vPosition += vLook * fData + vLook * GetRandomFloat(0.f, 2.f) * fData;
 
 	fDirection = _float(rand() % 2 - 1);
-	fData = 5.f * fDirection;
+	fData = 8.f * fDirection;
 	vPosition += vRight * fData + vRight * GetRandomFloat(0.f, 2.f) * fData;
 
 	vPosition.y += 5.f;
@@ -622,7 +686,6 @@ HRESULT CConjuredDragon::Add_Components_for_Shake()
 		m_pStep_Shake->Ready_Shake(fMaxDistance, fMinDistance, Camera_Shake_Desc.Shake_Info_Desc.fShakePower);
 
 
-		
 		Camera_Shake_Desc.eShake_Priority = CCamera_Manager::SHAKE_PRIORITY_1;
 		Camera_Shake_Desc.isDistanceOption = true;
 		Camera_Shake_Desc.pTransform = m_pTransform;
@@ -641,7 +704,59 @@ HRESULT CConjuredDragon::Add_Components_for_Shake()
 
 		m_pPulse_Shake->Ready_Shake(fMaxDistance, fMinDistance, Camera_Shake_Desc.Shake_Info_Desc.fShakePower);
 
+		Camera_Shake_Desc.eShake_Priority = CCamera_Manager::SHAKE_PRIORITY_1;
+		Camera_Shake_Desc.isDistanceOption = true;
+		Camera_Shake_Desc.pTransform = m_pTransform;
+		Camera_Shake_Desc.Shake_Info_Desc.eEase = CEase::IN_EXPO;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Axis = CCamera_Manager::SHAKE_AXIS_UP;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Power = CCamera_Manager::SHAKE_POWER_DECRECENDO;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Type = CCamera_Manager::SHAKE_TYPE_TRANSLATION;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakeDuration = 4.f;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakePower = 0.2f;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakeSpeed = 10.0f;
+		Camera_Shake_Desc.Shake_Info_Desc.vShake_Axis_Set = _float3();
 
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Enemy_Camera_Shake"),
+			TEXT("Com_Death_Shake"), reinterpret_cast<CComponent**>(&m_pDeath_Shake), &Camera_Shake_Desc)))
+			throw TEXT("Com_Death_Shake");
+
+		m_pDeath_Shake->Ready_Shake(fMaxDistance, fMinDistance, Camera_Shake_Desc.Shake_Info_Desc.fShakePower);
+
+		Camera_Shake_Desc.eShake_Priority = CCamera_Manager::SHAKE_PRIORITY_2;
+		Camera_Shake_Desc.isDistanceOption = true;
+		Camera_Shake_Desc.pTransform = m_pTransform;
+		Camera_Shake_Desc.Shake_Info_Desc.eEase = CEase::IN_EXPO;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Axis = CCamera_Manager::SHAKE_AXIS_UP;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Power = CCamera_Manager::SHAKE_POWER_DECRECENDO;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Type = CCamera_Manager::SHAKE_TYPE_ROTATION;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakeDuration = 4.f;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakePower = 0.002f;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakeSpeed = 10.0f;
+		Camera_Shake_Desc.Shake_Info_Desc.vShake_Axis_Set = _float3();
+
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Enemy_Camera_Shake"),
+			TEXT("Com_Death_Shake2"), reinterpret_cast<CComponent**>(&m_pDeath_Shake2), &Camera_Shake_Desc)))
+			throw TEXT("Com_Death_Shake2");
+
+		m_pDeath_Shake2->Ready_Shake(fMaxDistance, fMinDistance, Camera_Shake_Desc.Shake_Info_Desc.fShakePower);
+
+		Camera_Shake_Desc.eShake_Priority = CCamera_Manager::SHAKE_PRIORITY_1;
+		Camera_Shake_Desc.isDistanceOption = true;
+		Camera_Shake_Desc.pTransform = m_pTransform;
+		Camera_Shake_Desc.Shake_Info_Desc.eEase = CEase::IN_SINE;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Axis = CCamera_Manager::SHAKE_AXIS_UP;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Power = CCamera_Manager::SHAKE_POWER_DECRECENDO;
+		Camera_Shake_Desc.Shake_Info_Desc.eShake_Type = CCamera_Manager::SHAKE_TYPE_TRANSLATION;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakeDuration = 1.f;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakePower = 0.05f;
+		Camera_Shake_Desc.Shake_Info_Desc.fShakeSpeed = 10.0f;
+		Camera_Shake_Desc.Shake_Info_Desc.vShake_Axis_Set = _float3();
+
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Enemy_Camera_Shake"),
+			TEXT("Com_FallDown_Shake"), reinterpret_cast<CComponent**>(&m_pFallDown_Shake), &Camera_Shake_Desc)))
+			throw TEXT("Com_FallDown_Shake");
+
+		m_pFallDown_Shake->Ready_Shake(fMaxDistance, fMinDistance, Camera_Shake_Desc.Shake_Info_Desc.fShakePower);
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -667,13 +782,13 @@ HRESULT CConjuredDragon::Make_Notifies_for_Shake()
 
 	FAILED_CHECK(m_pModelCom->Bind_Notifies(TEXT("Enter_Camera_Shake_Step_1"), Func));
 	FAILED_CHECK(m_pModelCom->Bind_Notifies(TEXT("Enter_Camera_Shake_Step_2"), Func));
-	
+
 	FAILED_CHECK(m_pModelCom->Bind_Notifies(TEXT("End_Camera_Shake_Step_1"), Func));
 	FAILED_CHECK(m_pModelCom->Bind_Notifies(TEXT("End_Camera_Shake_Step_2"), Func));
 	FAILED_CHECK(m_pModelCom->Bind_Notifies(TEXT("End_Camera_Shake_Step_3"), Func));
 	FAILED_CHECK(m_pModelCom->Bind_Notifies(TEXT("End_Camera_Shake_Step_4"), Func));
 	FAILED_CHECK(m_pModelCom->Bind_Notifies(TEXT("End_Camera_Shake_Step_5"), Func));
-	
+
 	FAILED_CHECK(m_pModelCom->Bind_Notifies(TEXT("Loop_Camera_Shake_Step_1"), Func));
 	FAILED_CHECK(m_pModelCom->Bind_Notifies(TEXT("Loop_Camera_Shake_Step_2"), Func));
 	FAILED_CHECK(m_pModelCom->Bind_Notifies(TEXT("Loop_Camera_Shake_Step_3"), Func));
@@ -883,6 +998,42 @@ HRESULT CConjuredDragon::Make_Notifies()
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Exit_Invin"), Func)))
 		return E_FAIL;
 
+	Func = [&] { this->Death_Enter(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Death_Enter"), Func)))
+		return E_FAIL;
+
+	Func = [&] { this->Death_Exit(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Death_Exit"), Func)))
+		return E_FAIL;
+
+	Func = [&] { this->Struggle(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Struggle_01"), Func)))
+		return E_FAIL;
+
+	Func = [&] { this->Struggle(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Struggle_02"), Func)))
+		return E_FAIL;
+
+	Func = [&] { this->Struggle(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Struggle_03"), Func)))
+		return E_FAIL;
+
+	Func = [&] { this->Shake_FallDown(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Fall_Down_01"), Func)))
+		return E_FAIL;
+
+	Func = [&] { this->Shake_FallDown(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Fall_Down_02"), Func)))
+		return E_FAIL;
+
+	Func = [&] { this->Shake_FallDown(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Fall_Down_03"), Func)))
+		return E_FAIL;
+
+	Func = [&] { this->Shake_FallDown(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Fall_Down_04"), Func)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -964,7 +1115,7 @@ HRESULT CConjuredDragon::Add_Components()
 		lstrcpy(Desc.wszObjectName, TEXT("Bone Dragon"));
 
 		BEGININSTANCE;
-		m_pUI_HP = dynamic_cast<CUI_Group_Enemy_HP*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"), &Desc));
+		m_pUI_HP = static_cast<CUI_Group_Enemy_HP*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"), &Desc));
 		ENDINSTANCE;
 		if (nullptr == m_pUI_HP)
 			throw TEXT("m_pUI_HP is nullptr");
@@ -1175,6 +1326,17 @@ HRESULT CConjuredDragon::Add_Effects()
 			TEXT("Com_Particle_InvinBreakDust"), reinterpret_cast<CComponent**>(&m_pEffect_InvinBreakDust))))
 			throw TEXT("Com_Particle_InvinBreakDust");
 
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_MeshEffect_DeathWhiteBall"),
+			TEXT("Com_GameObject_MeshEffect_DeathWhiteBall"), reinterpret_cast<CComponent**>(&m_pEffect_MeshEffect_DeathWhiteBall))))
+			throw TEXT("Com_GameObject_MeshEffect_DeathWhiteBall");
+
+		for (auto& pDeathWhiteBall : m_pEffect_DeathWhiteBall)
+		{
+			if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_DeathWhiteBall"),
+				Generate_HashtagW().data(), reinterpret_cast<CComponent**>(&pDeathWhiteBall))))
+				throw TEXT("Com_Particle_InvinBreakDust");
+		}
+
 		m_pEffect_Pulse_Charge->Disable();
 		m_pEffect_Pulse_SplashWater->Disable();
 		m_pEffect_Pulse_Rock->Disable();
@@ -1182,6 +1344,8 @@ HRESULT CConjuredDragon::Add_Effects()
 		m_pEffect_DragonInvin->Disable();
 		m_pEffect_InvinBreakDust->Disable();
 		m_pEffect_DragonInvinMesh->Stop();
+		for (auto& pDeathWhiteBall : m_pEffect_DeathWhiteBall)
+			pDeathWhiteBall->Disable();
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -1959,9 +2123,9 @@ HRESULT CConjuredDragon::Make_Ground_Attacks(_Inout_ CSequence* pSequence)
 		CSequence* pSequence_Attack_Pulse = { nullptr };
 		if (FAILED(Create_Behavior(pSequence_Attack_Pulse)))
 			throw TEXT("Failed Create_Behavior pSequence_Attack_Pulse");
-		CSequence* pSequence_Attack_AOE = { nullptr };
+		/*CSequence* pSequence_Attack_AOE = { nullptr };
 		if (FAILED(Create_Behavior(pSequence_Attack_AOE)))
-			throw TEXT("Failed Create_Behavior pSequence_Attack_AOE");
+			throw TEXT("Failed Create_Behavior pSequence_Attack_AOE");*/
 		CSequence* pSequence_Attack_Range = { nullptr };
 		if (FAILED(Create_Behavior(pSequence_Attack_Range)))
 			throw TEXT("Failed Create_Behavior pSequence_Attack_Range");
@@ -1994,8 +2158,8 @@ HRESULT CConjuredDragon::Make_Ground_Attacks(_Inout_ CSequence* pSequence)
 
 		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Pulse"), pSequence_Attack_Pulse, 0.1f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Pulse");
-		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_AOE"), pSequence_Attack_AOE, 0.1f)))
-			throw TEXT("Failed Assemble_Behavior Sequence_Attack_AOE");
+		/*if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_AOE"), pSequence_Attack_AOE, 0.1f)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_AOE");*/
 		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Range"), pSequence_Attack_Range, 0.7f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Range");
 		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Melee"), pSequence_Attack_Melee, 0.1f)))
@@ -2003,8 +2167,8 @@ HRESULT CConjuredDragon::Make_Ground_Attacks(_Inout_ CSequence* pSequence)
 
 		if (FAILED(Make_Ground_Attack_Pulse(pSequence_Attack_Pulse)))
 			throw TEXT("Failed Make_Ground_Attack_Pulse");
-		if (FAILED(Make_Ground_Attack_AOE(pSequence_Attack_AOE)))
-			throw TEXT("Failed Make_Ground_Attack_AOE");
+		/*if (FAILED(Make_Ground_Attack_AOE(pSequence_Attack_AOE)))
+			throw TEXT("Failed Make_Ground_Attack_AOE");*/
 		if (FAILED(Make_Ground_Attacks_Range(pSequence_Attack_Range)))
 			throw TEXT("Failed Make_Ground_Attacks_Range");
 		if (FAILED(Make_Ground_Attacks_Melee(pSequence_Attack_Melee)))
@@ -2865,7 +3029,8 @@ void CConjuredDragon::Enter_Invin()
 {
 	m_pEffect_DragonInvin->Get_VelocityOverLifetimeModuleRef().fRadial = 0.f;
 	m_pEffect_DragonInvin->Play(m_pTransform->Get_Position());
-	m_pEffect_DragonInvinMesh->Play(m_vOffsetPos);
+	if (true == m_isPhaseOne)
+		m_pEffect_DragonInvinMesh->Play(m_vOffsetPos);
 	m_pPulse_Shake->RandomRightAxisShake();
 	m_pRenderer->Set_ScreenRadial(true, 0.5f, 0.2f);
 	m_vEmissiveStrength.x = 0.22f;
@@ -2917,7 +3082,7 @@ void CConjuredDragon::Off_Breath()
 		m_pBreath->Off_Breath();
 
 	m_pEffect_Breath->Stop();
-}                                                     
+}
 
 void CConjuredDragon::Action_Pulse()
 {
@@ -2947,6 +3112,37 @@ void CConjuredDragon::Pulse_Stop_Charge()
 {
 	m_pEffect_Pulse_Charge->Stop();
 	m_pEffect_Pulse_CircleEmit->Stop();
+}
+
+void CConjuredDragon::Death_Enter()
+{
+	for (auto& pDeathWhiteBall : m_pEffect_DeathWhiteBall)
+		pDeathWhiteBall->Play(m_pTransform->Get_Position());
+	m_pDeath_Shake->RandomUpAxisShake();
+	m_pDeath_Shake2->Shake();
+	m_pEffect_MeshEffect_DeathWhiteBall->Set_LifeTime(1.5f);
+	m_pEffect_MeshEffect_DeathWhiteBall->Play(m_pTransform->Get_Position());
+	m_pRenderer->FadeOut(0.8f, _float4(1.f, 1.f, 1.f, 1.f));
+}
+
+void CConjuredDragon::Death_Exit()
+{
+	for (auto& pDeathWhiteBall : m_pEffect_DeathWhiteBall)
+		pDeathWhiteBall->Stop();
+	m_pRenderer->Set_ScreenRadial(true, 2.f, 1.f);
+	m_pPulse_Shake->RandomUpAxisShake();
+	m_pEffect_MeshEffect_DeathWhiteBall->Stop();
+	m_pRenderer->FadeIn(0.1f, _float4(1.f, 1.f, 1.f, 1.f));
+}
+
+void CConjuredDragon::Struggle()
+{
+	Play_Death_Color();
+}
+
+void CConjuredDragon::Shake_FallDown()
+{
+	m_pFallDown_Shake->RandomRightAxisShake();
 }
 
 CConjuredDragon* CConjuredDragon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)
@@ -3000,9 +3196,15 @@ void CConjuredDragon::Free()
 	Safe_Release(m_pEffect_DragonInvin);
 	Safe_Release(m_pEffect_InvinBreakDust);
 	Safe_Release(m_pEffect_DragonInvinMesh);
+	Safe_Release(m_pEffect_MeshEffect_DeathWhiteBall);
+	for(auto& pDeathWhiteBall : m_pEffect_DeathWhiteBall)
+		Safe_Release(pDeathWhiteBall);
 
 	Safe_Release(m_pEnter_Shake);
 	Safe_Release(m_pCamera_Shake_Hit_Terrain);
 	Safe_Release(m_pStep_Shake);
 	Safe_Release(m_pPulse_Shake);
+	Safe_Release(m_pDeath_Shake);
+	Safe_Release(m_pDeath_Shake2);
+	Safe_Release(m_pFallDown_Shake);
 }

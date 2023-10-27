@@ -42,7 +42,7 @@ void CFlyGameManager::ReplaceBallon()
 				for (_uint i = 0; i < m_pRacerGroup.size(); i++)
 				{
 					vTempPosition = _float3(GetRandomFloat(77.f, 153.f), GetRandomFloat(10.f, 30.f), GetRandomFloat(74.f, 246.f));
-					if (_float3(vTempPosition - m_pRacerGroup[i]->Get_Transform()->Get_Position()).Length() < 10)
+					if (_float3(vTempPosition - m_pRacerGroup[i]->Get_Transform()->Get_Position()).Length() < 10.f)
 					{
 						isFound = true;
 						break;

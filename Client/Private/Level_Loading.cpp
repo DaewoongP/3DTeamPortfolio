@@ -57,42 +57,42 @@ HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID, _bool isStaticLoaded)
 		}
 		break;
 	case LEVEL_CLIFFSIDE:
-		if (FAILED(Loading_Cliffside(TEXT("Layer_CliffSide"))))
+		if (FAILED(Loading_Cliffside(TEXT("Layer_Loading"))))
 		{
 			MSG_BOX("Failed Loading CliffSide Object");
 			return E_FAIL;
 		}
 		break;
 	case LEVEL_VAULT:
-		if (FAILED(Loading_Vault(TEXT("Layer_Vault"))))
+		if (FAILED(Loading_Vault(TEXT("Layer_Loading"))))
 		{
 			MSG_BOX("Failed Loading Vault Object");
 			return E_FAIL;
 		}
 		break;
 	case LEVEL_GREATHALL:
-		if (FAILED(Loading_GreatHall(TEXT("Layer_GreatHall"))))
+		if (FAILED(Loading_GreatHall(TEXT("Layer_Loading"))))
 		{
 			MSG_BOX("Failed Loading GreatHall Object");
 			return E_FAIL;
 		}
 		break;
 	case LEVEL_SMITH:
-		if (FAILED(Loading_Hogsmeade(TEXT("Layer_Hogsmeade"))))
+		if (FAILED(Loading_Hogsmeade(TEXT("Layer_Loading"))))
 		{
 			MSG_BOX("Failed Loading Hogsmeade Object");
 			return E_FAIL;
 		}
 		break;
 	case LEVEL_SKY:
-		if (FAILED(Loading_Sky(TEXT("Layer_Sky"))))
+		if (FAILED(Loading_Sky(TEXT("Layer_Loading"))))
 		{
 			MSG_BOX("Failed Loading Sky Object");
 			return E_FAIL;
 		}
 		break;
 	case LEVEL_SANCTUM:
-		if (FAILED(Loading_Sanctum(TEXT("Layer_Sanctum"))))
+		if (FAILED(Loading_Sanctum(TEXT("Layer_Loading"))))
 		{
 			MSG_BOX("Failed Loading Sanctum Object");
 			return E_FAIL;
@@ -235,7 +235,7 @@ HRESULT CLevel_Loading::Loading_Cliffside(const _tchar* pLayerTag)
 	Safe_AddRef(pGameInstance);
 
 	_tchar wszFilePath[MAX_PATH] = TEXT("");
-	lstrcpy(wszFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Loading1.uidata"));
+	lstrcpy(wszFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Loading_Cliffside.uidata"));
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_LOADING, TEXT("Prototype_GameObject_UI_Group_Loading"),
 		pLayerTag, TEXT("Prototype_GameObject_UI_Group_Loading1"), wszFilePath)))
 	{
@@ -254,7 +254,7 @@ HRESULT CLevel_Loading::Loading_Vault(const _tchar* pLayerTag)
 	Safe_AddRef(pGameInstance);
 
 	_tchar wszFilePath[MAX_PATH] = TEXT("");
-	lstrcpy(wszFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Loading2.uidata"));
+	lstrcpy(wszFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Loading_Vault.uidata"));
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_LOADING, TEXT("Prototype_GameObject_UI_Group_Loading"),
 		pLayerTag, TEXT("Prototype_GameObject_UI_Group_Loading1"), wszFilePath)))
 	{
@@ -276,6 +276,26 @@ HRESULT CLevel_Loading::Loading_Hogsmeade(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 
+	// ³·
+	_tchar wszFilePath[MAX_PATH] = TEXT("");
+	lstrcpy(wszFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Loading_Hogsmeade_Day.uidata"));
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_LOADING, TEXT("Prototype_GameObject_UI_Group_Loading"),
+		pLayerTag, TEXT("Prototype_GameObject_UI_Group_Loading1"), wszFilePath)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_UI_Group_Loading)");
+		return E_FAIL;
+	}
+
+	//// ¹ã
+	//_tchar wszFilePath[MAX_PATH] = TEXT("");
+	//lstrcpy(wszFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Loading_Hogsmeade_Night.uidata"));
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_LOADING, TEXT("Prototype_GameObject_UI_Group_Loading"),
+	//	pLayerTag, TEXT("Prototype_GameObject_UI_Group_Loading1"), wszFilePath)))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_UI_Group_Loading)");
+	//	return E_FAIL;
+	//}
+
 	ENDINSTANCE;
 
 	return S_OK;
@@ -283,10 +303,37 @@ HRESULT CLevel_Loading::Loading_Hogsmeade(const _tchar* pLayerTag)
 
 HRESULT CLevel_Loading::Loading_Sky(const _tchar* pLayerTag)
 {
+	BEGININSTANCE;
+
+	//_tchar wszFilePath[MAX_PATH] = TEXT("");
+	//lstrcpy(wszFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Loading2.uidata"));
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_LOADING, TEXT("Prototype_GameObject_UI_Group_Loading"),
+	//	pLayerTag, TEXT("Prototype_GameObject_UI_Group_Loading1"), wszFilePath)))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_UI_Group_Loading)");
+	//	return E_FAIL;
+	//}
+
+	ENDINSTANCE;
+
 	return S_OK;
 }
+
 HRESULT CLevel_Loading::Loading_Sanctum(const _tchar* pLayerTag)
 {
+	BEGININSTANCE;
+
+	_tchar wszFilePath[MAX_PATH] = TEXT("");
+	lstrcpy(wszFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Loading_Sanctum.uidata"));
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_LOADING, TEXT("Prototype_GameObject_UI_Group_Loading"),
+		pLayerTag, TEXT("Prototype_GameObject_UI_Group_Loading1"), wszFilePath)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_UI_Group_Loading)");
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
 	return S_OK;
 }
 

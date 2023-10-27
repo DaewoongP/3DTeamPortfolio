@@ -73,6 +73,10 @@ void CEvent_Smeade_Next_Level::Check_Event_Cliff(_float fTimeDelta)
 
 	if (true == m_pNext_Level_Cliff->Is_Collision())
 	{
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+		pGameInstance->Get_CurrentLevel()->Set_NextLevel(LEVEL_CLIFFSIDE);
+		Safe_Release(pGameInstance);
 		m_isCheck_Cliff = true;
 	}
 }
@@ -84,6 +88,11 @@ void CEvent_Smeade_Next_Level::Check_Event_Sanctum(_float fTimeDelta)
 
 	if (true == m_pNext_Level_Sanctum->Is_Collision())
 	{
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+		pGameInstance->Get_CurrentLevel()->Set_NextLevel(LEVEL_SANCTUM);
+		Safe_Release(pGameInstance);
+
 		m_isCheck_Sanctum = true;
 	}
 }

@@ -158,11 +158,7 @@ void CMapObject::Late_Tick(_float fTimeDelta)
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
-		if (pGameInstance->isIn_WorldFrustum(m_vCenterPoint.TransCoord(), m_fRadius))
-		{
-			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-		}
-		
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 #ifdef _DEBUG
 		for (auto& pRigidBody : m_RigidBodys)
 		{
@@ -176,9 +172,6 @@ void CMapObject::Late_Tick(_float fTimeDelta)
 
 HRESULT CMapObject::Render()
 {
-	if (FAILED(__super::Render()))
-		return E_FAIL;
-
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 

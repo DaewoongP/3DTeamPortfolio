@@ -236,13 +236,9 @@ HRESULT CRenderer::Initialize_Prototype()
 #ifdef _DEBUG 
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Deferred"), 80.f, 80.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_DOF"), 80.f, 240.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Depth"), 80.f, 240.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Glowed"), 80.f, 400.f, 160.f, 160.f)))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Emissive"), 80.f, 560.f, 160.f, 160.f)))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_LightShaft"), 320.f, 160.f, 320.f, 320.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Emissive"), 80.f, 400.f, 160.f, 160.f)))
 		return E_FAIL;
 
 	m_isDebugRender = false;
@@ -1107,6 +1103,9 @@ HRESULT CRenderer::Render_Fade()
 		return E_FAIL;
 	if (FAILED(m_pFadeTexture->Bind_ShaderResource(m_pFadeShader, "g_FadeTexture")))
 		return E_FAIL;
+	if (FAILED(m_pFadeShader->Bind_RawValue("g_vFadeColor", &m_vFadeColor, sizeof(m_vFadeColor))))
+		return E_FAIL;
+
 	if (true == m_isFade)
 	{
 		CGameInstance* pGameInstance = CGameInstance::GetInstance();

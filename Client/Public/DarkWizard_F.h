@@ -47,7 +47,21 @@ private:
 	CMagic::MAGICDESC m_MagicDesc;
 	CMagicBall* m_CastingMagic = { nullptr };
 
+	_bool m_isFinishSpawn = { false };
+	_bool m_isShow = { false };
 	mutable _float m_fProtegoCoolTime = { 0.f };
+
+	//카메라 쉐이크 노티파이에 함수를 넣기 위한 클래스
+	CCamera_Shake* m_pDescendo_Shake = { nullptr };
+
+private:
+	CParticleSystem* m_pEffect_LandingFlame = { nullptr };
+	CParticleSystem* m_pEffect_LandingFog = { nullptr };
+	CParticleSystem* m_pEffect_LandingLight = { nullptr };
+
+private:
+	virtual HRESULT Add_Components_for_Shake();
+	virtual HRESULT Make_Notifies_for_Shake();
 
 private:
 	HRESULT Make_AI();
@@ -62,6 +76,7 @@ private: /* 사망처리 전용 함수 */
 	void DeathBehavior(const _float& fTimeDelta);
 
 private: /* 행동 묶음들 */
+	HRESULT Make_Spawn(_Inout_ CRandomChoose* pRandomChoose);
 	HRESULT Make_Death(_Inout_ CSelector* pSelector);
 	HRESULT Make_Alive(_Inout_ CSelector* pSelector);
 
@@ -86,6 +101,8 @@ private: /* Notify Functions */
 	void Cast_Confringo();
 	void Cast_Diffindo();
 	void Shot_Magic();
+	void Play_Effect_1();
+	void Play_Effect_2();
 
 private:
 	static _uint iNumClass;

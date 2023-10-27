@@ -39,9 +39,9 @@ HRESULT CMain_Menu::Initialize(void* pArg)
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
+
 	if (FAILED(Read_File(reinterpret_cast<const _tchar*>(pArg))))
 		return E_FAIL;
-
 
 	Ready_Menus();
 	Add_Cursor();

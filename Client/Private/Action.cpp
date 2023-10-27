@@ -158,7 +158,7 @@ _bool CAction::Is_Success_Action()
 		isSuccess = true;
 
 	// 애니메이션이 끝난 경우
-	if (true == m_pModel->Is_Finish_Animation())
+	if (true == m_pModel->Is_Finish_Animation(m_eAnimationType))
 		isSuccess = true;
 
 	// 내가 설정한 탈출조건에 부합한 경우

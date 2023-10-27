@@ -56,11 +56,11 @@ HRESULT CEvent_Smeade::Initialize(void* pArg)
 	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Fade_Out"), false, 1.0f);
 	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play"), false, 14.428f);
 
-	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play_2_FadeOut"), true, 9.466);
-	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play_2_FadeIn"), true, 9.666);
+	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play_2_FadeOut"), true, 9.466f);
+	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play_2_FadeIn"), true, 9.666f);
 
-	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play_3_FadeOut"), true, 10.866);
-	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play_3_FadeIn"), true, 11.066);
+	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play_3_FadeOut"), true, 10.866f);
+	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play_3_FadeIn"), true, 11.066f);
 
 	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play_4_Scream"), true, 13.3f);
 	

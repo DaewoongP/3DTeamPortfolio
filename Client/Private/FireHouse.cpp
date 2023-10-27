@@ -249,9 +249,6 @@ void CFireHouse::Late_Tick(_float fTimeDelta)
 
 HRESULT CFireHouse::Render()
 {
-	if (FAILED(__super::Render()))
-		return E_FAIL;
-
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
