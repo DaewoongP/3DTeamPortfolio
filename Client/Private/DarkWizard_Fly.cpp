@@ -23,6 +23,8 @@
 #include "Weapon_DarkWizard_Wand.h"
 #include "Broom_Stick_DarkWizard.h"
 
+#include "FlyGameManager.h"
+
 #include "UI_Damage.h"
 
 _int CDarkWizard_Fly::iNumClass = { 0 };
@@ -808,8 +810,6 @@ HRESULT CDarkWizard_Fly::Make_Attacks(_Inout_ CRandomChoose* pRandomChoose)
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 					return false;
 
-				cout << *pICurrentSpell << endl;
-
 				return BUFF_NONE == *pICurrentSpell;
 			});
 		pRandomChoose->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -970,19 +970,15 @@ void CDarkWizard_Fly::Update_BalloonTarget_Near()
 		return;
 	}
 
-	BEGININSTANCE;
-	auto pLayer = pGameInstance->Find_Components_In_Layer(LEVEL_SKY, TEXT("Layer_Balloon"));
-	ENDINSTANCE;
-	if (nullptr == pLayer)
-		return;
+	auto Balloons = Get_Balloons();
 
 	_float3 vPosition = m_pTransform->Get_Position();
 
 	m_pTargetBalloon = { nullptr };
 
-	for (auto Pair : *pLayer)
+	for (auto pBalloon : *Balloons)
 	{
-		CBalloon* pDstBalloon = static_cast<CBalloon*>(Pair.second);
+		CBalloon* pDstBalloon = pBalloon;
 
 		if (true == pDstBalloon->isDead())
 			continue;
@@ -1011,22 +1007,18 @@ void CDarkWizard_Fly::Update_BalloonTarget_Middle()
 		return;
 	}
 
-	BEGININSTANCE;
-	auto pLayer = pGameInstance->Find_Components_In_Layer(LEVEL_SKY, TEXT("Layer_Balloon"));
-	ENDINSTANCE;
-	if (nullptr == pLayer)
-		return;
+	auto Balloons = Get_Balloons();
 
-	_uint iNumBalloons = pLayer->size();
+	_uint iNumBalloons = Balloons->size();
 	iNumBalloons = iNumBalloons / 4;
 
 	_float3 vPosition = m_pTransform->Get_Position();
 
 	m_pTargetBalloon = { nullptr };
 
-	for (auto Pair : *pLayer)
+	for (auto pBalloon : *Balloons)
 	{
-		CBalloon* pDstBalloon = static_cast<CBalloon*>(Pair.second);
+		CBalloon* pDstBalloon = pBalloon;
 
 		if (0 == iNumBalloons)
 			return;
@@ -1061,19 +1053,15 @@ void CDarkWizard_Fly::Update_BalloonTarget_Far()
 		return;
 	}
 
-	BEGININSTANCE;
-	auto pLayer = pGameInstance->Find_Components_In_Layer(LEVEL_SKY, TEXT("Layer_Balloon"));
-	ENDINSTANCE;
-	if (nullptr == pLayer)
-		return;
+	auto Balloons = Get_Balloons();
 
 	_float3 vPosition = m_pTransform->Get_Position();
 
 	m_pTargetBalloon = { nullptr };
 
-	for (auto Pair : *pLayer)
+	for (auto pBalloon : *Balloons)
 	{
-		CBalloon* pDstBalloon = static_cast<CBalloon*>(Pair.second);
+		CBalloon* pDstBalloon = pBalloon;
 
 		if (true == pDstBalloon->isDead())
 			continue;
@@ -1142,6 +1130,19 @@ void CDarkWizard_Fly::Bounce_Off(const _float& fTimeDelta)
 	vForce = vForce - (m_fBounceTimeAcc / (fBounceTime / 2.f)) * vForce;
 
 	m_pRigidBody->Add_Force(vForce);
+}
+
+const vector<CBalloon*>* CDarkWizard_Fly::Get_Balloons()
+{
+	BEGININSTANCE;
+	auto pFlyGameManager = pGameInstance->Find_Component_In_Layer(LEVEL_SKY, TEXT("Layer_BackGround"), TEXT("GameObject_FlyGameManager"));
+	ENDINSTANCE;
+	if (nullptr == pFlyGameManager)
+		return nullptr;
+
+	auto Balloons = static_cast<CFlyGameManager*>(pFlyGameManager)->Get_Balloons();
+
+	return Balloons;
 }
 
 void CDarkWizard_Fly::Cast_Levioso()
