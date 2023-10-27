@@ -509,7 +509,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			Go_Hit(&HitStateDesc);
 			
 
-			_float iDamege = pDesc->iDamage;
+			_int iDamege = pDesc->iDamage;
 
 			if (0.0f < m_DefensiveDesc.fBuffValueAcc)
 			{
@@ -521,8 +521,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 				iDamege = 0;
 			}
 
-			//Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
-			m_pPlayer_Information->fix_HP((iDamege) * -1);
+			m_pPlayer_Information->fix_HP(iDamege * -1);
 		}
 	}
 	else if (wstring::npos != wstrCollisionTag.find(TEXT("Magic_Ball")))
@@ -578,7 +577,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 			Go_Hit(&HitStateDesc);
 
-			_float iDamege = pDesc->iDamage;
+			_int iDamege = pDesc->iDamage;
 
 			if (0.0f < m_DefensiveDesc.fBuffValueAcc)
 			{
@@ -591,7 +590,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			}
 
 			//Ã¼·Â ¼öÁ¤
-			m_pPlayer_Information->fix_HP((iDamege) * -1);
+			m_pPlayer_Information->fix_HP(iDamege * -1);
 		}
 	}
 }

@@ -132,15 +132,6 @@ HRESULT CBroom_Stick::Render()
 	return S_OK;
 }
 
-void CBroom_Stick::HeadParticle(_float fTimeDelta)
-{
-	if (nullptr != m_pOwner)
-	{
-		//m_pParticle->Get_Transform()->Set_Position(_float4x4(m_OffsetMatrix*m_pTransform->Get_WorldMatrix()).Translation());
-	}
-	
-}
-
 HRESULT CBroom_Stick::Add_Components(void* pArg)
 {
 	try /* Check Add_Components */
