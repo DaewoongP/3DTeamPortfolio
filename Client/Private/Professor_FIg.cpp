@@ -1102,6 +1102,7 @@ void CProfessor_Fig::Tick_Script(_float fTimeDelta)
 			Safe_AddRef(pQuest_Manager);
 			pQuest_Manager->Clear_Quest(TEXT("Quest_Save_Fig"));
 			Safe_Release(pQuest_Manager);
+			g_isNight = true;
 		}
 	}
 }
