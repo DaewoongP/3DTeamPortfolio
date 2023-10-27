@@ -238,10 +238,13 @@ void CProtego::Tick_DrawMagic(_float fTimeDelta)
 	m_vColor1.w = fRatio;
 	m_vColor2.w = fRatio;
 
-	m_pTransform->Set_Scale(_float3(m_fScale * fRatio, m_fScale * fRatio, m_fScale * fRatio));
-
 	if (fRatio > 1.f)
+	{
+		fRatio = 1.f;
 		Do_MagicBallState_To_Next();
+	}
+		
+	m_pTransform->Set_Scale(_float3(m_fScale * fRatio, m_fScale * fRatio, m_fScale * fRatio));
 }
 
 void CProtego::Tick_CastMagic(_float fTimeDelta)
@@ -259,12 +262,14 @@ void CProtego::Tick_Dying(_float fTimeDelta)
 	m_vColor1.w = fRatio;
 	m_vColor2.w = fRatio;
 	m_fScale = 0.01f - fRatio * 0.01f;
-	m_pTransform->Set_Scale(_float3(m_fScale, m_fScale, m_fScale));
 
 	if (fRatio >= 1.f)
 	{
 		Do_MagicBallState_To_Next();
+		fRatio = 1.f;
 	}
+
+	m_pTransform->Set_Scale(_float3(m_fScale, m_fScale, m_fScale));
 }
 
 void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)

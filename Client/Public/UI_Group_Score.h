@@ -41,7 +41,7 @@ public:
 		_tchar		wszEighthName[MAX_PATH] = TEXT("");
 		_tchar		wszNinthName[MAX_PATH] = TEXT("");
 
-		_uint*		pScore[UISCORE_END] = { nullptr };
+		vector<_uint>*		pScore = { nullptr };
 	};
 
 	struct UISCORE

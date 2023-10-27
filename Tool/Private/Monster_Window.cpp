@@ -722,6 +722,9 @@ HRESULT CMonster_Window::Load_Model_Prototypes(const wstring& wstrFilePath)
 				else if (wstring::npos != result1.find(TEXT("Wolf")))
 				{
 				}
+				else if (wstring::npos != result1.find(TEXT("crowd")))
+				{
+				}
 				else
 				{
 					m_wstrModelPaths.pop_back();

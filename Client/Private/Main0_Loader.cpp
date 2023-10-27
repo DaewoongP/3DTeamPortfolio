@@ -55,6 +55,7 @@
 #include "Pulse.h"
 #include "RadialBlur.h"
 #include "Projectile_White_Effect.h"
+#include"FireWorks.h"
 #pragma endregion Effects
 
 #pragma region Magic
@@ -115,6 +116,7 @@
 #pragma endregion
 
 #pragma region Event
+#include "Balloon_Coin.h"
 #include "Racer.h"
 #include "FlyGameManager.h"
 #pragma endregion
@@ -342,6 +344,8 @@ HRESULT CMain0_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 		CEvent_Smeade_Next_Level::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Event_Smeade_Next_Level");
 
+	
+
 	ENDINSTANCE;
 
 	return S_OK;
@@ -358,12 +362,20 @@ HRESULT CMain0_Loader::Loading_For_Sky(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Racer"),
 			CRacer::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Racer");
+		
+		/* For.Prototype_GameObject_Balloon_Coin */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Balloon_Coin"),
+			CBalloon_Coin::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Balloon_Coin");
 
 		/* For.Prototype_GameObject_FlyGameManager */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FlyGameManager"),
 			CFlyGameManager::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_FlyGameManager");
+	
 	}
+
+
 	catch (const _tchar* pErrorTag)
 	{
 		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
@@ -418,6 +430,9 @@ HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 			CProjectile_White_Effect::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Projectile_White_Effect");
 
+		
+
+
 		/* For.Prototype_GameObject_Event_Spawn */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Spawn"),
 			CEvent_Spawn::Create(m_pDevice, m_pContext))))
@@ -430,7 +445,7 @@ HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 
 		/* For.Prototype_GameObject_Event_Spawn_Dragon */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Spawn_Dragon"),
-			CEvent_Spawn_Dragon::Create(m_pDevice, m_pContext))))
+			CEvent_Spawn_Dragon::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Event_Spawn_Dragon");
 
 		/* For.Prototype_GameObject_Event_Spawn_Dragon_2 */
@@ -442,6 +457,22 @@ HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MapParticle_Sanctum_CircularRocks01"),
 			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/MapParticle/Sanctum/CircularRocks01"), eLevelID))))
 			throw TEXT("Prototype_GameObject_MapParticle_Sanctum_CircularRocks01");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg01"),
+			CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/SummonRituals/DarkWizardSpawnToConjuredDragonEgg01.ME"), eLevelID))))
+			throw TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg01");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg02"),
+			CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/SummonRituals/DarkWizardSpawnToConjuredDragonEgg02.ME"), eLevelID))))
+			throw TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg02");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg03"),
+			CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/SummonRituals/DarkWizardSpawnToConjuredDragonEgg03.ME"), eLevelID))))
+			throw TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg03");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg04"),
+			CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/SummonRituals/DarkWizardSpawnToConjuredDragonEgg04.ME"), eLevelID))))
+			throw TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg04");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -1204,8 +1235,16 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 				throw TEXT("Reserve Particle : Particle_DestroyProtego_Yellow2");
 
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_CircularRocks02"),
-				TEXT("../../Resources/GameData/ParticleData/MapParticle/CircularRocks02/"), 2)))
+				TEXT("../../Resources/GameData/ParticleData/MapParticle/Sanctum/CircularRocks02/"), 1)))
 				throw TEXT("Reserve Particle : Particle_CircularRocks02");
+				
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Balloon_Spread"),
+				TEXT("../../Resources/GameData/ParticleData/Balloon/Spread/"), 30)))
+				throw TEXT("Reserve Particle : Particle_Balloon_Spread");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Balloon_Line"),
+				TEXT("../../Resources/GameData/ParticleData/Balloon/Line/"), 30)))
+				throw TEXT("Reserve Particle : Particle_Balloon_Line");
 		}
 #pragma endregion
 
