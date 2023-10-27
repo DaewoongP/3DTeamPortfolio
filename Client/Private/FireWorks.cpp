@@ -100,9 +100,9 @@ void CFireWorks::Tick(_float fTimeDelta)
 	m_fHeight += fTimeDelta;
 	m_pTransform->Set_Position(_float3(FirePosition.x, FirePosition.y+ m_fHeight, FirePosition.z));
 	_uint i = rand() % 2 + 1;
-
+	_uint RandTime = rand() % 15 + 15;
 	
-	if (1.f <= m_fHeight)
+	if (RandTime <= m_fHeight)
 	{
 		m_vecParticle[0]->Stop();
 		m_vecParticle[i]->Play(m_pTransform->Get_Position());
