@@ -1,39 +1,42 @@
-#include "MapObject.h"
+#pragma once
+
+#include "GameObject.h"
 #include "Client_Defines.h"
 
 BEGIN(Engine)
-class CMesh;
-class CModel;
 class CShader;
+class CTexture;
 class CRenderer;
+class CVIBuffer;
 class CParticleSystem;
-class CLight;
 END
 
 BEGIN(Client)
-
-class CFireWorks : public CMapObject
+class CFireWorks : public CGameObject
 {
-public:
-	typedef struct tagMapObjectDesc
+	enum  FIRETYPE
+	{
+		TYPE_CIRCLE,TYPE_SPREAD,TYPE_END
+	};
+
+	typedef struct tagFire
 	{
 		_float4x4 WorldMatrix; // 상태 행렬
-		_uint iTagLen = { 0 }; // 문자열 길이
-		_tchar wszTag[MAX_PATH] = TEXT(""); // 오브젝트 종류(모델 컴포넌트 이름)
-	}MAPOBJECTDESC;
+		FIRETYPE m_eType;
+	}FireDesc;
 
-protected:
+private:
 	explicit CFireWorks(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CFireWorks(const CFireWorks& rhs);
 	virtual ~CFireWorks() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype();
+	HRESULT Initialize_Prototype(_uint iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
-	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT Render() override;
+
+	HRESULT Play(_float3 vPosition);
 
 private:
 	CShader* m_pShader = { nullptr };
@@ -41,20 +44,17 @@ private:
 	CRenderer* m_pRenderer = { nullptr };
 	CModel* m_pModel = { nullptr };
 	vector<CParticleSystem*> m_vecParticle;
-private:
-	// 절두체 컬링을 위해 Bounding Box를 생성 하기위한 최소, 최대 정점
-	_float3			m_vMinPoint, m_vMaxPoint, m_vCenterPoint;
-	_float			m_fRadius = { 0.f };
-	MAPOBJECTDESC	m_ObjectDesc;
-
-	_float4			m_vEmissive;
+	_float3 FirePosition = _float3(0.f, 0.f, 0.f);
+	_uint m_iLevel = 0;
+	_float m_fHeight = { 0.f };
+	FIRETYPE m_eType;
 
 private:
 	HRESULT Add_Components();
 	
 
 public:
-	static CFireWorks* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CFireWorks* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,_uint iLevel);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };

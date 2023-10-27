@@ -44,50 +44,29 @@ HRESULT CUI_Group_Score::Initialize(void* pArg)
 	{
 		UISCOREDESC* pDesc = (UISCOREDESC*)pArg;
 
-		Create_UI_Score(pDesc->wszFirstName, &Text1, FIRST);
-		Create_UI_Score(pDesc->wszSecondName, &Text2, SECOND);
-		Create_UI_Score(pDesc->wszThirdName, &Text3, THIRD);
-		Create_UI_Score(pDesc->wszFourthName, &Text4, FOURTH);
-		Create_UI_Score(pDesc->wszFifthName, &Text5, FIFTH);
-		Create_UI_Score(pDesc->wszSixthName, &Text6, SIXTH);
-		Create_UI_Score(pDesc->wszSeventhName, &Text7, SEVENTH);
-		Create_UI_Score(pDesc->wszEighthName, &Text8, EIGHTH);
-		Create_UI_Score(pDesc->wszEighthName, &Text9, NINTH);
+		Create_UI_Score(pDesc->wszFirstName, &(*pDesc->pScore)[0], FIRST);
+		Create_UI_Score(pDesc->wszSecondName, & (*pDesc->pScore)[1], SECOND);
+		Create_UI_Score(pDesc->wszThirdName, & (*pDesc->pScore)[2], THIRD);
+		Create_UI_Score(pDesc->wszFourthName, & (*pDesc->pScore)[3], FOURTH);
+		Create_UI_Score(pDesc->wszFifthName, & (*pDesc->pScore)[4], FIFTH);
+		Create_UI_Score(pDesc->wszSixthName, & (*pDesc->pScore)[5], SIXTH);
+		Create_UI_Score(pDesc->wszSeventhName, & (*pDesc->pScore)[6], SEVENTH);
+		Create_UI_Score(pDesc->wszEighthName, & (*pDesc->pScore)[7], EIGHTH);
+		Create_UI_Score(pDesc->wszNinthName, &(*pDesc->pScore)[8], NINTH);
 	}
-
 	return S_OK;
 }
 
 void CUI_Group_Score::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
-	{
-		Text1 = rand() % 10;
-		Text2 = rand() % 10;
-		Text3 = rand() % 10;
-		Text4 = rand() % 10;
-		Text5 = rand() % 10;
-		Text6 = rand() % 10;
-		Text7 = rand() % 10;
-		Text8 = rand() % 10;
-		Text9 = rand() % 10;
-	}
-	Safe_Release(pGameInstance);
-
 	_uint iIndex = 0;
 	for (auto& pScore : m_UIScores)
 	{
 		m_UIScores[iIndex].pScore->Set_Text(to_wstring(*pScore.fScore));
 		++iIndex;
 	}
-
 	Update_Score(fTimeDelta);
-
-
 }
 
 void CUI_Group_Score::Late_Tick(_float fTimeDelta)

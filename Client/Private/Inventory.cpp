@@ -200,7 +200,6 @@ _bool CInventory::Add_Item(CItem* pItem, ITEMTYPE eType)
 		m_pUI_Inventory[eType]->Set_ResourceInventoryItem(m_pItems[eType], &m_ResourcesCount);
 	}
 
-
 	return true;
 }
 
@@ -208,7 +207,7 @@ _bool CInventory::Add_Item(const _tchar* pPrototypeTag, _uint iLevel, void* pArg
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-	CItem* pItem = dynamic_cast<CItem*>(pGameInstance->Clone_Component(iLevel, pPrototypeTag, pArg));
+	CItem* pItem = static_cast<CItem*>(pGameInstance->Clone_Component(iLevel, pPrototypeTag, pArg));
 	Safe_Release(pGameInstance);
 	
 	// 잘못된 아이템을 넣은 경우 디버그 브레이크
@@ -285,7 +284,7 @@ void CInventory::Delete_Item(ITEM_ID eTargetItemID)
 				ITEMTYPE eType = (*iter)->Get_Type();
 				if (eType == ITEMTYPE::RESOURCE)
 				{
-					CIngredient* pIngredient = dynamic_cast<CIngredient*>(*iter);
+					CIngredient* pIngredient = static_cast<CIngredient*>(*iter);
 					m_ResourcesCount[pIngredient->Get_Ingredient()]--;
 					Safe_Release(*iter);
 					m_pItems[eType].erase(iter);
@@ -353,7 +352,7 @@ void CInventory::Swap_Item(_uint Index, ITEMTYPE eType)
 	
 	m_pUI_Inventory[eType]->Set_GearInventoryItem(m_pItems[eType]);
 
-	CGear_Item* pGearItem = dynamic_cast<CGear_Item*>(m_pPlayerCurItems[eType]);
+	CGear_Item* pGearItem = static_cast<CGear_Item*>(m_pPlayerCurItems[eType]);
 	if (nullptr != pGearItem)
 		pGearItem->Equipment();
 

@@ -52,7 +52,9 @@ HRESULT CTimer_Manager::Add_Timer(const wstring& _wstrTimerTag, _bool _isRepeat,
 
 	if (m_Timers.end() != Timer)
 	{
+#ifdef _DEBUG
 		MSG_BOX("[CTime_Manager] Tag is duplicate Tag");
+#endif // _DEBUG
 		return E_FAIL;
 	}
 

@@ -33,7 +33,7 @@ HRESULT CCutScene_Camera_Tool::Initialize(void* pArg)
 
 	//생성 가이드 포인트
 	m_pCreateGuidePoint =
-		dynamic_cast<CCamera_Point*>(
+		static_cast<CCamera_Point*>(
 			pGameInstance->Clone_Component(LEVEL_TOOL,
 				TEXT("Prototype_GameObject_Camera_Point"),
 				&CameraPointDesc));
@@ -357,7 +357,7 @@ void CCutScene_Camera_Tool::Create_CameraInfo(_float4 _vRayPos, _float4 _vRayDir
 		CameraPointDesc.vPosition = Point_Create_Position(_vRayPos, _vRayDir);
 
 		CCamera_Point* pCameraPoint =
-			dynamic_cast<CCamera_Point*>(
+			static_cast<CCamera_Point*>(
 				pGameInstance->Clone_Component(LEVEL_TOOL,
 					TEXT("Prototype_GameObject_Camera_Point"),
 					&CameraPointDesc));
@@ -433,7 +433,7 @@ void CCutScene_Camera_Tool::Create_OriginAt(_float4 _vRayPos, _float4 _vRayDir)
 		CameraPointDesc.vPosition = Point_Create_Position(_vRayPos, _vRayDir);
 
 		CCamera_Point* pCameraPoint =
-			dynamic_cast<CCamera_Point*>(
+			static_cast<CCamera_Point*>(
 				pGameInstance->Clone_Component(LEVEL_TOOL,
 					TEXT("Prototype_GameObject_Camera_Point"),
 					&CameraPointDesc));
@@ -473,7 +473,7 @@ void CCutScene_Camera_Tool::Create_LookPoint()
 		CameraPointDesc.vPosition = *pGameInstance->Get_CamPosition() + (pGameInstance->Get_CamLook()->TransCoord() * 10.0f);
 
 		CCamera_Point* pCameraPoint =
-			dynamic_cast<CCamera_Point*>(
+			static_cast<CCamera_Point*>(
 				pGameInstance->Clone_Component(LEVEL_TOOL,
 					TEXT("Prototype_GameObject_Camera_Point"),
 					&CameraPointDesc));
@@ -509,7 +509,7 @@ void CCutScene_Camera_Tool::Create_LookPoint()
 		CameraPointDesc.vPosition = *pGameInstance->Get_CamPosition();
 
 		pCameraPoint =
-			dynamic_cast<CCamera_Point*>(
+			static_cast<CCamera_Point*>(
 				pGameInstance->Clone_Component(LEVEL_TOOL,
 					TEXT("Prototype_GameObject_Camera_Point"),
 					&CameraPointDesc));
@@ -855,7 +855,7 @@ HRESULT CCutScene_Camera_Tool::Load_CutSceneInfo(const _tchar* _wszFilePath)
 		CameraPointDesc.vPosition = CutSceneCameraDesc.vEye;
 
 		CCamera_Point* pCameraPoint =
-			dynamic_cast<CCamera_Point*>(
+			static_cast<CCamera_Point*>(
 				pGameInstance->Clone_Component(LEVEL_TOOL,
 					TEXT("Prototype_GameObject_Camera_Point"),
 					&CameraPointDesc));
@@ -883,7 +883,7 @@ HRESULT CCutScene_Camera_Tool::Load_CutSceneInfo(const _tchar* _wszFilePath)
 		CameraPointDesc.vPosition = CutSceneCameraDesc.vAt;
 
 		pCameraPoint =
-			dynamic_cast<CCamera_Point*>(
+			static_cast<CCamera_Point*>(
 				pGameInstance->Clone_Component(LEVEL_TOOL,
 					TEXT("Prototype_GameObject_Camera_Point"),
 					&CameraPointDesc));
@@ -1066,17 +1066,17 @@ HRESULT CCutScene_Camera_Tool::Ready_Line()
 	BEGININSTANCE;
 
 	m_pEyeLine =
-		dynamic_cast<CCamera_Line*>(
+		static_cast<CCamera_Line*>(
 			pGameInstance->Clone_Component(LEVEL_TOOL,
 				TEXT("Prototype_GameObject_Camera_Line")));
 
 	m_pAtLine =
-		dynamic_cast<CCamera_Line*>(
+		static_cast<CCamera_Line*>(
 			pGameInstance->Clone_Component(LEVEL_TOOL,
 				TEXT("Prototype_GameObject_Camera_Line")));
 
 	m_pLookLine =
-		dynamic_cast<CCamera_Line*>(
+		static_cast<CCamera_Line*>(
 			pGameInstance->Clone_Component(LEVEL_TOOL,
 				TEXT("Prototype_GameObject_Camera_Line")));
 
@@ -1840,7 +1840,7 @@ void CCutScene_Camera_Tool::Set_Position_CurrentPoint()
 
 	if (nullptr != m_pCurrentPoint && pGameInstance->Get_DIKeyState(DIK_T, CInput_Device::KEY_DOWN))
 	{
-		dynamic_cast<CMain_Camera*>(pGameInstance->Find_Camera(TEXT("Main_Camera")))->Set_Position(m_pCurrentPoint->Get_Position().xyz());
+		static_cast<CMain_Camera*>(pGameInstance->Find_Camera(TEXT("Main_Camera")))->Set_Position(m_pCurrentPoint->Get_Position().xyz());
 	}
 
 	ENDINSTANCE;

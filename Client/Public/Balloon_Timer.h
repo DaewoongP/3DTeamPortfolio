@@ -28,9 +28,15 @@ private:
 public:
 	_bool Is_Finished() { 
 		if (m_fTimeAcc > m_fTime)
+		{
+			m_isFinished = true;
+			m_fTimeAcc = 0.f;
 			return true;
+		}
+			
 		return false;
 	}
+	void Reset(_float3 vPosition, _float fFinishTime);
 
 public:
 	virtual HRESULT Initialize(void* pArg) override;
@@ -46,6 +52,7 @@ private:
 	_float						m_fTime = { 0.f };
 	_float						m_fTimeAcc = { 0.f };
 	_float3						m_vInitPosition;
+	_bool						m_isFinished = { false };
 
 private:
 	HRESULT Add_Components();

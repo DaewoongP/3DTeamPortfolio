@@ -78,6 +78,7 @@ private:
 	void Update_BalloonTarget_Player();
 	void Move(const _float& fTimeDelta);
 	void Bounce_Off(const _float& fTimeDelta);
+	const vector<CBalloon*>* Get_Balloons();
 
 private: /* Notify Functions */
 	void Cast_Levioso();

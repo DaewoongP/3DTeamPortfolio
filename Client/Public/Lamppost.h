@@ -3,10 +3,6 @@
 #include "MapObject.h"
 #include "Client_Defines.h"
 
-BEGIN(Engine)
-class CLight;
-END
-
 BEGIN(Client)
 
 class CLamppost final : public CMapObject
@@ -23,9 +19,6 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-
-private:
-	CLight* m_pLight = { nullptr };
 
 public:
 	static CLamppost* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

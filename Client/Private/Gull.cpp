@@ -47,6 +47,8 @@ HRESULT CGull::Initialize(void* pArg)
 	Safe_AddRef(m_pPlayer);
 	ENDINSTANCE;
 
+	m_fRandTime = (rand() % 3) * 1.f;
+
 	return S_OK;
 }
 
@@ -61,8 +63,27 @@ HRESULT CGull::Initialize_Level(_uint iCurrentLevelIndex)
 		return E_FAIL;
 	}
 
-	m_GullAnimIndex = GULL_IDLE2;
-	m_pModel->Change_Animation((_uint)m_GullAnimIndex);
+	// 갈매기 인덱스 추출
+	wstring wsGull(m_pTag);
+	size_t findIndex = wsGull.find(TEXT("Gull_")) + 5;
+
+	wstring wsModelIndex = wsGull.substr(findIndex);
+	m_iGullIndex = stoi(wsModelIndex);
+
+	// 플레이어가 다가가면 날아가는 갈매기
+	if (10 > m_iGullIndex)
+	{
+		m_GullAnimIndex = GULL_IDLE2;
+		m_pModel->Change_Animation((_uint)m_GullAnimIndex);
+	}
+
+	// 갈매기 v편대
+	else
+	{
+		m_GullAnimIndex = GULL_FLY;
+		m_pModel->Change_Animation((_uint)m_GullAnimIndex);
+		m_vecOriginPos = m_pTransform->Get_Position();
+	}	
 
 	// 리지드 바디 초기화
 	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
@@ -96,15 +117,27 @@ void CGull::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	// 플레이어와 거리 비교
-	_float3 vPlayerPos = m_pPlayer->Get_PlayerPos();
-	_float3 vGullPos = m_pTransform->Get_Position();
+	m_fRandTimeAcc += fTimeDelta;
 
-	m_fDist_From_Player = sqrtf((vPlayerPos.x - vGullPos.x) * (vPlayerPos.x - vGullPos.x) +
-		(vPlayerPos.y - vGullPos.y) * (vPlayerPos.y - vGullPos.y) +
-		(vPlayerPos.z - vGullPos.z) * (vPlayerPos.z - vGullPos.z));
+	// 플레이어가 다가가면 날아가는 갈매기
+	if (10 > m_iGullIndex)
+	{
+		// 플레이어와 거리 비교
+		_float3 vPlayerPos = m_pPlayer->Get_PlayerPos();
+		_float3 vGullPos = m_pTransform->Get_Position();
 
-	Check_Dist_From_Player(fTimeDelta); // 플레이어 거리에 따른 애니메이션 변경
+		m_fDist_From_Player = sqrtf((vPlayerPos.x - vGullPos.x) * (vPlayerPos.x - vGullPos.x) +
+			(vPlayerPos.y - vGullPos.y) * (vPlayerPos.y - vGullPos.y) +
+			(vPlayerPos.z - vGullPos.z) * (vPlayerPos.z - vGullPos.z));
+
+		Check_Dist_From_Player(fTimeDelta); // 플레이어 거리에 따른 애니메이션 변경
+	}
+
+	// 갈매기 v편대
+	else
+	{
+		Fly_V_Squadron(fTimeDelta);
+	}
 
 	// 애니메이션이 변경되면 그때 애니메이션 삽입
 	if (m_PreGullAnimIndex != m_GullAnimIndex)
@@ -114,7 +147,15 @@ void CGull::Tick(_float fTimeDelta)
 	}
 
 	if (nullptr != m_pModel)
-		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+	{
+		if (10 <= m_iGullIndex)
+		{
+			if (m_fRandTimeAcc >= m_fRandTime)
+				m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+		}
+		else
+			m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+	}
 }
 
 void CGull::Late_Tick(_float fTimeDelta)
@@ -158,9 +199,6 @@ void CGull::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 
 HRESULT CGull::Render()
 {
-	if (FAILED(__super::Render()))
-		return E_FAIL;
-
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
@@ -327,6 +365,19 @@ void CGull::Check_Dist_From_Player(_float fTimeDelta)
 	else
 	{
 		m_GullAnimIndex = GULL_IDLE2;
+	}
+}
+
+void CGull::Fly_V_Squadron(_float fTimeDelta)
+{
+	m_fFlyTime += fTimeDelta;
+
+	m_pTransform->Go_Straight(fTimeDelta);
+
+	if (20.f <= m_fFlyTime)
+	{
+		m_pTransform->Set_Position(m_vecOriginPos);
+		m_fFlyTime = 0.f;
 	}
 }
 

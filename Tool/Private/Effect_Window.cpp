@@ -24,18 +24,18 @@ HRESULT CEffect_Window::Initialize(ImVec2 _vWindowPos, ImVec2 _vWindowSize)
 	// 레이어에서 돌리기
 	//pGameInstance->Add_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyParticle")
 	//	, TEXT("Test"), TEXT("TestParticle"));
-	//m_pDummyParticle = dynamic_cast<CDummyParticle*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Test"), TEXT("TestParticle")));
+	//m_pDummyParticle = static_cast<CDummyParticle*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Test"), TEXT("TestParticle")));
 
 	//pGameInstance->Add_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyMeshEffect")
 	//	, TEXT("Test"), TEXT("TestMeshEffect"));
-	//m_pDummyMeshEffect = dynamic_cast<CDummyMeshEffect*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Test"), TEXT("TestMeshEffect")));
+	//m_pDummyMeshEffect = static_cast<CDummyMeshEffect*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Test"), TEXT("TestMeshEffect")));
 
 	// 직접 돌리기.
-	m_pDummyParticle = dynamic_cast<CDummyParticle*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyParticle")));
-	m_pDummyMeshEffect = dynamic_cast<CDummyMeshEffect*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyMeshEffect")));
-	m_pDummyTrail = dynamic_cast<CDummyTrail*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyTrail")));
-	m_pDummyFlipbook = dynamic_cast<CDummyFlipBook*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyFlipbook")));
-	m_pDummyEffect = dynamic_cast<CDummy_Effect*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyEffect")));
+	m_pDummyParticle = static_cast<CDummyParticle*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyParticle")));
+	m_pDummyMeshEffect = static_cast<CDummyMeshEffect*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyMeshEffect")));
+	m_pDummyTrail = static_cast<CDummyTrail*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyTrail")));
+	m_pDummyFlipbook = static_cast<CDummyFlipBook*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyFlipbook")));
+	m_pDummyEffect = static_cast<CDummy_Effect*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyEffect")));
 
 	ENDINSTANCE;
 	return S_OK;
@@ -51,7 +51,7 @@ void CEffect_Window::Tick(_float _fTimeDelta)
 		CGameInstance* pGameInstance = CGameInstance::GetInstance();
 		Safe_AddRef(pGameInstance);
 		Safe_Release(m_pDummyParticle);
-		m_pDummyParticle = dynamic_cast<CDummyParticle*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyParticle")));
+		m_pDummyParticle = static_cast<CDummyParticle*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyParticle")));
 		Safe_Release(pGameInstance);
 	}
 
@@ -60,7 +60,7 @@ void CEffect_Window::Tick(_float _fTimeDelta)
 		CGameInstance* pGameInstance = CGameInstance::GetInstance();
 		Safe_AddRef(pGameInstance);
 		Safe_Release(m_pDummyMeshEffect);
-		m_pDummyMeshEffect = dynamic_cast<CDummyMeshEffect*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyMeshEffect")));
+		m_pDummyMeshEffect = static_cast<CDummyMeshEffect*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyMeshEffect")));
 		Safe_Release(pGameInstance);
 	}
 

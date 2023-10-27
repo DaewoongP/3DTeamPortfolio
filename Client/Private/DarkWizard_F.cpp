@@ -1442,35 +1442,35 @@ HRESULT CDarkWizard_F::Make_Turns(_Inout_ CSequence* pSequence)
 	try /* Failed Check Make_Turns */
 	{
 		/* Make Child Behaviors */
-		CCheck_Degree* pTsk_Check_Degree = dynamic_cast<CCheck_Degree*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Degree")));
+		CCheck_Degree* pTsk_Check_Degree = static_cast<CCheck_Degree*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Degree")));
 		if (nullptr == pTsk_Check_Degree)
 			throw TEXT("pTsk_Check_Degree is nullptr");
-		CSelector_Degree* pSelector_Degree = dynamic_cast<CSelector_Degree*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector_Degree")));
+		CSelector_Degree* pSelector_Degree = static_cast<CSelector_Degree*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector_Degree")));
 		if (nullptr == pSelector_Degree)
 			throw TEXT("pSelector_Choose_Degree is nullptr");
 
-		CAction* pAction_Right_45 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		CAction* pAction_Right_45 = static_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 		if (nullptr == pAction_Right_45)
 			throw TEXT("pAction_Right_45 is nullptr");
-		CAction* pAction_Left_45 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		CAction* pAction_Left_45 = static_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 		if (nullptr == pAction_Left_45)
 			throw TEXT("pAction_Left_45 is nullptr");
-		CAction* pAction_Left_90 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		CAction* pAction_Left_90 = static_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 		if (nullptr == pAction_Left_90)
 			throw TEXT("pAction_Left_90 is nullptr");
-		CAction* pAction_Right_90 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		CAction* pAction_Right_90 = static_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 		if (nullptr == pAction_Right_90)
 			throw TEXT("pAction_Right_90 is nullptr");
-		CAction* pAction_Left_135 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		CAction* pAction_Left_135 = static_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 		if (nullptr == pAction_Left_135)
 			throw TEXT("pAction_Left_135 is nullptr");
-		CAction* pAction_Right_135 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		CAction* pAction_Right_135 = static_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 		if (nullptr == pAction_Right_135)
 			throw TEXT("pAction_Right_135 is nullptr");
-		CAction* pAction_Left_180 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		CAction* pAction_Left_180 = static_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 		if (nullptr == pAction_Left_180)
 			throw TEXT("pAction_Left_180 is nullptr");
-		CAction* pAction_Right_180 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		CAction* pAction_Right_180 = static_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 		if (nullptr == pAction_Right_180)
 			throw TEXT("pAction_Right_180 is nullptr");
 		/* Set Decorations */

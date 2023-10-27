@@ -98,7 +98,7 @@ HRESULT CUI_Damage::Add_Prototype()
 
 HRESULT CUI_Damage::Add_Font(_uint iDamage, _float3 vTargetPos)
 {
-	CEnemy* pEnemy = dynamic_cast<CEnemy*>(m_pOwner);
+	CEnemy* pEnemy = static_cast<CEnemy*>(m_pOwner);
 	if (nullptr == pEnemy)
 		return E_FAIL;
 

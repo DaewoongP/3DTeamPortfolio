@@ -238,10 +238,13 @@ void CProtego::Tick_DrawMagic(_float fTimeDelta)
 	m_vColor1.w = fRatio;
 	m_vColor2.w = fRatio;
 
-	m_pTransform->Set_Scale(_float3(m_fScale * fRatio, m_fScale * fRatio, m_fScale * fRatio));
-
 	if (fRatio > 1.f)
+	{
+		fRatio = 1.f;
 		Do_MagicBallState_To_Next();
+	}
+		
+	m_pTransform->Set_Scale(_float3(m_fScale * fRatio, m_fScale * fRatio, m_fScale * fRatio));
 }
 
 void CProtego::Tick_CastMagic(_float fTimeDelta)
@@ -259,12 +262,14 @@ void CProtego::Tick_Dying(_float fTimeDelta)
 	m_vColor1.w = fRatio;
 	m_vColor2.w = fRatio;
 	m_fScale = 0.01f - fRatio * 0.01f;
-	m_pTransform->Set_Scale(_float3(m_fScale, m_fScale, m_fScale));
 
 	if (fRatio >= 1.f)
 	{
 		Do_MagicBallState_To_Next();
+		fRatio = 1.f;
 	}
+
+	m_pTransform->Set_Scale(_float3(m_fScale, m_fScale, m_fScale));
 }
 
 void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
@@ -316,7 +321,7 @@ void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			//가상의 축과
 			_float3 vAxis = _float3(0, 1, 0);
 			//볼이 플레이어를 향한 방향벡터를
-			_float3 vDir = dynamic_cast<CMagicBall*>(pTransform->Get_Owner())->Get_MoveDir();
+			_float3 vDir = static_cast<CMagicBall*>(pTransform->Get_Owner())->Get_MoveDir();
 			vDir.Normalize();
 			vAxis.Normalize();
 			vDir *= -1;
@@ -332,7 +337,7 @@ void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			_float4x4 RotationMatrix = XMMatrixRotationY(fRadian);
 			
 			vDir = XMVector3TransformNormal(vDir, RotationMatrix);
-			dynamic_cast<CMagicBall*>(pTransform->Get_Owner())->Re_Set_StartEndLerpAcc(vCollisionPosition, vDir);
+			static_cast<CMagicBall*>(pTransform->Get_Owner())->Re_Set_StartEndLerpAcc(vCollisionPosition, vDir);
 			Hit_Effect(vCollisionPosition);
 		}
 	}

@@ -99,7 +99,7 @@ HRESULT CDummyParticle::Render()
 void CDummyParticle::Tick_Imgui(_float _fTimeDelta)
 {
 	CImWindow* pWindow = CWindow_Manager::GetInstance()->Find_Window(TEXT("Effect_Window"));
-	CEffect_Window* pEffectWindow = dynamic_cast<CEffect_Window*>(pWindow);
+	CEffect_Window* pEffectWindow = static_cast<CEffect_Window*>(pWindow);
 
 	MainMoudle_TreeNode(pEffectWindow);
 	ImGui::Separator();

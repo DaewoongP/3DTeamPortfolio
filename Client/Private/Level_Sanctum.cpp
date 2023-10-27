@@ -115,7 +115,7 @@ HRESULT CLevel_Sanctum::Ready_Layer_Monsters(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	Matrix = XMMatrixRotationY(XMConvertToRadians(23.f)) * XMMatrixTranslation(-4.75f, 2.45f, 171.3f);
+	Matrix = XMMatrixRotationY(XMConvertToRadians(23.f)) * XMMatrixTranslation(-4.75f, 2.45f, 171.3f); // +2.5f
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_DarkWizard_Spawn"), pLayerTag, TEXT("Spawn_2"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (Spawn_2)");
@@ -146,6 +146,30 @@ HRESULT CLevel_Sanctum::Ready_Layer_MapEffect(const _tchar* pLayerTag)
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_MapParticle_Sanctum_CircularRocks01"), pLayerTag, TEXT("GameObject_MapEffect_CircularRocks"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_MapEffect_CircularRocks)");
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg01"), pLayerTag, TEXT("GameObject_MapEffect_DarkWizardSpawnToConjuredDragonEgg01"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg01)");
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg02"), pLayerTag, TEXT("GameObject_MapEffect_DarkWizardSpawnToConjuredDragonEgg02"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg02)");
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg03"), pLayerTag, TEXT("GameObject_MapEffect_DarkWizardSpawnToConjuredDragonEgg03"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg03)");
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg04"), pLayerTag, TEXT("GameObject_MapEffect_DarkWizardSpawnToConjuredDragonEgg04"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg04)");
 		return E_FAIL;
 	}
 
