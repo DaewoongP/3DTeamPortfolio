@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "UI.h"
 #include "Client_Defines.h"
 
 BEGIN(Engine)
@@ -20,6 +21,7 @@ public:
 		_float			m_fRotation = { 0.f };
 		_float2			m_vOrigin = { 0.f, 0.f };
 		_float2 		m_vScale = { 1.f, 1.f };
+		CUI*			m_pParent = { nullptr };
 	};
 
 protected:
@@ -42,16 +44,16 @@ public:
 
 	void Left_Align();
 
-
-
 protected:
 	_tchar			m_pText[MAX_PATH] = TEXT("");
 	_float2			m_vPos = { 650.f, 360.f };
 	_float4			m_vColor = _float4(1.f, 1.f, 1.f, 1.f);
-	//XMVECTOR		m_vColor = _float4(1.f, 1.f, 1.f, 1.f);
 	_float			m_fRotation = { 0.f };
 	_float2			m_vOrigin = { 0.f, 0.f };
 	_float2 		m_vScale = { 1.f, 1.f };
+
+	_float2			m_vPrePos = { 0.f, 0.f };
+	_float2			m_vCombinedPos = { 0.f, 0.f };
 
 
 private:
@@ -61,6 +63,8 @@ private:
 private:
 	SpriteBatch* m_pBatch = { nullptr };
 	SpriteFont* m_pFont = { nullptr };
+
+	CUI* m_pParent = { nullptr };
 
 private:
 	CRenderer* m_pRendererCom = { nullptr };

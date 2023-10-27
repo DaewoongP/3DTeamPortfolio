@@ -39,6 +39,8 @@
 #include "UI_Store.h"
 #include "UI_Interaction.h"
 #include "Script.h"
+#include "UI_Group_Score.h"
+#include "UI_Group_Timer.h"
 #pragma endregion UI
 
 #pragma region Effects
@@ -485,6 +487,14 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Script"),
 				CScript::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_GameObject_Script");
+
+
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Timer"),
+				CUI_Group_Timer::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_UI_Timer");
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Score"),
+				CUI_Group_Score::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_UI_Score");
 #pragma endregion
 
 #pragma region Guide_Book

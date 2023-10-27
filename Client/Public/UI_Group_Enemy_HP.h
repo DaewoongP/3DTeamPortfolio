@@ -44,7 +44,7 @@ private:
 	_tchar				m_wszObjectLevel[MAX_PATH] = TEXT("");
 	_tchar				m_wszObjectName[MAX_PATH] = TEXT("");
 	ENEMYTYPE			eEnemyType;
-	CHealth*				m_pHealth = { nullptr };
+	CHealth*			m_pHealth = { nullptr };
 
 private:
 	HRESULT Add_Prototype();

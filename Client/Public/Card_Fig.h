@@ -28,6 +28,7 @@ private:
 		ENTERSANCTUM,
 		CREATEDRAGON,
 		DRAGONHPDOWN,
+		DRAGONDEATH,
 		CARDFIGSCRIPT_END
 	};
 
@@ -125,6 +126,9 @@ private:
 	_uint		m_iScriptIndex = { 0 };
 
 	_bool		m_isEnterValutScriptEnd = { false };
+	_bool		m_isCreateDragonScriptEnd = { false };
+	_bool		m_isDragonHpDownScriptEnd = { false };
+	_bool		m_isDragonDeathScriptEnd = { false };
 
 private: // Four UI
 	void		Ready_Card_UI();
