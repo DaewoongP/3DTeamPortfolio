@@ -226,19 +226,17 @@ HRESULT CFlyGameManager::Add_Components()
 		}
 	}
 
-
-
 	CUI_Group_Score::UISCOREDESC ScoreDesc;
 	ZEROMEM(&ScoreDesc);
-	lstrcpy(ScoreDesc.wszNinthName, TEXT("¾Ç´ç8"));
-	lstrcpy(ScoreDesc.wszSecondName, TEXT("¾Ç´ç1"));
-	lstrcpy(ScoreDesc.wszThirdName, TEXT("¾Ç´ç2"));
-	lstrcpy(ScoreDesc.wszFourthName, TEXT("¾Ç´ç3"));
-	lstrcpy(ScoreDesc.wszFifthName, TEXT("¾Ç´ç4"));
-	lstrcpy(ScoreDesc.wszSixthName, TEXT("¾Ç´ç5"));
-	lstrcpy(ScoreDesc.wszSeventhName, TEXT("¾Ç´ç6"));
-	lstrcpy(ScoreDesc.wszEighthName, TEXT("¾Ç´ç7"));
-	lstrcpy(ScoreDesc.wszFirstName, TEXT("ÇÃ·¹ÀÌ¾î"));
+	lstrcpy(ScoreDesc.wszFirstName, TEXT("Æ÷Ç×±è¾¾"));
+	lstrcpy(ScoreDesc.wszSecondName, TEXT("¹ÚÁ¤È¯"));
+	lstrcpy(ScoreDesc.wszThirdName, TEXT("½ÉÁ¤È¯"));
+	lstrcpy(ScoreDesc.wszFourthName, TEXT("¾ÈÃ¶¹Î"));
+	lstrcpy(ScoreDesc.wszFifthName, TEXT("ÀåÇö¿ì"));
+	lstrcpy(ScoreDesc.wszSixthName, TEXT("Àü´ëÀÎ"));
+	lstrcpy(ScoreDesc.wszSeventhName, TEXT("ÀüÀ±Çõ"));
+	lstrcpy(ScoreDesc.wszEighthName, TEXT("ÁÖ¼ºÈ¯"));
+	lstrcpy(ScoreDesc.wszNinthName, TEXT("¹Ú´ë¿õ"));
 	ScoreDesc.pScore = &m_pScoreGroup;
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Score"),
