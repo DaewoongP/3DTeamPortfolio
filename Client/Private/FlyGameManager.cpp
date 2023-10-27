@@ -27,7 +27,7 @@ void CFlyGameManager::ReplaceBallon()
 		if (m_pAllBalloonGroup[iBalloonIndex]->isDead())
 		{
 			CBalloon::BALLOONINITDESC initDesc = {};
-			ZEROMEM(&initDesc, 0);
+			ZEROMEM(&initDesc);
 			initDesc.iScore = rand() % 5;
 			_float fTempscale = Random_Generator(0.5f, 2.f);
 			initDesc.vScale = _float3(fTempscale, fTempscale, fTempscale);

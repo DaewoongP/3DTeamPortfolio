@@ -44,20 +44,23 @@ HRESULT CBalloon::Initialize(void* pArg)
 
 void CBalloon::Tick(_float fTimeDelta)
 {
-	// if (true == m_pTimer->Is_Finished())
-	// {
-	// 	if (m_isColliderOn)
-	// 	{
-	// 		m_isColliderOn = false;
-	// 		m_pRigidBody->Disable_Collision("Body");
-	// 	}
-	// 	return;
-	// 	m_isDead = true;
-	// }
-		
+	m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);
+
+	if (true == m_isColliderOn &&
+		true == m_isDead)
+	{
+		m_isColliderOn = false;
+		m_pRigidBody->Disable_Collision("Body");
+	}
+
+	if (true == m_pTimer->Is_Finished())
+	{
+		m_isDead = true;
+		m_pRigidBody->Disable_Collision("Body");
+		return;
+	}
 
 	__super::Tick(fTimeDelta);
-	m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);
 }
 
 void CBalloon::Late_Tick(_float fTimeDelta)
