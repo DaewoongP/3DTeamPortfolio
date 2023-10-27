@@ -83,18 +83,18 @@ HRESULT CFireHouse::Initialize_Level(_uint iCurrentLevelIndex)
 		m_eHouseType = HOUSE_DB_GR;
 	}
 	vector<class CMesh*> Meshes = *m_pModel->Get_MeshesVec();
-	vector<_float3> FirePosition;
+	//vector<_float3> FirePosition;
 	for (auto& pMesh : Meshes)
 	{
 		vector<_float3> Positions = *pMesh->Get_VerticesPositionVec();
 		for (_uint i = 0; i < MAX_FIRES; ++i)
 		{
 			_uint iRandIndex = _uint(Random_Generator(0.f, _float(Positions.size())));
-			FirePosition.push_back(XMVector3TransformCoord(Positions[iRandIndex], m_pTransform->Get_WorldMatrix()));
+			m_FirePosition.push_back(XMVector3TransformCoord(Positions[iRandIndex], m_pTransform->Get_WorldMatrix()));
 		}
 	}
 
-	for (auto& vPosition : FirePosition)
+	for (auto& vPosition : m_FirePosition)
 	{
 		CParticleSystem* pParticle = { nullptr };
 		wstring wstrTag = TEXT("Com_Fire_Particle") + Generate_HashtagW();
@@ -106,7 +106,7 @@ HRESULT CFireHouse::Initialize_Level(_uint iCurrentLevelIndex)
 		}
 		pParticle->Get_MainModuleRef().fSimulationSpeed = Random_Generator(0.1f, 1.5f);
 		pParticle->Get_MainModuleRef().fStartSize = Random_Generator(1.f, 4.f);
-		pParticle->Play(vPosition);
+		//pParticle->Play(vPosition);
 		m_Particles.push_back(pParticle);
 
 		wstrTag = TEXT("Com_Fire_Distortion") + Generate_HashtagW();
@@ -117,7 +117,7 @@ HRESULT CFireHouse::Initialize_Level(_uint iCurrentLevelIndex)
 			return E_FAIL;
 		}
 
-		pParticle->Play(vPosition);
+		//pParticle->Play(vPosition);
 		m_Particles.push_back(pParticle);
 
 		wstrTag = TEXT("Com_Fire_Smoke") + Generate_HashtagW();
@@ -128,7 +128,7 @@ HRESULT CFireHouse::Initialize_Level(_uint iCurrentLevelIndex)
 			return E_FAIL;
 		}
 
-		pParticle->Play(vPosition);
+		//pParticle->Play(vPosition);
 
 		m_Particles.push_back(pParticle);
 	}
@@ -225,6 +225,9 @@ HRESULT CFireHouse::Initialize_Level(_uint iCurrentLevelIndex)
 void CFireHouse::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if(true == m_isFireOn)
+		FireOn();
 }
 
 void CFireHouse::Late_Tick(_float fTimeDelta)
@@ -266,6 +269,18 @@ HRESULT CFireHouse::Render()
 	}
 
 	return S_OK;
+}
+
+void CFireHouse::FireOn()
+{
+	_uint iPosIndex = 0;
+
+	for (auto& iter : m_Particles)
+	{
+		iter->Play(m_FirePosition[iPosIndex++]);
+	}
+
+	m_isFireOn = false;
 }
 
 CFireHouse* CFireHouse::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -34,6 +34,11 @@ CArmored_Troll::CArmored_Troll(const CArmored_Troll& rhs)
 {
 }
 
+void CArmored_Troll::Set_Weapon_Render(_bool tf)
+{
+	m_pWeapon->Set_Render(tf); 
+}
+
 HRESULT CArmored_Troll::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
@@ -140,6 +145,10 @@ void CArmored_Troll::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 HRESULT CArmored_Troll::Render()
 {
+	// 심씨 추가. 스폰되어야 랜더링 되게 넣어둠
+	if (false == m_isSpawn)
+		return S_OK;
+
 	if (FAILED(__super::SetUp_ShaderResources()))
 		return E_FAIL;
 
@@ -183,6 +192,43 @@ HRESULT CArmored_Troll::Render()
 				if (FAILED(m_pShaderCom->Begin("AnimMesh")))
 					throw TEXT("Shader Begin AnimMesh");
 			}
+
+			if (FAILED(m_pModelCom->Render(i)))
+				throw TEXT("Model Render");
+		}
+		catch (const _tchar* pErrorTag)
+		{
+			wstring wstrErrorMSG = TEXT("[CEnemy] Failed Render : ");
+			wstrErrorMSG += pErrorTag;
+			MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+
+			return E_FAIL;
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CArmored_Troll::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
+{
+	// 심씨 추가. 스폰되어야 랜더링 되게 넣어둠
+	if (false == m_isSpawn)
+		return S_OK;
+
+	if (FAILED(SetUp_ShadowShaderResources(LightViewMatrix, LightProjMatrix)))
+		return E_FAIL;
+
+	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+	{
+		try /* Failed Render */
+		{
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShadowShaderCom, "g_BoneMatrices", i)))
+				throw TEXT("Bind_BoneMatrices");
+
+			if (FAILED(m_pShadowShaderCom->Begin("Shadow")))
+				throw TEXT("Shader Begin Shadow");
 
 			if (FAILED(m_pModelCom->Render(i)))
 				throw TEXT("Model Render");

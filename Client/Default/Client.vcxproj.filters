@@ -988,6 +988,9 @@
     <Filter Include="02. GameObject\13. FlyGameManager\Balloons\ABCD">
       <UniqueIdentifier>{d1c24aee-579f-46e7-b851-1319e0c3ec24}</UniqueIdentifier>
     </Filter>
+    <Filter Include="07. Events\Smeade\Event_Smeade">
+      <UniqueIdentifier>{890fa528-9c0c-4d93-93e2-6289c8ea4852}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1610,9 +1613,6 @@
     <ClInclude Include="..\public\Gear_Item.h">
       <Filter>02. GameObject\10. Item\03. Gear</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Event_Smeade.h">
-      <Filter>07. Events\Smeade</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_Interaction.h">
       <Filter>02. GameObject\05. UI\UI_Composite\UI_Interaction</Filter>
     </ClInclude>
@@ -1964,18 +1964,6 @@
     <ClInclude Include="..\Public\Balloon.h">
       <Filter>02. GameObject\13. FlyGameManager\Balloons</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\BeastBalloon_A.h">
-      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_A</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\BeastBalloon_B.h">
-      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_B</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\BeastBalloon_C.h">
-      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_C</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\BeastBalloon_D.h">
-      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_D</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Balloon_Timer.h">
       <Filter>02. GameObject\13. FlyGameManager\Balloons\Timer</Filter>
     </ClInclude>
@@ -1990,6 +1978,13 @@
     </ClInclude>
     <ClInclude Include="..\Public\BeastBalloon_D.h">
       <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_A.h" />
+    <ClInclude Include="..\Public\BeastBalloon_B.h" />
+    <ClInclude Include="..\Public\BeastBalloon_C.h" />
+    <ClInclude Include="..\Public\BeastBalloon_D.h" />
+    <ClInclude Include="..\Public\Event_Smeade.h">
+      <Filter>07. Events\Smeade\Event_Smeade</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2577,9 +2572,6 @@
     <ClCompile Include="..\private\Gear_Item.cpp">
       <Filter>02. GameObject\10. Item\03. Gear</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Event_Smeade.cpp">
-      <Filter>07. Events\Smeade</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UI_Interaction.cpp">
       <Filter>02. GameObject\05. UI\UI_Composite\UI_Interaction</Filter>
     </ClCompile>
@@ -2922,18 +2914,6 @@
     <ClCompile Include="..\Private\Balloon.cpp">
       <Filter>02. GameObject\13. FlyGameManager\Balloons</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\BeastBalloon_A.cpp">
-      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_A</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\BeastBalloon_B.cpp">
-      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_B</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\BeastBalloon_C.cpp">
-      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_C</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\BeastBalloon_D.cpp">
-      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_D</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Balloon_Timer.cpp">
       <Filter>02. GameObject\13. FlyGameManager\Balloons\Timer</Filter>
     </ClCompile>
@@ -2948,6 +2928,13 @@
     </ClCompile>
     <ClCompile Include="..\Private\BeastBalloon_D.cpp">
       <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_A.cpp" />
+    <ClCompile Include="..\Private\BeastBalloon_B.cpp" />
+    <ClCompile Include="..\Private\BeastBalloon_C.cpp" />
+    <ClCompile Include="..\Private\BeastBalloon_D.cpp" />
+    <ClCompile Include="..\Private\Event_Smeade.cpp">
+      <Filter>07. Events\Smeade\Event_Smeade</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -111,7 +111,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_BackGround(const _tchar* pLayerTag)
 
 HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 {
-	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Cliff.mon"));
+	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Cliffside.mon"));
 
 	return S_OK;
 }
