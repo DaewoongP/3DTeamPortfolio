@@ -34,6 +34,8 @@ HRESULT CEdurusPotion_Item::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	m_Clone_Desc.pIsStartTiming = static_cast<_bool*>(pArg);
+
 	return S_OK;
 }
 
@@ -56,10 +58,17 @@ void CEdurusPotion_Item::Use(_float3 vPlayPos)
 {
 	__super::Use(vPlayPos);
 
+	m_pPlayer->DefenceTiming();
+
+#ifdef _DEBUG
+	
 	cout << "방어력이 증가했어요" << endl;
+
+#endif // _DEBUG
+
 }
 
-void CEdurusPotion_Item::CreateTool()
+void CEdurusPotion_Item::CreateTool(void* pArg)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	_uint iLevelIndex = pGameInstance->Get_CurrentLevelIndex();
@@ -70,7 +79,7 @@ void CEdurusPotion_Item::CreateTool()
 		iLevelIndex,
 		TEXT("Prototype_GameObject_EdurusPotion"),
 		TEXT("Layer_BackGround"),
-		Generate_HashtagW().c_str())))
+		Generate_HashtagW().c_str(),pArg)))
 	{
 		__debugbreak();
 		Safe_Release(pGameInstance);

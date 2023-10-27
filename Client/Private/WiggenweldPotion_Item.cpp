@@ -58,7 +58,7 @@ void CWiggenweldPotion_Item::Use(_float3 vPlayPos)
 	m_pPlayerInformation->Get_Health()->Heal(m_fRecoveryAmount);
 }
 
-void CWiggenweldPotion_Item::CreateTool()
+void CWiggenweldPotion_Item::CreateTool(void* pArg)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	_uint iLevelIndex = pGameInstance->Get_CurrentLevelIndex();
@@ -69,7 +69,7 @@ void CWiggenweldPotion_Item::CreateTool()
 		iLevelIndex,
 		TEXT("Prototype_GameObject_WiggenweldPotion"),
 		TEXT("Layer_BackGround"),
-		Generate_HashtagW().c_str())))
+		Generate_HashtagW().c_str(), pArg)))
 	{
 		__debugbreak();
 		Safe_Release(pGameInstance);

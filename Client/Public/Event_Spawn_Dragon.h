@@ -54,6 +54,8 @@ private:
 
 	_bool m_isScream = { false };
 
+	_bool m_isEgg[4] = { false, false, false, false };
+
 
 private: /* 몬스터 스폰 관련 */
 	_umap<wstring, CEnemy*> m_pMonsters;

@@ -44,7 +44,7 @@ public:
 
 public:
 	virtual void Use(_float3 vPlayPos);
-	virtual void CreateTool() override;
+	virtual void CreateTool(void* pArg) override;
 public:
 	static CThunderBrewPotion_Item* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
 	virtual CGameObject* Clone(void* pArg) override;

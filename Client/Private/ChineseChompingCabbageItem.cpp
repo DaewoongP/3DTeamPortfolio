@@ -43,7 +43,7 @@ void CChineseChompingCabbageItem::Use(_float3 vPlayPos)
 
 }
 
-void CChineseChompingCabbageItem::CreateTool()
+void CChineseChompingCabbageItem::CreateTool(void* pArg)
 {
 }
 

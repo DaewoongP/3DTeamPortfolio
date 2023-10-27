@@ -75,7 +75,7 @@ void CBroom_Stick::Late_Tick(_float fTimeDelta)
 	CGameObject::Late_Tick(fTimeDelta);
 
 	_float4x4 CombinedWorldMatrix;
-	// ÀÚÃ¼ ¿ÀÇÁ¼Â»À(¿ÀÇÁ¼Â * »À * ÇÇ¹þ) * ºÎ¸ðÀÇ ¿ùµå
+	// ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½Â»ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ * ï¿½ï¿½ * ï¿½Ç¹ï¿½) * ï¿½Î¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	CombinedWorldMatrix = m_OffsetMatrix * m_ParentMatrixDesc.OffsetMatrix * *m_ParentMatrixDesc.pCombindTransformationMatrix * m_ParentMatrixDesc.PivotMatrix *
 		  *m_ParentMatrixDesc.pParentWorldMatrix;
 	m_pTransform->Set_WorldMatrix(CombinedWorldMatrix);
@@ -130,6 +130,15 @@ HRESULT CBroom_Stick::Render()
 	}
 
 	return S_OK;
+}
+
+void CBroom_Stick::HeadParticle(_float fTimeDelta)
+{
+	if (nullptr != m_pOwner)
+	{
+		//m_pParticle->Get_Transform()->Set_Position(_float4x4(m_OffsetMatrix*m_pTransform->Get_WorldMatrix()).Translation());
+	}
+	
 }
 
 HRESULT CBroom_Stick::Add_Components(void* pArg)

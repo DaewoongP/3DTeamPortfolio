@@ -56,6 +56,14 @@ HRESULT CEvent_Smeade::Initialize(void* pArg)
 	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Fade_Out"), false, 1.0f);
 	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play"), false, 14.428f);
 
+	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play_2_FadeOut"), true, 9.466);
+	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play_2_FadeIn"), true, 9.666);
+
+	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play_3_FadeOut"), true, 10.866);
+	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play_3_FadeIn"), true, 11.066);
+
+	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play_4_Scream"), true, 13.3f);
+	
 	ENDINSTANCE;
 	
 	return S_OK;
@@ -134,10 +142,40 @@ void CEvent_Smeade::Check_Event_Spawn_Troll()
 			m_pRenderer->FadeIn(1.0f);
 			//타이머 리셋
 			pGameInstance->Reset_Timer(TEXT("Troll_Spawn_CutScene_Play"));
+			pGameInstance->Reset_Timer(TEXT("Troll_Spawn_CutScene_Play_2_FadeOut"));
+			pGameInstance->Reset_Timer(TEXT("Troll_Spawn_CutScene_Play_2_FadeIn"));
+			pGameInstance->Reset_Timer(TEXT("Troll_Spawn_CutScene_Play_3_FadeOut"));
+			pGameInstance->Reset_Timer(TEXT("Troll_Spawn_CutScene_Play_3_FadeIn"));
+			pGameInstance->Reset_Timer(TEXT("Troll_Spawn_CutScene_Play_4_Scream"));
 			//진입 표시
 			m_isEnter = false;
 			//컷씬 재생
 			pGameInstance->Add_CutScene(TEXT("Troll_Enter"));
+		}
+		
+		if (true == pGameInstance->Check_Timer(TEXT("Troll_Spawn_CutScene_Play_2_FadeOut")))
+		{
+			m_pRenderer->FadeOut(5.0f);
+		}
+
+		if (true == pGameInstance->Check_Timer(TEXT("Troll_Spawn_CutScene_Play_2_FadeIn")))
+		{
+			m_pRenderer->FadeIn(5.0f);
+		}
+
+		if (true == pGameInstance->Check_Timer(TEXT("Troll_Spawn_CutScene_Play_3_FadeOut")))
+		{
+			m_pRenderer->FadeOut(5.0f);
+		}
+
+		if (true == pGameInstance->Check_Timer(TEXT("Troll_Spawn_CutScene_Play_3_FadeIn")))
+		{
+			m_pRenderer->FadeIn(5.0f);
+		}
+
+		if (true == pGameInstance->Check_Timer(TEXT("Troll_Spawn_CutScene_Play_4_Scream")))
+		{
+			m_pRenderer->Set_ScreenRadial(false, 1.0f, 0.2f);
 		}
 
 		//타이머 종료
@@ -162,6 +200,8 @@ void CEvent_Smeade::Check_Event_Spawn_Troll()
 			//진입 표시
 			m_isEnter = false;
 		}
+
+		
 
 		//타이머 체크
 		if (true == pGameInstance->Check_Timer(TEXT("Troll_Spawn_CutScene_Fade_Out")))

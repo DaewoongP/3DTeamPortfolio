@@ -44,10 +44,10 @@ public:
 
 public:
 	virtual void Use(_float3 vPlayPos);
-	virtual void CreateTool() override;
+	virtual void CreateTool(void *pArg) override;
 
 private:
-	_float m_fRecoveryAmount = { 0.2f };
+	_float m_fRecoveryAmount = { 0.4f };
 
 public:
 	static CWiggenweldPotion_Item* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);

@@ -61,7 +61,7 @@ void CInvisibilityPotion_Item::Use(_float3 vPlayPos)
 	//m_pPlayerInformation->Get_Health()->Heal(m_fRecoveryAmount);
 }
 
-void CInvisibilityPotion_Item::CreateTool()
+void CInvisibilityPotion_Item::CreateTool(void* pArg)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	_uint iLevelIndex = pGameInstance->Get_CurrentLevelIndex();
@@ -72,7 +72,7 @@ void CInvisibilityPotion_Item::CreateTool()
 		iLevelIndex,
 		TEXT("Prototype_GameObject_InvisibilityPotion"),
 		TEXT("Layer_BackGround"),
-		Generate_HashtagW().c_str())))
+		Generate_HashtagW().c_str(), pArg)))
 	{
 		__debugbreak();
 		Safe_Release(pGameInstance);

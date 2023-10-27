@@ -241,6 +241,9 @@ CTool* CPotionTap::ToolFactory(POTIONTAP eType)
 	case Client::MANDRAKE:
 		break;
 	case Client::HEALTH_POTION:
+		pTool = static_cast<CTool*>(pGameInstance->Clone_Component(
+			LEVEL_STATIC,
+			TEXT("Prototype_GameObject_WiggenweldPotion_Item")));
 		break;
 	case Client::TENTACULAR:
 		break;
