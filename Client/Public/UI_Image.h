@@ -59,6 +59,11 @@ public:
 		m_isShow = !m_isShow;
 		return m_isShow;
 	}
+	void		Set_Size(_float2 vXY) {
+		m_fSizeX = vXY.x;
+		m_fSizeY = vXY.y;
+		Change_Scale(m_fSizeX, m_fSizeY);
+	}
 	void		Set_Z(_float fZ) {
 		m_fZ = fZ;
 	}

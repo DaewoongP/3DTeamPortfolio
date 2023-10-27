@@ -41,6 +41,7 @@ public:
 
 public:
 	void On_Enter_Vault_Script() { m_isEnterVault = true; }
+	void On_Enter_Sanctum_Script() { m_isEnterSanctum = true; }
 	void On_Dragon_Death() { m_isDragonDeath = true; }
 	void On_Dragon_Hp_Down_Script() { m_isDragonHpDown = true; }
 
@@ -84,6 +85,7 @@ private:
 
 private: /* 피그 교수 이벤트 관련 데이터 */
 	_bool m_isEnterVault = { false };
+	_bool m_isEnterSanctum = { false };
 	_bool m_isCreateDragon = { false };
 	_bool m_isDragonHpDown = { false };
 	_bool m_isDragonDeath = { false };
@@ -129,6 +131,7 @@ private:
 	_uint		m_iScriptIndex = { 0 };
 
 	_bool		m_isEnterValutScriptEnd = { false };
+	_bool		m_isEnterSanctumScriptEnd = { false };
 	_bool		m_isCreateDragonScriptEnd = { false };
 	_bool		m_isDragonHpDownScriptEnd = { false };
 	_bool		m_isDragonDeathScriptEnd = { false };

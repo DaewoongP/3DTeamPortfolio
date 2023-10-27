@@ -14,6 +14,7 @@
 BEGIN(Client)
 class CEnemy;
 class CTrigger;
+class CCard_Fig;
 class CLightStand;
 class CSanctum_Door;
 END
@@ -33,6 +34,7 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 
 private:
+	CCard_Fig* m_pCard_Fig = { nullptr };
 	_umap<wstring, CEnemy*> m_pMonsters;
 	vector<CLightStand*> m_pLightStands;
 	vector<CSanctum_Door*> m_pDoors;

@@ -43,7 +43,8 @@ void CQuest_Potion::Tick(_float fTimeDelta)
 		for (size_t i = 0; i < INGREDIENT_END; i++)
 		{
 			m_iCurResourceSize += m_pInventory->Get_Resource(INGREDIENT(i));
-			if (m_iCurResourceSize - m_iPreResourceSize > m_iRequestSize && m_isCheckResource == false)
+			_int iSize = m_iCurResourceSize - m_iPreResourceSize;
+			if (iSize > m_iRequestSize && m_isCheckResource == false)
 			{
 				m_isClear = true;
 				Set_State(QUESTSTATE::QUESTSTATE_CLEAR);

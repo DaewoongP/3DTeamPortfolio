@@ -126,47 +126,47 @@ HRESULT CUI_Group_Score::Add_Components(_tchar* pFontFont, UISCORE* pUI, UISCORE
 	{
 	case Client::CUI_Group_Score::FIRST:
 		lstrcpy(UIDesc.szTexturePath, TEXT("../../Resources/UI/Game/UI/Icons/Activities/UI_T_HUD_AccioScore_BG_Black.png"));
-		UIDesc.fX = { 1180.f };
+		UIDesc.fX = { 70.f };
 		UIDesc.fY = { 160.f };
 		break;
 	case Client::CUI_Group_Score::SECOND:
 		lstrcpy(UIDesc.szTexturePath, TEXT("../../Resources/UI/Game/UI/Icons/Activities/UI_T_HUD_AccioScore_BG_Blue.png"));
-		UIDesc.fX = { 1180.f };
+		UIDesc.fX = { 70.f };
 		UIDesc.fY = { 230.f };
 		break;
 	case Client::CUI_Group_Score::THIRD:
 		lstrcpy(UIDesc.szTexturePath, TEXT("../../Resources/UI/Game/UI/Icons/Activities/UI_T_HUD_AccioScore_BG_Green.png"));
-		UIDesc.fX = { 1180.f };
+		UIDesc.fX = { 70.f };
 		UIDesc.fY = { 300.f };
 		break;
 	case Client::CUI_Group_Score::FOURTH:
 		lstrcpy(UIDesc.szTexturePath, TEXT("../../Resources/UI/Game/UI/Icons/Activities/UI_T_HUD_AccioScore_BG_Red.png"));
-		UIDesc.fX = { 1180.f };
+		UIDesc.fX = { 70.f };
 		UIDesc.fY = { 370.f };
 		break;
 	case Client::CUI_Group_Score::FIFTH:
 		lstrcpy(UIDesc.szTexturePath, TEXT("../../Resources/UI/Game/UI/Icons/Activities/UI_T_HUD_AccioScore_BG_Yellow.png"));
-		UIDesc.fX = { 1180.f };
+		UIDesc.fX = { 70.f };
 		UIDesc.fY = { 440.f };
 		break;
 	case Client::CUI_Group_Score::SIXTH:
 		lstrcpy(UIDesc.szTexturePath, TEXT("../../Resources/UI/Game/UI/Icons/Activities/UI_T_HUD_AccioScore_BG_Gray.png"));
-		UIDesc.fX = { 1180.f };
+		UIDesc.fX = { 70.f };
 		UIDesc.fY = { 440.f };
 		break;
 	case Client::CUI_Group_Score::SEVENTH:
 		lstrcpy(UIDesc.szTexturePath, TEXT("../../Resources/UI/Game/UI/Icons/Activities/UI_T_HUD_AccioScore_BG_HotPink.png"));
-		UIDesc.fX = { 1180.f };
+		UIDesc.fX = { 70.f };
 		UIDesc.fY = { 440.f };
 		break;
 	case Client::CUI_Group_Score::EIGHTH:
 		lstrcpy(UIDesc.szTexturePath, TEXT("../../Resources/UI/Game/UI/Icons/Activities/UI_T_HUD_AccioScore_BG_Laim.png"));
-		UIDesc.fX = { 1180.f };
+		UIDesc.fX = { 70.f };
 		UIDesc.fY = { 440.f };
 		break;
 	case Client::CUI_Group_Score::NINTH:
 		lstrcpy(UIDesc.szTexturePath, TEXT("../../Resources/UI/Game/UI/Icons/Activities/UI_T_HUD_AccioScore_BG_TerQuaiz.png"));
-		UIDesc.fX = { 1180.f };
+		UIDesc.fX = { 70.f };
 		UIDesc.fY = { 440.f };
 		break;
 	case Client::CUI_Group_Score::UISCORE_END:

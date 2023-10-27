@@ -52,6 +52,7 @@ private:
 private:
 	_uint m_iLevel = { 0 };
 	_bool m_isOpen = { true };
+	_bool m_isSetGold = { true };
 
 private:
 	CUI_Back* m_pStoreDefault = { nullptr };
@@ -65,6 +66,7 @@ private:
 	CUI_Effect_Back* m_pBuyIcon = { nullptr }; // 1
 	CUI_Back* m_pBuyBack = { nullptr }; // 2
 
+	CUI_Font* m_pGoldFont = { nullptr };
 
 private:
 	HRESULT Add_Compoents();
@@ -80,6 +82,8 @@ private:
 	vector<_float2>					m_fPosition;
 	vector<CUI_Slot*>				m_pSlots;
 	vector<CItem*>                  m_pItems;
+
+	class CInventory* m_pInventory = { nullptr };
 
 public:
 	static CUI_Store* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
