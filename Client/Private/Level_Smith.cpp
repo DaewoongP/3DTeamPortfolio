@@ -166,7 +166,7 @@ HRESULT CLevel_Smith::Ready_Layer_NPC(const _tchar* pLayerTag)
 	FlymanInitDesc.isCheckPosition = true;
 #endif // _DEBUG
 	FlymanInitDesc.wstrAnimationTag = TEXT("Hu_Broom_Hover_Idle_anm");
-	FlymanInitDesc.WorldMatrix = XMMatrixRotationY(XMConvertToRadians(145.5f)) * XMMatrixTranslation(29.8f, 4.8f, 69.9f);
+	FlymanInitDesc.WorldMatrix = XMMatrixTranslation(29.8f, 4.8f, 69.9f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_FlyMan"), pLayerTag, TEXT("GameObject_FlyMan"), &FlymanInitDesc)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_FlyMan)");
@@ -259,6 +259,8 @@ HRESULT CLevel_Smith::Ready_Event(const _tchar* pLayerTag)
 		MSG_BOX("Failed Add_GameObject : (Event_Smeade_Next_Level)");
 		return E_FAIL;
 	}
+	
+	
 
 	ENDINSTANCE;
 
@@ -308,6 +310,7 @@ HRESULT CLevel_Smith::Load_Dummy_NPC(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}
+
 
 	InitDesc.WorldMatrix = XMMatrixRotationY(XMConvertToRadians(70.f)) * XMMatrixTranslation(56.05f, 7.05f, 91.85f);
 	InitDesc.wstrAnimationTag = TEXT("Table_Convor_1");
@@ -561,6 +564,8 @@ HRESULT CLevel_Smith::Load_Dummy_NPC(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+	
+
 	/* Doby*/
 	CHouse_Elf::ELFINITDESC ElfInitDesc;
 	ElfInitDesc.WorldMatrix = XMMatrixRotationY(XMConvertToRadians(234.f)) * XMMatrixTranslation(59.1f, 6.6f, 93.96f);
@@ -590,6 +595,7 @@ HRESULT CLevel_Smith::Load_Dummy_NPC(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+	
 	ENDINSTANCE;
 
 	return S_OK;

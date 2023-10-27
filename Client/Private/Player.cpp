@@ -205,10 +205,10 @@ HRESULT CPlayer::Initialize(void* pArg)
 	pGameInstance->Play_BGM(TEXT("01_Main.mp3"), 1.0f);
 	ENDINSTANCE;*/
 
-	m_pNonFlySpell[0] = { LEVIOSO };
-	m_pNonFlySpell[1] = { FLIPENDO };
-	m_pNonFlySpell[2] = { ACCIO };
-	m_pNonFlySpell[3] = { DESCENDO };
+	m_pFlySpell[0] = { LEVIOSO };
+	m_pFlySpell[1] = { FLIPENDO };
+	m_pFlySpell[2] = { ACCIO };
+	m_pFlySpell[3] = { DESCENDO };
 
 	Init_PotionBuffValue();
 
@@ -290,6 +290,8 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	Fix_Mouse();
 	Update_Cloth(fTimeDelta);
+
+
 
 
 
@@ -1055,7 +1057,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_CONTROL;
 		magicInitDesc.eMagicType = CMagic::MT_YELLOW;
 		magicInitDesc.eMagicTag = LEVIOSO;
-		magicInitDesc.fInitCoolTime = 5.f;
+		magicInitDesc.fInitCoolTime = 10.f;
 		magicInitDesc.iDamage = 0;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.8f;
@@ -1069,7 +1071,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
 		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = CONFRINGO;
-		magicInitDesc.fInitCoolTime = 5.f;
+		magicInitDesc.fInitCoolTime = 2.f;
 		magicInitDesc.iDamage = 50;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
@@ -1083,7 +1085,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = FINISHER;
-		magicInitDesc.fInitCoolTime = 5.f;
+		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 500;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 3.f;
@@ -1097,7 +1099,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
 		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = NCENDIO;
-		magicInitDesc.fInitCoolTime = 5.f;
+		magicInitDesc.fInitCoolTime = 10.f;
 		magicInitDesc.iDamage = 300;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.f;
@@ -1125,7 +1127,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_CONTROL;
 		magicInitDesc.eMagicType = CMagic::MT_YELLOW;
 		magicInitDesc.eMagicTag = ARRESTOMOMENTUM;
-		magicInitDesc.fInitCoolTime = 5.f;
+		magicInitDesc.fInitCoolTime = 8.f;
 		magicInitDesc.iDamage = 0;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 30.f;
@@ -1139,7 +1141,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
 		magicInitDesc.eMagicType = CMagic::MT_PURPLE;
 		magicInitDesc.eMagicTag = ACCIO;
-		magicInitDesc.fInitCoolTime = 5.f;
+		magicInitDesc.fInitCoolTime = 12.f;
 		magicInitDesc.iDamage = 0;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.f;
@@ -1153,7 +1155,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
 		magicInitDesc.eMagicType = CMagic::MT_PURPLE;
 		magicInitDesc.eMagicTag = DESCENDO;
-		magicInitDesc.fInitCoolTime = 5.f;
+		magicInitDesc.fInitCoolTime = 7.f;
 		magicInitDesc.iDamage = 30;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.f;
@@ -1167,7 +1169,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
 		magicInitDesc.eMagicType = CMagic::MT_PURPLE;
 		magicInitDesc.eMagicTag = FLIPENDO;
-		magicInitDesc.fInitCoolTime = 5.f;
+		magicInitDesc.fInitCoolTime = 14.f;
 		magicInitDesc.iDamage = 0;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.3f;
@@ -1181,7 +1183,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
 		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = EXPELLIARMUS;
-		magicInitDesc.fInitCoolTime = 5.f;
+		magicInitDesc.fInitCoolTime = 13.f;
 		magicInitDesc.iDamage = 50;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.6f;
@@ -1195,7 +1197,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_CURSE;
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = IMPERIO;
-		magicInitDesc.fInitCoolTime = 5.f;
+		magicInitDesc.fInitCoolTime = 15.f;
 		magicInitDesc.iDamage = 100;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
@@ -1209,7 +1211,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_CURSE;
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = CRUCIO;
-		magicInitDesc.fInitCoolTime = 5.f;
+		magicInitDesc.fInitCoolTime = 20.f;
 		magicInitDesc.iDamage = 0;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
@@ -1237,7 +1239,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
 		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = DIFFINDO;
-		magicInitDesc.fInitCoolTime = 5.f;
+		magicInitDesc.fInitCoolTime = 12.f;
 		magicInitDesc.iDamage = 200;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
@@ -1251,7 +1253,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
 		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = BOMBARDA;
-		magicInitDesc.fInitCoolTime = 1.f;
+		magicInitDesc.fInitCoolTime = 30.f;
 		magicInitDesc.iDamage = 500;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
@@ -1507,7 +1509,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			m_isLumosOn = false;
 		}
 	}
-
+					
 
 	if (pGameInstance->Get_DIKeyState(DIK_GRAVE, CInput_Device::KEY_DOWN) || pGameInstance->Get_DIKeyState(DIK_T, CInput_Device::KEY_DOWN))
 	{
@@ -3374,6 +3376,8 @@ void CPlayer::Landing()
 void CPlayer::Landing_DisMount()
 {
 	m_pStateContext->Set_StateMachine(TEXT("Move Loop"));
+	m_pCustomModel->Change_Animation(TEXT("Hu_BM_Sprint_Loop_Fwd_anm"));
+	m_iMoveType = MOVETYPE_SPRINT;
 }
 
 void CPlayer::Add_Potion()
@@ -3501,6 +3505,7 @@ void CPlayer::Go_Use_Item()
 
 	CUseItemState::USEITEMDESC UseItemDesc;
 
+	UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(nullptr); };
 
 	m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Add_Layer_Item"), UseItemDesc.funcPotion);
 	m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Add_Layer_Item"), UseItemDesc.funcPotion,CModel::ANOTHERBODY);
@@ -3511,43 +3516,44 @@ void CPlayer::Go_Use_Item()
 	{
 	case Client::ITEM_ID_WIGGENWELD_POTION:	//회복 물약
 	{
-		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(nullptr); };
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
+
+		for (_uint i = 0; i < 4; ++i)
+		{
+			m_vecPotionParticle[i]->Play(m_pTransform->Get_Position());
+			m_vecMeshEffect[0]->Play(m_pTransform->Get_Position());
+		}
+		
+
 	}
 	break;
 	case Client::ITEM_ID_EDURUS_POTION:	//방어 물약
 	{
-		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(&m_DefensiveDesc.isStart); };
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
 	}
 	break;
 	case Client::ITEM_ID_FOCUS_POTION:	//쿨타임 물약
 	{
-		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(&m_CoolTimeDesc.isStart); };
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
 	}
 	break;
 	case Client::ITEM_ID_MAXIMA_POTION:	//공격력 물약
 	{
-		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(&m_DemegeDesc.isStart); };
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
 	}
 	break;
 	case Client::ITEM_ID_INVISIBILITY_POTION://투명 물약
 	{
-		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(nullptr); };
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
 	}
 	break;
 	case Client::ITEM_ID_THUNDERBEW_POTION: //번개구름 물약
 	{
-		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(nullptr); };
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
 	}
 	break;
 	case Client::ITEM_ID_FELIX_FELICIS_POTION:
 	{
-		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(nullptr); };
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
 	}
 	break;
@@ -3569,6 +3575,7 @@ void CPlayer::Go_Use_Item()
 
 void CPlayer::Go_Use_Potion()
 {
+	
 	/*CUseItemState::USEITEMDESC UseItemDesc;
 
 	UseItemDesc.funcPotion = [&] {(*this).Add_Potion(); };
@@ -3580,16 +3587,7 @@ void CPlayer::Go_Use_Potion()
 
 	UseItemDesc.funcPotion = [&] {(*this).Drink_Heal_Potion(); };
 
-	if (UseItemDesc.eItem_Id == ITEM_ID_WIGGENWELD_POTION)
-	{
-		//m_vecPotionParticle[0]->Play(m_pTransform->Get_Position());
-		//m_vecPotionParticle[1]->Play(m_pTransform->Get_Position());
-		//m_vecPotionParticle[2]->Play(m_pTransform->Get_Position());
-		for(_uint i = 0 ; i<4;++i)
-			m_vecPotionParticle[i]->Play(m_pTransform->Get_Position());
-
-		m_vecMeshEffect[0]->Play(m_pTransform->Get_Position());
-	}
+	
 
 	if (UseItemDesc.eItem_Id == ITEM_ID_MAXIMA_POTION)
 		m_vecPotionParticle[2]->Play(m_pTransform->Get_Position());

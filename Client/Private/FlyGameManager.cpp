@@ -3,6 +3,8 @@
 #include "GameInstance.h"
 #include "Racer.h"
 #include "Balloon.h"
+#include "UI_Group_Timer.h"
+#include "UI_Group_Score.h"
 
 CFlyGameManager::CFlyGameManager(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	: CComposite(_pDevice, _pContext)
@@ -28,7 +30,7 @@ void CFlyGameManager::ReplaceBallon()
 		{
 			CBalloon::BALLOONINITDESC initDesc = {};
 			ZEROMEM(&initDesc);
-			initDesc.iScore = rand() % 5;
+			initDesc.iScore = (rand() % 5) +1;
 			_float fTempscale = Random_Generator(0.5f, 2.f);
 			initDesc.vScale = _float3(fTempscale, fTempscale, fTempscale);
 			initDesc.fForce = GetRandomFloat(40.f, 60.f);
@@ -223,6 +225,36 @@ HRESULT CFlyGameManager::Add_Components()
 			return E_FAIL;
 		}
 	}
+
+	CUI_Group_Score::UISCOREDESC ScoreDesc;
+	ZEROMEM(&ScoreDesc);
+	lstrcpy(ScoreDesc.wszFirstName, TEXT("Æ÷Ç×±è¾¾"));
+	lstrcpy(ScoreDesc.wszSecondName, TEXT("¹ÚÁ¤È¯"));
+	lstrcpy(ScoreDesc.wszThirdName, TEXT("½ÉÁ¤È¯"));
+	lstrcpy(ScoreDesc.wszFourthName, TEXT("¾ÈÃ¶¹Î"));
+	lstrcpy(ScoreDesc.wszFifthName, TEXT("ÀåÇö¿ì"));
+	lstrcpy(ScoreDesc.wszSixthName, TEXT("Àü´ëÀÎ"));
+	lstrcpy(ScoreDesc.wszSeventhName, TEXT("ÀüÀ±Çõ"));
+	lstrcpy(ScoreDesc.wszEighthName, TEXT("ÁÖ¼ºÈ¯"));
+	lstrcpy(ScoreDesc.wszNinthName, TEXT("¹Ú´ë¿õ"));
+	ScoreDesc.pScore = &m_pScoreGroup;
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Score"),
+		TEXT("Com_UI_Score"), reinterpret_cast<CComponent**>(&m_pUiScore), &ScoreDesc)))
+	{
+		MSG_BOX("Failed CFlyGameManager Add_Component : Com_UI_Score");
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Timer"),
+		TEXT("Com_UI_Timer"), reinterpret_cast<CComponent**>(&m_pUiTimer), &m_fGameTimer)))
+	{
+		MSG_BOX("Failed CFlyGameManager Add_Component : Com_UI_Timer");
+		__debugbreak();
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -289,5 +321,8 @@ void CFlyGameManager::Free()
 		{
 			Safe_Release(m_pAllBalloonGroup[i]);
 		}
+
+		Safe_Release(m_pUiScore);
+		Safe_Release(m_pUiTimer);
 	}
 }

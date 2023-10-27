@@ -52,7 +52,7 @@ private:
 	CRigidBody* m_pRigidBody = { nullptr };
 	CParticleSystem* m_pEffect_WingAttack_TraceDarkCloud = { nullptr };
 	CParticleSystem* m_pEffect_WingAttack_TraceRocks = { nullptr };
-
+	CParticleSystem* m_pEffect_WingAttack_TraceDust = { nullptr };
 #ifdef _DEBUG
 	CRenderer* m_pRenderer = { nullptr };
 #endif // _DEBUG

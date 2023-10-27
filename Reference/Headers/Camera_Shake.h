@@ -50,7 +50,8 @@ public:
 
 	//원하는 축으로 지속시간동안 한번만 갔다오는 쉐이크(각축의 반대 방향을 원한다면 구조체의 파워를 음수로 설정한다.)
 	void GoAndComeBackShake();
-
+	
+	void Shake();
 
 private:
 	//거리 비례 파워 변수
