@@ -199,7 +199,7 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 			throw TEXT("Prototype_Component_Defence");
 
 
-
+		
 	}
 	catch (const _tchar* pErrorTag)
 	{

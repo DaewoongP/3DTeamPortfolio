@@ -24,6 +24,7 @@ class CRigidBody;
 class CCoolTime;
 class CDefence;
 class CParticleSystem;
+class CMeshEffect;
 END
 
 BEGIN(Client)
@@ -79,6 +80,16 @@ public:
 		SKILLINPUT_END
 	};
 
+	typedef struct tagPotionBufValueDesc
+	{
+		_float fBuffValue = { 0.0f };
+		_float fBuffValueAcc = { 0.0f };
+		_float fBuffValuePreAcc = { 0.0f };
+		_float fBuffValueTime = { 0.0f };
+		_bool isFinish = { false };
+		_bool isStart = { false };
+	}POTIONBUFVALUEDESC;
+
 private:
 	explicit CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CPlayer(const CPlayer& rhs);
@@ -100,7 +111,8 @@ public:
 
 	void Set_Spell_Botton(_uint _Button, SPELL _eSpell);
 
-	void AddForce_Impulse(_float3 vAxis,_float fForce) { m_pRigidBody->Add_Force(vAxis * fForce, PxForceMode::eIMPULSE, true); }
+	void Set_Fix_Mouse(_bool _Fix_Mouse) { m_isFixMouse = _Fix_Mouse; }
+	void AddForce_Impulse(_float3 vfForce) { m_pRigidBody->Add_Force_OtherCall(vfForce); }
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -118,6 +130,12 @@ public:
 	virtual void On_Maigc_Throw_Data(void* data) const override;
 	_bool Is_Action_Camera_Playing();
 
+public:
+	void DamageTiming() { m_DemegeDesc.isStart = true; }
+	void DefenceTiming() { m_DefensiveDesc.isStart = true; }
+	void FocusTiming() { m_CoolTimeDesc.isStart = true; }
+
+
 private:
 	CShader* m_pShader = { nullptr };
 	CShader* m_pShadowShader = { nullptr };
@@ -130,6 +148,7 @@ private:
 	vector<CParticleSystem*> m_vecPotionParticle;
 	vector<CParticleSystem*> m_vecPlayer_StateParicle;
 	vector<CParticleSystem*> m_vecTest_Particle;
+	vector<CMeshEffect*> m_vecMeshEffect;
 	_float3 Test = { 0.f,0.f,0.f };
 private: /* Card Fig 전용 데이터 */
 	CCard_Fig* m_pCard_Fig = { nullptr };
@@ -162,6 +181,8 @@ private:
 
 	CMagic::MAGICDESC m_BasicDesc_Light;
 	CMagic::MAGICDESC m_BasicDesc_Heavy;
+
+	CMagic::MAGICDESC m_MagicDescs[SPELL_END];
 
 	CMagicBall* m_pMagicBall = { nullptr };
 
@@ -273,6 +294,13 @@ private:
 	SPELL m_pNonFlySpell[4] = { SPELL(0) };
 	CParticleSystem* m_pWindParticle = { nullptr };
 
+	//포션 버프용
+	POTIONBUFVALUEDESC m_DemegeDesc = { POTIONBUFVALUEDESC() };
+	POTIONBUFVALUEDESC m_DefensiveDesc = { POTIONBUFVALUEDESC() };
+	POTIONBUFVALUEDESC m_CoolTimeDesc = { POTIONBUFVALUEDESC() };
+
+	_bool m_isTabNext = { false };
+
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
@@ -294,6 +322,17 @@ public:
 	// 마법에 함수가 잘 들어가나 테스트용도입니다.
 	// 추후에 마법 사용시 지팡이가 빛나게 하는 파티클 action을 여기에 넣어주면 될거같음.
 	void MagicTestTextOutput();
+
+private:
+	//포션 버프
+	void Init_PotionBuffValue();
+
+	void Update_Init_PotionBuffValue();
+
+	void Update_CoolTime();
+	void Update_Demege();
+	void Update_Defensive();
+
 
 #ifdef _DEBUG
 private:
@@ -348,7 +387,7 @@ private:
 	void Shot_Basic_Last_Spell();
 
 	void Protego();
-	void Add_Layer_Item();
+	void Add_Layer_Item(void * pArg);
 	void Drink_Potion();
 
 	void Add_Potion();

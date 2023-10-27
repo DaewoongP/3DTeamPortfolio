@@ -16,7 +16,7 @@ CTurn::CTurn(const CTurn& rhs)
 HRESULT CTurn::Initialize(void* pArg)
 {
 	BEGININSTANCE;
-	m_pCheckDegree = dynamic_cast<CCheck_Degree*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Degree")));
+	m_pCheckDegree = static_cast<CCheck_Degree*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Degree")));
 	ENDINSTANCE;
 	if (nullptr == m_pCheckDegree)
 	{

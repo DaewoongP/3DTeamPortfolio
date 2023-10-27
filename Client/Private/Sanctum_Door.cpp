@@ -65,21 +65,6 @@ HRESULT CSanctum_Door::Initialize_Level(_uint iCurrentLevelIndex)
 		m_eDoorType = RIGHTDOOR;
 	}
 
-	BEGININSTANCE;
-	auto pBackGroundLayer = pGameInstance->Find_Components_In_Layer(LEVEL_SANCTUM, TEXT("Layer_BackGround"));
-	ENDINSTANCE;
-
-	for (auto Pair : *pBackGroundLayer)
-	{
-		wstring wsObjTag = Pair.first;
-
-		if (wstring::npos != wsObjTag.find(TEXT("LightStand")))
-		{
-			m_pLightStands.push_back(static_cast<CLightStand*>(Pair.second));
-			Safe_AddRef(Pair.second);
-		}
-	}
-
 	return S_OK;
 }
 
@@ -87,7 +72,6 @@ void CSanctum_Door::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	Check_FireOn();
 	Door_Action(fTimeDelta);
 }
 
@@ -100,26 +84,6 @@ void CSanctum_Door::Late_Tick(_float fTimeDelta)
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
 	}
-}
-
-void CSanctum_Door::Check_FireOn()
-{
-	if (0 == m_pLightStands.size())
-		return;
-
-	for (auto iter = m_pLightStands.begin(); iter != m_pLightStands.end();)
-	{
-		if (true == (*iter)->Get_FireOn())
-		{
-			Safe_Release(*iter);
-			iter = m_pLightStands.erase(iter);
-		}
-		else
-			++iter;
-	}
-
-	if (0 == m_pLightStands.size())
-		m_isDoorAction = true;
 }
 
 void CSanctum_Door::Door_Action(_float fTimeDelta)
@@ -170,7 +134,4 @@ CGameObject* CSanctum_Door::Clone(void* pArg)
 void CSanctum_Door::Free()
 {
 	__super::Free();
-
-	for (auto& iter : m_pLightStands)
-		Safe_Release(iter);
 }

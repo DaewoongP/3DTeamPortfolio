@@ -48,7 +48,7 @@ public:
 	// 7. pDist : (out)충돌한 거리 
 	// 8. iMaxHits : 레이를 맞을 수 있는 최대 개수
 	// 반환 : 충돌 했을 시 true
-	_bool RayCast(_float3 vOrigin, _float3 vDir, _float fMaxDist = PX_MAX_F32, _Inout_ _float3* pHitPosition = nullptr, _Inout_ _float* pDist = nullptr);
+	_bool RayCast(_float3 vOrigin, _float3 vDir, _float fMaxDist = PX_MAX_F32, _Inout_ _float3* pHitPosition = nullptr, _Inout_ _float* pDist = nullptr, const _tchar* pCollisionTag = nullptr);
 	// 1. pContext : Dx11 DeviceContext 
 	// 2. hWnd : 클라이언트 핸들 
 	// 3. pCollisionObject : 충돌한 오브젝트 
@@ -58,7 +58,7 @@ public:
 	// 7. pDist : (out)충돌한 거리 
 	// 8. iMaxHits : 레이를 맞을 수 있는 최대 개수
 	// 반환 : 충돌 했을 시 true
-	_bool Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _float fMaxDist = PX_MAX_F32, _Inout_ _float3* pHitPosition = nullptr, _Inout_ _float* pDist = nullptr);
+	_bool Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _float fMaxDist = PX_MAX_F32, _Inout_ _float3* pHitPosition = nullptr, _Inout_ _float* pDist = nullptr, const _tchar* pCollisionTag = nullptr);
 
 private: /* 에러 메세지 등 cout 처리 */
 	CPXErrorCallBack			m_PXErrorCallBack;

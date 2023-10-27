@@ -45,6 +45,16 @@ HRESULT CUI_Font::Initialize(void* pArg)
 		m_fRotation = pDesc->m_fRotation;
 		m_vOrigin = pDesc->m_vOrigin;
 		m_vScale = pDesc->m_vScale;
+		
+		if (nullptr != pDesc->m_pParent)
+		{
+			m_pParent = pDesc->m_pParent;
+			_float2 vParentPos = m_pParent->Get_XY();
+			//m_vPrePos = m_vPos - vParentPos;
+			//m_vPos = m_vPrePos + vParentPos;
+			m_vCombinedPos = m_vPos + vParentPos;
+
+		}
 	}
 
 	_float4 textSize = m_pFont->MeasureString(m_pText);
@@ -52,8 +62,11 @@ HRESULT CUI_Font::Initialize(void* pArg)
 	_float textHeight = XMVectorGetY(textSize) * m_vScale.y; // 텍스트의 높이
 
 
+	if (nullptr != m_pParent)
+		m_vCombinedPos.x -= (textWidth / 2.0f); // 중앙 위치에서 왼쪽으로 텍스트의 반 너비만큼 이동
+	else
+		m_vPos.x -= (textWidth / 2.0f); // 중앙 위치에서 왼쪽으로 텍스트의 반 너비만큼 이동
 
-	m_vPos.x -= (textWidth / 2.0f); // 중앙 위치에서 왼쪽으로 텍스트의 반 너비만큼 이동
 //	m_vPos.y -= (textHeight / 2.0f); // 중앙 위치에서 위로 텍스트의 반 높이만큼 이동
 
 	return S_OK;
@@ -68,13 +81,19 @@ void CUI_Font::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	Set_vPos(m_vPos);
+	if (nullptr != m_pParent)
+	{
+		_float2 vParentPos = m_pParent->Get_XY();
+		//m_vPos = m_vPrePos + vParentPos;
+		m_vCombinedPos = m_vPos + vParentPos;
+	}
+	else
+		Set_vPos(m_vPos);
+
 	Set_vScale(m_vScale);
 
 	if (nullptr != m_pRendererCom)
-	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
-	}
 }
 
 HRESULT CUI_Font::Render()
@@ -87,7 +106,10 @@ HRESULT CUI_Font::Render()
 
 	m_pBatch->Begin();
 	
-	m_pFont->DrawString(m_pBatch, m_pText, m_vPos, m_vColor, m_fRotation, m_vOrigin, m_vScale);
+	if (nullptr != m_pParent)
+		m_pFont->DrawString(m_pBatch, m_pText, m_vCombinedPos, m_vColor, m_fRotation, m_vOrigin, m_vScale);
+	else
+		m_pFont->DrawString(m_pBatch, m_pText, m_vPos, m_vColor, m_fRotation, m_vOrigin, m_vScale);
 
 	m_pBatch->End();
 
@@ -177,4 +199,5 @@ void CUI_Font::Free()
 	}
 
 	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pParent);
 }

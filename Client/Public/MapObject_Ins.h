@@ -45,6 +45,7 @@ private:
 	CShader*			m_pShadowShader = { nullptr };
 	CRenderer*			m_pRenderer = { nullptr };
 	CModel_Instance*	m_pModel = { nullptr };
+	vector<CComponent*>	m_RigidBodys;
 
 private:
 	_float4				m_vEmissive;

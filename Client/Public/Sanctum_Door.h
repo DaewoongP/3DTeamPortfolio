@@ -16,6 +16,11 @@ private:
 	virtual ~CSanctum_Door() = default;
 
 public:
+	void Open_Door() {
+		m_isDoorAction = true;
+	}
+
+public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
@@ -28,13 +33,10 @@ private:
 
 	_bool			m_isDoorAction = { false }; // 문의 움직일지 아닐지 판단 여부
 
-	vector<CLightStand*>	m_pLightStands;		// 화로 모음
-
 private:
 	DOORTYPE		m_eDoorType = { DOOR_END }; // 문의 종류
 
 private:
-	void Check_FireOn();					// 화로에 불이 붙었는지 확인하는 함수
 	void Door_Action(_float fTimeDelta);	// 조건에 따라 문이 열리는 함수
 
 public:

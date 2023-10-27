@@ -244,6 +244,10 @@ HRESULT CMain2_Loader::Loading_For_Vault(LEVELID eLevelID)
 			throw TEXT("Prototype_GameObject_Golem_CombatGrunt");
 
 #pragma region Pensive
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Particle_Pensive_Skill_Distotion"),
+			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Pensive_Skill_Distotion"), eLevelID))))
+			throw TEXT("Particle_Pensive_Skill_Distotion");
+
 		/* For.Prototype_GameObject_Dragon_Head */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Dragon_Head"),
 			CWeapon_Dragon_Head::Create(m_pDevice, m_pContext))))
@@ -470,6 +474,18 @@ HRESULT CMain2_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_DarkWizard_Spawn"),
 			CDarkWizard_Spawn::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_DarkWizard_Spawn");
+
+		/* For.Prototype_Component_Model_Wolf */
+		PivotMatrix = _float4x4();
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Wolf"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Wolf/Wolf.gcm"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Wolf");
+
+		/* For.Prototype_GameObject_Wolf */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Wolf"),
+			CWolf::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Wolf");
+
 	}
 	catch (const _tchar* pErrorTag)
 	{

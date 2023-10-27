@@ -88,7 +88,7 @@ void CEvent_Vault_Next_Level::Check_Event(_float fTimeDelta)
 		{
 			CGameInstance* pGameInstance = CGameInstance::GetInstance();
 			Safe_AddRef(pGameInstance);
-			pGameInstance->Get_CurrentLevel()->Set_NextLevel();
+			pGameInstance->Get_CurrentLevel()->Set_NextLevel(LEVEL_SMITH);
 			Safe_Release(pGameInstance);
 
 			m_isCheck = true;

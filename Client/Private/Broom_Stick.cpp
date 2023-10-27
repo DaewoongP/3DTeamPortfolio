@@ -43,7 +43,7 @@ HRESULT CBroom_Stick::Initialize(void* pArg)
 		* XMMatrixTranslation(0.53f, 0.f, -0.99f);
 
 	_float4x4 RotationMatrix = XMMatrixRotationQuaternion(
-		XMQuaternionRotationAxis(XMVector3Normalize(_float3(1, 0, 0)), 1 * -30.f));
+		XMQuaternionRotationAxis(XMVector3Normalize(_float3(1, 0, 0)), 1 * -10.f));
 
 	_float3 vRight = m_OffsetMatrix.Right();
 	_float3 vUp = m_OffsetMatrix.Up();
@@ -75,7 +75,7 @@ void CBroom_Stick::Late_Tick(_float fTimeDelta)
 	CGameObject::Late_Tick(fTimeDelta);
 
 	_float4x4 CombinedWorldMatrix;
-	// ÀÚÃ¼ ¿ÀÇÁ¼Â»À(¿ÀÇÁ¼Â * »À * ÇÇ¹þ) * ºÎ¸ðÀÇ ¿ùµå
+	// ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½Â»ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ * ï¿½ï¿½ * ï¿½Ç¹ï¿½) * ï¿½Î¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	CombinedWorldMatrix = m_OffsetMatrix * m_ParentMatrixDesc.OffsetMatrix * *m_ParentMatrixDesc.pCombindTransformationMatrix * m_ParentMatrixDesc.PivotMatrix *
 		  *m_ParentMatrixDesc.pParentWorldMatrix;
 	m_pTransform->Set_WorldMatrix(CombinedWorldMatrix);

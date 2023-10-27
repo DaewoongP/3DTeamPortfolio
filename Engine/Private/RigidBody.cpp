@@ -334,6 +334,12 @@ HRESULT CRigidBody::Initialize(void* pArg)
 
 void CRigidBody::Tick(_float fTimeDelta)
 {
+	if (m_isImpulse)
+	{
+		Add_Force(m_vImpulseForce, PxForceMode::eIMPULSE, true);
+		m_isImpulse = false;
+		m_vImpulseForce = _float3(0, 0, 0);
+	}
 }
 
 void CRigidBody::Late_Tick(_float fTimeDelta)
@@ -384,7 +390,7 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 	// 트리거 설정
 	if (true == pRigidBodyDesc->isTrigger)
 	{
-		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eTRIGGER_SHAPE;// | PxShapeFlag::eVISUALIZATION;
+		ePxFlag = PxShapeFlag::eTRIGGER_SHAPE; // | PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eVISUALIZATION;
 	}
 	else
 	{
@@ -466,6 +472,12 @@ void CRigidBody::Add_Force(const _float3& _vForce, PxForceMode::Enum _eMode, _bo
 	{
 		reinterpret_cast<PxRigidDynamic*>(m_pActor)->addForce(PhysXConverter::ToPxVec3(_vForce), _eMode, _bAutowake);
 	}
+}
+
+void CRigidBody::Add_Force_OtherCall(const _float3& _vForce)
+{
+	m_isImpulse = true;
+	m_vImpulseForce = _vForce;
 }
 
 void CRigidBody::Add_Torque(const _float3& _vTorque, PxForceMode::Enum _eMode, _bool _bAutowake) const

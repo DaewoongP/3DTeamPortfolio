@@ -73,6 +73,7 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     vSpecular *= 0.2f;
     vector vShadow = g_ShadowTexture.Sample(LinearSampler, In.vTexUV);
     vector vEmissive = g_EmissiveTexture.Sample(LinearSampler, In.vTexUV);
+    vEmissive.a = 0.f;
     vector vBloom = g_BloomTexture.Sample(LinearSampler, In.vTexUV);
     
     if (vShadow.r < 0.8f)

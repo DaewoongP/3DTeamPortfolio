@@ -69,7 +69,7 @@ void CPensive_Death::Action_None_Tick()
 		else if (m_iActionIndex == 1)
 		{
 			//ªÁ∏¡√≥∏Æ
-			dynamic_cast<CGameObject*>(m_pOwner->Get_Owner())->Set_Dead();
+			static_cast<CGameObject*>(m_pOwner->Get_Owner())->Set_Dead();
 		}
 		m_iActionIndex++;
 	}

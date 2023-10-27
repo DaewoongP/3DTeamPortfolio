@@ -42,7 +42,7 @@ public:
 
 public:
 	virtual void Use(_float3 vPlayPos) PURE;
-	virtual void CreateTool() PURE;
+	virtual void CreateTool(void * pArg) PURE;
 
 public:
 	virtual void Free(void) override;

@@ -64,7 +64,6 @@ void CCamera_Debug::Tick(_float fTimeDelta)
 	pGameInstance->Set_CameraFar(1000.f);
 	pGameInstance->Set_Transform(CPipeLine::D3DTS_VIEW, m_pTransform->Get_WorldMatrix_Inverse());
 	pGameInstance->Set_Transform(CPipeLine::D3DTS_PROJ, XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), _float(g_iWinSizeX) / g_iWinSizeY, m_fCameraNear, 1000.f));
-
 	Safe_Release(pGameInstance);
 
 	__super::Tick(fTimeDelta);
@@ -195,7 +194,7 @@ void CCamera_Debug::Tick_ImGui()
 
 	if (ImGui::Button("Teleport Pos to Cam"))
 	{
-		CPlayer* pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+		CPlayer* pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
 		if (nullptr != pPlayer)
 		{
 			_float3 vPos = m_pTransform->Get_Position();

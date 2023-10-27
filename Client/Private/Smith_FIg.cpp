@@ -56,13 +56,18 @@ void CSmith_Fig::Tick(_float fTimeDelta)
 	Check_Quest();
 
 	Play_Script(fTimeDelta);
-
-
-
 }
 
 void CSmith_Fig::Late_Tick(_float fTimeDelta)
 {
+	CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
+	Safe_AddRef(pQuest_Manager);
+	_bool isFinished_Quest_SaveFig = pQuest_Manager->Is_Quest_Finished(TEXT("Quest_Save_Fig"));
+	Safe_Release(pQuest_Manager);
+
+	if (false == isFinished_Quest_SaveFig)
+		return;
+
 	__super::Late_Tick(fTimeDelta);
 
 	if (true == m_isColPlayer && nullptr != m_pModelCom)

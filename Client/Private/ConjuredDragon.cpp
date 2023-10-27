@@ -513,11 +513,11 @@ void CConjuredDragon::EnergyBall_PhaseFinal(const _float& fTimeDelta)
 	_float3 vRight = m_pTransform->Get_Right();
 
 	_float fDirection = _float(rand() % 2 - 1);
-	_float fData = 5.f * fDirection;
+	_float fData = 8.f * fDirection;
 	vPosition += vLook * fData + vLook * GetRandomFloat(0.f, 2.f) * fData;
 
 	fDirection = _float(rand() % 2 - 1);
-	fData = 5.f * fDirection;
+	fData = 8.f * fDirection;
 	vPosition += vRight * fData + vRight * GetRandomFloat(0.f, 2.f) * fData;
 
 	vPosition.y += 5.f;
@@ -1115,7 +1115,7 @@ HRESULT CConjuredDragon::Add_Components()
 		lstrcpy(Desc.wszObjectName, TEXT("Bone Dragon"));
 
 		BEGININSTANCE;
-		m_pUI_HP = dynamic_cast<CUI_Group_Enemy_HP*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"), &Desc));
+		m_pUI_HP = static_cast<CUI_Group_Enemy_HP*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"), &Desc));
 		ENDINSTANCE;
 		if (nullptr == m_pUI_HP)
 			throw TEXT("m_pUI_HP is nullptr");
@@ -2123,9 +2123,9 @@ HRESULT CConjuredDragon::Make_Ground_Attacks(_Inout_ CSequence* pSequence)
 		CSequence* pSequence_Attack_Pulse = { nullptr };
 		if (FAILED(Create_Behavior(pSequence_Attack_Pulse)))
 			throw TEXT("Failed Create_Behavior pSequence_Attack_Pulse");
-		CSequence* pSequence_Attack_AOE = { nullptr };
+		/*CSequence* pSequence_Attack_AOE = { nullptr };
 		if (FAILED(Create_Behavior(pSequence_Attack_AOE)))
-			throw TEXT("Failed Create_Behavior pSequence_Attack_AOE");
+			throw TEXT("Failed Create_Behavior pSequence_Attack_AOE");*/
 		CSequence* pSequence_Attack_Range = { nullptr };
 		if (FAILED(Create_Behavior(pSequence_Attack_Range)))
 			throw TEXT("Failed Create_Behavior pSequence_Attack_Range");
@@ -2158,8 +2158,8 @@ HRESULT CConjuredDragon::Make_Ground_Attacks(_Inout_ CSequence* pSequence)
 
 		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Pulse"), pSequence_Attack_Pulse, 0.1f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Pulse");
-		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_AOE"), pSequence_Attack_AOE, 0.1f)))
-			throw TEXT("Failed Assemble_Behavior Sequence_Attack_AOE");
+		/*if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_AOE"), pSequence_Attack_AOE, 0.1f)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_AOE");*/
 		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Range"), pSequence_Attack_Range, 0.7f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Range");
 		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Melee"), pSequence_Attack_Melee, 0.1f)))
@@ -2167,8 +2167,8 @@ HRESULT CConjuredDragon::Make_Ground_Attacks(_Inout_ CSequence* pSequence)
 
 		if (FAILED(Make_Ground_Attack_Pulse(pSequence_Attack_Pulse)))
 			throw TEXT("Failed Make_Ground_Attack_Pulse");
-		if (FAILED(Make_Ground_Attack_AOE(pSequence_Attack_AOE)))
-			throw TEXT("Failed Make_Ground_Attack_AOE");
+		/*if (FAILED(Make_Ground_Attack_AOE(pSequence_Attack_AOE)))
+			throw TEXT("Failed Make_Ground_Attack_AOE");*/
 		if (FAILED(Make_Ground_Attacks_Range(pSequence_Attack_Range)))
 			throw TEXT("Failed Make_Ground_Attacks_Range");
 		if (FAILED(Make_Ground_Attacks_Melee(pSequence_Attack_Melee)))

@@ -111,7 +111,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_BackGround(const _tchar* pLayerTag)
 
 HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 {
-	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Cliff.mon"));
+	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Cliffside.mon"));
 
 	return S_OK;
 }
@@ -282,7 +282,7 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 		else if (0 == lstrcmp(modelName.c_str(), wsSmithToCliff.c_str()))
 		{
 			_tchar wszobjName[MAX_PATH] = { 0 };
-			_stprintf_s(wszobjName, TEXT("GameObject_SmithToCliff_Gate_%d"), (iObjectNum));
+			_stprintf_s(wszobjName, TEXT("GameObject_SmithTocliff_Gate_%d"), (iObjectNum));
 
 			if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE,
 				TEXT("Prototype_GameObject_SmithToCliff_Gate"), TEXT("Layer_BackGround"),

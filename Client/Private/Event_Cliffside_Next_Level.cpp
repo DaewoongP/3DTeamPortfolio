@@ -29,6 +29,7 @@ HRESULT CEvent_Cliffside_Next_Level::Initialize(void* pArg)
 		// Cliff_Gate를 찾는다.
 		if (wstring::npos != wstrObjTag.find(TEXT("Cliff_Gate")))
 		{
+			/* 여기 두번 불려서 누수남 */
 			m_pCliff_Gate = static_cast<CCliff_Gate*>(Pair.second);
 			Safe_AddRef(m_pCliff_Gate);
 		}
@@ -84,8 +85,16 @@ void CEvent_Cliffside_Next_Level::Check_Event(_float fTimeDelta)
 
 		_bool isGateOpen = m_pCliff_Gate->Get_GateOpen();
 
-		if(true == isGateOpen)
+		if (true == isGateOpen)
+		{
+			CGameInstance* pGameInstance = CGameInstance::GetInstance();
+			Safe_AddRef(pGameInstance);
+			pGameInstance->Get_CurrentLevel()->Set_NextLevel(LEVEL_SMITH);
+			Safe_Release(pGameInstance);
+
 			m_isCheck = true;
+		}
+			
 	}
 }
 

@@ -153,7 +153,7 @@ HRESULT CCharacterController::Add_Components(PxControllerDesc* pControllerDesc)
 
 	if (PxControllerShapeType::eBOX == m_pController->getType())
 	{
-		PxBoxControllerDesc* pBoxControllerDesc = dynamic_cast<PxBoxControllerDesc*>(pControllerDesc);
+		PxBoxControllerDesc* pBoxControllerDesc = static_cast<PxBoxControllerDesc*>(pControllerDesc);
 		// Debug Components
 		CDebug_Render_Box::BOXDESC BoxDesc;
 		BoxDesc.vExtents.x = pBoxControllerDesc->halfSideExtent;
@@ -172,7 +172,7 @@ HRESULT CCharacterController::Add_Components(PxControllerDesc* pControllerDesc)
 	}
 	else if (PxControllerShapeType::eCAPSULE == m_pController->getType())
 	{
-		PxCapsuleControllerDesc* pCapsuleControllerDesc = dynamic_cast<PxCapsuleControllerDesc*>(pControllerDesc);
+		PxCapsuleControllerDesc* pCapsuleControllerDesc = static_cast<PxCapsuleControllerDesc*>(pControllerDesc);
 
 		CDebug_Render_Capsule::CAPSULEDESC CapsuleDesc;
 		CapsuleDesc.fRadius = pCapsuleControllerDesc->radius;

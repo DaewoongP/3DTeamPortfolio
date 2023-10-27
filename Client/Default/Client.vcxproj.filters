@@ -265,9 +265,6 @@
     <Filter Include="02. GameObject\01. Player\01. StateMachine\08. CraftState">
       <UniqueIdentifier>{d5efb67c-1189-46bb-bd77-8c0dcdb658ba}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Levels\05. Sky">
-      <UniqueIdentifier>{8daaa0f5-8eda-4c23-b5f9-f4ec1e89c6c1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Levels\98. Static">
       <UniqueIdentifier>{3494d13e-3cfe-40db-a8ee-e89e7a07f613}</UniqueIdentifier>
     </Filter>
@@ -772,9 +769,6 @@
     <Filter Include="02. GameObject\07. NPC\House_Elf">
       <UniqueIdentifier>{15e98751-98a2-4629-a638-7f71b9ab4fce}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\07. NPC\House_Elf\Jammin">
-      <UniqueIdentifier>{0439cf3f-15e3-4b94-a1ae-c6eb1625c7e7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\08. Trigger">
       <UniqueIdentifier>{b738306a-5e9e-4d2f-91bd-31bb6708ef2c}</UniqueIdentifier>
     </Filter>
@@ -958,6 +952,15 @@
     <Filter Include="05. Magic\MagicBall\08. Ncendio\Meteor">
       <UniqueIdentifier>{97f40771-8d72-4a53-8140-5be88cc65c3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Timer">
+      <UniqueIdentifier>{ffac594c-5cc7-4a3f-990e-d9125d211e1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Score">
+      <UniqueIdentifier>{8e71c64d-fbc2-4a7b-b13a-a98d7790c0fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\FireWorks">
+      <UniqueIdentifier>{b7215cba-fa2f-42ae-ae7c-54432c46f8ca}</UniqueIdentifier>
+    </Filter>
     <Filter Include="07. Events\Cliffside\Event_Cliffside">
       <UniqueIdentifier>{845740ad-58bc-488d-8592-72c639b6d61c}</UniqueIdentifier>
     </Filter>
@@ -987,6 +990,21 @@
     </Filter>
     <Filter Include="02. GameObject\13. FlyGameManager\Balloons\ABCD">
       <UniqueIdentifier>{d1c24aee-579f-46e7-b851-1319e0c3ec24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Sanctum\Enter_Sanctum">
+      <UniqueIdentifier>{aa5de3f7-03ce-47a3-92fe-c1f77c90f4d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\07. NPC\FlyMan">
+      <UniqueIdentifier>{8605f585-f64d-431e-8c45-ebafd5e60d77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Smeade\Event_Smeade">
+      <UniqueIdentifier>{890fa528-9c0c-4d93-93e2-6289c8ea4852}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\05. Sky">
+      <UniqueIdentifier>{8daaa0f5-8eda-4c23-b5f9-f4ec1e89c6c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\Coin">
+      <UniqueIdentifier>{632277b4-5f7a-4e80-8da8-4cd95bc0c5e0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1610,9 +1628,6 @@
     <ClInclude Include="..\public\Gear_Item.h">
       <Filter>02. GameObject\10. Item\03. Gear</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Event_Smeade.h">
-      <Filter>07. Events\Smeade</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_Interaction.h">
       <Filter>02. GameObject\05. UI\UI_Composite\UI_Interaction</Filter>
     </ClInclude>
@@ -1754,9 +1769,6 @@
     <ClInclude Include="..\Public\Robe_Beast.h">
       <Filter>02. GameObject\10. Item\03. Gear\Robe_Beast</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Jammin.h">
-      <Filter>02. GameObject\07. NPC\House_Elf\Jammin</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Professor_Fig.h">
       <Filter>02. GameObject\07. NPC\Fig\Combat</Filter>
     </ClInclude>
@@ -1798,12 +1810,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Magic_Sound_Manager.h">
       <Filter>05. Magic\Magic_Sound_Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Event_Spawn_Dragon.h">
-      <Filter>07. Events\Sanctum</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Event_Spawn_Darkwizard.h">
-      <Filter>07. Events\Sanctum</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Broom_Stick.h">
       <Filter>02. GameObject\01. Player\01. Weapon\BroomStick</Filter>
@@ -1940,6 +1946,15 @@
     <ClInclude Include="..\Public\UI_Font.h">
       <Filter>02. GameObject\05. UI\Font\Normal</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Timer.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Score.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Score</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FireWorks.h">
+      <Filter>02. GameObject\03. MapObject\FireWorks</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Event_Cliffside.h">
       <Filter>07. Events\Cliffside\Event_Cliffside</Filter>
     </ClInclude>
@@ -1964,21 +1979,43 @@
     <ClInclude Include="..\Public\Balloon.h">
       <Filter>02. GameObject\13. FlyGameManager\Balloons</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\BeastBalloon_A.h">
-      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_A</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\BeastBalloon_B.h">
-      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_B</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\BeastBalloon_C.h">
-      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_C</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\BeastBalloon_D.h">
-      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_D</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Balloon_Timer.h">
       <Filter>02. GameObject\13. FlyGameManager\Balloons\Timer</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Event_Enter_Sanctum.h">
+      <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Spawn_Dragon_2.h">
+      <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Spawn_Darkwizard.h">
+      <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Spawn_Dragon.h">
+      <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_D.h">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_A.h">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_B.h">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_C.h">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FlyMan.h">
+      <Filter>02. GameObject\07. NPC\FlyMan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_A.h" />
+    <ClInclude Include="..\Public\BeastBalloon_B.h" />
+    <ClInclude Include="..\Public\BeastBalloon_C.h" />
+    <ClInclude Include="..\Public\BeastBalloon_D.h" />
+    <ClInclude Include="..\Public\Event_Smeade.h">
+      <Filter>07. Events\Smeade\Event_Smeade</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\BeastBalloon_A.h">
       <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
     </ClInclude>
@@ -1990,6 +2027,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\BeastBalloon_D.h">
       <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Balloon_Coin.h">
+      <Filter>02. GameObject\13. FlyGameManager\Coin</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2577,9 +2617,6 @@
     <ClCompile Include="..\private\Gear_Item.cpp">
       <Filter>02. GameObject\10. Item\03. Gear</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Event_Smeade.cpp">
-      <Filter>07. Events\Smeade</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UI_Interaction.cpp">
       <Filter>02. GameObject\05. UI\UI_Composite\UI_Interaction</Filter>
     </ClCompile>
@@ -2721,9 +2758,6 @@
     <ClCompile Include="..\Private\Robe_Beast.cpp">
       <Filter>02. GameObject\10. Item\03. Gear\Robe_Beast</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Jammin.cpp">
-      <Filter>02. GameObject\07. NPC\House_Elf\Jammin</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Professor_Fig.cpp">
       <Filter>02. GameObject\07. NPC\Fig\Combat</Filter>
     </ClCompile>
@@ -2765,12 +2799,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Magic_Sound_Manager.cpp">
       <Filter>05. Magic\Magic_Sound_Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Event_Spawn_Dragon.cpp">
-      <Filter>07. Events\Sanctum</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Event_Spawn_Darkwizard.cpp">
-      <Filter>07. Events\Sanctum</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Broom_Stick.cpp">
       <Filter>02. GameObject\01. Player\01. Weapon\BroomStick</Filter>
@@ -2898,6 +2926,15 @@
     <ClCompile Include="..\private\Item.cpp">
       <Filter>02. GameObject\10. Item</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Timer.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Score.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Score</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FireWorks.cpp">
+      <Filter>02. GameObject\03. MapObject\FireWorks</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Event_Cliffside.cpp">
       <Filter>07. Events\Cliffside\Event_Cliffside</Filter>
     </ClCompile>
@@ -2922,21 +2959,21 @@
     <ClCompile Include="..\Private\Balloon.cpp">
       <Filter>02. GameObject\13. FlyGameManager\Balloons</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\BeastBalloon_A.cpp">
-      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_A</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\BeastBalloon_B.cpp">
-      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_B</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\BeastBalloon_C.cpp">
-      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_C</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\BeastBalloon_D.cpp">
-      <Filter>02. GameObject\13. FlyGameManager\BeastBalloon_D</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Balloon_Timer.cpp">
       <Filter>02. GameObject\13. FlyGameManager\Balloons\Timer</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Event_Enter_Sanctum.cpp">
+      <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Spawn_Darkwizard.cpp">
+      <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Spawn_Dragon.cpp">
+      <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Spawn_Dragon_2.cpp">
+      <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\BeastBalloon_A.cpp">
       <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
     </ClCompile>
@@ -2948,6 +2985,31 @@
     </ClCompile>
     <ClCompile Include="..\Private\BeastBalloon_D.cpp">
       <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FlyMan.cpp">
+      <Filter>02. GameObject\07. NPC\FlyMan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_A.cpp" />
+    <ClCompile Include="..\Private\BeastBalloon_B.cpp" />
+    <ClCompile Include="..\Private\BeastBalloon_C.cpp" />
+    <ClCompile Include="..\Private\BeastBalloon_D.cpp" />
+    <ClCompile Include="..\Private\Event_Smeade.cpp">
+      <Filter>07. Events\Smeade\Event_Smeade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_A.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_B.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_C.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_D.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Balloon_Coin.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Coin</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

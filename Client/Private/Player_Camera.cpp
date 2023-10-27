@@ -135,7 +135,7 @@ HRESULT CPlayer_Camera::Initialize(void* pArg)
 	m_vEyeStandard = _float3(sinf(XMConvertToRadians(45.0f)), 0.0f, -cosf(XMConvertToRadians(45.f)));
 
 	m_fEyeMaxDistance = m_fAtMaxDistance = 1.5f;
-	m_fEyeMinDistance = m_fAtMinDistance = 0.2f;
+	m_fEyeMinDistance = m_fAtMinDistance = 0.1f;
 
 
 	m_fTimeSpeed = 10.0f;
@@ -303,11 +303,11 @@ void CPlayer_Camera::Eye_At_Distance()
 
 	BEGININSTANCE;
 
-	/*_float3 vEyeDir = XMVector3TransformNormal(m_vEyeStandard, m_pTransform->Get_WorldMatrix());
+	_float3 vEyeDir = XMVector3TransformNormal(m_vEyeStandard, m_pTransform->Get_WorldMatrix());
 
 	vEyeDir.Normalize();
 
-	pGameInstance->RayCast(m_pTransform->Get_Position(),vEyeDir,10.0f,nullptr, &m_fEyeIntersectDistance);*/
+	pGameInstance->RayCast(m_pTransform->Get_Position(), vEyeDir, 10.0f, nullptr, &m_fEyeIntersectDistance, TEXT("GameObject_Player"));
 	//eye
 	//충돌해서 값이 있고, 최대 거리보다 길다면
 	if (0.0f != m_fEyeIntersectDistance &&

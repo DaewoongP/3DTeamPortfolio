@@ -316,7 +316,7 @@ void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			//가상의 축과
 			_float3 vAxis = _float3(0, 1, 0);
 			//볼이 플레이어를 향한 방향벡터를
-			_float3 vDir = dynamic_cast<CMagicBall*>(pTransform->Get_Owner())->Get_MoveDir();
+			_float3 vDir = static_cast<CMagicBall*>(pTransform->Get_Owner())->Get_MoveDir();
 			vDir.Normalize();
 			vAxis.Normalize();
 			vDir *= -1;
@@ -332,7 +332,7 @@ void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			_float4x4 RotationMatrix = XMMatrixRotationY(fRadian);
 			
 			vDir = XMVector3TransformNormal(vDir, RotationMatrix);
-			dynamic_cast<CMagicBall*>(pTransform->Get_Owner())->Re_Set_StartEndLerpAcc(vCollisionPosition, vDir);
+			static_cast<CMagicBall*>(pTransform->Get_Owner())->Re_Set_StartEndLerpAcc(vCollisionPosition, vDir);
 			Hit_Effect(vCollisionPosition);
 		}
 	}
@@ -429,7 +429,7 @@ HRESULT CProtego::Reset(MAGICBALLINITDESC& InitDesc)
 		m_pBreakParticle[i]->Get_ColorOverLifetimeModuleRef().vEndColor = m_vColor1;
 	}
 
-	m_fScale = { 1.8f };
+	m_fScale = { 1.5f };
 	m_fEnterDuration = { 0.1f };
 	m_fExitDuration = { 0.1f };
 	m_fRimPower = { 2.1f };

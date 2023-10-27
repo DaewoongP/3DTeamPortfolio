@@ -27,7 +27,7 @@ HRESULT CEvent_Enter_Vault::Initialize(void* pArg)
 	FAILED_CHECK_RETURN(Add_Components(*pInitDesc), E_FAIL);
 
 	BEGININSTANCE;
-	CPlayer* pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+	CPlayer* pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
 	ENDINSTANCE;
 	if (nullptr == pPlayer)
 		return E_FAIL;

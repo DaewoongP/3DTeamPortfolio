@@ -18,6 +18,8 @@ HRESULT CLevel_Logo::Initialize()
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Logo"), true);
 	Safe_Release(pGameInstance);
 
+	g_isNight = false;
+
 	return S_OK;
 }
 

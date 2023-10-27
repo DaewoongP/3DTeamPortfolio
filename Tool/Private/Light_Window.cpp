@@ -27,7 +27,7 @@
 //	LightDot.vPosition = LightDesc.vPos;
 //	LightDot.vDir = LightDesc.vDir;
 //	LightDot.fRange = 1.f;
-//	m_pLightDot =dynamic_cast<CLightDot*>(pGameInstance->Clone_Component(LEVEL_TOOL,TEXT("Prototype_GameObject_LightDot"),&LightDot));
+//	m_pLightDot =static_cast<CLightDot*>(pGameInstance->Clone_Component(LEVEL_TOOL,TEXT("Prototype_GameObject_LightDot"),&LightDot));
 //
 //
 //	ENDINSTANCE
@@ -608,7 +608,7 @@
 //						LightDot.fRange = 3.f;
 //					else
 //						LightDot.fRange = LightDesc.fRange;
-//					 CLightDot* pLightDot = dynamic_cast<CLightDot*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_LightDot"), &LightDot));
+//					 CLightDot* pLightDot = static_cast<CLightDot*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_LightDot"), &LightDot));
 //					 
 //					 Safe_Release(pLightDot);
 //					ResetValue();
