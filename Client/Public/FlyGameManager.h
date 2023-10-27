@@ -25,6 +25,11 @@ private:
     virtual ~CFlyGameManager() = default;
 
 public:
+    const vector<CBalloon*>* Get_Balloons() const {
+        return &m_pAllBalloonGroup;
+    }
+
+public:
     void Add_Score(_uint iNumber,_uint iScore);
     void ReplaceBallon();
     void Racer_AddForce(_uint iNumber, _uint eType, _float fForce);
