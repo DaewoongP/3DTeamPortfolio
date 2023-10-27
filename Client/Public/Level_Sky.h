@@ -27,10 +27,6 @@ private:
 	HRESULT Load_MapObject_Ins(const _tchar* pObjectFilePath);
 	HRESULT Load_Monsters(const wstring& wstrMonsterFilePath);
 
-	CFireWorks* m_pFireWorks = { nullptr };
-
-	CFireWorks* m_pFireWorks = { nullptr };
-
 public:
 	static CLevel_Sky* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;

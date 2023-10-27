@@ -172,7 +172,6 @@ void CBalloon::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	pGameInstance->Play_Particle(TEXT("Particle_Balloon_Line"),m_pTransform->Get_Position());
 	ENDINSTANCE;
 
-	m_isDead = true;
 	__super::OnCollisionEnter(CollisionEventDesc);
 }
 

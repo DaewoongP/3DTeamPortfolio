@@ -85,6 +85,8 @@ void CCard_Fig::Tick(_float fTimeDelta)
 		m_pTransform->Set_WorldMatrix(WorldMatrix);
 		ENDINSTANCE;
 	}
+	else
+		m_pTransform->LookAt_Lerp(m_pTarget->Get_Transform()->Get_Position(), fTimeDelta, true);
 
 	Jump_Up(fTimeDelta);
 
@@ -230,8 +232,6 @@ HRESULT CCard_Fig::Make_AI()
 			throw TEXT("Failed Add_Type isJump");
 		if (FAILED(m_pRootBehavior->Add_Type("isChangeAnimation", &m_isChangeAnimation)))
 			throw TEXT("Failed Add_Type isChangeAnimation");
-		if (FAILED(m_pRootBehavior->Add_Type("cppTarget", &m_pTarget)))
-			throw TEXT("Failed Add_Type cppTarget");
 
 		/* Create Child Behaviors */
 		CSequence* pSequence = { nullptr };
@@ -256,16 +256,6 @@ HRESULT CCard_Fig::Make_AI()
 		CAction* pAction_Jump_Out = { nullptr };
 		if (FAILED(Create_Behavior(pAction_Jump_Out)))
 			throw TEXT("Failed Create_Behavior pAction_Jump_Out");
-
-		CLookAt* pTsk_LookAt_1 = { nullptr };
-		if (FAILED(Create_Behavior(pTsk_LookAt_1)))
-			throw TEXT("Failed Create_Behavior pTsk_LookAt_1");
-		CLookAt* pTsk_LookAt_2 = { nullptr };
-		if (FAILED(Create_Behavior(pTsk_LookAt_2)))
-			throw TEXT("Failed Create_Behavior pTsk_LookAt_2");
-		CLookAt* pTsk_LookAt_3 = { nullptr };
-		if (FAILED(Create_Behavior(pTsk_LookAt_3)))
-			throw TEXT("Failed Create_Behavior pTsk_LookAt_3");
 
 		/* Set Decorators */
 		pSequence->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -309,10 +299,6 @@ HRESULT CCard_Fig::Make_AI()
 		pAction_Attack_3->Set_Options(TEXT("Attack_Cast_Finisher"), m_pModelCom);
 		pAction_Jump_Out->Set_Options(TEXT("Spawn_Out"), m_pModelCom);
 
-		pTsk_LookAt_1->Set_Option(m_pTransform);
-		pTsk_LookAt_2->Set_Option(m_pTransform);
-		pTsk_LookAt_3->Set_Option(m_pTransform);
-		
 		/* Assemble Behaviors */
 		if (FAILED(m_pRootBehavior->Assemble_Behavior(TEXT("pSequence"), pSequence)))
 			throw TEXT("Failed Assemble_Behavior pSequence");
@@ -330,12 +316,6 @@ HRESULT CCard_Fig::Make_AI()
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Jump_Out"), pAction_Jump_Out)))
 			throw TEXT("Failed Assemble_Behavior Action_Jump_Out");
 
-		if (FAILED(pAction_Attack_1->Assemble_Behavior(TEXT("pTsk_LookAt_1"), pTsk_LookAt_1)))
-			throw TEXT("Failed Assemble_Behavior pTsk_LookAt_1");
-		if (FAILED(pAction_Attack_2->Assemble_Behavior(TEXT("pTsk_LookAt_2"), pTsk_LookAt_2)))
-			throw TEXT("Failed Assemble_Behavior pTsk_LookAt_2");
-		if (FAILED(pAction_Attack_3->Assemble_Behavior(TEXT("pTsk_LookAt_3"), pTsk_LookAt_3)))
-			throw TEXT("Failed Assemble_Behavior pTsk_LookAt_3");
 	}
 	catch (const _tchar* pErrorTag)
 	{
