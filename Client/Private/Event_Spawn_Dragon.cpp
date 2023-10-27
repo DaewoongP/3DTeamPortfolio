@@ -174,13 +174,24 @@ void CEvent_Spawn_Dragon::Check_Event_Spawn_Dragon()
 
 		if (true == pGameInstance->Check_Timer(TEXT("Sanctum_Egg_Particle_RadialMinus")))
 		{
-			m_pParticle_Dragon_Egg->Get_VelocityOverLifetimeModuleRef().fRadial = -50.f;
+			m_pParticle_Dragon_Egg->Get_VelocityOverLifetimeModuleRef().fRadial = -20.f;
 		}
 
 		if (true == pGameInstance->Check_Timer(TEXT("Sanctum_Egg_Particle_RadialPlus")))
 		{
 			m_pParticle_Dragon_Egg->Get_VelocityOverLifetimeModuleRef().fRadial = 100.f;
-			m_pParticle_Dragon_Egg_Distortion->Enable();
+			_float3 vPos = m_pParticle_Dragon_Egg->Get_Transform()->Get_Position();
+			m_pParticle_Dragon_Egg_Distortion->Play(vPos);
+			m_pRenderer->FadeOut(2.f, _float4(1.f, 1.f, 1.f, 1.f));
+			pGameInstance->Set_Shake(
+				CCamera_Manager::SHAKE_PRIORITY_1,
+				CCamera_Manager::SHAKE_TYPE_TRANSLATION,
+				CCamera_Manager::SHAKE_AXIS_LOOK,
+				CEase::IN_EXPO,
+				10.f,
+				0.5f,
+				0.1f,
+				CCamera_Manager::SHAKE_POWER_DECRECENDO);
 		}
 
 		//타이머 종료
@@ -194,7 +205,7 @@ void CEvent_Spawn_Dragon::Check_Event_Spawn_Dragon()
 			m_isEnter = true;
 
 			//페이드 아웃
-			m_pRenderer->FadeOut(1.0f);
+			//m_pRenderer->FadeOut(1.0f);
 		}
 	}
 		break;
@@ -241,7 +252,8 @@ void CEvent_Spawn_Dragon::Check_Event_Spawn_Dragon()
 					++iter;
 			}
 			//페이드 인
-			m_pRenderer->FadeIn(1.0f);
+			m_pRenderer->FadeIn(1.0f, _float4(1.f, 1.f, 1.f, 1.f));
+			m_pParticle_Dragon_Egg->Stop();
 			//진입 표시
 			m_isEnter = false;
 			//컷씬 재생

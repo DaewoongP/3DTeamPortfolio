@@ -1220,7 +1220,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 				throw TEXT("Reserve Particle : Particle_DestroyProtego_Yellow2");
 
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_CircularRocks02"),
-				TEXT("../../Resources/GameData/ParticleData/MapParticle/CircularRocks02/"), 2)))
+				TEXT("../../Resources/GameData/ParticleData/MapParticle/Sanctum/CircularRocks02/"), 1)))
 				throw TEXT("Reserve Particle : Particle_CircularRocks02");
 		}
 #pragma endregion
