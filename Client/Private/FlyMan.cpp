@@ -340,4 +340,5 @@ void CFlyMan::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pShadowShaderCom);
 	Safe_Release(m_pRenderer);
+	Safe_Release(m_pBroom_Stick);
 }
