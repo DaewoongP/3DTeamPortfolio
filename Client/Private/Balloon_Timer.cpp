@@ -12,6 +12,13 @@ CBalloon_Timer::CBalloon_Timer(const CBalloon_Timer& rhs)
 {
 }
 
+void CBalloon_Timer::Reset(_float3 vPosition, _float fFinishTime)
+{
+	m_fTime = fFinishTime;
+	m_vInitPosition = vPosition;
+	m_fTimeAcc = 0.f;
+}
+
 HRESULT CBalloon_Timer::Initialize(void* pArg)
 {
 	NULL_CHECK_RETURN(pArg, E_FAIL);

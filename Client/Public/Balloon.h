@@ -38,16 +38,7 @@ public:
 
 public:
 	_float3 Get_Position() { return m_pTransform->Get_Position(); }
-	void	ResetBallon(BALLOONINITDESC InitDesc)
-	{
-		m_iScore = InitDesc.iScore;
-		m_pTransform->Set_Position(InitDesc.vPosition);
-		m_pTransform->Set_Scale(InitDesc.vScale);
-		m_fForce = InitDesc.fForce;
-		m_isDead = false;
-		m_isColliderOn = true;
-		m_pRigidBody->Enable_Collision("Body", this, nullptr);
-	}
+	void	ResetBallon(BALLOONINITDESC InitDesc);
 
 protected:
 	explicit CBalloon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -75,6 +66,7 @@ protected:
 	BALLOONTYPE		m_eBallonActionType = { TYPE_NONE };
 	_float			m_fForce = { 20.f };
 	_bool			m_isColliderOn = { false };
+	_bool			m_isCollsionEventTriger = { false };
 
 protected:
 	HRESULT Add_Components();

@@ -4,6 +4,18 @@
 #include "Racer.h"
 #include "Balloon_Timer.h"
 
+void CBalloon::ResetBallon(BALLOONINITDESC InitDesc)
+{
+	m_iScore = InitDesc.iScore;
+	m_pTransform->Set_Position(InitDesc.vPosition);
+	m_pTransform->Set_Scale(InitDesc.vScale);
+	m_fForce = InitDesc.fForce;
+	m_isDead = false;
+	m_isColliderOn = true;
+	m_pRigidBody->Enable_Collision("Body", this, nullptr);
+	m_pTimer->Reset(m_pTransform->Get_Position(), GetRandomFloat(40.f, 60.f));
+}
+
 CBalloon::CBalloon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -46,6 +58,26 @@ void CBalloon::Tick(_float fTimeDelta)
 {
 	m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);
 
+	if (m_isDead)
+	{
+		return;
+	}
+
+	// 타이머 사망 체크
+	// 충돌 체크
+
+	// 사망 처리
+
+	if (m_isCollsionEventTriger)
+	{
+		CFlyGameManager* pMgr = static_cast<CFlyGameManager*>(m_pOwner);
+		if (pMgr == nullptr)
+			return;
+		pMgr->ReplaceBallon();
+		m_isCollsionEventTriger = false;
+		m_isDead = true;
+	}
+
 	if (true == m_isColliderOn &&
 		true == m_isDead)
 	{
@@ -55,9 +87,8 @@ void CBalloon::Tick(_float fTimeDelta)
 
 	if (true == m_pTimer->Is_Finished())
 	{
-		m_isDead = true;
+		m_isCollsionEventTriger = true;
 		m_pRigidBody->Disable_Collision("Body");
-		return;
 	}
 
 	__super::Tick(fTimeDelta);
@@ -121,6 +152,8 @@ HRESULT CBalloon::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMat
 
 void CBalloon::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
+	m_isCollsionEventTriger = true;
+
 	CFlyGameManager* pMgr = static_cast<CFlyGameManager*>(m_pOwner);
 	if (pMgr == nullptr)
 		return;
@@ -130,10 +163,7 @@ void CBalloon::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		return;
 
 	pMgr->Add_Score(racerInfo->iRacerNumber,m_iScore);
-	pMgr->ReplaceBallon();
 	pMgr->Racer_AddForce(racerInfo->iRacerNumber,m_eBallonActionType, m_fForce);
-
-	m_isDead = true;
 	__super::OnCollisionEnter(CollisionEventDesc);
 }
 

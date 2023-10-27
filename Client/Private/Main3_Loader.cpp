@@ -50,6 +50,7 @@
 #include "Dummy_NPC.h"
 #include "Smith_FIg.h"
 #include "Card_Fig.h"
+#include "Crowd.h"
 #include "Broom_Stick_DarkWizard.h"
 
 #pragma region Items
@@ -332,6 +333,22 @@ HRESULT CMain3_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 
 HRESULT CMain3_Loader::Loading_For_Sky(LEVELID eLevelID)
 {
+	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Crowd"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/crowd/crowd.gcm")))))
+	{
+		MSG_BOX("Failed Add_Prototype Loading_For_Sky : Prototype_Component_Model_Crowd");
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_crowd"),
+		CCrowd::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Failed Add_Prototype Loading_For_Sky : Prototype_GameObject_crowd");
+		__debugbreak();
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
