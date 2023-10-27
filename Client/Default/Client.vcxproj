@@ -286,6 +286,8 @@
     <ClInclude Include="..\Public\Smith_FIg.h" />
     <ClInclude Include="..\Public\Quest_Town.h" />
     <ClInclude Include="..\Public\UI_DamageFont.h" />
+    <ClInclude Include="..\Public\UI_Group_Score.h" />
+    <ClInclude Include="..\Public\UI_Group_Timer.h" />
     <ClInclude Include="..\Public\UI_Interaction.h" />
     <ClInclude Include="..\Public\UI_Script.h" />
     <ClInclude Include="..\Public\StateContext_Enemy.h" />
@@ -639,6 +641,8 @@
     <ClCompile Include="..\Private\Smith_FIg.cpp" />
     <ClCompile Include="..\Private\Quest_Town.cpp" />
     <ClCompile Include="..\Private\UI_DamageFont.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Score.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Timer.cpp" />
     <ClCompile Include="..\Private\UI_Interaction.cpp" />
     <ClCompile Include="..\Private\UI_Script.cpp" />
     <ClCompile Include="..\Private\StateContext_Enemy.cpp" />

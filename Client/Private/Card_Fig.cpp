@@ -733,26 +733,29 @@ void CCard_Fig::Script_Finish_Check()
 	if (m_pScripts[ENTERVAULT]->Is_Finished() && !m_isEnterValutScriptEnd)
 	{
 		m_pScripts[ENTERVAULT]->Set_isRender(false);
-		++m_iScriptIndex;
 		m_isEnterValutScriptEnd = true;
 		m_isPlayScript = false;
 	}
 
-	if (m_pScripts[ENTERSANCTUM]->Is_Finished())
+	if (m_pScripts[ENTERSANCTUM]->Is_Finished() && !m_isCreateDragonScriptEnd)
 	{
 		m_pScripts[ENTERSANCTUM]->Set_isRender(false);
-		++m_iScriptIndex;
+		m_isCreateDragonScriptEnd = true;
+		m_isPlayScript = false;
 	}
 
-	if (m_pScripts[CREATEDRAGON]->Is_Finished())
+	if (m_pScripts[CREATEDRAGON]->Is_Finished() && !m_isDragonHpDownScriptEnd)
 	{
 		m_pScripts[CREATEDRAGON]->Set_isRender(false);
-		++m_iScriptIndex;
+		m_isDragonHpDownScriptEnd = true;
+		m_isPlayScript = false;
 	}
 
-	if (m_pScripts[DRAGONHPDOWN]->Is_Finished())
+	if (m_pScripts[DRAGONHPDOWN]->Is_Finished() && !m_isDragonDeathScriptEnd)
 	{
 		m_pScripts[DRAGONHPDOWN]->Set_isRender(false);
+		m_isDragonDeathScriptEnd = true;
+		m_isPlayScript = false;
 	}
 }
 
@@ -764,23 +767,35 @@ void CCard_Fig::Play_Script(_float fTimeDelta)
 		m_isEnterVault = false;
 		m_pScripts[ENTERVAULT]->Reset_Script();
 		m_pScripts[ENTERVAULT]->Set_isRender(true);
+		m_iScriptIndex = ENTERVAULT;
+	}
+
+	if (m_isCreateDragon)
+	{
+		m_isPlayScript = true;
+		m_isCreateDragon = false;
+		m_pScripts[CREATEDRAGON]->Reset_Script();
+		m_pScripts[CREATEDRAGON]->Set_isRender(true);
+		m_iScriptIndex = CREATEDRAGON;
 	}
 
 	if (m_isDragonHpDown)
 	{
 		m_isPlayScript = true;
-		m_isEnterVault = false;
+		m_isDragonHpDown = false;
 		m_pScripts[DRAGONHPDOWN]->Reset_Script();
 		m_pScripts[DRAGONHPDOWN]->Set_isRender(true);
+		m_iScriptIndex = DRAGONHPDOWN;
 	}
 
-	if (m_isDragonDeath)
-	{
-		m_isPlayScript = true;
-		m_isEnterVault = false;
-		m_pScripts[m_iScriptIndex]->Reset_Script();
-		m_pScripts[m_iScriptIndex]->Set_isRender(true);
-	}
+	//if (m_isDragonDeath)
+	//{
+	//	m_isPlayScript = true;
+	//	m_isDragonDeath = false;
+	//	m_pScripts[DRAGONDEATH]->Reset_Script();
+	//	m_pScripts[DRAGONDEATH]->Set_isRender(true);
+	//	m_iScriptIndex = DRAGONDEATH;
+	//}
 
 	Script_Finish_Check();
 

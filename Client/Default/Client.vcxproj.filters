@@ -955,6 +955,12 @@
     <Filter Include="05. Magic\MagicBall\08. Ncendio\Meteor">
       <UniqueIdentifier>{97f40771-8d72-4a53-8140-5be88cc65c3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Timer">
+      <UniqueIdentifier>{ffac594c-5cc7-4a3f-990e-d9125d211e1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Score">
+      <UniqueIdentifier>{8e71c64d-fbc2-4a7b-b13a-a98d7790c0fa}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\03. MapObject\FireWorks">
       <UniqueIdentifier>{b7215cba-fa2f-42ae-ae7c-54432c46f8ca}</UniqueIdentifier>
     </Filter>
@@ -1937,6 +1943,12 @@
     <ClInclude Include="..\Public\UI_Font.h">
       <Filter>02. GameObject\05. UI\Font\Normal</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Timer.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Score.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Score</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\FireWorks.h">
       <Filter>02. GameObject\03. MapObject\FireWorks</Filter>
     </ClInclude>
@@ -2907,6 +2919,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Item.cpp">
       <Filter>02. GameObject\10. Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Timer.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Score.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Score</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\FireWorks.cpp">
       <Filter>02. GameObject\03. MapObject\FireWorks</Filter>
