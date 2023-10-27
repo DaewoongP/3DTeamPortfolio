@@ -65,7 +65,7 @@ void CMagic::Late_Tick(_float fTimeDelta)
 HRESULT CMagic::ResetMagicDesc(MAGICDESC SkillDesc)
 {
 	memcpy(&m_MagicDesc, &SkillDesc, sizeof(MAGICDESC));
-	m_fCurrentCoolTime = m_MagicDesc.fInitCoolTime;
+	m_fCurrentCoolTime = 0.f;
 	return S_OK;
 }
 
