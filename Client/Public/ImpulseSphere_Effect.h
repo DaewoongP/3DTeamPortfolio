@@ -52,7 +52,7 @@ private:
 
 private:
 	_float m_fCircleOffset = { 2.f };
-	_float4 m_vColor = { 1.f, 0.376f, 0.376f, 1.f };
+	_float4 m_vColor = { 0.956f, 0.047f, 0.047f, 1.f };
 	_bool m_isEnable = { false };
 	_float m_fScale = { 0.f };
 	_float m_fFresnelPower = { 0.84f };

@@ -26,9 +26,9 @@ public:
 	virtual void	Clear_Quest();
 
 private:
-	_uint		m_iRequestSize = { 10 };
-	_uint		m_iCurResourceSize = { 0 };
-	_uint		m_iPreResourceSize = { 0 };
+	_int		m_iRequestSize = { 10 };
+	_int		m_iCurResourceSize = { 0 };
+	_int		m_iPreResourceSize = { 0 };
 
 	_bool		m_isClear = { false };
 	_bool		m_isCheckResource = { true };

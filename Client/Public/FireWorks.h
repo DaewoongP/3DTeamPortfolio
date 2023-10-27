@@ -19,8 +19,6 @@ class CFireWorks : public CGameObject
 		TYPE_UP,TYPE_BURST,TYPE_READY,TYPE_END
 	};
 
-	
-
 	typedef struct tagFire
 	{
 		_float4x4 WorldMatrix; // 상태 행렬

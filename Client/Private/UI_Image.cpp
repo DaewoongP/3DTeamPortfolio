@@ -203,6 +203,9 @@ HRESULT CUI_Image::Set_Desc(IMAGEDESC desc, _bool isChild)
 	if (isChild == true)
 	{
 		m_pParent = static_cast<CUI*>(m_pOwner);
+		_float2 vParentPos = m_pParent->Get_XY();
+		m_vCombinedXY.x = vParentPos.x + m_fX;
+		m_vCombinedXY.y = vParentPos.y + m_fY;
 	}
 
 	return S_OK;

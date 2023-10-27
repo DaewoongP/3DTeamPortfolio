@@ -65,7 +65,7 @@ void CMagic::Late_Tick(_float fTimeDelta)
 HRESULT CMagic::ResetMagicDesc(MAGICDESC SkillDesc)
 {
 	memcpy(&m_MagicDesc, &SkillDesc, sizeof(MAGICDESC));
-	m_fCurrentCoolTime = m_MagicDesc.fInitCoolTime;
+	m_fCurrentCoolTime = 0.f;
 	return S_OK;
 }
 
@@ -116,7 +116,7 @@ CMagicBall* CMagic::Magic_Cast(const CGameObject* pTarget, const CGameObject* pW
 	}
 	Safe_Release(pMagicBallPool);
 
-	CMagicBall* pMagicBall = dynamic_cast<CMagicBall*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Magic"), objTag));
+	CMagicBall* pMagicBall = static_cast<CMagicBall*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Magic"), objTag));
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
 
 	ENDINSTANCE;

@@ -59,9 +59,16 @@ private:
 private:
 	// 절두체 컬링을 위해 Bounding Box를 생성 하기위한 최소, 최대 정점
 	_float3			m_vMinPoint, m_vMaxPoint, m_vCenterPoint;
+	_float3			m_vecOriginPos = { 0.f, 0.f, 0.f };
 	_float			m_fRadius = { 0.f };
 	_float			m_fDist_From_Player = { 0.f }; // 갈매기와 플레이어와의 거리
 	_float			m_fDeadTime = { 0.f }; // 갈매기 죽는 시간
+	_float			m_fFlyTime = { 0.f };  // v편대 비행 시간
+
+	_float			m_fRandTime = { 0.f }; // v편대 랜덤 애니메이션 타이밍
+	_float			m_fRandTimeAcc = { 0.f }; // v편대 랜덤 애니메이션 타이밍 누적값
+	
+	_uint			m_iGullIndex = { 0 };	// 갈매기 인덱스 
 
 	_bool			m_isCol_with_Player = { false }; // 플레이어와 충돌 여부
 
@@ -75,6 +82,7 @@ private:
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix);
 	void	Check_Dist_From_Player(_float fTimeDelta);
+	void	Fly_V_Squadron(_float fTimeDelta);
 
 public:
 	static CGull* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -69,23 +69,6 @@ HRESULT CLevel_Static::Ready_Layer_UI(const _tchar* pLayerTag)
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC,
 		TEXT("Prototype_GameObject_UI_Farming"), pLayerTag, TEXT("GameObject_UI_Farming")), E_FAIL);
-
-
-	CUI_Group_Score::UISCOREDESC ScoreDesc;
-	ZEROMEM(&ScoreDesc);
-	lstrcpy(ScoreDesc.wszFirstName, TEXT("Ы溯檜橫"));
-	lstrcpy(ScoreDesc.wszSecondName, TEXT("學渡1"));
-	lstrcpy(ScoreDesc.wszThirdName, TEXT("學渡2"));
-	lstrcpy(ScoreDesc.wszFourthName, TEXT("學渡3"));
-	lstrcpy(ScoreDesc.wszFifthName, TEXT("學渡4"));
-	lstrcpy(ScoreDesc.wszSixthName, TEXT("學渡5"));
-	lstrcpy(ScoreDesc.wszSeventhName, TEXT("學渡6"));
-	lstrcpy(ScoreDesc.wszEighthName, TEXT("學渡7"));
-	lstrcpy(ScoreDesc.wszNinthName, TEXT("學渡8"));
-
-	FAILED_CHECK_RETURN(m_pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC,
-		TEXT("Prototype_GameObject_UI_Score"), pLayerTag, TEXT("GameObject_UI_Score"), &ScoreDesc), E_FAIL);
-
 	return S_OK;
 }
 

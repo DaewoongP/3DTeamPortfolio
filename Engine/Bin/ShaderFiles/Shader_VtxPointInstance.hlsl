@@ -105,6 +105,9 @@ PS_OUT PS_MAIN(PS_IN In)
 
     Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
 
+    if (0.1f > Out.vColor.a)
+        discard;
+    
     return Out;
 }
 
@@ -212,7 +215,7 @@ PS_OUT PS_MAIN_TIMER(PS_IN In)
     else
         discard;
     
-    vCurrentColor.gb *= 1.f - g_fTimeRatio;
+    vCurrentColor *= float4(g_fTimeRatio, 1.f - g_fTimeRatio, 0.f, 1.f);
     Out.vColor = vCurrentColor;
     
     return Out;

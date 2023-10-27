@@ -10,6 +10,7 @@
 #include"Blink_Effect.h"
 
 #include "Event_Enter_Vault.h"
+#include "Event_Enter_Sanctum.h"
 #include "Event_Dragon_Death.h"
 #include "Event_Dragon_Hp_Down.h"
 
@@ -50,6 +51,7 @@ BEGIN(Client)
 class CPlayer final : public CGameObject
 {
 	friend CEvent_Enter_Vault;
+	friend CEvent_Enter_Sanctum;
 	friend CEvent_Dragon_Death;
 	friend CEvent_Dragon_Hp_Down;
 

@@ -12,6 +12,13 @@ CBalloon_Timer::CBalloon_Timer(const CBalloon_Timer& rhs)
 {
 }
 
+void CBalloon_Timer::Reset(_float3 vPosition, _float fFinishTime)
+{
+	m_fTime = fFinishTime;
+	m_vInitPosition = vPosition;
+	m_fTimeAcc = 0.f;
+}
+
 HRESULT CBalloon_Timer::Initialize(void* pArg)
 {
 	NULL_CHECK_RETURN(pArg, E_FAIL);
@@ -39,7 +46,7 @@ void CBalloon_Timer::Late_Tick(_float fTimeDelta)
 	m_pTransform->Set_Position(XMVectorLerp(m_vInitPosition, pGameInstance->Get_CamPosition()->xyz(), 0.35f));
 	Safe_Release(pGameInstance);
 
-	if (m_fTimeAcc <= m_fTime)
+	if (m_fTimeAcc < m_fTime - fTimeDelta) // 1frame
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
 }
 

@@ -14,13 +14,42 @@ CEvent_Spawn_Dragon::CEvent_Spawn_Dragon(ID3D11Device* pDevice, ID3D11DeviceCont
 
 CEvent_Spawn_Dragon::CEvent_Spawn_Dragon(const CEvent_Spawn_Dragon& rhs)
 	: CGameObject(rhs)
+	, m_iLevel(rhs.m_iLevel)
 {
+}
+
+HRESULT CEvent_Spawn_Dragon::Initialize_Prototype(_uint iLevel)
+{
+	__super::Initialize_Prototype();
+	m_iLevel = iLevel;
+
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Dragon_Egg")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Dragon_Egg")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/MapParticle/Sanctum/Dragon_Egg/"), m_iLevel))))
+			throw;
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Dragon_Egg_Distortion")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Dragon_Egg_Distortion")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/MapParticle/Sanctum/Dragon_Egg_Distortion/"), m_iLevel))))
+			throw;
+	}
+
+	Safe_Release(pGameInstance);
+	return S_OK;
 }
 
 HRESULT CEvent_Spawn_Dragon::Initialize(void* pArg)
 {
 	FAILED_CHECK_RETURN(Add_Components(), E_FAIL);
-
+	m_pParticle_Dragon_Egg->Enable();
+	m_pParticle_Dragon_Egg_Distortion->Disable();
 	BEGININSTANCE;
 	
 	auto pMonsterLayer = pGameInstance->Find_Components_In_Layer(LEVEL_SANCTUM, TEXT("Layer_Monster"));
@@ -50,6 +79,9 @@ HRESULT CEvent_Spawn_Dragon::Initialize(void* pArg)
 	pGameInstance->Add_Timer(TEXT("Sanctum_Egg_CutScene_Play_2_FadeIn"), true, 3.0f);
 	pGameInstance->Add_Timer(TEXT("Sanctum_Egg_CutScene_Play_3_FadeOut"), true, 5.83f);
 	pGameInstance->Add_Timer(TEXT("Sanctum_Egg_CutScene_Play_3_FadeIn"), true, 6.03f);
+
+	pGameInstance->Add_Timer(TEXT("Sanctum_Egg_Particle_RadialMinus"), true, 7.03f);
+	pGameInstance->Add_Timer(TEXT("Sanctum_Egg_Particle_RadialPlus"), true, 10.03f);
 
 	ENDINSTANCE;
 	
@@ -84,7 +116,7 @@ void CEvent_Spawn_Dragon::Check_Event_Spawn_Dragon()
 			//진입 표시
 			m_isEnter = false;
 		}
-
+		
 		//타이머 체크
 		if (true == pGameInstance->Check_Timer(TEXT("Sanctum_CutScene_Fade_Out")))
 		{
@@ -100,6 +132,8 @@ void CEvent_Spawn_Dragon::Check_Event_Spawn_Dragon()
 			pGameInstance->Reset_Timer(TEXT("Sanctum_Egg_CutScene_Play_2_FadeIn"));
 			pGameInstance->Reset_Timer(TEXT("Sanctum_Egg_CutScene_Play_3_FadeOut"));
 			pGameInstance->Reset_Timer(TEXT("Sanctum_Egg_CutScene_Play_3_FadeIn"));
+			pGameInstance->Reset_Timer(TEXT("Sanctum_Egg_Particle_RadialMinus"));
+			pGameInstance->Reset_Timer(TEXT("Sanctum_Egg_Particle_RadialPlus"));
 		}
 	}
 		break;
@@ -138,6 +172,28 @@ void CEvent_Spawn_Dragon::Check_Event_Spawn_Dragon()
 			m_isEgg[3] = true;
 		}
 
+		if (true == pGameInstance->Check_Timer(TEXT("Sanctum_Egg_Particle_RadialMinus")))
+		{
+			m_pParticle_Dragon_Egg->Get_VelocityOverLifetimeModuleRef().fRadial = -20.f;
+		}
+
+		if (true == pGameInstance->Check_Timer(TEXT("Sanctum_Egg_Particle_RadialPlus")))
+		{
+			m_pParticle_Dragon_Egg->Get_VelocityOverLifetimeModuleRef().fRadial = 100.f;
+			_float3 vPos = m_pParticle_Dragon_Egg->Get_Transform()->Get_Position();
+			m_pParticle_Dragon_Egg_Distortion->Play(vPos);
+			m_pRenderer->FadeOut(2.f, _float4(1.f, 1.f, 1.f, 1.f));
+			pGameInstance->Set_Shake(
+				CCamera_Manager::SHAKE_PRIORITY_1,
+				CCamera_Manager::SHAKE_TYPE_TRANSLATION,
+				CCamera_Manager::SHAKE_AXIS_LOOK,
+				CEase::IN_EXPO,
+				10.f,
+				0.5f,
+				0.1f,
+				CCamera_Manager::SHAKE_POWER_DECRECENDO);
+		}
+
 		//타이머 종료
 		if (true == pGameInstance->Check_Timer(TEXT("Sanctum_Egg_CutScene_Play")))
 		{
@@ -149,7 +205,7 @@ void CEvent_Spawn_Dragon::Check_Event_Spawn_Dragon()
 			m_isEnter = true;
 
 			//페이드 아웃
-			m_pRenderer->FadeOut(1.0f);
+			//m_pRenderer->FadeOut(1.0f);
 		}
 	}
 		break;
@@ -196,7 +252,8 @@ void CEvent_Spawn_Dragon::Check_Event_Spawn_Dragon()
 					++iter;
 			}
 			//페이드 인
-			m_pRenderer->FadeIn(1.0f);
+			m_pRenderer->FadeIn(1.0f, _float4(1.f, 1.f, 1.f, 1.f));
+			m_pParticle_Dragon_Egg->Stop();
 			//진입 표시
 			m_isEnter = false;
 			//컷씬 재생
@@ -325,18 +382,29 @@ HRESULT CEvent_Spawn_Dragon::Add_Components()
 		return E_FAIL;
 	}
 
-
 	
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Dragon_Egg"),
+		TEXT("Com_Particle_Dragon_Egg"), reinterpret_cast<CComponent**>(&m_pParticle_Dragon_Egg))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
 
-
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Dragon_Egg_Distortion"),
+		TEXT("Com_Particle_Dragon_Egg_Distortion"), reinterpret_cast<CComponent**>(&m_pParticle_Dragon_Egg_Distortion))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	
 	return S_OK;
 }
 
-CEvent_Spawn_Dragon* CEvent_Spawn_Dragon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CEvent_Spawn_Dragon* CEvent_Spawn_Dragon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)
 {
 	CEvent_Spawn_Dragon* pInstance = New CEvent_Spawn_Dragon(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize_Prototype(iLevel)))
 	{
 		MSG_BOX("Failed to Created CEvent_Spawn_Dragon");
 		Safe_Release(pInstance);
@@ -366,6 +434,8 @@ void CEvent_Spawn_Dragon::Free()
 	{
 		Safe_Release(m_pSpawn_Dragon);
 		Safe_Release(m_pRenderer);
+		Safe_Release(m_pParticle_Dragon_Egg);
+		Safe_Release(m_pParticle_Dragon_Egg_Distortion);
 
 		for (auto& Pair : m_pMonsters)
 			Safe_Release(Pair.second);

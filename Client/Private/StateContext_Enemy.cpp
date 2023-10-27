@@ -58,7 +58,7 @@ HRESULT CStateContext_Enemy::Set_StateMachine(const _tchar* _pTag, void * _pArg)
 	
 	Safe_AddRef(m_pCurrentStateMachine);
 	m_pCurrentStateMachine->OnStateEnter(_pArg);
-	dynamic_cast<CPensive*>(m_pOwner)->ResetMagicBall();
+	static_cast<CPensive*>(m_pOwner)->ResetMagicBall();
 	return S_OK;
 }
 

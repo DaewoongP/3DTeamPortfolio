@@ -27,7 +27,7 @@ HRESULT CParticleSystemPool::Reserve_Particle(ID3D11Device* pDevice, ID3D11Devic
 	// Reserve하고싶은 개수만큼 포문을 돌면서 클론해서 큐에 넣는다.
 	for (_uint i = 0; i < iNumReserveParticles; ++i)
 	{
-		CParticleSystem* pParticle = dynamic_cast<CParticleSystem*>(pComponent_Manager->Clone_Component(0, szPrototypeTag, nullptr));
+		CParticleSystem* pParticle = static_cast<CParticleSystem*>(pComponent_Manager->Clone_Component(0, szPrototypeTag, nullptr));
 		pParticle->Set_ParticleTag(szParticleTag);
 		pParticleQueue->Push_Back(pParticle);
 	}
@@ -65,7 +65,7 @@ void CParticleSystemPool::Play_Particle(const _tchar* szParticleTag, _float3 vWo
 	{
 		_tchar szPrototypeTag[MAX_PATH] = TEXT("Prototype_GameObject_");
 		lstrcat(szPrototypeTag, szParticleTag);
-		pParticle = dynamic_cast<CParticleSystem*>(pComponent_Manager->Clone_Component(0, szPrototypeTag, nullptr));
+		pParticle = static_cast<CParticleSystem*>(pComponent_Manager->Clone_Component(0, szPrototypeTag, nullptr));
 		pParticle->Set_ParticleTag(szParticleTag);
 	}
 
@@ -103,7 +103,7 @@ void CParticleSystemPool::Play_Particle(const _tchar* szParticleTag, _float3 vPo
 	{
 		_tchar szPrototypeTag[MAX_PATH] = TEXT("Prototype_GameObject_");
 		lstrcat(szPrototypeTag, szParticleTag);
-		pParticle = dynamic_cast<CParticleSystem*>(pComponent_Manager->Clone_Component(0, szPrototypeTag, nullptr));
+		pParticle = static_cast<CParticleSystem*>(pComponent_Manager->Clone_Component(0, szPrototypeTag, nullptr));
 		pParticle->Set_ParticleTag(szParticleTag);
 	}
 	pParticle->Get_ShapeModuleRef().Set_ShapeLook(vPosition, vDir + vPosition);
@@ -144,7 +144,7 @@ void CParticleSystemPool::Play_Particle(const _tchar* szParticleTag, _float4x4 P
 	{
 		_tchar szPrototypeTag[MAX_PATH] = TEXT("Prototype_GameObject_");
 		lstrcat(szPrototypeTag, szParticleTag);
-		pParticle = dynamic_cast<CParticleSystem*>(pComponent_Manager->Clone_Component(0, szPrototypeTag, nullptr));
+		pParticle = static_cast<CParticleSystem*>(pComponent_Manager->Clone_Component(0, szPrototypeTag, nullptr));
 		pParticle->Set_ParticleTag(szParticleTag);
 	}
 	ObjectMatrix.m[3][0] = 0;
@@ -187,7 +187,7 @@ void CParticleSystemPool::Play_Particle(const _tchar* szParticleTag, _float4x4 O
 	{
 		_tchar szPrototypeTag[MAX_PATH] = TEXT("Prototype_GameObject_");
 		lstrcat(szPrototypeTag, szParticleTag);
-		pParticle = dynamic_cast<CParticleSystem*>(pComponent_Manager->Clone_Component(0, szPrototypeTag, nullptr));
+		pParticle = static_cast<CParticleSystem*>(pComponent_Manager->Clone_Component(0, szPrototypeTag, nullptr));
 		pParticle->Set_ParticleTag(szParticleTag);
 	}
 
