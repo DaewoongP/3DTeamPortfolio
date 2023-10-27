@@ -1482,7 +1482,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			m_isLumosOn = false;
 		}
 	}
-
+					
 
 	if (pGameInstance->Get_DIKeyState(DIK_GRAVE, CInput_Device::KEY_DOWN) || pGameInstance->Get_DIKeyState(DIK_T, CInput_Device::KEY_DOWN))
 	{
@@ -3474,6 +3474,7 @@ void CPlayer::Go_Use_Item()
 
 	CUseItemState::USEITEMDESC UseItemDesc;
 
+	UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(nullptr); };
 
 	m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Add_Layer_Item"), UseItemDesc.funcPotion);
 	m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Add_Layer_Item"), UseItemDesc.funcPotion,CModel::ANOTHERBODY);
@@ -3484,43 +3485,36 @@ void CPlayer::Go_Use_Item()
 	{
 	case Client::ITEM_ID_WIGGENWELD_POTION:	//회복 물약
 	{
-		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(nullptr); };
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
 	}
 	break;
 	case Client::ITEM_ID_EDURUS_POTION:	//방어 물약
 	{
-		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(&m_DefensiveDesc.isStart); };
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
 	}
 	break;
 	case Client::ITEM_ID_FOCUS_POTION:	//쿨타임 물약
 	{
-		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(&m_CoolTimeDesc.isStart); };
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
 	}
 	break;
 	case Client::ITEM_ID_MAXIMA_POTION:	//공격력 물약
 	{
-		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(&m_DemegeDesc.isStart); };
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
 	}
 	break;
 	case Client::ITEM_ID_INVISIBILITY_POTION://투명 물약
 	{
-		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(nullptr); };
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
 	}
 	break;
 	case Client::ITEM_ID_THUNDERBEW_POTION: //번개구름 물약
 	{
-		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(nullptr); };
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
 	}
 	break;
 	case Client::ITEM_ID_FELIX_FELICIS_POTION:
 	{
-		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(nullptr); };
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
 	}
 	break;
