@@ -1967,10 +1967,6 @@
     <ClInclude Include="..\public\Balloon_Timer.h">
       <Filter>02. GameObject\13. FlyGameManager\Balloons\Timer</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\BeastBalloon_A.h" />
-    <ClInclude Include="..\Public\BeastBalloon_B.h" />
-    <ClInclude Include="..\Public\BeastBalloon_C.h" />
-    <ClInclude Include="..\Public\BeastBalloon_D.h" />
     <ClInclude Include="..\Public\Event_Enter_Sanctum.h">
       <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
     </ClInclude>
@@ -2004,6 +2000,18 @@
     <ClInclude Include="..\Public\BeastBalloon_D.h" />
     <ClInclude Include="..\Public\Event_Smeade.h">
       <Filter>07. Events\Smeade\Event_Smeade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_A.h">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_B.h">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_C.h">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_D.h">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2930,10 +2938,6 @@
     <ClCompile Include="..\private\Balloon_Timer.cpp">
       <Filter>02. GameObject\13. FlyGameManager\Balloons\Timer</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\BeastBalloon_A.cpp" />
-    <ClCompile Include="..\Private\BeastBalloon_B.cpp" />
-    <ClCompile Include="..\Private\BeastBalloon_C.cpp" />
-    <ClCompile Include="..\Private\BeastBalloon_D.cpp" />
     <ClCompile Include="..\Private\Event_Enter_Sanctum.cpp">
       <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
     </ClCompile>
@@ -2967,6 +2971,18 @@
     <ClCompile Include="..\Private\BeastBalloon_D.cpp" />
     <ClCompile Include="..\Private\Event_Smeade.cpp">
       <Filter>07. Events\Smeade\Event_Smeade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_A.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_B.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_C.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_D.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -14,7 +14,6 @@ HRESULT CLevel_Sky::Initialize()
 	FAILED_CHECK_RETURN(Ready_Lights(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_Monster(TEXT("Layer_Monster")), E_FAIL);
-	FAILED_CHECK_RETURN(Ready_Layer_Balloon(TEXT("Layer_Balloon")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_FlyGame(TEXT("Layer_BackGround")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Shader(), E_FAIL);
 
@@ -154,37 +153,6 @@ HRESULT CLevel_Sky::Ready_Layer_Monster(const _tchar* pLayerTag)
 
 	ENDINSTANCE;
 
-	return S_OK;
-}
-
-HRESULT CLevel_Sky::Ready_Layer_Balloon(const _tchar* pLayerTag)
-{
-	BEGININSTANCE;
-
-	wstring wstrPrototypes[5];
-	wstrPrototypes[0] = TEXT("Prototype_GameObject_Balloon");
-	wstrPrototypes[1] = TEXT("Prototype_GameObject_BeastBalloon_A");
-	wstrPrototypes[2] = TEXT("Prototype_GameObject_BeastBalloon_B");
-	wstrPrototypes[3] = TEXT("Prototype_GameObject_BeastBalloon_C");
-	wstrPrototypes[4] = TEXT("Prototype_GameObject_BeastBalloon_D");
-
-	for (_uint i = 0; i < 50; ++i)
-	{
-		wstring Tag = TEXT("GameObject_Balloon_") + to_wstring(i);
-		_int j = rand() % 5;
-		CScoreBalloon::BALLOONINITDESC InitDesc;
-		InitDesc.iScore = 100;
-		InitDesc.WorldMatrix = XMMatrixTranslation(GetRandomFloat(77.f, 153.f), GetRandomFloat(10.f, 30.f), GetRandomFloat(74.f, 246.f));
-		InitDesc.vScale = _float3(3.f, 3.f, 3.f);
-		if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, wstrPrototypes[0].c_str(), pLayerTag, Tag.c_str(), &InitDesc)))
-		{
-			MSG_BOX("Failed Add_GameObject : (GameObject_Balloon)");
-			ENDINSTANCE;
-			return E_FAIL;
-		}
-	}
-
-	ENDINSTANCE;
 	return S_OK;
 }
 

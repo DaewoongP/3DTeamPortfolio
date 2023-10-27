@@ -289,7 +289,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	Go_Protego(&m_ProtegoStateDesc);
 
 	Fix_Mouse();
-	//Update_Cloth(fTimeDelta);
+	Update_Cloth(fTimeDelta);
 
 
 
@@ -2798,8 +2798,8 @@ HRESULT CPlayer::Bind_Notify()
 void CPlayer::Update_Cloth(_float fTimeDelta)
 {
 	_float3 vVelocity = m_pTransform->Get_Velocity();
-	vVelocity.y *= -1.f;
-	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(m_fClothPower * vVelocity,
+	
+	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(m_fClothPower * vVelocity * -1.f,
 		XMMatrixInverse(nullptr, XMMatrixRotationQuaternion(m_pTransform->Get_Quaternion()))));
 
 	m_pCustomModel->Tick(CCustomModel::ROBE, m_iRobeMeshIndex, fTimeDelta);
