@@ -1484,7 +1484,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	}
 
 
-	if (pGameInstance->Get_DIKeyState(DIK_GRAVE, CInput_Device::KEY_DOWN))
+	if (pGameInstance->Get_DIKeyState(DIK_GRAVE, CInput_Device::KEY_DOWN) || pGameInstance->Get_DIKeyState(DIK_T, CInput_Device::KEY_DOWN))
 	{
 		if (true == m_isFixMouse)
 			m_isFixMouse = false;
@@ -3232,7 +3232,8 @@ void CPlayer::Go_MagicCast(void* _pArg)
 {
 	Find_Target_For_Distance();
 
-	if (m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+	if (true == m_isFixMouse && (
+		m_pStateContext->Is_Current_State(TEXT("Idle")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
@@ -3240,7 +3241,7 @@ void CPlayer::Go_MagicCast(void* _pArg)
 		m_pStateContext->Is_Current_State(TEXT("Hover_Idle")) ||
 		m_pStateContext->Is_Current_State(TEXT("Hover_Move")) ||
 		m_pStateContext->Is_Current_State(TEXT("Fly_Move"))
-		)
+		))
 	{
 		if (nullptr != m_pTarget)
 		{

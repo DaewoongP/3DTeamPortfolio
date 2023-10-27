@@ -47,6 +47,8 @@ HRESULT CEvent_Smeade::Initialize(void* pArg)
 	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play_3_FadeOut"), true, 10.866);
 	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play_3_FadeIn"), true, 11.066);
 
+	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play_4_Scream"), true, 13.3f);
+	
 	ENDINSTANCE;
 	
 	return S_OK;
@@ -120,6 +122,7 @@ void CEvent_Smeade::Check_Event_Spawn_Troll()
 			pGameInstance->Reset_Timer(TEXT("Troll_Spawn_CutScene_Play_2_FadeIn"));
 			pGameInstance->Reset_Timer(TEXT("Troll_Spawn_CutScene_Play_3_FadeOut"));
 			pGameInstance->Reset_Timer(TEXT("Troll_Spawn_CutScene_Play_3_FadeIn"));
+			pGameInstance->Reset_Timer(TEXT("Troll_Spawn_CutScene_Play_4_Scream"));
 			//진입 표시
 			m_isEnter = false;
 			//컷씬 재생
@@ -144,6 +147,11 @@ void CEvent_Smeade::Check_Event_Spawn_Troll()
 		if (true == pGameInstance->Check_Timer(TEXT("Troll_Spawn_CutScene_Play_3_FadeIn")))
 		{
 			m_pRenderer->FadeIn(5.0f);
+		}
+
+		if (true == pGameInstance->Check_Timer(TEXT("Troll_Spawn_CutScene_Play_4_Scream")))
+		{
+			m_pRenderer->Set_ScreenRadial(false, 1.0f, 0.2f);
 		}
 
 		//타이머 종료
