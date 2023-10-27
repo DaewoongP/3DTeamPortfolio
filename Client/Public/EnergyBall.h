@@ -2,7 +2,7 @@
 
 #include "Enemy.h"
 #include "Client_Defines.h"
-
+#include "Magic.h"
 BEGIN(Engine)
 class CMesh;
 class CModel;
@@ -11,6 +11,7 @@ class CRenderer;
 class CParticleSystem;
 class CMeshEffect;
 class CTrail;
+class CCamera_Shake;
 END
 
 BEGIN(Client)
@@ -39,9 +40,14 @@ public:
 		return m_isEnable;
 	}
 
+private:
+	virtual HRESULT Add_Components_for_Shake();
+	virtual HRESULT Make_Notifies_for_Shake();
+
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
@@ -57,14 +63,19 @@ private:
 	_bool m_isEnable = { false };
 	function<_bool(const _float&)> m_DeathFunction;
 	_bool m_isEffectStart = { false };
+	CMagic::MAGIC_TYPE		m_eMagicType;
 
 private:
+	CCamera_Shake* m_pShake = { nullptr };
+
 	CMagicSlot* m_pMagicSlot = { nullptr };
 	CParticleSystem* m_pParticle_EnergyBall_ChargeDistortion = { nullptr };
 	CParticleSystem* m_pParticle_EnergyBall_ChargeDarkBall = { nullptr };
 
 	CMeshEffect* m_pMeshEffect_Conjured[13] = { nullptr };
 	CMeshEffect* m_pMeshEffect_Inner_Ball = { nullptr };
+
+	CRenderer* m_pRenderer = { nullptr };
 private:
 	HRESULT Make_Magics();
 	HRESULT Add_Components();

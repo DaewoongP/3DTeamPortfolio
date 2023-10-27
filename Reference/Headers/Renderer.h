@@ -25,11 +25,13 @@ public:
 		m_vFogCenterPos = vFogCenterPos;
 		m_fFogRadius = fFogRadius;
 	}
-	void FadeOut(_float fFadeSpeed) {
+	void FadeOut(_float fFadeSpeed, _float4 vFadeColor = { 0.f, 0.f, 0.f, 1.f }) {
+		m_vFadeColor = vFadeColor;
 		m_isFade = true;
 		m_fFadeSpeed = fFadeSpeed;
 	}
-	void FadeIn(_float fFadeSpeed) {
+	void FadeIn(_float fFadeSpeed, _float4 vFadeColor = { 0.f, 0.f, 0.f, 1.f }) {
+		m_vFadeColor = vFadeColor;
 		m_isFade = true;
 		m_fFadeSpeed = fFadeSpeed * -1.f;
 	}
@@ -162,11 +164,13 @@ private:
 	_float4		m_vFogColor;
 	_float3		m_vFogCenterPos;
 	_float		m_fFogRadius = { 0.f };
+	
 
 private:
 	_bool		m_isFade = { false };
 	_float		m_fFadeTime = { 1.f };
 	_float		m_fFadeSpeed = { 0.f };
+	_float4		m_vFadeColor = { 0.f, 0.f, 0.f, 1.f };
 	_bool		m_isRaining = { false };
 	_bool		m_isNight = { false };
 	_float		m_fGlowPower = { 0.f };

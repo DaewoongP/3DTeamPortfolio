@@ -5,6 +5,7 @@
 #include "MagicBall.h"
 #include "MagicSlot.h"
 #include "Protego.h"
+#include "Camera_Shake.h"
 
 CEnergyBall::CEnergyBall(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -14,6 +15,42 @@ CEnergyBall::CEnergyBall(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 CEnergyBall::CEnergyBall(const CEnergyBall& rhs)
 	: CGameObject(rhs)
 {
+}
+
+HRESULT CEnergyBall::Add_Components_for_Shake()
+{
+	CCamera_Shake::CAMERA_SHAKE_DESC Camera_Shake_Desc = { CCamera_Shake::CAMERA_SHAKE_DESC() };
+
+	_float fMaxDistance = { 60.0f };
+	_float fMinDistance = { 5.0f };
+
+	Camera_Shake_Desc.eShake_Priority = CCamera_Manager::SHAKE_PRIORITY_1;
+	Camera_Shake_Desc.isDistanceOption = true;
+	Camera_Shake_Desc.pTransform = m_pTransform;
+	Camera_Shake_Desc.Shake_Info_Desc.eEase = CEase::IN_EXPO;
+	Camera_Shake_Desc.Shake_Info_Desc.eShake_Axis = CCamera_Manager::SHAKE_AXIS_UP;
+	Camera_Shake_Desc.Shake_Info_Desc.eShake_Power = CCamera_Manager::SHAKE_POWER_DECRECENDO;
+	Camera_Shake_Desc.Shake_Info_Desc.eShake_Type = CCamera_Manager::SHAKE_TYPE_TRANSLATION;
+	Camera_Shake_Desc.Shake_Info_Desc.fShakeDuration = 0.2f;
+	Camera_Shake_Desc.Shake_Info_Desc.fShakePower = 0.05f;
+	Camera_Shake_Desc.Shake_Info_Desc.fShakeSpeed = 10.0f;
+	Camera_Shake_Desc.Shake_Info_Desc.vShake_Axis_Set = _float3();
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Enemy_Camera_Shake"),
+		TEXT("Com_Camera_Shake_Hit_Terrain"), reinterpret_cast<CComponent**>(&m_pShake), &Camera_Shake_Desc)))
+		throw TEXT("Com_Camera_Shake_Hit_Terrain");
+
+	return S_OK;
+}
+
+HRESULT CEnergyBall::Make_Notifies_for_Shake()
+{
+	function<void()> Func;
+
+	//Func = [&] { m_pShake->RandomRightAxisShake(); };
+	//FAILED_CHECK(m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Hit_Terrain"), Func));
+
+	return S_OK;
 }
 
 HRESULT CEnergyBall::Initialize_Prototype()
@@ -228,6 +265,9 @@ HRESULT CEnergyBall::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	if (FAILED(Add_Components_for_Shake()))
+		return E_FAIL;
+
 	if (FAILED(Make_Magics()))
 		return E_FAIL;
 
@@ -244,6 +284,12 @@ HRESULT CEnergyBall::Initialize(void* pArg)
 	return S_OK;
 }
 
+HRESULT CEnergyBall::Initialize_Level(_uint iCurrentLevelIndex)
+{
+	if (FAILED(Make_Notifies_for_Shake()))
+		return E_FAIL;
+}
+
 void CEnergyBall::Tick(_float fTimeDelta)
 {
 	if (false == m_isEnable)
@@ -252,7 +298,7 @@ void CEnergyBall::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	m_fTimeAcc += fTimeDelta;
-	
+
 	if (true == m_isFirst)
 	{
 		if (false == m_isEffectStart)
@@ -267,10 +313,10 @@ void CEnergyBall::Tick(_float fTimeDelta)
 
 				Conjureds->Play(m_pTransform->Get_Position());
 			}
-				
+
 			//m_pMesheffect->Play();
 		}
-		
+
 		if (m_fActionProtegoTime < m_fTimeAcc)
 		{
 			m_pParticle_EnergyBall_ChargeDistortion->Stop();
@@ -287,7 +333,7 @@ void CEnergyBall::Tick(_float fTimeDelta)
 		m_pMeshEffect_Inner_Ball->Stop();
 		m_isEnable = false;
 	}
-		
+
 
 	if (true == m_isDead)
 	{
@@ -330,6 +376,34 @@ void CEnergyBall::Set_Protego_Collision(CTransform* pTransform, CEnemy::ATTACKTY
 	if (eType == CEnemy::ATTACK_BREAK || eType == CEnemy::ATTACK_SUPERBREAK)
 	{
 		m_isDead = true;
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+		switch (m_eMagicType)
+		{
+		case Client::CMagic::MT_YELLOW:
+			pGameInstance->Play_Particle(TEXT("Particle_DestroyProtego_Yellow"), m_pTransform->Get_Position());
+			pGameInstance->Play_Particle(TEXT("Particle_DestroyProtego_Yellow2"), m_pTransform->Get_Position());
+			break;
+		case Client::CMagic::MT_PURPLE:
+			pGameInstance->Play_Particle(TEXT("Particle_DestroyProtego_Purple"), m_pTransform->Get_Position());
+			pGameInstance->Play_Particle(TEXT("Particle_DestroyProtego_Purple2"), m_pTransform->Get_Position());
+			break;
+
+		case Client::CMagic::MT_RED:
+			pGameInstance->Play_Particle(TEXT("Particle_DestroyProtego_Red"), m_pTransform->Get_Position());
+			pGameInstance->Play_Particle(TEXT("Particle_DestroyProtego_Red2"), m_pTransform->Get_Position());
+			break;
+		case Client::CMagic::MT_NOTHING:
+		case Client::CMagic::MT_ALL:
+			pGameInstance->Play_Particle(TEXT("Particle_DestroyProtego_Blue"), m_pTransform->Get_Position());
+			pGameInstance->Play_Particle(TEXT("Particle_DestroyProtego_Blu2e"), m_pTransform->Get_Position());
+		default:
+			__debugbreak();
+			break;
+		}
+		Safe_Release(pGameInstance);
+		m_pRenderer->Set_ScreenRadial(true, 0.1f, 0.1f);
+		m_pShake->RandomRightAxisShake();
 	}
 }
 
@@ -352,7 +426,7 @@ HRESULT CEnergyBall::Make_Magics()
 
 		m_pMeshEffect_Inner_Ball->Set_LifeTime(7.f);
 
-		switch (magicInitDesc.eMagicType)
+		switch (m_eMagicType = magicInitDesc.eMagicType)
 		{
 		case Client::CMagic::MT_YELLOW:
 			m_pMeshEffect_Inner_Ball->Set_StartColor(_float4(1.f, 1.f, 0.f, 1.f));
@@ -386,6 +460,9 @@ HRESULT CEnergyBall::Add_Components()
 	FAILED_CHECK(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_MagicSlot"),
 		TEXT("Com_MagicSlot"), reinterpret_cast<CComponent**>(&m_pMagicSlot)));
 
+	FAILED_CHECK(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
+		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer)));
+
 	/* For. Partices */
 	FAILED_CHECK(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_Particle_EnergyBall_ChargeDistortion"),
 		TEXT("Com_Particle_EnergyBall_ChargeDistortion"), reinterpret_cast<CComponent**>(&m_pParticle_EnergyBall_ChargeDistortion)));
@@ -404,15 +481,6 @@ HRESULT CEnergyBall::Add_Components()
 
 	FAILED_CHECK(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooBolt02"),
 		TEXT("Com_MeshEffect_Conjured_GooBolt02"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Conjured[3])));
-
-	//FAILED_CHECK(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooStapleA02"),
-	//	TEXT("Com_MeshEffect_Conjured_GooStapleA01"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Conjured[4])));
-
-	//FAILED_CHECK(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooStapleA02"),
-	//	TEXT("Com_MeshEffect_Conjured_GooStapleA02"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Conjured[5])));
-
-	//FAILED_CHECK(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooStapleB01"),
-	//	TEXT("Com_MeshEffect_Conjured_GooStapleB01"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Conjured[6])));
 
 	//FAILED_CHECK(CComposite::Add_Component(LEVEL_SANCTUM, TEXT("Prototype_GameObject_MeshEffect_Conjured_GooStapleB02"),
 	//	TEXT("Com_MeshEffect_Conjured_GooStapleB02"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Conjured[7])));
@@ -468,6 +536,8 @@ void CEnergyBall::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pShake);
+	Safe_Release(m_pRenderer);
 	Safe_Release(m_pMagicSlot);
 	Safe_Release(m_pParticle_EnergyBall_ChargeDistortion);
 	Safe_Release(m_pParticle_EnergyBall_ChargeDarkBall);
