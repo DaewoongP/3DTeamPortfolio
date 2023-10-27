@@ -45,7 +45,7 @@ HRESULT CUI_Group_R::Initialize(void* pArg)
 	pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC, m_ProtoTypeTags[0], TEXT("Layer_UI"),
 		TEXT("GameObject_UI_Potion"), pArg);
 
-	CUI* pUI = dynamic_cast<CUI*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_UI"), TEXT("GameObject_UI_HP_Potion")));
+	CUI* pUI = static_cast<CUI*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_UI"), TEXT("GameObject_UI_HP_Potion")));
 	pUI = nullptr;
 
 	ENDINSTANCE;

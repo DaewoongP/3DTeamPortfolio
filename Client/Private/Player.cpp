@@ -293,6 +293,8 @@ void CPlayer::Tick(_float fTimeDelta)
 
 
 
+
+
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::OTHERBODY);
@@ -405,7 +407,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 			return;
 		}
 
-		CEnemy* pEnemy = dynamic_cast<CEnemy*>(m_pTarget);
+		CEnemy* pEnemy = static_cast<CEnemy*>(m_pTarget);
 		if (nullptr != pEnemy)
 			pEnemy->Get_UI_Enemy_HP()->Late_Tick(fTimeDelta);
 	}
@@ -1507,7 +1509,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			m_isLumosOn = false;
 		}
 	}
-
+					
 
 	if (pGameInstance->Get_DIKeyState(DIK_GRAVE, CInput_Device::KEY_DOWN) || pGameInstance->Get_DIKeyState(DIK_T, CInput_Device::KEY_DOWN))
 	{
@@ -2831,14 +2833,14 @@ void CPlayer::Find_Target_For_Distance()
 
 		_float3 vPlayerPos = m_pTransform->Get_Position();
 
-		_float3 vMonsterPos = dynamic_cast<CGameObject*>(iter->second)->Get_Transform()->Get_Position();
+		_float3 vMonsterPos = static_cast<CGameObject*>(iter->second)->Get_Transform()->Get_Position();
 
 		_float fDistance = XMVectorGetX(XMVector3Length(vPlayerPos - vMonsterPos));
 
 		if (fMinDistance > fDistance)
 		{
 			fMinDistance = fDistance;
-			pTarget = dynamic_cast<CGameObject*>(iter->second);
+			pTarget = static_cast<CGameObject*>(iter->second);
 		}
 	}
 
@@ -3501,6 +3503,7 @@ void CPlayer::Go_Use_Item()
 
 	CUseItemState::USEITEMDESC UseItemDesc;
 
+	UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(nullptr); };
 
 	m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Add_Layer_Item"), UseItemDesc.funcPotion);
 	m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Add_Layer_Item"), UseItemDesc.funcPotion,CModel::ANOTHERBODY);
@@ -3511,43 +3514,36 @@ void CPlayer::Go_Use_Item()
 	{
 	case Client::ITEM_ID_WIGGENWELD_POTION:	//회복 물약
 	{
-		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(nullptr); };
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
 	}
 	break;
 	case Client::ITEM_ID_EDURUS_POTION:	//방어 물약
 	{
-		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(&m_DefensiveDesc.isStart); };
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
 	}
 	break;
 	case Client::ITEM_ID_FOCUS_POTION:	//쿨타임 물약
 	{
-		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(&m_CoolTimeDesc.isStart); };
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
 	}
 	break;
 	case Client::ITEM_ID_MAXIMA_POTION:	//공격력 물약
 	{
-		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(&m_DemegeDesc.isStart); };
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
 	}
 	break;
 	case Client::ITEM_ID_INVISIBILITY_POTION://투명 물약
 	{
-		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(nullptr); };
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
 	}
 	break;
 	case Client::ITEM_ID_THUNDERBEW_POTION: //번개구름 물약
 	{
-		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(nullptr); };
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
 	}
 	break;
 	case Client::ITEM_ID_FELIX_FELICIS_POTION:
 	{
-		UseItemDesc.funcPotion = [&] {(*this).Add_Layer_Item(nullptr); };
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
 	}
 	break;

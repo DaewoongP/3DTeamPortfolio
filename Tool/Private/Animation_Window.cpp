@@ -22,7 +22,7 @@ HRESULT CAnimation_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 
 	CameraPointDesc.vPosition = _float4(0, 0, 0, 1);
 	m_pCameraPoint =
-		dynamic_cast<CCamera_Point*>(
+		static_cast<CCamera_Point*>(
 			pGameInstance->Clone_Component(LEVEL_TOOL,
 				TEXT("Prototype_GameObject_Camera_Point"),
 				&CameraPointDesc));
@@ -36,7 +36,7 @@ HRESULT CAnimation_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 	for (int i = 0; i < CModel::ANIM_END; i++)
 	{
 		m_pParticleNotify[i] =
-			dynamic_cast<CCamera_Point*>(
+			static_cast<CCamera_Point*>(
 				pGameInstance->Clone_Component(LEVEL_TOOL,
 					TEXT("Prototype_GameObject_Camera_Point"),
 					&CameraPointDesc));
@@ -200,7 +200,7 @@ void CAnimation_Window::Create_Dummy_Button()
 		{
 			MSG_BOX("Failed to Created Dummy Clone");
 		}
-		m_pDummyObject = dynamic_cast<CDummy*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), TEXT("Dummy_Animation")));
+		m_pDummyObject = static_cast<CDummy*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), TEXT("Dummy_Animation")));
 		Safe_AddRef(m_pDummyObject);
 		Safe_Release(pGameInstance);
 	}
@@ -278,9 +278,9 @@ void CAnimation_Window::AddModel_Button()
 		m_pDummyObject->Add_Model_Component(m_vecModelList_t[m_iModelIndex].c_str());
 		lstrcpy(m_wszCurrentDummyModelTag, m_vecModelList_t[m_iModelIndex].c_str());
 		m_pDummyObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxAnimMesh"));
-		m_pDummyModel = dynamic_cast<CModel*>(m_pDummyObject->Find_Component(TEXT("Com_Model")));
+		m_pDummyModel = static_cast<CModel*>(m_pDummyObject->Find_Component(TEXT("Com_Model")));
 		Safe_AddRef(m_pDummyModel);
-		CModel* pCurrentModel = dynamic_cast<CModel*>(m_pDummyObject->Find_Component(TEXT("Com_Model")));
+		CModel* pCurrentModel = static_cast<CModel*>(m_pDummyObject->Find_Component(TEXT("Com_Model")));
 		_tchar wszAnimationName[MAX_PATH] = {};
 		_tchar wszTypeComboName[MAX_PATH] = {};
 		lstrcpy(wszAnimationName, pCurrentModel->Get_Animation(0)->Get_AnimationName());
@@ -459,7 +459,7 @@ void CAnimation_Window::Animation_Action_Button(CModel::ANIMTYPE ePartCnt, CMode
 	ImGui::SameLine();
 	if (ImGui::Button("Reset_Dummy_WorldMatrix##Animation"))
 	{
-		dynamic_cast<CTransform*>(m_pDummyObject->Find_Component(TEXT("Com_Transform")))->Set_WorldMatrix(XMMatrixIdentity());
+		static_cast<CTransform*>(m_pDummyObject->Find_Component(TEXT("Com_Transform")))->Set_WorldMatrix(XMMatrixIdentity());
 	}
 
 	ImGui::SameLine();
@@ -648,7 +648,7 @@ void CAnimation_Window::Export_Model()
 			MSG_BOX("Failed to Export Because of No Model");
 			return;
 		}
-		dynamic_cast<CModel*>(m_pDummyObject->Find_Component(TEXT("Com_Model")))->Convert_Animations_GCM();
+		static_cast<CModel*>(m_pDummyObject->Find_Component(TEXT("Com_Model")))->Convert_Animations_GCM();
 
 		wchar_t temp[MAX_PATH] = {};
 		wcscpy_s(temp, m_wszCurrentDummyModelTag);
@@ -656,7 +656,7 @@ void CAnimation_Window::Export_Model()
 		if (found != nullptr) {
 			wcscpy_s(temp, found + wcslen(TEXT("Prototype_Component_Model_")));
 		}
-		dynamic_cast<CModel*>(m_pDummyObject->Find_Component(TEXT("Com_Model")))->Write_File_GCM(CModel::TYPE_ANIM, temp);
+		static_cast<CModel*>(m_pDummyObject->Find_Component(TEXT("Com_Model")))->Write_File_GCM(CModel::TYPE_ANIM, temp);
 	}
 }
 

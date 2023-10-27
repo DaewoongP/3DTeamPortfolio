@@ -47,7 +47,7 @@ HRESULT CEvent_Cliffside::Initialize(void* pArg)
 
 		if (wstring::npos != wstrObjTag.find(TEXT("Professor_Fig")))
 		{
-			CProfessor_Fig* pFig = dynamic_cast<CProfessor_Fig*>(Pair.second);
+			CProfessor_Fig* pFig = static_cast<CProfessor_Fig*>(Pair.second);
 			if (nullptr == pFig)
 				continue;
 

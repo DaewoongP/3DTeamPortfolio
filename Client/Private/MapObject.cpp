@@ -172,9 +172,6 @@ void CMapObject::Late_Tick(_float fTimeDelta)
 
 HRESULT CMapObject::Render()
 {
-	if (FAILED(__super::Render()))
-		return E_FAIL;
-
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 

@@ -45,7 +45,7 @@ HRESULT CItem::Initialize(void* pArg)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	m_pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(
+	m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(
 		LEVEL_STATIC
 		, TEXT("Layer_Player")
 		, TEXT("GameObject_Player")));

@@ -390,7 +390,7 @@ HRESULT CNavigation_Window::Navigation_List()
 			{
 				m_iCurrentCellIndex = m_iSelecIndex;
 
-				CCamera_Free* pCamera = dynamic_cast<CCamera_Free*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), TEXT("GameObject_Camera_Free")));
+				CCamera_Free* pCamera = static_cast<CCamera_Free*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), TEXT("GameObject_Camera_Free")));
 				if (nullptr == pCamera)
 					return E_FAIL;
 

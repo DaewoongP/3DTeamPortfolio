@@ -159,7 +159,7 @@ HRESULT CBreath::Add_Components()
 
 	/* Object Cylinder */
 	BEGININSTANCE;
-	m_pCylinder = dynamic_cast<CCylinder*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Cylinder")));
+	m_pCylinder = static_cast<CCylinder*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Cylinder")));
 	ENDINSTANCE;
 	if(nullptr == m_pCylinder)
 	{

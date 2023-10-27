@@ -69,7 +69,7 @@ void CField_Guide::Tick(_float fTimeDelta)
 		CGameInstance* pGameInstance = CGameInstance::GetInstance();
 		Safe_AddRef(pGameInstance);
 
-		m_pMenu = dynamic_cast<CMain_Menu*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Menu_UI"), TEXT("GameObject_UI_Main_Menu")));
+		m_pMenu = static_cast<CMain_Menu*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Menu_UI"), TEXT("GameObject_UI_Main_Menu")));
 		Safe_AddRef(m_pMenu);
 
 		Safe_Release(pGameInstance);
@@ -355,18 +355,18 @@ HRESULT CField_Guide::Create_BackGround()
 	ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 	ReadFile(hFile, szGroupName, dwStrByte, &dwByte, nullptr);
 
-	CUI_Back* pBack = dynamic_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_FieldGuide_UI"), TEXT("Com_UI_Effect_Back_FieldGuide_Back")));
+	CUI_Back* pBack = static_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_FieldGuide_UI"), TEXT("Com_UI_Effect_Back_FieldGuide_Back")));
 	pBack->Load(Load_File(hFile));
 
 	_uint iSize = { 0 };
 	ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
 
-	CUI_Effect_Back* pHouse = dynamic_cast<CUI_Effect_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_FieldGuide_UI"), TEXT("Com_UI_Effect_Back_FieldGuide_House")));
+	CUI_Effect_Back* pHouse = static_cast<CUI_Effect_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_FieldGuide_UI"), TEXT("Com_UI_Effect_Back_FieldGuide_House")));
 	pHouse->Load(Load_File(hFile));
 	pHouse->Set_Parent(pBack);
 	pHouse->Set_Effecttype(CUI_Effect_Back::ALPHA);
 
-	CUI_Effect_Back* pRayburst = dynamic_cast<CUI_Effect_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_FieldGuide_UI"), TEXT("Com_UI_Effect_Back_FieldGuide_Rayburst")));
+	CUI_Effect_Back* pRayburst = static_cast<CUI_Effect_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_FieldGuide_UI"), TEXT("Com_UI_Effect_Back_FieldGuide_Rayburst")));
 	pRayburst->Load(Load_File(hFile));
 	pRayburst->Set_Parent(pBack);
 	pRayburst->Set_Effecttype(CUI_Effect_Back::ALPHA);

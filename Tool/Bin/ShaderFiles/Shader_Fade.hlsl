@@ -3,7 +3,7 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D g_FadeTexture;
 float g_fFade;
 bool g_isFade;
-
+float4 g_vFadeColor = { 0.f, 0.f, 0.f, 1.f };
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -46,9 +46,8 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
-    float4 vColor = g_FadeTexture.Sample(LinearSampler, In.vTexUV);
-
-    Out.vColor = g_fFade * vColor;
+    //float4 vColor = g_FadeTexture.Sample(LinearSampler, In.vTexUV);
+    Out.vColor = g_fFade * g_vFadeColor;
     
     return Out;
 }

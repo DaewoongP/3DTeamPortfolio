@@ -20,7 +20,7 @@ HRESULT CEvent_Spawn_Dragon_2::Initialize(void* pArg)
 
 	BEGININSTANCE;
 
-	m_pDragon = dynamic_cast<CConjuredDragon*>(pGameInstance->Find_Component_In_Layer(LEVEL_SANCTUM, TEXT("Layer_Monster"), TEXT("GameObject_ConjuredDragon")));
+	m_pDragon = static_cast<CConjuredDragon*>(pGameInstance->Find_Component_In_Layer(LEVEL_SANCTUM, TEXT("Layer_Monster"), TEXT("GameObject_ConjuredDragon")));
 	if (nullptr == m_pDragon)
 	{
 		ENDINSTANCE;

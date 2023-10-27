@@ -210,7 +210,7 @@ void CUI_Window::Open_Object_List()
 				ImGui::SetItemDefaultFocus();
 				//_tchar wszGameObjectName[MAX_PATH];
 				//lstrcpy(wszGameObjectName, m_pUIVector[i]->Get_Tag());
-				m_pDummy_UI = dynamic_cast<CDummy_UI*>(m_pUIVector[i]);
+				m_pDummy_UI = static_cast<CDummy_UI*>(m_pUIVector[i]);
 				string DragFloatTag = "Transform##";
 				_float4x4 pMatrix = m_pUIVector[i]->Get_Transform()->Get_WorldMatrix();
 
@@ -223,12 +223,12 @@ void CUI_Window::Open_Object_List()
 				//	pGameObejctVector[i]->Get_Transform()->Set_WorldMatrix(pMatrix);
 				_float2 fScale = _float2(pMatrix.Right().x, pMatrix.Up().y);
 
-				// float2 fXY = dynamic_cast<CDummy_UI*>(m_pUIVector[i])->WorldPos_To_UIPos(pMatrix.Translation().x, pMatrix.Translation().y);
+				// float2 fXY = static_cast<CDummy_UI*>(m_pUIVector[i])->WorldPos_To_UIPos(pMatrix.Translation().x, pMatrix.Translation().y);
 				_float fZ = pMatrix.Translation().z;
 
-				//dynamic_cast<CDummy_UI*>(m_pUIVector[i])->Set_fXY(fXY.x, fXY.y);
-				dynamic_cast<CDummy_UI*>(m_pUIVector[i])->Set_fZ(fZ);
-				dynamic_cast<CDummy_UI*>(m_pUIVector[i])->Set_Size(fScale.x, fScale.y);
+				//static_cast<CDummy_UI*>(m_pUIVector[i])->Set_fXY(fXY.x, fXY.y);
+				static_cast<CDummy_UI*>(m_pUIVector[i])->Set_fZ(fZ);
+				static_cast<CDummy_UI*>(m_pUIVector[i])->Set_Size(fScale.x, fScale.y);
 
 				GetWindowRect(g_hWnd, &rc);
 				ImGui::SetNextWindowPos(ImVec2(_float(rc.left) + 200, _float(rc.top + 600.f)) + m_vWindowPos);
@@ -256,16 +256,16 @@ void CUI_Window::Select_Obejct(CGameObject* pGameObject)
 
 	Add_Group(pGameObject);
 
-	_float4 Color = dynamic_cast<CDummy_UI*>(pGameObject)->Get_vColor();
+	_float4 Color = static_cast<CDummy_UI*>(pGameObject)->Get_vColor();
 	
 	if (ImGui::ColorEdit4("Color Picker", (float*)&Color))
 	{
-		dynamic_cast<CDummy_UI*>(pGameObject)->Set_vColor(Color);
+		static_cast<CDummy_UI*>(pGameObject)->Set_vColor(Color);
 	}
 
-	_bool	isAlpha = dynamic_cast<CDummy_UI*>(pGameObject)->Get_bAlpha();
+	_bool	isAlpha = static_cast<CDummy_UI*>(pGameObject)->Get_bAlpha();
 	ImGui::Checkbox("isAlpha", &isAlpha);
-	dynamic_cast<CDummy_UI*>(pGameObject)->Set_bAlpha(isAlpha);
+	static_cast<CDummy_UI*>(pGameObject)->Set_bAlpha(isAlpha);
 
 
 	Select_Object_ID(pGameObject);
@@ -281,7 +281,7 @@ void CUI_Window::Select_Obejct(CGameObject* pGameObject)
 
 		if (m_isOpenSelectAlphaTexture)
 		{
-			Select_AlphaTexture(dynamic_cast<CDummy_UI*>(pGameObject));
+			Select_AlphaTexture(static_cast<CDummy_UI*>(pGameObject));
 		}
 	}
 
@@ -292,7 +292,7 @@ void CUI_Window::Select_Obejct(CGameObject* pGameObject)
 	{
 		if (nullptr != m_pDummy_UI_Group)
 		{
-			m_pDummy_UI_Group->Delete(dynamic_cast<CDummy_UI*>(pGameObject));
+			m_pDummy_UI_Group->Delete(static_cast<CDummy_UI*>(pGameObject));
 		}
 		pGameObject->Set_ObjEvent(CGameObject::OBJ_EVENT::OBJ_DEAD);
 	}
@@ -551,10 +551,10 @@ void CUI_Window::Interaction_UI()
 	{
 		CGameInstance* pGameInstance = CGameInstance::GetInstance();
 		Safe_AddRef(pGameInstance);
-		if (dynamic_cast<CDummy_UI*>(pGameObject)->Is_In_Rect(g_hWnd) &&
+		if (static_cast<CDummy_UI*>(pGameObject)->Is_In_Rect(g_hWnd) &&
 			pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
 		{
-			m_pDummy_UI = dynamic_cast<CDummy_UI*>(pGameObject);
+			m_pDummy_UI = static_cast<CDummy_UI*>(pGameObject);
 			Safe_Release(pGameInstance);
 			break;
 		}
@@ -596,7 +596,7 @@ void CUI_Window::Correction_Pick()
 			else
 				CurrentMousePos.y += (10 - iRoundY);
 
-			CDummy_UI* pParent = dynamic_cast<CDummy_UI*>(m_pDummy_UI->Get_Parent());
+			CDummy_UI* pParent = static_cast<CDummy_UI*>(m_pDummy_UI->Get_Parent());
 
 			if (nullptr != pParent)
 			{
@@ -617,7 +617,7 @@ void CUI_Window::Correction_Pick()
 
 void CUI_Window::Select_Object_ID(CGameObject* pGameObject)
 {
-	m_iIDIndex = (_int)dynamic_cast<CDummy_UI*>(pGameObject)->Get_UI_ID();
+	m_iIDIndex = (_int)static_cast<CDummy_UI*>(pGameObject)->Get_UI_ID();
 	const _char* szID[] = { "NONE", "BUTTON", "PROGRESS", "END"};
 
 	if (ImGui::BeginCombo("ID List", szID[m_iIDIndex]))
@@ -630,7 +630,7 @@ void CUI_Window::Select_Object_ID(CGameObject* pGameObject)
 			{
 				ImGui::SetItemDefaultFocus(); // 선택한 항목을 기본으로 설정
 				m_iIDIndex = i;
-				dynamic_cast<CDummy_UI*>(pGameObject)->Set_eUIID((CDummy_UI::UI_ID)m_iIDIndex);
+				static_cast<CDummy_UI*>(pGameObject)->Set_eUIID((CDummy_UI::UI_ID)m_iIDIndex);
 			}
 
 			if (isSelected)
@@ -728,7 +728,7 @@ void CUI_Window::Open_Font_List()
 			if (m_isFontSelected)
 			{
 				ImGui::SetItemDefaultFocus();
-				m_pDummy_Font = dynamic_cast<CDummy_Font*>(m_pFontVector[i]);
+				m_pDummy_Font = static_cast<CDummy_Font*>(m_pFontVector[i]);
 				//string DragFloatTag = "Transform##";
 				//_float4x4 pMatrix = m_pUIVector[i]->Get_Transform()->Get_WorldMatrix();
 
@@ -841,12 +841,12 @@ void CUI_Window::Add_Group(CGameObject* pGameObject)
 
 		if (m_isParent)
 		{
-			dynamic_cast<CDummy_UI*>(pGameObject)->Set_bParent();
-			dynamic_cast<CDummy_UI_Group*>(m_pGroupVector[m_AddGroupIndex])->Set_Parent(dynamic_cast<CDummy_UI*>(pGameObject));
+			static_cast<CDummy_UI*>(pGameObject)->Set_bParent();
+			static_cast<CDummy_UI_Group*>(m_pGroupVector[m_AddGroupIndex])->Set_Parent(static_cast<CDummy_UI*>(pGameObject));
 		}
 		else
 		{
-			dynamic_cast<CDummy_UI_Group*>(m_pGroupVector[m_AddGroupIndex])->Set_Child(dynamic_cast<CDummy_UI*>(pGameObject));
+			static_cast<CDummy_UI_Group*>(m_pGroupVector[m_AddGroupIndex])->Set_Child(static_cast<CDummy_UI*>(pGameObject));
 		}
 	}
 
@@ -927,21 +927,21 @@ void CUI_Window::UI_Gruop_Combo()
 	}
 
 	_char wszGaemObject[MAX_PATH] = {};
-	WCharToChar(dynamic_cast<CDummy_UI_Group*>(m_pGroupVector[m_GroupComboIndex])->Get_GroupName(), wszGaemObject);
+	WCharToChar(static_cast<CDummy_UI_Group*>(m_pGroupVector[m_GroupComboIndex])->Get_GroupName(), wszGaemObject);
 
 	if (ImGui::BeginCombo("Group List", wszGaemObject))
 	{
 		for (int i = 0; i < m_pGroupVector.size(); i++)
 		{
 			bool isSelected = (m_GroupComboIndex == i);
-			const _tchar* gameObjectName = dynamic_cast<CDummy_UI_Group*>(m_pGroupVector[i])->Get_GroupName();
+			const _tchar* gameObjectName = static_cast<CDummy_UI_Group*>(m_pGroupVector[i])->Get_GroupName();
 			WCharToChar(gameObjectName, wszGaemObject);
 
 			if (ImGui::Selectable(wszGaemObject, isSelected))
 			{
 				ImGui::SetItemDefaultFocus(); // 선택한 항목을 기본으로 설정
 				m_GroupComboIndex = i;
-				m_pDummy_UI_Group = dynamic_cast<CDummy_UI_Group*>(m_pGroupVector[i]);
+				m_pDummy_UI_Group = static_cast<CDummy_UI_Group*>(m_pGroupVector[i]);
 			}
 
 			if (isSelected)
@@ -1044,12 +1044,12 @@ HRESULT CUI_Window::Save_Data(_tchar* pFilePath)
 		{
 			// 그룹의 Tag
 			_tchar wszGroupName[MAX_PATH] = TEXT("");
-			lstrcpy(wszGroupName, dynamic_cast<CDummy_UI_Group*>(pGroup)->Get_GroupName());
+			lstrcpy(wszGroupName, static_cast<CDummy_UI_Group*>(pGroup)->Get_GroupName());
 			DWORD dwStrByte = sizeof(_tchar) * (lstrlen(wszGroupName) + 1);
 			WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 			WriteFile(hFile, wszGroupName, dwStrByte, &dwByte, nullptr);
 
-			CDummy_UI* pParent = dynamic_cast<CDummy_UI_Group*>(pGroup)->Get_Parent();
+			CDummy_UI* pParent = static_cast<CDummy_UI_Group*>(pGroup)->Get_Parent();
 
 			_float2 vCombinedXY = pParent->Get_vCombinedXY();
 			WriteFile(hFile, &vCombinedXY, sizeof(_float2), &dwByte, nullptr);
@@ -1073,45 +1073,45 @@ HRESULT CUI_Window::Save_Data(_tchar* pFilePath)
 			WriteFile(hFile, &m_fSizeY, sizeof(_float), &dwByte, nullptr);
 
 			_tchar wszTextureName[MAX_PATH] = TEXT("");
-			lstrcpy(wszTextureName, dynamic_cast<CDummy_UI*>(pParent)->Get_TextureName());
+			lstrcpy(wszTextureName, static_cast<CDummy_UI*>(pParent)->Get_TextureName());
 			dwStrByte = sizeof(_tchar) * (lstrlen(wszTextureName) + 1);
 			WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 			WriteFile(hFile, wszTextureName, dwStrByte, &dwByte, nullptr);
 
 			_tchar wszTexturePath[MAX_PATH] = TEXT("");
-			lstrcpy(wszTexturePath, dynamic_cast<CDummy_UI*>(pParent)->Get_TexturePath());
+			lstrcpy(wszTexturePath, static_cast<CDummy_UI*>(pParent)->Get_TexturePath());
 			dwStrByte = sizeof(_tchar) * (lstrlen(wszTexturePath) + 1);
 			WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 			WriteFile(hFile, wszTexturePath, dwStrByte, &dwByte, nullptr);
 
-			CDummy_UI::UI_ID eType = dynamic_cast<CDummy_UI*>(pParent)->Get_UI_ID();
+			CDummy_UI::UI_ID eType = static_cast<CDummy_UI*>(pParent)->Get_UI_ID();
 			WriteFile(hFile, &eType, sizeof(CDummy_UI::UI_ID), &dwByte, nullptr);
 
-			_bool isParent = dynamic_cast<CDummy_UI*>(pParent)->Get_bParent();
+			_bool isParent = static_cast<CDummy_UI*>(pParent)->Get_bParent();
 			WriteFile(hFile, &isParent, sizeof(_bool), &dwByte, nullptr);
 
-			_bool isAlpha = dynamic_cast<CDummy_UI*>(pParent)->Get_bAlpha();
+			_bool isAlpha = static_cast<CDummy_UI*>(pParent)->Get_bAlpha();
 			WriteFile(hFile, &isAlpha, sizeof(_bool), &dwByte, nullptr);
 
 			if (isAlpha)
 			{
-				_float4 vColor = dynamic_cast<CDummy_UI*>(pParent)->Get_vColor();
+				_float4 vColor = static_cast<CDummy_UI*>(pParent)->Get_vColor();
 				WriteFile(hFile, &vColor, sizeof(_float4), &dwByte, nullptr);
 
 				_tchar wszAlphaTexturePrototypeTag[MAX_PATH] = TEXT("");
-				lstrcpy(wszAlphaTexturePrototypeTag, dynamic_cast<CDummy_UI*>(pParent)->Get_AlphaPrototypeTag());
+				lstrcpy(wszAlphaTexturePrototypeTag, static_cast<CDummy_UI*>(pParent)->Get_AlphaPrototypeTag());
 				dwStrByte = sizeof(_tchar) * (lstrlen(wszAlphaTexturePrototypeTag) + 1);
 				WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 				WriteFile(hFile, wszAlphaTexturePrototypeTag, dwStrByte, &dwByte, nullptr);
 
 				_tchar wszAlphaTextureFilePath[MAX_PATH] = TEXT("");
-				lstrcpy(wszAlphaTextureFilePath, dynamic_cast<CDummy_UI*>(pParent)->Get_AlphaTexturePath());
+				lstrcpy(wszAlphaTextureFilePath, static_cast<CDummy_UI*>(pParent)->Get_AlphaTexturePath());
 				dwStrByte = sizeof(_tchar) * (lstrlen(wszAlphaTextureFilePath) + 1);
 				WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 				WriteFile(hFile, wszAlphaTextureFilePath, dwStrByte, &dwByte, nullptr);
 			}
 
-			vector <class CDummy_UI*>* m_Childs = dynamic_cast<CDummy_UI_Group*>(pGroup)->Get_Childs();
+			vector <class CDummy_UI*>* m_Childs = static_cast<CDummy_UI_Group*>(pGroup)->Get_Childs();
 			iSize = m_Childs->size();
 			WriteFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
 
@@ -1139,39 +1139,39 @@ HRESULT CUI_Window::Save_Data(_tchar* pFilePath)
 				WriteFile(hFile, &m_fSizeY, sizeof(_float), &dwByte, nullptr);
 
 				_tchar wszTextureName[MAX_PATH] = TEXT("");
-				lstrcpy(wszTextureName, dynamic_cast<CDummy_UI*>(pChild)->Get_TextureName());
+				lstrcpy(wszTextureName, static_cast<CDummy_UI*>(pChild)->Get_TextureName());
 				dwStrByte = sizeof(_tchar) * (lstrlen(wszTextureName) + 1);
 				WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 				WriteFile(hFile, wszTextureName, dwStrByte, &dwByte, nullptr);
 
 				_tchar wszTexturePath[MAX_PATH] = TEXT("");
-				lstrcpy(wszTexturePath, dynamic_cast<CDummy_UI*>(pChild)->Get_TexturePath());
+				lstrcpy(wszTexturePath, static_cast<CDummy_UI*>(pChild)->Get_TexturePath());
 				dwStrByte = sizeof(_tchar) * (lstrlen(wszTexturePath) + 1);
 				WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 				WriteFile(hFile, wszTexturePath, dwStrByte, &dwByte, nullptr);
 
-				CDummy_UI::UI_ID eType = dynamic_cast<CDummy_UI*>(pChild)->Get_UI_ID();
+				CDummy_UI::UI_ID eType = static_cast<CDummy_UI*>(pChild)->Get_UI_ID();
 				WriteFile(hFile, &eType, sizeof(CDummy_UI::UI_ID), &dwByte, nullptr);
 
-				_bool isParent = dynamic_cast<CDummy_UI*>(pChild)->Get_bParent();
+				_bool isParent = static_cast<CDummy_UI*>(pChild)->Get_bParent();
 				WriteFile(hFile, &isParent, sizeof(_bool), &dwByte, nullptr);
 
-				_bool isAlpha = dynamic_cast<CDummy_UI*>(pChild)->Get_bAlpha();
+				_bool isAlpha = static_cast<CDummy_UI*>(pChild)->Get_bAlpha();
 				WriteFile(hFile, &isAlpha, sizeof(_bool), &dwByte, nullptr);
 
 				if (isAlpha)
 				{
-					_float4 vColor = dynamic_cast<CDummy_UI*>(pChild)->Get_vColor();
+					_float4 vColor = static_cast<CDummy_UI*>(pChild)->Get_vColor();
 					WriteFile(hFile, &vColor, sizeof(_float4), &dwByte, nullptr);
 
 					_tchar wszAlphaTexturePrototypeTag[MAX_PATH] = TEXT("");
-					lstrcpy(wszAlphaTexturePrototypeTag, dynamic_cast<CDummy_UI*>(pChild)->Get_AlphaPrototypeTag());
+					lstrcpy(wszAlphaTexturePrototypeTag, static_cast<CDummy_UI*>(pChild)->Get_AlphaPrototypeTag());
 					dwStrByte = sizeof(_tchar) * (lstrlen(wszAlphaTexturePrototypeTag) + 1);
 					WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 					WriteFile(hFile, wszAlphaTexturePrototypeTag, dwStrByte, &dwByte, nullptr);
 
 					_tchar wszAlphaTextureFilePath[MAX_PATH] = TEXT("");
-					lstrcpy(wszAlphaTextureFilePath, dynamic_cast<CDummy_UI*>(pChild)->Get_AlphaTexturePath());
+					lstrcpy(wszAlphaTextureFilePath, static_cast<CDummy_UI*>(pChild)->Get_AlphaTexturePath());
 					dwStrByte = sizeof(_tchar) * (lstrlen(wszAlphaTextureFilePath) + 1);
 					WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 					WriteFile(hFile, wszAlphaTextureFilePath, dwStrByte, &dwByte, nullptr);
@@ -1195,16 +1195,16 @@ HRESULT CUI_Window::Save(_tchar* pFilePath)
 	}
 
 	_tchar wszGroupName[MAX_PATH] = TEXT("");
-	lstrcpy(wszGroupName, dynamic_cast<CDummy_UI_Group*>(m_pDummy_UI_Group)->Get_GroupName());
+	lstrcpy(wszGroupName, static_cast<CDummy_UI_Group*>(m_pDummy_UI_Group)->Get_GroupName());
 	DWORD dwStrByte = sizeof(_tchar) * (lstrlen(wszGroupName) + 1);
 	WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 	WriteFile(hFile, wszGroupName, dwStrByte, &dwByte, nullptr);
 
-	CDummy_UI* pParent = dynamic_cast<CDummy_UI*>(m_pDummy_UI_Group->Get_Parent());
+	CDummy_UI* pParent = static_cast<CDummy_UI*>(m_pDummy_UI_Group->Get_Parent());
 
 	pParent->Save(hFile, dwByte);
 
-	vector <class CDummy_UI*>* m_Childs = dynamic_cast<CDummy_UI_Group*>(m_pDummy_UI_Group)->Get_Childs();
+	vector <class CDummy_UI*>* m_Childs = static_cast<CDummy_UI_Group*>(m_pDummy_UI_Group)->Get_Childs();
 
 	_uint iSize = m_Childs->size();
 	WriteFile(hFile, &iSize, sizeof(iSize), &dwByte, nullptr);

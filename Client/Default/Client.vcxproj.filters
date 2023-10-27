@@ -265,9 +265,6 @@
     <Filter Include="02. GameObject\01. Player\01. StateMachine\08. CraftState">
       <UniqueIdentifier>{d5efb67c-1189-46bb-bd77-8c0dcdb658ba}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Levels\05. Sky">
-      <UniqueIdentifier>{8daaa0f5-8eda-4c23-b5f9-f4ec1e89c6c1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Levels\98. Static">
       <UniqueIdentifier>{3494d13e-3cfe-40db-a8ee-e89e7a07f613}</UniqueIdentifier>
     </Filter>
@@ -1002,6 +999,12 @@
     </Filter>
     <Filter Include="07. Events\Smeade\Event_Smeade">
       <UniqueIdentifier>{890fa528-9c0c-4d93-93e2-6289c8ea4852}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\05. Sky">
+      <UniqueIdentifier>{8daaa0f5-8eda-4c23-b5f9-f4ec1e89c6c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\Coin">
+      <UniqueIdentifier>{632277b4-5f7a-4e80-8da8-4cd95bc0c5e0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2025,6 +2028,9 @@
     <ClInclude Include="..\Public\BeastBalloon_D.h">
       <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Balloon_Coin.h">
+      <Filter>02. GameObject\13. FlyGameManager\Coin</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -3001,6 +3007,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\BeastBalloon_D.cpp">
       <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Balloon_Coin.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Coin</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

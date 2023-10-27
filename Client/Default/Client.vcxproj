@@ -169,6 +169,7 @@
     <ClInclude Include="..\Public\Animation_Camera_Model.h" />
     <ClInclude Include="..\public\AshwinderEggs_Item.h" />
     <ClInclude Include="..\Public\Balloon.h" />
+    <ClInclude Include="..\public\Balloon_Coin.h" />
     <ClInclude Include="..\public\Balloon_Timer.h" />
     <ClInclude Include="..\Public\BeastBalloon_A.h" />
     <ClInclude Include="..\Public\BeastBalloon_B.h" />
@@ -526,6 +527,7 @@
     <ClCompile Include="..\Private\Animation_Camera_Model.cpp" />
     <ClCompile Include="..\Private\AshwinderEggs_Item.cpp" />
     <ClCompile Include="..\Private\Balloon.cpp" />
+    <ClCompile Include="..\private\Balloon_Coin.cpp" />
     <ClCompile Include="..\private\Balloon_Timer.cpp" />
     <ClCompile Include="..\Private\BeastBalloon_A.cpp" />
     <ClCompile Include="..\Private\BeastBalloon_B.cpp" />

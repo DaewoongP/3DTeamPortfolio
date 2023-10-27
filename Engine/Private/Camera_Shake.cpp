@@ -125,6 +125,20 @@ void CCamera_Shake::GoAndComeBackShake()
 		m_Camera_Shake_Desc.Shake_Info_Desc.vShake_Axis_Set);
 }
 
+void CCamera_Shake::Shake()
+{
+m_pCamera_Manager->Set_Shake(
+	m_Camera_Shake_Desc.eShake_Priority,
+	m_Camera_Shake_Desc.Shake_Info_Desc.eShake_Type,
+	m_Camera_Shake_Desc.Shake_Info_Desc.eShake_Axis,
+	m_Camera_Shake_Desc.Shake_Info_Desc.eEase,
+	m_Camera_Shake_Desc.Shake_Info_Desc.fShakeSpeed,
+	m_Camera_Shake_Desc.Shake_Info_Desc.fShakeDuration,
+	m_Camera_Shake_Desc.Shake_Info_Desc.fShakePower,
+	m_Camera_Shake_Desc.Shake_Info_Desc.eShake_Power,
+	m_Camera_Shake_Desc.Shake_Info_Desc.vShake_Axis_Set);
+}
+
 
 
 

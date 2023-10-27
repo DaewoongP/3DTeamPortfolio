@@ -15,7 +15,7 @@ CStateMachine::CStateMachine(const CStateMachine& rhs)
 
 HRESULT CStateMachine::Set_StateMachine(const _tchar* _pTag)
 {
-	if (dynamic_cast<CStateContext*>(m_pOwner)->Set_StateMachine(_pTag))
+	if (static_cast<CStateContext*>(m_pOwner)->Set_StateMachine(_pTag))
 	{
 		MSG_BOX("Failed Set StateMachine");
 

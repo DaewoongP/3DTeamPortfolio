@@ -63,7 +63,7 @@ void CDummyTrail::Tick_Imgui(_float _fTimeDelta)
 
 
 	CImWindow* pWindow = CWindow_Manager::GetInstance()->Find_Window(TEXT("Effect_Window"));
-	CEffect_Window* pEffectWindow = dynamic_cast<CEffect_Window*>(pWindow);
+	CEffect_Window* pEffectWindow = static_cast<CEffect_Window*>(pWindow);
 	if (ImGui::BeginTable("CDummyTrailTable", 2))
 	{
 		ImGui::TableNextRow();
