@@ -259,7 +259,7 @@ HRESULT CTreasure_Chest::Add_Components()
 	lstrcpy(pDesc.m_wszName, TEXT("보물상자"));
 	lstrcpy(pDesc.m_wszFunc, TEXT("열기"));
 	m_UIMatirx = m_pTransform->Get_WorldMatrix();
-	m_UIMatirx._42 += 1.5f;
+	m_UIMatirx._42 += 1.25f;
 	pDesc.m_WorldMatrix = &m_UIMatirx;
 
 	m_pUI_Interaction = static_cast<CUI_Interaction*>(pGameInstance->Clone_Component(LEVEL_STATIC,
