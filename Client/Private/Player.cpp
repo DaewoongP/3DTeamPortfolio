@@ -3722,7 +3722,12 @@ void CPlayer::Free()
 		{
 			Safe_Release(m_vecPlayer_StateParicle.data()[i]);
 		}
+		for (auto& pMeshEffect : m_vecMeshEffect)
+		{
+			Safe_Release(pMeshEffect);
+		}
 
+		m_vecMeshEffect.clear();
 		m_vecCoolTimeRatio.clear();
 		m_vecSpellCheck.clear();
 	}
