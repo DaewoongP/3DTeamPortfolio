@@ -109,21 +109,12 @@ void CTreasure_Chest::Tick(_float fTimeDelta)
 			m_isGetItem = false;
 
 			// 인벤토리 획득 처리
-			for (int i = 0; i < 2; ++i)
-			{
-				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_DUGBOG_TONGUE);
-				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LACEWING_FLIES);
-				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_KNOTGRASS);
-				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_MALLOWSWEET);
-				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_MOONSTONE);
-				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_SHRIVELFIG);
-				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_MONGREL_FUR);
-				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_TROLL_BOGEYS);
-				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_STENCH_OF_THE_DEAD);
-				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_SPIDER_FANG);
-				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_DITTANY_LEAVES);
-				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_FLUXWEED_STEM);
-			}			
+			m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LACEWING_FLIES);
+			m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_KNOTGRASS);
+			m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_MONGREL_FUR);
+			m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_SPIDER_FANG);
+			m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_DITTANY_LEAVES);
+			m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_FLUXWEED_STEM);
 #ifdef _DEBUG
 			cout << "보물 상자가 열리고 어떤 아이템 획득" << '\n';
 #endif // _DEBUG

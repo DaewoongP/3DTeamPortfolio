@@ -181,13 +181,13 @@ HRESULT CMapObject_Ins::Render()
 		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 		m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
 
-		if (wcswcs(Meshes[iMeshCount]->Get_MeshName(), TEXT("Glass")))
+		if (wcswcs(Meshes[iMeshCount]->Get_MeshName(), TEXT("Glass")) && true == g_isNight)
 		{
 			m_vEmissive = _float4(0.5f, 0.5f, 0.45f, 0.5f);
 			if (FAILED(m_pShader->Bind_RawValue("g_vBloom", &m_vEmissive, sizeof(_float4))))
 				return E_FAIL;
 		}
-		else if (wcswcs(Meshes[iMeshCount]->Get_MeshName(), TEXT("SUB_GEN_A_EXT_LOD1_Alphas")))
+		else if (wcswcs(Meshes[iMeshCount]->Get_MeshName(), TEXT("SUB_GEN_A_EXT_LOD1_Alphas")) && true == g_isNight)
 		{
 			m_vEmissive = _float4(0.5f, 0.5f, 0.45f, 0.5f);
 			if (FAILED(m_pShader->Bind_RawValue("g_vBloom", &m_vEmissive, sizeof(_float4))))
