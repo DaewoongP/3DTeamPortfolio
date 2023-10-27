@@ -85,7 +85,14 @@ void CEvent_Vault_Next_Level::Check_Event(_float fTimeDelta)
 		_bool isGateOpen = m_pVault_Gate->Get_GateOpen();
 
 		if (true == isGateOpen)
+		{
+			CGameInstance* pGameInstance = CGameInstance::GetInstance();
+			Safe_AddRef(pGameInstance);
+			pGameInstance->Get_CurrentLevel()->Set_NextLevel(LEVEL_SMITH);
+			Safe_Release(pGameInstance);
+
 			m_isCheck = true;
+		}
 	}
 }
 CEvent_Vault_Next_Level* CEvent_Vault_Next_Level::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

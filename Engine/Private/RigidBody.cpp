@@ -390,7 +390,7 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 	// 트리거 설정
 	if (true == pRigidBodyDesc->isTrigger)
 	{
-		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eTRIGGER_SHAPE;// | PxShapeFlag::eVISUALIZATION;
+		ePxFlag = PxShapeFlag::eTRIGGER_SHAPE; // | PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eVISUALIZATION;
 	}
 	else
 	{

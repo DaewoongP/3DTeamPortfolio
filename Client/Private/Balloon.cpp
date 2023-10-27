@@ -2,6 +2,7 @@
 #include "FlyGameManager.h"
 #include "GameInstance.h"
 #include "Racer.h"
+#include "Balloon_Timer.h"
 
 CBalloon::CBalloon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -33,20 +34,26 @@ HRESULT CBalloon::Initialize(void* pArg)
 	m_pTransform->Set_Scale(pInitDesc->vScale);
 	m_isColliderOn = true;
 	m_isDead = true;
+
+	// balloon timer 생성
+	// 트랜스폼 필요해요 ㅠ
+	FAILED_CHECK_RETURN(Make_Timer(), E_FAIL);
+
 	return S_OK;
 }
 
 void CBalloon::Tick(_float fTimeDelta)
 {
-	if (true == m_isDead)
-	{
-		if (m_isColliderOn)
-		{
-			m_isColliderOn = false;
-			m_pRigidBody->Disable_Collision("Body");
-		}
-		return;
-	}
+	// if (true == m_pTimer->Is_Finished())
+	// {
+	// 	if (m_isColliderOn)
+	// 	{
+	// 		m_isColliderOn = false;
+	// 		m_pRigidBody->Disable_Collision("Body");
+	// 	}
+	// 	return;
+	// 	m_isDead = true;
+	// }
 		
 
 	__super::Tick(fTimeDelta);
@@ -57,6 +64,8 @@ void CBalloon::Late_Tick(_float fTimeDelta)
 {
 	if (true == m_isDead)
 		return;
+
+	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRenderer)
 	{
@@ -150,6 +159,7 @@ HRESULT CBalloon::Add_Components()
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
 		MSG_BOX("CLoadBalloon Failed Clone Component : Com_Renderer");
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -192,6 +202,25 @@ HRESULT CBalloon::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4
 	return S_OK;
 }
 
+HRESULT CBalloon::Make_Timer()
+{
+	CBalloon_Timer::BALLOONTIMERDESC BalloonTimerDesc;
+	BalloonTimerDesc.fTime = 10.f * (rand() % 10);
+	BalloonTimerDesc.vScale = _float2(10.f, 10.f);
+	BalloonTimerDesc.vPosition = m_pTransform->Get_Position();
+
+	/* Com_Timer */
+	if (FAILED(CComposite::Add_Component(LEVEL_SKY, TEXT("Prototype_GameObject_Balloon_Timer"),
+		TEXT("Com_Timer"), reinterpret_cast<CComponent**>(&m_pTimer), &BalloonTimerDesc)))
+	{
+		MSG_BOX("CBalloon Failed Clone Component : Com_Timer");
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
 void CBalloon::Free()
 {
 	__super::Free();
@@ -201,4 +230,5 @@ void CBalloon::Free()
 	Safe_Release(m_pShadowShader);
 	Safe_Release(m_pRigidBody);
 	Safe_Release(m_pRenderer);
+	Safe_Release(m_pTimer);
 }

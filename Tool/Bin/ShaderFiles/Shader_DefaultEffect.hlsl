@@ -14,6 +14,7 @@ float4 g_vCamPos;
 bool g_isFlutter = false;
 float g_fTimeAcc;
 float3 g_vStrength = { 1.f, 1.f, 1.f };
+float g_fRimPower;
 
 // For. Emission
 bool g_isEmission = { false };
@@ -210,6 +211,45 @@ PS_OUT PS_NONBLEND(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_DRAGON_PROTEGO(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT)0;
+    float3 vViewDir;
+    TilingAndOffset_float(In.vTexUV, g_vTililing, g_vOffset, In.vTexUV);
+
+    vector vDiffuse = g_MaterialTexture.Sample(LinearSampler, In.vTexUV);
+    //vector		vClipTexture = g_ClipTexture.Sample(LinearSampler, In.vTexUV);
+
+    if (Out.vColor.a < g_fClipThreshold)
+    {
+        discard;
+    }
+
+    Out.vColor.rgb = vDiffuse.rgb;
+    Out.vColor *= g_vColor;
+
+    if (g_isEmission)
+    {
+        float fEmissionValue = 0.f, fRemapValue = 0.f;
+        vector vEmission = g_EmissionTexture.Sample(LinearSampler, In.vTexUV);
+        float fSineTime = sin(g_fFrequency * g_fTimeAcc);
+        if (0 == g_iClipChannel)
+            fEmissionValue = vEmission.r;
+        else if (1 == g_iClipChannel)
+            fEmissionValue = vEmission.g;
+        else if (2 == g_iClipChannel)
+            fEmissionValue = vEmission.b;
+        else if (3 == g_iClipChannel)
+            fEmissionValue = vEmission.a;
+        // out1 + (val - in1) * (out2 - out1) / (in2 - in1);
+
+        Remap_float(fSineTime, float2(-1.f, 1.f), g_vRemap, fRemapValue);
+
+        Out.vColor += fRemapValue * fEmissionValue * float4(g_vEmissionColor, 0.f);
+    }
+    return Out;
+}
+
 technique11 DefaultTechnique
 {
     pass Default_AlphaBlend
@@ -257,5 +297,17 @@ technique11 DefaultTechnique
         HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader = compile ps_5_0 PS_MAIN();
+    }
+
+    pass DragonProtego
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_DRAGON_PROTEGO();
     }
 }
