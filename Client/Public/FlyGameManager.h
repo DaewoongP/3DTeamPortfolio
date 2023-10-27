@@ -4,6 +4,8 @@
 BEGIN(Client)
 class CRacer;
 class CBalloon;
+class CUI_Group_Timer;
+class CUI_Group_Score;
 END
 
 BEGIN(Client)
@@ -47,6 +49,9 @@ private:
     //풀같은 존재인데, 따로 클래스 팔 이유가 없어보여서 내부에 생성함.
     vector<CBalloon*>        m_pAllBalloonGroup = {};
     vector<wstring>          m_wszBalloonComponentTag = {};
+
+    CUI_Group_Timer*        m_pUiTimer = { nullptr };
+    CUI_Group_Score*        m_pUiScore = { nullptr };
 
 private:
     //게임 진행시간임.
