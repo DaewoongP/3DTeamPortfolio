@@ -101,12 +101,20 @@ void CEvent_Smeade_Next_Level::Check_Event_Sanctum(_float fTimeDelta)
 
 	if (true == m_pNext_Level_Sanctum->Is_Collision())
 	{
-		CGameInstance* pGameInstance = CGameInstance::GetInstance();
-		Safe_AddRef(pGameInstance);
-		pGameInstance->Get_CurrentLevel()->Set_NextLevel(LEVEL_SANCTUM);
-		Safe_Release(pGameInstance);
+		BEGININSTANCE;
+
+		if (false == g_isPensiveDead)
+		{
+			pGameInstance->Get_CurrentLevel()->Set_NextLevel(LEVEL_VAULT);
+		}
+
+		else
+		{
+			pGameInstance->Get_CurrentLevel()->Set_NextLevel(LEVEL_SANCTUM);
+		}
 
 		m_isCheck_Sanctum = true;
+		ENDINSTANCE;
 	}
 }
 
