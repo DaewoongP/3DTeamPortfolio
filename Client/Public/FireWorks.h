@@ -14,15 +14,16 @@ END
 BEGIN(Client)
 class CFireWorks : public CGameObject
 {
-	enum  FIRETYPE
+	enum  FIRESTATE
 	{
-		TYPE_CIRCLE,TYPE_SPREAD,TYPE_END
+		TYPE_UP,TYPE_BURST,TYPE_READY,TYPE_END
 	};
+
+	
 
 	typedef struct tagFire
 	{
 		_float4x4 WorldMatrix; // 상태 행렬
-		FIRETYPE m_eType;
 	}FireDesc;
 
 private:
@@ -39,16 +40,15 @@ public:
 	HRESULT Play(_float3 vPosition);
 
 private:
-	CShader* m_pShader = { nullptr };
-	CShader* m_pShadowShader = { nullptr };
-	CRenderer* m_pRenderer = { nullptr };
-	CModel* m_pModel = { nullptr };
+	
 	vector<CParticleSystem*> m_vecParticle;
 	_float3 FirePosition = _float3(0.f, 0.f, 0.f);
 	_uint m_iLevel = 0;
 	_float m_fHeight = { 0.f };
-	FIRETYPE m_eType;
-
+	FIRESTATE m_eType;
+	_float m_fTimeAcc = { 0.f };
+	_uint m_iRandTime = { 0 };
+	_float m_fRandHeight = { 0.f };
 private:
 	HRESULT Add_Components();
 	

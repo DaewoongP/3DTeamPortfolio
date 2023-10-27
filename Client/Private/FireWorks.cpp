@@ -11,7 +11,7 @@ CFireWorks::CFireWorks(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :CG
 {
 }
 
-CFireWorks::CFireWorks(const CFireWorks& rhs) : CGameObject(rhs),m_iLevel(rhs.m_iLevel)
+CFireWorks::CFireWorks(const CFireWorks& rhs) : CGameObject(rhs),m_iLevel(rhs.m_iLevel),m_eType(rhs.m_eType)
 {
 }
 
@@ -21,12 +21,12 @@ HRESULT CFireWorks::Initialize_Prototype(_uint iLevel)
 		return E_FAIL;
 
 	m_iLevel = iLevel;
-	//m_eType = eType;
+	m_eType = TYPE_UP;
 	BEGININSTANCE
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireWorks_Stem")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireWorks_Stem")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/FireWorks/FireStem"), m_iLevel))))
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/FireWorks/Stem"), m_iLevel))))
 		{
 			__debugbreak();
 			ENDINSTANCE;
@@ -45,10 +45,54 @@ HRESULT CFireWorks::Initialize_Prototype(_uint iLevel)
 		}
 	}
 
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireWorks_Head2")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireWorks_Head2")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/FireWorks/FireHead2"), m_iLevel))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireWorks_Head3")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireWorks_Head3")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/FireWorks/FireHead3"), m_iLevel))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireWorks_SpreadHead")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireWorks_SpreadHead")
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/FireWorks/FireHeadSpread"), m_iLevel))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireWorks_SpreadHead2")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireWorks_SpreadHead2")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/FireWorks/FireHeadSpread2"), m_iLevel))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireWorks_SpreadHead3")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireWorks_SpreadHead3")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/FireWorks/FireHeadSpread3"), m_iLevel))))
 		{
 			__debugbreak();
 			ENDINSTANCE;
@@ -78,17 +122,14 @@ HRESULT CFireWorks::Initialize(void* pArg)
 
 	m_pTransform->Set_WorldMatrix(*pMatrix);
 	FirePosition = m_pTransform->Get_Position();
+	
+	m_iRandTime = rand() % 7 + 10;
 
-	//for (_uint i = 0; i < m_vecParticle.size(); ++i)
-	//{
-	//	m_vecParticle[i]->Play(FirePosition);
-	//}
+	m_vecParticle[0]->Get_Transform()->Set_Position(FirePosition);
+
 	m_vecParticle[0]->Play(FirePosition);
 
-	//Play(FirePosition);
-
-	//for (_uint i = 0; i < m_vecParticle.size(); ++i)
-	//	m_vecParticle[i]->Play(m_pTransform->Get_Position());
+	
 	
 	return S_OK;
 }
@@ -97,17 +138,51 @@ HRESULT CFireWorks::Initialize(void* pArg)
 void CFireWorks::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	m_fHeight += fTimeDelta;
-	m_pTransform->Set_Position(_float3(FirePosition.x, FirePosition.y+ m_fHeight, FirePosition.z));
-	_uint i = rand() % 2 + 1;
-	_uint RandTime = rand() % 15 + 15;
-	
-	if (RandTime <= m_fHeight)
-	{
-		m_vecParticle[0]->Stop();
-		m_vecParticle[i]->Play(m_pTransform->Get_Position());
-		m_fHeight = 0.f;
-	}
+
+		switch (m_eType)
+		{
+		case Client::CFireWorks::TYPE_UP:
+		{	m_fHeight += fTimeDelta * 5.f;
+			m_pTransform->Set_Position(_float3(FirePosition.x, FirePosition.y + m_fHeight, FirePosition.z));
+			m_vecParticle[0]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+			if (m_fRandHeight <= m_fHeight)
+			{
+				m_vecParticle[0]->Stop();
+			
+				m_fHeight = 0.f;
+				m_eType = TYPE_BURST;
+			}
+			}
+				break;
+		case Client::CFireWorks::TYPE_BURST:
+		{
+			m_vecParticle[0]->Get_Transform()->Set_Position(FirePosition);
+			_uint i = rand() % 7;
+			m_vecParticle[i]->Play(m_pTransform->Get_Position());
+			m_fTimeAcc = 0.f;
+			m_eType = TYPE_READY;
+		}
+			break;
+		case Client::CFireWorks::TYPE_READY:
+		{	m_fTimeAcc += fTimeDelta;
+			 m_iRandTime = rand() % 5 + 6;
+		
+		 if (m_iRandTime < m_fTimeAcc)
+		 {
+			 m_vecParticle[0]->Play(FirePosition);
+			 m_fRandHeight = Random_Generator(10.f, 35.f);
+			 m_eType = TYPE_UP;
+		 }
+
+		}
+			break;
+		case Client::CFireWorks::TYPE_END:
+			break;
+		default:
+			break;
+		}
+
+
 	
 
 }
@@ -147,7 +222,7 @@ HRESULT CFireWorks::Play(_float3 vPosition)
 
 HRESULT CFireWorks::Add_Components()
 {
-	m_vecParticle.resize(3);
+	m_vecParticle.resize(7);
 
 	if (FAILED(CComposite::Add_Component(LEVEL_SKY, TEXT("Prototype_GameObject_FireWorks_Stem"),
 		TEXT("Com_FireWorks_Stem"), reinterpret_cast<CComponent**>(&m_vecParticle[0]))))
@@ -165,13 +240,48 @@ HRESULT CFireWorks::Add_Components()
 		return E_FAIL;
 	}
 
+	if (FAILED(CComposite::Add_Component(LEVEL_SKY, TEXT("Prototype_GameObject_FireWorks_Head2"),
+		TEXT("Com_FireWorks_Head2"), reinterpret_cast<CComponent**>(&m_vecParticle[2]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_FireWorks_Head2)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	if (FAILED(CComposite::Add_Component(LEVEL_SKY, TEXT("Prototype_GameObject_FireWorks_Head3"),
+		TEXT("Com_FireWorks_Head3"), reinterpret_cast<CComponent**>(&m_vecParticle[3]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_FireWorks_Head3)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
 	if (FAILED(CComposite::Add_Component(LEVEL_SKY, TEXT("Prototype_GameObject_FireWorks_SpreadHead"),
-		TEXT("Com_FireWorks_SpreadHead"), reinterpret_cast<CComponent**>(&m_vecParticle[2]))))
+		TEXT("Com_FireWorks_SpreadHead"), reinterpret_cast<CComponent**>(&m_vecParticle[4]))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_FireWorks_SpreadHead)");
 		__debugbreak();
 		return E_FAIL;
 	}
+
+	if (FAILED(CComposite::Add_Component(LEVEL_SKY, TEXT("Prototype_GameObject_FireWorks_SpreadHead2"),
+		TEXT("Com_FireWorks_SpreadHead2"), reinterpret_cast<CComponent**>(&m_vecParticle[5]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_FireWorks_SpreadHead2)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	if (FAILED(CComposite::Add_Component(LEVEL_SKY, TEXT("Prototype_GameObject_FireWorks_SpreadHead3"),
+		TEXT("Com_FireWorks_SpreadHead3"), reinterpret_cast<CComponent**>(&m_vecParticle[6]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_FireWorks_SpreadHead3)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
+
+
 
 
 	return S_OK;
