@@ -21,6 +21,7 @@
 #include "UI_Group_Enemy_HP.h"
 #include "Sequence_MoveTarget.h"
 #include "Weapon_DarkWizard_Wand.h"
+#include "Broom_Stick_DarkWizard.h"
 
 #include "UI_Damage.h"
 

@@ -240,7 +240,7 @@
     <ClInclude Include="..\Public\Outfit_Celtic_A.h" />
     <ClInclude Include="..\Public\Outfit_DarkArts_Delux.h" />
     <ClInclude Include="..\Public\Outfit_DarkArts_Delux_A.h" />
-    <ClInclude Include="..\Public\Jammin.h" />
+    <ClInclude Include="..\Public\FlyMan.h" />
     <ClInclude Include="..\Public\Level_Sky.h" />
     <ClInclude Include="..\public\Level_Static.h" />
     <ClInclude Include="..\Public\Magic_Sound_Manager.h" />
@@ -592,7 +592,7 @@
     <ClCompile Include="..\Private\Outfit_Celtic_A.cpp" />
     <ClCompile Include="..\Private\Outfit_DarkArts_Delux.cpp" />
     <ClCompile Include="..\Private\Outfit_DarkArts_Delux_A.cpp" />
-    <ClCompile Include="..\Private\Jammin.cpp" />
+    <ClCompile Include="..\Private\FlyMan.cpp" />
     <ClCompile Include="..\Private\Level_Sky.cpp" />
     <ClCompile Include="..\private\Level_Static.cpp" />
     <ClCompile Include="..\Private\Magic_Sound_Manager.cpp" />

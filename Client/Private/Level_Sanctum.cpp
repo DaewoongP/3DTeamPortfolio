@@ -131,7 +131,7 @@ HRESULT CLevel_Sanctum::Ready_Layer_Monsters(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Sanctum_1.mon"));
+	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Sanctum.mon"));
 
 	ENDINSTANCE;
 

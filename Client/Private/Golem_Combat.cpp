@@ -496,6 +496,16 @@ HRESULT CGolem_Combat::Make_Death(_Inout_ CSequence* pSequence)
 
 				return false;
 			});
+		pAction_Death_Ground->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				Set_Dead();
+				return true;
+			});
+		pAction_Knockback->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				Set_Dead();
+				return true;
+			});
 
 		// Set Options 
 		function<void(const _float&)> Func = [&](const _float& fTimeDelta) { this->DeathBehavior(fTimeDelta); };

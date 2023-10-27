@@ -7,6 +7,7 @@
 #include "Trigger.h"
 #include "Dummy_NPC.h"
 #include "House_Elf.h"
+#include "FlyMan.h"
 
 #include "Cat.h"
 
@@ -149,6 +150,17 @@ HRESULT CLevel_Smith::Ready_Layer_NPC(const _tchar* pLayerTag)
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Smith_Fig"), pLayerTag, TEXT("GameObject_Smith_Fig"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Smith_Fig)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	CFlyMan::FLYMANINITDESC FlymanInitDesc;
+	FlymanInitDesc.isCheckPosition = true;
+	FlymanInitDesc.wstrAnimationTag = TEXT("Hu_Broom_Hover_Idle_anm");
+	FlymanInitDesc.WorldMatrix = XMMatrixRotationY(XMConvertToRadians(145.5f)) * XMMatrixTranslation(29.8f, 4.8f, 69.9f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_FlyMan"), pLayerTag, TEXT("GameObject_FlyMan"), &FlymanInitDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_FlyMan)");
 		ENDINSTANCE;
 		return E_FAIL;
 	}

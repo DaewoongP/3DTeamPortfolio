@@ -1,17 +1,19 @@
-#include "Jammin.h"
+#include "FlyMan.h"
 #include "GameInstance.h"
 
-CJammin::CJammin(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+#include "Broom_Stick_DarkWizard.h"
+
+CFlyMan::CFlyMan(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
 }
 
-CJammin::CJammin(const CJammin& rhs)
+CFlyMan::CFlyMan(const CFlyMan& rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CJammin::Initialize_Prototype()
+HRESULT CFlyMan::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -19,7 +21,7 @@ HRESULT CJammin::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CJammin::Initialize(void* pArg)
+HRESULT CFlyMan::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -27,7 +29,7 @@ HRESULT CJammin::Initialize(void* pArg)
 	if (nullptr == pArg)
 		return E_FAIL;
 
-	ELFINITDESC* pDesc = reinterpret_cast<ELFINITDESC*>(pArg);
+	FLYMANINITDESC* pDesc = reinterpret_cast<FLYMANINITDESC*>(pArg);
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -45,19 +47,22 @@ HRESULT CJammin::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CJammin::Tick(_float fTimeDelta)
+void CFlyMan::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
 	if (nullptr != m_pModelCom)
+	{
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+		m_pModelCom->Play_Animation(fTimeDelta, CModel::UNDERBODY, m_pTransform);
+	}
 
 #ifdef _DEBUG
 	ADD_IMGUI([&] { this->Tick_TestShake(); });
 #endif // _DEBUG
 }
 
-void CJammin::Late_Tick(_float fTimeDelta)
+void CFlyMan::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
@@ -68,7 +73,7 @@ void CJammin::Late_Tick(_float fTimeDelta)
 	}
 }
 
-HRESULT CJammin::Render()
+HRESULT CFlyMan::Render()
 {
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
@@ -85,26 +90,18 @@ HRESULT CJammin::Render()
 			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, DIFFUSE)))
 				throw TEXT("Bind_Material Diffuse");
 
-			if (4 == i)
-			{
-				if (FAILED(m_pShaderCom->Begin("HairMesh")))
-					throw TEXT("Shader Begin HairMesh");
-			}
-			else
-			{
-				if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_NormalTexture", i, NORMALS)))
-					throw TEXT("Bind_Material Normal");
+			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_NormalTexture", i, NORMALS)))
+				throw TEXT("Bind_Material Normal");
 
-				if (FAILED(m_pShaderCom->Begin("AnimMesh")))
-					throw TEXT("Shader Begin AnimMesh");
-			}
+			if (FAILED(m_pShaderCom->Begin("AnimMesh")))
+				throw TEXT("Shader Begin AnimMesh");
 
 			if (FAILED(m_pModelCom->Render(i)))
 				throw TEXT("Model Render");
 		}
 		catch (const _tchar* pErrorTag)
 		{
-			wstring wstrErrorMSG = TEXT("[CJammin] Failed Render : ");
+			wstring wstrErrorMSG = TEXT("[CFlyMan] Failed Render : ");
 			wstrErrorMSG += pErrorTag;
 			MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 
@@ -115,7 +112,7 @@ HRESULT CJammin::Render()
 	return S_OK;
 }
 
-HRESULT CJammin::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
+HRESULT CFlyMan::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
 	if (FAILED(SetUp_ShadowShaderResources(LightViewMatrix, LightProjMatrix)))
 		return E_FAIL;
@@ -137,7 +134,7 @@ HRESULT CJammin::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatr
 		}
 		catch (const _tchar* pErrorTag)
 		{
-			wstring wstrErrorMSG = TEXT("[CJammin] Failed Render : ");
+			wstring wstrErrorMSG = TEXT("[CFlyMan] Failed Render : ");
 			wstrErrorMSG += pErrorTag;
 			MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 
@@ -150,7 +147,7 @@ HRESULT CJammin::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatr
 
 #ifdef _DEBUG
 
-void CJammin::Tick_TestShake()
+void CFlyMan::Tick_TestShake()
 {
 	if (false == m_isCheckPosition)
 		return;
@@ -179,7 +176,7 @@ void CJammin::Tick_TestShake()
 
 #endif
 
-HRESULT CJammin::Add_Components()
+HRESULT CFlyMan::Add_Components()
 {
 	try /* Check Add_Components */
 	{
@@ -189,7 +186,7 @@ HRESULT CJammin::Add_Components()
 			throw TEXT("Com_Renderer");
 
 		/* For.Com_Model */
-		if (FAILED(CComposite::Add_Component(LEVEL_SMITH, TEXT("Prototype_Component_Model_Vendor"),
+		if (FAILED(CComposite::Add_Component(LEVEL_SMITH, TEXT("Prototype_Component_Model_FlyMan"),
 			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 			throw TEXT("Com_Model");
 
@@ -202,10 +199,25 @@ HRESULT CJammin::Add_Components()
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowAnimMesh"),
 			TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShaderCom))))
 			throw TEXT("Com_ShadowShader");
-	}
+
+		/* For.Com_Broom_Stick */
+		const CBone* pBone = m_pModelCom->Get_Bone(TEXT("LeftInHandRing"));
+		if (nullptr == pBone)
+			throw TEXT("pBone is nullptr");
+
+		CBroom_Stick_DarkWizard::PARENTMATRIXDESC ParentMatrixDesc;
+		ParentMatrixDesc.OffsetMatrix = pBone->Get_OffsetMatrix();
+		ParentMatrixDesc.PivotMatrix = m_pModelCom->Get_PivotFloat4x4();
+		ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
+		ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+
+		if (FAILED(Add_Component(LEVEL_SMITH, TEXT("Prototype_GameObject_Broom_Stick_DarkWizard"),
+			TEXT("Com_Broom_Stick"), reinterpret_cast<CComponent**>(&m_pBroom_Stick), &ParentMatrixDesc)))
+			throw TEXT("Com_Broom_Stick");
+}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CJammin] Failed Add_Components : \n");
+		wstring wstrErrorMSG = TEXT("[CFlyMan] Failed Add_Components : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -216,7 +228,7 @@ HRESULT CJammin::Add_Components()
 	return S_OK;
 }
 
-HRESULT CJammin::SetUp_ShaderResources()
+HRESULT CFlyMan::SetUp_ShaderResources()
 {
 	BEGININSTANCE;
 
@@ -243,7 +255,7 @@ HRESULT CJammin::SetUp_ShaderResources()
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CJammin] Failed SetUp_ShaderResources : \n");
+		wstring wstrErrorMSG = TEXT("[CFlyMan] Failed SetUp_ShaderResources : \n");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 
@@ -257,7 +269,7 @@ HRESULT CJammin::SetUp_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CJammin::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
+HRESULT CFlyMan::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
 	BEGININSTANCE;
 
@@ -280,7 +292,7 @@ HRESULT CJammin::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CJammin] Failed SetUp_ShadowShaderResources : \n");
+		wstring wstrErrorMSG = TEXT("[CFlyMan] Failed SetUp_ShadowShaderResources : \n");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 
@@ -294,33 +306,33 @@ HRESULT CJammin::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x
 	return S_OK;
 }
 
-CJammin* CJammin::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CFlyMan* CFlyMan::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CJammin* pInstance = New CJammin(pDevice, pContext);
+	CFlyMan* pInstance = New CFlyMan(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CJammin");
+		MSG_BOX("Failed to Created CFlyMan");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CJammin::Clone(void* pArg)
+CGameObject* CFlyMan::Clone(void* pArg)
 {
-	CJammin* pInstance = New CJammin(*this);
+	CFlyMan* pInstance = New CFlyMan(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CJammin");
+		MSG_BOX("Failed to Cloned CFlyMan");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CJammin::Free()
+void CFlyMan::Free()
 {
 	__super::Free();
 

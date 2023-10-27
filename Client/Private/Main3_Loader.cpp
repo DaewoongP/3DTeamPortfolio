@@ -46,10 +46,11 @@
 #include "Vendor.h"
 #include "Oakes.h"
 #include "House_Elf.h"
-#include "Jammin.h"
+#include "FlyMan.h"
 #include "Dummy_NPC.h"
 #include "Smith_FIg.h"
 #include "Card_Fig.h"
+#include "Broom_Stick_DarkWizard.h"
 
 #pragma region Items
 
@@ -275,17 +276,27 @@ HRESULT CMain3_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 			CHouse_Elf::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Doby");
 
-		/* For.Prototype_Component_Model_Jammin */
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Jammin"),
-		//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Jammin/Jammin.dat")))))
-		//	throw TEXT("Prototype_Component_Model_Jammin");
+		/* For.Prototype_Component_Model_Broom_Stick_DarkWizard */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Broom_Stick_DarkWizard"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/DarkWizardBroom/DarkWizardBroom.dat")))))
+			throw TEXT("Prototype_Component_Model_Broom_Stick_DarkWizard");
 
-		///* For.Prototype_GameObject_Jammin */
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Jammin"),
-		//	CJammin::Create(m_pDevice, m_pContext))))
-		//	throw TEXT("Prototype_GameObject_Jammin");
+		/* For.Prototype_GameObject_Broom_Stick_DarkWizard */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Broom_Stick_DarkWizard"),
+			CBroom_Stick_DarkWizard::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Broom_Stick_DarkWizard");
 
-		_float4x4 PivotMatrix;
+		_float4x4 PivotMatrix = XMMatrixIdentity();
+		/* For.Prototype_Component_Model_FlyMan */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_FlyMan"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/DarkWizard_Fly/DarkWizard_Fly.gcm")))))
+			throw TEXT("Prototype_Component_Model_FlyMan");
+
+		/* For.Prototype_GameObject_FlyMan */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FlyMan"),
+			CFlyMan::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_FlyMan");
+
 		PivotMatrix = XMMatrixRotationQuaternion(XMQuaternionRotationRollPitchYaw(0.f, XMConvertToRadians(180.f), 0.f));
 		/* For.Prototype_Component_Model_CustomModel_NPC_M */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_CustomModel_NPC_M"),
