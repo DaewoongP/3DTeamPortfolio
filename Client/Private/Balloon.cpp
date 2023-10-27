@@ -15,6 +15,7 @@ void CBalloon::ResetBallon(BALLOONINITDESC InitDesc)
 	m_isColliderOn = true;
 	m_pRigidBody->Enable_Collision("Body", this, nullptr);
 	m_pTimer->Reset(m_pTransform->Get_Position(), GetRandomFloat(40.f, 60.f));
+	m_pCoin->Reset(m_pTransform->Get_Position(), (CBalloon_Coin::COIN)(m_iScore - 1));
 }
 
 CBalloon::CBalloon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -261,7 +262,7 @@ HRESULT CBalloon::Make_Timer()
 	
 	CBalloon_Coin::COINDESC CoinDesc;
 	CoinDesc.eCoinColorType = CBalloon_Coin::COIN_RAINBOW;
-	CoinDesc.vScale = _float2(20.f, 20.f);
+	CoinDesc.vScale = _float2(0.5f, 0.5f);
 	CoinDesc.vPosition = m_pTransform->Get_Position();
 
 	/* Com_Coin */

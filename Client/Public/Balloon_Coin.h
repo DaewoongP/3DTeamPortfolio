@@ -32,7 +32,7 @@ private:
 	virtual ~CBalloon_Coin() = default;
 
 public:
-	void Reset();
+	void Reset(_float3 vPosition, COIN eCoinType);
 
 public:
 	HRESULT Initialize(void* pArg) override;
@@ -42,14 +42,19 @@ public:
 
 private:
 	CShader*						m_pShader = { nullptr };
-	CTexture*						m_pTexture = { nullptr };
+	vector<CTexture*>				m_Textures;
 	CRenderer*						m_pRenderer = { nullptr };
 	CVIBuffer_Point_Instance*		m_pBuffer = { nullptr };
 
 private:
+	_float3							m_vInitPosition;
 	_uint							m_iCoinMaxIndex = { 0 };
 	_uint							m_iCoinIndex = { 0 };
 	COIN							m_eCoinColor = { COIN_END };
+
+private:
+	_float							m_fTimeAcc = { 0.f };
+	_float							m_fTime = { 0.f };
 
 private:
 	HRESULT Add_Components();

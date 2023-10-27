@@ -188,8 +188,6 @@ HRESULT CLevel_Sky::Ready_Shader()
 	CRenderer* pRenderer = static_cast<CRenderer*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer")));
 	pRenderer->Defualt_Shading();
 
-
-
 	Safe_Release(pRenderer);
 
 	ENDINSTANCE;

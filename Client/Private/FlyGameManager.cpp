@@ -30,7 +30,7 @@ void CFlyGameManager::ReplaceBallon()
 		{
 			CBalloon::BALLOONINITDESC initDesc = {};
 			ZEROMEM(&initDesc);
-			initDesc.iScore = rand() % 5;
+			initDesc.iScore = (rand() % 5) +1;
 			_float fTempscale = Random_Generator(0.5f, 2.f);
 			initDesc.vScale = _float3(fTempscale, fTempscale, fTempscale);
 			initDesc.fForce = GetRandomFloat(40.f, 60.f);

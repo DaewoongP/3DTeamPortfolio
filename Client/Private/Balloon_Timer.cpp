@@ -47,7 +47,7 @@ void CBalloon_Timer::Late_Tick(_float fTimeDelta)
 	Safe_Release(pGameInstance);
 
 	if (m_fTimeAcc <= m_fTime)
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
 }
 
 HRESULT CBalloon_Timer::Render()
