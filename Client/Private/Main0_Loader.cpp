@@ -115,6 +115,7 @@
 #pragma endregion
 
 #pragma region Event
+#include "Balloon_Coin.h"
 #include "Racer.h"
 #include "FlyGameManager.h"
 #pragma endregion
@@ -358,6 +359,11 @@ HRESULT CMain0_Loader::Loading_For_Sky(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Racer"),
 			CRacer::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Racer");
+		
+		/* For.Prototype_GameObject_Balloon_Coin */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Balloon_Coin"),
+			CBalloon_Coin::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Balloon_Coin");
 
 		/* For.Prototype_GameObject_FlyGameManager */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FlyGameManager"),
@@ -430,7 +436,7 @@ HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 
 		/* For.Prototype_GameObject_Event_Spawn_Dragon */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Spawn_Dragon"),
-			CEvent_Spawn_Dragon::Create(m_pDevice, m_pContext))))
+			CEvent_Spawn_Dragon::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Event_Spawn_Dragon");
 
 		/* For.Prototype_GameObject_Event_Spawn_Dragon_2 */
@@ -442,6 +448,22 @@ HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MapParticle_Sanctum_CircularRocks01"),
 			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/MapParticle/Sanctum/CircularRocks01"), eLevelID))))
 			throw TEXT("Prototype_GameObject_MapParticle_Sanctum_CircularRocks01");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg01"),
+			CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/SummonRituals/DarkWizardSpawnToConjuredDragonEgg01.ME"), eLevelID))))
+			throw TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg01");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg02"),
+			CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/SummonRituals/DarkWizardSpawnToConjuredDragonEgg02.ME"), eLevelID))))
+			throw TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg02");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg03"),
+			CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/SummonRituals/DarkWizardSpawnToConjuredDragonEgg03.ME"), eLevelID))))
+			throw TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg03");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg04"),
+			CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/SummonRituals/DarkWizardSpawnToConjuredDragonEgg04.ME"), eLevelID))))
+			throw TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg04");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -1162,6 +1184,50 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Conjured_Step_Dust"),
 				TEXT("../../Resources/GameData/ParticleData/BoneDragon/StepDust/"), 3)))
 				throw TEXT("Reserve Particle : Particle_Conjured_Step_Dust");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Conjured_FallDown_Dust_01"),
+				TEXT("../../Resources/GameData/ParticleData/Misc/FallDownDust01/"), 1)))
+				throw TEXT("Reserve Particle : Particle_Conjured_FallDown_Dust_01");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Conjured_FallDown_Dust_02"),
+				TEXT("../../Resources/GameData/ParticleData/Misc/FallDownDust02/"), 1)))
+				throw TEXT("Reserve Particle : Particle_Conjured_FallDown_Dust_02");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Blue"),
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Blue/"), 2)))
+				throw TEXT("Reserve Particle : Particle_DestroyProtego_Blue");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Purple"),
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Purple/"), 2)))
+				throw TEXT("Reserve Particle : Particle_DestroyProtego_Purple");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Red"),
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Red/"), 2)))
+				throw TEXT("Reserve Particle : Particle_DestroyProtego_Red");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Yellow"),
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Yellow/"), 2)))
+				throw TEXT("Reserve Particle : Particle_DestroyProtego_Yellow");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Blue2"),
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Blue2/"), 2)))
+				throw TEXT("Reserve Particle : Particle_DestroyProtego_Blue2");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Purple2"),
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Purple2/"), 2)))
+				throw TEXT("Reserve Particle : Particle_DestroyProtego_Purple2");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Red2"),
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Red2/"), 2)))
+				throw TEXT("Reserve Particle : Particle_DestroyProtego_Red2");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Yellow2"),
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Yellow2/"), 2)))
+				throw TEXT("Reserve Particle : Particle_DestroyProtego_Yellow2");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_CircularRocks02"),
+				TEXT("../../Resources/GameData/ParticleData/MapParticle/CircularRocks02/"), 2)))
+				throw TEXT("Reserve Particle : Particle_CircularRocks02");
 		}
 #pragma endregion
 

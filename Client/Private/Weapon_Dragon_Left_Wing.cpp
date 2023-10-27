@@ -45,6 +45,8 @@ HRESULT CWeapon_Dragon_Left_Wing::Set_Bone_Data(CModel* pModel)
 
 void CWeapon_Dragon_Left_Wing::Enter_Hit_Terrain()
 {
+	m_pEffect_WingAttack_TraceDust->Play(m_Bones[2].vPosition);
+
 	if (nullptr != m_pEffect_WingAttack_TraceRocks)
 		m_pEffect_WingAttack_TraceRocks->Play(m_Bones[0].vPosition);
 }
@@ -225,6 +227,7 @@ void CWeapon_Dragon_Left_Wing::Free()
 	Safe_Release(m_pRigidBody);
 	Safe_Release(m_pEffect_WingAttack_TraceDarkCloud);
 	Safe_Release(m_pEffect_WingAttack_TraceRocks);
+	Safe_Release(m_pEffect_WingAttack_TraceDust);
 #ifdef _DEBUG
 	Safe_Release(m_pRenderer);
 #endif // _DEBUG

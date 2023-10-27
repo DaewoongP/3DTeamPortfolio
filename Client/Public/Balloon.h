@@ -12,6 +12,7 @@ END
 
 BEGIN(Client)
 class CBalloon_Timer;
+class CBalloon_Coin;
 END
 
 BEGIN(Client)
@@ -60,6 +61,7 @@ protected:
 	CRigidBody* m_pRigidBody = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 	CBalloon_Timer* m_pTimer = { nullptr };
+	CBalloon_Coin* m_pCoin = { nullptr };
 
 protected:
 	_int			m_iScore = { 0 };

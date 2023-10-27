@@ -12,7 +12,7 @@
 BEGIN(Engine)
 
 class CRenderer;
-
+class CParticleSystem;
 END
 
 BEGIN(Client)
@@ -39,12 +39,16 @@ private:
 	virtual ~CEvent_Spawn_Dragon() = default;
 
 public:
+	HRESULT Initialize_Prototype(_uint iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 
 private:
+	_uint m_iLevel = { 0 };
 	CTrigger* m_pSpawn_Dragon = { nullptr };
+	CParticleSystem* m_pParticle_Dragon_Egg = { nullptr };
+	CParticleSystem* m_pParticle_Dragon_Egg_Distortion = { nullptr };
 
 private:
 	CRenderer* m_pRenderer = { nullptr };
@@ -62,12 +66,11 @@ private: /* 몬스터 스폰 관련 */
 	_bool m_isSpawned_Dragon = { false };
 	void Check_Event_Spawn_Dragon();
 
-
 private:
 	HRESULT Add_Components();
 
 public:
-	static CEvent_Spawn_Dragon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CEvent_Spawn_Dragon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
 	virtual CEvent_Spawn_Dragon* Clone(void* pArg) override;
 	virtual void Free() override;
 };

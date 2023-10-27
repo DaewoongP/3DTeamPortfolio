@@ -1006,6 +1006,9 @@
     <Filter Include="02. GameObject\07. NPC\Crowd">
       <UniqueIdentifier>{616803ff-182f-45f8-970d-796f12e0c7f1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\Coin">
+      <UniqueIdentifier>{632277b4-5f7a-4e80-8da8-4cd95bc0c5e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -2031,6 +2034,9 @@
     <ClInclude Include="..\Public\Crowd.h">
       <Filter>02. GameObject\07. NPC\Crowd</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Balloon_Coin.h">
+      <Filter>02. GameObject\13. FlyGameManager\Coin</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -3010,6 +3016,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Crowd.cpp">
       <Filter>02. GameObject\07. NPC\Crowd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Balloon_Coin.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Coin</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
