@@ -288,6 +288,8 @@ HRESULT CEnergyBall::Initialize_Level(_uint iCurrentLevelIndex)
 {
 	if (FAILED(Make_Notifies_for_Shake()))
 		return E_FAIL;
+
+	return S_OK;
 }
 
 void CEnergyBall::Tick(_float fTimeDelta)
