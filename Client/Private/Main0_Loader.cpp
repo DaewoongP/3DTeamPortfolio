@@ -1162,6 +1162,14 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Conjured_Step_Dust"),
 				TEXT("../../Resources/GameData/ParticleData/BoneDragon/StepDust/"), 3)))
 				throw TEXT("Reserve Particle : Particle_Conjured_Step_Dust");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Balloon_Spread"),
+				TEXT("../../Resources/GameData/ParticleData/Balloon/Spread/"), 30)))
+				throw TEXT("Reserve Particle : Particle_Balloon_Spread");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Balloon_Line"),
+				TEXT("../../Resources/GameData/ParticleData/Balloon/Line/"), 30)))
+				throw TEXT("Reserve Particle : Particle_Balloon_Line");
 		}
 #pragma endregion
 

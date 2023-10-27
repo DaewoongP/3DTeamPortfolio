@@ -3,6 +3,8 @@
 #include "GameInstance.h"
 #include "Racer.h"
 #include "Balloon.h"
+#include "UI_Group_Timer.h"
+#include "UI_Group_Score.h"
 
 CFlyGameManager::CFlyGameManager(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	: CComposite(_pDevice, _pContext)
@@ -223,6 +225,38 @@ HRESULT CFlyGameManager::Add_Components()
 			return E_FAIL;
 		}
 	}
+
+
+
+	CUI_Group_Score::UISCOREDESC ScoreDesc;
+	ZEROMEM(&ScoreDesc);
+	lstrcpy(ScoreDesc.wszNinthName, TEXT("學渡8"));
+	lstrcpy(ScoreDesc.wszSecondName, TEXT("學渡1"));
+	lstrcpy(ScoreDesc.wszThirdName, TEXT("學渡2"));
+	lstrcpy(ScoreDesc.wszFourthName, TEXT("學渡3"));
+	lstrcpy(ScoreDesc.wszFifthName, TEXT("學渡4"));
+	lstrcpy(ScoreDesc.wszSixthName, TEXT("學渡5"));
+	lstrcpy(ScoreDesc.wszSeventhName, TEXT("學渡6"));
+	lstrcpy(ScoreDesc.wszEighthName, TEXT("學渡7"));
+	lstrcpy(ScoreDesc.wszFirstName, TEXT("Ы溯檜橫"));
+	ScoreDesc.pScore = &m_pScoreGroup;
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Score"),
+		TEXT("Com_UI_Score"), reinterpret_cast<CComponent**>(&m_pUiScore), &ScoreDesc)))
+	{
+		MSG_BOX("Failed CFlyGameManager Add_Component : Com_UI_Score");
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Timer"),
+		TEXT("Com_UI_Timer"), reinterpret_cast<CComponent**>(&m_pUiTimer), &m_fGameTimer)))
+	{
+		MSG_BOX("Failed CFlyGameManager Add_Component : Com_UI_Timer");
+		__debugbreak();
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -289,5 +323,8 @@ void CFlyGameManager::Free()
 		{
 			Safe_Release(m_pAllBalloonGroup[i]);
 		}
+
+		Safe_Release(m_pUiScore);
+		Safe_Release(m_pUiTimer);
 	}
 }

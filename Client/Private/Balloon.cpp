@@ -133,6 +133,11 @@ void CBalloon::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	pMgr->ReplaceBallon();
 	pMgr->Racer_AddForce(racerInfo->iRacerNumber,m_eBallonActionType, m_fForce);
 
+	BEGININSTANCE;
+	pGameInstance->Play_Particle(TEXT("Particle_Balloon_Spread"),m_pTransform->Get_Position());
+	pGameInstance->Play_Particle(TEXT("Particle_Balloon_Line"),m_pTransform->Get_Position());
+	ENDINSTANCE;
+
 	m_isDead = true;
 	__super::OnCollisionEnter(CollisionEventDesc);
 }
