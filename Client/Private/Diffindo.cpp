@@ -67,6 +67,35 @@ HRESULT CDiffindo::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Diffindo_Hit_Particle")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Diffindo_Hit_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Diffindo/Hit_Diffindo"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Diffindo_Hit_Boom")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Diffindo_Hit_Boom")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Diffindo/Diffindo_Boom"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Diffindo_Hit_Distortion")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Diffindo_Hit_Distortion")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Diffindo/Distortion"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Diffindo_MeshEffect")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Diffindo_MeshEffect")
@@ -97,7 +126,14 @@ HRESULT CDiffindo::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
-	m_pTransform->Set_Speed(30);
+	m_pTransform->Set_Speed(50);
+	for (_uint i = 0; i < m_ParticleVec->size(); ++i)
+	{
+		m_ParticleVec[EFFECT_STATE_MAIN][i]->Enable();
+		m_ParticleVec[EFFECT_STATE_MAIN][i]->Play();
+	}
+
+
 
 	Ready_Shake(30.0f, 2.0f, 0.04f);
 	return S_OK;
@@ -130,10 +166,17 @@ void CDiffindo::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			0.2f,
 			Shake_Power(CollisionEventDesc.pOtherTransform->Get_Position()),
 			CCamera_Manager::SHAKE_POWER_DECRECENDO);
+		//for(_uint i = 3 ; i<m_ParticleVec->size();++i)
+		//m_ParticleVec[EFFECT_STATE_MAIN][i]->Play(m_pMeshEffect->Get_Transform()->Get_Position());
+		m_ParticleVec[EFFECT_STATE_MAIN][4]->Play(m_pMeshEffect->Get_Transform()->Get_Position());
+		m_ParticleVec[EFFECT_STATE_MAIN][5]->Play(m_pMeshEffect->Get_Transform()->Get_Position());
 
 		ENDINSTANCE;
 #pragma endregion
 	}
+
+
+
 	__super::OnCollisionEnter(CollisionEventDesc);
 }
 
@@ -192,7 +235,7 @@ void CDiffindo::Ready_CastMagic()
 
 	m_fTimeScalePerDitance = 30.f / _float3(m_vEndPosition - m_vStartPosition).Length();
 	m_pMeshEffect->Play(m_vStartPosition);
-	m_ParticleVec[EFFECT_STATE_MAIN][3]->Play(m_pMeshEffect->Get_Transform()->Get_Position(	));
+	m_ParticleVec[EFFECT_STATE_MAIN][3]->Play(m_pMeshEffect->Get_Transform()->Get_Position());
 
 	m_pMeshEffect->Get_Transform()->LookAt(m_vEndPosition);
 	__super::Ready_CastMagic();
@@ -242,6 +285,7 @@ void CDiffindo::Tick_CastMagic(_float fTimeDelta)
 	m_ParticleVec[EFFECT_STATE_MAIN][1]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
 
 	m_ParticleVec[EFFECT_STATE_MAIN][2]->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
+	m_ParticleVec[EFFECT_STATE_MAIN][3]->Get_Transform()->Set_Position(m_pMeshEffect->Get_Transform()->Get_Position());
 
 
 	_float distance =m_pMeshEffect->Get_Transform()->Get_Speed()* m_fLerpAcc;
@@ -249,7 +293,6 @@ void CDiffindo::Tick_CastMagic(_float fTimeDelta)
 	
 	if (distance > 5.f)
 	{
-		m_ParticleVec[EFFECT_STATE_MAIN][3]->Get_Transform()->Set_Position(m_pMeshEffect->Get_Transform()->Get_Position());
 
 	}
 	if (distance>30)
@@ -274,7 +317,7 @@ HRESULT CDiffindo::Add_Components()
 		return E_FAIL;
 	}
 	
-	m_ParticleVec[EFFECT_STATE_MAIN].resize(4);
+	m_ParticleVec[EFFECT_STATE_MAIN].resize(7);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Diffindo_Ball_Twinkle"),
 		TEXT("Com_Ball_Twinkle"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][0]))))
 	{
@@ -300,6 +343,27 @@ HRESULT CDiffindo::Add_Components()
 		TEXT("Com_Move_Particle"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][3]))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Diffindo_Move_Particle)");
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Diffindo_Hit_Particle"),
+		TEXT("Com_Hit_Particle"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][4]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Diffindo_Hit_Particle)");
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Diffindo_Hit_Boom"),
+		TEXT("Com_Hit_Diffindo_Boom"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][5]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Diffindo_Hit_Boom)");
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Diffindo_Hit_Distortion"),
+		TEXT("Com_Diffindo_Hit_Distortion"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][6]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Diffindo_Hit_Distortion)");
 		__debugbreak();
 		return E_FAIL;
 	}

@@ -715,6 +715,9 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Player_Hit_Fog")
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/PlayerHit/HitFog"), eLevelID))))
 			throw TEXT("Prototype_GameObject_Player_Hit_Fog");
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Player_Hit_Circle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/PlayerHit/HitCircle"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Player_Hit_Circle");
 
 #pragma endregion
 
@@ -741,14 +744,30 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 
 #pragma region Potion_Effect
 
-		/*For_Player_WandHeadLight*/
+		/*For_Player_Potion*/
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Heal_Particle")
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/Wiggenweld"), eLevelID))))
 			throw TEXT("Prototype_GameObject_Heal_Particle");
 
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Heal_After_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/Wig_After"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Heal_After_Particle");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Heal_After_Particle2")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/Wig_After2"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Heal_After_Particle2");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Heal_Ground")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/Wig_Ground"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Heal_Ground");
+
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Maxima_Particle")
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/Maxima"), eLevelID))))
 			throw TEXT("Prototype_GameObject_Maxima_Particle");
+		
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Potion_Distortoin")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Potion/Potion_Distortion.ME"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Potion_Distortoin");
 
 #pragma endregion
 
@@ -1039,6 +1058,10 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Particle"),
 				TEXT("../../Resources/GameData/ParticleData/Blink/BlinkParticle/"))))
 				throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Particle");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Ring"),
+				TEXT("../../Resources/GameData/ParticleData/Blink/BlinkRing"))))
+				throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Ring");
 
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Player_Hit_Dust"),
 				TEXT("../../Resources/GameData/ParticleData/PlayerHit/HitDust/"))))

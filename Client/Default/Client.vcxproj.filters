@@ -958,6 +958,9 @@
     <Filter Include="05. Magic\MagicBall\08. Ncendio\Meteor">
       <UniqueIdentifier>{97f40771-8d72-4a53-8140-5be88cc65c3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\03. MapObject\FireWorks">
+      <UniqueIdentifier>{b7215cba-fa2f-42ae-ae7c-54432c46f8ca}</UniqueIdentifier>
+    </Filter>
     <Filter Include="07. Events\Cliffside\Event_Cliffside">
       <UniqueIdentifier>{845740ad-58bc-488d-8592-72c639b6d61c}</UniqueIdentifier>
     </Filter>
@@ -1940,6 +1943,9 @@
     <ClInclude Include="..\Public\UI_Font.h">
       <Filter>02. GameObject\05. UI\Font\Normal</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\FireWorks.h">
+      <Filter>02. GameObject\03. MapObject\FireWorks</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Event_Cliffside.h">
       <Filter>07. Events\Cliffside\Event_Cliffside</Filter>
     </ClInclude>
@@ -2889,6 +2895,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Item.cpp">
       <Filter>02. GameObject\10. Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FireWorks.cpp">
+      <Filter>02. GameObject\03. MapObject\FireWorks</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Event_Cliffside.cpp">
       <Filter>07. Events\Cliffside\Event_Cliffside</Filter>
