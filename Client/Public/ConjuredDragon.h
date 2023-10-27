@@ -149,6 +149,9 @@ private:
 	CCamera_Shake* m_pStep_Shake = { nullptr };
 	CCamera_Shake* m_pPulse_Shake = { nullptr };
 	CCamera_Shake* m_pDeath_Shake = { nullptr };
+	CCamera_Shake* m_pDeath_Shake2 = { nullptr };
+	CCamera_Shake* m_pFallDown_Shake = { nullptr };
+	
 
 private:
 	virtual HRESULT Add_Components_for_Shake();
@@ -231,6 +234,7 @@ private: /* Notify Func */
 	void Death_Enter();
 	void Death_Exit();
 	void Struggle();
+	void Shake_FallDown();
 
 public:
 	static CConjuredDragon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);

@@ -1069,6 +1069,42 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Conjured_FallDown_Dust_02"),
 				TEXT("../../Resources/GameData/ParticleData/Misc/FallDownDust02/"), 1)))
 				throw TEXT("Reserve Particle : Particle_Conjured_FallDown_Dust_02");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Blue"),
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Blue/"), 2)))
+				throw TEXT("Reserve Particle : Particle_DestroyProtego_Blue");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Purple"),
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Purple/"), 2)))
+				throw TEXT("Reserve Particle : Particle_DestroyProtego_Purple");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Red"),
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Red/"), 2)))
+				throw TEXT("Reserve Particle : Particle_DestroyProtego_Red");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Yellow"),
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Yellow/"), 2)))
+				throw TEXT("Reserve Particle : Particle_DestroyProtego_Yellow");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Blue2"),
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Blue2/"), 2)))
+				throw TEXT("Reserve Particle : Particle_DestroyProtego_Blue2");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Purple2"),
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Purple2/"), 2)))
+				throw TEXT("Reserve Particle : Particle_DestroyProtego_Purple2");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Red2"),
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Red2/"), 2)))
+				throw TEXT("Reserve Particle : Particle_DestroyProtego_Red2");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Yellow2"),
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Yellow2/"), 2)))
+				throw TEXT("Reserve Particle : Particle_DestroyProtego_Yellow2");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_CircularRocks02"),
+				TEXT("../../Resources/GameData/ParticleData/MapParticle/CircularRocks02/"), 2)))
+				throw TEXT("Reserve Particle : Particle_CircularRocks02");
 		}
 #pragma endregion
 

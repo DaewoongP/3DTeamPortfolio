@@ -1107,6 +1107,9 @@ HRESULT CRenderer::Render_Fade()
 		return E_FAIL;
 	if (FAILED(m_pFadeTexture->Bind_ShaderResource(m_pFadeShader, "g_FadeTexture")))
 		return E_FAIL;
+	if (FAILED(m_pFadeShader->Bind_RawValue("g_vFadeColor", &m_vFadeColor, sizeof(m_vFadeColor))))
+		return E_FAIL;
+
 	if (true == m_isFade)
 	{
 		CGameInstance* pGameInstance = CGameInstance::GetInstance();
