@@ -26,12 +26,13 @@ public:
 
 private:
 	CShader*						m_pShader = { nullptr };
-	CTexture*						m_pTexture = { nullptr };
+	vector<CTexture*>				m_Textures = { nullptr };
 	CRenderer*						m_pRenderer = { nullptr };
 	CVIBuffer_Point_Instance*		m_pBuffer = { nullptr };
 
 private:
 	HRESULT Add_Component();
+	HRESULT SetUp_ShaderResources();
 
 public:
 	static CBalloon_Coin* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
