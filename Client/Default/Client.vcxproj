@@ -204,6 +204,7 @@
     <ClInclude Include="..\Public\DarkWizard_Fly.h" />
     <ClInclude Include="..\Public\FireHouse.h" />
     <ClInclude Include="..\Public\FireWood.h" />
+    <ClInclude Include="..\Public\FireWorks.h" />
     <ClInclude Include="..\Public\Fly_Move.h" />
     <ClInclude Include="..\public\Game_Manager.h" />
     <ClInclude Include="..\public\Gear_Item.h" />
@@ -542,6 +543,7 @@
     <ClCompile Include="..\Private\DarkWizard_Fly.cpp" />
     <ClCompile Include="..\Private\FireHouse.cpp" />
     <ClCompile Include="..\Private\FireWood.cpp" />
+    <ClCompile Include="..\Private\FireWorks.cpp" />
     <ClCompile Include="..\Private\Fly_Move.cpp" />
     <ClCompile Include="..\private\Game_Manager.cpp" />
     <ClCompile Include="..\private\Gear_Item.cpp" />
