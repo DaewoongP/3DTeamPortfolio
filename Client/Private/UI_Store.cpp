@@ -500,6 +500,7 @@ void CUI_Store::Free()
 		{
 			Safe_Release(pItem);
 		}
+		Safe_Release(m_pGoldFont);
 		m_pItems.clear();
 		Safe_Release(m_pInventory);
 	}
