@@ -297,10 +297,10 @@ void CPlayer::Tick(_float fTimeDelta)
 
 
 
-	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
-	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
-	m_pCustomModel->Play_Animation(fTimeDelta, CModel::OTHERBODY);
-	m_pCustomModel->Play_Animation(fTimeDelta, CModel::ANOTHERBODY);
+	m_pCustomModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
+	m_pCustomModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UNDERBODY);
+	m_pCustomModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::OTHERBODY);
+	m_pCustomModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::ANOTHERBODY);
 
 	Update_CoolTime();
 	Update_Demege();

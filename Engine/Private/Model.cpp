@@ -226,7 +226,7 @@ void CModel::Change_Animation(_uint iAnimIndex, ANIMTYPE eType)
 	m_tAnimationDesc[eType].isFinishAnimation = false;
 }
 
-void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTransform)
+void CModel::Play_Animation(_float fTimeDelta, _Inout_ vector<_int>* iSoundChannelVec, ANIMTYPE eType, CTransform* pTransform)
 {
 	//애니메이션 없으면 재생하지마
 	if (m_tAnimationDesc[eType].iNumAnimations == 0||
@@ -263,7 +263,7 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 		currentAnimation->Get_Accmulation() &&
 		!currentAnimation->Get_LoopAnim();
 
-	currentAnimation->Invalidate_Frame(fTimeDelta, m_PivotMatrix,pTransform->Get_WorldMatrixPtr());
+	currentAnimation->Invalidate_Frame(fTimeDelta, m_PivotMatrix, iSoundChannelVec,pTransform->Get_WorldMatrixPtr());
 
 	if (!m_tAnimationDesc[eType].isAnimChangeLerp)
 	{
@@ -1030,9 +1030,7 @@ HRESULT CModel::Convert_Animations_GCM()
 					Notify_Frame->eKeyFrameType = *reinterpret_cast<KEYFRAME_GCM::KEYFRAMETYPE*>(&keyframe.second->eKeyFrameType);
 					Notify_Frame->fTime = keyframe.second->fTime;
 					lstrcpy(Notify_Frame->wszSoundTag, static_cast<SOUNDFRAME*>(keyframe.second)->wszSoundTag);
-					Notify_Frame->iChannel = static_cast<SOUNDFRAME*>(keyframe.second)->iChannel;
 					Notify_Frame->fVolum = static_cast<SOUNDFRAME*>(keyframe.second)->fVolum;
-					Notify_Frame->isForce = static_cast<SOUNDFRAME*>(keyframe.second)->isForce;
 
 					//�������� ä���� ���ο� �����͸� ��Ƽ���̿� �־���.
 					Animation.Notify->tKeyFrame.push_back(Notify_Frame);
@@ -1401,9 +1399,7 @@ HRESULT CModel::Ready_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 						lstrcpy(NotifyFrame->szName, szFrameName);
 						NotifyFrame->eKeyFrameType = *reinterpret_cast<KEYFRAME_GCM::KEYFRAMETYPE*>(&iType);
 						ReadFile(hFile, &NotifyFrame->fTime, sizeof(_float), &dwByte, nullptr);
-						ReadFile(hFile, &NotifyFrame->isForce, sizeof(_bool), &dwByte, nullptr);
 						ReadFile(hFile, &NotifyFrame->fVolum, sizeof(_float), &dwByte, nullptr);
-						ReadFile(hFile, &NotifyFrame->iChannel, sizeof(_int), &dwByte, nullptr);
 						ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 						ReadFile(hFile, NotifyFrame->wszSoundTag, dwStrByte, &dwByte, nullptr);
 						if (0 == dwByte)
@@ -1909,9 +1905,7 @@ HRESULT CModel::Write_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 						break;
 
 					case KEYFRAME::KF_SOUND:
-						WriteFile(hFile, &reinterpret_cast<SOUNDFRAME_GCM*>(Keyframe)->isForce, sizeof(_bool), &dwByte, nullptr);
 						WriteFile(hFile, &reinterpret_cast<SOUNDFRAME_GCM*>(Keyframe)->fVolum, sizeof(_float), &dwByte, nullptr);
-						WriteFile(hFile, &reinterpret_cast<SOUNDFRAME_GCM*>(Keyframe)->iChannel, sizeof(_int), &dwByte, nullptr);
 
 						dwStrByte = (_ulong)sizeof(_tchar) * (lstrlen(reinterpret_cast<SOUNDFRAME_GCM*>(Keyframe)->wszSoundTag) + 1);
 						WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);

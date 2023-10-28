@@ -37,6 +37,12 @@ HRESULT CGameObject::Initialize(void* pArg)
 void CGameObject::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	for (auto iter= m_SoundChannel.begin(); iter < m_SoundChannel.end();iter++)
+	{
+		if (*iter == -1)
+			iter = m_SoundChannel.erase(iter);
+	}
 }
 
 void CGameObject::Late_Tick(_float fTimeDelta)

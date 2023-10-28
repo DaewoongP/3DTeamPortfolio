@@ -70,8 +70,6 @@ namespace Engine
 		}
 		wchar_t wszSoundTag[MAX_PATH] = {};
 		_float	fVolum = { 0.7f };
-		_int	iChannel = { 2 };
-		_bool	isForce = { false };
 	}SOUNDFRAME;
 
 	typedef struct tagParticleFrame : KEYFRAME

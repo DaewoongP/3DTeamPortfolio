@@ -93,9 +93,9 @@ void CVault_Gate::Tick(_float fTimeDelta)
 	Check_FireOn();
 
 	if (true == m_isCheckOnce && true == m_isGateOpen)
-		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+		m_pModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 	else
-		m_pModel->Play_Animation(0, CModel::UPPERBODY, m_pTransform);
+		m_pModel->Play_Animation(0, &m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 }
 
 void CVault_Gate::Late_Tick(_float fTimeDelta)

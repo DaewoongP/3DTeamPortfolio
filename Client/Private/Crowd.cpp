@@ -48,7 +48,7 @@ void CCrowd::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	if (nullptr != m_pModelCom)
-		m_pModelCom->Play_Animation(fTimeDelta);
+		m_pModelCom->Play_Animation(fTimeDelta, &m_SoundChannel);
 }
 
 void CCrowd::Late_Tick(_float fTimeDelta)

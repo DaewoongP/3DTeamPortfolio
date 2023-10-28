@@ -101,7 +101,7 @@ private:
 	_float* m_pEyePlusDistanceForHover = { nullptr };
 
 private:
-	void	Mouse_Input(_float _fTimeDelta);
+	void	Mouse_Input(_float fTimeDelta);
 	//행렬 갱신
 	void	Update_FollowMatrix();
 

@@ -451,6 +451,7 @@ HRESULT CMainTool::Ready_Prototype_Object()
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Dark_Wizard_Male_D/"));
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Player/"));
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Eleazar_Fig/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Pensive/"));
 	ENDINSTANCE;
 
 #pragma region Load Particle

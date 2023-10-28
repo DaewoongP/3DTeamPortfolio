@@ -61,7 +61,7 @@ void CDummy_NPC::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	if (nullptr != m_pCustomModel)
-		m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+		m_pCustomModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 
 	if (true == m_isColPlayer && m_isInteraction)
 	{
