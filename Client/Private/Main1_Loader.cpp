@@ -709,7 +709,9 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 			0 == lstrcmp(modelName.c_str(), wsLeech.c_str()) || 
 			0 == lstrcmp(modelName.c_str(), wsGull.c_str()) ||
 			0 == lstrcmp(modelName.c_str(), wsBigBird.c_str()) ||
-			0 == lstrcmp(modelName.c_str(), wsCat.c_str()))
+			0 == lstrcmp(modelName.c_str(), wsCat.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsCliffGate.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsVaultGate.c_str()))
 			modelPath += TEXT(".gcm");
 		else
 			modelPath += TEXT(".dat");
