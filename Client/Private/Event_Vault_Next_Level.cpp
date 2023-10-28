@@ -74,6 +74,13 @@ void CEvent_Vault_Next_Level::Check_Event(_float fTimeDelta)
 	if (true == m_isCheck)
 		return;
 
+	// 여기다가 컷신 작업해주시면 됩니다 현우형
+	if (true == m_pVault_Gate->Get_All_LightStands_On())
+	{
+		// Vault_Gate Open 실행시켜 주시려면 아래 함수 쓰시면 됩니다.
+		// m_pVault_Gate->Set_Gate_On();
+	}
+
 	if (true == m_pNext_Level->Is_Collision())
 	{
 		if (nullptr == m_pVault_Gate)
