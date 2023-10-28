@@ -3,7 +3,6 @@
 #include "Client_Defines.h"
 
 BEGIN(Client)
-class CFireWorks;
 
 class CLevel_Sky final : public CLevel
 {

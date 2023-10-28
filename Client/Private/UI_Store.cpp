@@ -488,6 +488,7 @@ void CUI_Store::Free()
 		Safe_Release(m_pBuyFrame);
 		Safe_Release(m_pBuyIcon);
 		Safe_Release(m_pBuyBack);
+		Safe_Release(m_pGoldFont);
 
 		for (auto& pSlot : m_pSlots)
 		{

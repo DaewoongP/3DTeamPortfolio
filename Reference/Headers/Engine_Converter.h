@@ -191,6 +191,7 @@ namespace Engine
 	typedef struct tagSoundFrame_GCM : KEYFRAME_GCM
 	{
 		wchar_t wszSoundTag[MAX_PATH] = {};
+		_float	fVolum = { 0.7f };
 	}SOUNDFRAME_GCM;
 
 	typedef struct tagParticleFrame_GCM : KEYFRAME_GCM

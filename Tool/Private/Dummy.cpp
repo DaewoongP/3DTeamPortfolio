@@ -37,7 +37,7 @@ void CDummy::Tick(_float fTimeDelta)
 	{
 		for (size_t i = 0; i < CModel::ANIM_END; i++)
 		{
-			m_pModel->Play_Animation(fTimeDelta, (CModel::ANIMTYPE)i, m_pTransform);
+			m_pModel->Play_Animation(fTimeDelta,&m_SoundChannel, (CModel::ANIMTYPE)i, m_pTransform);
 		}
 	}
 

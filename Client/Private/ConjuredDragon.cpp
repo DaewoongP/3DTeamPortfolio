@@ -290,7 +290,7 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 	m_pEffect_DragonInvinMesh->Get_Transform()->Set_Position(m_vOffsetPos);
 
 	if (nullptr != m_pModelCom)
-		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+		m_pModelCom->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 }
 
 void CConjuredDragon::Late_Tick(_float fTimeDelta)

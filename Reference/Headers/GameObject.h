@@ -51,6 +51,7 @@ protected:
 	_float4x4			m_OffsetMatrix = {};
 	const _float4x4*	m_pHitMatrix = { nullptr };
 	mutable _bool		m_isDead = { false };
+	vector<_int>		m_SoundChannel = {};
 
 public:
 	virtual CGameObject* Clone(void* pArg) PURE;

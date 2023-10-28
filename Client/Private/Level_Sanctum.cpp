@@ -64,9 +64,8 @@ HRESULT CLevel_Sanctum::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	_bool isNight = true;
-	FAILED_CHECK_RETURN(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SANCTUM,
-		TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"), &isNight), E_FAIL)
+	FAILED_CHECK_RETURN(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM,
+		TEXT("Prototype_GameObject_RedSky"), pLayerTag, TEXT("GameObject_RedSky")), E_FAIL)
 
 	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData4.ddd"))))
 	{
@@ -179,6 +178,8 @@ HRESULT CLevel_Sanctum::Ready_Layer_MapEffect(const _tchar* pLayerTag)
 
 HRESULT CLevel_Sanctum::Ready_Lights()
 {
+	g_isNight = true;
+
 	BEGININSTANCE;
 	CLight::LIGHTDESC		LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
@@ -187,9 +188,9 @@ HRESULT CLevel_Sanctum::Ready_Lights()
 	LightDesc.vPos = _float4(10.f, 100.f, 25.f, 1.f);
 	LightDesc.vDir = _float4(0.33f, -0.99f, 0.33f, 0.f);
 
-	LightDesc.vDiffuse = WHITEDEFAULT;
-	LightDesc.vAmbient = WHITEDEFAULT;
-	LightDesc.vSpecular = WHITEDEFAULT;
+	LightDesc.vDiffuse = _float4(0.75f, 0.75f, 0.75f, 1.f);
+	LightDesc.vAmbient = LightDesc.vDiffuse;
+	LightDesc.vSpecular = LightDesc.vDiffuse;
 
 	if (FAILED(pGameInstance->Add_Light(LightDesc, nullptr, true)))
 		return E_FAIL;

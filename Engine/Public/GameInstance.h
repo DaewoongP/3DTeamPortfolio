@@ -139,16 +139,20 @@ public: /* For.Light_Manager */
 	HRESULT Add_InstanceLight(_float3 vPos, _float fStartRange, _float fTime, _float4 vColor, _bool isIncrease = false, _float fIncreasePower = 0.f);
 
 public: /* For.Sound_Manager */
-	HRESULT Add_Sounds(const _tchar * szSoundFilePath);
-	HRESULT Play_Sound(const _tchar * szSoundTag, CSound_Manager::SOUNDCHANNEL eChannel, _float fVolume, _bool bForcePlay = false);
+	// 파일경로에 있는 사운드를 자동으로 파일이름을 태그값으로 입력해줌
+	HRESULT Add_Sounds(const _tchar* pSoundFilePath);
+	_bool Is_Playing(_int iChannel);
+	// forceplay 활성화하면 현재 재생중인 사운드 무시하고 실행함.
+	// default 매개변수 설정하는것을 추천함.
+	_int Play_Sound(const _tchar* pSoundTag, _float fVolume);
 	// 랜덤으로 실행할 사운드 개수와 태그 입력
-	HRESULT Play_Sound(const _tchar * pSoundTag, _uint iNumSounds, CSound_Manager::SOUNDCHANNEL eChannel, _float fVolume, _bool bForcePlay = false);
-	HRESULT Play_BGM(const _tchar * szSoundTag, _float fVolume);
-	HRESULT Stop_Sound(CSound_Manager::SOUNDCHANNEL eChannel);
-	HRESULT Pause_Sound(CSound_Manager::SOUNDCHANNEL eChannel);
-	HRESULT Restart_Sound(CSound_Manager::SOUNDCHANNEL eChannel);
+	// sound%d.wav, 10 -> 10개중에 랜덤 사운드 재생
+	_int Play_Sound(const _tchar* pSoundTag, _uint iNumSounds, _float fVolume);
+	HRESULT Stop_Sound(_int iChannel);
+	HRESULT Pause_Sound(_int iChannel);
+	HRESULT Restart_Sound(_int iChannel);
 	HRESULT Stop_AllSound();
-	HRESULT Set_ChannelVolume(CSound_Manager::SOUNDCHANNEL eChannel, _float fVolume);
+	HRESULT Set_ChannelVolume(_int iChannel, _float fVolume);
 
 public: /* For. Calculator */
 	// 현재 마우스의 레이를 반환받는 함수입니다(피킹대상의 월드 역행렬 필요). (로컬)
@@ -302,6 +306,7 @@ public:
 	HRESULT Add_Prototype_Models(_uint iLevel, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::TYPE eType, const _tchar* pPrototypeName, const _tchar* pTargetExtension, const _tchar* pDirectoryPath, _bool isFailedSkip, _float4x4 PivotMatrix = _float4x4());
 	HRESULT Find_And_Add_Texture(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel, const _tchar* pPath);
 	HRESULT Find_And_Add_Model(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel, CModel::TYPE eModelType, const _tchar* pModelPath, _float4x4 PivotMatrix = _float4x4());
+	_float Get_SoundPower(_float3 vObjectPosition);
 
 	static void Release_Engine();
 	virtual void Free() override;
