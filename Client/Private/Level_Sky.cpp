@@ -273,6 +273,8 @@ HRESULT CLevel_Sky::Ready_Layer_Monster(const _tchar* pLayerTag)
 
 HRESULT CLevel_Sky::Ready_Lights()
 {
+	g_isNight = true;
+
 	BEGININSTANCE;
 
 	CLight::LIGHTDESC		LightDesc;
