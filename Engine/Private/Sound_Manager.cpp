@@ -55,7 +55,7 @@ _int CSound_Manager::Play_Sound(const _tchar* pSoundTag, _float fVolume)
 
 		// 32개 쓰고있으면 리턴
 		if (iChannel > 32)
-			return S_OK;
+			return -1;
 	}
 	
 	m_pSystem->playSound(pSound, nullptr, false, &m_Channels[iChannel]);
@@ -73,7 +73,7 @@ _int CSound_Manager::Play_Sound(const _tchar* pSoundTag, _float fVolume)
 	if (FMOD_OK != m_pSystem->update())
 		return -1;
 
-	return S_OK;
+	return iChannel;
 }
 
 _int CSound_Manager::Play_BGM(const _tchar* pSoundTag, _float fVolume)
@@ -81,7 +81,7 @@ _int CSound_Manager::Play_BGM(const _tchar* pSoundTag, _float fVolume)
 	FMOD::Sound* pSound = Find_Sound(pSoundTag);
 
 	if (nullptr == pSound)
-		return E_FAIL;
+		return -1;
 
 	_int iChannel = 0;
 	_bool isPlay = { true };
@@ -95,17 +95,17 @@ _int CSound_Manager::Play_BGM(const _tchar* pSoundTag, _float fVolume)
 
 		// 32개 쓰고있으면 리턴
 		if (iChannel > 32)
-			return S_OK;
+			return -1;
 	}
 
 	if (FMOD_OK != m_pSystem->playSound(pSound, nullptr, false, &m_Channels[iChannel]))
-		return E_FAIL;
+		return -1;
 
 	m_Channels[iChannel]->setMode(FMOD_LOOP_NORMAL);
 	m_Channels[iChannel]->setVolume(fVolume);
 	m_pSystem->update();
 
-	return S_OK;
+	return iChannel;
 }
 
 _int CSound_Manager::Play_Sound(const _tchar* pSoundTag, _uint iNumSounds, _float fVolume)
