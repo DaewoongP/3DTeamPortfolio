@@ -29,7 +29,6 @@ HRESULT CEvent_Cliffside_Next_Level::Initialize(void* pArg)
 		// Cliff_Gate를 찾는다.
 		if (wstring::npos != wstrObjTag.find(TEXT("Cliff_Gate")))
 		{
-			/* 여기 두번 불려서 누수남 */
 			m_pCliff_Gate = static_cast<CCliff_Gate*>(Pair.second);
 			Safe_AddRef(m_pCliff_Gate);
 		}
@@ -74,6 +73,13 @@ void CEvent_Cliffside_Next_Level::Check_Event(_float fTimeDelta)
 {
 	if (true == m_isCheck)
 		return;
+
+	// 여기다가 컷신 작업해주시면 됩니다 현우형
+	if (true == m_pCliff_Gate->Get_All_LightStands_On())
+	{
+		// Cliff_Gate Reparo 실행시켜 주시려면 아래 함수 쓰시면 됩니다.
+		// m_pCliff_Gate->Set_Gate_Reparo_On();
+	}
 
 	if (true == m_pNext_Level->Is_Collision())
 	{

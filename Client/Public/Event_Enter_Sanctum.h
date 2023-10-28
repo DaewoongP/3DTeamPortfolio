@@ -41,6 +41,8 @@ private:
 	_bool m_isSpawn = { false };
 	_bool m_isDoorOpen = { false };
 
+	_bool m_isCutSceneOn = { true }; // ÄÆ½Å¿ë º¯¼ö
+
 private:
 	void Check_Event_On_Torch_To_Spawn();
 	void Check_Monsters_Are_Death();

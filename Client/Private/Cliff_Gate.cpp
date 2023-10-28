@@ -94,7 +94,7 @@ void CCliff_Gate::Tick(_float fTimeDelta)
 	// 화로에 불 다 붙으면 문열림
 	Check_FireOn();
 
-	if(false == m_isCheckOnce)
+	if(false == m_isCheckOnce && true == m_isReparoOn)
 		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	else
 		m_pModel->Play_Animation(0, CModel::UPPERBODY, m_pTransform);
@@ -249,7 +249,10 @@ void CCliff_Gate::Check_FireOn()
 	}
 
 	if (m_iLightStandsCnt == iFireOn)
+	{
+		m_isAllLightStandsOn = true;
 		m_isCheckOnce = false;
+	}		
 }
 
 CCliff_Gate* CCliff_Gate::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

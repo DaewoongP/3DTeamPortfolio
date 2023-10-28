@@ -121,14 +121,18 @@ void CEvent_Enter_Sanctum::Check_Monsters_Are_Death()
 
 	if (0 == m_pMonsters.size())
 	{
+		// 여기서 컷신 작업 해주시면 됩니다 현우형
+
+		// 이 포문은 문을 여는 부분입니다.
 		for (auto iter = m_pDoors.begin(); iter != m_pDoors.end();)
 		{
 			(*iter)->Open_Door();
 			Safe_Release(*iter);
 			iter = m_pDoors.erase(iter);
 		}
-		m_pCard_Fig->On_Enter_Sanctum_Script();
-		m_isDoorOpen = true;
+
+		m_pCard_Fig->On_Enter_Sanctum_Script(); // 피그 교수의 스크립트를 출력하는 부분입니다.
+		m_isDoorOpen = true; // 이 변수가 true가 되면 이 함수에 더이상 들어오지 않습니다.
 	}
 }
 
