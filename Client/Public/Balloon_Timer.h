@@ -29,7 +29,9 @@ public:
 	_bool Is_Finished() { 
 		if (m_fTimeAcc > m_fTime)
 		{
+			m_vInitPosition = _float3(1000.f, 1000.f, 0.f);
 			m_isFinished = true;
+			m_fTime = 0.f;
 			m_fTimeAcc = 0.f;
 			return true;
 		}
