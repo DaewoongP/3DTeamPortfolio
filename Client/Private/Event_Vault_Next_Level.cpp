@@ -21,7 +21,6 @@ HRESULT CEvent_Vault_Next_Level::Initialize(void* pArg)
 
 	BEGININSTANCE;
 	auto pMapObjectLayer = pGameInstance->Find_Components_In_Layer(LEVEL_VAULT, TEXT("Layer_BackGround"));
-	ENDINSTANCE;
 
 	for (auto Pair : *pMapObjectLayer)
 	{
@@ -33,6 +32,16 @@ HRESULT CEvent_Vault_Next_Level::Initialize(void* pArg)
 			Safe_AddRef(m_pVault_Gate);
 		}
 	}
+
+	pGameInstance->Add_Timer(TEXT("Vault_Gate_CutScene_Fade_Out"), false, 1.0f);
+	pGameInstance->Add_Timer(TEXT("Vault_Gate_CutScene_Play"), false, 7.1f);
+
+	pGameInstance->Add_Timer(TEXT("Vault_Gate_CutScene_Play_Fade_Out"), false, 1.8f);
+	pGameInstance->Add_Timer(TEXT("Vault_Gate_CutScene_Play_Fade_In"), false, 2.0f);
+
+	pGameInstance->Read_CutSceneCamera(TEXT("Vault_Gate"), TEXT("../../Resources/GameData/CutScene/Vault_Gate.cut"));
+
+	ENDINSTANCE;
 
 	return S_OK;
 }
@@ -51,6 +60,14 @@ void CEvent_Vault_Next_Level::Late_Tick(_float fTimeDelta)
 
 HRESULT CEvent_Vault_Next_Level::Add_Components()
 {
+	/* Com_Renderer */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
+		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
 	/* For.Trigger_Vault_Next_Level */
 	CTrigger::TRIGGERDESC TriggerDesc;
 	TriggerDesc.isCollisionToDead = true;
@@ -79,6 +96,121 @@ void CEvent_Vault_Next_Level::Check_Event(_float fTimeDelta)
 	{
 		// Vault_Gate Open 실행시켜 주시려면 아래 함수 쓰시면 됩니다.
 		// m_pVault_Gate->Set_Gate_On();
+
+
+		BEGININSTANCE;
+
+		switch (m_eSequence)
+		{
+		case Client::CEvent_Vault_Next_Level::GATECUTSCENE_SEQUENCE_FADE_OUT:
+		{
+			//진입시
+			if (true == m_isEnter)
+			{
+				//페이드 아웃
+				m_pRenderer->FadeOut(1.0f);
+
+				//진입 표시
+				m_isEnter = false;
+			}
+
+			//타이머 체크
+			if (true == pGameInstance->Check_Timer(TEXT("Vault_Gate_CutScene_Fade_Out")))
+			{
+				m_isEnter = true;
+
+				m_eSequence = GATECUTSCENE_SEQUENCE_PLAY_CUTSCENE;
+			}
+		}
+		break;
+		case Client::CEvent_Vault_Next_Level::GATECUTSCENE_SEQUENCE_PLAY_CUTSCENE:
+		{
+			//진입시
+			if (true == m_isEnter)
+			{
+				//페이드 인
+				m_pRenderer->FadeIn(1.0f);
+				//타이머 리셋
+				pGameInstance->Reset_Timer(TEXT("Vault_Gate_CutScene_Play"));
+				pGameInstance->Reset_Timer(TEXT("Vault_Gate_CutScene_Play_Fade_Out"));
+				pGameInstance->Reset_Timer(TEXT("Vault_Gate_CutScene_Play_Fade_In"));
+				//진입 표시
+				m_isEnter = false;
+				//컷씬 재생
+				pGameInstance->Add_CutScene(TEXT("Vault_Gate"));
+
+
+			}
+
+			if (false == m_isFade[0] && true == pGameInstance->Check_Timer(TEXT("Vault_Gate_CutScene_Play_Fade_Out")))
+			{
+				m_isFade[0] = true;
+				m_pRenderer->FadeOut(5.0f);
+			}
+
+			if (false == m_isFade[1] && true == pGameInstance->Check_Timer(TEXT("Vault_Gate_CutScene_Play_Fade_In")))
+			{
+				m_isFade[1] = true;
+				m_pRenderer->FadeIn(5.0f);
+
+				m_pVault_Gate->Set_Gate_On();
+			}
+
+			//타이머 종료
+			if (true == pGameInstance->Check_Timer(TEXT("Vault_Gate_CutScene_Play")))
+			{
+				m_eSequence = GATECUTSCENE_SEQUENCE_FADE_IN;
+
+				//페이드 아웃
+				m_pRenderer->FadeOut(1.0f);
+				//타이머 리셋
+				pGameInstance->Reset_Timer(TEXT("Vault_Gate_CutScene_Fade_Out"));
+
+				m_isEnter = true;
+			}
+		}
+		break;
+		case Client::CEvent_Vault_Next_Level::GATECUTSCENE_SEQUENCE_FADE_IN:
+		{
+			//진입시
+			if (true == m_isEnter)
+			{
+				//진입 표시
+				m_isEnter = false;
+			}
+
+			//타이머 체크
+			if (true == pGameInstance->Check_Timer(TEXT("Vault_Gate_CutScene_Fade_Out")))
+			{
+				m_isEnter = true;
+
+				m_eSequence = GATECUTSCENE_SEQUENCE_END;
+
+				//페이드 인
+				m_pRenderer->FadeIn(1.0f);
+			}
+		}
+		break;
+		case Client::CEvent_Vault_Next_Level::GATECUTSCENE_SEQUENCE_END:
+		{
+			if (true == m_isEnter)
+				break;
+
+			if (false == m_isGateCutsceneStart)
+			{
+				m_isGateCutsceneStart = true;
+				m_isEnter = true;
+				m_eSequence = GATECUTSCENE_SEQUENCE_FADE_OUT;
+				//타이머 리셋
+				pGameInstance->Reset_Timer(TEXT("Vault_Gate_CutScene_Fade_Out"));
+			}
+		}
+		break;
+		default:
+			break;
+		}
+
+		ENDINSTANCE;
 	}
 
 	if (true == m_pNext_Level->Is_Collision())
