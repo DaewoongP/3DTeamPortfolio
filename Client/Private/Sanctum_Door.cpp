@@ -91,6 +91,22 @@ void CSanctum_Door::Door_Action(_float fTimeDelta)
 	if (false == m_isDoorAction)
 		return;
 
+	BEGININSTANCE;
+
+	//½ÃÀÛ
+	if (0.0f == m_fDoorSpinValue)
+	{
+		pGameInstance->Set_Shake(
+			CCamera_Manager::SHAKE_PRIORITY_1,
+			CCamera_Manager::SHAKE_TYPE_TRANSLATION,
+			CCamera_Manager::SHAKE_AXIS_UP,
+			CEase::IN_BOUNCE,
+			6.0f,
+			5.0f,
+			0.1f,
+			CCamera_Manager::SHAKE_POWER_DECRECENDO);
+	}
+
 	if(RIGHTDOOR == m_eDoorType)
 		m_pTransform->Turn(_float3(0.f, 1.f, 0.f), XMConvertToRadians(m_fDoorTurn), fTimeDelta * 0.25f);
 	else
@@ -103,7 +119,19 @@ void CSanctum_Door::Door_Action(_float fTimeDelta)
 	if (m_fDoorTurn <= m_fDoorSpinValue)
 	{
 		m_isDoorAction = false;
+		//³¡ 
+		pGameInstance->Set_Shake(
+			CCamera_Manager::SHAKE_PRIORITY_1,
+			CCamera_Manager::SHAKE_TYPE_TRANSLATION,
+			CCamera_Manager::SHAKE_AXIS_UP,
+			CEase::IN_EXPO,
+			8.0f,
+			1.0f,
+			0.2f,
+			CCamera_Manager::SHAKE_POWER_DECRECENDO);
 	}
+
+	ENDINSTANCE;
 }
 
 CSanctum_Door* CSanctum_Door::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
