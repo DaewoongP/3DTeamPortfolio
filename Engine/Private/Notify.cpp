@@ -123,11 +123,11 @@ void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameI
 			}
 			case KEYFRAME::KF_SOUND:
 			{
-				CGameInstance* pGameInstance = CGameInstance::GetInstance();
+				/*CGameInstance* pGameInstance = CGameInstance::GetInstance();
 				Safe_AddRef(pGameInstance);
 				SOUNDFRAME* pParticleFrame = static_cast<SOUNDFRAME*>(pKeyFrame);
-				pGameInstance->Play_Sound(pParticleFrame->wszSoundTag, (CSound_Manager::SOUNDCHANNEL)pParticleFrame->iChannel, pParticleFrame->fVolum);
-				Safe_Release(pGameInstance);
+				pGameInstance->Play_Sound(pParticleFrame->wszSoundTag, pParticleFrame->fVolum);
+				Safe_Release(pGameInstance);*/
 				break;
 			}
 			case KEYFRAME::KF_PARTICLE:

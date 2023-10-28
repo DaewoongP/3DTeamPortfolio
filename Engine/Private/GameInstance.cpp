@@ -569,53 +569,46 @@ HRESULT CGameInstance::Add_InstanceLight(_float3 vPos, _float fStartRange, _floa
 	return m_pLight_Manager->Add_InstanceLight(vPos, fStartRange, fTime, vColor, isIncrease, fIncreasePower);
 }
 
-HRESULT CGameInstance::Add_Sounds(const _tchar* szSoundFilePath)
+HRESULT CGameInstance::Add_Sounds(const _tchar* pSoundFilePath)
 {
 	NULL_CHECK_RETURN_MSG(m_pSound_Manager, E_FAIL, TEXT("Sound NULL"));
 
-	return m_pSound_Manager->Add_Sounds(szSoundFilePath);
+	return m_pSound_Manager->Add_Sounds(pSoundFilePath);
 }
 
-HRESULT CGameInstance::Play_Sound(const _tchar* szSoundTag, CSound_Manager::SOUNDCHANNEL eChannel, _float fVolume, _bool bForcePlay)
+_int CGameInstance::Play_Sound(const _tchar* pSoundTag, _float fVolume)
 {
-	NULL_CHECK_RETURN_MSG(m_pSound_Manager, E_FAIL, TEXT("Sound NULL"));
+	NULL_CHECK_RETURN_MSG(m_pSound_Manager, -1, TEXT("Sound NULL"));
 
-	return m_pSound_Manager->Play_Sound(szSoundTag, eChannel, fVolume, bForcePlay);
+	return m_pSound_Manager->Play_Sound(pSoundTag, fVolume);
 }
 
-HRESULT CGameInstance::Play_Sound(const _tchar* pSoundTag, _uint iNumSounds, CSound_Manager::SOUNDCHANNEL eChannel, _float fVolume, _bool bForcePlay)
+_int CGameInstance::Play_Sound(const _tchar* pSoundTag, _uint iNumSounds, _float fVolume)
 {
-	NULL_CHECK_RETURN_MSG(m_pSound_Manager, E_FAIL, TEXT("Sound NULL"));
+	NULL_CHECK_RETURN_MSG(m_pSound_Manager, -1, TEXT("Sound NULL"));
 
-	return m_pSound_Manager->Play_Sound(pSoundTag, iNumSounds, eChannel, fVolume, bForcePlay);
+	return m_pSound_Manager->Play_Sound(pSoundTag, iNumSounds, fVolume);
 }
 
-HRESULT CGameInstance::Play_BGM(const _tchar* szSoundTag, _float fVolume)
+HRESULT CGameInstance::Stop_Sound(_int iChannel)
 {
 	NULL_CHECK_RETURN_MSG(m_pSound_Manager, E_FAIL, TEXT("Sound NULL"));
 
-	return m_pSound_Manager->Play_BGM(szSoundTag, fVolume);
+	return m_pSound_Manager->Stop_Sound(iChannel);
 }
 
-HRESULT CGameInstance::Stop_Sound(CSound_Manager::SOUNDCHANNEL eChannel)
+HRESULT CGameInstance::Pause_Sound(_int iChannel)
 {
 	NULL_CHECK_RETURN_MSG(m_pSound_Manager, E_FAIL, TEXT("Sound NULL"));
 
-	return m_pSound_Manager->Stop_Sound(eChannel);
+	return m_pSound_Manager->Pause_Sound(iChannel);
 }
 
-HRESULT CGameInstance::Pause_Sound(CSound_Manager::SOUNDCHANNEL eChannel)
+HRESULT CGameInstance::Restart_Sound(_int iChannel)
 {
 	NULL_CHECK_RETURN_MSG(m_pSound_Manager, E_FAIL, TEXT("Sound NULL"));
 
-	return m_pSound_Manager->Pause_Sound(eChannel);
-}
-
-HRESULT CGameInstance::Restart_Sound(CSound_Manager::SOUNDCHANNEL eChannel)
-{
-	NULL_CHECK_RETURN_MSG(m_pSound_Manager, E_FAIL, TEXT("Sound NULL"));
-
-	return m_pSound_Manager->Restart_Sound(eChannel);
+	return m_pSound_Manager->Restart_Sound(iChannel);
 }
 
 HRESULT CGameInstance::Stop_AllSound()
@@ -625,11 +618,11 @@ HRESULT CGameInstance::Stop_AllSound()
 	return m_pSound_Manager->Stop_AllSound();
 }
 
-HRESULT CGameInstance::Set_ChannelVolume(CSound_Manager::SOUNDCHANNEL eChannel, _float fVolume)
+HRESULT CGameInstance::Set_ChannelVolume(_int iChannel, _float fVolume)
 {
 	NULL_CHECK_RETURN_MSG(m_pSound_Manager, E_FAIL, TEXT("Sound NULL"));
 
-	return m_pSound_Manager->Set_ChannelVolume(eChannel, fVolume);
+	return m_pSound_Manager->Set_ChannelVolume(iChannel, fVolume);
 }
 
 HRESULT CGameInstance::Get_MouseRay(ID3D11DeviceContext* pContext, HWND hWnd, _float4x4 PickingWorldMatrix_Inverse, _Inout_ _float4* vRayPos, _Inout_ _float4* vRayDir)

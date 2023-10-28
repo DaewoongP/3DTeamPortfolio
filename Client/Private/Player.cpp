@@ -444,7 +444,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		{
 			BEGININSTANCE;
 			_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_36443.wav") },{TEXT("playermale_35938.wav") } ,{TEXT("playermale_35067.wav") },{TEXT("playermale_27895.wav") } };
-			pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
+			//pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
 			ENDINSTANCE;
 		}
 		//회피시 무시
@@ -478,7 +478,9 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 				BEGININSTANCE;
 				_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_24397.wav") },{TEXT("playermale_99996.wav") } ,{TEXT("playermale_35941.wav")},{TEXT("playermale_99995.wav") } };
-				pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
+				m_iSoundTest = pGameInstance->Play_Sound(szVoiceTag[rand() % 4], 0.7f);
+				pGameInstance->Pause_Sound(m_iSoundTest);
+				pGameInstance->Restart_Sound(m_iSoundTest);
 				ENDINSTANCE;
 				if (m_pStateContext->Is_Current_State(TEXT("Jump")))
 				{
@@ -499,7 +501,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 				BEGININSTANCE;
 				_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_25735.wav") },{TEXT("playermale_99991.wav") } ,{TEXT("playermale_99992.wav") },{TEXT("playermale_99993.wav") } };
-				pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
+				//pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
 				ENDINSTANCE;
 				HitStateDesc.iHitType = CHitState::HIT_HEABY;
 			}
@@ -1465,7 +1467,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		{
 			BEGININSTANCE;
 			_tchar szVoiceTag[3][MAX_PATH] = { {TEXT("playermale_34286.wav") },{TEXT("playermale_23883.wav") } ,{TEXT("playermale_32104.wav") } };
-			pGameInstance->Play_Sound(szVoiceTag[rand() % 3], CSound_Manager::SOUND_VOICE, 0.7f, true);
+			pGameInstance->Play_Sound(szVoiceTag[rand() % 3], 0.7f);
 			ENDINSTANCE;
 			if(nullptr != m_pCard_Fig)
 				m_pCard_Fig->Spawn_Fig(m_pTarget);

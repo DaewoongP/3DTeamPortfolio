@@ -276,6 +276,7 @@
     <ClInclude Include="..\public\Quest_Save_Fig.h" />
     <ClInclude Include="..\Public\Quest_Secret.h" />
     <ClInclude Include="..\Public\Racer.h" />
+    <ClInclude Include="..\public\RedSky.h" />
     <ClInclude Include="..\public\Robe_Arcane.h" />
     <ClInclude Include="..\Public\Robe_DarkArts.h" />
     <ClInclude Include="..\Public\Robe_DarkArts_Delux.h" />
@@ -633,6 +634,7 @@
     <ClCompile Include="..\private\Quest_Save_Fig.cpp" />
     <ClCompile Include="..\Private\Quest_Secret.cpp" />
     <ClCompile Include="..\Private\Racer.cpp" />
+    <ClCompile Include="..\private\RedSky.cpp" />
     <ClCompile Include="..\private\Robe_Arcane.cpp" />
     <ClCompile Include="..\Private\Robe_DarkArts.cpp" />
     <ClCompile Include="..\Private\Robe_DarkArts_Delux.cpp" />
