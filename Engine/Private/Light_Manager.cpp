@@ -156,6 +156,8 @@ HRESULT CLight_Manager::Return_Light(CLight* pLight)
 	if (nullptr == pLight)
 		return S_OK;
 
+	std::lock_guard<std::mutex> lock(mtx);
+
 	auto iter = find_if(m_Lights.begin(), m_Lights.end(), [&](auto value) {
 		if (value == pLight)
 			return true;

@@ -3,6 +3,7 @@
 #include "Level_Loading.h"
 
 #include "Trigger.h"
+#include "Quest_Manager.h"
 
 CEvent_Smeade_Next_Level::CEvent_Smeade_Next_Level(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -103,7 +104,10 @@ void CEvent_Smeade_Next_Level::Check_Event_Sanctum(_float fTimeDelta)
 	{
 		BEGININSTANCE;
 
-		if (false == g_isPensiveDead)
+		CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
+		Safe_AddRef(pQuest_Manager);
+		
+		if (false == pQuest_Manager->Is_Quest_Finished(TEXT("Quest_Secret")))
 		{
 			pGameInstance->Get_CurrentLevel()->Set_NextLevel(LEVEL_VAULT);
 		}
@@ -114,6 +118,8 @@ void CEvent_Smeade_Next_Level::Check_Event_Sanctum(_float fTimeDelta)
 		}
 
 		m_isCheck_Sanctum = true;
+
+		Safe_Release(pQuest_Manager);
 		ENDINSTANCE;
 	}
 }
