@@ -44,6 +44,11 @@ private:
 	_float3			m_vParitcleNotify_OffsetPosition = {};
 	KEYFRAME::KEYFRAMETYPE m_eNotifyKeyFrameType = { KEYFRAME::KF_SPEED };
 
+	//사운드 노티파이
+	_bool			m_isFoce = { false };
+	_int			m_iChannel = { 2 };
+	_float			m_fVolum = { 0.7f };
+
 	_char			m_szAnimationSearch[CModel::ANIM_END][MAX_PATH] = {};
 
 	_int			m_iSelectedNotifyIndex[CModel::ANIM_END] = { 0 };
