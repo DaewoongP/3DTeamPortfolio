@@ -44,6 +44,10 @@ public:
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix);
 
+public:
+	// 객체의 모든 사운드를 해제
+	void Stop_Sound();
+
 protected:
 	CTransform*			m_pTransform = { nullptr };
 

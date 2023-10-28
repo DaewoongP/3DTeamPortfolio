@@ -36,7 +36,7 @@ void CLevel_Cliffside::Tick(_float fTimeDelta)
 		if (!lstrcmp(TEXT("Scene_Main"), pGameInstance->Get_CurrentSceneTag()))
 		{
 			BEGININSTANCE;
-			pGameInstance->Play_Sound(TEXT("Field_Guide_Sound.wav"), CSound_Manager::SOUND_UI, 1.0f, true);
+			//pGameInstance->Play_Sound(TEXT("Field_Guide_Sound.wav"), CSound_Manager::SOUND_UI, 1.0f, true);
 			ENDINSTANCE
 
 			pGameInstance->Set_CurrentScene(TEXT("Scene_FieldGuide"), false);

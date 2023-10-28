@@ -576,7 +576,7 @@ HRESULT CGameInstance::Add_Sounds(const _tchar* pSoundFilePath)
 	return m_pSound_Manager->Add_Sounds(pSoundFilePath);
 }
 
-_bool CGameInstance::Is_Playing(_int iChannel)
+_bool CGameInstance::Is_SoundPlaying(_int iChannel)
 {
 	NULL_CHECK_RETURN_MSG(m_pSound_Manager, false, TEXT("Sound NULL"));
 
