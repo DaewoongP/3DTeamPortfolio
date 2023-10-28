@@ -94,6 +94,16 @@ void CCliff_Gate::Tick(_float fTimeDelta)
 	// 화로에 불 다 붙으면 문열림
 	Check_FireOn();
 
+	// 소리
+	if (true == m_isSoundOn && true == m_isReparoOn)
+	{
+		BEGININSTANCE;
+		pGameInstance->Play_Sound(TEXT("Cliff_Gate.wav"), 0.5f);
+		ENDINSTANCE;
+
+		m_isSoundOn = false;
+	}
+
 	if(false == m_isCheckOnce && true == m_isReparoOn)
 		m_pModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 	else
@@ -252,6 +262,7 @@ void CCliff_Gate::Check_FireOn()
 	{
 		m_isAllLightStandsOn = true;
 		m_isCheckOnce = false;
+		m_isSoundOn = true;
 	}		
 }
 

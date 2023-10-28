@@ -91,6 +91,16 @@ void CSanctum_Door::Door_Action(_float fTimeDelta)
 	if (false == m_isDoorAction)
 		return;
 
+	// ¼Ò¸®
+	if (true == m_isSound)
+	{
+		BEGININSTANCE;
+		pGameInstance->Play_Sound(TEXT("SanctumDoorOpen.wav"), 0.75f);
+		ENDINSTANCE;
+
+		m_isSound = false;
+	}
+
 	if(RIGHTDOOR == m_eDoorType)
 		m_pTransform->Turn(_float3(0.f, 1.f, 0.f), XMConvertToRadians(m_fDoorTurn), fTimeDelta * 0.25f);
 	else

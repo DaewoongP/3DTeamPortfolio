@@ -56,6 +56,7 @@ private:
 	_bool			m_isEffectOn = { false }; // 이펙트 한 번만 켜주기
 	_bool			m_isAllLightStandsOn = { false }; // 화로가 전부 점화되었는지
 	_bool			m_isReparoOn = { false };	// 컷신을 위해서 한단계 추가
+	_bool			m_isSoundOn = { false };
 
 	_uint			m_iLightStandsCnt = 0;  // 화로의 개수
 
