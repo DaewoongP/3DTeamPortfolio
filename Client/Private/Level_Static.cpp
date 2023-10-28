@@ -108,6 +108,7 @@ HRESULT CLevel_Static::Add_Scene()
 	MainSceneLayerTags.push_back(TEXT("Layer_Item"));
 	MainSceneLayerTags.push_back(TEXT("Layer_Event"));
 	MainSceneLayerTags.push_back(TEXT("Layer_Balloon"));
+	MainSceneLayerTags.push_back(TEXT("Layer_Manager"));
 #ifdef _DEBUG
 	MainSceneLayerTags.push_back(TEXT("Layer_Debug"));
 #endif // _DEBUG

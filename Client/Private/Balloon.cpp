@@ -58,7 +58,8 @@ HRESULT CBalloon::Initialize(void* pArg)
 
 void CBalloon::Tick(_float fTimeDelta)
 {
-	m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);
+	_float fSpeed = GetRandomFloat(-1.f, 1.f);
+	m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta * fSpeed);
 
 	if (m_isDead)
 	{

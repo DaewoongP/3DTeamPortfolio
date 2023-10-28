@@ -974,6 +974,7 @@ void CDarkWizard_Fly::Update_BalloonTarget_Near()
 
 	_float3 vPosition = m_pTransform->Get_Position();
 
+	Safe_Release(m_pTargetBalloon);
 	m_pTargetBalloon = { nullptr };
 
 	for (auto pBalloon : *Balloons)
@@ -996,6 +997,7 @@ void CDarkWizard_Fly::Update_BalloonTarget_Near()
 			m_pTargetBalloon = (vSrcDistance < vDstDistance) ? m_pTargetBalloon : pDstBalloon;
 		}
 	}
+	Safe_AddRef(m_pTargetBalloon);
 }
 
 void CDarkWizard_Fly::Update_BalloonTarget_Middle()
@@ -1014,6 +1016,7 @@ void CDarkWizard_Fly::Update_BalloonTarget_Middle()
 
 	_float3 vPosition = m_pTransform->Get_Position();
 
+	Safe_Release(m_pTargetBalloon);
 	m_pTargetBalloon = { nullptr };
 
 	for (auto pBalloon : *Balloons)
@@ -1042,6 +1045,7 @@ void CDarkWizard_Fly::Update_BalloonTarget_Middle()
 				m_pTargetBalloon = pDstBalloon;
 		}
 	}
+	Safe_AddRef(m_pTargetBalloon);
 }
 
 void CDarkWizard_Fly::Update_BalloonTarget_Far()
@@ -1057,6 +1061,7 @@ void CDarkWizard_Fly::Update_BalloonTarget_Far()
 
 	_float3 vPosition = m_pTransform->Get_Position();
 
+	Safe_Release(m_pTargetBalloon);
 	m_pTargetBalloon = { nullptr };
 
 	for (auto pBalloon : *Balloons)
@@ -1079,6 +1084,7 @@ void CDarkWizard_Fly::Update_BalloonTarget_Far()
 			m_pTargetBalloon = (vSrcDistance > vDstDistance) ? m_pTargetBalloon : pDstBalloon;
 		}
 	}
+	Safe_AddRef(m_pTargetBalloon);
 }
 
 void CDarkWizard_Fly::Update_BalloonTarget_Player()
@@ -1135,7 +1141,7 @@ void CDarkWizard_Fly::Bounce_Off(const _float& fTimeDelta)
 const vector<CBalloon*>* CDarkWizard_Fly::Get_Balloons()
 {
 	BEGININSTANCE;
-	auto pFlyGameManager = pGameInstance->Find_Component_In_Layer(LEVEL_SKY, TEXT("Layer_BackGround"), TEXT("GameObject_FlyGameManager"));
+	auto pFlyGameManager = pGameInstance->Find_Component_In_Layer(LEVEL_SKY, TEXT("Layer_Manager"), TEXT("GameObject_FlyGameManager"));
 	ENDINSTANCE;
 	if (nullptr == pFlyGameManager)
 		return nullptr;

@@ -89,6 +89,7 @@ private: /* Notify Functions */
 
 private:
 	_int m_iMy_Number = { 0 };
+	// 객체의 개수를 확인하기 위한 변수 처리
 	static _int iNumClass;
 
 public:
