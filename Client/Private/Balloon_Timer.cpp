@@ -46,7 +46,7 @@ void CBalloon_Timer::Late_Tick(_float fTimeDelta)
 	m_pTransform->Set_Position(XMVectorLerp(m_vInitPosition, pGameInstance->Get_CamPosition()->xyz(), 0.35f));
 	Safe_Release(pGameInstance);
 
-	if (m_fTimeAcc < m_fTime - fTimeDelta) // 1frame
+	if (m_fTimeAcc < m_fTime) // 1frame
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
 }
 

@@ -190,7 +190,7 @@ void CPlayer_Camera::Tick(const _float& _TimeDelta)
 	ENDINSTANCE;
 }
 
-void CPlayer_Camera::Mouse_Input(_float _fTimeDelta)
+void CPlayer_Camera::Mouse_Input(_float fTimeDelta)
 {
 	_long		dwMouseMove = 0;
 
@@ -204,7 +204,7 @@ void CPlayer_Camera::Mouse_Input(_float _fTimeDelta)
 
 		_float3	vRight = worldMatrix.Right();
 
-		worldMatrix = worldMatrix * XMMatrixRotationAxis(vRight, dwMouseMove * _fTimeDelta * 0.1f);
+		worldMatrix = worldMatrix * XMMatrixRotationAxis(vRight, dwMouseMove * fTimeDelta * 0.1f);
 
 		_float3 vUp = worldMatrix.Up();
 
@@ -226,14 +226,14 @@ void CPlayer_Camera::Mouse_Input(_float _fTimeDelta)
 		//기준 보다 커지면 안됌
 		if (fStandardAngle >= fAngle)
 		{
-			m_pTransform->Turn(vRight, dwMouseMove * _fTimeDelta * 0.1f);
+			m_pTransform->Turn(vRight, dwMouseMove * fTimeDelta * 0.1f);
 
 			dwMouseMove = 0;
 		}
 
 		/*_float3	vRight = m_pTransform->Get_Right();
 
-		m_pTransform->Turn(vRight, dwMouseMove * _fTimeDelta * 0.1f);
+		m_pTransform->Turn(vRight, dwMouseMove * fTimeDelta * 0.1f);
 
 		dwMouseMove = 0;*/
 	}
@@ -244,7 +244,7 @@ void CPlayer_Camera::Mouse_Input(_float _fTimeDelta)
 	{
 		_float3	vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
 
-		m_pTransform->Turn(vUp, dwMouseMove * _fTimeDelta * 0.1f);
+		m_pTransform->Turn(vUp, dwMouseMove * fTimeDelta * 0.1f);
 
 		dwMouseMove = 0;
 	}

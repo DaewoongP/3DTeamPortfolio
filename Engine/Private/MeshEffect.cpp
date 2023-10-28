@@ -169,7 +169,7 @@ void CMeshEffect::Tick(_float _fTimeDelta)
 	m_fAge += _fTimeDelta;
 
 	if (nullptr != m_pModel && CModel::TYPE_ANIM == m_eAnimType)
-		m_pModel->Play_Animation(_fTimeDelta);
+		m_pModel->Play_Animation(_fTimeDelta, &m_SoundChannel);
 	m_vOffset.x += m_vDeltaOffset.x * _fTimeDelta;
 	m_vOffset.y += m_vDeltaOffset.y * _fTimeDelta;
 	m_vTililing.x += m_vDeltaTiling.x * _fTimeDelta;

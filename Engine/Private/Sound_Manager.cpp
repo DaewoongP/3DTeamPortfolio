@@ -30,114 +30,146 @@ HRESULT CSound_Manager::Add_Sounds(const _tchar* pSoundFilePath)
 	return S_OK;
 }
 
-HRESULT CSound_Manager::Play_Sound(const _tchar* pSoundTag, SOUNDCHANNEL eChannel, _float fVolume, _bool bForcePlay)
+_bool CSound_Manager::Is_Playing(_int iChannel)
+{
+	if (0 > iChannel ||
+		MAX_CHANNEL < iChannel)
+		return false;
+
+	_bool isPlay = { true };
+	m_Channels[iChannel]->isPlaying(&isPlay);
+
+	return isPlay;
+}
+
+_int CSound_Manager::Play_Sound(const _tchar* pSoundTag, _float fVolume)
 {
 	FMOD::Sound* pSound = Find_Sound(pSoundTag);
-
+	
 	if (nullptr == pSound)
 	{
 #ifdef _DEBUG
 		MSG_BOX("Failed Find_Sound");
 #endif // _DEBUG
-		return E_FAIL;
+		return -1;
+	}
+
+	_bool isPlay = { true };
+
+	// false일때 재생중이면 패스, 재생중이 아니면 들어온 사운드 재생.
+	_uint iChecked = { 0 };
+	while (isPlay)
+	{
+		if (MAX_CHANNEL == m_iChannel)
+			m_iChannel = 0;
+
+		m_Channels[m_iChannel]->isPlaying(&isPlay);
+
+		if (true == isPlay)
+		{
+			++m_iChannel;
+		}
+		
+		++iChecked;
+		// 32개 쓰고있으면 리턴
+		if (iChecked > 32)
+			return -1;
 	}
 	
-	if (0 > eChannel ||
-		SOUND_END <= eChannel)
-		return E_FAIL;
-	
-	_bool isPlay = { false };
-
-	//  forcePlay가 true면 강제로 들어온 사운드 재생
-	if (true == bForcePlay ||
-		nullptr == m_Channels[eChannel])
-	{
-		m_pSystem->playSound(pSound, nullptr, false, &m_Channels[eChannel]);	
-	}
-	else
-	{
-		// false일때 재생중이면 패스, 재생중이 아니면 들어온 사운드 재생.
-		m_Channels[eChannel]->isPlaying(&isPlay);
-
-		if (false == isPlay)
-			m_pSystem->playSound(pSound, nullptr, false, &m_Channels[eChannel]);
-		else
-			return S_OK;
-	}
+	m_pSystem->playSound(pSound, nullptr, false, &m_Channels[m_iChannel]);
 
 	// 예외처리
-	if (nullptr == m_Channels[eChannel])
+	if (nullptr == m_Channels[m_iChannel])
 	{
 		MSG_BOX("Failed Set Channel");
-		return E_FAIL;
+		return -1;
 	}
 	
-	if (FMOD_OK != m_Channels[eChannel]->setVolume(fVolume))
-		return E_FAIL;
+	if (FMOD_OK != m_Channels[m_iChannel]->setVolume(fVolume))
+		return -1;
 
 	if (FMOD_OK != m_pSystem->update())
-		return E_FAIL;
+		return -1;
 
-	return S_OK;
+	return m_iChannel;
 }
 
-HRESULT CSound_Manager::Play_Sound(const _tchar* pSoundTag, _uint iNumSounds, SOUNDCHANNEL eChannel, _float fVolume, _bool bForcePlay)
-{
-	_tchar	szSoundName[MAX_STR] = TEXT("");
-	wsprintf(szSoundName, pSoundTag, rand() % iNumSounds);
-
-	if (FAILED(Play_Sound(szSoundName, eChannel, fVolume, bForcePlay)))
-		return E_FAIL;
-
-	return S_OK;
-}
-
-HRESULT CSound_Manager::Play_BGM(const _tchar* pSoundTag, _float fVolume)
+_int CSound_Manager::Play_BGM(const _tchar* pSoundTag, _float fVolume)
 {
 	FMOD::Sound* pSound = Find_Sound(pSoundTag);
 
 	if (nullptr == pSound)
-		return E_FAIL;
+		return -1;
 
-	if (FMOD_OK != m_pSystem->playSound(pSound, nullptr, false, &m_Channels[SOUND_BGM]))
-		return E_FAIL;
+	_bool isPlay = { true };
 
-	m_Channels[SOUND_BGM]->setMode(FMOD_LOOP_NORMAL);
-	m_Channels[SOUND_BGM]->setVolume(fVolume);
+	_uint iChecked = { 0 };
+	while (isPlay)
+	{
+		if (MAX_CHANNEL == m_iChannel)
+			m_iChannel = 0;
+
+		m_Channels[m_iChannel]->isPlaying(&isPlay);
+
+		if (true == isPlay)
+		{
+			++m_iChannel;
+		}
+
+		++iChecked;
+		// 32개 쓰고있으면 리턴
+		if (iChecked > 32)
+			return -1;
+	}
+
+
+	if (FMOD_OK != m_pSystem->playSound(pSound, nullptr, false, &m_Channels[m_iChannel]))
+		return -1;
+
+	m_Channels[m_iChannel]->setMode(FMOD_LOOP_NORMAL);
+	m_Channels[m_iChannel]->setVolume(fVolume);
 	m_pSystem->update();
-	
+
+	return m_iChannel;
+}
+
+_int CSound_Manager::Play_Sound(const _tchar* pSoundTag, _uint iNumSounds, _float fVolume)
+{
+	_tchar	szSoundName[MAX_STR] = TEXT("");
+	wsprintf(szSoundName, pSoundTag, rand() % iNumSounds);
+
+	return Play_Sound(szSoundName, fVolume);
+}
+
+HRESULT CSound_Manager::Stop_Sound(_int iChannel)
+{
+	if (0 > iChannel ||
+		MAX_CHANNEL < iChannel)
+		return E_FAIL;
+
+	m_Channels[iChannel]->stop();
+
 	return S_OK;
 }
 
-HRESULT CSound_Manager::Stop_Sound(SOUNDCHANNEL eChannel)
+HRESULT CSound_Manager::Pause_Sound(_int iChannel)
 {
-	if (0 > eChannel ||
-		SOUND_END <= eChannel)
+	if (0 > iChannel ||
+		MAX_CHANNEL < iChannel)
 		return E_FAIL;
 
-	m_Channels[eChannel]->stop();
+	m_Channels[iChannel]->setPaused(true);
 
 	return S_OK;
 }
 
-HRESULT CSound_Manager::Pause_Sound(SOUNDCHANNEL eChannel)
+HRESULT CSound_Manager::Restart_Sound(_int iChannel)
 {
-	if (0 > eChannel ||
-		SOUND_END <= eChannel)
+	if (0 > iChannel ||
+		MAX_CHANNEL <= iChannel)
 		return E_FAIL;
 
-	m_Channels[eChannel]->setPaused(true);
-
-	return S_OK;
-}
-
-HRESULT CSound_Manager::Restart_Sound(SOUNDCHANNEL eChannel)
-{
-	if (0 > eChannel ||
-		SOUND_END <= eChannel)
-		return E_FAIL;
-
-	m_Channels[eChannel]->setPaused(false);
+	m_Channels[iChannel]->setPaused(false);
 
 	return S_OK;
 }
@@ -150,13 +182,13 @@ HRESULT CSound_Manager::Stop_AllSound()
 	return S_OK;
 }
 
-HRESULT CSound_Manager::Set_ChannelVolume(SOUNDCHANNEL eChannel, _float fVolume)
+HRESULT CSound_Manager::Set_ChannelVolume(_int iChannel, _float fVolume)
 {
-	if (0 > eChannel ||
-		SOUND_END <= eChannel)
+	if (0 > iChannel ||
+		MAX_CHANNEL <= iChannel)
 		return E_FAIL;
 
-	m_Channels[eChannel]->setVolume(fVolume);
+	m_Channels[iChannel]->setVolume(fVolume);
 	m_pSystem->update();
 
 	return S_OK;

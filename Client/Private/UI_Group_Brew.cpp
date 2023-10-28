@@ -120,6 +120,9 @@ void CUI_Group_Brew::Tick(_float fTimeDelta)
 
 			if (pIcon->Get_Clicked())
 			{
+				BEGININSTANCE;
+				//pGameInstance->Play_Sound(TEXT("Create_Potion.wav"), CSound_Manager::SOUND_UI,1.0f, true);
+				ENDINSTANCE
 				// 제조하게끔 하는 로직.
 				_bool isSuccess = { false };
 				
@@ -134,7 +137,9 @@ void CUI_Group_Brew::Tick(_float fTimeDelta)
 					{
 						break;
 					}
-					
+					m_pPotionTap->Add_Potion(POTIONTAP::HEALTH_POTION);
+					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_HORKLUMP_JUICE);
+					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_DITTANY_LEAVES);
 					break;
 				case EDURUS:
 					if (1 > m_pInventory->Get_Resource(INGREDIENT::ASHWINDER_EGGS))

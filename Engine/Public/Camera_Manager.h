@@ -154,7 +154,9 @@ public:
 	HRESULT Clear();
 
 	//컷씬 재생 중 임을 알리는 함수
-	_bool Is_Playing_CutScene() { return m_isPlayingCutScene; }
+	_bool Is_Playing_CutScene() { 
+		return m_isPlayingCutScene; 
+	}
 
 
 	//for.protected

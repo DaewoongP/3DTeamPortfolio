@@ -6,7 +6,7 @@
 #include"MapObject_Ins.h"
 #include"Player.h"
 #include "Event_Spawn.h"
-
+#include"Santum_MapEffects.h"
 CLevel_Sanctum::CLevel_Sanctum(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) : CLevel(pDevice, pContext)
 {
 }
@@ -64,9 +64,8 @@ HRESULT CLevel_Sanctum::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	_bool isNight = true;
-	FAILED_CHECK_RETURN(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SANCTUM,
-		TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"), &isNight), E_FAIL)
+	FAILED_CHECK_RETURN(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM,
+		TEXT("Prototype_GameObject_RedSky"), pLayerTag, TEXT("GameObject_RedSky")), E_FAIL)
 
 	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData4.ddd"))))
 	{
@@ -173,12 +172,26 @@ HRESULT CLevel_Sanctum::Ready_Layer_MapEffect(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_Sanctum_MapEffets"), pLayerTag, TEXT("GameObject_Sanctum_MapEffets"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Sanctum_MapEffets)");
+		return E_FAIL;
+	}
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_MapParticle_Liquid"), pLayerTag, TEXT("GameObject_MapParticle_Liquid"))))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (GameObject_MapParticle_Liquid)");
+	//	return E_FAIL;
+	//}
+
+
 	Safe_Release(pGameInstance);
 	return S_OK;
 }
 
 HRESULT CLevel_Sanctum::Ready_Lights()
 {
+	g_isNight = true;
+
 	BEGININSTANCE;
 	CLight::LIGHTDESC		LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
@@ -187,12 +200,40 @@ HRESULT CLevel_Sanctum::Ready_Lights()
 	LightDesc.vPos = _float4(10.f, 100.f, 25.f, 1.f);
 	LightDesc.vDir = _float4(0.33f, -0.99f, 0.33f, 0.f);
 
-	LightDesc.vDiffuse = WHITEDEFAULT;
-	LightDesc.vAmbient = WHITEDEFAULT;
-	LightDesc.vSpecular = WHITEDEFAULT;
+	LightDesc.vDiffuse = _float4(0.75f, 0.75f, 0.75f, 1.f);
+	LightDesc.vAmbient = LightDesc.vDiffuse;
+	LightDesc.vSpecular = LightDesc.vDiffuse;
 
 	if (FAILED(pGameInstance->Add_Light(LightDesc, nullptr, true)))
 		return E_FAIL;
+
+	ZeroMemory(&LightDesc, sizeof LightDesc);
+
+	LightDesc.eType = CLight::TYPE_POINT;
+	LightDesc.vPos = _float4(5.f, -69.f, 176.f, 1.f);
+	LightDesc.vDir = _float4(0.33f, -0.99f, 0.33f, 0.f);
+	LightDesc.fRange = 160.f;
+	//LightDesc.fIncreasePower
+	LightDesc.vDiffuse = _float4(1.f,0.f,0.f,0.f);
+	LightDesc.vAmbient = _float4(1.f, 0.f, 0.f, 0.f);
+	LightDesc.vSpecular = _float4(1.f, 0.f, 0.f, 0.f);
+
+	if (FAILED(pGameInstance->Add_Light(LightDesc, nullptr, true)))
+		return E_FAIL;
+
+	//LightDesc.eType = CLight::TYPE_POINT;
+	//LightDesc.vPos = _float4(47.f, -75.f, 243.f, 1.f);
+	//LightDesc.vDir = _float4(0.33f, -0.99f, 0.33f, 0.f);
+	//LightDesc.fRange = 160.f;
+	////LightDesc.fIncreasePower
+	//LightDesc.vDiffuse = _float4(1.f, 0.f, 0.f, 0.f);
+	//LightDesc.vAmbient = _float4(1.f, 0.f, 0.f, 0.f);
+	//LightDesc.vSpecular = _float4(1.f, 0.f, 0.f, 0.f);
+	//
+	//if (FAILED(pGameInstance->Add_Light(LightDesc, nullptr, true)))
+	//	return E_FAIL;
+
+
 
 	ENDINSTANCE;
 	return S_OK;

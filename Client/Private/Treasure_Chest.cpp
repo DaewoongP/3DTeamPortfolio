@@ -126,13 +126,13 @@ void CTreasure_Chest::Tick(_float fTimeDelta)
 	// 닫혀있는 상태
 	if (true == m_isGetItem)
 	{
-		m_pModel->Play_Animation(0.f, CModel::UPPERBODY, m_pTransform);
+		m_pModel->Play_Animation(0.f, &m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 	}
 
 	// 열리는 상태
 	else
 	{
-		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+		m_pModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 	}
 }
 

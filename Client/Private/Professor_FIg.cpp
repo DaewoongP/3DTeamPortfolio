@@ -80,7 +80,7 @@ void CProfessor_Fig::Tick(_float fTimeDelta)
 		Tick_Script(fTimeDelta);
 
 	if (nullptr != m_pModelCom)
-		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+		m_pModelCom->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 }
 
 void CProfessor_Fig::Late_Tick(_float fTimeDelta)
@@ -115,7 +115,7 @@ void CProfessor_Fig::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		}
 		BEGININSTANCE;
 		_tchar szVoiceTag[2][MAX_PATH] = { {TEXT("eleazarfig_13367.wav") },{TEXT("eleazarfig_13368.wav")} };
-		pGameInstance->Play_Sound(szVoiceTag[rand() % 2], CSound_Manager::SOUND_VOICE, 0.5f, true);
+		//pGameInstance->Play_Sound(szVoiceTag[rand() % 2], CSound_Manager::SOUND_VOICE, 0.5f, true);
 		ENDINSTANCE;
 		//Protego
 		if (BUFF_PROTEGO & m_iCurrentSpell)

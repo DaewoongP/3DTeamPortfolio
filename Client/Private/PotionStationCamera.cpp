@@ -26,6 +26,8 @@ void CPotionStationCamera::Tick(const _float& fTimeDelta)
 	BEGININSTANCE;
 
 	pGameInstance->Set_Transform(CPipeLine::D3DTS_VIEW, XMMatrixLookAtLH(m_vEye, m_vAt, _float3(0.0f, 1.0f, 0.0f)));
+
+	pGameInstance->Set_Transform(CPipeLine::D3DTS_PROJ, XMMatrixPerspectiveFovLH(m_CameraDesc.m_fFovY, m_CameraDesc.m_fAspect, m_CameraDesc.m_fNear, m_CameraDesc.m_fFar));
 #ifdef _DEBUG
 	//ADD_IMGUI([&] { this->Tick_Imgui(fTimeDelta); });
 #endif // _DEBUG

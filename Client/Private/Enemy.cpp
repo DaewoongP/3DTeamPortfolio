@@ -78,7 +78,8 @@ void CEnemy::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	m_vCurrentPosition = m_pTransform->Get_Position();
 
-	m_pUI_HP->Tick(fTimeDelta);
+	if (nullptr != m_pUI_HP)
+		m_pUI_HP->Tick(fTimeDelta);
 }
 
 void CEnemy::Late_Tick(_float fTimeDelta)

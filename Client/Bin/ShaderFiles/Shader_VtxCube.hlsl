@@ -63,7 +63,7 @@ technique11 DefaultTechnique
 {
     pass Sky
     {
-        SetRasterizerState(RS_Cull_None);
+        SetRasterizerState(RS_Cull_CW);
         SetDepthStencilState(DSS_Depth_Disable, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 

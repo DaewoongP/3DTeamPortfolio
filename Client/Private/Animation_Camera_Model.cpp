@@ -70,7 +70,7 @@ HRESULT CAnimation_Camera_Model::Initialize_Level(_uint _iLevelIndex)
 void CAnimation_Camera_Model::Tick(_float fTimeDelta)
 {
 	//애니메이션 재생
-	m_pAnimCameraModel->Play_Animation(fTimeDelta);
+	m_pAnimCameraModel->Play_Animation(fTimeDelta, &m_SoundChannel);
 
 	//eye,up,at갱신
 	Update_Up_Eye_At();

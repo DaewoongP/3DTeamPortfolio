@@ -151,10 +151,10 @@ void CGull::Tick(_float fTimeDelta)
 		if (10 <= m_iGullIndex)
 		{
 			if (m_fRandTimeAcc >= m_fRandTime)
-				m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+				m_pModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 		}
 		else
-			m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+			m_pModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 	}
 }
 

@@ -48,7 +48,7 @@ HRESULT CNotify::Initialize()
 	return S_OK;
 }
 
-void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameIndex, _Inout_ _float* fSpeed, const _float4x4* pWorldMatrix, _float4x4 PivotMatrix)
+void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameIndex, _Inout_ _float* fSpeed, _Inout_ vector<_int>* iSoundChannelVecconst,const _float4x4* pWorldMatrix, _float4x4 PivotMatrix)
 {
 	if (0.f == fTimeAcc)
 	{
@@ -126,7 +126,12 @@ void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameI
 				CGameInstance* pGameInstance = CGameInstance::GetInstance();
 				Safe_AddRef(pGameInstance);
 				SOUNDFRAME* pParticleFrame = static_cast<SOUNDFRAME*>(pKeyFrame);
-				pGameInstance->Play_Sound(pParticleFrame->wszSoundTag, (CSound_Manager::SOUNDCHANNEL)pParticleFrame->iChannel, pParticleFrame->fVolum);
+				_int returnValue = pGameInstance->Play_Sound(pParticleFrame->wszSoundTag, pParticleFrame->fVolum);
+				if (returnValue != -1 && iSoundChannelVecconst != nullptr)
+				{
+					iSoundChannelVecconst->push_back(returnValue);
+				}
+					
 				Safe_Release(pGameInstance);
 				break;
 			}
@@ -235,9 +240,7 @@ void CNotify::Edit_Frame(_uint iFindFrame, KEYFRAME* pTempFrame)
 		SOUNDFRAME* pSoundFrameData = static_cast<SOUNDFRAME*>(pTempFrame);
 
 		lstrcpy(static_cast<SOUNDFRAME*>(pKeyFrame)->wszSoundTag, pSoundFrameData->wszSoundTag);
-		static_cast<SOUNDFRAME*>(pKeyFrame)->iChannel = pSoundFrameData->iChannel;
 		static_cast<SOUNDFRAME*>(pKeyFrame)->fVolum = pSoundFrameData->fVolum;
-		static_cast<SOUNDFRAME*>(pKeyFrame)->isForce = pSoundFrameData->isForce;
 	}
 
 	//Á¤·Ä
@@ -298,8 +301,6 @@ HRESULT CNotify::AddFrame(KEYFRAME_GCM* data,const CModel::BONES& Bones)
 		soundFrameDesc->fTime = data->fTime;
 		soundFrameDesc->isEnable = true;
 		soundFrameDesc->fVolum = reinterpret_cast<SOUNDFRAME_GCM*>(data)->fVolum;
-		soundFrameDesc->isForce = reinterpret_cast<SOUNDFRAME_GCM*>(data)->isForce;
-		soundFrameDesc->iChannel = reinterpret_cast<SOUNDFRAME_GCM*>(data)->iChannel;
 		lstrcpy(soundFrameDesc->wszSoundTag, reinterpret_cast<SOUNDFRAME_GCM*>(data)->wszSoundTag);
 		keyFrameDesc = soundFrameDesc;
 		wstring str = data->szName;
