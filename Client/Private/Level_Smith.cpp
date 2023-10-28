@@ -57,7 +57,6 @@ void CLevel_Smith::Tick(_float fTimeDelta)
 		pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVELID)m_iNextLevelIndex));
 	}
 
-#ifdef _DEBUG
 	if (pGameInstance->Get_DIKeyState(DIK_LSHIFT))
 	{
 		if (pGameInstance->Get_DIKeyState(DIK_7, CInput_Device::KEY_DOWN))
@@ -77,7 +76,6 @@ void CLevel_Smith::Tick(_float fTimeDelta)
 			pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_SANCTUM));
 		}
 	}
-#endif // _DEBUG
 
 	ENDINSTANCE;
 

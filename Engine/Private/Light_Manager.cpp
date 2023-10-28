@@ -151,10 +151,12 @@ HRESULT CLight_Manager::Render_Lights(CShader* pShader, CVIBuffer_Rect* pVIBuffe
 
 HRESULT CLight_Manager::Return_Light(CLight* pLight)
 {
-	Safe_Release(pLight);
+	std::lock_guard<std::mutex> lock(mtx);
 
 	if (nullptr == pLight)
 		return S_OK;
+
+	Safe_Release(pLight);
 
 	auto iter = find_if(m_Lights.begin(), m_Lights.end(), [&](auto value) {
 		if (value == pLight)

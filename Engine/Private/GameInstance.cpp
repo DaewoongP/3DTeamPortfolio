@@ -80,7 +80,7 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 	if (FAILED(m_pCamera_Manager->Initialize_CameraManager()))
 		return E_FAIL;
 
-	if (FAILED(m_pLight_Manager->Reserve_Lights(50)))
+	if (FAILED(m_pLight_Manager->Reserve_Lights(100)))
 		return E_FAIL;
 
 	//m_pThread_Pool->Initialize(4);

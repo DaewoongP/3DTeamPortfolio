@@ -388,6 +388,7 @@ HRESULT CUI_Inventory::Set_ResourceInventoryItem(vector<CItem*>& pItems, vector<
 						return E_FAIL;
 					}
 					m_pSlots[iIndex]->Set_IconTexture(pItem->Get_UITexture());
+					m_pSlots[iIndex]->Set_Font(to_wstring((*ResourceCount)[static_cast<CIngredient*>(pItem)->Get_Ingredient()]));				
 				}
 				else if (m_pSlots[iIndex] && !m_pSlots[iIndex]->Get_IconTexture())
 				{

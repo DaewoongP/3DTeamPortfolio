@@ -3,6 +3,7 @@
 #include "Level_Loading.h"
 
 #include "Trigger.h"
+#include "Quest_Manager.h"
 
 CEvent_Smeade_Next_Level::CEvent_Smeade_Next_Level(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -101,12 +102,25 @@ void CEvent_Smeade_Next_Level::Check_Event_Sanctum(_float fTimeDelta)
 
 	if (true == m_pNext_Level_Sanctum->Is_Collision())
 	{
-		CGameInstance* pGameInstance = CGameInstance::GetInstance();
-		Safe_AddRef(pGameInstance);
-		pGameInstance->Get_CurrentLevel()->Set_NextLevel(LEVEL_SANCTUM);
-		Safe_Release(pGameInstance);
+		BEGININSTANCE;
+
+		CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
+		Safe_AddRef(pQuest_Manager);
+		
+		if (false == pQuest_Manager->Is_Quest_Finished(TEXT("Quest_Secret")))
+		{
+			pGameInstance->Get_CurrentLevel()->Set_NextLevel(LEVEL_VAULT);
+		}
+
+		else
+		{
+			pGameInstance->Get_CurrentLevel()->Set_NextLevel(LEVEL_SANCTUM);
+		}
 
 		m_isCheck_Sanctum = true;
+
+		Safe_Release(pQuest_Manager);
+		ENDINSTANCE;
 	}
 }
 

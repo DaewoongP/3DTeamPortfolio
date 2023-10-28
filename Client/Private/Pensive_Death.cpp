@@ -45,7 +45,6 @@ void CPensive_Death::OnStateEnter(void* _pArg)
 	Safe_AddRef(pQuest_Manager);
 	pQuest_Manager->Clear_Quest(TEXT("Quest_Secret"));
 	Safe_Release(pQuest_Manager);
-	
 }
 
 void CPensive_Death::OnStateTick()
