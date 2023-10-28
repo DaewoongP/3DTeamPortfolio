@@ -196,7 +196,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(29.f, 2.7f, 26.f);
 	m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
 	m_vLevelInitPosition[LEVEL_SMITH] = _float3(32.f, 0.8f, 25.f);
-	m_vLevelInitPosition[LEVEL_SKY] = _float3(88.8f, 12.5f, 69.8f);
+	m_vLevelInitPosition[LEVEL_SKY] = _float3(110.f, 0.5f, 68.8f);
 
 	m_fTargetViewRange = 2.0f;
 
@@ -240,6 +240,8 @@ HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 		m_pTargetTransform = nullptr;
 	}
 
+	if (LEVEL_SKY == m_eLevelID)
+		m_isFlying = true;
 
 	return S_OK;
 }
@@ -290,13 +292,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	Fix_Mouse();
 	Update_Cloth(fTimeDelta);
-
-
-
-
-
-
-
+	
 	m_pCustomModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UNDERBODY);
 	m_pCustomModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::OTHERBODY);

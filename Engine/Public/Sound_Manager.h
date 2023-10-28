@@ -26,6 +26,7 @@ public:
     HRESULT Initialize();
 	// 파일경로에 있는 사운드를 자동으로 파일이름을 태그값으로 입력해줌
 	HRESULT Add_Sounds(const _tchar* pSoundFilePath);
+	_bool Is_Playing(_int iChannel);
 	
 public:
 	// forceplay 활성화하면 현재 재생중인 사운드 무시하고 실행함.
@@ -49,7 +50,8 @@ private:
 	_umap<_tchar*, FMOD::Sound*>		m_Sounds;
 	FMOD::Channel*						m_Channels[MAX_CHANNEL];
 	FMOD::System*						m_pSystem = { nullptr };
-	
+	_int								m_iChannel = { 0 };
+
 public:
     virtual void Free() override;
 };

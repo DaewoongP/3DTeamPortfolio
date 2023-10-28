@@ -30,6 +30,18 @@ HRESULT CSound_Manager::Add_Sounds(const _tchar* pSoundFilePath)
 	return S_OK;
 }
 
+_bool CSound_Manager::Is_Playing(_int iChannel)
+{
+	if (0 > iChannel ||
+		MAX_CHANNEL < iChannel)
+		return false;
+
+	_bool isPlay = { true };
+	m_Channels[iChannel]->isPlaying(&isPlay);
+
+	return isPlay;
+}
+
 _int CSound_Manager::Play_Sound(const _tchar* pSoundTag, _float fVolume)
 {
 	FMOD::Sound* pSound = Find_Sound(pSoundTag);
@@ -45,35 +57,41 @@ _int CSound_Manager::Play_Sound(const _tchar* pSoundTag, _float fVolume)
 	_bool isPlay = { true };
 
 	// false일때 재생중이면 패스, 재생중이 아니면 들어온 사운드 재생.
-	_int iChannel = 0;
+	_uint iChecked = { 0 };
 	while (isPlay)
 	{
-		m_Channels[iChannel]->isPlaying(&isPlay);
+		m_Channels[m_iChannel]->isPlaying(&isPlay);
 
 		if (true == isPlay)
-			iChannel++;
-
+		{
+			if (MAX_CHANNEL == m_iChannel)
+				m_iChannel = 0;
+			else
+				++m_iChannel;
+		}
+		
+		++iChecked;
 		// 32개 쓰고있으면 리턴
-		if (iChannel > 32)
+		if (iChecked > 32)
 			return -1;
 	}
 	
-	m_pSystem->playSound(pSound, nullptr, false, &m_Channels[iChannel]);
+	m_pSystem->playSound(pSound, nullptr, false, &m_Channels[m_iChannel]);
 
 	// 예외처리
-	if (nullptr == m_Channels[iChannel])
+	if (nullptr == m_Channels[m_iChannel])
 	{
 		MSG_BOX("Failed Set Channel");
 		return -1;
 	}
 	
-	if (FMOD_OK != m_Channels[iChannel]->setVolume(fVolume))
+	if (FMOD_OK != m_Channels[m_iChannel]->setVolume(fVolume))
 		return -1;
 
 	if (FMOD_OK != m_pSystem->update())
 		return -1;
 
-	return iChannel;
+	return m_iChannel;
 }
 
 _int CSound_Manager::Play_BGM(const _tchar* pSoundTag, _float fVolume)
@@ -83,29 +101,36 @@ _int CSound_Manager::Play_BGM(const _tchar* pSoundTag, _float fVolume)
 	if (nullptr == pSound)
 		return -1;
 
-	_int iChannel = 0;
 	_bool isPlay = { true };
 
+	_uint iChecked = { 0 };
 	while (isPlay)
 	{
-		m_Channels[iChannel]->isPlaying(&isPlay);
+		m_Channels[m_iChannel]->isPlaying(&isPlay);
 
 		if (true == isPlay)
-			iChannel++;
+		{
+			if (MAX_CHANNEL == m_iChannel)
+				m_iChannel = 0;
+			else
+				++m_iChannel;
+		}
 
+		++iChecked;
 		// 32개 쓰고있으면 리턴
-		if (iChannel > 32)
+		if (iChecked > 32)
 			return -1;
 	}
 
-	if (FMOD_OK != m_pSystem->playSound(pSound, nullptr, false, &m_Channels[iChannel]))
+
+	if (FMOD_OK != m_pSystem->playSound(pSound, nullptr, false, &m_Channels[m_iChannel]))
 		return -1;
 
-	m_Channels[iChannel]->setMode(FMOD_LOOP_NORMAL);
-	m_Channels[iChannel]->setVolume(fVolume);
+	m_Channels[m_iChannel]->setMode(FMOD_LOOP_NORMAL);
+	m_Channels[m_iChannel]->setVolume(fVolume);
 	m_pSystem->update();
 
-	return iChannel;
+	return m_iChannel;
 }
 
 _int CSound_Manager::Play_Sound(const _tchar* pSoundTag, _uint iNumSounds, _float fVolume)

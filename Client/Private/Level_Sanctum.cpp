@@ -178,6 +178,8 @@ HRESULT CLevel_Sanctum::Ready_Layer_MapEffect(const _tchar* pLayerTag)
 
 HRESULT CLevel_Sanctum::Ready_Lights()
 {
+	g_isNight = true;
+
 	BEGININSTANCE;
 	CLight::LIGHTDESC		LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);

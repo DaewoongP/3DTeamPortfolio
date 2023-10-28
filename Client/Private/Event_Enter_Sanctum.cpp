@@ -20,6 +20,8 @@ CEvent_Enter_Sanctum::CEvent_Enter_Sanctum(const CEvent_Enter_Sanctum& rhs)
 
 HRESULT CEvent_Enter_Sanctum::Initialize(void* pArg)
 {
+	FAILED_CHECK_RETURN(Add_Components(), E_FAIL);
+
 	/* Set Monsters */
 	BEGININSTANCE;
 
@@ -63,6 +65,11 @@ HRESULT CEvent_Enter_Sanctum::Initialize(void* pArg)
 			Safe_AddRef(Pair.second);
 		}
 	}
+
+	pGameInstance->Add_Timer(TEXT("Sanctum_Gate_CutScene_Fade_Out"), false, 1.0f);
+	pGameInstance->Add_Timer(TEXT("Sanctum_Gate_CutScene_Play"), false, 5.2f);
+	pGameInstance->Read_CutSceneCamera(TEXT("Sanctum_Gate"), TEXT("../../Resources/GameData/CutScene/Sanctum_Gate.cut"));
+
 
 	ENDINSTANCE;
 
@@ -123,17 +130,131 @@ void CEvent_Enter_Sanctum::Check_Monsters_Are_Death()
 	{
 		// 여기서 컷신 작업 해주시면 됩니다 현우형
 
-		// 이 포문은 문을 여는 부분입니다.
-		for (auto iter = m_pDoors.begin(); iter != m_pDoors.end();)
+		BEGININSTANCE;
+
+		switch (m_eSequence)
 		{
-			(*iter)->Open_Door();
-			Safe_Release(*iter);
-			iter = m_pDoors.erase(iter);
+		case Client::CEvent_Enter_Sanctum::GATECUTSCENE_SEQUENCE_FADE_OUT:
+		{
+			//진입시
+			if (true == m_isEnter)
+			{
+				//페이드 아웃
+				m_pRenderer->FadeOut(1.0f);
+
+				//진입 표시
+				m_isEnter = false;
+			}
+
+			//타이머 체크
+			if (true == pGameInstance->Check_Timer(TEXT("Sanctum_Gate_CutScene_Fade_Out")))
+			{
+				m_isEnter = true;
+
+				m_eSequence = GATECUTSCENE_SEQUENCE_PLAY_CUTSCENE;
+			}
+		}
+		break;
+		case Client::CEvent_Enter_Sanctum::GATECUTSCENE_SEQUENCE_PLAY_CUTSCENE:
+		{
+			//진입시
+			if (true == m_isEnter)
+			{
+				//페이드 인
+				m_pRenderer->FadeIn(1.0f);
+				//타이머 리셋
+				pGameInstance->Reset_Timer(TEXT("Sanctum_Gate_CutScene_Play"));
+				//진입 표시
+				m_isEnter = false;
+				//컷씬 재생
+				pGameInstance->Add_CutScene(TEXT("Sanctum_Gate"));
+
+				// 이 포문은 문을 여는 부분입니다.
+				for (auto iter = m_pDoors.begin(); iter != m_pDoors.end();)
+				{
+					(*iter)->Open_Door();
+					Safe_Release(*iter);
+					iter = m_pDoors.erase(iter);
+				}
+			}
+
+			//타이머 종료
+			if (true == pGameInstance->Check_Timer(TEXT("Sanctum_Gate_CutScene_Play")))
+			{
+				m_eSequence = GATECUTSCENE_SEQUENCE_FADE_IN;
+
+				//페이드 아웃
+				m_pRenderer->FadeOut(1.0f);
+				//타이머 리셋
+				pGameInstance->Reset_Timer(TEXT("Sanctum_Gate_CutScene_Fade_Out"));
+
+				m_isEnter = true;
+			}
+		}
+		break;
+		case Client::CEvent_Enter_Sanctum::GATECUTSCENE_SEQUENCE_FADE_IN:
+		{
+			//진입시
+			if (true == m_isEnter)
+			{
+				//진입 표시
+				m_isEnter = false;
+			}
+
+			//타이머 체크
+			if (true == pGameInstance->Check_Timer(TEXT("Sanctum_Gate_CutScene_Fade_Out")))
+			{
+				m_isEnter = true;
+
+				m_eSequence = GATECUTSCENE_SEQUENCE_END;
+
+				//페이드 인
+				m_pRenderer->FadeIn(1.0f);
+
+				m_isDoorOpen = true; // 이 변수가 true가 되면 이 함수에 더이상 들어오지 않습니다.
+				m_pCard_Fig->On_Enter_Sanctum_Script(); // 피그 교수의 스크립트를 출력하는 부분입니다.
+			}
+		}
+		break;
+		case Client::CEvent_Enter_Sanctum::GATECUTSCENE_SEQUENCE_END:
+		{
+			if (true == m_isEnter)
+				break;
+
+			if (false == m_isGateCutsceneStart)
+			{
+				m_isGateCutsceneStart = true;
+				m_isEnter = true;
+				m_eSequence = GATECUTSCENE_SEQUENCE_FADE_OUT;
+				//타이머 리셋
+				pGameInstance->Reset_Timer(TEXT("Sanctum_Gate_CutScene_Fade_Out"));
+			}
+		}
+		break;
+		default:
+			break;
 		}
 
-		m_pCard_Fig->On_Enter_Sanctum_Script(); // 피그 교수의 스크립트를 출력하는 부분입니다.
-		m_isDoorOpen = true; // 이 변수가 true가 되면 이 함수에 더이상 들어오지 않습니다.
+		ENDINSTANCE;
+
+		
+
+		
+		
 	}
+}
+
+HRESULT CEvent_Enter_Sanctum::Add_Components()
+{
+	/* Com_Renderer */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
+		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	return S_OK;
 }
 
 CEvent_Enter_Sanctum* CEvent_Enter_Sanctum::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
