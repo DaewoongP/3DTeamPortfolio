@@ -411,7 +411,11 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 		CEnemy* pEnemy = static_cast<CEnemy*>(m_pTarget);
 		if (nullptr != pEnemy)
-			pEnemy->Get_UI_Enemy_HP()->Late_Tick(fTimeDelta);
+		{
+			CUI_Group_Enemy_HP* pUI_HP = pEnemy->Get_UI_Enemy_HP();
+			if(nullptr != pUI_HP)
+				pUI_HP->Late_Tick(fTimeDelta);
+		}
 	}
 	ENDINSTANCE;
 }
