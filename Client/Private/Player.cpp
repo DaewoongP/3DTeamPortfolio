@@ -377,7 +377,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
-	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
+	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")) || pGameInstance->Is_Playing_CutScene() == true)
 	{
 		ENDINSTANCE;
 		return;

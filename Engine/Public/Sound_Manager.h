@@ -17,7 +17,7 @@ class CSound_Manager final : public CBase
 {
     DECLARE_SINGLETON(CSound_Manager)
 public:
-	enum SOUNDCHANNEL { SOUND_BGM,SOUND_VOICE, SOUND_END };
+	enum SOUNDCHANNEL { SOUND_BGM,SOUND_VOICE, SOUND_UI, SOUND_END };
 
 private:
     explicit CSound_Manager() = default;
