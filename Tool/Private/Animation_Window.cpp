@@ -503,6 +503,19 @@ void CAnimation_Window::Notify_InputFileds(_char* szNotifyName, KEYFRAME::KEYFRA
 		sprintf_s(szUIName, "%s", "ActionTag##");
 		ImGui::InputText(szUIName, szNotifyActionTag,255);
 	}
+
+	if (*eNotifyKeyFrameType == KEYFRAME::KEYFRAMETYPE::KF_SOUND)
+	{
+		sprintf_s(szUIName, "%s", "SoundNotify_IChannel##");
+		ImGui::InputInt(szUIName, &m_iChannel);
+
+		sprintf_s(szUIName, "%s", "SoundNotify_fVolum##");
+		ImGui::InputFloat(szUIName, &m_fVolum);
+
+		sprintf_s(szUIName, "%s", "SoundNotify_isForce##");
+		ImGui::Checkbox(szUIName, &m_isFoce);
+	}
+
 	if (*eNotifyKeyFrameType == KEYFRAME::KEYFRAMETYPE::KF_PARTICLE)
 	{
 		sprintf_s(szUIName, "%s", "ParitcleNotify_BindBoneIndex##");
@@ -556,6 +569,9 @@ void CAnimation_Window::Add_Notify_Button(CModel::ANIMTYPE ePartCnt, _char* szNo
 			SOUNDFRAME_GCM* NotifyKeyFrameDesc = new SOUNDFRAME_GCM{};
 			NotifyKeyFrameDesc->eKeyFrameType = *eNotifyKeyFrameType;
 			NotifyKeyFrameDesc->fTime = *fNotifyActionTime;
+			NotifyKeyFrameDesc->isForce = m_isFoce;
+			NotifyKeyFrameDesc->iChannel = m_iChannel;
+			NotifyKeyFrameDesc->fVolum = m_fVolum;
 			lstrcpy(NotifyKeyFrameDesc->szName, wszNotifyName);
 			_tchar  wszActionTagName[MAX_PATH] = {};
 			CharToWChar(szActionTagName, wszActionTagName);
@@ -602,8 +618,40 @@ void CAnimation_Window::Edit_Notify_Button(CModel::ANIMTYPE ePartCnt, CModel* m_
 	{
 		CNotify* pNotify = m_pDummyModel->Get_Animation(ePartCnt)->Get_Notify_Point();
 		//본즈 가져오자.
-		pNotify->Edit_Frame(m_iSelectedNotifyIndex[ePartCnt], m_eNotifyKeyFrameType, m_fNotifyActionTime, m_fNotifySpeed,m_szNotifyTag,
-			m_iParitcleNotify_BindBoneIndex,XMMatrixTranslation(m_vParitcleNotify_OffsetPosition.x, m_vParitcleNotify_OffsetPosition.y, m_vParitcleNotify_OffsetPosition.z), *m_pDummyModel->Get_Bone_Vector_Point());
+
+		/*Bones[iBondIndex]->Get_CombinedTransformationMatrixPtr()*/
+		KEYFRAME* pFrame = { nullptr };
+		switch (m_eNotifyKeyFrameType)
+		{
+		case Engine::tagFrame::KF_SPEED:
+			pFrame = new SPEEDFRAME();
+			static_cast<SPEEDFRAME*>(pFrame)->fSpeed = m_fNotifySpeed;
+			break;
+		case Engine::tagFrame::KF_NOTIFY:
+			pFrame = new NOTIFYFRAME();
+			break;
+		case Engine::tagFrame::KF_SOUND:
+			pFrame = new SOUNDFRAME();
+			CharToWChar(m_szNotifyTag,static_cast<SOUNDFRAME*>(pFrame)->wszSoundTag);
+			static_cast<SOUNDFRAME*>(pFrame)->iChannel = m_iChannel;
+			static_cast<SOUNDFRAME*>(pFrame)->fVolum = m_fVolum;
+			static_cast<SOUNDFRAME*>(pFrame)->isForce = m_isFoce;
+			break;
+		case Engine::tagFrame::KF_PARTICLE:
+			pFrame = new PARTICLEFRAME();
+			CharToWChar(m_szNotifyTag, static_cast<PARTICLEFRAME*>(pFrame)->wszParticleTag);
+			static_cast<PARTICLEFRAME*>(pFrame)->iBoneIndex = m_iParitcleNotify_BindBoneIndex;
+			static_cast<PARTICLEFRAME*>(pFrame)->OffsetMatrix = XMMatrixTranslation(m_vParitcleNotify_OffsetPosition.x, m_vParitcleNotify_OffsetPosition.y, m_vParitcleNotify_OffsetPosition.z);
+			static_cast<PARTICLEFRAME*>(pFrame)->BindBoneMatrix = ((*m_pDummyModel->Get_Bone_Vector_Point())[static_cast<PARTICLEFRAME*>(pFrame)->iBoneIndex])->Get_CombinedTransformationMatrixPtr();
+			break;
+		default:
+			return;
+		}
+		pFrame->eKeyFrameType = m_eNotifyKeyFrameType;
+		pFrame->fTime = m_fNotifyActionTime;
+
+		pNotify->Edit_Frame(m_iSelectedNotifyIndex[ePartCnt], pFrame);
+		Safe_Delete(pFrame);
 	}
 }
 
