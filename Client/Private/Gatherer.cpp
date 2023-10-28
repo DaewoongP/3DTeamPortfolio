@@ -205,7 +205,7 @@ void CGatherer::Tick(_float fTimeDelta)
 	}
 
 	if (nullptr != m_pModel)
-		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+		m_pModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 
 	// 채집물 뽑히는 애니메이션이 끝나고 나면 사망처리
 	if (nullptr != m_pModel) 

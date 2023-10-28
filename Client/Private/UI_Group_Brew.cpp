@@ -120,6 +120,9 @@ void CUI_Group_Brew::Tick(_float fTimeDelta)
 
 			if (pIcon->Get_Clicked())
 			{
+				BEGININSTANCE;
+				//pGameInstance->Play_Sound(TEXT("Create_Potion.wav"), CSound_Manager::SOUND_UI,1.0f, true);
+				ENDINSTANCE
 				// 제조하게끔 하는 로직.
 				_bool isSuccess = { false };
 				

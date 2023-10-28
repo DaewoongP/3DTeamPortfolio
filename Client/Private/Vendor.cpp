@@ -68,7 +68,7 @@ void CVendor::Tick(_float fTimeDelta)
 		m_pUI_Store->Tick(fTimeDelta);
 
 	if (nullptr != m_pModelCom)
-		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+		m_pModelCom->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 }
 
 void CVendor::Late_Tick(_float fTimeDelta)

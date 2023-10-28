@@ -69,6 +69,11 @@ HRESULT CLevel_Static::Ready_Layer_UI(const _tchar* pLayerTag)
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC,
 		TEXT("Prototype_GameObject_UI_Farming"), pLayerTag, TEXT("GameObject_UI_Farming")), E_FAIL);
+	
+	BEGININSTANCE;
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/UI_Sound/"));
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
@@ -108,6 +113,7 @@ HRESULT CLevel_Static::Add_Scene()
 	MainSceneLayerTags.push_back(TEXT("Layer_Item"));
 	MainSceneLayerTags.push_back(TEXT("Layer_Event"));
 	MainSceneLayerTags.push_back(TEXT("Layer_Balloon"));
+	MainSceneLayerTags.push_back(TEXT("Layer_Manager"));
 #ifdef _DEBUG
 	MainSceneLayerTags.push_back(TEXT("Layer_Debug"));
 #endif // _DEBUG

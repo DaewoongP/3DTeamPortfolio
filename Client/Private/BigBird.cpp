@@ -64,7 +64,7 @@ void CBigBird::Tick(_float fTimeDelta)
 	//BigBird_Run(fTimeDelta);
 
 	if (nullptr != m_pModel)
-		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+		m_pModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 }
 
 void CBigBird::Late_Tick(_float fTimeDelta)

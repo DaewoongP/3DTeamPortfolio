@@ -30,12 +30,12 @@ public:
 	HRESULT Initialize();
 
 public:
-	void			Invalidate_Frame(_float fTimeAcc, _Inout_ _uint * pCurrentKeyFrameIndex, _Inout_ _float * fSpeed, const _float4x4 * pWorldMatrix, _float4x4 PivotMatrix);
+	void			Invalidate_Frame(_float fTimeAcc, _Inout_ _uint * pCurrentKeyFrameIndex, _Inout_ _float * fSpeed, _Inout_ vector<_int>* iSoundChannelVec, const _float4x4 * pWorldMatrix, _float4x4 PivotMatrix);
 	//인덱스를 이용한 검색
 	KEYFRAME* Find_Frame(_uint iFindFrame);
 	const _tchar* Find_Frame_Key(_uint iFindFrame);
 	void			Delete_Frame(_uint iFindFrame);
-	void			Edit_Frame(_uint iFindFrame, KEYFRAME::KEYFRAMETYPE eFrameType, _float fActionTime, _float fSpeed, _char * szActionTag, _int iBondIndex, _float4x4 OffsetMatrix, const CModel::BONES & Bones);
+	void			Edit_Frame(_uint iFindFrame, KEYFRAME* pTempFrame);
 	//태그를 이용한 검색
 	KEYFRAME* Find_Frame(const wchar_t* wszKeyFrameTag);
 	//추가(툴용)

@@ -38,7 +38,7 @@ void CForest_Troll::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	m_pModelCom->Play_Animation(fTimeDelta);
+	m_pModelCom->Play_Animation(fTimeDelta, &m_SoundChannel);
 }
 
 void CForest_Troll::Late_Tick(_float fTimeDelta)

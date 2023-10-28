@@ -1012,6 +1012,9 @@
     <Filter Include="04. Effect\Santum_MapEffects">
       <UniqueIdentifier>{5fbc3e11-c006-4d49-851d-fd6c99ef63df}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\00. Sky\Red">
+      <UniqueIdentifier>{36f2f32e-d3ac-480c-914b-9f5cf9d20abd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -2043,6 +2046,9 @@
     <ClInclude Include="..\public\Santum_MapEffects.h">
       <Filter>04. Effect\Santum_MapEffects</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\RedSky.h">
+      <Filter>02. GameObject\00. Sky\Red</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -3028,6 +3034,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Santum_MapEffects.cpp">
       <Filter>04. Effect\Santum_MapEffects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RedSky.cpp">
+      <Filter>02. GameObject\00. Sky\Red</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

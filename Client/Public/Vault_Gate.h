@@ -31,6 +31,8 @@ private:
 
 public:
 	_bool Get_GateOpen() const { return m_isCheckOnce; }
+	_bool Get_All_LightStands_On() const { return m_isAllLightStandsOn; } // 컷신을 위해 한 단계 추가
+	void Set_Gate_On() { m_isGateOpen = true; }
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -54,6 +56,8 @@ private:
 	_float			m_fRadius = { 0.f };
 
 	_bool			m_isCheckOnce = { false }; // 한번만 상호작용 가능
+	_bool			m_isAllLightStandsOn = { false };
+	_bool			m_isGateOpen = { false };
 	
 	vector<CLightStand*> m_pLightStands; // 맵에 존재하는 화로들
 

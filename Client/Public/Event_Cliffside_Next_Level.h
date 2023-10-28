@@ -10,6 +10,14 @@ class CCliff_Gate;
 
 class CEvent_Cliffside_Next_Level final : public CGameObject
 {
+	enum GATECUTSCENE_SEQUENCE
+	{
+		GATECUTSCENE_SEQUENCE_FADE_OUT,
+		GATECUTSCENE_SEQUENCE_PLAY_CUTSCENE,
+		GATECUTSCENE_SEQUENCE_FADE_IN,
+		GATECUTSCENE_SEQUENCE_END
+	};
+
 private:
 	explicit CEvent_Cliffside_Next_Level(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CEvent_Cliffside_Next_Level(const CEvent_Cliffside_Next_Level& rhs);
@@ -28,8 +36,17 @@ private:
 
 	CCliff_Gate* m_pCliff_Gate = { nullptr };
 
+	CRenderer* m_pRenderer = { nullptr };
+
 private:
 	_bool	m_isCheck = { false };
+
+	_bool m_isGateCutsceneStart = { false };
+	_bool	m_isEnter = { false };
+
+	_bool m_isFade[2] = { false,false };
+
+	GATECUTSCENE_SEQUENCE m_eSequence = { GATECUTSCENE_SEQUENCE_END };
 
 private:
 	HRESULT Add_Components();

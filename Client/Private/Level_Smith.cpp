@@ -31,8 +31,6 @@ HRESULT CLevel_Smith::Initialize()
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);	
 	ENDINSTANCE;
 
-
-
 	return S_OK;
 }
 
@@ -57,7 +55,6 @@ void CLevel_Smith::Tick(_float fTimeDelta)
 		pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVELID)m_iNextLevelIndex));
 	}
 
-#ifdef _DEBUG
 	if (pGameInstance->Get_DIKeyState(DIK_LSHIFT))
 	{
 		if (pGameInstance->Get_DIKeyState(DIK_7, CInput_Device::KEY_DOWN))
@@ -77,7 +74,6 @@ void CLevel_Smith::Tick(_float fTimeDelta)
 			pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_SANCTUM));
 		}
 	}
-#endif // _DEBUG
 
 	ENDINSTANCE;
 
@@ -208,7 +204,7 @@ HRESULT CLevel_Smith::Ready_Lights()
 		LightDesc.vLookAt = _float4(108.3f, 0.f, 108.3f, 1.f);
 		LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
 
-		LightDesc.vDiffuse = _float4(0.4f, 0.53f, 0.55f, 0.5f);
+		LightDesc.vDiffuse = _float4(0.4f, 0.53f, 0.55f, 1.f);
 		LightDesc.vAmbient = LightDesc.vDiffuse;
 		LightDesc.vSpecular = LightDesc.vDiffuse;
 	}

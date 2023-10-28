@@ -302,6 +302,8 @@ private:
 	POTIONBUFVALUEDESC m_CoolTimeDesc = { POTIONBUFVALUEDESC() };
 
 	_bool m_isTabNext = { false };
+	
+	_int	m_iSoundTest = { 0 };
 
 private:
 	HRESULT Add_Components();
