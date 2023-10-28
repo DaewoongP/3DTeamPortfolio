@@ -116,7 +116,7 @@ HRESULT CConjuredDragon::Initialize_Prototype(_uint iLevel)
 		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_DragonInvin")))
 		{
 			if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_DragonInvin")
-				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/DragonInvin/"), m_iLevel))))
+				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/RedSmokeIdle/"), m_iLevel))))
 				throw;
 		}
 
@@ -286,7 +286,7 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 	m_vOffsetPos.y += 10.f;
 	m_pEffect_BlackSmokeIdle->Get_Transform()->Set_Position(m_vOffsetPos);
 
-	m_pEffect_DragonInvin->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+	m_pEffect_DragonInvin->Get_Transform()->Set_Position(m_vOffsetPos);
 	m_pEffect_DragonInvinMesh->Get_Transform()->Set_Position(m_vOffsetPos);
 
 	if (nullptr != m_pModelCom)
