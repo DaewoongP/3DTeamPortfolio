@@ -136,7 +136,7 @@ void CPotion_Station::Tick(_float fTimeDelta)
 		}
 		break;
 	case Client::CPotion_Station::SHOW:
-		// E버튼 누르면 비활성화
+		// F버튼 누르면 비활성화
 		if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
 		{
 			m_pCUI_Group_Brew->Set_isOpen(false);

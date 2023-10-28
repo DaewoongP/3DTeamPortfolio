@@ -3,7 +3,7 @@
 
 #include "ConjuredDragon.h"
 #include "Trigger.h"
-
+#include "Santum_MapEffects.h"
 CEvent_Spawn_Dragon_2::CEvent_Spawn_Dragon_2(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -59,6 +59,9 @@ void CEvent_Spawn_Dragon_2::Check_Event_Spawn_Dragon_2()
 
 		BEGININSTANCE;
 		pGameInstance->Play_Particle(TEXT("Particle_CircularRocks02"), _float3(-33.933f, -61.301f, 230.270f));
+		CSantum_MapEffects* pSanctumMapEffects = static_cast<CSantum_MapEffects*>(pGameInstance->Find_Component_In_Layer(LEVEL_SANCTUM, TEXT("Layer_Particle")
+			, TEXT("GameObject_Sanctum_MapEffets")));
+		pSanctumMapEffects->Set_Phase2();
 		ENDINSTANCE;
 	}
 }

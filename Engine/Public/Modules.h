@@ -32,6 +32,7 @@ public:
 public:
 	_float		fAge = { 0.f };
 	_float		fGravityAccel = { 0.f };
+	_float3		vOrbitVelocity = _float3();
 	_float4     vVelocity = _float4();
 	_float4x4   WorldMatrix = _float4x4();
 	_float		fGenTime = { 0.f };

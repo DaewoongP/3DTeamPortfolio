@@ -137,7 +137,9 @@ void CUI_Group_Brew::Tick(_float fTimeDelta)
 					{
 						break;
 					}
-					
+					m_pPotionTap->Add_Potion(POTIONTAP::HEALTH_POTION);
+					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_HORKLUMP_JUICE);
+					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_DITTANY_LEAVES);
 					break;
 				case EDURUS:
 					if (1 > m_pInventory->Get_Resource(INGREDIENT::ASHWINDER_EGGS))

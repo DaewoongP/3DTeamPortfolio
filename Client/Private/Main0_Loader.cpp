@@ -55,7 +55,8 @@
 #include "Pulse.h"
 #include "RadialBlur.h"
 #include "Projectile_White_Effect.h"
-#include"FireWorks.h"
+#include "FireWorks.h"
+#include "Santum_MapEffects.h"
 #pragma endregion Effects
 
 #pragma region Magic
@@ -476,6 +477,10 @@ HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg04"),
 			CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/SummonRituals/DarkWizardSpawnToConjuredDragonEgg04.ME"), eLevelID))))
 			throw TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg04");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Sanctum_MapEffets"),
+			CSantum_MapEffects::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Sanctum_MapEffets");
 	}
 	catch (const _tchar* pErrorTag)
 	{

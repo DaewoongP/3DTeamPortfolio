@@ -6,7 +6,7 @@
 #include"MapObject_Ins.h"
 #include"Player.h"
 #include "Event_Spawn.h"
-
+#include"Santum_MapEffects.h"
 CLevel_Sanctum::CLevel_Sanctum(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) : CLevel(pDevice, pContext)
 {
 }
@@ -172,6 +172,11 @@ HRESULT CLevel_Sanctum::Ready_Layer_MapEffect(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_Sanctum_MapEffets"), pLayerTag, TEXT("GameObject_Sanctum_MapEffets"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Sanctum_MapEffets)");
+		return E_FAIL;
+	}
 	//if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_MapParticle_Liquid"), pLayerTag, TEXT("GameObject_MapParticle_Liquid"))))
 	//{
 	//	MSG_BOX("Failed Add_GameObject : (GameObject_MapParticle_Liquid)");
