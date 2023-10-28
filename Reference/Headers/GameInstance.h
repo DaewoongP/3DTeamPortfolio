@@ -302,6 +302,7 @@ public:
 	HRESULT Add_Prototype_Models(_uint iLevel, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::TYPE eType, const _tchar* pPrototypeName, const _tchar* pTargetExtension, const _tchar* pDirectoryPath, _bool isFailedSkip, _float4x4 PivotMatrix = _float4x4());
 	HRESULT Find_And_Add_Texture(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel, const _tchar* pPath);
 	HRESULT Find_And_Add_Model(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel, CModel::TYPE eModelType, const _tchar* pModelPath, _float4x4 PivotMatrix = _float4x4());
+	_float Get_SoundPower(_float3 vObjectPosition);
 
 	static void Release_Engine();
 	virtual void Free() override;

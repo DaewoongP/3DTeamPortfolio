@@ -989,6 +989,16 @@ HRESULT CGameInstance::Find_And_Add_Model(ID3D11Device* pDevice, ID3D11DeviceCon
 	return S_OK;
 }
 
+_float CGameInstance::Get_SoundPower(_float3 vObjectPosition)
+{
+	_float3 vCamPos = Get_CamPosition()->xyz();
+	_float fDist = _float3::Distance(vCamPos, vObjectPosition) / 30.f;
+
+	Saturate(fDist, 0.f, 1.f);
+
+	return fDist;
+}
+
 _char* CGameInstance::Make_Char(const _char* pMakeChar)
 {
 	NULL_CHECK_RETURN_MSG(m_pString_Manager, nullptr, TEXT("String_Manager NULL"));
