@@ -506,14 +506,8 @@ void CAnimation_Window::Notify_InputFileds(_char* szNotifyName, KEYFRAME::KEYFRA
 
 	if (*eNotifyKeyFrameType == KEYFRAME::KEYFRAMETYPE::KF_SOUND)
 	{
-		sprintf_s(szUIName, "%s", "SoundNotify_IChannel##");
-		ImGui::InputInt(szUIName, &m_iChannel);
-
 		sprintf_s(szUIName, "%s", "SoundNotify_fVolum##");
 		ImGui::InputFloat(szUIName, &m_fVolum);
-
-		sprintf_s(szUIName, "%s", "SoundNotify_isForce##");
-		ImGui::Checkbox(szUIName, &m_isFoce);
 	}
 
 	if (*eNotifyKeyFrameType == KEYFRAME::KEYFRAMETYPE::KF_PARTICLE)
@@ -569,8 +563,6 @@ void CAnimation_Window::Add_Notify_Button(CModel::ANIMTYPE ePartCnt, _char* szNo
 			SOUNDFRAME_GCM* NotifyKeyFrameDesc = new SOUNDFRAME_GCM{};
 			NotifyKeyFrameDesc->eKeyFrameType = *eNotifyKeyFrameType;
 			NotifyKeyFrameDesc->fTime = *fNotifyActionTime;
-			NotifyKeyFrameDesc->isForce = m_isFoce;
-			NotifyKeyFrameDesc->iChannel = m_iChannel;
 			NotifyKeyFrameDesc->fVolum = m_fVolum;
 			lstrcpy(NotifyKeyFrameDesc->szName, wszNotifyName);
 			_tchar  wszActionTagName[MAX_PATH] = {};
@@ -633,9 +625,7 @@ void CAnimation_Window::Edit_Notify_Button(CModel::ANIMTYPE ePartCnt, CModel* m_
 		case Engine::tagFrame::KF_SOUND:
 			pFrame = new SOUNDFRAME();
 			CharToWChar(m_szNotifyTag,static_cast<SOUNDFRAME*>(pFrame)->wszSoundTag);
-			static_cast<SOUNDFRAME*>(pFrame)->iChannel = m_iChannel;
 			static_cast<SOUNDFRAME*>(pFrame)->fVolum = m_fVolum;
-			static_cast<SOUNDFRAME*>(pFrame)->isForce = m_isFoce;
 			break;
 		case Engine::tagFrame::KF_PARTICLE:
 			pFrame = new PARTICLEFRAME();

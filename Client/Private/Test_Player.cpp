@@ -37,7 +37,7 @@ HRESULT CTest_Player::Initialize(void* pArg)
 	
 	m_pCharacterController->Set_Position(_float3(10.f, 0.f, 2.f));
 
-	m_pModelCom->Play_Animation(0.f);
+	m_pModelCom->Play_Animation(0.f, &m_SoundChannel);
 
 	m_fWindPower = 5.f;
 

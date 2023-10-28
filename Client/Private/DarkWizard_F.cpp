@@ -113,7 +113,7 @@ void CDarkWizard_F::Tick(_float fTimeDelta)
 	Tick_Spells();
 
 	if (nullptr != m_pModelCom)
-		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+		m_pModelCom->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 }
 
 void CDarkWizard_F::Late_Tick(_float fTimeDelta)
