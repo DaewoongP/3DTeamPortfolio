@@ -55,7 +55,10 @@ void CUI_Group_Timer::Tick(_float fTimeDelta)
 void CUI_Group_Timer::Late_Tick(_float fTimeDelta)
 {
 	if (nullptr != m_pTime)
-		m_pUI_Time->Set_Text(to_wstring(*m_pTime));
+	{
+		wstring time = to_wstring(*m_pTime);
+		m_pUI_Time->Set_Text(time.substr(0, time.find('.') + 3).c_str());
+	}
 
 	__super::Late_Tick(fTimeDelta);
 }
@@ -93,8 +96,8 @@ HRESULT CUI_Group_Timer::Add_Components()
 
 	CUI::UIDESC UIDesc;
 	UIDesc.vCombinedXY = { 0.f, 0.f };
-	UIDesc.fX = { 530.f };
-	UIDesc.fY = { 30.f };
+	UIDesc.fX = { 580.f };
+	UIDesc.fY = { 50.f };
 	UIDesc.fZ = { 0.8f };
 	UIDesc.fSizeX = { 64.f };
 	UIDesc.fSizeY = { 64.f };
@@ -120,11 +123,11 @@ HRESULT CUI_Group_Timer::Add_Fonts(void* pArg)
 	else
 		lstrcpy(Desc.m_pText, TEXT(""));
 
-	Desc.m_vPos = { 30.f, 0.f };
+	Desc.m_vPos = { 703.f, 38.f };
 	Desc.m_vColor = _float4(1.f, 1.f, 1.f, 1.f);
 	Desc.m_fRotation = { 0.f };
 	Desc.m_vOrigin = { 0.f, 0.f };
-	Desc.m_vScale = { 0.5f, 0.5f };
+	Desc.m_vScale = { 0.8f, 0.8f };
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Font"),
 		TEXT("Com_UI_Font_Time"), reinterpret_cast<CComponent**>(&m_pUI_Time), &Desc)))

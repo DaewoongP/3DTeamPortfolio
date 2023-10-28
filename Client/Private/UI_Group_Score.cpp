@@ -243,31 +243,31 @@ HRESULT CUI_Group_Score::Ready_Offset()
 {
 	m_vOffset.clear();
 
-	_float2 vPos = _float2(1180.f, 90.f);
+	_float2 vPos = _float2(70.f, 90.f);
 	m_vOffset.push_back(vPos);
 
-	vPos = _float2(1180.f, 150.f);
+	vPos = _float2(70.f, 150.f);
 	m_vOffset.push_back(vPos);
 
-	vPos = _float2(1180.f, 210.f);
+	vPos = _float2(70.f, 210.f);
 	m_vOffset.push_back(vPos);
 
-	vPos = _float2(1180.f, 270.f);
+	vPos = _float2(70.f, 270.f);
 	m_vOffset.push_back(vPos);
 
-	vPos = _float2(1180.f, 330.f);
+	vPos = _float2(70.f, 330.f);
 	m_vOffset.push_back(vPos);
 
-	vPos = _float2(1180.f, 390.f);
+	vPos = _float2(70.f, 390.f);
 	m_vOffset.push_back(vPos);
 
-	vPos = _float2(1180.f, 450.f);
+	vPos = _float2(70.f, 450.f);
 	m_vOffset.push_back(vPos);
 
-	vPos = _float2(1180.f, 510.f);
+	vPos = _float2(70.f, 510.f);
 	m_vOffset.push_back(vPos);
 
-	vPos = _float2(1180.f, 570.f);
+	vPos = _float2(70.f, 570.f);
 	m_vOffset.push_back(vPos);
 
 	return S_OK;
