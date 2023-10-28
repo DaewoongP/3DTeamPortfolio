@@ -60,14 +60,14 @@ _int CSound_Manager::Play_Sound(const _tchar* pSoundTag, _float fVolume)
 	_uint iChecked = { 0 };
 	while (isPlay)
 	{
+		if (MAX_CHANNEL == m_iChannel)
+			m_iChannel = 0;
+
 		m_Channels[m_iChannel]->isPlaying(&isPlay);
 
 		if (true == isPlay)
 		{
-			if (MAX_CHANNEL == m_iChannel)
-				m_iChannel = 0;
-			else
-				++m_iChannel;
+			++m_iChannel;
 		}
 		
 		++iChecked;
@@ -106,14 +106,14 @@ _int CSound_Manager::Play_BGM(const _tchar* pSoundTag, _float fVolume)
 	_uint iChecked = { 0 };
 	while (isPlay)
 	{
+		if (MAX_CHANNEL == m_iChannel)
+			m_iChannel = 0;
+
 		m_Channels[m_iChannel]->isPlaying(&isPlay);
 
 		if (true == isPlay)
 		{
-			if (MAX_CHANNEL == m_iChannel)
-				m_iChannel = 0;
-			else
-				++m_iChannel;
+			++m_iChannel;
 		}
 
 		++iChecked;
