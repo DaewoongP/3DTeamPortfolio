@@ -213,6 +213,8 @@ void CBombarda::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			CCamera_Manager::SHAKE_POWER_DECRECENDO,
 			vRandomAxis);
 
+		pGameInstance->Play_Sound(TEXT("Bombarda_Hit.wav"), 1.0f);
+
 		ENDINSTANCE;
 #pragma endregion
 	}
@@ -257,6 +259,10 @@ void CBombarda::Ready_DrawMagic()
 
 void CBombarda::Ready_CastMagic()
 {
+	BEGININSTANCE;
+	pGameInstance->Play_Sound(TEXT("Bombarda.wav"), 1.0f);
+	ENDINSTANCE;
+
 	Ready_StraightMove(m_TrailVec[EFFECT_STATE_MAIN][0]);
 	
 	__super::Ready_CastMagic();

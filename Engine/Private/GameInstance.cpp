@@ -996,10 +996,10 @@ HRESULT CGameInstance::Find_And_Add_Model(ID3D11Device* pDevice, ID3D11DeviceCon
 	return S_OK;
 }
 
-_float CGameInstance::Get_SoundPower(_float3 vObjectPosition)
+_float CGameInstance::Get_SoundPower(_float3 vObjectPosition, _float fDistance)
 {
 	_float3 vCamPos = Get_CamPosition()->xyz();
-	_float fDist = _float3::Distance(vCamPos, vObjectPosition) / 30.f;
+	_float fDist = _float3::Distance(vCamPos, vObjectPosition) / fDistance;
 
 	Saturate(fDist, 0.f, 1.f);
 
