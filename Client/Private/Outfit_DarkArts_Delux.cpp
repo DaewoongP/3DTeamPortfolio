@@ -54,8 +54,17 @@ _bool COutfit_DarkArts_Delux::Buy()
 
 void COutfit_DarkArts_Delux::Equipment()
 {
-	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Jacket_DarkArtsDelux")
-		, CCustomModel::MESHTYPE::TOP);
+	if (true == m_pPlayerModel->is_Equip_Robe())
+	{
+		m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Jacket_DarkArtsDelux_A")
+			, CCustomModel::MESHTYPE::TOP);
+	}
+	else
+	{
+		m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Jacket_DarkArtsDelux")
+			, CCustomModel::MESHTYPE::TOP);
+	}
+	
 	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Pants_DarkArtsDelux")
 		, CCustomModel::MESHTYPE::PANTS);
 	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Socks_E")

@@ -65,6 +65,16 @@ void CWeapon_Armored_Troll::Late_Tick(_float fTimeDelta)
 	}
 }
 
+void CWeapon_Armored_Troll::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
+{
+	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
+
+	if (wstring::npos != wstrObjectTag.find(TEXT("Player")))
+	{
+		Play_Random_Hit_Sounds();
+	}
+}
+
 HRESULT CWeapon_Armored_Troll::Render()
 {
 	// 심씨 추가. 스폰되어야 랜더링 되게 넣어둠
@@ -307,6 +317,13 @@ HRESULT CWeapon_Armored_Troll::SetUp_ShadowShaderResources(_float4x4 LightViewMa
 	ENDINSTANCE;
 
 	return S_OK;
+}
+
+void CWeapon_Armored_Troll::Play_Random_Hit_Sounds()
+{
+	BEGININSTANCE;
+	pGameInstance->Play_Sound(TEXT("Troll_Impact_%d"), 4, 0.6f);
+	ENDINSTANCE;
 }
 
 CWeapon_Armored_Troll* CWeapon_Armored_Troll::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

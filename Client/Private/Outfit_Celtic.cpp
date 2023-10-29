@@ -54,8 +54,17 @@ _bool COutfit_Celtic::Buy()
 
 void COutfit_Celtic::Equipment()
 {
-	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Jacket_Celtic")
-		, CCustomModel::MESHTYPE::TOP);
+	if (true == m_pPlayerModel->is_Equip_Robe())
+	{
+		m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Jacket_Celtic_A")
+			, CCustomModel::MESHTYPE::TOP);
+	}
+	else
+	{
+		m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Jacket_Celtic")
+			, CCustomModel::MESHTYPE::TOP);
+	}
+	
 	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Pants_Merlin")
 		, CCustomModel::MESHTYPE::PANTS);
 	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Socks_D")

@@ -205,6 +205,7 @@ HRESULT CConjuredDragon::Initialize_Level(_uint iCurrentLevelIndex)
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
+	m_pRigidBody->Set_LinearDamping(2.f);
 
 	if (FAILED(Bind_HitMatrices()))
 		return E_FAIL;
@@ -282,7 +283,6 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 
 	m_pHitMatrix = m_HitMatrices[rand() % 3];
 	Update_Invincible(fTimeDelta);
-	Check_Air_Balance(fTimeDelta);
 	EnergyBall_PhaseOne(fTimeDelta);
 	EnergyBall_PhaseFinal(fTimeDelta);
 	Update_Breath(fTimeDelta);
@@ -594,32 +594,6 @@ void CConjuredDragon::DeathBehavior(const _float& fTimeDelta)
 		Set_ObjEvent(OBJ_DEAD);
 }
 
-void CConjuredDragon::Check_Air_Balance(const _float& fTimeDelta)
-{
-	if (false == m_isSettingBalance)
-		return;
-
-	_float3 vTargetPosition = m_pTarget->Get_Transform()->Get_Position();
-	_float3 vPosition = m_pTransform->Get_Position();
-	_float fTargetDistance = _float3::Distance(vPosition, vTargetPosition);
-
-	if (30.f < fTargetDistance)
-	{
-		_float3 vDirection = vTargetPosition - vPosition;
-		vDirection = _float3(vDirection.x, 0.f, vDirection.z);
-		vDirection.Normalize();
-		m_pRigidBody->Add_Force(vDirection * 3.f);
-	}
-	else
-	{
-		_float3 vCurrentVelocity = m_pRigidBody->Get_Current_Velocity();
-		if (0.07f > vCurrentVelocity.Length())
-			return;
-
-		m_pRigidBody->Add_Force(-vCurrentVelocity * 3.f);
-	}
-}
-
 void CConjuredDragon::Check_Phase()
 {
 	if (true == m_isPhaseOne)
@@ -822,8 +796,6 @@ HRESULT CConjuredDragon::Make_AI()
 			throw TEXT("Failed Add_Type isInvincible");
 		if (FAILED(m_pRootBehavior->Add_Type("isBreakInvincible", &m_isBreakInvincible)))
 			throw TEXT("Failed Add_Type isBreakInvincible");
-		if (FAILED(m_pRootBehavior->Add_Type("isSettingBalance", &m_isSettingBalance)))
-			throw TEXT("Failed Add_Type isSettingBalance");
 		if (FAILED(m_pRootBehavior->Add_Type("isMoveLeft", &m_isMoveLeft)))
 			throw TEXT("Failed Add_Type isMoveLeft");
 		if (FAILED(m_pRootBehavior->Add_Type("isPhaseOne", &m_isPhaseOne)))
@@ -1676,16 +1648,6 @@ HRESULT CConjuredDragon::Make_Next_Phase(_Inout_ CSequence* pSequence)
 
 				return false == *pIsPhaseOne;
 			});
-		pAction_Fly->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
-			{
-				_bool* pIsSettingBalance = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("isSettingBalance", pIsSettingBalance)))
-					return false;
-
-				*pIsSettingBalance = false;
-
-				return true;
-			});
 		pAction_Fly->Add_End_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_bool* pIsPhaseTwo = { nullptr };
@@ -1704,7 +1666,7 @@ HRESULT CConjuredDragon::Make_Next_Phase(_Inout_ CSequence* pSequence)
 		/* Set Options */
 		pAction_Enter_Next_Phase->Set_Options(TEXT("Fly_Next_Phase"), m_pModelCom, false, 0.f, true);
 		pAction_Fly->Set_Options(TEXT("Fly_Loop"), m_pModelCom, true, 0.f, true, false);
-		pRigidMove->Set_Option(m_pRigidBody, m_pTransform, CRigidMove::DIR_LOOK, 10.f, 10.f);
+		pRigidMove->Set_Option(m_pRigidBody, m_pTransform, CRigidMove::DIR_LOOK, 20.f, 1000.f);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Enter_Next_Phase"), pAction_Enter_Next_Phase)))
@@ -2850,51 +2812,28 @@ HRESULT CConjuredDragon::Make_Air_Idle_Breaks(_Inout_ CRandomChoose* pRandomChoo
 			});
 		pAction_Hover_Dash_Left->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
-				_bool* pIsSettingBalance = { nullptr };
 				_bool* pIsMoveLeft = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("isSettingBalance", pIsSettingBalance)))
-					return false;
 				if (FAILED(pBlackBoard->Get_Type("isMoveLeft", pIsMoveLeft)))
 					return false;
-
-				*pIsSettingBalance = false;
 
 				return false == *pIsMoveLeft;
 			});
 		pAction_Hover_Dash_Left->Add_End_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
-				_bool* pIsSettingBalance = { nullptr };
 				_bool* pIsMoveLeft = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("isSettingBalance", pIsSettingBalance)))
-					return false;
 				if (FAILED(pBlackBoard->Get_Type("isMoveLeft", pIsMoveLeft)))
 					return false;
 
-				*pIsSettingBalance = true;
 				*pIsMoveLeft = true;
-
-				return true;
-			});
-		pAction_Hover_Dash_Right->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
-			{
-				_bool* pIsSettingBalance = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("isSettingBalance", pIsSettingBalance)))
-					return false;
-
-				*pIsSettingBalance = false;
 
 				return true;
 			});
 		pAction_Hover_Dash_Right->Add_End_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
-				_bool* pIsSettingBalance = { nullptr };
 				_bool* pIsMoveLeft = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("isSettingBalance", pIsSettingBalance)))
-					return false;
 				if (FAILED(pBlackBoard->Get_Type("isMoveLeft", pIsMoveLeft)))
 					return false;
 
-				*pIsSettingBalance = true;
 				*pIsMoveLeft = false;
 
 				return true;

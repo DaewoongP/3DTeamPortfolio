@@ -38,6 +38,7 @@ public:
 	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
+	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix) override;
 
@@ -69,6 +70,9 @@ private:
 	HRESULT Add_Components_Level(_uint iCurrentLevelIndex);
 	HRESULT Set_Shader_Resources();
 	HRESULT SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix);
+
+private:
+	void Play_Random_Hit_Sounds();
 
 public:
 	static CWeapon_Armored_Troll* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

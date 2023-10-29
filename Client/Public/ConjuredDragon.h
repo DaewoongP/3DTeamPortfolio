@@ -122,10 +122,7 @@ private: /* 사망처리 전용 데이터 */
 	void DeathBehavior(const _float& fTimeDelta);
 
 private:
-	_bool m_isSettingBalance = { false };
 	_bool m_isMoveLeft = { false };
-	/* 무중력 상태에서 특정 방향으로 이동하지 못하게 만드는 함수 */
-	void Check_Air_Balance(const _float& fTimeDelta);
 
 private: /* 페이즈 관련 함수 */
 	_bool m_isPhaseOne = { false };
