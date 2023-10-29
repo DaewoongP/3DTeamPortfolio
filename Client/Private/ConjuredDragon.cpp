@@ -162,7 +162,7 @@ HRESULT CConjuredDragon::Initialize_Prototype(_uint iLevel)
 	}
 
 	pGameInstance->Read_CutSceneCamera(TEXT("Dragon_Enter"), TEXT("../../Resources/GameData/CutScene/Sanctum_Dragon_Enter.cut"));
-
+	
 	ENDINSTANCE;
 
 	return S_OK;
@@ -190,7 +190,7 @@ HRESULT CConjuredDragon::Initialize(void* pArg)
 	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
 	m_CollisionRequestDesc.iDamage = 20;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
-
+	
 	return S_OK;
 }
 
@@ -422,8 +422,6 @@ void CConjuredDragon::Tick_Imgui(_float fTimeDelta)
 	ImGui::End();
 }
 #endif // _DEBUG
-
-
 
 void CConjuredDragon::Update_Invincible(const _float& fTimeDelta)
 {
