@@ -349,11 +349,17 @@ HRESULT CMain3_Loader::Loading_For_Sky(LEVELID eLevelID)
 		return E_FAIL;
 	}
 
+
 	return S_OK;
 }
 
 HRESULT CMain3_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 {
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/ConjuredDragon/"));
+	Safe_Release(pGameInstance);
+
 	return S_OK;
 }
 

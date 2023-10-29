@@ -178,6 +178,10 @@ void CProjectile_White::Ready_CastMagic()
 	__super::Ready_CastMagic();
 	m_pMeshEffect_Projectile_Black->Play(m_CurrentWeaponMatrix.Translation());
 	m_ParticleVec[EFFECT_STATE_MAIN][0]->Play(m_CurrentWeaponMatrix.Translation());
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	pGameInstance->Play_Sound(TEXT("ConjuredDragon_Explosion.wav"), 0.7f);
+	Safe_Release(pGameInstance);
 }
 
 void CProjectile_White::Ready_Dying()
@@ -185,6 +189,10 @@ void CProjectile_White::Ready_Dying()
 	for (auto& SplineUp : m_pMeshEffect_SplineUp)
 	{
 		SplineUp->Play(m_vEndPosition);
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+		pGameInstance->Play_Sound(TEXT("ConjuredDragon_Explosion2.wav"), 0.7f);
+		Safe_Release(pGameInstance);
 	}
 	__super::Ready_Dying();
 }

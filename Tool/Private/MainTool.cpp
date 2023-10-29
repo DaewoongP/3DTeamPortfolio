@@ -452,6 +452,7 @@ HRESULT CMainTool::Ready_Prototype_Object()
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Player/"));
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Eleazar_Fig/"));
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Pensive/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/ConjuredDragon/"));
 	ENDINSTANCE;
 
 #pragma region Load Particle

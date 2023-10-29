@@ -199,6 +199,12 @@ void CProjectile_Black::Ready_CastMagic()
 	m_pMeshEffect_Outer_Ball->Play(m_CurrentWeaponMatrix.Translation());
 	m_pMeshEffect_Inner_Ball->Play(m_CurrentWeaponMatrix.Translation());
 	m_pMeshEffect_StartBoom->Play(m_CurrentWeaponMatrix.Translation());
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	pGameInstance->Play_Sound(TEXT("Projectile_1.wav"), 0.7f);
+	Safe_Release(pGameInstance);
+
 }
 
 void CProjectile_Black::Ready_Dying()
