@@ -11,33 +11,37 @@ BEGIN(Client)
 
 class CQuest_Manager final : public CBase
 {
-	DECLARE_SINGLETON(CQuest_Manager)
+    DECLARE_SINGLETON(CQuest_Manager)
 
 public:
-	explicit CQuest_Manager() = default;
-	virtual ~CQuest_Manager() = default;
+    explicit CQuest_Manager() = default;
+    virtual ~CQuest_Manager() = default;
 
 public:
-	_bool Is_Quest_Finished(const _tchar* szQuestTag);
-	
+    _bool Is_Quest_Finished(const _tchar* szQuestTag);
+
 public:
-	HRESULT Add_Quest(const _tchar* szQuestTag, class CQuest* pQuest);
-	void Unlock_Quest(const _tchar* szQuestTag);
-	void Clear_Quest(const _tchar* szQuestTag);
-	virtual void Tick(_float fTimeDelta);
-	virtual void Late_Tick(_float fTimeDelta);
+    HRESULT Add_Quest(const _tchar* szQuestTag, class CQuest* pQuest);
+    void Unlock_Quest(const _tchar* szQuestTag);
+    void Clear_Quest(const _tchar* szQuestTag);
+    virtual void Tick(_float fTimeDelta);
+    virtual void Late_Tick(_float fTimeDelta);
 
 private:
-	void Cheat_Quest();
+    _bool Cheat_Init_Quest();
+    void  Cheat_Quest();
 
 private:
-	_umap<const _tchar*, CQuest*>	m_Quests;
+    _umap<const _tchar*, CQuest*>    m_Quests;
 
 public:
-	CQuest* Find_Quest(const _tchar* szQuestTag);
+    CQuest* Find_Quest(const _tchar* szQuestTag);
+
+private:
+    _bool    isInit = { true };
 
 public:
-	virtual void Free() override;
+    virtual void Free() override;
 };
 
 END

@@ -178,15 +178,7 @@ HRESULT CCustomModel::Add_MeshParts(const _uint& _iLevelIndex, const wstring& _w
 	MeshPartsDesc.szClothDataFilePath = _szClothDataFilePath;
 	MeshPartsDesc.vColor = _vColor;
 
-	CMeshParts* pMeshParts = { nullptr };
-	if (TOP == _eMeshPartsType &&
-		true == m_isRobeTop)
-	{
-		wstring wstrPrototypeTag = _wstrPrototypeTag + TEXT("_A");
-		pMeshParts = static_cast<CMeshParts*>(pGameInstance->Clone_Component(_iLevelIndex, wstrPrototypeTag.c_str(), &MeshPartsDesc));
-	}
-	else
-		pMeshParts = static_cast<CMeshParts*>(pGameInstance->Clone_Component(_iLevelIndex, _wstrPrototypeTag.c_str(), &MeshPartsDesc));
+	CMeshParts* pMeshParts = static_cast<CMeshParts*>(pGameInstance->Clone_Component(_iLevelIndex, _wstrPrototypeTag.c_str(), &MeshPartsDesc));
 
 	Safe_Release(pGameInstance);
 

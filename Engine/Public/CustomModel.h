@@ -44,6 +44,7 @@ public:
 	HRESULT								Set_Top_For_Robe(const _uint& _iLevelIndex);
 	// 로브 없는 상의로 변경
 	HRESULT								Set_Top_For_NonRobe(const _uint& _iLevelIndex);
+	_bool								is_Equip_Robe() const { return m_isRobeTop; }
 
 public:
 	virtual HRESULT Initialize_Prototype(TYPE eType, const wstring& _wstrModelFilePath, _float4x4 _PivotMatrix);

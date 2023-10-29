@@ -51,12 +51,53 @@ void CQuest_Manager::Tick(_float fTimeDelta)
 	{
 		Pair.second->Tick(fTimeDelta);
 	}
+
+	if (isInit)
+	{
+		if (Cheat_Init_Quest() == false)
+			return;
+		isInit = false;
+	}
 }
 
 void CQuest_Manager::Late_Tick(_float fTimeDelta)
 {
 }
 
+_bool CQuest_Manager::Cheat_Init_Quest()
+{
+	_uint iSize = m_Quests.size();
+	if (iSize != 5)
+		return false;
+
+	// 클리어하고싶은거 빼고  주석거세요
+	BEGININSTANCE;
+
+	Clear_Quest(TEXT("Quest_Save_Fig"));
+	Unlock_Quest(TEXT("Quest_Potion"));
+
+	Clear_Quest(TEXT("Quest_Potion"));
+	Unlock_Quest(TEXT("Quest_Town"));
+	CPlayer* pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+	if (pPlayer == nullptr)
+	{
+		ENDINSTANCE;
+		return false;
+	}
+
+	static_cast<CCard_Fig*>(pPlayer->Find_Component(TEXT("Card_Fig")))->Set_ShowCard(true);
+
+	Clear_Quest(TEXT("Quest_Town"));
+	Unlock_Quest(TEXT("Quest_Secret"));
+
+	Clear_Quest(TEXT("Quest_Secret"));
+	Unlock_Quest(TEXT("Quest_Bone"));
+
+	//Clear_Quest(TEXT("Quest_Bone"));
+
+	ENDINSTANCE;
+
+}
 void CQuest_Manager::Cheat_Quest()
 {
 
@@ -72,25 +113,31 @@ void CQuest_Manager::Cheat_Quest()
 		{
 			// 피그 교출
 			Clear_Quest(TEXT("Quest_Save_Fig"));
+			Unlock_Quest(TEXT("Quest_Potion"));
 		}
 		else if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
 		{
 			//  포션 퀘 클리어, 클리어 후에는 인벤토리 잘 맞춰놓으셈.
 			Clear_Quest(TEXT("Quest_Potion"));
+			Unlock_Quest(TEXT("Quest_Town"));
 
-			// 카드까지 줌 개꿀
-			CPlayer* pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+				// 카드까지 줌 개꿀
+				CPlayer* pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
 			static_cast<CCard_Fig*>(pPlayer->Find_Component(TEXT("Card_Fig")))->Set_ShowCard(true);
 		}
 		else if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN))
 		{
 			// 트롤잡는거 클리어
 			Clear_Quest(TEXT("Quest_Town"));
+			Unlock_Quest(TEXT("Quest_Secret"));
+
 		}
 		else if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
 		{
 			// 회랑 클
 			Clear_Quest(TEXT("Quest_Secret"));
+			Unlock_Quest(TEXT("Quest_Bone"));
+
 		}
 		else if (pGameInstance->Get_DIKeyState(DIK_5, CInput_Device::KEY_DOWN))
 		{
