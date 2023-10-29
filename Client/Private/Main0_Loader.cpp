@@ -55,7 +55,8 @@
 #include "Pulse.h"
 #include "RadialBlur.h"
 #include "Projectile_White_Effect.h"
-#include"FireWorks.h"
+#include "FireWorks.h"
+#include "Santum_MapEffects.h"
 #pragma endregion Effects
 
 #pragma region Magic
@@ -119,9 +120,11 @@
 #include "Balloon_Coin.h"
 #include "Racer.h"
 #include "FlyGameManager.h"
+#include "MarioCount.h"
 #pragma endregion
 
 #include "Guide_Book.h"
+#include "RedSky.h"
 
 #ifdef _DEBUG
 #include "Test_Player.h"
@@ -344,7 +347,20 @@ HRESULT CMain0_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 		CEvent_Smeade_Next_Level::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Event_Smeade_Next_Level");
 
-	
+	/* For.Prototype_Component_Particle_ChestLight */
+	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Particle_ChestLight"),
+		CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Chest/ChestLight/")))))
+		throw TEXT("Prototype_Component_Particle_ChestLight");
+
+	/* For.Prototype_Component_Particle_ChestParticle */
+	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Particle_ChestParticle"),
+		CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Chest/ChestParticle/")))))
+		throw TEXT("Prototype_Component_Particle_ChestParticle");
+
+	/* For.Prototype_Component_Particle_ChestLight_ME */
+	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Particle_ChestLight_ME"),
+		CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Chest/ChestLight.ME")))))
+		throw TEXT("Prototype_Component_Particle_ChestLight_ME");
 
 	ENDINSTANCE;
 
@@ -372,7 +388,11 @@ HRESULT CMain0_Loader::Loading_For_Sky(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FlyGameManager"),
 			CFlyGameManager::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_FlyGameManager");
-	
+
+		/* For.Prototype_GameObject_MarioCount */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MarioCount"),
+			CMarioCount::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_MarioCount");
 	}
 
 
@@ -430,9 +450,11 @@ HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 			CProjectile_White_Effect::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Projectile_White_Effect");
 
+		/* For.Prototype_GameObject_Event_Spawn */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_RedSky"),
+			CRedSky::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_RedSky");
 		
-
-
 		/* For.Prototype_GameObject_Event_Spawn */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Spawn"),
 			CEvent_Spawn::Create(m_pDevice, m_pContext))))
@@ -473,6 +495,10 @@ HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg04"),
 			CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/SummonRituals/DarkWizardSpawnToConjuredDragonEgg04.ME"), eLevelID))))
 			throw TEXT("Prototype_GameObject_MapEffect_Sanctum_DarkWizardSpawnToConjuredDragonEgg04");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Sanctum_MapEffets"),
+			CSantum_MapEffects::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Sanctum_MapEffets");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -663,7 +689,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		/* For.Prototype_Component_Shader_VtxCube */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_VtxCube"),
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxCube.hlsl"), VTXPOSCUBE_DECL::Elements, VTXPOSCUBE_DECL::iNumElements))))
-			throw TEXT("Prototype_Component_Texture_SkyBox");
+			throw TEXT("Prototype_Component_Shader_VtxCube");
 
 		/* For.Prototype_Component_Shader_VtxAnimMesh */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_VtxAnimMesh"),

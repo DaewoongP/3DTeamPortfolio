@@ -98,26 +98,23 @@ HRESULT CDarkWizard_Fly::Initialize_Level(_uint iCurrentLevelIndex)
 
 void CDarkWizard_Fly::Tick(_float fTimeDelta)
 {
-	if (CGameInstance::GetInstance()->Get_DIKeyState(DIK_6))
-		m_isSpawn = true; // 레이서의 스타트 신호
-
 	Update_Target();
 	switch (m_iMy_Number)
 	{
 	case 1:
-	case 5:
-	case 9:
 		Update_BalloonTarget_Near();
 		break;
 
 	case 2:
 	case 6:
 	case 8:
+	case 5:
+	case 9:
+	case 7:
 		Update_BalloonTarget_Middle();
 		break;
 
 	case 3:
-	case 7:
 		Update_BalloonTarget_Far();
 		break;
 
@@ -138,8 +135,8 @@ void CDarkWizard_Fly::Tick(_float fTimeDelta)
 
 	if (nullptr != m_pModelCom)
 	{
-		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
-		m_pModelCom->Play_Animation(fTimeDelta, CModel::UNDERBODY);
+		m_pModelCom->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
+		m_pModelCom->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UNDERBODY);
 	}
 }
 
@@ -473,55 +470,6 @@ HRESULT CDarkWizard_Fly::Add_Components()
 			MSG_BOX("Failed CTest_Player Add_Component : (Com_MagicSlot)");
 			return E_FAIL;
 		}
-
-		// UI
-		CUI_Group_Enemy_HP::ENEMYHPDESC  Desc;
-
-		Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::MONSTER;
-		Desc.pHealth = m_pHealth;
-		lstrcpy(Desc.wszObjectLevel, TEXT("135"));
-		wstring wstrEnemyTag;
-		
-		switch (m_iMy_Number)
-		{
-		case 1:
-			wstrEnemyTag = TEXT("박대웅");
-			break;
-		case 2:
-			wstrEnemyTag = TEXT("박정환");
-			break;
-		case 3:
-			wstrEnemyTag = TEXT("심정환");
-			break;
-		case 4:
-			wstrEnemyTag = TEXT("안철민");
-			break;
-		case 5:
-			wstrEnemyTag = TEXT("장현우");
-			break;
-		case 6:
-			wstrEnemyTag = TEXT("전대인");
-			break;
-		case 7:
-			wstrEnemyTag = TEXT("전윤혁");
-			break;
-		case 8:
-			wstrEnemyTag = TEXT("주성환");
-			break;
-		case 9:
-			wstrEnemyTag = TEXT("포항김씨");
-			break;
-		default:
-			break;
-		}
-
-		lstrcpy(Desc.wszObjectName, wstrEnemyTag.c_str());
-
-		BEGININSTANCE;
-		m_pUI_HP = static_cast<CUI_Group_Enemy_HP*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"), &Desc));
-		ENDINSTANCE;
-		if (nullptr == m_pUI_HP)
-			throw TEXT("m_pUI_HP is nullptr");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -1024,7 +972,10 @@ void CDarkWizard_Fly::Update_BalloonTarget_Middle()
 		CBalloon* pDstBalloon = pBalloon;
 
 		if (0 == iNumBalloons)
+		{
+			Safe_AddRef(m_pTargetBalloon);
 			return;
+		}
 
 		if (true == pDstBalloon->isDead())
 			continue;

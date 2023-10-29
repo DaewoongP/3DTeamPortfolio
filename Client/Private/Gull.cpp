@@ -151,10 +151,10 @@ void CGull::Tick(_float fTimeDelta)
 		if (10 <= m_iGullIndex)
 		{
 			if (m_fRandTimeAcc >= m_fRandTime)
-				m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+				m_pModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 		}
 		else
-			m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+			m_pModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 	}
 }
 
@@ -359,6 +359,15 @@ void CGull::Check_Dist_From_Player(_float fTimeDelta)
 	else if (5.f >= m_fDist_From_Player && true == m_isCol_with_Player)
 	{
 		m_GullAnimIndex = GULL_START_FLY;
+
+		if (true == m_isSound)
+		{
+			BEGININSTANCE;
+			pGameInstance->Play_Sound(TEXT("Gull%d.wav"), 6, 0.6f);
+			ENDINSTANCE;
+
+			m_isSound = false;
+		}
 	}
 
 	// Æò»ó½Ã

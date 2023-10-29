@@ -1010,6 +1010,8 @@ void CDummyParticle::Load_After()
 	m_pSizeXEaseCombo->Update_Current_Item(m_SizeOverLifeTimeModuleDesc.eEaseX);
 	m_pSizeYEaseCombo->Update_Current_Item(m_SizeOverLifeTimeModuleDesc.eEaseY);
 	m_pSizeZEaseCombo->Update_Current_Item(m_SizeOverLifeTimeModuleDesc.eEaseZ);
+	m_pLinearOptionCombo->Update_Current_Item(m_VelocityOverLifeTimeModuleDesc.strLinearOption);
+	m_pOrbitalOptionCombo->Update_Current_Item(m_VelocityOverLifeTimeModuleDesc.strOrbitalOption);
 	//m_pColorEaseCombo->Update_Current_Item(M_)
 	//m_pSizeXEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingX", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
 	//m_pSizeYEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingY", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);

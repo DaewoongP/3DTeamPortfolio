@@ -66,7 +66,7 @@ void COwl::Tick(_float fTimeDelta)
 	Owl_Fly(fTimeDelta);
 
 	if (nullptr != m_pModel)
-		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+		m_pModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 }
 
 void COwl::Late_Tick(_float fTimeDelta)

@@ -50,6 +50,30 @@ HRESULT CTreasure_Chest::Initialize(void* pArg)
 	Safe_AddRef(m_pPlayerInformation);
 	ENDINSTANCE;
 
+	if (FAILED(CComposite::Add_Component(LEVEL_SMITH, TEXT("Prototype_Component_Particle_ChestLight"),
+		TEXT("Com_Effect0"), reinterpret_cast<CComponent**>(&m_pEffect0))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_Component_Particle_ChestLight)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	if (FAILED(CComposite::Add_Component(LEVEL_SMITH, TEXT("Prototype_Component_Particle_ChestParticle"),
+		TEXT("Com_Effect1"), reinterpret_cast<CComponent**>(&m_pEffect1))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_Component_Particle_ChestParticle)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	if (FAILED(CComposite::Add_Component(LEVEL_SMITH, TEXT("Prototype_Component_Particle_ChestLight_ME"),
+		TEXT("Com_Effect2"), reinterpret_cast<CComponent**>(&m_pEffect2))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_Component_Particle_ChestLight_ME)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -108,6 +132,12 @@ void CTreasure_Chest::Tick(_float fTimeDelta)
 		{
 			m_isGetItem = false;
 
+			// 소리와 이펙트
+			pGameInstance->Play_Sound(TEXT("ChestOpen.wav"), 1.f);
+			m_pEffect0->Play(m_pTransform->Get_Position());
+			m_pEffect1->Play(m_pTransform->Get_Position());
+			m_pEffect2->Play(m_pTransform->Get_Position());
+
 			// 인벤토리 획득 처리
 			m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LACEWING_FLIES);
 			m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_KNOTGRASS);
@@ -126,13 +156,13 @@ void CTreasure_Chest::Tick(_float fTimeDelta)
 	// 닫혀있는 상태
 	if (true == m_isGetItem)
 	{
-		m_pModel->Play_Animation(0.f, CModel::UPPERBODY, m_pTransform);
+		m_pModel->Play_Animation(0.f, &m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 	}
 
 	// 열리는 상태
 	else
 	{
-		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+		m_pModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 	}
 }
 
@@ -360,6 +390,9 @@ void CTreasure_Chest::Free()
 	Safe_Release(m_pShader);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pRenderer);
+	Safe_Release(m_pEffect0);
+	Safe_Release(m_pEffect1);
+	Safe_Release(m_pEffect2);
 
 	Safe_Release(m_pUI_Interaction);
 }

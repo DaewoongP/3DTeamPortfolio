@@ -85,11 +85,11 @@ HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID, _bool isStaticLoaded)
 		}
 		break;
 	case LEVEL_SKY:
-		if (FAILED(Loading_Sky(TEXT("Layer_Loading"))))
+		/*if (FAILED(Loading_Sky(TEXT("Layer_Loading"))))
 		{
 			MSG_BOX("Failed Loading Sky Object");
 			return E_FAIL;
-		}
+		}*/
 		break;
 	case LEVEL_SANCTUM:
 		if (FAILED(Loading_Sanctum(TEXT("Layer_Loading"))))
@@ -305,14 +305,14 @@ HRESULT CLevel_Loading::Loading_Sky(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 
-	//_tchar wszFilePath[MAX_PATH] = TEXT("");
-	//lstrcpy(wszFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Loading2.uidata"));
-	//if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_LOADING, TEXT("Prototype_GameObject_UI_Group_Loading"),
-	//	pLayerTag, TEXT("Prototype_GameObject_UI_Group_Loading1"), wszFilePath)))
-	//{
-	//	MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_UI_Group_Loading)");
-	//	return E_FAIL;
-	//}
+	_tchar wszFilePath[MAX_PATH] = TEXT("");
+	lstrcpy(wszFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Loading_Sky.uidata"));
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_LOADING, TEXT("Prototype_GameObject_UI_Group_Loading"),
+		pLayerTag, TEXT("Prototype_GameObject_UI_Group_Loading1"), wszFilePath)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_UI_Group_Loading)");
+		return E_FAIL;
+	}
 
 	ENDINSTANCE;
 

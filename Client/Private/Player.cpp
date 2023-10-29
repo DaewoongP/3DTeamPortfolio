@@ -196,7 +196,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(29.f, 2.7f, 26.f);
 	m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
 	m_vLevelInitPosition[LEVEL_SMITH] = _float3(32.f, 0.8f, 25.f);
-	m_vLevelInitPosition[LEVEL_SKY] = _float3(88.8f, 12.5f, 69.8f);
+	m_vLevelInitPosition[LEVEL_SKY] = _float3(110.f, 0.5f, 68.8f);
 
 	m_fTargetViewRange = 2.0f;
 
@@ -240,6 +240,23 @@ HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 		m_pTargetTransform = nullptr;
 	}
 
+	if (LEVEL_SKY == m_eLevelID)
+	{
+		for (_uint i = 0; i < 4; i++)
+		{
+			Set_Spell_Botton(i, m_pFlySpell[i]);
+		}
+		m_isFlying = true;
+	}
+	else
+	{
+		for (_uint i = 0; i < 4; i++)
+		{
+			Set_Spell_Botton(i, m_pNonFlySpell[i]);
+		}
+
+		m_isFlying = false;
+	}
 
 	return S_OK;
 }
@@ -290,12 +307,11 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	Fix_Mouse();
 	Update_Cloth(fTimeDelta);
-
-
-	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
-	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
-	m_pCustomModel->Play_Animation(fTimeDelta, CModel::OTHERBODY);
-	m_pCustomModel->Play_Animation(fTimeDelta, CModel::ANOTHERBODY);
+	
+	m_pCustomModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
+	m_pCustomModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UNDERBODY);
+	m_pCustomModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::OTHERBODY);
+	m_pCustomModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::ANOTHERBODY);
 
 	Update_CoolTime();
 	Update_Demege();
@@ -377,7 +393,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
-	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
+	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")) || pGameInstance->Is_Playing_CutScene() == true)
 	{
 		ENDINSTANCE;
 		return;
@@ -411,7 +427,11 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 		CEnemy* pEnemy = static_cast<CEnemy*>(m_pTarget);
 		if (nullptr != pEnemy)
-			pEnemy->Get_UI_Enemy_HP()->Late_Tick(fTimeDelta);
+		{
+			CUI_Group_Enemy_HP* pUI_HP = pEnemy->Get_UI_Enemy_HP();
+			if(nullptr != pUI_HP)
+				pUI_HP->Late_Tick(fTimeDelta);
+		}
 	}
 
 	
@@ -445,7 +465,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		{
 			BEGININSTANCE;
 			_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_36443.wav") },{TEXT("playermale_35938.wav") } ,{TEXT("playermale_35067.wav") },{TEXT("playermale_27895.wav") } };
-			pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
+			//pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
 			ENDINSTANCE;
 		}
 		//회피시 무시
@@ -479,7 +499,9 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 				BEGININSTANCE;
 				_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_24397.wav") },{TEXT("playermale_99996.wav") } ,{TEXT("playermale_35941.wav")},{TEXT("playermale_99995.wav") } };
-				pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
+				m_iSoundTest = pGameInstance->Play_Sound(szVoiceTag[rand() % 4], 0.7f);
+				pGameInstance->Pause_Sound(m_iSoundTest);
+				pGameInstance->Restart_Sound(m_iSoundTest);
 				ENDINSTANCE;
 				if (m_pStateContext->Is_Current_State(TEXT("Jump")))
 				{
@@ -500,7 +522,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 				BEGININSTANCE;
 				_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_25735.wav") },{TEXT("playermale_99991.wav") } ,{TEXT("playermale_99992.wav") },{TEXT("playermale_99993.wav") } };
-				pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
+				//pGameInstance->Play_Sound(szVoiceTag[rand() % 4], CSound_Manager::SOUND_VOICE, 0.7f, true);
 				ENDINSTANCE;
 				HitStateDesc.iHitType = CHitState::HIT_HEABY;
 			}
@@ -1490,7 +1512,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		{
 			BEGININSTANCE;
 			_tchar szVoiceTag[3][MAX_PATH] = { {TEXT("playermale_34286.wav") },{TEXT("playermale_23883.wav") } ,{TEXT("playermale_32104.wav") } };
-			pGameInstance->Play_Sound(szVoiceTag[rand() % 3], CSound_Manager::SOUND_VOICE, 0.7f, true);
+			pGameInstance->Play_Sound(szVoiceTag[rand() % 3], 0.7f);
 			ENDINSTANCE;
 			if(nullptr != m_pCard_Fig)
 				m_pCard_Fig->Spawn_Fig(m_pTarget);

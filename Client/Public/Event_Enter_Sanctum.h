@@ -23,6 +23,14 @@ BEGIN(Client)
 
 class CEvent_Enter_Sanctum final : public CGameObject
 {
+	enum GATECUTSCENE_SEQUENCE
+	{
+		GATECUTSCENE_SEQUENCE_FADE_OUT,
+		GATECUTSCENE_SEQUENCE_PLAY_CUTSCENE,
+		GATECUTSCENE_SEQUENCE_FADE_IN,
+		GATECUTSCENE_SEQUENCE_END
+	};
+
 private:
 	explicit CEvent_Enter_Sanctum(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CEvent_Enter_Sanctum(const CEvent_Enter_Sanctum& rhs);
@@ -41,9 +49,20 @@ private:
 	_bool m_isSpawn = { false };
 	_bool m_isDoorOpen = { false };
 
+	_bool m_isCutSceneOn = { true }; // ÄÆ½Å¿ë º¯¼ö
+
+	_bool m_isGateCutsceneStart = { false };
+	_bool	m_isEnter = { false };
+
+	GATECUTSCENE_SEQUENCE m_eSequence = { GATECUTSCENE_SEQUENCE_END };
+
+	CRenderer* m_pRenderer = { nullptr };
+
 private:
 	void Check_Event_On_Torch_To_Spawn();
 	void Check_Monsters_Are_Death();
+
+	HRESULT Add_Components();
 
 public:
 	static CEvent_Enter_Sanctum* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

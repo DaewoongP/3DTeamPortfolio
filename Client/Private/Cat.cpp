@@ -59,6 +59,36 @@ HRESULT CCat::Initialize_Level(_uint iCurrentLevelIndex)
 	if (CAT_TURN == m_eCatAnimIndex)
 		m_pModel->Get_Animation(m_eCatAnimIndex)->Set_Loop(false);
 
+	if (6 > m_ObjectDesc.iAnimIndex)
+	{
+		// 리지드 바디 초기화
+		CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+		RigidBodyDesc.isStatic = false;
+		RigidBodyDesc.isTrigger = true;
+		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
+		RigidBodyDesc.eConstraintFlag = CRigidBody::All;
+		RigidBodyDesc.fStaticFriction = 1.f;
+		RigidBodyDesc.fDynamicFriction = 1.f;
+		RigidBodyDesc.fRestitution = 0.f;
+		PxSphereGeometry MyGeometry = PxSphereGeometry(2.f);
+		RigidBodyDesc.pGeometry = &MyGeometry;
+		RigidBodyDesc.pOwnerObject = this;
+		RigidBodyDesc.vDebugColor = _float4(0.f, 1.f, 1.f, 1.f);
+		RigidBodyDesc.eThisCollsion = COL_STATIC;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER;
+		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Cat");
+
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+		{
+			MSG_BOX("Failed CDoor Add_Component : (Com_RigidBody)");
+			__debugbreak();
+			return E_FAIL;
+		}
+
+		m_pTransform->Set_RigidBody(m_pRigidBody);
+	}	
+
 	return S_OK;
 }
 
@@ -76,7 +106,7 @@ void CCat::Tick(_float fTimeDelta)
 	}
 
 	if (nullptr != m_pModel)
-		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+		m_pModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 }
 
 void CCat::Late_Tick(_float fTimeDelta)
@@ -87,7 +117,24 @@ void CCat::Late_Tick(_float fTimeDelta)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
+#ifdef _DEBUG
+		m_pRenderer->Add_DebugGroup(m_pRigidBody);
+#endif // _DEBUG
 	}
+}
+
+void CCat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
+{
+	wstring wsCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wsPlayer(TEXT("Player_Default"));
+
+	// 플레이어와 충돌했다면 수집 활성화
+	if (0 == lstrcmp(wsCollisionTag.c_str(), wsPlayer.c_str()))
+	{
+		BEGININSTANCE;
+		pGameInstance->Play_Sound(TEXT("Cat%d.wav"), 4, 0.6f);
+		ENDINSTANCE;
+	}		
 }
 
 HRESULT CCat::Render()
@@ -317,6 +364,7 @@ void CCat::Free()
 
 	Safe_Release(m_pShadowShader);
 	Safe_Release(m_pShader);
+	Safe_Release(m_pRigidBody);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pCatTexture);
 	Safe_Release(m_pRenderer);

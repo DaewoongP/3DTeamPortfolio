@@ -142,6 +142,8 @@ HRESULT CLevel_Vault::Ready_Events(const _tchar* pLayerTag)
 
 HRESULT CLevel_Vault::Ready_Lights()
 {
+	g_isNight = true;
+
 	BEGININSTANCE;
 
 	CLight::LIGHTDESC		LightDesc;

@@ -225,6 +225,7 @@
     <ClInclude Include="..\Public\Lamppost.h" />
     <ClInclude Include="..\Public\Lamp_Wall.h" />
     <ClInclude Include="..\Public\LightStand.h" />
+    <ClInclude Include="..\public\MarioCount.h" />
     <ClInclude Include="..\Public\Meteor.h" />
     <ClInclude Include="..\Public\Quest_Bone.h" />
     <ClInclude Include="..\Public\Quest_Potion.h" />
@@ -276,12 +277,14 @@
     <ClInclude Include="..\public\Quest_Save_Fig.h" />
     <ClInclude Include="..\Public\Quest_Secret.h" />
     <ClInclude Include="..\Public\Racer.h" />
+    <ClInclude Include="..\public\RedSky.h" />
     <ClInclude Include="..\public\Robe_Arcane.h" />
     <ClInclude Include="..\Public\Robe_DarkArts.h" />
     <ClInclude Include="..\Public\Robe_DarkArts_Delux.h" />
     <ClInclude Include="..\Public\Robe_Beast.h" />
     <ClInclude Include="..\Public\Robe_Quidditch.h" />
     <ClInclude Include="..\Public\Sanctum_Door.h" />
+    <ClInclude Include="..\public\Santum_MapEffects.h" />
     <ClInclude Include="..\Public\ScoreBalloon.h" />
     <ClInclude Include="..\Public\Script.h" />
     <ClInclude Include="..\Public\SmithToCliff_Gate.h" />
@@ -582,6 +585,7 @@
     <ClCompile Include="..\Private\Lamppost.cpp" />
     <ClCompile Include="..\Private\Lamp_Wall.cpp" />
     <ClCompile Include="..\Private\LightStand.cpp" />
+    <ClCompile Include="..\private\MarioCount.cpp" />
     <ClCompile Include="..\Private\Meteor.cpp" />
     <ClCompile Include="..\Private\Quest_Bone.cpp" />
     <ClCompile Include="..\Private\Quest_Potion.cpp" />
@@ -633,12 +637,14 @@
     <ClCompile Include="..\private\Quest_Save_Fig.cpp" />
     <ClCompile Include="..\Private\Quest_Secret.cpp" />
     <ClCompile Include="..\Private\Racer.cpp" />
+    <ClCompile Include="..\private\RedSky.cpp" />
     <ClCompile Include="..\private\Robe_Arcane.cpp" />
     <ClCompile Include="..\Private\Robe_DarkArts.cpp" />
     <ClCompile Include="..\Private\Robe_DarkArts_Delux.cpp" />
     <ClCompile Include="..\Private\Robe_Beast.cpp" />
     <ClCompile Include="..\Private\Robe_Quidditch.cpp" />
     <ClCompile Include="..\Private\Sanctum_Door.cpp" />
+    <ClCompile Include="..\private\Santum_MapEffects.cpp" />
     <ClCompile Include="..\Private\ScoreBalloon.cpp" />
     <ClCompile Include="..\Private\Script.cpp" />
     <ClCompile Include="..\Private\SmithToCliff_Gate.cpp" />

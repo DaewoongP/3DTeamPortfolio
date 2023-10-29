@@ -207,10 +207,10 @@ namespace Engine
 			_value = _max;
 			return 1;
 		}
-		else if (_value <= _max)
+		else if (_value <= _min)
 		{
 			_value = _min;
-			return -1;
+			return 0;
 		}
 
 		return 0;

@@ -6,7 +6,7 @@
 #include"MapObject_Ins.h"
 #include"Player.h"
 #include "Event_Spawn.h"
-
+#include"Santum_MapEffects.h"
 CLevel_Sanctum::CLevel_Sanctum(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) : CLevel(pDevice, pContext)
 {
 }
@@ -64,9 +64,8 @@ HRESULT CLevel_Sanctum::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	_bool isNight = true;
-	FAILED_CHECK_RETURN(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SANCTUM,
-		TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"), &isNight), E_FAIL)
+	FAILED_CHECK_RETURN(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM,
+		TEXT("Prototype_GameObject_RedSky"), pLayerTag, TEXT("GameObject_RedSky")), E_FAIL)
 
 	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData4.ddd"))))
 	{
@@ -173,6 +172,11 @@ HRESULT CLevel_Sanctum::Ready_Layer_MapEffect(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_Sanctum_MapEffets"), pLayerTag, TEXT("GameObject_Sanctum_MapEffets"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Sanctum_MapEffets)");
+		return E_FAIL;
+	}
 	//if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_MapParticle_Liquid"), pLayerTag, TEXT("GameObject_MapParticle_Liquid"))))
 	//{
 	//	MSG_BOX("Failed Add_GameObject : (GameObject_MapParticle_Liquid)");
@@ -194,9 +198,9 @@ HRESULT CLevel_Sanctum::Ready_Lights()
 	LightDesc.vPos = _float4(10.f, 100.f, 25.f, 1.f);
 	LightDesc.vDir = _float4(0.33f, -0.99f, 0.33f, 0.f);
 
-	LightDesc.vDiffuse = WHITEDEFAULT;
-	LightDesc.vAmbient = WHITEDEFAULT;
-	LightDesc.vSpecular = WHITEDEFAULT;
+	LightDesc.vDiffuse = _float4(0.75f, 0.75f, 0.75f, 1.f);
+	LightDesc.vAmbient = LightDesc.vDiffuse;
+	LightDesc.vSpecular = LightDesc.vDiffuse;
 
 	if (FAILED(pGameInstance->Add_Light(LightDesc, nullptr, true)))
 		return E_FAIL;
@@ -287,7 +291,8 @@ HRESULT CLevel_Sanctum::Ready_Shader()
 	CRenderer* pRenderer = static_cast<CRenderer*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer")));
 	pRenderer->Defualt_Shading();
 
-
+	pRenderer->Set_Fog(true, _float4(0.3f, 0.f, 0.f, 0.3f), _float3(0.f, 0.f, 40.f), 40.f);
+	//pRenderer->Set_Fog(true, _float4(0.3f, 0.f, 0.f, 0.5f), 0.f);
 
 	Safe_Release(pRenderer);
 

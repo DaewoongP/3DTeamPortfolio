@@ -48,7 +48,7 @@ HRESULT CNotify::Initialize()
 	return S_OK;
 }
 
-void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameIndex, _Inout_ _float* fSpeed, const _float4x4* pWorldMatrix, _float4x4 PivotMatrix)
+void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameIndex, _Inout_ _float* fSpeed, _Inout_ vector<_int>* iSoundChannelVecconst,const _float4x4* pWorldMatrix, _float4x4 PivotMatrix)
 {
 	if (0.f == fTimeAcc)
 	{
@@ -125,9 +125,14 @@ void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameI
 			{
 				CGameInstance* pGameInstance = CGameInstance::GetInstance();
 				Safe_AddRef(pGameInstance);
+				SOUNDFRAME* pParticleFrame = static_cast<SOUNDFRAME*>(pKeyFrame);
+				_int returnValue = pGameInstance->Play_Sound(pParticleFrame->wszSoundTag, pParticleFrame->fVolum);
+				if (returnValue != -1 && iSoundChannelVecconst != nullptr)
+				{
+					iSoundChannelVecconst->push_back(returnValue);
+				}
+					
 				Safe_Release(pGameInstance);
-				//m_iCurrentKeyFramesIndex = (*pCurrentKeyFrameIndex);
-				//static_cast<SOUNDFRAME*>(pKeyFrame)->Action();
 				break;
 			}
 			case KEYFRAME::KF_PARTICLE:
@@ -208,29 +213,34 @@ void CNotify::Delete_Frame(_uint iFindFrame)
 	m_iNumKeyFrames--;
 }
 
-void CNotify::Edit_Frame(_uint iFindFrame, KEYFRAME::KEYFRAMETYPE eFrameType, _float fActionTime, _float fSpeed,_char* szActionTag,_int iBondIndex,_float4x4 OffsetMatrix, const CModel::BONES& Bones)
+void CNotify::Edit_Frame(_uint iFindFrame, KEYFRAME* pTempFrame)
 {
 	KEYFRAME* pKeyFrame = Find_Frame(iFindFrame);
 
-	pKeyFrame->eKeyFrameType = eFrameType;
-	pKeyFrame->fTime = fActionTime;
-	if (eFrameType == KEYFRAME::KF_SPEED)
+	pKeyFrame->eKeyFrameType = pTempFrame->eKeyFrameType;
+	pKeyFrame->fTime = pTempFrame->fTime;
+
+	if (pKeyFrame->eKeyFrameType == KEYFRAME::KF_SPEED)
 	{
-		static_cast<SPEEDFRAME*>(pKeyFrame)->fSpeed = fSpeed;
+		static_cast<SPEEDFRAME*>(pKeyFrame)->fSpeed = static_cast<SPEEDFRAME*>(pTempFrame)->fSpeed;
 	}
 
-	if (eFrameType == KEYFRAME::KF_PARTICLE)
+	if (pKeyFrame->eKeyFrameType == KEYFRAME::KF_PARTICLE)
 	{
-		CharToWChar(szActionTag, static_cast<PARTICLEFRAME*>(pKeyFrame)->wszParticleTag);
+		PARTICLEFRAME* pParticleFrameData = static_cast<PARTICLEFRAME*>(pTempFrame);
+		lstrcpy(static_cast<PARTICLEFRAME*>(pKeyFrame)->wszParticleTag, pParticleFrameData->wszParticleTag);
 		
-		static_cast<PARTICLEFRAME*>(pKeyFrame)->iBoneIndex = iBondIndex;
-		static_cast<PARTICLEFRAME*>(pKeyFrame)->OffsetMatrix = OffsetMatrix;
-		static_cast<PARTICLEFRAME*>(pKeyFrame)->BindBoneMatrix = Bones[iBondIndex]->Get_CombinedTransformationMatrixPtr();
+		static_cast<PARTICLEFRAME*>(pKeyFrame)->iBoneIndex = pParticleFrameData->iBoneIndex;
+		static_cast<PARTICLEFRAME*>(pKeyFrame)->OffsetMatrix = pParticleFrameData->OffsetMatrix;
+		static_cast<PARTICLEFRAME*>(pKeyFrame)->BindBoneMatrix = pParticleFrameData->BindBoneMatrix;
 	}
 	
-	if (eFrameType == KEYFRAME::KF_SOUND)
+	if (pKeyFrame->eKeyFrameType == KEYFRAME::KF_SOUND)
 	{
-		CharToWChar(szActionTag, static_cast<SOUNDFRAME*>(pKeyFrame)->wszSoundTag);
+		SOUNDFRAME* pSoundFrameData = static_cast<SOUNDFRAME*>(pTempFrame);
+
+		lstrcpy(static_cast<SOUNDFRAME*>(pKeyFrame)->wszSoundTag, pSoundFrameData->wszSoundTag);
+		static_cast<SOUNDFRAME*>(pKeyFrame)->fVolum = pSoundFrameData->fVolum;
 	}
 
 	//Á¤·Ä
@@ -290,6 +300,7 @@ HRESULT CNotify::AddFrame(KEYFRAME_GCM* data,const CModel::BONES& Bones)
 		soundFrameDesc->eKeyFrameType = KEYFRAME::KF_SOUND;
 		soundFrameDesc->fTime = data->fTime;
 		soundFrameDesc->isEnable = true;
+		soundFrameDesc->fVolum = reinterpret_cast<SOUNDFRAME_GCM*>(data)->fVolum;
 		lstrcpy(soundFrameDesc->wszSoundTag, reinterpret_cast<SOUNDFRAME_GCM*>(data)->wszSoundTag);
 		keyFrameDesc = soundFrameDesc;
 		wstring str = data->szName;

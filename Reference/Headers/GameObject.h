@@ -44,6 +44,10 @@ public:
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix);
 
+public:
+	// 객체의 모든 사운드를 해제
+	void Stop_Sound();
+
 protected:
 	CTransform*			m_pTransform = { nullptr };
 
@@ -51,6 +55,7 @@ protected:
 	_float4x4			m_OffsetMatrix = {};
 	const _float4x4*	m_pHitMatrix = { nullptr };
 	mutable _bool		m_isDead = { false };
+	vector<_int>		m_SoundChannel = {};
 
 public:
 	virtual CGameObject* Clone(void* pArg) PURE;

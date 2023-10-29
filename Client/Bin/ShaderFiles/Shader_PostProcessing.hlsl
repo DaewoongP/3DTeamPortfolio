@@ -12,6 +12,7 @@ texture2D g_RainTexture;
 bool g_isSSAO;
 bool g_isCircleFog;
 bool g_isFloorFog;
+bool g_isYFog;
 bool g_isNight;
 float g_fCamFar;
 float4 g_vCamPos;
@@ -21,6 +22,7 @@ float3 g_vCircleFogCenter;
 float4 g_vFogColor;
 float g_fCircleFogRadius;
 float g_fTime;
+float g_fFogY;
 
 // HDR
 texture2D g_DeferredTexture;
@@ -149,11 +151,17 @@ PS_OUT PS_MAIN(PS_IN In)
         Out.vColor.rgb += In.vTexUV.y * vFogColor * FractionalBrownianMotion(vFbmInput) * 0.3f;       
     }
     
-    //y°ª ¾È°³
-    //if (vPosition.y >= 10.f)
-    //    fFogPower = 0.f;
-    //else
-    //    fFogPower = saturate((vPosition.y - 10.f) / -10.f);
+    if (g_isYFog)
+    {
+        float fFogPower = 0.f;
+        
+        if (vPosition.y >= g_fFogY)
+            fFogPower = 0.f;
+        else
+            fFogPower = saturate((vPosition.y - g_fFogY) / -30.f);
+        
+        Out.vColor = lerp(Out.vColor, g_vFogColor, fFogPower);
+    }
 
     Out.vColor += g_RainTexture.Sample(LinearSampler, In.vTexUV);
     saturate(Out.vColor);

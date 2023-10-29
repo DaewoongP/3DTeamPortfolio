@@ -17,6 +17,21 @@ CUI_Group_Score::CUI_Group_Score(const CUI_Group_Score& rhs)
 {
 }
 
+_uint CUI_Group_Score::Get_PlayerRank()
+{
+	_uint iIndex = { 0 };
+	for (auto& ScoreDesc : m_UIScores)
+	{
+		++iIndex;
+		if (!lstrcmp(ScoreDesc.pName->Get_Text(), m_NameDesc.wszNinthName))
+		{
+			return iIndex;
+		}
+	}
+
+	return 0;
+}
+
 HRESULT CUI_Group_Score::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
@@ -42,17 +57,17 @@ HRESULT CUI_Group_Score::Initialize(void* pArg)
 
 	if (nullptr != pArg)
 	{
-		UISCOREDESC* pDesc = (UISCOREDESC*)pArg;
+		m_NameDesc = *(UISCOREDESC*)pArg;
 
-		Create_UI_Score(pDesc->wszFirstName, &(*pDesc->pScore)[0], FIRST);
-		Create_UI_Score(pDesc->wszSecondName, & (*pDesc->pScore)[1], SECOND);
-		Create_UI_Score(pDesc->wszThirdName, & (*pDesc->pScore)[2], THIRD);
-		Create_UI_Score(pDesc->wszFourthName, & (*pDesc->pScore)[3], FOURTH);
-		Create_UI_Score(pDesc->wszFifthName, & (*pDesc->pScore)[4], FIFTH);
-		Create_UI_Score(pDesc->wszSixthName, & (*pDesc->pScore)[5], SIXTH);
-		Create_UI_Score(pDesc->wszSeventhName, & (*pDesc->pScore)[6], SEVENTH);
-		Create_UI_Score(pDesc->wszEighthName, & (*pDesc->pScore)[7], EIGHTH);
-		Create_UI_Score(pDesc->wszNinthName, &(*pDesc->pScore)[8], NINTH);
+		Create_UI_Score(m_NameDesc.wszFirstName, &(*m_NameDesc.pScore)[0], FIRST);
+		Create_UI_Score(m_NameDesc.wszSecondName, & (*m_NameDesc.pScore)[1], SECOND);
+		Create_UI_Score(m_NameDesc.wszThirdName, & (*m_NameDesc.pScore)[2], THIRD);
+		Create_UI_Score(m_NameDesc.wszFourthName, & (*m_NameDesc.pScore)[3], FOURTH);
+		Create_UI_Score(m_NameDesc.wszFifthName, & (*m_NameDesc.pScore)[4], FIFTH);
+		Create_UI_Score(m_NameDesc.wszSixthName, & (*m_NameDesc.pScore)[5], SIXTH);
+		Create_UI_Score(m_NameDesc.wszSeventhName, & (*m_NameDesc.pScore)[6], SEVENTH);
+		Create_UI_Score(m_NameDesc.wszEighthName, & (*m_NameDesc.pScore)[7], EIGHTH);
+		Create_UI_Score(m_NameDesc.wszNinthName, &(*m_NameDesc.pScore)[8], NINTH);
 	}
 	return S_OK;
 }
@@ -243,31 +258,31 @@ HRESULT CUI_Group_Score::Ready_Offset()
 {
 	m_vOffset.clear();
 
-	_float2 vPos = _float2(1180.f, 90.f);
+	_float2 vPos = _float2(70.f, 90.f);
 	m_vOffset.push_back(vPos);
 
-	vPos = _float2(1180.f, 150.f);
+	vPos = _float2(70.f, 150.f);
 	m_vOffset.push_back(vPos);
 
-	vPos = _float2(1180.f, 210.f);
+	vPos = _float2(70.f, 210.f);
 	m_vOffset.push_back(vPos);
 
-	vPos = _float2(1180.f, 270.f);
+	vPos = _float2(70.f, 270.f);
 	m_vOffset.push_back(vPos);
 
-	vPos = _float2(1180.f, 330.f);
+	vPos = _float2(70.f, 330.f);
 	m_vOffset.push_back(vPos);
 
-	vPos = _float2(1180.f, 390.f);
+	vPos = _float2(70.f, 390.f);
 	m_vOffset.push_back(vPos);
 
-	vPos = _float2(1180.f, 450.f);
+	vPos = _float2(70.f, 450.f);
 	m_vOffset.push_back(vPos);
 
-	vPos = _float2(1180.f, 510.f);
+	vPos = _float2(70.f, 510.f);
 	m_vOffset.push_back(vPos);
 
-	vPos = _float2(1180.f, 570.f);
+	vPos = _float2(70.f, 570.f);
 	m_vOffset.push_back(vPos);
 
 	return S_OK;

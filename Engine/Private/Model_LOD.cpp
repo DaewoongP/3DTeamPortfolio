@@ -146,7 +146,7 @@ void CModel_LOD::Play_Animation(_float fTimeDelta)
 	if (nullptr == m_pCurrentModel)
 		return;
 
-	m_pCurrentModel->Play_Animation(fTimeDelta);
+	m_pCurrentModel->Play_Animation(fTimeDelta,nullptr);
 }
 
 HRESULT CModel_LOD::Add_Components()

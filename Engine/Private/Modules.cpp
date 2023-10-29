@@ -675,7 +675,7 @@ HRESULT VELOCITY_OVER_LIFETIME::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, strLinearOption.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	WriteFile(hFile, &vOrbital, sizeof(vOrbital), &dwByte, nullptr);
 	WriteFile(hFile, &vOrbitalMin, sizeof(vOrbitalMin), &dwByte, nullptr);
-	WriteFile(hFile, &vOrbitalMin, sizeof(vOrbitalMin), &dwByte, nullptr);
+	WriteFile(hFile, &vOrbitalMax, sizeof(vOrbitalMax), &dwByte, nullptr);
 	WriteFile(hFile, strOrbitalOption.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	WriteFile(hFile, &vOffset, sizeof(vOffset), &dwByte, nullptr);
 	WriteFile(hFile, &fRadial, sizeof(fRadial), &dwByte, nullptr);
@@ -721,7 +721,7 @@ HRESULT VELOCITY_OVER_LIFETIME::Load(const _tchar* _pDirectoyPath)
 	strLinearOption = szBuffer;
 	ReadFile(hFile, &vOrbital, sizeof(vOrbital), &dwByte, nullptr);
 	ReadFile(hFile, &vOrbitalMin, sizeof(vOrbitalMin), &dwByte, nullptr);
-	ReadFile(hFile, &vOrbitalMin, sizeof(vOrbitalMin), &dwByte, nullptr);
+	ReadFile(hFile, &vOrbitalMax, sizeof(vOrbitalMax), &dwByte, nullptr);
 	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	strOrbitalOption = szBuffer;
 	ReadFile(hFile, &vOffset, sizeof(vOffset), &dwByte, nullptr);
@@ -765,18 +765,40 @@ void VELOCITY_OVER_LIFETIME::Action(PARTICLE_IT& _particle_iter, const _float4x4
 		vLook.Normalize(vNormalLook);
 		
 		// Orbit 계산
-		vOrbitVelocity =
-			(vOrbital.x * vNormalRight.Cross(vOrbitCenterDir) +
-			vOrbital.y * vNormalUp.Cross(vOrbitCenterDir) +
-			vOrbital.z * vNormalLook.Cross(vOrbitCenterDir)) * fTimeDelta;
+
+		if ("Constant" == strOrbitalOption)
+		{
+			vOrbitVelocity =
+				(vOrbital.x * vNormalRight.Cross(vOrbitCenterDir) +
+					vOrbital.y * vNormalUp.Cross(vOrbitCenterDir) +
+					vOrbital.z * vNormalLook.Cross(vOrbitCenterDir)) * fTimeDelta;
+		}
+		else
+		{
+			vOrbitVelocity =
+				(_particle_iter->vOrbitVelocity.x * vNormalRight.Cross(vOrbitCenterDir) +
+					_particle_iter->vOrbitVelocity.y * vNormalUp.Cross(vOrbitCenterDir) +
+					_particle_iter->vOrbitVelocity.z * vNormalLook.Cross(vOrbitCenterDir)) * fTimeDelta;
+		}
+		
 	}
 	else // World
 	{
 		// Orbit 계산
-		vOrbitVelocity =
-			(vOrbital.x * _float3(1.f, 0.f, 0.f).Cross(vOrbitCenterDir) +
-			vOrbital.y * _float3(0.f, 1.f, 0.f).Cross(vOrbitCenterDir) +
-			vOrbital.z * _float3(0.f, 0.f, 1.f).Cross(vOrbitCenterDir)) * fTimeDelta;
+		if ("Constant" == strOrbitalOption)
+		{
+			vOrbitVelocity =
+				(vOrbital.x * _float3(1.f, 0.f, 0.f).Cross(vOrbitCenterDir) +
+					vOrbital.y * _float3(0.f, 1.f, 0.f).Cross(vOrbitCenterDir) +
+					vOrbital.z * _float3(0.f, 0.f, 1.f).Cross(vOrbitCenterDir)) * fTimeDelta;
+		}
+		else
+		{
+			vOrbitVelocity =
+				(_particle_iter->vOrbitVelocity.x * _float3(1.f, 0.f, 0.f).Cross(vOrbitCenterDir) +
+					_particle_iter->vOrbitVelocity.y * _float3(0.f, 1.f, 0.f).Cross(vOrbitCenterDir) +
+					_particle_iter->vOrbitVelocity.z * _float3(0.f, 0.f, 1.f).Cross(vOrbitCenterDir)) * fTimeDelta;
+		}
 	}
 
 	// Radial 적용
@@ -847,6 +869,14 @@ void VELOCITY_OVER_LIFETIME::Reset(PARTICLE_IT& _particle_iter, const _float4x4*
 			vVelocity += Random_Generator(vLinearMin.z, vLinearMax.z) * _float3(0.f, 0.f, 1.f);
 		}
 	}
+
+	if ("Range" == strOrbitalOption)
+	{
+		_particle_iter->vOrbitVelocity.x = Random_Generator(vOrbitalMin.x, vOrbitalMax.x);
+		_particle_iter->vOrbitVelocity.y = Random_Generator(vOrbitalMin.y, vOrbitalMax.y);
+		_particle_iter->vOrbitVelocity.z = Random_Generator(vOrbitalMin.z, vOrbitalMax.z);
+	}
+	
 
 	_particle_iter->vVelocity += (vVelocity * fSpeedModifier).TransNorm();
 }

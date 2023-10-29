@@ -444,6 +444,16 @@ HRESULT CMainTool::Ready_Prototype_Object()
 		CTriangleColMesh::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	
+	BEGININSTANCE;
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Dark_Wizard_Male_A/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Dark_Wizard_Male_B/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Dark_Wizard_Male_C/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Dark_Wizard_Male_D/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Player/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Eleazar_Fig/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Pensive/"));
+	ENDINSTANCE;
+
 #pragma region Load Particle
 	{
 		std::lock_guard<std::mutex> lock(mtx);

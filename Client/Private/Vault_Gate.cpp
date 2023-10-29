@@ -92,10 +92,19 @@ void CVault_Gate::Tick(_float fTimeDelta)
 	// 화로에 불 다 붙으면 문열림
 	Check_FireOn();
 
-	if (true == m_isCheckOnce)
-		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+	BEGININSTANCE;
+	if (true == m_isSound0 && true == m_isGateOpen)
+	{
+		m_iSound0 = pGameInstance->Play_Sound(TEXT("Vault_Door_Open.wav"), 1.f);
+		m_isSound0 = false;
+	}
+		
+	ENDINSTANCE;
+
+	if (true == m_isCheckOnce && true == m_isGateOpen)
+		m_pModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 	else
-		m_pModel->Play_Animation(0, CModel::UPPERBODY, m_pTransform);
+		m_pModel->Play_Animation(0, &m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 }
 
 void CVault_Gate::Late_Tick(_float fTimeDelta)
@@ -257,7 +266,10 @@ void CVault_Gate::Check_FireOn()
 	}
 
 	if (iFireOn == iCheckFireOn)
+	{
 		m_isCheckOnce = true;
+		m_isAllLightStandsOn = true;
+	}		
 }
 
 CVault_Gate* CVault_Gate::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
