@@ -190,8 +190,6 @@ HRESULT CLevel_Sanctum::Ready_Layer_MapEffect(const _tchar* pLayerTag)
 
 HRESULT CLevel_Sanctum::Ready_Lights()
 {
-	g_isNight = true;
-
 	BEGININSTANCE;
 	CLight::LIGHTDESC		LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
@@ -218,7 +216,7 @@ HRESULT CLevel_Sanctum::Ready_Lights()
 	LightDesc.vAmbient = _float4(1.f, 0.f, 0.f, 0.f);
 	LightDesc.vSpecular = _float4(1.f, 0.f, 0.f, 0.f);
 
-	if (FAILED(pGameInstance->Add_Light(LightDesc, nullptr, true)))
+	if (FAILED(pGameInstance->Add_Light(LightDesc)))
 		return E_FAIL;
 
 	//LightDesc.eType = CLight::TYPE_POINT;
@@ -293,7 +291,8 @@ HRESULT CLevel_Sanctum::Ready_Shader()
 	CRenderer* pRenderer = static_cast<CRenderer*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer")));
 	pRenderer->Defualt_Shading();
 
-
+	pRenderer->Set_Fog(true, _float4(0.3f, 0.f, 0.f, 0.3f), _float3(0.f, 0.f, 40.f), 40.f);
+	//pRenderer->Set_Fog(true, _float4(0.3f, 0.f, 0.f, 0.5f), 0.f);
 
 	Safe_Release(pRenderer);
 

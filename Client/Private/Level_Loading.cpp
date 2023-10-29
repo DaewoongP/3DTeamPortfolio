@@ -85,11 +85,11 @@ HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID, _bool isStaticLoaded)
 		}
 		break;
 	case LEVEL_SKY:
-		if (FAILED(Loading_Sky(TEXT("Layer_Loading"))))
+		/*if (FAILED(Loading_Sky(TEXT("Layer_Loading"))))
 		{
 			MSG_BOX("Failed Loading Sky Object");
 			return E_FAIL;
-		}
+		}*/
 		break;
 	case LEVEL_SANCTUM:
 		if (FAILED(Loading_Sanctum(TEXT("Layer_Loading"))))

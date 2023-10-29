@@ -30,6 +30,11 @@ protected:
 	virtual ~CUI_Font() = default;
 
 public:
+	const _tchar* Get_Text() {
+		return m_pText;
+	}
+
+public:
 	virtual HRESULT Initialize_Prototype(const _tchar* pFontFilePath);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;

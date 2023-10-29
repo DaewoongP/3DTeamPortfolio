@@ -792,9 +792,13 @@ HRESULT CRenderer::Render_PostProcessing()
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_fCircleFogRadius", &m_fFogRadius, sizeof(_float))))
 		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_fFogY", &m_fFogY, sizeof(_float))))
+		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_isCircleFog", &m_isCircleFog, sizeof(_bool))))
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_isFloorFog", &m_isFloorFog, sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_isYFog", &m_isYFog, sizeof(_bool))))
 		return E_FAIL;
 
 	_float fTimeAcc = CGameInstance::GetInstance()->Get_World_TimeAcc();

@@ -98,9 +98,6 @@ HRESULT CDarkWizard_Fly::Initialize_Level(_uint iCurrentLevelIndex)
 
 void CDarkWizard_Fly::Tick(_float fTimeDelta)
 {
-	if (CGameInstance::GetInstance()->Get_DIKeyState(DIK_6))
-		m_isSpawn = true; // 레이서의 스타트 신호
-
 	Update_Target();
 	switch (m_iMy_Number)
 	{

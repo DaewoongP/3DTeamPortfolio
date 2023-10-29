@@ -120,6 +120,7 @@
 #include "Balloon_Coin.h"
 #include "Racer.h"
 #include "FlyGameManager.h"
+#include "MarioCount.h"
 #pragma endregion
 
 #include "Guide_Book.h"
@@ -387,7 +388,11 @@ HRESULT CMain0_Loader::Loading_For_Sky(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FlyGameManager"),
 			CFlyGameManager::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_FlyGameManager");
-	
+
+		/* For.Prototype_GameObject_MarioCount */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MarioCount"),
+			CMarioCount::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_MarioCount");
 	}
 
 
