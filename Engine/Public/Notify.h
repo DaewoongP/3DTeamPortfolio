@@ -30,7 +30,7 @@ public:
 	HRESULT Initialize();
 
 public:
-	void			Invalidate_Frame(_float fTimeAcc, _Inout_ _uint * pCurrentKeyFrameIndex, _Inout_ _float * fSpeed, _Inout_ vector<_int>* iSoundChannelVec, const _float4x4 * pWorldMatrix, _float4x4 PivotMatrix);
+	void			Invalidate_Frame(_float fTimeAcc, _Inout_ _uint * pCurrentKeyFrameIndex, _Inout_ _float * fSpeed, _Inout_ vector<pair<_int, _float>>* iSoundChannelVec, const _float4x4 * pWorldMatrix, _float4x4 PivotMatrix);
 	//인덱스를 이용한 검색
 	KEYFRAME* Find_Frame(_uint iFindFrame);
 	const _tchar* Find_Frame_Key(_uint iFindFrame);

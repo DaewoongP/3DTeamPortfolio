@@ -76,7 +76,7 @@ void CEvent_Vault_Torch::Check_Event_On_1(_float fTimeDelta)
 	{
 		m_fStage1Time += fTimeDelta;
 
-		_uint iTorchIndex = (_uint)(m_fStage1Time * 10.f);
+		_uint iTorchIndex = (_uint)(m_fStage1Time * 5.f);
 
 		// 0.2 초마다 불이 켜짐
 		if (0 == (iTorchIndex % 2))
@@ -113,7 +113,7 @@ void CEvent_Vault_Torch::Check_Event_On_2(_float fTimeDelta)
 		m_fStage2Time += fTimeDelta;
 
 		// 두번째 횃불의 인덱스는 12부터 시작한다.
-		_uint iTorchIndex = (_uint)(m_fStage2Time * 10.f) + 12;
+		_uint iTorchIndex = (_uint)(m_fStage2Time * 5.f) + 12;
 
 		// 0.2 초마다 불이 켜짐
 		if (0 == (iTorchIndex % 2))

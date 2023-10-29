@@ -184,6 +184,10 @@ HRESULT CFinisher::Reset(MAGICBALLINITDESC& InitDesc)
 void CFinisher::Ready_Begin()
 {
 	__super::Ready_Begin();
+
+	BEGININSTANCE;
+	pGameInstance->Play_Sound(TEXT("ThunderFinisher.wav"), 8, 1.f);
+	ENDINSTANCE;
 }
 
 void CFinisher::Ready_DrawMagic()

@@ -117,6 +117,9 @@ void CEvent_Vault_Spawn::Check_Event_Spawn_3()
 		//진입시
 		if (true == m_isEnter)
 		{
+			pGameInstance->Stop_AllSound();
+			pGameInstance->Play_BGM(TEXT("Vault_Boss_Bgm.wav"), 0.6f);
+
 			//페이드 아웃
 			m_pRenderer->FadeOut(1.0f);
 

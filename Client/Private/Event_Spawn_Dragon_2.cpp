@@ -74,7 +74,7 @@ void CEvent_Spawn_Dragon_2::Check_Event_Spawn_Dragon_2()
 		if (true == pGameInstance->Check_Timer(TEXT("Spawn_Dragon_2_CutScene_Fade_Out")))
 		{
 			m_isEnter = true;
-
+			m_pRenderer->Set_Fog(true, _float4(0.3f, 0.1f, 0.1f, 0.5f), _float3(-31.f, 0.f, 227.f), 20.f);
 			m_eSequence = SPAWN_DRAGON_2_SEQUENCE_PLAY_CUTSCENE;
 		}
 	}
@@ -187,8 +187,8 @@ HRESULT CEvent_Spawn_Dragon_2::Add_Components()
 	TriggerDesc.isCollisionToDead = true;
 	strcpy_s(TriggerDesc.szCollisionTag, "Trigger_Sanctum_Spawn");
 	lstrcpy(TriggerDesc.szOtherTag, TEXT("Player_Default"));
-	TriggerDesc.vTriggerSize = _float3(20.f, 10.f, 5.f);
-	TriggerDesc.vTriggerWorldPos = _float3(-37.f, -54.f, 203.f);
+	TriggerDesc.vTriggerSize = _float3(20.f, 20.f, 10.f);
+	TriggerDesc.vTriggerWorldPos = _float3(-36.f, -33.f, 144.f);
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Trigger"),
 		TEXT("Trigger_Spawn"), reinterpret_cast<CComponent**>(&m_pTrigger_Spawn), &TriggerDesc)))

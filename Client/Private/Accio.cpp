@@ -241,6 +241,10 @@ HRESULT CAccio::Reset(MAGICBALLINITDESC& InitDesc)
 void CAccio::Ready_Begin()
 {
 	__super::Ready_Begin();
+
+	BEGININSTANCE;
+	pGameInstance->Play_Sound(TEXT("Accio.wav"), 1.f);
+	ENDINSTANCE;
 }
 
 void CAccio::Ready_DrawMagic()

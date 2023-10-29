@@ -728,6 +728,12 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshInstance.hlsl"),
 				VTXMESHINSTANCE_DECL::Elements, VTXMESHINSTANCE_DECL::iNumElements))))
 			return E_FAIL;
+		
+		/* For.Prototype_Component_Shader_VtxAnimMeshInstance */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_VtxAnimMeshInstance"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAnimMeshInstance.hlsl"),
+				VTXANIMMESHINSTANCE_DECL::Elements, VTXANIMMESHINSTANCE_DECL::iNumElements))))
+			return E_FAIL;
 
 		/* For.Prototype_Component_Shader_ShadowMeshInstance */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_ShadowMeshInstance"),
@@ -882,10 +888,31 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Max_Ground")
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/Maxima/Max_Ground"), eLevelID))))
 			throw TEXT("Prototype_GameObject_Max_Ground");
-
+		//FocusPotion
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Max_Aura")
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/MaximaFlare"), eLevelID))))
 			throw TEXT("Prototype_GameObject_Max_Aura");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Focus_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/FocusPotion/Focus"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Focus_Particle");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Focus_After_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/FocusPotion/Focus_After"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Focus_After_Particle");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Focus_After_Particle2")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/FocusPotion/Focus_After2"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Focus_After_Particle2");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Focus_Ground")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/FocusPotion/Focus_Ground"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Focus_Ground");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Focus_Effect")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/FocusPotion/Focus_Effect"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Focus_Effect");
+
 
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Potion_Distortoin")
 			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Potion/Potion_Distortion.ME"), eLevelID))))
@@ -926,6 +953,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			throw TEXT("Prototype_GameObject_Levioso");
 
 		/* For.Prototype_GameObject_Confringo */
+
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Confringo"),
 			CConfringo::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Confringo");
@@ -1271,7 +1299,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 				throw TEXT("Reserve Particle : Particle_DestroyProtego_Blue2");
 
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Purple2"),
-				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Purple2/"), 2)))
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Purlple2/"), 2)))
 				throw TEXT("Reserve Particle : Particle_DestroyProtego_Purple2");
 
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Red2"),
@@ -1309,11 +1337,6 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Test_Player"),
 			CTest_Player::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Test_Player");
-
-		/* For.Prototype_GameObject_Test_Particle */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Test_Particle"),
-			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Test/"), eLevelID))))
-			throw TEXT("Prototype_GameObject_Test_Particle");
 
 		/* For.Prototype_GameObject_PhysxRenderer */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_PhysxRenderer"),

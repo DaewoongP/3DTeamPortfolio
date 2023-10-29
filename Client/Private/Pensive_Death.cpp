@@ -69,6 +69,10 @@ void CPensive_Death::Action_None_Tick()
 		{
 			//ªÁ∏¡√≥∏Æ
 			static_cast<CGameObject*>(m_pOwner->Get_Owner())->Set_Dead();
+			BEGININSTANCE;
+			pGameInstance->Stop_AllSound();
+			pGameInstance->Play_BGM(TEXT("Vault_Bgm"), 0.6f);
+			ENDINSTANCE;
 		}
 		m_iActionIndex++;
 	}

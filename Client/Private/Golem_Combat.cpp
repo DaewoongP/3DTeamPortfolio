@@ -330,6 +330,10 @@ HRESULT CGolem_Combat::Make_Notifies()
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Change_Animation"), Func)))
 		return E_FAIL;
 
+	Func = [&] {(*this).StopAllSound(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("StopAllSound"), Func)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -342,7 +346,7 @@ HRESULT CGolem_Combat::Add_Components()
 
 		/* For.Com_Health */
 		CHealth::HEALTHDESC HealthDesc;
-		HealthDesc.iMaxHP = 200;
+		HealthDesc.iMaxHP = 350;
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 			throw TEXT("Com_Health");
@@ -388,7 +392,7 @@ HRESULT CGolem_Combat::Add_Components()
 
 		Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::MONSTER;
 		Desc.pHealth = m_pHealth;
-		lstrcpy(Desc.wszObjectLevel, TEXT("1"));
+		lstrcpy(Desc.wszObjectLevel, TEXT("23"));
 		lstrcpy(Desc.wszObjectName, TEXT("°¡µð¾ð"));
 
 		BEGININSTANCE;

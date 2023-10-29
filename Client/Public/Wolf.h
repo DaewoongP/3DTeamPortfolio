@@ -38,11 +38,20 @@ public:
 	virtual HRESULT Render() override;
 
 private:
+	CTexture* m_pDissolveTexture = { nullptr };				 // 디졸브용 노이즈 텍스처
+
+private:
 	_float m_fDeathTimeAcc = { 0.f }; // 사망 애니메이션이 나오고 얼마 뒤에 죽을 건지
 	_float m_fLeviosoDur = { 0.f };   // 레비오소 지속 시간
 	_float m_fDecendoDur = { 0.f };   // 디센도 지속 시간
+	_float m_fDissolveAmount = { 0.f }; // 디졸브 값
 
 	_bool m_isDecendo = { false }; // 디센도에 피격했는가?
+	_bool m_isDissolveStart = { false };
+
+	_bool m_isSound0 = { true }; // 하울링
+	_bool m_isSound1 = { true }; // 짖기
+	_bool m_isSound2 = { true }; // 으르렁(공격)
 
 private:
 	W0LF_ANIMATION m_eCurrentAnim = { WF_END };
@@ -53,6 +62,7 @@ private:
 	HRESULT Add_Components();
 	HRESULT Add_Components_Level(_uint iCurrentLevelIndex);
 	HRESULT Bind_HitMatrices();
+	HRESULT SetUp_ShaderResources();
 
 private:
 	void Wolf_Attack();						// 늑대 공격, Notify

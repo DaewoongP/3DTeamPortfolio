@@ -1181,7 +1181,7 @@ HRESULT CRenderer::Sort_Render(RENDERGROUP eGroup)
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();
 	Safe_AddRef(pPipeLine);
 
-	_float4 vCamPos = *pPipeLine->Get_CamPosition();
+	_float3 vCamPos = pPipeLine->Get_CamPosition()->xyz();
 
 	Safe_Release(pPipeLine);
 
@@ -1189,8 +1189,8 @@ HRESULT CRenderer::Sort_Render(RENDERGROUP eGroup)
 		_float3 vSourPos = pSour->Get_Transform()->Get_Position();
 		_float3 vDestPos = pDest->Get_Transform()->Get_Position();
 
-		_float4 vSour = vSourPos - vCamPos;
-		_float4 vDest = vDestPos - vCamPos;
+		_float3 vSour = vSourPos - vCamPos;
+		_float3 vDest = vDestPos - vCamPos;
 
 		if (vSour.Length() > vSour.Length())
 			return true;

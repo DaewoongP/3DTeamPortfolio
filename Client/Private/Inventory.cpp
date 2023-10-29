@@ -87,13 +87,11 @@ _bool CInventory::Can_Purchase(_uint iCost)
 void CInventory::Pay_Money(_uint iCost)
 {
 	m_iGold -= iCost;
-	cout << "³²Àº °ñµå : " << m_iGold << '\n';
 }
 
 void CInventory::Earn_Money(_uint iCost)
 {
 	m_iGold += iCost;
-	cout << "³²Àº °ñµå : " << m_iGold << '\n';
 }
 
 HRESULT CInventory::Add_Components()
@@ -179,7 +177,6 @@ _bool CInventory::Add_Item(CItem* pItem, ITEMTYPE eType)
 	CIngredient* pIngredient = dynamic_cast<CIngredient*>(pItem);
 	if (nullptr != pIngredient)
 	{
-		cout << pIngredient->Get_Ingredient() << '\n';
 		m_ResourcesCount[pIngredient->Get_Ingredient()]++;
 	}
 

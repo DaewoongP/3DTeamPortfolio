@@ -105,6 +105,7 @@ public:
 	void Set_TargetTransform(CTransform* _pTargetTransform = nullptr) { m_pTargetTransform = _pTargetTransform; }
 	void Set_Protego_Collision(CTransform* _pTransform, CEnemy::ATTACKTYPE _eAttackType) const;
 
+	void  Set_isInteractionUI(_bool isInteractionUI) { m_isInteractionUI = isInteractionUI; }
 	void Set_Robe_Mesh_Index(const _uint& iMeshIndex) { m_iRobeMeshIndex = iMeshIndex; }
 	void Set_PowerUp(_bool isPowerUp) { m_isPowerUp = isPowerUp; }
 	void Set_DefUp(_bool isDefUp) { m_isDefUp = isDefUp; }
@@ -162,6 +163,7 @@ private:
 	CUI_Group_Skill* m_UI_Group_Skill_01 = { nullptr };
 	CUI_Group_SkillTap* m_UI_Group_SkillTap = { nullptr };
 	_bool			m_isOpenSkillTap = { false };
+	_bool			m_isInteractionUI = { false };
 
 	CTool* m_pCurTool = { nullptr };
 
@@ -305,6 +307,9 @@ private:
 	_bool m_isTabNext = { false };
 	
 	_int	m_iSoundTest = { 0 };
+
+	_bool m_isFlySoundPlaying = { false };
+	_int  m_iCurrentFlySoundChannel = { -1 };
 
 private:
 	HRESULT Add_Components();

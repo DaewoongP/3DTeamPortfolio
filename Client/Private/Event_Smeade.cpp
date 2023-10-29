@@ -23,17 +23,20 @@ HRESULT CEvent_Smeade::Initialize(void* pArg)
 	FAILED_CHECK_RETURN(Add_Components(), E_FAIL);
 
 	BEGININSTANCE;
-	
+
 	auto pMonsterLayer = pGameInstance->Find_Components_In_Layer(LEVEL_SMITH, TEXT("Layer_Monster"));
-	
+
 	for (auto Pair : *pMonsterLayer)
 	{
 		wstring wstrObjTag = Pair.first;
 		// 나는 스폰 관련 데이터만 가져와서 처리할거야.
 		if (wstring::npos != wstrObjTag.find(TEXT("Troll")))
 		{
-			m_pMonsters.emplace(wstrObjTag, static_cast<CEnemy*>(Pair.second));
-			Safe_AddRef(Pair.second);
+			if (nullptr == m_pTroll)
+			{
+				m_pTroll = static_cast<CArmored_Troll*>(Pair.second);
+				Safe_AddRef(m_pTroll);
+			}
 		}
 	}
 
@@ -63,9 +66,9 @@ HRESULT CEvent_Smeade::Initialize(void* pArg)
 	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play_3_FadeIn"), true, 11.066f);
 
 	pGameInstance->Add_Timer(TEXT("Troll_Spawn_CutScene_Play_4_Scream"), true, 13.3f);
-	
+
 	ENDINSTANCE;
-	
+
 	return S_OK;
 }
 
@@ -94,9 +97,12 @@ void CEvent_Smeade::Check_Event_Spawn_Troll()
 		//진입시
 		if (true == m_isEnter)
 		{
+			pGameInstance->Stop_AllSound();
+			_int ChennelNum = pGameInstance->Play_BGM(TEXT("HogSmead_Boss_Bgm.wav"), 0.6f);
+			m_pTroll->Set_Boss_BGM_Chennel_Number(ChennelNum);
 			//페이드 아웃
 			m_pRenderer->FadeOut(1.0f);
-			
+
 			//진입 표시
 			m_isEnter = false;
 		}
@@ -110,27 +116,18 @@ void CEvent_Smeade::Check_Event_Spawn_Troll()
 
 		}
 	}
-		break;
+	break;
 	case Client::CEvent_Smeade::TROLLSPAWN_SEQUENCE_TROLL_SPAWN_AND_PLAY_CUTSCENE:
-	{	
+	{
 		//진입시
 		if (true == m_isEnter)
 		{
 			//스폰 처리
-			for (auto iter = m_pMonsters.begin(); iter != m_pMonsters.end(); )
-			{
-				wstring wstrObjectTag = iter->first;
-				if (wstring::npos != wstrObjectTag.find(TEXT("Troll")))
-				{
 					// 여기서 트롤의 무기 렌더링 처리
-					static_cast<CArmored_Troll*>(iter->second)->Set_Weapon_Render(true);
-					iter->second->Spawn();
-					Safe_Release(iter->second);
-					iter = m_pMonsters.erase(iter);
-				}
-				else
-					++iter;
-			}
+			m_pTroll->Set_Weapon_Render(true);
+			m_pTroll->Spawn();
+			Safe_Release(m_pTroll);
+			m_pTroll = nullptr;
 
 			// 컷신에 맞춰 집에 불 
 			for (auto& iter : m_pFireHouse)
@@ -152,7 +149,7 @@ void CEvent_Smeade::Check_Event_Spawn_Troll()
 			//컷씬 재생
 			pGameInstance->Add_CutScene(TEXT("Troll_Enter"));
 		}
-		
+
 		if (true == pGameInstance->Check_Timer(TEXT("Troll_Spawn_CutScene_Play_2_FadeOut")))
 		{
 			m_pRenderer->FadeOut(5.0f);
@@ -190,7 +187,7 @@ void CEvent_Smeade::Check_Event_Spawn_Troll()
 
 			m_isEnter = true;
 		}
-	}	
+	}
 	break;
 	case Client::CEvent_Smeade::TROLLSPAWN_SEQUENCE_FADE_IN:
 	{
@@ -201,7 +198,7 @@ void CEvent_Smeade::Check_Event_Spawn_Troll()
 			m_isEnter = false;
 		}
 
-		
+
 
 		//타이머 체크
 		if (true == pGameInstance->Check_Timer(TEXT("Troll_Spawn_CutScene_Fade_Out")))
@@ -222,7 +219,7 @@ void CEvent_Smeade::Check_Event_Spawn_Troll()
 			//pPlayer->Get_Player_Camera_Transform()->Turn(_float3(0.0f, 0.0f, 1.0f), XMConvertToRadians(15.0f));
 		}
 	}
-		break;
+	break;
 	case Client::CEvent_Smeade::TROLLSPAWN_SEQUENCE_END:
 	{
 		if (true == m_isEnter)
@@ -239,7 +236,7 @@ void CEvent_Smeade::Check_Event_Spawn_Troll()
 			}
 		}
 	}
-		break;
+	break;
 	default:
 		break;
 	}
@@ -351,8 +348,7 @@ void CEvent_Smeade::Free()
 		Safe_Release(m_pCutSceneTest);
 		Safe_Release(m_pRenderer);
 
-		for (auto& Pair : m_pMonsters)
-			Safe_Release(Pair.second);
+		Safe_Release(m_pTroll);
 
 		for (auto& iter : m_pFireHouse)
 			Safe_Release(iter);

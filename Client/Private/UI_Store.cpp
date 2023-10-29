@@ -96,16 +96,14 @@ void CUI_Store::Tick(_float fTimeDelta)
 	{
 		if (m_pSlots[i]->Get_Clicked())
 		{
-			if (true )
+			if (false == m_pItems[i]->Buy())
 			{
-				cout << "아이템 구입 실패" << '\n';
 				BEGININSTANCE;
 				pGameInstance->Play_Sound(TEXT("Fail_Buy.wav"), 1.0f);
 				ENDINSTANCE
 			}
 			else
 			{
-				cout << "구입 성공" << '\n';
 				BEGININSTANCE;
 				pGameInstance->Play_Sound(TEXT("Store_Buy.wav"), 1.0f);
 				ENDINSTANCE
@@ -115,6 +113,7 @@ void CUI_Store::Tick(_float fTimeDelta)
 		}
 	}
 }
+
 void CUI_Store::Late_Tick(_float fTimeDelta)
 {
 	if (false == m_isOpen)
@@ -122,14 +121,17 @@ void CUI_Store::Late_Tick(_float fTimeDelta)
 
 	__super::Late_Tick(fTimeDelta);
 }
+
 void CUI_Store::Open()
 {
 	m_isOpen = true;
 }
+
 void CUI_Store::Close()
 {
 	m_isOpen = false;
 }
+
 HRESULT CUI_Store::Store_Sell_Read_File(const _tchar* pFilePath)
 {
 	_ulong dwByte = 0;
@@ -185,6 +187,7 @@ HRESULT CUI_Store::Store_Sell_Read_File(const _tchar* pFilePath)
 
 	return S_OK;
 }
+
 HRESULT CUI_Store::Store_Buy_Read_File(const _tchar* pFilePath)
 {
 	/*if (nullptr == m_pIcons[iIndex] || nullptr == m_pFrames[iIndex] || nullptr == m_pCountBacks[iIndex]
