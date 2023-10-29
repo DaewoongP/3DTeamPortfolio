@@ -71,6 +71,7 @@ private:
 	_uint			m_iGullIndex = { 0 };	// 갈매기 인덱스 
 
 	_bool			m_isCol_with_Player = { false }; // 플레이어와 충돌 여부
+	_bool			m_isSound = { true };
 
 private:
 	MAPOBJECTDESC	m_ObjectDesc;

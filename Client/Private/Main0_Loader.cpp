@@ -347,7 +347,20 @@ HRESULT CMain0_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 		CEvent_Smeade_Next_Level::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Event_Smeade_Next_Level");
 
-	
+	/* For.Prototype_Component_Particle_ChestLight */
+	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Particle_ChestLight"),
+		CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Chest/ChestLight/")))))
+		throw TEXT("Prototype_Component_Particle_ChestLight");
+
+	/* For.Prototype_Component_Particle_ChestParticle */
+	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Particle_ChestParticle"),
+		CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Chest/ChestParticle/")))))
+		throw TEXT("Prototype_Component_Particle_ChestParticle");
+
+	/* For.Prototype_Component_Particle_ChestLight_ME */
+	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Particle_ChestLight_ME"),
+		CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Chest/ChestLight.ME")))))
+		throw TEXT("Prototype_Component_Particle_ChestLight_ME");
 
 	ENDINSTANCE;
 

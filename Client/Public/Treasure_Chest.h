@@ -8,6 +8,8 @@ class CModel;
 class CShader;
 class CRenderer;
 class CRigidBody;
+class CMeshEffect;
+class CParticleSystem;
 END
 
 BEGIN(Client)
@@ -49,6 +51,9 @@ private:
 	CRigidBody* m_pRigidBody = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 	CModel* m_pModel = { nullptr };
+	CParticleSystem* m_pEffect0 = { nullptr };
+	CParticleSystem* m_pEffect1 = { nullptr };
+	CMeshEffect* m_pEffect2 = { nullptr };
 
 	CPlayer* m_pPlayer = { nullptr }; // 플레이어 주소
 	CPlayer_Information* m_pPlayerInformation = { nullptr }; // 플레이어 인벤토리와 상호작용하기 위한 주소
