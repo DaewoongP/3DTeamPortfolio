@@ -3205,6 +3205,7 @@ void CConjuredDragon::Free()
 	Safe_Release(m_pEffect_Breath);
 	Safe_Release(m_pEffect_Pulse_Charge);
 	Safe_Release(m_pEffect_Pulse_CircleEmit);
+	Safe_Release(m_pEffect_Pulse_CircleEmit_Distortion);
 	Safe_Release(m_pEffect_Pulse_Rock);
 	Safe_Release(m_pEffect_Pulse_SplashWater);
 	Safe_Release(m_pEffect_Pulse_BoomWispy);
