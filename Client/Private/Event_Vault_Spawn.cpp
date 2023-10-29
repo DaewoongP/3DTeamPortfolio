@@ -49,6 +49,8 @@ void CEvent_Vault_Spawn::Tick(_float fTimeDelta)
 	Check_Event_Spawn_1();
 	Check_Event_Spawn_2();
 	Check_Event_Spawn_3();
+
+
 }
 
 void CEvent_Vault_Spawn::Late_Tick(_float fTimeDelta)

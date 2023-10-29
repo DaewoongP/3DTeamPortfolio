@@ -154,10 +154,14 @@ void CMapObject_Ins::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
+		if (pGameInstance->Get_CurrentLevelIndex() != LEVEL_SMITH ||
+			40.f > _float3::Distance(pGameInstance->Get_CamPosition()->xyz(), m_pTransform->Get_Position()))
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
 
 #ifdef _DEBUG
 		for (auto& pRigidBody : m_RigidBodys)
@@ -166,6 +170,8 @@ void CMapObject_Ins::Late_Tick(_float fTimeDelta)
 		}
 #endif // _DEBUG
 	}
+
+	Safe_Release(pGameInstance);
 }
 
 HRESULT CMapObject_Ins::Render()
