@@ -194,6 +194,19 @@ HRESULT CSound_Manager::Set_ChannelVolume(_int iChannel, _float fVolume)
 	return S_OK;
 }
 
+_float CSound_Manager::Get_ChannelVolume(_int iChannel)
+{
+	if (0 > iChannel ||
+		MAX_CHANNEL <= iChannel)
+		return E_FAIL;
+
+	_float fVolume = { 0.f };
+	m_Channels[iChannel]->getVolume(&fVolume);
+	m_pSystem->update();
+
+	return fVolume;
+}
+
 HRESULT CSound_Manager::Load_SoundFile(const _tchar* pSoundFile)
 {
 	_wfinddata_t FindDataValue;

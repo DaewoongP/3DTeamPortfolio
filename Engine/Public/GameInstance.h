@@ -154,6 +154,7 @@ public: /* For.Sound_Manager */
 	HRESULT Restart_Sound(_int iChannel);
 	HRESULT Stop_AllSound();
 	HRESULT Set_ChannelVolume(_int iChannel, _float fVolume);
+	_float Get_ChannelVolume(_int iChannel);
 
 public: /* For. Calculator */
 	// 현재 마우스의 레이를 반환받는 함수입니다(피킹대상의 월드 역행렬 필요). (로컬)
