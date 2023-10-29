@@ -39,7 +39,7 @@ private:
 	virtual void Tick_Dying(_float fTimeDelta) override;
 
 private:
-	CMeshEffect* m_pLightningMeshEffect = { nullptr };
+	CMeshEffect* m_pLightningMeshEffect[3] = {nullptr};
 	_float		 m_fLightningTimer = { 0.1f };
 
 private:
