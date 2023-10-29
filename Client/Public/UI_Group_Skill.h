@@ -34,7 +34,7 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 
 public:
-	void	Set_SpellTexture(KEYLIST eSkill, SPELL eSpell);
+	void	Set_SpellTexture(KEYLIST eSkill, SPELL eSpell, _bool isplaysound = false);
 	void	Set_SkillCoolTime();
 
 private:

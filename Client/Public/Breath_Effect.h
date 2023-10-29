@@ -58,6 +58,7 @@ private:
 	_float m_fTerrainYPos = { 0.f };
 	_bool m_isBurnStart = { false };
 	_bool m_isBurnStop = { false };
+	_int m_iChannel = { 0 };
 
 private:
 	HRESULT Add_Components();

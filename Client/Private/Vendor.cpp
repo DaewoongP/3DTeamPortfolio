@@ -56,6 +56,10 @@ void CVendor::Tick(_float fTimeDelta)
 		Safe_AddRef(pGameInstance);
 		if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
 		{
+			BEGININSTANCE;
+			pGameInstance->Play_Sound(TEXT("Store_Interaction.wav"), 1.0f);
+			ENDINSTANCE
+
 			m_isOpenStore = !m_isOpenStore;
 			m_pUI_Store->Set_isOpen(m_isOpenStore);
 

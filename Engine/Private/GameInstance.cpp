@@ -583,6 +583,13 @@ _bool CGameInstance::Is_SoundPlaying(_int iChannel)
 	return m_pSound_Manager->Is_Playing(iChannel);
 }
 
+_int CGameInstance::Play_BGM(const _tchar* pSoundTag, _float fVolume)
+{
+	NULL_CHECK_RETURN_MSG(m_pSound_Manager, -1, TEXT("Sound NULL"));
+
+	return m_pSound_Manager->Play_BGM(pSoundTag, fVolume);
+}
+
 _int CGameInstance::Play_Sound(const _tchar* pSoundTag, _float fVolume)
 {
 	NULL_CHECK_RETURN_MSG(m_pSound_Manager, -1, TEXT("Sound NULL"));
@@ -637,6 +644,13 @@ HRESULT CGameInstance::Set_ChannelVolume(_int iChannel, _float fVolume)
 	NULL_CHECK_RETURN_MSG(m_pSound_Manager, E_FAIL, TEXT("Sound NULL"));
 
 	return m_pSound_Manager->Set_ChannelVolume(iChannel, fVolume);
+}
+
+_float CGameInstance::Get_ChannelVolume(_int iChannel)
+{
+	NULL_CHECK_RETURN_MSG(m_pSound_Manager, 0.f, TEXT("Sound NULL"));
+
+	return m_pSound_Manager->Get_ChannelVolume(iChannel);
 }
 
 HRESULT CGameInstance::Get_MouseRay(ID3D11DeviceContext* pContext, HWND hWnd, _float4x4 PickingWorldMatrix_Inverse, _Inout_ _float4* vRayPos, _Inout_ _float4* vRayDir)
@@ -1003,7 +1017,7 @@ _float CGameInstance::Get_SoundPower(_float3 vObjectPosition)
 
 	Saturate(fDist, 0.f, 1.f);
 
-	return fDist;
+	return (1.f - fDist);
 }
 
 _char* CGameInstance::Make_Char(const _char* pMakeChar)

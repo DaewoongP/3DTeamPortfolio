@@ -39,10 +39,16 @@ void CLevel_Sanctum::Tick(_float fTimeDelta)
 	{
 		if (!lstrcmp(TEXT("Scene_Main"), pGameInstance->Get_CurrentSceneTag()))
 		{
+			BEGININSTANCE;
+			pGameInstance->Play_Sound(TEXT("Field.wav"), 1.0f);
+			ENDINSTANCE
 			pGameInstance->Set_CurrentScene(TEXT("Scene_FieldGuide"), false);
 		}
 		else
 		{
+			BEGININSTANCE;
+			pGameInstance->Play_Sound(TEXT("Field.wav"), 1.0f);
+			ENDINSTANCE
 			pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
 		}
 	}
@@ -202,8 +208,6 @@ HRESULT CLevel_Sanctum::Ready_Layer_NPC(const _tchar* pLayerTag)
 
 HRESULT CLevel_Sanctum::Ready_Lights()
 {
-	g_isNight = true;
-
 	BEGININSTANCE;
 	CLight::LIGHTDESC		LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
@@ -230,7 +234,7 @@ HRESULT CLevel_Sanctum::Ready_Lights()
 	LightDesc.vAmbient = _float4(1.f, 0.f, 0.f, 0.f);
 	LightDesc.vSpecular = _float4(1.f, 0.f, 0.f, 0.f);
 
-	if (FAILED(pGameInstance->Add_Light(LightDesc, nullptr, true)))
+	if (FAILED(pGameInstance->Add_Light(LightDesc)))
 		return E_FAIL;
 
 	//LightDesc.eType = CLight::TYPE_POINT;
@@ -304,8 +308,6 @@ HRESULT CLevel_Sanctum::Ready_Shader()
 
 	CRenderer* pRenderer = static_cast<CRenderer*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer")));
 	pRenderer->Defualt_Shading();
-
-
 
 	Safe_Release(pRenderer);
 

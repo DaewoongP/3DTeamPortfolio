@@ -142,7 +142,6 @@ _bool CScript::Next_Script()
 
 	if (pGameInstance->Get_DIKeyState(DIK_RETURN, CInput_Device::KEY_DOWN))
 	{
-
 		if (m_Scripts.size() - 1 == m_iCurrentScriptIndex)
 		{
 			Safe_Release(pGameInstance);
@@ -150,6 +149,10 @@ _bool CScript::Next_Script()
 			m_isFinished = true;
 			return false;
 		}
+
+		BEGININSTANCE;
+		pGameInstance->Play_Sound(TEXT("Next_Script_Sound.wav"), 1.0f);
+		ENDINSTANCE
 
 		Safe_Release(pGameInstance);
 		++m_iCurrentScriptIndex;

@@ -31,6 +31,10 @@ private:
 	virtual ~CDarkWizard_Fly() = default;
 
 public:
+	void Start_Race() { m_isSpawn = true; }
+	void Finish_Race() { m_isSpawn = false; }
+
+public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;

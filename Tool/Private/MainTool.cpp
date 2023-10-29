@@ -12,6 +12,7 @@
 #include "DummyFlipBook.h"
 #include "Dummy_Effect.h"
 #include "TriangleColMesh.h"
+#include "Sound_Manager.h"
 
 #ifdef _DEBUG
 
@@ -452,6 +453,12 @@ HRESULT CMainTool::Ready_Prototype_Object()
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Player/"));
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Eleazar_Fig/"));
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Pensive/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Golem/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Monster/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Dugbog/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Player_Movement/"));
+
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/ConjuredDragon/"));
 	ENDINSTANCE;
 
 #pragma region Load Particle

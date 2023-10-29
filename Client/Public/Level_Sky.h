@@ -25,6 +25,7 @@ private:
 	HRESULT Ready_Lights();
 	HRESULT Ready_Shader();
 	HRESULT Ready_FlyGame(const _tchar* pLayerTag);
+	HRESULT Ready_Events(const _tchar* pLayerTag);
 
 private:
 	HRESULT Load_MapObject(const _tchar* pObjectFilePath);

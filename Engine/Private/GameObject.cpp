@@ -47,7 +47,11 @@ void CGameObject::Tick(_float fTimeDelta)
 		if (false == pGameInstance->Is_SoundPlaying(*iter))
 			iter = m_SoundChannel.erase(iter);
 		else
+		{
+			pGameInstance->Set_ChannelVolume(*iter, 
+				pGameInstance->Get_ChannelVolume(*iter) * pGameInstance->Get_SoundPower(m_pTransform->Get_Position()));
 			iter++;
+		}
 	}
 
 	Safe_Release(pGameInstance);

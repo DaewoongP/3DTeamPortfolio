@@ -1,8 +1,12 @@
 #include "FlyGameManager.h"
 #include "Client_Defines.h"
 #include "GameInstance.h"
+#include "Level.h"
 #include "Racer.h"
 #include "Balloon.h"
+#include "Event_Sky_Enter.h"
+#include "MarioCount.h"
+#include "DarkWizard_Fly.h"
 #include "UI_Group_Timer.h"
 #include "UI_Group_Score.h"
 
@@ -41,7 +45,7 @@ void CFlyGameManager::ReplaceBallon()
 			while (isFound)
 			{
 				isFound = false;
-				for (_uint i = 0; i < m_pRacerGroup.size(); i++)
+				for (_uint i = 0; i < m_pRacerGroup.size(); ++i)
 				{
 					vTempPosition = _float3(GetRandomFloat(77.f, 153.f), GetRandomFloat(10.f, 30.f), GetRandomFloat(74.f, 246.f));
 					if (_float3(vTempPosition - m_pRacerGroup[i]->Get_Transform()->Get_Position()).Length() < 10.f)
@@ -120,10 +124,10 @@ HRESULT CFlyGameManager::Initialize(void* pArg)
 	}
 
 	//게임 타이머를 설정해줍니다.
-	m_fGameTimer = 180.f;
-	m_isGameContinue = true;
+	m_fInitWaitTime = 3.f;
+	m_fGameTimer = 10.f;
 
-	_uint iIndex = (_uint)(m_pAllBalloonGroup.size()/2);
+	_uint iIndex = (_uint)(m_pAllBalloonGroup.size() / 2);
 
 	CBalloon::BALLOONINITDESC initDesc = {};
 	for (_uint i = 0; i < iIndex; i++)
@@ -134,14 +138,63 @@ HRESULT CFlyGameManager::Initialize(void* pArg)
 	return S_OK;
 }
 
+HRESULT CFlyGameManager::Initialize_Level(_uint iCurrentLevelIndex)
+{
+	if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
+		return E_FAIL;
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	m_pEvent = static_cast<CEvent_Sky_Enter*>(pGameInstance->Find_Component_In_Layer(LEVEL_SKY, TEXT("Layer_Event"), TEXT("Event_Sky_Enter")));
+	Safe_AddRef(m_pEvent);
+	Safe_Release(pGameInstance);
+
+	return S_OK;
+}
+
 void CFlyGameManager::Tick(_float fTimeDelta)
 {
+	if (true == m_pEvent->Is_Finished())
+	{
+		m_fInitWaitTimeAcc += fTimeDelta;
+
+		if (m_fInitWaitTimeAcc > m_fInitWaitTime &&
+			false == m_isGameContinue &&
+			false == m_isGameFinished)
+			m_pCount->Start();
+
+		if (true == m_pCount->Is_Finished() &&
+			false == m_isGameContinue &&
+			false == m_isGameFinished)
+		{
+			for (auto& pRacer : m_pRacerOwnerGroup)
+			{
+				static_cast<CDarkWizard_Fly*>(pRacer)->Start_Race();
+			}
+
+			m_isGameContinue = true;
+		}
+	}
+	
+
 	__super::Tick(fTimeDelta);
+
 	if (m_isGameContinue)
 	{
 		m_fGameTimer -= fTimeDelta;
 		if (m_fGameTimer < 0)
 		{
+			// 게임 종료
+			m_fGameTimer = 0.f;
+			// player rank
+			m_pCount->Set_RankTexture(m_pUiScore->Get_PlayerRank());
+
+			for (auto& pRacer : m_pRacerOwnerGroup)
+			{
+				static_cast<CDarkWizard_Fly*>(pRacer)->Finish_Race();
+			}
+
+			m_isGameFinished = true;
 			m_isGameContinue = false;
 		}
 	}
@@ -254,6 +307,14 @@ HRESULT CFlyGameManager::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+	
+	if (FAILED(CComposite::Add_Component(LEVEL_SKY, TEXT("Prototype_GameObject_MarioCount"),
+		TEXT("Com_Count"), reinterpret_cast<CComponent**>(&m_pCount))))
+	{
+		MSG_BOX("Failed CFlyGameManager Add_Component : Com_Count");
+		__debugbreak();
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -324,5 +385,8 @@ void CFlyGameManager::Free()
 
 		Safe_Release(m_pUiScore);
 		Safe_Release(m_pUiTimer);
+
+		Safe_Release(m_pCount);
+		Safe_Release(m_pEvent);
 	}
 }

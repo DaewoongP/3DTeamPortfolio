@@ -24,6 +24,9 @@ public:
 private:
 	CParticleSystem* m_pEffect = { nullptr };
 
+private:
+	_uint m_iSound0 = { 0 }; // 사운드 채널 0
+
 public:
 	static CSmithToCliff_Gate* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

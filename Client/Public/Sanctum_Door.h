@@ -32,6 +32,7 @@ private:
 	_float			m_fDoorSpinValue = { 0.f };	   // 문이 얼만큼 회전했는지 
 
 	_bool			m_isDoorAction = { false }; // 문의 움직일지 아닐지 판단 여부
+	_bool			m_isSound = { true }; // 소리
 
 private:
 	DOORTYPE		m_eDoorType = { DOOR_END }; // 문의 종류

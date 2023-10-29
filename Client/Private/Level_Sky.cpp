@@ -17,6 +17,7 @@ HRESULT CLevel_Sky::Initialize()
 	FAILED_CHECK_RETURN(Ready_FlyGame(TEXT("Layer_Manager")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_NPC(TEXT("Layer_NPC")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Shader(), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Events(TEXT("Layer_Event")), E_FAIL);
 
 	BEGININSTANCE;
 	pGameInstance->Reset_World_TimeAcc();
@@ -37,14 +38,27 @@ void CLevel_Sky::Tick(_float fTimeDelta)
 	{
 		if (!lstrcmp(TEXT("Scene_Main"), pGameInstance->Get_CurrentSceneTag()))
 		{
+			BEGININSTANCE;
+			pGameInstance->Play_Sound(TEXT("Field.wav"), 1.0f);
+			ENDINSTANCE
 			pGameInstance->Set_CurrentScene(TEXT("Scene_FieldGuide"), false);
 		}
 		else
 		{
+			BEGININSTANCE;
+			pGameInstance->Play_Sound(TEXT("Field.wav"), 1.0f);
+			ENDINSTANCE
 			pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
 		}
 	}
 
+	if (true == m_isNextLevel)
+	{
+		pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, (LEVELID)m_iNextLevelIndex));
+	}
+
+
+#ifdef _DEBUG
 	if (pGameInstance->Get_DIKeyState(DIK_LSHIFT))
 	{
 		if (pGameInstance->Get_DIKeyState(DIK_BACKSPACE, CInput_Device::KEY_DOWN))
@@ -52,6 +66,7 @@ void CLevel_Sky::Tick(_float fTimeDelta)
 			pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_SMITH));
 		}
 	}
+#endif // _DEBUG
 
 	ENDINSTANCE;
 
@@ -64,7 +79,7 @@ HRESULT CLevel_Sky::Ready_Layer_BackGround(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 
-	_bool isNight = false;
+	_bool isNight = g_isNight;
 	FAILED_CHECK_RETURN(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SKY,
 		TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"), &isNight), E_FAIL)
 
@@ -347,6 +362,21 @@ HRESULT CLevel_Sky::Ready_FlyGame(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 	ENDINSTANCE;
+	return S_OK;
+}
+
+HRESULT CLevel_Sky::Ready_Events(const _tchar* pLayerTag)
+{
+	BEGININSTANCE;
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_Event_Sky_Enter"), pLayerTag, TEXT("Event_Sky_Enter"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Event_Sky_Enter)");
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
 	return S_OK;
 }
 

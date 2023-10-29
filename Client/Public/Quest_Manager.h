@@ -28,6 +28,9 @@ public:
 	virtual void Late_Tick(_float fTimeDelta);
 
 private:
+	void Cheat_Quest();
+
+private:
 	_umap<const _tchar*, CQuest*>	m_Quests;
 
 public:

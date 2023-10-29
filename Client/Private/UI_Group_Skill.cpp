@@ -79,14 +79,14 @@ void CUI_Group_Skill::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 }
 
-void CUI_Group_Skill::Set_SpellTexture(KEYLIST eKey, SPELL eSpell)
+void CUI_Group_Skill::Set_SpellTexture(KEYLIST eKey, SPELL eSpell, _bool isplaysound)
 {
 	if (nullptr == m_pMains[eKey] || eKey >= KEYLIST_END || eSpell >= BASICCAST)
 		return;
 
 	if (m_KeyList[eKey] == eSpell)
 		return;
-	
+
 	m_KeyList[eKey] = eSpell;
 	m_pMains[eKey]->Set_Texture(m_SkillTextures[eSpell]);
 	m_pMains[eKey]->Set_SkillBackType(CUI_Group_SkillTap::Translation_SkillTap(eSpell));
