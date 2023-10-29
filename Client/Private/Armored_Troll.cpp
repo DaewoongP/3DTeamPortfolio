@@ -327,21 +327,21 @@ HRESULT CArmored_Troll::Make_Notifies_for_Shake()
 {
 	if (nullptr == m_pStep_Shake || nullptr == m_pHit_Shake || nullptr == m_pDeath_Shake)
 	{
-		MSG_BOX("Failed Make_Notifies_for_Shake");
+		MSG_BOX("Failed Make_Notifies_for_Shake"); 
 		return E_FAIL;
 	}
 
-	function<void()> func = [&] {m_pStep_Shake->RandomUpAxisShake(); };
+	function<void()> func = [&] { this->Play_FootStep_Sound(); };
 
 	m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Step_1"), func);
 	m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Step_2"), func);
 	m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Step_3"), func);
 	m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Step_4"), func);
 
-	func = [&] {m_pHit_Shake->RandomUpAxisShake(); };
+	func = [&] { this->Play_Hit_Sound(); };
 	m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Hit"), func);
 
-	func = [&] {m_pDeath_Shake->RandomUpAxisShake(); };
+	func = [&] { this->Play_Dead_Sound(); };
 	m_pModelCom->Bind_Notifies(TEXT("Camera_Shake_Death_Land"), func);
 
 	return S_OK;
@@ -358,6 +358,8 @@ HRESULT CArmored_Troll::Make_AI()
 
 		if (FAILED(m_pRootBehavior->Add_Type("isOverheadAction", &m_isOverheadAction)))
 			throw TEXT("Failed Add_Type isOverheadAction");
+		if (FAILED(m_pRootBehavior->Add_Type("isPlaySound", &m_isPlaySound)))
+			throw TEXT("Failed Add_Type isPlaySound");
 
 		/* Make Childs */
 		CSelector* pSelector = nullptr;
@@ -608,19 +610,19 @@ HRESULT CArmored_Troll::Bind_HitMatrices()
 
 void CArmored_Troll::DeathBehavior(const _float& fTimeDelta)
 {
+	BEGININSTANCE;
+
 	if (false == m_isEnterDeath)
 	{
+		pGameInstance->Play_Sound(TEXT("Troll_Dead.wav"), 0.8f);
 		CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
 		Safe_AddRef(pQuest_Manager);
 		pQuest_Manager->Clear_Quest(TEXT("Quest_Town"));
 		Safe_Release(pQuest_Manager);
 		m_isEnterDeath = true;
-		m_isDead = true;
 	}
 
 	m_fDeadTimeAcc += fTimeDelta;
-
-	BEGININSTANCE;
 
 	_float fSound = { 0.6f };
 
@@ -636,7 +638,7 @@ void CArmored_Troll::DeathBehavior(const _float& fTimeDelta)
 		if (false == m_isEnter_Play_BGM)
 		{
 			// 마을 bgm으로 변경 후
-			pGameInstance->Stop_AllSound();
+			pGameInstance->Stop_Sound(m_iChennelNumber);
 			m_iChennelNumber = pGameInstance->Play_BGM(TEXT("HogSmead_Night_Bgm.wav"), 0.01f);
 			m_isEnter_Play_BGM = true;
 		}
@@ -654,6 +656,7 @@ void CArmored_Troll::DeathBehavior(const _float& fTimeDelta)
 		m_isDissolve = true;
 		m_fDissolveAmount += fTimeDelta / 1.5f; // 디졸브 값 증가
 		m_pWeapon->On_Dissolve();
+		m_isDead = true;
 	}
 
 	if (5.5f < m_fDeadTimeAcc && m_fDissolveAmount >= 1.f)
@@ -1035,7 +1038,31 @@ HRESULT CArmored_Troll::Make_Attack_Degree(_Inout_ CSequence* pSequence)
 					return false;
 				}
 
-				return 7.f >= fTargetDistance;
+				if (7.f >= fTargetDistance)
+				{
+					_bool* pIsPlaySound = { nullptr };
+					if (FAILED(pBlackBoard->Get_Type("isPlaySound", pIsPlaySound)))
+						return false;
+
+					if (false == *pIsPlaySound)
+					{
+						Play_Random_Attack_Sound();
+						*pIsPlaySound = true;
+					}
+					return true;
+				}
+
+				return false;
+			});
+		pSelector_Degree->Add_End_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsPlaySound = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isPlaySound", pIsPlaySound)))
+					return false;
+
+				*pIsPlaySound = false;
+
+				return true;
 			});
 
 		/* Set Options */
@@ -2118,6 +2145,29 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_Run(_Inout_ CSequence* pSequence)
 			{
 				return true;
 			});
+		pRandom_Attacks->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsPlaySound = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isPlaySound", pIsPlaySound)))
+					return false;
+
+				if (false == *pIsPlaySound)
+				{
+					Play_Random_Attack_Sound();
+					*pIsPlaySound = true;
+				}
+				return true;
+			});
+		pRandom_Attacks->Add_End_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsPlaySound = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isPlaySound", pIsPlaySound)))
+					return false;
+
+				*pIsPlaySound = false;
+
+				return true;
+			});
 
 		/* Set Options */
 		pAction_Run_Loop->Set_Options(TEXT("Run_Loop"), m_pModelCom, true, 0.f, false, false);
@@ -2467,6 +2517,9 @@ void CArmored_Troll::Enter_Light_Attack()
 	m_CollisionRequestDesc.iDamage = 10;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
 	m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
+	BEGININSTANCE;
+	pGameInstance->Play_Sound(TEXT("Troll_Whip_%d.wav"), 6, 0.3f);
+	ENDINSTANCE;
 }
 
 void CArmored_Troll::Enter_Heavy_Attack()
@@ -2475,6 +2528,9 @@ void CArmored_Troll::Enter_Heavy_Attack()
 	m_CollisionRequestDesc.iDamage = 20;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
 	m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
+	BEGININSTANCE;
+	pGameInstance->Play_Sound(TEXT("Troll_Whip_%d.wav"), 6, 0.3f);
+	ENDINSTANCE;
 }
 
 void CArmored_Troll::Enter_Body_Attack()
@@ -2491,6 +2547,38 @@ void CArmored_Troll::Exit_Attack()
 	m_CollisionRequestDesc.iDamage = 0;
 	m_pRigidBody->Disable_Collision("Enemy_Body_Attack");
 	m_pWeapon->Off_Collider_Attack();
+}
+
+void CArmored_Troll::Play_FootStep_Sound()
+{
+	m_pStep_Shake->RandomUpAxisShake();
+	BEGININSTANCE;
+	pGameInstance->Play_Sound(TEXT("Troll_Step.wav"), 0.55f);
+	ENDINSTANCE;
+}
+
+void CArmored_Troll::Play_Hit_Sound()
+{
+	m_pHit_Shake->RandomUpAxisShake();
+	BEGININSTANCE;
+	pGameInstance->Play_Sound(TEXT("Troll_Hit_%d.wav"), 5, 0.85f);
+	ENDINSTANCE;
+}
+
+void CArmored_Troll::Play_Random_Attack_Sound()
+{
+	BEGININSTANCE;
+	pGameInstance->Play_Sound(TEXT("Troll_Attack_%d.wav"), 5, 0.5f);
+	ENDINSTANCE;
+}
+
+void CArmored_Troll::Play_Dead_Sound()
+{
+	m_pDeath_Shake->RandomUpAxisShake();
+
+	BEGININSTANCE;
+	pGameInstance->Play_Sound(TEXT("Troll_Step.wav"), 0.8f);
+	ENDINSTANCE;
 }
 
 CArmored_Troll* CArmored_Troll::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

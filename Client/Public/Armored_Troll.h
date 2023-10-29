@@ -74,6 +74,7 @@ private:
 private:
 	_bool m_isEnterDeath = { false };
 	_bool m_isEnter_Play_BGM = { false };
+	_bool m_isPlaySound = { false };
 	_float m_fDeadTimeAcc = { 0.f };
 	void DeathBehavior(const _float& fTimeDelta);
 
@@ -115,6 +116,10 @@ private: /* Notify Functions */
 	void Off_Overhead_Event() {
 		m_isOverheadAction = false;
 	}
+	void Play_FootStep_Sound();
+	void Play_Hit_Sound();
+	void Play_Random_Attack_Sound();
+	void Play_Dead_Sound();
 
 public:
 	static CArmored_Troll* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
