@@ -862,9 +862,25 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			throw TEXT("Prototype_GameObject_Heal_Ground");
 
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Maxima_Particle")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/Maxima"), eLevelID))))
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/Maxima/MaximaPotion"), eLevelID))))
 			throw TEXT("Prototype_GameObject_Maxima_Particle");
 		
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Max_After_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/Maxima/Max_After"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Max_After_Particle");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Max_After_Particle2")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/Maxima/Max_After2"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Max_After_Particle2");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Max_Ground")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/Maxima/Max_Ground"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Max_Ground");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Max_Aura")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/MaximaFlare"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Max_Aura");
+
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Potion_Distortoin")
 			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Potion/Potion_Distortion.ME"), eLevelID))))
 			throw TEXT("Prototype_GameObject_Potion_Distortoin");

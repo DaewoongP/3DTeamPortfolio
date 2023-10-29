@@ -49,7 +49,12 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
 			, ProtoTag.data()
 			, CTexture::Create(m_pDevice, m_pContext, m_RendererModuleDesc.wstrMaterialPath.c_str()))))
+		{
+			__debugbreak();
 			return E_FAIL;
+			
+		}
+			
 	}
 
 	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_ShapeModuleDesc.wstrClipTexturePath.c_str());
@@ -58,7 +63,11 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
 			, ProtoTag.data()
 			, CTexture::Create(m_pDevice, m_pContext, m_ShapeModuleDesc.wstrClipTexturePath.c_str()))))
+		{
+			__debugbreak();
 			return E_FAIL;
+
+		}
 	}
 
 	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_TextureSheetAnimationModuleDesc.wstrNormalPath.c_str());
@@ -67,7 +76,11 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
 			, ProtoTag.data()
 			, CTexture::Create(m_pDevice, m_pContext, m_TextureSheetAnimationModuleDesc.wstrNormalPath.c_str()))))
+		{
+			__debugbreak();
 			return E_FAIL;
+
+		}
 	}
 
 	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_RendererModuleDesc.wstrGraientTexture.c_str());
@@ -76,7 +89,11 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
 			, ProtoTag.data()
 			, CTexture::Create(m_pDevice, m_pContext, m_RendererModuleDesc.wstrGraientTexture.c_str()))))
+		{
+			__debugbreak();
 			return E_FAIL;
+
+		}
 	}
 
 	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_RendererModuleDesc.wstrEmissionPath.c_str());
@@ -85,7 +102,11 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
 			, ProtoTag.data()
 			, CTexture::Create(m_pDevice, m_pContext, m_RendererModuleDesc.wstrEmissionPath.c_str()))))
+		{
+			__debugbreak();
 			return E_FAIL;
+
+		}
 	}
 
 	pGameInstance->Find_And_Add_Texture(m_pDevice, m_pContext, m_iLevel
@@ -97,7 +118,11 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 			, TEXT("Prototype_Component_Shader_VtxRectColIdxInstance")
 			, CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxRectColIdxInstance.hlsl")
 				, VTXPARTICLE_DECL::Elements, VTXPARTICLE_DECL::iNumElements))))
+		{
+			__debugbreak();
 			return E_FAIL;
+
+		}
 	}
 
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_Component_VIBuffer_Rect_Particle_Instance")))
@@ -105,7 +130,11 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
 			, TEXT("Prototype_Component_VIBuffer_Rect_Particle_Instance")
 			, CVIBuffer_Rect_Particle_Instance::Create(m_pDevice, m_pContext))))
+		{
+			__debugbreak();
 			return E_FAIL;
+
+		}
 	}
 
 	Safe_Release(pGameInstance);
