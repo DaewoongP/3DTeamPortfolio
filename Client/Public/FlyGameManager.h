@@ -38,6 +38,7 @@ public:
 public:
     virtual HRESULT Initialize_Prototype();
     virtual HRESULT Initialize(void* pArg);
+    virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
     virtual void Tick(_float fTimeDelta);
     virtual void Late_Tick(_float fTimeDelta);
     
@@ -62,6 +63,7 @@ private:
     CMarioCount*            m_pCount = { nullptr };
     _float                  m_fInitWaitTime = { 0.f };
     _float                  m_fInitWaitTimeAcc = { 0.f };
+    class CEvent_Sky_Enter* m_pEvent = { nullptr };
 
 private:
     //게임 진행시간임.

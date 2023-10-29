@@ -24,6 +24,9 @@ private:
 	virtual ~CEvent_Sky_Enter() = default;
 
 public:
+	_bool Is_Finished() { return m_isFinished; }
+
+public:
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
@@ -33,6 +36,7 @@ private:
 
 private:
 	_bool m_isEnter = { false };
+	_bool m_isFinished = { false };
 	SKY_ENTER_SEQUENCE m_eSky_Enter_Sequence = { SKY_ENTER_SEQUENCE_END };
 	
 	
