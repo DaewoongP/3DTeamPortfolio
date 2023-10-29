@@ -90,6 +90,28 @@ HRESULT CCrucio::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Crucio_Lightning04")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Crucio_Lightning04")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Crucio/Lightning03/Lightning03.ME"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			__debugbreak();
+			return E_FAIL;
+		}
+	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Crucio_Lightning05")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Crucio_Lightning05")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Crucio/Lightning03/Lightning03.ME"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			__debugbreak();
+			return E_FAIL;
+		}
+	}
+
+
 
 	//종료 이펙트
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Crucio_End_Dust")))
@@ -280,14 +302,17 @@ void CCrucio::Tick_CastMagic(_float fTimeDelta)
 	if (m_fLightningTimer < 0)
 	{
 		//완드 위치에서 생성.
-		m_pLightningMeshEffect->Play(m_CurrentWeaponMatrix.Translation());
-		//스케일은 distance /3;
-		_float fDistance = Vector3::Distance(m_CurrentWeaponMatrix.Translation(), m_CurrentTargetMatrix.Translation());
-		m_pLightningMeshEffect->Get_Transform()->Set_Scale(_float3(3.f, 3.f, fDistance / 3.f));
-		//로테이션은 z축만 랜덤으로 생성.
-		m_pLightningMeshEffect->Get_Transform()->LookAt(m_CurrentTargetMatrix.Translation());
-		_float3 Axis = m_CurrentTargetMatrix.Translation() - m_CurrentWeaponMatrix.Translation();
-		m_pLightningMeshEffect->Get_Transform()->Turn(Axis, XMConvertToRadians(_float(rand() % 360)));
+		for (_int i = 0; i < 3; i++)
+		{
+			m_pLightningMeshEffect[i]->Play(m_CurrentWeaponMatrix.Translation());
+			//스케일은 distance /3;
+			_float fDistance = Vector3::Distance(m_CurrentWeaponMatrix.Translation(), m_CurrentTargetMatrix.Translation());
+			m_pLightningMeshEffect[i]->Get_Transform()->Set_Scale(_float3(3.f, 3.f, fDistance / 3.f));
+			//로테이션은 z축만 랜덤으로 생성.
+			m_pLightningMeshEffect[i]->Get_Transform()->LookAt(m_CurrentTargetMatrix.Translation());
+			_float3 Axis = m_CurrentTargetMatrix.Translation() - m_CurrentWeaponMatrix.Translation();
+			m_pLightningMeshEffect[i]->Get_Transform()->Turn(Axis, XMConvertToRadians(_float(rand() % 360)));
+		}
 		m_fLightningTimer = 0.1f;
 
 		ADD_DECREASE_LIGHT(m_vStartPosition, 50.f, 0.2f, ToColor(128.f, 0.f, 25.f, 255.f));
@@ -374,8 +399,14 @@ HRESULT CCrucio::Add_Components()
 	}
 
 	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Crucio_Lightning03")
-		, TEXT("Com_Lightning01"), (CComponent**)&m_pLightningMeshEffect), E_FAIL);
+		, TEXT("Com_Lightning01"), (CComponent**)&m_pLightningMeshEffect[0]), E_FAIL);
 	
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Crucio_Lightning04")
+		, TEXT("Com_Lightning02"), (CComponent**)&m_pLightningMeshEffect[1]), E_FAIL);
+
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Crucio_Lightning05")
+		, TEXT("Com_Lightning03"), (CComponent**)&m_pLightningMeshEffect[2]), E_FAIL);
+
 	//메인 트레일 제작중
 	m_ParticleVec[EFFECT_STATE_MAIN].resize(11);
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Crucio_Main_Wand_Sprak_03")
@@ -499,7 +530,10 @@ CGameObject* CCrucio::Clone(void* pArg)
 
 void CCrucio::Free()
 {
-	Safe_Release(m_pLightningMeshEffect);
+	for (_int i = 0; i < 3; i++)
+	{
+		Safe_Release(m_pLightningMeshEffect[i]);
+	}
 	__super::Free();
 }
 
