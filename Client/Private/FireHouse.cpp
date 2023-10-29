@@ -82,55 +82,59 @@ HRESULT CFireHouse::Initialize_Level(_uint iCurrentLevelIndex)
 	{
 		m_eHouseType = HOUSE_DB_GR;
 	}
-	vector<class CMesh*> Meshes = *m_pModel->Get_MeshesVec();
-	//vector<_float3> FirePosition;
-	for (auto& pMesh : Meshes)
+
+	if (HOUSE_DB_GR != m_eHouseType)
 	{
-		vector<_float3> Positions = *pMesh->Get_VerticesPositionVec();
-		for (_uint i = 0; i < MAX_FIRES; ++i)
+		vector<class CMesh*> Meshes = *m_pModel->Get_MeshesVec();
+		//vector<_float3> FirePosition;
+		for (auto& pMesh : Meshes)
 		{
-			_uint iRandIndex = _uint(Random_Generator(0.f, _float(Positions.size())));
-			m_FirePosition.push_back(XMVector3TransformCoord(Positions[iRandIndex], m_pTransform->Get_WorldMatrix()));
-		}
-	}
-
-	for (auto& vPosition : m_FirePosition)
-	{
-		CParticleSystem* pParticle = { nullptr };
-		wstring wstrTag = TEXT("Com_Fire_Particle") + Generate_HashtagW();
-		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_House_FireEffect")
-			, wstrTag.c_str(), (CComponent**)&pParticle)))
-		{
-			__debugbreak();
-			return E_FAIL;
-		}
-		pParticle->Get_MainModuleRef().fSimulationSpeed = Random_Generator(0.1f, 1.5f);
-		pParticle->Get_MainModuleRef().fStartSize = Random_Generator(1.f, 4.f);
-		//pParticle->Play(vPosition);
-		m_Particles.push_back(pParticle);
-
-		wstrTag = TEXT("Com_Fire_Distortion") + Generate_HashtagW();
-		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_House_Fire_Distortion")
-			, wstrTag.c_str(), (CComponent**)&pParticle)))
-		{
-			__debugbreak();
-			return E_FAIL;
+			vector<_float3> Positions = *pMesh->Get_VerticesPositionVec();
+			for (_uint i = 0; i < MAX_FIRES; ++i)
+			{
+				_uint iRandIndex = _uint(Random_Generator(0.f, _float(Positions.size())));
+				m_FirePosition.push_back(XMVector3TransformCoord(Positions[iRandIndex], m_pTransform->Get_WorldMatrix()));
+			}
 		}
 
-		//pParticle->Play(vPosition);
-		m_Particles.push_back(pParticle);
-
-		wstrTag = TEXT("Com_Fire_Smoke") + Generate_HashtagW();
-		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_House_Fire_Smoke")
-			, wstrTag.c_str(), (CComponent**)&pParticle)))
+		for (auto& vPosition : m_FirePosition)
 		{
-			__debugbreak();
-			return E_FAIL;
+			CParticleSystem* pParticle = { nullptr };
+			wstring wstrTag = TEXT("Com_Fire_Particle") + Generate_HashtagW();
+			if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_House_FireEffect")
+				, wstrTag.c_str(), (CComponent**)&pParticle)))
+			{
+				__debugbreak();
+				return E_FAIL;
+			}
+			pParticle->Get_MainModuleRef().fSimulationSpeed = Random_Generator(0.1f, 1.5f);
+			pParticle->Get_MainModuleRef().fStartSize = Random_Generator(1.f, 4.f);
+			//pParticle->Play(vPosition);
+			m_Particles.push_back(pParticle);
+
+			wstrTag = TEXT("Com_Fire_Distortion") + Generate_HashtagW();
+			if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_House_Fire_Distortion")
+				, wstrTag.c_str(), (CComponent**)&pParticle)))
+			{
+				__debugbreak();
+				return E_FAIL;
+			}
+
+			//pParticle->Play(vPosition);
+			m_Particles.push_back(pParticle);
+
+			wstrTag = TEXT("Com_Fire_Smoke") + Generate_HashtagW();
+			if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_House_Fire_Smoke")
+				, wstrTag.c_str(), (CComponent**)&pParticle)))
+			{
+				__debugbreak();
+				return E_FAIL;
+			}
+
+			//pParticle->Play(vPosition);
+
+			m_Particles.push_back(pParticle);
 		}
-
-		//pParticle->Play(vPosition);
-
-		m_Particles.push_back(pParticle);
 	}
 
 #pragma region 리지드 바디 생성

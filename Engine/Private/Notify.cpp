@@ -48,7 +48,7 @@ HRESULT CNotify::Initialize()
 	return S_OK;
 }
 
-void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameIndex, _Inout_ _float* fSpeed, _Inout_ vector<_int>* iSoundChannelVecconst,const _float4x4* pWorldMatrix, _float4x4 PivotMatrix)
+void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameIndex, _Inout_ _float* fSpeed, _Inout_ vector<pair<_int, _float>>* iSoundChannelVecconst, const _float4x4* pWorldMatrix, _float4x4 PivotMatrix)
 {
 	if (0.f == fTimeAcc)
 	{
@@ -129,7 +129,7 @@ void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameI
 				_int returnValue = pGameInstance->Play_Sound(pParticleFrame->wszSoundTag, pParticleFrame->fVolum);
 				if (returnValue != -1 && iSoundChannelVecconst != nullptr)
 				{
-					iSoundChannelVecconst->push_back(returnValue);
+					iSoundChannelVecconst->push_back({ returnValue, pParticleFrame->fVolum });
 				}
 					
 				Safe_Release(pGameInstance);
