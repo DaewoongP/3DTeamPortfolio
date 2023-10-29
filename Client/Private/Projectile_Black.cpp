@@ -341,4 +341,6 @@ void CProjectile_Black::Free()
 	Safe_Release(m_pMeshEffect_StartBoom);
 	Safe_Release(m_pMeshEffect_EndBoom);
 	Safe_Release(m_pParticle_Projectile_White_BulletTrace);
+
+	
 }

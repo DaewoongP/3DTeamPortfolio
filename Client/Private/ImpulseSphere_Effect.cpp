@@ -71,20 +71,6 @@ HRESULT CImpulseSphere_Effect::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
-
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_GlowSphere")))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_GlowSphere")
-			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/GlowSphere/"), m_iLevel))))
-		{
-			__debugbreak();
-			ENDINSTANCE;
-			return E_FAIL;
-		}
-	}
-
-
-
 	ENDINSTANCE;
 
 	return S_OK;
