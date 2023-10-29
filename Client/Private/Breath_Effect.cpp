@@ -198,7 +198,7 @@ void CBreath_Effect::Play(const _float3* pStartPos, _float3* pTargetPos, _float 
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-	m_iChannel = pGameInstance->Play_Sound(TEXT("BreathBurn.wav"), 0.7f);
+	m_iChannel = pGameInstance->Play_Sound(TEXT("BreathBurn.wav"), 1.f);
 	Safe_Release(pGameInstance);
 
 	m_isEnable = true;
