@@ -297,9 +297,6 @@ HRESULT CLevel_Sanctum::Ready_Shader()
 	CRenderer* pRenderer = static_cast<CRenderer*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer")));
 	pRenderer->Defualt_Shading();
 
-	pRenderer->Set_Fog(true, _float4(0.3f, 0.f, 0.f, 0.3f), _float3(0.f, 0.f, 40.f), 40.f);
-	//pRenderer->Set_Fog(true, _float4(0.3f, 0.f, 0.f, 0.5f), 0.f);
-
 	Safe_Release(pRenderer);
 
 	ENDINSTANCE;
