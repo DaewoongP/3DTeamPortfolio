@@ -1299,7 +1299,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 				throw TEXT("Reserve Particle : Particle_DestroyProtego_Blue2");
 
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Purple2"),
-				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Purple2/"), 2)))
+				TEXT("../../Resources/GameData/ParticleData/Portego/DestroyPortego_Purlple2/"), 2)))
 				throw TEXT("Reserve Particle : Particle_DestroyProtego_Purple2");
 
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DestroyProtego_Red2"),

@@ -117,7 +117,7 @@ void CBigBird::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	if (0 == lstrcmp(wsCollisionTag.c_str(), wsPlayer.c_str()))
 	{
 		BEGININSTANCE;
-		pGameInstance->Play_Sound(TEXT("BigBird%d.wav"), 3, 0.6f);
+		pGameInstance->Play_Sound(TEXT("BigBird%d.wav"), 3, 0.1f);
 		ENDINSTANCE;
 	}
 }
