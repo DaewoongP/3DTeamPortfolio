@@ -1314,9 +1314,9 @@ HRESULT CConjuredDragon::Add_Effects()
 		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit"),
 			TEXT("Com_Pulse_CircleEmit"), reinterpret_cast<CComponent**>(&m_pEffect_Pulse_CircleEmit))))
 			throw TEXT("Com_Pulse_CircleEmit");
-		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit_Distortion"),
+		/*if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit_Distortion"),
 			TEXT("Com_Pulse_CircleEmit_Distortion"), reinterpret_cast<CComponent**>(&m_pEffect_Pulse_CircleEmit_Distortion))))
-			throw TEXT("Com_Pulse_CircleEmit_Distortion");
+			throw TEXT("Com_Pulse_CircleEmit_Distortion");*/
 
 
 		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_BoomWispy"),
@@ -1350,7 +1350,7 @@ HRESULT CConjuredDragon::Add_Effects()
 		m_pEffect_Pulse_SplashWater->Disable();
 		m_pEffect_Pulse_Rock->Disable();
 		m_pEffect_Pulse_CircleEmit->Disable();
-		m_pEffect_Pulse_CircleEmit_Distortion->Disable();
+		//m_pEffect_Pulse_CircleEmit_Distortion->Disable();
 		m_pEffect_DragonInvin->Disable();
 		m_pEffect_InvinBreakDust->Disable();
 		m_pEffect_DragonInvinMesh->Stop();
