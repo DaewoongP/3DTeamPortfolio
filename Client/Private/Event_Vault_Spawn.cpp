@@ -50,7 +50,18 @@ void CEvent_Vault_Spawn::Tick(_float fTimeDelta)
 	Check_Event_Spawn_2();
 	Check_Event_Spawn_3();
 
-
+	if (m_iBossBGM != -1 && m_isBossDead)
+	{
+		BEGININSTANCE;
+		pGameInstance->Set_ChannelVolume(m_iBossBGM, pGameInstance->Get_ChannelVolume(m_iBossBGM)*0.95f);
+		
+		if (pGameInstance->Get_ChannelVolume(m_iBossBGM) < 0.01f)
+		{
+			pGameInstance->Stop_Sound(m_iBossBGM);
+			m_iBossBGM = -1;
+		}
+		ENDINSTANCE;
+	}
 }
 
 void CEvent_Vault_Spawn::Late_Tick(_float fTimeDelta)
@@ -119,15 +130,14 @@ void CEvent_Vault_Spawn::Check_Event_Spawn_3()
 		//진입시
 		if (true == m_isEnter)
 		{
-			pGameInstance->Stop_AllSound();
-			pGameInstance->Play_BGM(TEXT("Vault_Boss_Bgm.wav"), 0.6f);
-
 			//페이드 아웃
 			m_pRenderer->FadeOut(1.0f);
-
+			m_iBossBGM = pGameInstance->Play_BGM(TEXT("Vault_Boss_Bgm.wav"), 0.6f);
 			//진입 표시
 			m_isEnter = false;
 		}
+
+
 
 		//타이머 체크
 		if (true == pGameInstance->Check_Timer(TEXT("Vault_CutScene_Fade_Out")))
@@ -223,6 +233,7 @@ void CEvent_Vault_Spawn::Check_Event_Spawn_3()
 				m_ePensive_Spawn_Sequence = PENSIVESPAWN_SEQUENCE_FADE_OUT;
 				//타이머 리셋
 				pGameInstance->Reset_Timer(TEXT("Vault_CutScene_Fade_Out"));
+				pGameInstance->Stop_AllSound();
 			}
 		}
 	}

@@ -32,6 +32,9 @@ private:
 	virtual ~CEvent_Vault_Spawn() = default;
 
 public:
+	void Set_BossDead() { m_isBossDead = true; }
+
+public:
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
@@ -51,6 +54,10 @@ private: /* 몬스터 스폰 관련 */
 	_bool m_isSpawned_1 = { false };
 	_bool m_isSpawned_2 = { false };
 	_bool m_isSpawned_3 = { false };
+
+	_int m_iBossBGM = { -1 };
+	_bool m_isBossDead = { false };
+
 	void Check_Event_Spawn_1();
 	void Check_Event_Spawn_2();
 	void Check_Event_Spawn_3();

@@ -80,6 +80,8 @@ void CWolf::Tick(_float fTimeDelta)
 	}
 	ENDINSTANCE;
 
+	m_pHitMatrix = m_HitMatrices[rand() % 3];
+
 	if (true == m_isDissolveStart)
 		m_fDissolveAmount += fTimeDelta; // 디졸브 값 증가
 
@@ -402,6 +404,21 @@ HRESULT CWolf::Add_Components_Level(_uint iCurrentLevelIndex)
 
 HRESULT CWolf::Bind_HitMatrices()
 {
+	const CBone* pBone = m_pModelCom->Get_Bone(TEXT("head"));
+	if (nullptr == pBone)
+		return E_FAIL;
+	m_HitMatrices[0] = pBone->Get_CombinedTransformationMatrixPtr();
+
+	pBone = m_pModelCom->Get_Bone(TEXT("tail_01"));
+	if (nullptr == pBone)
+		return E_FAIL;
+	m_HitMatrices[1] = pBone->Get_CombinedTransformationMatrixPtr();
+
+	pBone = m_pModelCom->Get_Bone(TEXT("spine_01"));
+	if (nullptr == pBone)
+		return E_FAIL;
+	m_HitMatrices[2] = pBone->Get_CombinedTransformationMatrixPtr();
+
 	return S_OK;
 }
 
