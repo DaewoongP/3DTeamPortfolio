@@ -91,6 +91,21 @@ void CSanctum_Door::Door_Action(_float fTimeDelta)
 	if (false == m_isDoorAction)
 		return;
 
+	BEGININSTANCE;
+
+	//시작
+	if (0.0f == m_fDoorSpinValue)
+	{
+		pGameInstance->Set_Shake(
+			CCamera_Manager::SHAKE_PRIORITY_1,
+			CCamera_Manager::SHAKE_TYPE_TRANSLATION,
+			CCamera_Manager::SHAKE_AXIS_UP,
+			CEase::IN_BOUNCE,
+			6.0f,
+			5.0f,
+			0.01f,
+			CCamera_Manager::SHAKE_POWER_DECRECENDO);
+	}
 	// 소리
 	if (true == m_isSound)
 	{
@@ -113,12 +128,22 @@ void CSanctum_Door::Door_Action(_float fTimeDelta)
 	if (m_fDoorTurn <= m_fDoorSpinValue)
 	{
 		m_isDoorAction = false;
+		//끝 
+		pGameInstance->Set_Shake(
+			CCamera_Manager::SHAKE_PRIORITY_1,
+			CCamera_Manager::SHAKE_TYPE_TRANSLATION,
+			CCamera_Manager::SHAKE_AXIS_UP,
+			CEase::IN_EXPO,
+			8.0f,
+			0.8f,
+			0.1f,
+			CCamera_Manager::SHAKE_POWER_DECRECENDO);
 		m_fDoorSpinValue = 0.f;
-
-		BEGININSTANCE;
+		
 		pGameInstance->Play_Sound(TEXT("SanctumDoorEnd.wav"), 1.f);
-		ENDINSTANCE;
 	}
+
+	ENDINSTANCE;
 }
 
 CSanctum_Door* CSanctum_Door::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

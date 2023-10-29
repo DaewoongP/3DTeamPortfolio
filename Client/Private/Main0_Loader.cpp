@@ -114,6 +114,7 @@
 #include "Event_Cliffside_Next_Level.h"
 #include "Event_Vault_Next_Level.h"
 #include "Event_Smeade_Next_Level.h"
+#include "Event_Sky_Enter.h"
 #pragma endregion
 
 #pragma region Event
@@ -388,6 +389,11 @@ HRESULT CMain0_Loader::Loading_For_Sky(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FlyGameManager"),
 			CFlyGameManager::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_FlyGameManager");
+	
+		/* For.Prototype_GameObject_Event_Sky_Enter */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Sky_Enter"),
+			CEvent_Sky_Enter::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Event_Sky_Enter");
 
 		/* For.Prototype_GameObject_MarioCount */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MarioCount"),
@@ -1351,7 +1357,7 @@ CMain0_Loader* CMain0_Loader::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 
 void CMain0_Loader::Free()
 {
-	// ·ÎµùÀÌ ³¡³¯¶§±îÁö ±â´Ù·Á¾ß ÇÏ¹Ç·Î infinite ¿É¼ÇÀ» ÁÖ¾î ·ÎµùÀÌ ³¡³¯¶§±îÁö ¾²·¹µå ´ë±â.
+	// ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ù·ï¿½ï¿½ï¿½ ï¿½Ï¹Ç·ï¿½ infinite ï¿½É¼ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½.
 	WaitForSingleObject(m_hThread, INFINITE);
 
 	DeleteCriticalSection(&m_Critical_Section);

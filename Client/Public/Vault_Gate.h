@@ -8,6 +8,7 @@ class CModel;
 class CShader;
 class CRenderer;
 class CParticleSystem;
+class CCamera_Shake;
 END
 
 BEGIN(Client)
@@ -49,6 +50,10 @@ private:
 	CRenderer* m_pRenderer = { nullptr };
 	CModel* m_pModel = { nullptr };
 	CParticleSystem* m_pEffect = { nullptr };
+	CCamera_Shake* m_pCamera_Shake_Up = { nullptr };
+	CCamera_Shake* m_pCamera_Shake_Down = { nullptr };
+	CCamera_Shake* m_pCamera_Shake_Loop = { nullptr };
+	CCamera_Shake* m_pCamera_Shake_End = { nullptr };
 
 private:
 	// 절두체 컬링을 위해 Bounding Box를 생성 하기위한 최소, 최대 정점
@@ -76,6 +81,7 @@ private:
 	void	Check_MinMaxPoint(_float3 vPoint);
 	void	Check_FireOn();
 
+	HRESULT Bind_Notifys();
 public:
 	static CVault_Gate* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
 	virtual CGameObject* Clone(void* pArg) override;
