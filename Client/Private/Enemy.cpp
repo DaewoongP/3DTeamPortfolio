@@ -181,6 +181,17 @@ HRESULT CEnemy::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatri
 	return S_OK;
 }
 
+void CEnemy::StopAllSound()
+{
+	BEGININSTANCE;
+	for (_int iChannel : m_SoundChannel)
+	{
+		pGameInstance->Stop_Sound(iChannel);
+	}
+	ENDINSTANCE;
+	m_SoundChannel.clear();
+}
+
 HRESULT CEnemy::Make_AI()
 {
 	BEGININSTANCE;

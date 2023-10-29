@@ -330,6 +330,10 @@ HRESULT CGolem_Combat::Make_Notifies()
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Change_Animation"), Func)))
 		return E_FAIL;
 
+	Func = [&] {(*this).StopAllSound(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("StopAllSound"), Func)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
