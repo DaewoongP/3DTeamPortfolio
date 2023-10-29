@@ -17,7 +17,6 @@ HRESULT CLevel_Static::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pC
 	FAILED_CHECK_RETURN(Ready_Layer_Inventory(TEXT("Layer_Inventory")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_FieldGuide_UI(TEXT("Layer_FieldGuide_UI")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_Menu_UI(TEXT("Layer_Menu_UI")), E_FAIL);
-	FAILED_CHECK_RETURN(Ready_Sounds(), E_FAIL);
 	
 #ifdef _DEBUG
 	FAILED_CHECK_RETURN(Ready_Layer_Debug(TEXT("Layer_Debug")), E_FAIL);
@@ -101,18 +100,13 @@ HRESULT CLevel_Static::Ready_Layer_Menu_UI(const _tchar* pLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_Static::Ready_Sounds()
+HRESULT CLevel_Static::Add_Sound()
 {
 	BEGININSTANCE;
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Pensive/"));
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Golem/"));
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Dugbog/"));
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Monster/"));
-	ENDINSTANCE;
-}
-HRESULT CLevel_Static::Add_Sound()
-{
-	BEGININSTANCE;
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Animal/BigBird/"));
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Animal/Cat/"));
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Animal/Owl/"));
