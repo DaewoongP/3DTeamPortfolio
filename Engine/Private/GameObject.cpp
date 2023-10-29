@@ -47,7 +47,7 @@ void CGameObject::Tick(_float fTimeDelta)
 		else
 		{
 			pGameInstance->Set_ChannelVolume(pair->first,
-				pair->second * pGameInstance->Get_SoundPower(m_pTransform->Get_Position()));
+				pair->second * pGameInstance->Get_SoundPower(m_pTransform->Get_Position(), m_fSoundPower));
 			pair++;
 		}
 	}

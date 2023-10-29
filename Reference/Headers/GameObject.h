@@ -56,6 +56,7 @@ protected:
 	const _float4x4*	m_pHitMatrix = { nullptr };
 	mutable _bool		m_isDead = { false };
 	vector<pair<_int, _float>>		m_SoundChannel = {};
+	_float				m_fSoundPower = { 30.f };
 
 public:
 	virtual CGameObject* Clone(void* pArg) PURE;

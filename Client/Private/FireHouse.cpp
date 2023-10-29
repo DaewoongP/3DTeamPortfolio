@@ -276,9 +276,12 @@ void CFireHouse::FireOn()
 {
 	_uint iPosIndex = 0;
 
-	for (auto& iter : m_Particles)
+	for (_uint i = 0; i < m_Particles.size();)
 	{
-		iter->Play(m_FirePosition[iPosIndex++]);
+		m_Particles[i++]->Play(m_FirePosition[iPosIndex]);
+		m_Particles[i++]->Play(m_FirePosition[iPosIndex]);
+		m_Particles[i++]->Play(m_FirePosition[iPosIndex]);
+		iPosIndex++;
 	}
 
 	m_isFireOn = false;
