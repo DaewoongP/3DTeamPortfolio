@@ -486,6 +486,10 @@ HRESULT CPensive::Make_Notifies()
 	Func = [&] {(*this).Set_EmmisivePower_Minus(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("EmmisiverPower_Minus"), Func)))
 		return E_FAIL;
+
+	Func = [&] {(*this).StopAllSound(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("StopAllSound"), Func)))
+		return E_FAIL;
 	
 	return S_OK;
 }
@@ -698,7 +702,7 @@ HRESULT CPensive::Add_Components()
 
 		/* For.Com_Health */
 		CHealth::HEALTHDESC HealthDesc;
-		HealthDesc.iMaxHP = 4000;
+		HealthDesc.iMaxHP = 5000;
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 			throw TEXT("Com_Health");
@@ -731,8 +735,8 @@ HRESULT CPensive::Add_Components()
 
 		Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::BOSS;
 		Desc.pHealth = m_pHealth;
-		lstrcpy(Desc.wszObjectLevel, TEXT("98"));
-		lstrcpy(Desc.wszObjectName, TEXT("°­Ã¶ °ñ·½ Ææ½Ãºê"));
+		lstrcpy(Desc.wszObjectLevel, TEXT("30"));
+		lstrcpy(Desc.wszObjectName, TEXT("Ææ½Ãºê ¼öÈ£ÀÚ"));
 
 		BEGININSTANCE;
 		m_pUI_HP = static_cast<CUI_Group_Enemy_HP*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"), &Desc));

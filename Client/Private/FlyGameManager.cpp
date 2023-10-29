@@ -4,6 +4,7 @@
 #include "Level.h"
 #include "Racer.h"
 #include "Balloon.h"
+#include "Event_Sky_Enter.h"
 #include "MarioCount.h"
 #include "DarkWizard_Fly.h"
 #include "UI_Group_Timer.h"
@@ -137,26 +138,44 @@ HRESULT CFlyGameManager::Initialize(void* pArg)
 	return S_OK;
 }
 
+HRESULT CFlyGameManager::Initialize_Level(_uint iCurrentLevelIndex)
+{
+	if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
+		return E_FAIL;
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	m_pEvent = static_cast<CEvent_Sky_Enter*>(pGameInstance->Find_Component_In_Layer(LEVEL_SKY, TEXT("Layer_Event"), TEXT("Event_Sky_Enter")));
+	Safe_AddRef(m_pEvent);
+	Safe_Release(pGameInstance);
+
+	return S_OK;
+}
+
 void CFlyGameManager::Tick(_float fTimeDelta)
 {
-	m_fInitWaitTimeAcc += fTimeDelta;
-
-	if (m_fInitWaitTimeAcc > m_fInitWaitTime &&
-		false == m_isGameContinue &&
-		false == m_isGameFinished)
-		m_pCount->Start();
-	
-	if (true == m_pCount->Is_Finished() &&
-		false == m_isGameContinue &&
-		false == m_isGameFinished)
+	if (true == m_pEvent->Is_Finished())
 	{
-		for (auto& pRacer : m_pRacerOwnerGroup)
-		{
-			static_cast<CDarkWizard_Fly*>(pRacer)->Start_Race();
-		}
+		m_fInitWaitTimeAcc += fTimeDelta;
 
-		m_isGameContinue = true;
+		if (m_fInitWaitTimeAcc > m_fInitWaitTime &&
+			false == m_isGameContinue &&
+			false == m_isGameFinished)
+			m_pCount->Start();
+
+		if (true == m_pCount->Is_Finished() &&
+			false == m_isGameContinue &&
+			false == m_isGameFinished)
+		{
+			for (auto& pRacer : m_pRacerOwnerGroup)
+			{
+				static_cast<CDarkWizard_Fly*>(pRacer)->Start_Race();
+			}
+
+			m_isGameContinue = true;
+		}
 	}
+	
 
 	__super::Tick(fTimeDelta);
 
@@ -368,5 +387,6 @@ void CFlyGameManager::Free()
 		Safe_Release(m_pUiTimer);
 
 		Safe_Release(m_pCount);
+		Safe_Release(m_pEvent);
 	}
 }

@@ -885,12 +885,12 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Max_Aura"),
+	/*if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Max_Aura"),
 		TEXT("Com_Max_Aura"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[8]))))
 	{
 		__debugbreak();
 		return E_FAIL;
-	}
+	}*/
 
 	m_vecPlayer_StateParicle.resize(3);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Player_Hit_Particle"),
@@ -1279,7 +1279,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = CRUCIO;
 		magicInitDesc.fInitCoolTime = 20.f;
-		magicInitDesc.iDamage = 0;
+		magicInitDesc.iDamage = 444;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
@@ -1441,6 +1441,8 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 		RollStateDesc.IsBlink = true;
 
+		pGameInstance->Play_Sound(TEXT("Dash.wav"), 1.f);
+
 		Go_Roll(&RollStateDesc);
 		//Go_Jump();
 	}
@@ -1455,6 +1457,8 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 		if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
 		{
+			pGameInstance->Play_Sound(TEXT("Normal%d.wav"), 8, 1.f);
+
 			Go_MagicCast(&MagicCastingStateDesc);
 		}
 

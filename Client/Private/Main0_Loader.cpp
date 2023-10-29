@@ -728,6 +728,12 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshInstance.hlsl"),
 				VTXMESHINSTANCE_DECL::Elements, VTXMESHINSTANCE_DECL::iNumElements))))
 			return E_FAIL;
+		
+		/* For.Prototype_Component_Shader_VtxAnimMeshInstance */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_VtxAnimMeshInstance"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAnimMeshInstance.hlsl"),
+				VTXANIMMESHINSTANCE_DECL::Elements, VTXANIMMESHINSTANCE_DECL::iNumElements))))
+			return E_FAIL;
 
 		/* For.Prototype_Component_Shader_ShadowMeshInstance */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_ShadowMeshInstance"),
@@ -1310,11 +1316,6 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Test_Player"),
 			CTest_Player::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Test_Player");
-
-		/* For.Prototype_GameObject_Test_Particle */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Test_Particle"),
-			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Test/"), eLevelID))))
-			throw TEXT("Prototype_GameObject_Test_Particle");
 
 		/* For.Prototype_GameObject_PhysxRenderer */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_PhysxRenderer"),

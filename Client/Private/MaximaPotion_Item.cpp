@@ -60,15 +60,6 @@ void CMaximaPotion_Item::Use(_float3 vPlayPos)
 	__super::Use(vPlayPos);
 
 	m_pPlayer->DamageTiming();
-
-#ifdef _DEBUG
-	
-	cout << "강해졌어요" << endl;
-
-#endif // _DEBUG
-
-	// 메쉬 올리기.
-	//m_pPlayerInformation->Get_Health()->Heal(m_fRecoveryAmount);
 }
 
 void CMaximaPotion_Item::CreateTool(void* pArg)

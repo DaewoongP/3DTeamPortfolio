@@ -37,6 +37,14 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 		MSG_BOX("Failed to Load ParticleSystem but You can progress");
 	}
 
+	if (m_RendererModuleDesc.wstrMaterialPath == TEXT("../../Resources/Effects/Textures/Default_Particle.png") &&
+		m_ShapeModuleDesc.wstrClipTexturePath == TEXT("../../Resources/Effects/Textures/Default_Particle.png") &&
+		m_RendererModuleDesc.isGlow == false &&
+		m_RendererModuleDesc.isDistortion == false)
+	{
+		__debugbreak();
+	}
+
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
