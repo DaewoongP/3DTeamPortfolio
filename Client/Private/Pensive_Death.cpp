@@ -4,6 +4,7 @@
 #include "StateContext_Enemy.h"
 #include "Quest_Manager.h"
 #include "Enemy.h"
+#include "Event_Vault_Spawn.h"
 
 CPensive_Death::CPensive_Death(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	:CStateMachine_Enemy(_pDevice,_pContext)
@@ -45,6 +46,10 @@ void CPensive_Death::OnStateEnter(void* _pArg)
 	Safe_AddRef(pQuest_Manager);
 	pQuest_Manager->Clear_Quest(TEXT("Quest_Secret"));
 	Safe_Release(pQuest_Manager);
+
+	BEGININSTANCE;
+	static_cast<CEvent_Vault_Spawn*>(pGameInstance->Find_Component_In_Layer(LEVEL_VAULT,TEXT("Layer_Event"), TEXT("Event_Spawn")))->Set_BossDead();
+	ENDINSTANCE;
 }
 
 void CPensive_Death::OnStateTick()
@@ -70,7 +75,7 @@ void CPensive_Death::Action_None_Tick()
 			//ªÁ∏¡√≥∏Æ
 			static_cast<CGameObject*>(m_pOwner->Get_Owner())->Set_Dead();
 			BEGININSTANCE;
-			pGameInstance->Stop_AllSound();
+			//pGameInstance->Stop_AllSound();
 			pGameInstance->Play_BGM(TEXT("Vault_Bgm"), 0.6f);
 			ENDINSTANCE;
 		}
