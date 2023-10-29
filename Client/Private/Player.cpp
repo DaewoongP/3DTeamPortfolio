@@ -407,7 +407,8 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
-	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")) || pGameInstance->Is_Playing_CutScene() == true)
+	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")) || pGameInstance->Is_Playing_CutScene() == true
+		 || m_isInteractionUI == true)
 	{
 		ENDINSTANCE;
 		return;

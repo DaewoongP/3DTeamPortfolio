@@ -113,6 +113,7 @@ void CUI_Store::Tick(_float fTimeDelta)
 		}
 	}
 }
+
 void CUI_Store::Late_Tick(_float fTimeDelta)
 {
 	if (false == m_isOpen)
@@ -120,14 +121,17 @@ void CUI_Store::Late_Tick(_float fTimeDelta)
 
 	__super::Late_Tick(fTimeDelta);
 }
+
 void CUI_Store::Open()
 {
 	m_isOpen = true;
 }
+
 void CUI_Store::Close()
 {
 	m_isOpen = false;
 }
+
 HRESULT CUI_Store::Store_Sell_Read_File(const _tchar* pFilePath)
 {
 	_ulong dwByte = 0;
@@ -183,6 +187,7 @@ HRESULT CUI_Store::Store_Sell_Read_File(const _tchar* pFilePath)
 
 	return S_OK;
 }
+
 HRESULT CUI_Store::Store_Buy_Read_File(const _tchar* pFilePath)
 {
 	/*if (nullptr == m_pIcons[iIndex] || nullptr == m_pFrames[iIndex] || nullptr == m_pCountBacks[iIndex]

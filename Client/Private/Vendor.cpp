@@ -3,6 +3,7 @@
 #include "UI_Store.h"
 #include "UI_Interaction.h"
 #include "Player.h"
+#include "Card_Fig.h"
 
 CVendor::CVendor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -63,7 +64,9 @@ void CVendor::Tick(_float fTimeDelta)
 			m_isOpenStore = !m_isOpenStore;
 			m_pUI_Store->Set_isOpen(m_isOpenStore);
 
-			static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")))->Set_Fix_Mouse(!m_isOpenStore);
+			CPlayer* pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+			pPlayer->Set_isInteractionUI(m_isOpenStore);
+			pPlayer->Set_Fix_Mouse(!m_isOpenStore);
 		}
 		Safe_Release(pGameInstance);
 	}

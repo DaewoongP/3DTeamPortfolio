@@ -105,7 +105,7 @@ void CCard_Fig::Late_Tick(_float fTimeDelta)
 	if (m_isPlayScript)
 		m_pScripts[m_iScriptIndex]->Late_Tick(fTimeDelta);
 
-	if (m_isShowCard)
+	if (m_isShowCard && m_isInteraction == false)
 		m_pUI_Card->Late_Tick(fTimeDelta);
 
 	if (false == m_isSpawn)
