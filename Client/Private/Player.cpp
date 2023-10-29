@@ -241,7 +241,22 @@ HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 	}
 
 	if (LEVEL_SKY == m_eLevelID)
+	{
+		for (_uint i = 0; i < 4; i++)
+		{
+			Set_Spell_Botton(i, m_pFlySpell[i]);
+		}
 		m_isFlying = true;
+	}
+	else
+	{
+		for (_uint i = 0; i < 4; i++)
+		{
+			Set_Spell_Botton(i, m_pNonFlySpell[i]);
+		}
+
+		m_isFlying = false;
+	}
 
 	return S_OK;
 }
@@ -314,6 +329,11 @@ void CPlayer::Tick(_float fTimeDelta)
 	}
 
 	m_isPreLumos = m_isLumosOn;
+
+	for (_uint i = 0; i < m_vecPotionParticle.size(); ++i)
+	{
+		m_vecPotionParticle[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+	}
 
 	for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
 	{
@@ -413,6 +433,11 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 				pUI_HP->Late_Tick(fTimeDelta);
 		}
 	}
+
+	
+	if (m_DemegeDesc.isFinish)
+		m_vecPotionParticle[8]->Stop();
+
 	ENDINSTANCE;
 }
 
@@ -791,7 +816,7 @@ HRESULT CPlayer::Add_Components()
 	}
 
 	/* For.Com_PotionParticle */
-	m_vecPotionParticle.resize(5);
+	m_vecPotionParticle.resize(9);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Heal_Particle"),
 		TEXT("Com_HealParticle"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[0]))))
 	{
@@ -826,9 +851,33 @@ HRESULT CPlayer::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
-	
 
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Max_Ground"),
+		TEXT("Com_Max_Ground"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[5]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
 
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Max_After_Particle"),
+		TEXT("Com_Max_After_Particle"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[6]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Max_After_Particle2"),
+		TEXT("Com_Max_After_Particle2"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[7]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Max_Aura"),
+		TEXT("Com_Max_Aura"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[8]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
 
 	m_vecPlayer_StateParicle.resize(3);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Player_Hit_Particle"),
@@ -1408,7 +1457,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Magic_Spell_Button_2(); };
 
 			Go_MagicCast(&MagicCastingStateDesc);
-		}
+		}4
 		if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN) && m_pMagicSlot->IsCoolOn_Skill(SKILLINPUT_3))
 		{
 			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Magic_Spell_Button_3(); };
@@ -1925,7 +1974,7 @@ void CPlayer::Update_Demege()
 	//기본 스팰, 스팰 공격력 바꾸기, 시간 감소
 	BEGININSTANCE;
 
-	if (0.0f < m_DemegeDesc.fBuffValueAcc)
+	if (20.0f < m_DemegeDesc.fBuffValueAcc)
 	{
 		m_DemegeDesc.fBuffValuePreAcc = m_DemegeDesc.fBuffValueAcc;
 		m_DemegeDesc.fBuffValueAcc -= pGameInstance->Get_World_Tick();
@@ -1934,7 +1983,7 @@ void CPlayer::Update_Demege()
 	ENDINSTANCE;
 
 	//0.0f에 도달 했을때, 이전 값이 초기화 되지 않은 양수라면
-	if (0.0f > m_DemegeDesc.fBuffValueAcc && 0.0f < m_DemegeDesc.fBuffValuePreAcc)
+	if (20.0f > m_DemegeDesc.fBuffValueAcc && 0.0f < m_DemegeDesc.fBuffValuePreAcc)
 	{
 		//초기화 하고
 		m_DemegeDesc.fBuffValuePreAcc = m_DemegeDesc.fBuffValueAcc = 0.0f;
@@ -3550,6 +3599,17 @@ void CPlayer::Go_Use_Item()
 	case Client::ITEM_ID_MAXIMA_POTION:	//공격력 물약
 	{
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
+
+		for (_uint i = 0; i < 5; ++i)
+		{
+			m_vecPotionParticle[4+i]->Play(m_pTransform->Get_Position());
+			m_vecMeshEffect[0]->Play(m_pTransform->Get_Position());
+		}
+
+		DamageTiming();
+
+		m_vecPotionParticle[8]->Play(m_pTransform->Get_Position());
+				
 	}
 	break;
 	case Client::ITEM_ID_INVISIBILITY_POTION://투명 물약

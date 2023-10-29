@@ -63,6 +63,11 @@ private:
 	_bool			m_isCheckOnce = { false }; // 한번만 상호작용 가능
 	_bool			m_isAllLightStandsOn = { false };
 	_bool			m_isGateOpen = { false };
+
+	_bool			m_isSound0 = { true }; // 문 열리는 소리
+	_uint			m_iSound0 = { 0 };	   // 문 열리는 소리 인덱스
+
+	_bool			m_isSound1 = { true }; // 문 닫히고 쿵 소리
 	
 	vector<CLightStand*> m_pLightStands; // 맵에 존재하는 화로들
 

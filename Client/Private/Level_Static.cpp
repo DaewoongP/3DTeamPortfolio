@@ -22,6 +22,7 @@ HRESULT CLevel_Static::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pC
 	FAILED_CHECK_RETURN(Ready_Layer_Debug(TEXT("Layer_Debug")), E_FAIL);
 #endif // _DEBUG
 
+	FAILED_CHECK_RETURN(Add_Sound(), E_FAIL);
 	FAILED_CHECK_RETURN(Add_Scene(), E_FAIL);
 	FAILED_CHECK_RETURN(Add_Cameras(pDevice, pContext), E_FAIL);
 	FAILED_CHECK_RETURN(Add_Quests(pDevice, pContext), E_FAIL);
@@ -95,6 +96,24 @@ HRESULT CLevel_Static::Ready_Layer_Menu_UI(const _tchar* pLayerTag)
 	// °¡ÀÌµå ºÏ
 	FAILED_CHECK_RETURN(m_pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC,
 		TEXT("Prototype_GameObject_Guide_Book"), pLayerTag, TEXT("GameObject_Guide_Book")), E_FAIL)
+
+	return S_OK;
+}
+
+HRESULT CLevel_Static::Add_Sound()
+{
+	BEGININSTANCE;
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Animal/BigBird/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Animal/Cat/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Animal/Owl/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Animal/Gull/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Object/Door/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Object/Gatherer/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Object/LightStand/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Object/Portal/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Object/PotionStation/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Object/TreasureChest/"));
+	ENDINSTANCE;
 
 	return S_OK;
 }

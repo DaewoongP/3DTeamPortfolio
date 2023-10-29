@@ -1,6 +1,8 @@
 #include "..\Public\SmithToCliff_Gate.h"
 #include "GameInstance.h"
 
+#include "Player.h"
+
 CSmithToCliff_Gate::CSmithToCliff_Gate(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMapObject(pDevice, pContext)
 {
@@ -61,6 +63,14 @@ HRESULT CSmithToCliff_Gate::Initialize_Level(_uint iCurrentLevelIndex)
 void CSmithToCliff_Gate::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	BEGININSTANCE;
+	if (false == pGameInstance->Is_SoundPlaying(m_iSound0))
+	{
+		m_iSound0 = pGameInstance->Play_Sound(TEXT("Portal_Idle.wav"), 1.f);
+	}
+
+	ENDINSTANCE;
 }
 
 void CSmithToCliff_Gate::Late_Tick(_float fTimeDelta)

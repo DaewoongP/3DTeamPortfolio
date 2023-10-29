@@ -226,6 +226,7 @@
     <ClInclude Include="..\Public\Lamppost.h" />
     <ClInclude Include="..\Public\Lamp_Wall.h" />
     <ClInclude Include="..\Public\LightStand.h" />
+    <ClInclude Include="..\public\MarioCount.h" />
     <ClInclude Include="..\Public\Meteor.h" />
     <ClInclude Include="..\Public\Quest_Bone.h" />
     <ClInclude Include="..\Public\Quest_Potion.h" />
@@ -586,6 +587,7 @@
     <ClCompile Include="..\Private\Lamppost.cpp" />
     <ClCompile Include="..\Private\Lamp_Wall.cpp" />
     <ClCompile Include="..\Private\LightStand.cpp" />
+    <ClCompile Include="..\private\MarioCount.cpp" />
     <ClCompile Include="..\Private\Meteor.cpp" />
     <ClCompile Include="..\Private\Quest_Bone.cpp" />
     <ClCompile Include="..\Private\Quest_Potion.cpp" />

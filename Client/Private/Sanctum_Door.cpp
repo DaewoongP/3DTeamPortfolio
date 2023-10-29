@@ -106,14 +106,23 @@ void CSanctum_Door::Door_Action(_float fTimeDelta)
 			0.01f,
 			CCamera_Manager::SHAKE_POWER_DECRECENDO);
 	}
+	// 소리
+	if (true == m_isSound)
+	{
+		BEGININSTANCE;
+		pGameInstance->Play_Sound(TEXT("SanctumDoorOpen.wav"), 0.75f);
+		ENDINSTANCE;
+
+		m_isSound = false;
+	}
 
 	if(RIGHTDOOR == m_eDoorType)
-		m_pTransform->Turn(_float3(0.f, 1.f, 0.f), XMConvertToRadians(m_fDoorTurn), fTimeDelta * 0.25f);
+		m_pTransform->Turn(_float3(0.f, 1.f, 0.f), XMConvertToRadians(m_fDoorTurn), fTimeDelta * 0.5f);
 	else
-		m_pTransform->Turn(_float3(0.f, 1.f, 0.f), XMConvertToRadians(-m_fDoorTurn), fTimeDelta * 0.25f);
+		m_pTransform->Turn(_float3(0.f, 1.f, 0.f), XMConvertToRadians(-m_fDoorTurn), fTimeDelta * 0.5f);
 
 	// DOORTURN 만큼 돌았으면 회전을 멈춤
-	m_fDoorSpinValue += m_fDoorTurn * fTimeDelta * 0.25f;
+	m_fDoorSpinValue += m_fDoorTurn * fTimeDelta * 0.5f;
 
 	// 문이 열린 상태라면 닫히고 닫힌 상태라면 그대로 다음 이벤트까지 대기
 	if (m_fDoorTurn <= m_fDoorSpinValue)
@@ -129,6 +138,9 @@ void CSanctum_Door::Door_Action(_float fTimeDelta)
 			0.8f,
 			0.1f,
 			CCamera_Manager::SHAKE_POWER_DECRECENDO);
+		m_fDoorSpinValue = 0.f;
+		
+		pGameInstance->Play_Sound(TEXT("SanctumDoorEnd.wav"), 1.f);
 	}
 
 	ENDINSTANCE;
