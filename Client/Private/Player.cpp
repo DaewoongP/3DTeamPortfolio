@@ -237,7 +237,8 @@ HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 	m_pRigidBody->Clear_Force(PxForceMode::eVELOCITY_CHANGE);
 	/*if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
 		return E_FAIL;*/
-
+	m_vecPotionParticle[8]->Disable();
+	m_vecPotionParticle[13]->Disable();
 	if (nullptr != m_pTarget)
 	{
 		Safe_Release(m_pTarget);
@@ -345,7 +346,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	{
 		m_vecPotionParticle[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
 	}
-
+	
 	for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
 	{
 		m_vecPlayer_StateParicle[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
@@ -869,7 +870,7 @@ HRESULT CPlayer::Add_Components()
 	}
 
 	/* For.Com_PotionParticle */
-	m_vecPotionParticle.resize(9);
+	m_vecPotionParticle.resize(14);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Heal_Particle"),
 		TEXT("Com_HealParticle"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[0]))))
 	{
@@ -924,13 +925,44 @@ HRESULT CPlayer::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
-
-	/*if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Max_Aura"),
+	
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Max_Aura"),
 		TEXT("Com_Max_Aura"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[8]))))
 	{
 		__debugbreak();
 		return E_FAIL;
-	}*/
+	}
+	//Focus
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Focus_Particle"),
+		TEXT("Com_Max_Aura"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[9]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Focus_After_Particle"),
+		TEXT("Com_Max_Aura"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[10]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Focus_After_Particle2"),
+		TEXT("Com_Max_Aura"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[11]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Focus_Ground"),
+		TEXT("Com_Max_Aura"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[12]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Focus_Effect"),
+		TEXT("Com_Max_Aura"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[13]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
 
 	m_vecPlayer_StateParicle.resize(3);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Player_Hit_Particle"),
@@ -1035,7 +1067,7 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Weapon_Player_Broom"),
 		TEXT("Com_Broom"), reinterpret_cast<CComponent**>(&m_pBroom), &ParentMatrixDesc2)))
 		throw TEXT("Com_Broom");
-
+	
 	/* Com_Player_Information */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Player_Information"),
 		TEXT("Com_Player_Information"), reinterpret_cast<CComponent**>(&m_pPlayer_Information))))
@@ -1970,7 +2002,7 @@ void CPlayer::Update_CoolTime()
 	if (true == m_CoolTimeDesc.isStart)
 	{
 		m_CoolTimeDesc.fBuffValueAcc = m_CoolTimeDesc.fBuffValueTime;
-
+		m_vecPotionParticle[13]->Play(m_pTransform->Get_Position());
 		CMagic::MAGICDESC magicInitDesc = { CMagic::MAGICDESC() };
 
 		for (size_t i = 0; i < SPELL_END; i++)
@@ -2003,6 +2035,7 @@ void CPlayer::Update_CoolTime()
 	//원래 구조체 대입
 	if (true == m_CoolTimeDesc.isFinish)
 	{
+		m_vecPotionParticle[13]->Stop();
 		CMagic::MAGICDESC magicInitDesc = { CMagic::MAGICDESC() };
 
 		for (size_t i = 0; i < SPELL_END; i++)
@@ -2056,9 +2089,8 @@ void CPlayer::Update_Demege()
 		m_DemegeDesc.fBuffValueAcc = m_DemegeDesc.fBuffValueTime;
 
 		m_isPowerUp = true;
-
 		//if (m_isPowerUp)
-		//m_vecPotionParticle[8]->Play(m_pTransform->Get_Position());
+		m_vecPotionParticle[8]->Play(m_pTransform->Get_Position());
 			
 	}
 
@@ -3657,6 +3689,15 @@ void CPlayer::Go_Use_Item()
 	case Client::ITEM_ID_FOCUS_POTION:	//쿨타임 물약
 	{
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
+
+		for (_uint i = 0; i < 5; ++i)
+		{
+			m_vecPotionParticle[9 + i]->Play(m_pTransform->Get_Position());
+			m_vecMeshEffect[0]->Play(m_pTransform->Get_Position());
+		}
+		
+		m_vecPotionParticle[13]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+		FocusTiming();
 	}
 	break;
 	case Client::ITEM_ID_MAXIMA_POTION:	//공격력 물약
