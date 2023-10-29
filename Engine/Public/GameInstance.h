@@ -149,6 +149,7 @@ public: /* For.Sound_Manager */
 	// 랜덤으로 실행할 사운드 개수와 태그 입력
 	// sound%d.wav, 10 -> 10개중에 랜덤 사운드 재생
 	_int Play_Sound(const _tchar* pSoundTag, _uint iNumSounds, _float fVolume);
+	_int Play_BGM(const _tchar* pSoundTag, _float fVolume);
 	HRESULT Stop_Sound(_int iChannel);
 	HRESULT Pause_Sound(_int iChannel);
 	HRESULT Restart_Sound(_int iChannel);

@@ -73,6 +73,7 @@ private:
 
 private:
 	_bool m_isEnterDeath = { false };
+	_bool m_isEnter_Play_BGM = { false };
 	_float m_fDeadTimeAcc = { 0.f };
 	void DeathBehavior(const _float& fTimeDelta);
 

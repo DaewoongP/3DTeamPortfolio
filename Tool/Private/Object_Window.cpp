@@ -1523,7 +1523,7 @@ HRESULT CObject_Window::Load_MapObject_Ins(const _tchar* wszMapDataPath)
 		// 인스턴스 모델 프로토타입 생성
 		_float4x4 PivotMatrix = XMMatrixIdentity();
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, ws.c_str(),
-			CModel_Instance::Create(m_pDevice, m_pContext, CModel_Instance::TYPE_NONANIM, wsPath.c_str(),
+			CModel_Instance::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, wsPath.c_str(),
 				m_vecSaveInsObject.at(i).pMatTransform, m_vecSaveInsObject.at(i).iInstanceCnt, PivotMatrix), true)))
 		{
 			MSG_BOX("Failed to Create New CModel_Instance Prototype");

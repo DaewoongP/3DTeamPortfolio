@@ -851,7 +851,7 @@ HRESULT CMain1_Loader::Loading_Map_Object_Ins(const _tchar* pMapObjectInsPath, L
 		// �ν��Ͻ� �� ������Ÿ�� ����
 		_float4x4 PivotMatrix = XMMatrixIdentity();
 		if (FAILED(m_pGameInstance->Add_Prototype(eID, ws.c_str(),
-			CModel_Instance::Create(m_pDevice, m_pContext, CModel_Instance::TYPE_NONANIM, wsPath.c_str(),
+			CModel_Instance::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, wsPath.c_str(),
 				LoadDesc.pMatTransform, LoadDesc.iInstanceCnt, PivotMatrix), true)))
 		{
 			MSG_BOX("Failed to Create New CModel_Instance Prototype");
