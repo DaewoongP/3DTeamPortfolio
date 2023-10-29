@@ -3,6 +3,8 @@
 #include "GameInstance.h"
 #include "Racer.h"
 #include "Balloon.h"
+#include "MarioCount.h"
+#include "DarkWizard_Fly.h"
 #include "UI_Group_Timer.h"
 #include "UI_Group_Score.h"
 
@@ -120,10 +122,10 @@ HRESULT CFlyGameManager::Initialize(void* pArg)
 	}
 
 	//게임 타이머를 설정해줍니다.
+	m_fInitWaitTime = 3.f;
 	m_fGameTimer = 180.f;
-	m_isGameContinue = true;
 
-	_uint iIndex = (_uint)(m_pAllBalloonGroup.size()/2);
+	_uint iIndex = (_uint)(m_pAllBalloonGroup.size() / 2);
 
 	CBalloon::BALLOONINITDESC initDesc = {};
 	for (_uint i = 0; i < iIndex; i++)
@@ -136,7 +138,25 @@ HRESULT CFlyGameManager::Initialize(void* pArg)
 
 void CFlyGameManager::Tick(_float fTimeDelta)
 {
+	m_fInitWaitTimeAcc += fTimeDelta;
+
+	if (m_fInitWaitTimeAcc > m_fInitWaitTime &&
+		false == m_isGameContinue)
+		m_pCount->Start();
+	
+	if (true == m_pCount->Is_Finished() &&
+		false == m_isGameContinue)
+	{
+		for (auto& pRacer : m_pRacerOwnerGroup)
+		{
+			static_cast<CDarkWizard_Fly*>(pRacer)->Start_Race();
+		}
+
+		m_isGameContinue = true;
+	}
+
 	__super::Tick(fTimeDelta);
+
 	if (m_isGameContinue)
 	{
 		m_fGameTimer -= fTimeDelta;
@@ -254,6 +274,14 @@ HRESULT CFlyGameManager::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+	
+	if (FAILED(CComposite::Add_Component(LEVEL_SKY, TEXT("Prototype_GameObject_MarioCount"),
+		TEXT("Com_Count"), reinterpret_cast<CComponent**>(&m_pCount))))
+	{
+		MSG_BOX("Failed CFlyGameManager Add_Component : Com_Count");
+		__debugbreak();
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -324,5 +352,7 @@ void CFlyGameManager::Free()
 
 		Safe_Release(m_pUiScore);
 		Safe_Release(m_pUiTimer);
+
+		Safe_Release(m_pCount);
 	}
 }

@@ -241,7 +241,13 @@ HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 	}
 
 	if (LEVEL_SKY == m_eLevelID)
+	{
+		for (_uint i = 0; i < 4; i++)
+		{
+			Set_Spell_Botton(i, m_pFlySpell[i]);
+		}
 		m_isFlying = true;
+	}
 
 	return S_OK;
 }

@@ -61,7 +61,7 @@ HRESULT CLevel_Sky::Ready_Layer_BackGround(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 
-	_bool isNight = false;
+	_bool isNight = g_isNight;
 	FAILED_CHECK_RETURN(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SKY,
 		TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"), &isNight), E_FAIL)
 

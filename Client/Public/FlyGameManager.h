@@ -4,6 +4,7 @@
 BEGIN(Client)
 class CRacer;
 class CBalloon;
+class CMarioCount;
 class CUI_Group_Timer;
 class CUI_Group_Score;
 END
@@ -57,6 +58,10 @@ private:
 
     CUI_Group_Timer*        m_pUiTimer = { nullptr };
     CUI_Group_Score*        m_pUiScore = { nullptr };
+
+    CMarioCount*            m_pCount = { nullptr };
+    _float                  m_fInitWaitTime = { 0.f };
+    _float                  m_fInitWaitTimeAcc = { 0.f };
 
 private:
     //게임 진행시간임.

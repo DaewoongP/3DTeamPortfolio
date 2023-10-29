@@ -1015,6 +1015,9 @@
     <Filter Include="02. GameObject\00. Sky\Red">
       <UniqueIdentifier>{36f2f32e-d3ac-480c-914b-9f5cf9d20abd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\MarioCount">
+      <UniqueIdentifier>{2a575062-c9a7-4842-84d4-0c2ca2ba07c0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -2049,6 +2052,9 @@
     <ClInclude Include="..\public\RedSky.h">
       <Filter>02. GameObject\00. Sky\Red</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\MarioCount.h">
+      <Filter>02. GameObject\13. FlyGameManager\MarioCount</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -3037,6 +3043,9 @@
     </ClCompile>
     <ClCompile Include="..\private\RedSky.cpp">
       <Filter>02. GameObject\00. Sky\Red</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MarioCount.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\MarioCount</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
