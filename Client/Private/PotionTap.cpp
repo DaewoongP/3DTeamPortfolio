@@ -52,6 +52,14 @@ void CPotionTap::Tick(_float fTimeDelta)
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
+
+	if (pGameInstance->Get_DIKeyState(DIK_TAB, CInput_Device::KEY_DOWN))
+	{
+		BEGININSTANCE;
+		pGameInstance->Play_Sound(TEXT("Potion_Tap_Open.wav"), 1.0f);
+		ENDINSTANCE
+	}
+
 	if (pGameInstance->Get_DIKeyState(DIK_TAB, CInput_Device::KEY_PRESSING))
 	{
 		m_pUI_Potion_Tap->Tick(fTimeDelta);
@@ -306,6 +314,9 @@ void CPotionTap::Set_CurPotion()
 	
 	if (nullptr != m_pPotionTextures[m_eCurPotion])
 	{
+		BEGININSTANCE;
+		pGameInstance->Play_Sound(TEXT("Potion_Tap_Select.wav"), 1.0f);
+		ENDINSTANCE
 		m_pUI_Main_Tap->Set_Texture(m_pPotionTextures[m_eCurPotion]);
 	}
 }

@@ -379,12 +379,16 @@ void CMain_Menu::Set_SelectedText()
 	{
 		if (pText->Get_Clicked())
 		{
+			BEGININSTANCE;
+			pGameInstance->Play_Sound(TEXT("Switch.wav"), 1.0f);
+			ENDINSTANCE
 			if (m_iSelectedText == -1)
 			{
 				m_iSelectedText = iIndex;
 				m_eCurMenu = (MENU)m_iSelectedText;
 				m_pTexts[m_iSelectedText]->Set_Clicked(true);
 				m_pPlayerInventory->Set_Open(false);
+
 				return;
 			}
 

@@ -69,6 +69,9 @@ void CMenu_Quest::Tick(_float fTimeDelta)
 		{
 			if (pExplain->Get_Clicked())
 			{
+				BEGININSTANCE;
+				pGameInstance->Play_Sound(TEXT("Switch.wav"), 1.0f);
+				ENDINSTANCE
 				if (pExplain->Switch_ImageShow())
 					pExplain->CUI::Set_Texture(1);
 				else

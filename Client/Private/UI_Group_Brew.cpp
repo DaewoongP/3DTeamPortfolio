@@ -120,96 +120,112 @@ void CUI_Group_Brew::Tick(_float fTimeDelta)
 
 			if (pIcon->Get_Clicked())
 			{
-				BEGININSTANCE;
-				//pGameInstance->Play_Sound(TEXT("Create_Potion.wav"), CSound_Manager::SOUND_UI,1.0f, true);
-				ENDINSTANCE
 				// 제조하게끔 하는 로직.
 				_bool isSuccess = { false };
-				
+				BEGININSTANCE;
 				switch (iIndex)
 				{
 				case WIGEN:
 					if (1 > m_pInventory->Get_Resource(INGREDIENT::HORKLUMP_JUICE))
 					{
+						pGameInstance->Play_Sound(TEXT("Fail_Buy.wav"), 1.0f);
 						break;
 					}
 					if (1 > m_pInventory->Get_Resource(INGREDIENT::DITTANY_LEAVES))
 					{
+						pGameInstance->Play_Sound(TEXT("Fail_Buy.wav"), 1.0f);
 						break;
 					}
 					m_pPotionTap->Add_Potion(POTIONTAP::HEALTH_POTION);
 					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_HORKLUMP_JUICE);
 					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_DITTANY_LEAVES);
+					pGameInstance->Play_Sound(TEXT("Create_Potion.wav"), 1.0f);
 					break;
 				case EDURUS:
 					if (1 > m_pInventory->Get_Resource(INGREDIENT::ASHWINDER_EGGS))
 					{
+						pGameInstance->Play_Sound(TEXT("Fail_Buy.wav"), 1.0f);
 						break;
 					}
 					if (1 > m_pInventory->Get_Resource(INGREDIENT::MONGREL_FUR))
 					{
+						pGameInstance->Play_Sound(TEXT("Fail_Buy.wav"), 1.0f);
 						break;
 					}
 
 					m_pPotionTap->Add_Potion(POTIONTAP::ENDURUS_POTION);
 					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_ASHWINDER_EGGS);
 					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_MONGREL_FUR);
+					pGameInstance->Play_Sound(TEXT("Create_Potion.wav"), 1.0f);
 					break;
 				case MAXIMA:
 					if (1 > m_pInventory->Get_Resource(INGREDIENT::LEECH_JUICE))
 					{
+						pGameInstance->Play_Sound(TEXT("Fail_Buy.wav"), 1.0f);
 						break;
 					}
 					if (1 > m_pInventory->Get_Resource(INGREDIENT::SPIDER_FANG))
 					{
+						pGameInstance->Play_Sound(TEXT("Fail_Buy.wav"), 1.0f);
 						break;
 					}
 					m_pPotionTap->Add_Potion(POTIONTAP::MAXIMA_POTION);
 					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_LEECH_JUICE);
 					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_SPIDER_FANG);
+					pGameInstance->Play_Sound(TEXT("Create_Potion.wav"), 1.0f);
 					break;
 				case INVISIBLE:
 					if (1 > m_pInventory->Get_Resource(INGREDIENT::LEAPING_TOADSTOOL_CAPS))
 					{
+						pGameInstance->Play_Sound(TEXT("Fail_Buy.wav"), 1.0f);
 						break;
 					}
 					if (1 > m_pInventory->Get_Resource(INGREDIENT::KNOTGRASS))
 					{
+						pGameInstance->Play_Sound(TEXT("Fail_Buy.wav"), 1.0f);
 						break;
 					}
 					m_pPotionTap->Add_Potion(POTIONTAP::INVISIBILITY_POTION);
 					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_LEAPING_TOADSTOOL_CAPS);
 					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_KNOTGRASS);
+					pGameInstance->Play_Sound(TEXT("Create_Potion.wav"), 1.0f);
 					break;
 				case FOCUS:
 					if (1 > m_pInventory->Get_Resource(INGREDIENT::LACEWING_FLIES))
 					{
+						pGameInstance->Play_Sound(TEXT("Fail_Buy.wav"), 1.0f);
 						break;
 					}
 					if (1 > m_pInventory->Get_Resource(INGREDIENT::FLUXWEED_STEM))
 					{
+						pGameInstance->Play_Sound(TEXT("Fail_Buy.wav"), 1.0f);
 						break;
 					}
 					m_pPotionTap->Add_Potion(POTIONTAP::FOCUS_POTION);
 					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_LACEWING_FLIES);
 					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_FLUXWEED_STEM);
+					pGameInstance->Play_Sound(TEXT("Create_Potion.wav"), 1.0f);
 					break;
 				case THUNDERBREW:
 					if (1 > m_pInventory->Get_Resource(INGREDIENT::LEECH_JUICE))
 					{
+						pGameInstance->Play_Sound(TEXT("Fail_Buy.wav"), 1.0f);
 						break;
 					}
 					if (1 > m_pInventory->Get_Resource(INGREDIENT::SHRIVELFIG))
 					{
+						pGameInstance->Play_Sound(TEXT("Fail_Buy.wav"), 1.0f);
 						break;
 					}
 					m_pPotionTap->Add_Potion(POTIONTAP::THUNDERBREW_POTION);
 					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_LEECH_JUICE);
 					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_SHRIVELFIG);
+					pGameInstance->Play_Sound(TEXT("Create_Potion.wav"), 1.0f);
 					break;
 				default:
 					break;
 				}
+				ENDINSTANCE
 			}
 		}
 		++iIndex;
@@ -375,7 +391,7 @@ HRESULT CUI_Group_Brew::Ready_ExplainTexture()
 HRESULT CUI_Group_Brew::Add_Fonts()
 {
 	CUI_Font::FONTDESC Desc;
-	lstrcpy(Desc.m_pText, TEXT("dd"));
+	lstrcpy(Desc.m_pText, TEXT(""));
 	Desc.m_vPos = { 939.f, 515.f };
 	Desc.m_vColor = _float4(1.f, 1.f, 1.f, 1.f);
 	Desc.m_fRotation = { 0.f };
@@ -390,7 +406,7 @@ HRESULT CUI_Group_Brew::Add_Fonts()
 		return E_FAIL;
 	}
 
-	lstrcpy(Desc.m_pText, TEXT("dd"));
+	lstrcpy(Desc.m_pText, TEXT(""));
 	Desc.m_vPos = { 939.f, 550.f };
 	Desc.m_vColor = _float4(1.f, 1.f, 1.f, 1.f);
 	Desc.m_fRotation = { 0.f };
