@@ -195,6 +195,8 @@ void CProjectile_White::Ready_CastMagic()
 
 void CProjectile_White::Ready_Dying()
 {
+	m_ParticleVec[EFFECT_STATE_MAIN][1]->Stop();
+
 	for (auto& SplineUp : m_pMeshEffect_SplineUp)
 	{
 		SplineUp->Play(m_vEndPosition);

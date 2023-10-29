@@ -9,6 +9,7 @@ class CTexture;
 class CShader;
 class CVIBuffer;
 class CParticleSystem;
+class CMeshEffect;
 END
 BEGIN(Client)
 
@@ -49,7 +50,7 @@ private:
 	CParticleSystem* m_pPulse_SplashWater_Particle = { nullptr };
 	CParticleSystem* m_pPulse_SplashWater2_Particle = { nullptr };
 	CParticleSystem* m_pPulse_GlowSphere_Particle = { nullptr };
-
+	CMeshEffect* m_pMeshEffect = { nullptr };
 private:
 	_float m_fCircleOffset = { 2.f };
 	_float4 m_vColor = { 0.956f, 0.047f, 0.047f, 1.f };
