@@ -68,6 +68,7 @@ private:
     _float                  m_fGameTimer = { 180.f };
     //게임 진행 여부임
     _bool                   m_isGameContinue = { false };
+    _bool                   m_isGameFinished = { false };
 
 public:
     static CFlyGameManager* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

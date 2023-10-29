@@ -32,6 +32,7 @@ private:
 
 public:
 	void Start_Race() { m_isSpawn = true; }
+	void Finish_Race() { m_isSpawn = false; }
 
 public:
 	virtual HRESULT Initialize_Prototype() override;

@@ -21,6 +21,7 @@ private:
 public:
 	void Start();
 	_bool Is_Finished();
+	void Set_RankTexture(_uint iRank);
 
 public:
 	virtual HRESULT Initialize(void* pArg) override;
@@ -33,6 +34,7 @@ private:
 	CTexture*			m_pTexture = { nullptr };
 	CRenderer*			m_pRenderer = { nullptr };
 	CVIBuffer_Rect*		m_pBuffer = { nullptr };
+	CTexture*			m_pFinishRankTexture = { nullptr };
 
 private:
 	_float4x4			m_ViewMatrix, m_ProjMatrix;
@@ -40,9 +42,13 @@ private:
 private:
 	_bool				m_isStart = { false };
 	_bool				m_isFinished = { false };
+	_bool				m_isRank = { false };
+	_uint				m_iRank = { 0 };
 	_uint				m_iCountIndex = { 0 };
 	_float				m_fTime = { 0.f };
 	_float				m_fTimeAcc = { 0.f };
+	_float				m_fRankTime = { 0.f };
+	_float				m_fRankTimeAcc = { 0.f };
 
 private:
 	HRESULT Add_Components();
