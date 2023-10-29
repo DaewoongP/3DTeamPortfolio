@@ -174,7 +174,7 @@ void CVault_Torch::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		if (eBuff == BUFF_CONFRINGO)
 		{
 			BEGININSTANCE;
-			pGameInstance->Play_Sound(TEXT("FireOn.wav"), 0.15f);
+			pGameInstance->Play_Sound(TEXT("FireOn.wav"), 0.15f * pGameInstance->Get_SoundPower(m_pTransform->Get_Position()));
 			ENDINSTANCE;
 
 			Switch_OnOff(true);

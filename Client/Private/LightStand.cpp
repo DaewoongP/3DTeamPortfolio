@@ -95,7 +95,7 @@ void CLightStand::Tick(_float fTimeDelta)
 	if (true == m_isFireOn && false == pGameInstance->Is_SoundPlaying(m_iSound0))
 	{
 		if(false == pGameInstance->Is_SoundPlaying(m_iSound1))
-			m_iSound1 = pGameInstance->Play_Sound(TEXT("Firing.wav"), 0.25f);
+			m_iSound1 = pGameInstance->Play_Sound(TEXT("Firing.wav"), 0.25f* pGameInstance->Get_SoundPower(m_pTransform->Get_Position()));
 	}
 
 	pGameInstance->Set_ChannelVolume(m_iSound1, 0.25f * pGameInstance->Get_SoundPower(m_pTransform->Get_Position()));
