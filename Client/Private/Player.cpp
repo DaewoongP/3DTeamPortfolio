@@ -338,10 +338,10 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	m_isPreLumos = m_isLumosOn;
 
-	for (_uint i = 0; i < m_vecPotionParticle.size(); ++i)
+	/*for (_uint i = 0; i < m_vecPotionParticle.size(); ++i)
 	{
 		m_vecPotionParticle[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
-	}
+	}*/
 
 	for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
 	{
@@ -880,12 +880,12 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Max_Aura"),
+	/*if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Max_Aura"),
 		TEXT("Com_Max_Aura"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[8]))))
 	{
 		__debugbreak();
 		return E_FAIL;
-	}
+	}*/
 
 	m_vecPlayer_StateParicle.resize(3);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Player_Hit_Particle"),
