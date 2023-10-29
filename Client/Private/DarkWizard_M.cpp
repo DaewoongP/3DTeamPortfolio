@@ -601,7 +601,7 @@ HRESULT CDarkWizard_M::Add_Components()
 
 		Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::MONSTER;
 		Desc.pHealth = m_pHealth;
-		lstrcpy(Desc.wszObjectLevel, TEXT("3"));
+		lstrcpy(Desc.wszObjectLevel, TEXT("35"));
 		lstrcpy(Desc.wszObjectName, TEXT("검은마법사"));
 
 		BEGININSTANCE;

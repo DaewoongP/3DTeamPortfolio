@@ -1051,7 +1051,7 @@ HRESULT CConjuredDragon::Add_Components()
 
 		/* For.Com_Health */
 		CHealth::HEALTHDESC HealthDesc;
-		HealthDesc.iMaxHP = 1000;
+		HealthDesc.iMaxHP = 5000;
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 			throw TEXT("Com_Health");
@@ -1116,8 +1116,8 @@ HRESULT CConjuredDragon::Add_Components()
 
 		Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::BOSS;
 		Desc.pHealth = m_pHealth;
-		lstrcpy(Desc.wszObjectLevel, TEXT("99"));
-		lstrcpy(Desc.wszObjectName, TEXT("Bone Dragon"));
+		lstrcpy(Desc.wszObjectLevel, TEXT("60"));
+		lstrcpy(Desc.wszObjectName, TEXT("µå·¡°ï ¶õ·Ï"));
 
 		BEGININSTANCE;
 		m_pUI_HP = static_cast<CUI_Group_Enemy_HP*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"), &Desc));
