@@ -373,8 +373,32 @@ void CPlayer::Tick(_float fTimeDelta)
 		case 7:
 		case 8:
 			m_pWindParticle->Get_EmissionModuleRef().fRateOverTime = 0.f;
+			if (m_iCurrentFlySoundChannel != -1)
+			{
+				CGameInstance* pGameInstance = CGameInstance::GetInstance();
+				Safe_AddRef(pGameInstance);
+				if (pGameInstance->Get_ChannelVolume(m_iCurrentFlySoundChannel)<=0.05f)
+				{
+					m_iCurrentFlySoundChannel = -1;
+					m_isFlySoundPlaying = false;
+					pGameInstance->Stop_Sound(m_iCurrentFlySoundChannel);
+				}
+				else 
+				{
+					pGameInstance->Set_ChannelVolume(m_iCurrentFlySoundChannel, pGameInstance->Get_ChannelVolume(m_iCurrentFlySoundChannel) * 0.95);
+				}
+				Safe_Release(pGameInstance);
+			}
 			break;
 		default:
+			if (!m_isFlySoundPlaying)
+			{
+				CGameInstance* pGameInstance = CGameInstance::GetInstance();
+				Safe_AddRef(pGameInstance);
+				m_isFlySoundPlaying = true;
+				m_iCurrentFlySoundChannel = pGameInstance->Play_Sound(TEXT("Bloom_Wind2.wav"), 1.f);
+				Safe_Release(pGameInstance);
+			}
 			m_pWindParticle->Get_EmissionModuleRef().fRateOverTime = iFast * 5.f;
 			break;
 		}
@@ -392,6 +416,22 @@ void CPlayer::Tick(_float fTimeDelta)
 	}
 	else
 	{
+		if (m_iCurrentFlySoundChannel != -1)
+		{
+			CGameInstance* pGameInstance = CGameInstance::GetInstance();
+			Safe_AddRef(pGameInstance);
+			if (pGameInstance->Get_ChannelVolume(m_iCurrentFlySoundChannel) <= 0.05f)
+			{
+				m_iCurrentFlySoundChannel = -1;
+				m_isFlySoundPlaying = false;
+				pGameInstance->Stop_Sound(m_iCurrentFlySoundChannel);
+			}
+			else
+			{
+				pGameInstance->Set_ChannelVolume(m_iCurrentFlySoundChannel, pGameInstance->Get_ChannelVolume(m_iCurrentFlySoundChannel) * 0.95);
+			}
+			Safe_Release(pGameInstance);
+		}
 		m_pWindParticle->Get_EmissionModuleRef().fRateOverTime = 0.f;
 	}
 

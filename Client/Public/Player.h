@@ -305,6 +305,9 @@ private:
 	
 	_int	m_iSoundTest = { 0 };
 
+	_bool m_isFlySoundPlaying = { false };
+	_int  m_iCurrentFlySoundChannel = { -1 };
+
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
