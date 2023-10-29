@@ -529,7 +529,7 @@ void CUI_Group_SkillTap::Drag_Slot()
 		{
 			if (pSlot->Get_Collision())
 			{
-				static_cast<CPlayer*>(m_pOwner)->Set_Spell_Botton(iIndexSlot, Translation_Spell(m_eSlectedSkill));
+				static_cast<CPlayer*>(m_pOwner)->Set_Spell_Botton(iIndexSlot, Translation_Spell(m_eSlectedSkill), true);
 				pSlot->Set_Texture(m_SkillTextures[m_eSlectedSkill]);
 				pSlot->Set_SkillBackType(m_eSlectedSkill);
 

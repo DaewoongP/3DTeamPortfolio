@@ -448,7 +448,9 @@ _uint CUI_Potion_Tap::Set_CurTapItem()
 	for (auto& pFrame : m_pFrames)
 	{
 		if (pFrame->Get_Collision())
-			return iIndex;
+		{
+				return iIndex;
+		}
 		
 		++iIndex;
 	}

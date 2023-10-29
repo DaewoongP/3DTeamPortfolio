@@ -42,10 +42,16 @@ void CLevel_Smith::Tick(_float fTimeDelta)
 	{
 		if (!lstrcmp(TEXT("Scene_Main"), pGameInstance->Get_CurrentSceneTag()))
 		{
+			BEGININSTANCE;
+			pGameInstance->Play_Sound(TEXT("Field.wav"), 1.0f);
+			ENDINSTANCE
 			pGameInstance->Set_CurrentScene(TEXT("Scene_FieldGuide"), false);
 		}
 		else
 		{
+			BEGININSTANCE;
+			pGameInstance->Play_Sound(TEXT("Field.wav"), 1.0f);
+			ENDINSTANCE
 			pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
 		}
 	}

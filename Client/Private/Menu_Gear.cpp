@@ -518,8 +518,11 @@ void CMenu_Gear::Select_Gear()
 	{
 		if (nullptr != m_pInventory && pSlot->Get_Clicked())
 		{
+			BEGININSTANCE;
+			pGameInstance->Play_Sound(TEXT("Switch_Tap.wav"), 1.0f);
+			ENDINSTANCE
 			m_pInventory->Set_Open(true);
-			m_pInventory->Set_CurItemtype(ITEMTYPE(iIndex));
+			m_pInventory->Set_CurItemtype(ITEMTYPE(iIndex));			
 			m_isOpen = false;
 			return;
 		}

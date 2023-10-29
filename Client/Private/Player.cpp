@@ -91,7 +91,7 @@ void CPlayer::Set_Protego_Collision(CTransform* _pTransform, CEnemy::ATTACKTYPE 
 	}
 }
 
-void CPlayer::Set_Spell_Botton(_uint _Button, SPELL _eSpell)
+void CPlayer::Set_Spell_Botton(_uint _Button, SPELL _eSpell, _bool isSound)
 {
 	if (SKILLINPUT_1 > _Button || SKILLINPUT_4 < _Button || ACCIO > _eSpell || WINGARDIUMLEVIOSA < _eSpell)
 	{
@@ -107,6 +107,14 @@ void CPlayer::Set_Spell_Botton(_uint _Button, SPELL _eSpell)
 	m_UI_Group_Skill_01->Set_SpellTexture((CUI_Group_Skill::KEYLIST)_Button, _eSpell);
 
 	m_vecSpellCheck[_Button] = _eSpell;
+
+	if (isSound)
+	{
+		BEGININSTANCE;
+		pGameInstance->Play_Sound(TEXT("Skill_Change_Sound.wav"), 1.0f);
+		ENDINSTANCE
+	}
+
 	return;
 }
 

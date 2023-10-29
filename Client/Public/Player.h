@@ -111,7 +111,7 @@ public:
 	void Set_FocusOn(_bool isFocus) { m_isFocusOn = isFocus; }
 	void Set_Invisible(_bool isInvisible) { m_isInvisible = isInvisible; }
 
-	void Set_Spell_Botton(_uint _Button, SPELL _eSpell);
+	void Set_Spell_Botton(_uint _Button, SPELL _eSpell, _bool isSound = false);
 
 	void Set_Fix_Mouse(_bool _Fix_Mouse) { m_isFixMouse = _Fix_Mouse; }
 	void AddForce_Impulse(_float3 vfForce) { m_pRigidBody->Add_Force_OtherCall(vfForce); }

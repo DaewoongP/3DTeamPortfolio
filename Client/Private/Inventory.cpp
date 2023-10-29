@@ -339,6 +339,7 @@ void CInventory::Swap_Item(_uint Index, ITEMTYPE eType)
 {
 	if (nullptr == m_pPlayerCurItems[eType])
 	{
+
 		m_pPlayerCurItems[eType] = m_pItems[eType][Index];
 		m_pItems[eType][Index] = nullptr;
 		m_pItems[eType].erase(m_pItems[eType].begin() + Index);
@@ -351,6 +352,10 @@ void CInventory::Swap_Item(_uint Index, ITEMTYPE eType)
 	}
 	
 	m_pUI_Inventory[eType]->Set_GearInventoryItem(m_pItems[eType]);
+	
+	BEGININSTANCE;
+	pGameInstance->Play_Sound(TEXT("Item_Equip.wav"), 1.0f);
+	ENDINSTANCE
 
 	CGear_Item* pGearItem = static_cast<CGear_Item*>(m_pPlayerCurItems[eType]);
 	if (nullptr != pGearItem)

@@ -755,7 +755,7 @@ void CCard_Fig::Play_Script(_float fTimeDelta)
 	if (m_isEnterSanctum)
 	{
 		m_isPlayScript = true;
-		m_isCreateDragon = false;
+		m_isEnterSanctum = false;
 		m_pScripts[ENTERSANCTUM]->Reset_Script();
 		m_pScripts[ENTERSANCTUM]->Set_isRender(true);
 		m_iScriptIndex = ENTERSANCTUM;
