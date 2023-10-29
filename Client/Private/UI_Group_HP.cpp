@@ -205,7 +205,7 @@ CUI::UIDESC CUI_Group_HP::Load_File(const HANDLE hFile)
 HRESULT CUI_Group_HP::Add_Fonts(_tchar* wszLevel)
 {
 	CUI_Font::FONTDESC Desc;
-	lstrcpy(Desc.m_pText, wszLevel);
+	lstrcpy(Desc.m_pText, TEXT(""));
 	Desc.m_vPos = { 1228.f, 665.f };
 	Desc.m_vColor = _float4(0.f, 1.f, 0.f, 1.f);
 	Desc.m_fRotation = { 0.f };

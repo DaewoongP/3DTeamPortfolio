@@ -55,6 +55,8 @@ void CRobe_Arcane::Equipment()
 {
 	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Robe_Arcane")
 		, CCustomModel::MESHTYPE::ROBE);
+
+	m_pPlayerModel->Set_Top_For_Robe(LEVEL_STATIC);
 }
 
 CRobe_Arcane* CRobe_Arcane::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)

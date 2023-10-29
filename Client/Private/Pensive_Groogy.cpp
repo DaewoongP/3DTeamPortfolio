@@ -52,7 +52,6 @@ void CPensive_Groogy::OnStateTick()
 		Change_Animation(m_wszAnimationTag[m_iMotionIndex]);
 		if (m_iMotionIndex > 1)
 		{
-			cout << "기지개를 실행합니다." << endl;
 			*m_StateMachineDesc.pAttackType = CPensive::ATTACK_SCREAM;
 			Change_Animation((m_wszAnimationTag[m_iMotionIndex]));
 			Set_StateMachine(TEXT("Physical_Attack"));

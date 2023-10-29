@@ -282,7 +282,7 @@ void CAnimation::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _flo
 	}
 }
 
-void CAnimation::Invalidate_Frame(_float fTimeDelta, _float4x4 PivotMatrix, _Inout_ vector<_int>* iSoundChannelVec,const _float4x4* pWorldMatrix)
+void CAnimation::Invalidate_Frame(_float fTimeDelta, _float4x4 PivotMatrix, _Inout_ vector<pair<_int, _float>>* iSoundChannelVec,const _float4x4* pWorldMatrix)
 {
 	if (m_pNotify != nullptr)
 	{

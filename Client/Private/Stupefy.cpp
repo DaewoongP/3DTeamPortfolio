@@ -148,6 +148,8 @@ void CStupefy::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			CCamera_Manager::SHAKE_POWER_DECRECENDO,
 			vRandomAxis);
 
+		pGameInstance->Play_Sound(TEXT("Stupefy.wav"), pGameInstance->Get_SoundPower(m_pTransform->Get_Position()));
+
 		ENDINSTANCE;
 #pragma endregion
 	}

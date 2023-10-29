@@ -25,7 +25,7 @@ HRESULT CEvent_Enter_Sanctum::Initialize(void* pArg)
 	/* Set Monsters */
 	BEGININSTANCE;
 
-	CPlayer* pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+	CPlayer* pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
 	if (nullptr == pPlayer)
 	{
 		ENDINSTANCE;
@@ -40,6 +40,7 @@ HRESULT CEvent_Enter_Sanctum::Initialize(void* pArg)
 	{
 		wstring wstrObjTag = Pair.first;
 
+		// 스폰하는 몬스터 태그입니다 오해 ㄴㄴ
 		if (wstring::npos != wstrObjTag.find(TEXT("Torch")))
 		{
 			m_pMonsters.emplace(wstrObjTag, static_cast<CEnemy*>(Pair.second));

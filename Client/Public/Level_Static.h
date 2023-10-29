@@ -24,7 +24,6 @@ private:
 	HRESULT Ready_Layer_UI(const _tchar * pLayerTag);
 	HRESULT Ready_Layer_FieldGuide_UI(const _tchar * pLayerTag);
 	HRESULT Ready_Layer_Menu_UI(const _tchar * pLayerTag);
-
 private:
 	HRESULT Add_Sound();
 	HRESULT Add_Scene();

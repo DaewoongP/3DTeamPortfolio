@@ -57,7 +57,7 @@ public:
 	void	Change_Animation(const wstring& wstrAnimationTag, ANIMTYPE eType = UPPERBODY);
 	void	Change_Animation(_uint iAnimIndex, ANIMTYPE eType = UPPERBODY);
 	//루트애니메이션을 사용할경우 ctransform을 넣어준다.
-	void	Play_Animation(_float fTimeDelta, _Inout_ vector<_int>* iSoundChannelVec, ANIMTYPE eType = UPPERBODY, CTransform* pTransform = nullptr);
+	void	Play_Animation(_float fTimeDelta, _Inout_ vector<pair<_int, _float>>* iSoundChannelVec, ANIMTYPE eType = UPPERBODY, CTransform* pTransform = nullptr);
 	HRESULT Find_BoneIndex(const _tchar* pBoneName, _Inout_ _uint* iIndex);
 	void	Set_CurrentAnimIndex(_uint iIndex, ANIMTYPE eType = UPPERBODY);
 	void	Set_RootBone(_uint iIndex) { m_iRootBoneIndex = iIndex; }

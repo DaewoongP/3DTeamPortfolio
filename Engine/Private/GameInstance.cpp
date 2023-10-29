@@ -103,6 +103,8 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	NULL_CHECK_RETURN_MSG(m_pInput_Device, , TEXT("Input_Device NULL"));
 	NULL_CHECK_RETURN_MSG(m_pCollision_Manager, , TEXT("Collsion_Manager NULL"));
 
+	m_pSound_Manager->Tick();
+
 	m_pTimer_Manager->Tick(fTimeDelta);
 
 	m_pInput_Device->Tick();
@@ -637,6 +639,13 @@ HRESULT CGameInstance::Set_ChannelVolume(_int iChannel, _float fVolume)
 	NULL_CHECK_RETURN_MSG(m_pSound_Manager, E_FAIL, TEXT("Sound NULL"));
 
 	return m_pSound_Manager->Set_ChannelVolume(iChannel, fVolume);
+}
+
+_float CGameInstance::Get_ChannelVolume(_int iChannel)
+{
+	NULL_CHECK_RETURN_MSG(m_pSound_Manager, 0.f, TEXT("Sound NULL"));
+
+	return m_pSound_Manager->Get_ChannelVolume(iChannel);
 }
 
 HRESULT CGameInstance::Get_MouseRay(ID3D11DeviceContext* pContext, HWND hWnd, _float4x4 PickingWorldMatrix_Inverse, _Inout_ _float4* vRayPos, _Inout_ _float4* vRayDir)

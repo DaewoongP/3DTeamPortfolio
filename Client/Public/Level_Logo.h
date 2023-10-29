@@ -16,6 +16,9 @@ public:
 	virtual HRESULT Render();
 
 private:
+	_int m_iChennelNum = { 0 };
+
+private:
 	HRESULT Ready_Layer_BackGround(const _tchar* pLayerTag);
 
 public:

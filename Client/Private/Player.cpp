@@ -342,7 +342,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	m_isPreLumos = m_isLumosOn;
 
-	for (_uint i = 0; i < m_vecPotionParticle.size(); ++i)
+	for (_uint i = 0; i < m_vecPotionParticle.size()-1; ++i)
 	{
 		m_vecPotionParticle[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
 	}
@@ -374,8 +374,32 @@ void CPlayer::Tick(_float fTimeDelta)
 		case 7:
 		case 8:
 			m_pWindParticle->Get_EmissionModuleRef().fRateOverTime = 0.f;
+			if (m_iCurrentFlySoundChannel != -1)
+			{
+				CGameInstance* pGameInstance = CGameInstance::GetInstance();
+				Safe_AddRef(pGameInstance);
+				if (pGameInstance->Get_ChannelVolume(m_iCurrentFlySoundChannel)<=0.05f)
+				{
+					m_iCurrentFlySoundChannel = -1;
+					m_isFlySoundPlaying = false;
+					pGameInstance->Stop_Sound(m_iCurrentFlySoundChannel);
+				}
+				else 
+				{
+					pGameInstance->Set_ChannelVolume(m_iCurrentFlySoundChannel, pGameInstance->Get_ChannelVolume(m_iCurrentFlySoundChannel) * 0.95f);
+				}
+				Safe_Release(pGameInstance);
+			}
 			break;
 		default:
+			if (!m_isFlySoundPlaying)
+			{
+				CGameInstance* pGameInstance = CGameInstance::GetInstance();
+				Safe_AddRef(pGameInstance);
+				m_isFlySoundPlaying = true;
+				m_iCurrentFlySoundChannel = pGameInstance->Play_Sound(TEXT("Bloom_Wind2.wav"), 1.f);
+				Safe_Release(pGameInstance);
+			}
 			m_pWindParticle->Get_EmissionModuleRef().fRateOverTime = iFast * 5.f;
 			break;
 		}
@@ -393,6 +417,22 @@ void CPlayer::Tick(_float fTimeDelta)
 	}
 	else
 	{
+		if (m_iCurrentFlySoundChannel != -1)
+		{
+			CGameInstance* pGameInstance = CGameInstance::GetInstance();
+			Safe_AddRef(pGameInstance);
+			if (pGameInstance->Get_ChannelVolume(m_iCurrentFlySoundChannel) <= 0.05f)
+			{
+				m_iCurrentFlySoundChannel = -1;
+				m_isFlySoundPlaying = false;
+				pGameInstance->Stop_Sound(m_iCurrentFlySoundChannel);
+			}
+			else
+			{
+				pGameInstance->Set_ChannelVolume(m_iCurrentFlySoundChannel, pGameInstance->Get_ChannelVolume(m_iCurrentFlySoundChannel) * 0.95f);
+			}
+			Safe_Release(pGameInstance);
+		}
 		m_pWindParticle->Get_EmissionModuleRef().fRateOverTime = 0.f;
 	}
 
@@ -408,7 +448,8 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
-	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")) || pGameInstance->Is_Playing_CutScene() == true)
+	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")) || pGameInstance->Is_Playing_CutScene() == true
+		 || m_isInteractionUI == true)
 	{
 		ENDINSTANCE;
 		return;
@@ -924,11 +965,6 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
-
-
-
-
-
 	m_vecPlayer_StateParicle.resize(3);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Player_Hit_Particle"),
 		TEXT("Com_Player_HitParticle"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[0]))))
@@ -1316,7 +1352,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = CRUCIO;
 		magicInitDesc.fInitCoolTime = 20.f;
-		magicInitDesc.iDamage = 0;
+		magicInitDesc.iDamage = 444;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
@@ -1748,7 +1784,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Hair"),
-		CCustomModel::HAIR)))
+		CCustomModel::HAIR, _float4(0.f, 0.f, 0.f, 1.f))))
 	{
 		MSG_BOX("Failed Add MeshPart Hair");
 

@@ -42,12 +42,16 @@ void CGameObject::Tick(_float fTimeDelta)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	for (auto iter = m_SoundChannel.begin(); iter < m_SoundChannel.end();)
+	for (auto pair = m_SoundChannel.begin(); pair < m_SoundChannel.end();)
 	{
-		if (false == pGameInstance->Is_SoundPlaying(*iter))
-			iter = m_SoundChannel.erase(iter);
+		if (false == pGameInstance->Is_SoundPlaying(pair->first))
+			pair = m_SoundChannel.erase(pair);
 		else
-			iter++;
+		{
+			pGameInstance->Set_ChannelVolume(pair->first,
+				pair->second * pGameInstance->Get_SoundPower(m_pTransform->Get_Position()));
+			pair++;
+		}
 	}
 
 	Safe_Release(pGameInstance);
@@ -78,7 +82,7 @@ void CGameObject::Stop_Sound()
 
 	for (auto& iChannel : m_SoundChannel)
 	{
-		pGameInstance->Stop_Sound(iChannel);
+		pGameInstance->Stop_Sound(iChannel.first);
 	}
 
 	Safe_Release(pGameInstance);

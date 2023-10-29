@@ -59,13 +59,6 @@ void CEdurusPotion_Item::Use(_float3 vPlayPos)
 	__super::Use(vPlayPos);
 
 	m_pPlayer->DefenceTiming();
-
-#ifdef _DEBUG
-	
-	cout << "방어력이 증가했어요" << endl;
-
-#endif // _DEBUG
-
 }
 
 void CEdurusPotion_Item::CreateTool(void* pArg)

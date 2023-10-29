@@ -619,9 +619,12 @@ HRESULT CMonster_Window::Create_Dummy()
 				return S_OK;
 			}
 
+			wstring wstrNum = to_wstring(m_MonsterDatas.size());
 			MonsterData.pDummy->Add_Model_Component(m_wstrPrototypeModelTags[m_iPrototypeTableIndex].c_str());
 			MonsterData.pDummy->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxAnimMesh"));
 			MonsterData.pDummy->Get_Transform()->Set_Position(vPos);
+			string strComponentTag = wstrToStr(MonsterData.wstrTag + TEXT("_") + wstrNum).c_str();
+			strcpy_s(MonsterData.szComponentTag, strComponentTag.c_str());
 
 			m_MonsterDatas.push_back(MonsterData);
 			Safe_AddRef(MonsterData.pDummy);

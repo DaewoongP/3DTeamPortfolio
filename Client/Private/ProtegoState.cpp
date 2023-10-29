@@ -49,12 +49,16 @@ void CProtegoState::Late_Tick(_float fTimeDelta)
 
 void CProtegoState::OnStateEnter(void* _pArg)
 {
+	BEGININSTANCE;
+	
 	//미리 시전 중이다.
 	if (nullptr == _pArg)
 	{
 		//시작 애니메이션
 		//m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Protego_Start_anm"));
 		Change_Animation_FlyOrNot(TEXT("Hu_Cmbt_Protego_Start_anm"), false);
+		pGameInstance->Play_Sound(TEXT("Protego_%d.wav"), 3, 1.0f);
+
 		*m_StateMachineDesc.pisFinishAnimation = false;
 	}
 	//시전중에 맞았다!!	`
@@ -65,7 +69,10 @@ void CProtegoState::OnStateEnter(void* _pArg)
 		if (nullptr == ProtegoStateDesc->pTransform)
 		{
 			Change_Animation_FlyOrNot(TEXT("Hu_Cmbt_Protego_Start_anm"), false);
+			pGameInstance->Play_Sound(TEXT("Protego_%d.wav"), 3, 1.0f);
+
 			*m_StateMachineDesc.pisFinishAnimation = false;
+			ENDINSTANCE;
 			return;
 		}
 
@@ -78,7 +85,7 @@ void CProtegoState::OnStateEnter(void* _pArg)
 		//맞았을 때 애니메이션 재생
 		if (true == m_isHit)
 		{
-			BEGININSTANCE;
+			
 
 			//쉐이크를 위한 변수
 
@@ -98,6 +105,7 @@ void CProtegoState::OnStateEnter(void* _pArg)
 			{
 				//애니메이션 실행
 				Change_Animation_FlyOrNot(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_anm"), false);
+				pGameInstance->Play_Sound(TEXT("Paring.wav"), 1.0f);
 
 				// maintimer를 0.2배속으로 0.4초동안 처리하겠다
 				pGameInstance->Set_SlowTime(TEXT("MainTimer"), 0.2f, 0.4f);
@@ -118,7 +126,8 @@ void CProtegoState::OnStateEnter(void* _pArg)
 			{
 				//애니메이션 실행
 				Change_Animation_FlyOrNot(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_Slide_anm"), false);
-				
+				pGameInstance->Play_Sound(TEXT("Paring.wav"), 1.0f);
+
 				fPower *= 5.0f;
 
 				// maintimer를 0.2배속으로 0.4초동안 처리하겠다

@@ -245,6 +245,8 @@ void CLevioso::Ready_Begin()
 {
 	ADD_DECREASE_LIGHT(m_vStartPosition, 10.f, 0.2f, m_vLightColor);
 	__super::Ready_Begin();
+
+	Levioso_Sound();
 }
 
 void CLevioso::Ready_DrawMagic()
@@ -407,6 +409,13 @@ HRESULT CLevioso::Add_Components()
 		return E_FAIL;
 	}
 	return S_OK;
+}
+
+void CLevioso::Levioso_Sound()
+{
+	BEGININSTANCE;
+	pGameInstance->Play_Sound(TEXT("Levioso.wav"), 1.f);
+	ENDINSTANCE;
 }
 
 CLevioso* CLevioso::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)

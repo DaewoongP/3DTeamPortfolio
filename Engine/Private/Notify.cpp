@@ -48,7 +48,7 @@ HRESULT CNotify::Initialize()
 	return S_OK;
 }
 
-void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameIndex, _Inout_ _float* fSpeed, _Inout_ vector<_int>* iSoundChannelVecconst,const _float4x4* pWorldMatrix, _float4x4 PivotMatrix)
+void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameIndex, _Inout_ _float* fSpeed, _Inout_ vector<pair<_int, _float>>* iSoundChannelVecconst, const _float4x4* pWorldMatrix, _float4x4 PivotMatrix)
 {
 	if (0.f == fTimeAcc)
 	{
@@ -129,7 +129,7 @@ void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameI
 				_int returnValue = pGameInstance->Play_Sound(pParticleFrame->wszSoundTag, pParticleFrame->fVolum);
 				if (returnValue != -1 && iSoundChannelVecconst != nullptr)
 				{
-					iSoundChannelVecconst->push_back(returnValue);
+					iSoundChannelVecconst->push_back({ returnValue, pParticleFrame->fVolum });
 				}
 					
 				Safe_Release(pGameInstance);
@@ -149,10 +149,12 @@ void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameI
 				if (pParticleFrame->BindBoneMatrix == nullptr)
 				{
 					pGameInstance->Play_Particle((pParticleFrame->wszParticleTag), _float3(0,0,0));
-					cout << "Please Bind Bone to ParticleNotify :" << Find_Frame_Key((*pCurrentKeyFrameIndex)) <<"\n";
 				}
 				else 
 				{
+					if (nullptr == pWorldMatrix)
+						break;
+
 					//여기에 pivot matrix 곱해주기 모델 가져와야하네?
 					PositionMatrix = pParticleFrame->OffsetMatrix * (*pParticleFrame->BindBoneMatrix)  * PivotMatrix * (*pWorldMatrix);
 
@@ -354,8 +356,6 @@ void CNotify::Notify_NULL_WarningAlam()
 	_char szName[MAX_PATH]="";
 
 	WCharToChar(m_KeyFrames[m_iCurrentKeyFramesIndex].first.c_str(), szName);
-
-	cout << szName << " : Please Input Notify Action" << endl;
 }
 void CNotify::Find_SpeedFrame()
 {

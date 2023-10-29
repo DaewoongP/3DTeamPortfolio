@@ -21,6 +21,12 @@ HRESULT CSound_Manager::Initialize()
 	return S_OK;
 }
 
+void CSound_Manager::Tick()
+{
+	if (nullptr != m_pSystem)
+		m_pSystem->update();
+}
+
 HRESULT CSound_Manager::Add_Sounds(const _tchar* pSoundFilePath)
 {
 	// 사운드 파일 저장
@@ -88,9 +94,6 @@ _int CSound_Manager::Play_Sound(const _tchar* pSoundTag, _float fVolume)
 	if (FMOD_OK != m_Channels[m_iChannel]->setVolume(fVolume))
 		return -1;
 
-	if (FMOD_OK != m_pSystem->update())
-		return -1;
-
 	return m_iChannel;
 }
 
@@ -128,7 +131,6 @@ _int CSound_Manager::Play_BGM(const _tchar* pSoundTag, _float fVolume)
 
 	m_Channels[m_iChannel]->setMode(FMOD_LOOP_NORMAL);
 	m_Channels[m_iChannel]->setVolume(fVolume);
-	m_pSystem->update();
 
 	return m_iChannel;
 }
@@ -189,9 +191,20 @@ HRESULT CSound_Manager::Set_ChannelVolume(_int iChannel, _float fVolume)
 		return E_FAIL;
 
 	m_Channels[iChannel]->setVolume(fVolume);
-	m_pSystem->update();
 
 	return S_OK;
+}
+
+_float CSound_Manager::Get_ChannelVolume(_int iChannel)
+{
+	if (0 > iChannel ||
+		MAX_CHANNEL <= iChannel)
+		return 0.f;
+
+	_float fVolume = { 0.f };
+	m_Channels[iChannel]->getVolume(&fVolume);
+
+	return fVolume;
 }
 
 HRESULT CSound_Manager::Load_SoundFile(const _tchar* pSoundFile)

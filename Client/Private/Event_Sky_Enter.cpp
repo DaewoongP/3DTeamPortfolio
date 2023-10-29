@@ -116,6 +116,7 @@ void CEvent_Sky_Enter::Check_Event_Play_CutScene()
 
 			//페이드 인
 			m_pRenderer->FadeIn(1.0f, _float4(1.0f, 1.0f, 1.0f, 1.0f));
+			m_isFinished = true;
 		}
 	}
 		break;

@@ -145,9 +145,6 @@ void CTreasure_Chest::Tick(_float fTimeDelta)
 			m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_SPIDER_FANG);
 			m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_DITTANY_LEAVES);
 			m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_FLUXWEED_STEM);
-#ifdef _DEBUG
-			cout << "보물 상자가 열리고 어떤 아이템 획득" << '\n';
-#endif // _DEBUG
 		}
 
 		ENDINSTANCE;

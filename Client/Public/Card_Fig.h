@@ -65,6 +65,9 @@ public:
 	void		Set_CreateDragon(_bool isCreate = true) {
 		m_isCreateDragon = isCreate;
 	}
+	void		Set_Interaction(_bool isInteraction = true) {
+		m_isInteraction = isInteraction;
+	}
 
 public:
 	void Spawn_Fig(CGameObject* pTarget);
@@ -127,6 +130,7 @@ private: /* Notify */
 
 private:
 	_bool		m_isShowCard = { false };
+	_bool		m_isInteraction= { false };
 	_bool		m_isPlayScript = { false };
 	_uint		m_iScriptIndex = { 0 };
 

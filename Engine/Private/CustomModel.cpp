@@ -29,19 +29,51 @@ _uint CCustomModel::Get_NumMeshes(const _uint& _iMeshPartsIndex) const
 		return E_FAIL;
 	}
 
-	if (nullptr == m_MeshParts[_iMeshPartsIndex])
+	if (nullptr == m_MeshParts[_iMeshPartsIndex].pMeshParts)
 		return 0;
 
-	return m_MeshParts[_iMeshPartsIndex]->Get_NumMeshes();
+	return m_MeshParts[_iMeshPartsIndex].pMeshParts->Get_NumMeshes();
 }
 
 void CCustomModel::Set_WindVelocity(_float3 vWindVelocity)
 {
 	for (auto& Mesh : m_MeshParts)
 	{
-		if (nullptr != Mesh)
-			Mesh->Set_WindVelocity(vWindVelocity);
+		if (nullptr != Mesh.pMeshParts)
+			Mesh.pMeshParts->Set_WindVelocity(vWindVelocity);
 	}
+}
+
+HRESULT CCustomModel::Set_Top_For_Robe(const _uint& _iLevelIndex)
+{
+	if (true == m_isRobeTop)
+		return S_OK;
+
+	wstring wstrPrototypeTag = m_MeshParts[TOP].wstrPrototypeTag;
+	wstrPrototypeTag += TEXT("_A");
+	
+	if (FAILED(Add_MeshParts(_iLevelIndex, wstrPrototypeTag, TOP)))
+		return E_FAIL;
+
+	m_isRobeTop = true;
+
+	return S_OK;
+}
+
+HRESULT CCustomModel::Set_Top_For_NonRobe(const _uint& _iLevelIndex)
+{
+	if (false == m_isRobeTop)
+		return S_OK;
+
+	wstring wstrPrototypeTag = m_MeshParts[TOP].wstrPrototypeTag;
+	wstrPrototypeTag = wstrPrototypeTag.substr(0, wstrPrototypeTag.size() - 2);
+
+	if (FAILED(Add_MeshParts(_iLevelIndex, wstrPrototypeTag, TOP)))
+		return E_FAIL;
+
+	m_isRobeTop = false;
+
+	return S_OK;
 }
 
 HRESULT CCustomModel::Initialize_Prototype(TYPE eType, const wstring& _wstrModelFilePath, _float4x4 _PivotMatrix)
@@ -74,10 +106,10 @@ void CCustomModel::Tick(const _uint& _iMeshPartsIndex, const _uint& _iMeshIndex,
 		return;
 	}
 
-	if (nullptr == m_MeshParts[_iMeshPartsIndex])
+	if (nullptr == m_MeshParts[_iMeshPartsIndex].pMeshParts)
 		return;
 
-	m_MeshParts[_iMeshPartsIndex]->Tick(_iMeshIndex, _fTimeDelta);
+	m_MeshParts[_iMeshPartsIndex].pMeshParts->Tick(_iMeshIndex, _fTimeDelta);
 }
 
 HRESULT CCustomModel::Render(const _uint& _iMeshPartsIndex, const _uint& _iMeshIndex)
@@ -88,30 +120,30 @@ HRESULT CCustomModel::Render(const _uint& _iMeshPartsIndex, const _uint& _iMeshI
 		return E_FAIL;
 	}
 
-	if (nullptr == m_MeshParts[_iMeshPartsIndex])
+	if (nullptr == m_MeshParts[_iMeshPartsIndex].pMeshParts)
 		return S_OK;
 
-	return m_MeshParts[_iMeshPartsIndex]->Render(_iMeshIndex);
+	return m_MeshParts[_iMeshPartsIndex].pMeshParts->Render(_iMeshIndex);
 }
 
 HRESULT CCustomModel::Bind_Material(CShader* _pShader, const char* _pConstantName,
 	const _uint& _iMeshPartsIndex, const _uint& _iMeshIndex, Engine::TextureType _MaterialType)
 {
-	if (nullptr == m_MeshParts[_iMeshPartsIndex])
+	if (nullptr == m_MeshParts[_iMeshPartsIndex].pMeshParts)
 		return S_OK;
 
-	return m_MeshParts[_iMeshPartsIndex]->Bind_Material(_pShader, _pConstantName, _iMeshIndex, _MaterialType);
+	return m_MeshParts[_iMeshPartsIndex].pMeshParts->Bind_Material(_pShader, _pConstantName, _iMeshIndex, _MaterialType);
 }
 
 HRESULT CCustomModel::Bind_BoneMatrices(CShader* pShader, const char* pConstantName, const _uint& _iMeshPartsIndex, const _uint& _iMeshIndex)
 {
-	if (nullptr == m_MeshParts[_iMeshPartsIndex])
+	if (nullptr == m_MeshParts[_iMeshPartsIndex].pMeshParts)
 		return S_OK;
 
 	_float4x4		BoneMatrices[MAX_SHADERMATRIX];
 	ZeroMemory(BoneMatrices, sizeof(_float4x4) * MAX_SHADERMATRIX);
 
-	m_MeshParts[_iMeshPartsIndex]->Get_Matrices(_iMeshIndex, m_Bones, BoneMatrices, XMLoadFloat4x4(&m_PivotMatrix));
+	m_MeshParts[_iMeshPartsIndex].pMeshParts->Get_Matrices(_iMeshIndex, m_Bones, BoneMatrices, XMLoadFloat4x4(&m_PivotMatrix));
 
 	pShader->Bind_Matrices(pConstantName, BoneMatrices, MAX_SHADERMATRIX);
 
@@ -120,10 +152,10 @@ HRESULT CCustomModel::Bind_BoneMatrices(CShader* pShader, const char* pConstantN
 
 HRESULT CCustomModel::Bind_Color(CShader* _pShader, const char* _pConstantName, const _uint& _iMeshPartsIndex)
 {
-	if (nullptr == m_MeshParts[_iMeshPartsIndex])
+	if (nullptr == m_MeshParts[_iMeshPartsIndex].pMeshParts)
 		return S_OK;
 
-	_float4 vColor = m_MeshParts[_iMeshPartsIndex]->Get_Parts_Color();
+	_float4 vColor = m_MeshParts[_iMeshPartsIndex].pMeshParts->Get_Parts_Color();
 	_pShader->Bind_RawValue(_pConstantName, &vColor, sizeof(_float4));
 
 	return S_OK;
@@ -145,7 +177,16 @@ HRESULT CCustomModel::Add_MeshParts(const _uint& _iLevelIndex, const wstring& _w
 	MeshPartsDesc.pBones = &m_Bones;
 	MeshPartsDesc.szClothDataFilePath = _szClothDataFilePath;
 	MeshPartsDesc.vColor = _vColor;
-	CMeshParts* pMeshParts = static_cast<CMeshParts*>(pGameInstance->Clone_Component(_iLevelIndex, _wstrPrototypeTag.c_str(), &MeshPartsDesc));
+
+	CMeshParts* pMeshParts = { nullptr };
+	if (TOP == _eMeshPartsType &&
+		true == m_isRobeTop)
+	{
+		wstring wstrPrototypeTag = _wstrPrototypeTag + TEXT("_A");
+		pMeshParts = static_cast<CMeshParts*>(pGameInstance->Clone_Component(_iLevelIndex, wstrPrototypeTag.c_str(), &MeshPartsDesc));
+	}
+	else
+		pMeshParts = static_cast<CMeshParts*>(pGameInstance->Clone_Component(_iLevelIndex, _wstrPrototypeTag.c_str(), &MeshPartsDesc));
 
 	Safe_Release(pGameInstance);
 
@@ -155,10 +196,11 @@ HRESULT CCustomModel::Add_MeshParts(const _uint& _iLevelIndex, const wstring& _w
 		return E_FAIL;
 	}
 
-	if (nullptr != m_MeshParts[_eMeshPartsType])
-		Safe_Release(m_MeshParts[_eMeshPartsType]);
+	if (nullptr != m_MeshParts[_eMeshPartsType].pMeshParts)
+		Safe_Release(m_MeshParts[_eMeshPartsType].pMeshParts);
 
-	m_MeshParts[_eMeshPartsType] = pMeshParts;
+	m_MeshParts[_eMeshPartsType].pMeshParts = pMeshParts;
+	m_MeshParts[_eMeshPartsType].wstrPrototypeTag = _wstrPrototypeTag;
 	pMeshParts->Set_MeshType(_eMeshPartsType);
 	
 	return S_OK;
@@ -195,6 +237,6 @@ void CCustomModel::Free()
 
 	for (auto& pMeshParts : m_MeshParts)
 	{
-		Safe_Release(pMeshParts);
+		Safe_Release(pMeshParts.pMeshParts);
 	}
 }
