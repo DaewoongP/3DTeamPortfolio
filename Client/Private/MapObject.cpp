@@ -157,8 +157,11 @@ void CMapObject::Late_Tick(_float fTimeDelta)
 	
 	if (nullptr != m_pRenderer)
 	{
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		if (pGameInstance->Get_CurrentLevelIndex() == LEVEL_SMITH ||
+			40.f > _float3::Distance(pGameInstance->Get_CamPosition()->xyz(), m_pTransform->Get_Position()))
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
+		
 #ifdef _DEBUG
 		for (auto& pRigidBody : m_RigidBodys)
 		{
