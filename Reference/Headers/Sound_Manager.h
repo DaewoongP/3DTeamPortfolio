@@ -24,6 +24,7 @@ private:
 public:
 	// 이거 꼭 Initialize_Engine에 넣어서 초기화 실행해주세요
     HRESULT Initialize();
+	void Tick();
 	// 파일경로에 있는 사운드를 자동으로 파일이름을 태그값으로 입력해줌
 	HRESULT Add_Sounds(const _tchar* pSoundFilePath);
 	_bool Is_Playing(_int iChannel);

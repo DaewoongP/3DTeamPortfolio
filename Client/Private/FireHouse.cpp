@@ -119,7 +119,7 @@ HRESULT CFireHouse::Initialize_Level(_uint iCurrentLevelIndex)
 				__debugbreak();
 				return E_FAIL;
 			}
-
+			pParticle->Get_MainModuleRef().fSimulationSpeed = 0.5f;
 			//pParticle->Play(vPosition);
 			m_Particles.push_back(pParticle);
 
