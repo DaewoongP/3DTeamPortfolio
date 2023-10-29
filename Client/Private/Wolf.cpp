@@ -62,6 +62,24 @@ void CWolf::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);	
 
+	BEGININSTANCE;
+	if (true == m_isSound0 && WF_HOWL == m_eCurrentAnim)
+	{
+		pGameInstance->Play_Sound(TEXT("WolfHowl.wav"), 1.f);
+		m_isSound0 = false;
+	}
+	if (true == m_isSound1 && WF_BARK == m_eCurrentAnim)
+	{
+		pGameInstance->Play_Sound(TEXT("Wolfmm.wav"), 1.f);
+		m_isSound1 = false;
+	}
+	if (true == m_isSound2 && WF_ATTACK_START == m_eCurrentAnim)
+	{
+		pGameInstance->Play_Sound(TEXT("WolfAttack.wav"), 1.f);
+		m_isSound2 = false;
+	}
+	ENDINSTANCE;
+
 	if (true == m_isDissolveStart)
 		m_fDissolveAmount += fTimeDelta; // 디졸브 값 증가
 
@@ -427,12 +445,14 @@ void CWolf::Wolf_Animation()
 		if (true == m_pModelCom->Is_Finish_Animation())
 		{
 			m_eCurrentAnim = WF_HOWL;
+			m_isSound0 = true;
 		}
 		break;
 	case WF_HOWL: // 일어난 후 하울링
 		if (true == m_pModelCom->Is_Finish_Animation())
 		{
 			m_eCurrentAnim = WF_BARK;
+			m_isSound1 = true;
 		}
 		break;
 	case WF_BARK: // 공격 전 짖기
@@ -450,6 +470,8 @@ void CWolf::Wolf_Animation()
 	case WF_ATTACK_START: // 공격 직전 자세 잡기
 		if (true == m_pModelCom->Is_Finish_Animation())
 		{
+			m_isSound2 = true;
+
 			m_CollisionRequestDesc.eType = ATTACK_LIGHT;
 			m_CollisionRequestDesc.iDamage = 5;
 			m_CollisionRequestDesc.pEnemyTransform = m_pTransform;

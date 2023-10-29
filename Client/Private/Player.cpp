@@ -1435,6 +1435,8 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 		RollStateDesc.IsBlink = true;
 
+		pGameInstance->Play_Sound(TEXT("Dash.wav"), 1.f);
+
 		Go_Roll(&RollStateDesc);
 		//Go_Jump();
 	}
@@ -1449,6 +1451,8 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 		if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
 		{
+			pGameInstance->Play_Sound(TEXT("Normal%d.wav"), 8, 1.f);
+
 			Go_MagicCast(&MagicCastingStateDesc);
 		}
 

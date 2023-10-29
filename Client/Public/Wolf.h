@@ -49,6 +49,9 @@ private:
 	_bool m_isDecendo = { false }; // 디센도에 피격했는가?
 	_bool m_isDissolveStart = { false };
 
+	_bool m_isSound0 = { true }; // 하울링
+	_bool m_isSound1 = { true }; // 짖기
+	_bool m_isSound2 = { true }; // 으르렁(공격)
 
 private:
 	W0LF_ANIMATION m_eCurrentAnim = { WF_END };
