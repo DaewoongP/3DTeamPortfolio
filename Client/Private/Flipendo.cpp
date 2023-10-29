@@ -144,7 +144,12 @@ void CFlipendo::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			Shake_Power(CollisionEventDesc.pOtherTransform->Get_Position()),
 			CCamera_Manager::SHAKE_POWER_DECRECENDO);
 
+
+		pGameInstance->Play_Sound(TEXT("Diffulso_Hit.wav"), pGameInstance->Get_SoundPower(CollisionEventDesc.pOtherTransform->Get_Position()));
+
 		ENDINSTANCE;
+
+
 #pragma endregion
 	}
 	__super::OnCollisionEnter(CollisionEventDesc);
@@ -178,6 +183,12 @@ void CFlipendo::Ready_DrawMagic()
 
 void CFlipendo::Ready_CastMagic()
 {
+	BEGININSTANCE;
+
+	pGameInstance->Play_Sound(TEXT("Diffulso.wav"), pGameInstance->Get_SoundPower(m_pTransform->Get_Position(), 60.0f));
+
+	ENDINSTANCE;
+
 	Ready_SplineMove(m_TrailVec[EFFECT_STATE_MAIN][0]);
 	__super::Ready_CastMagic();
 	m_fWandParticleDelayTimer = 0.05f;

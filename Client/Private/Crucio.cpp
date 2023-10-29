@@ -244,6 +244,16 @@ void CCrucio::Late_Tick(_float fTimeDelta)
 void CCrucio::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionEnter(CollisionEventDesc);
+
+	//¸÷ÀÌ¶û Ãæµ¹ÇßÀ¸¸é?
+	if (wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Enemy_Body")) != nullptr)
+	{
+		BEGININSTANCE;
+
+		pGameInstance->Play_Sound(TEXT("ES_Magic Power 1 - SFX Producer.wav"), 1.0f);
+
+		ENDINSTANCE;
+	}
 }
 
 void CCrucio::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
@@ -267,6 +277,11 @@ void CCrucio::Ready_Begin()
 {
 	ADD_DECREASE_LIGHT(m_vStartPosition, 50.f, 0.8f, _float4(1.f, 0.f, 0.f, 1.f));
 	__super::Ready_Begin();
+	{
+		BEGININSTANCE;
+		pGameInstance->Play_Sound(TEXT("ES_Magic Power 2 - SFX Producer.wav"), 1.0f);
+		ENDINSTANCE;
+	}
 }
 
 void CCrucio::Ready_DrawMagic()
@@ -277,6 +292,10 @@ void CCrucio::Ready_DrawMagic()
 void CCrucio::Ready_CastMagic()
 {
 	__super::Ready_CastMagic();
+	BEGININSTANCE;
+	pGameInstance->Play_Sound(TEXT("ES_Magic Power 7 - SFX Producer.wav"), 1.0f);
+	pGameInstance->Play_Sound(TEXT("ES_Magic Power 8 - SFX Producer.wav"), 1.0f);
+	ENDINSTANCE;
 }
 
 void CCrucio::Ready_Dying()

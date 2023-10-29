@@ -171,7 +171,7 @@ void CDiffindo::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		m_ParticleVec[EFFECT_STATE_MAIN][4]->Play(m_pMeshEffect->Get_Transform()->Get_Position());
 		m_ParticleVec[EFFECT_STATE_MAIN][5]->Play(m_pMeshEffect->Get_Transform()->Get_Position());
 
-		pGameInstance->Play_Sound(TEXT("Diffindo_Hit.wav"), pGameInstance->Get_SoundPower(CollisionEventDesc.pOtherTransform->Get_Position()));
+		pGameInstance->Play_Sound(TEXT("Diffindo_Hit.wav"), pGameInstance->Get_SoundPower(CollisionEventDesc.pOtherTransform->Get_Position(), 60.0f));
 
 		ENDINSTANCE;
 #pragma endregion
@@ -256,7 +256,7 @@ void CDiffindo::Ready_CastMagic()
 		-0.05f,
 		CCamera_Manager::SHAKE_POWER_DECRECENDO);
 
-	pGameInstance->Play_Sound(TEXT("Diffindo.wav"), 1.0f);
+	pGameInstance->Play_Sound(TEXT("Diffindo.wav"), pGameInstance->Get_SoundPower(m_pTransform->Get_Position(), 60.0f));
 
 	ENDINSTANCE;
 #pragma endregion

@@ -998,6 +998,17 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
+
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Edurus_Particle"),
+		TEXT("Com_EdurusParticle"), reinterpret_cast<CComponent**>(&m_pEdurusParticle))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	m_pEdurusParticle->Disable();
+
 	const CBone* pBone = m_pCustomModel->Get_Bone(TEXT("SKT_RightHand"));
 	if (nullptr == pBone)
 		throw TEXT("pBone is nullptr");
@@ -2108,6 +2119,8 @@ void CPlayer::Update_Defensive()
 	{
 		m_DefensiveDesc.fBuffValuePreAcc = m_DefensiveDesc.fBuffValueAcc;
 		m_DefensiveDesc.fBuffValueAcc -= pGameInstance->Get_World_Tick();
+
+		m_pEdurusParticle->Get_Transform()->Set_WorldMatrix(m_pTransform->Get_WorldMatrix());
 	}
 
 	ENDINSTANCE;
@@ -2126,11 +2139,14 @@ void CPlayer::Update_Defensive()
 	if (true == m_DefensiveDesc.isStart)
 	{
 		m_DefensiveDesc.fBuffValueAcc = m_DefensiveDesc.fBuffValueTime;
+
+		m_pEdurusParticle->Play(m_pTransform->Get_Position());
 	}
 
 	//원래 구조체 대입
 	if (true == m_DefensiveDesc.isFinish)
 	{
+		m_pEdurusParticle->Stop();
 	}
 }
 
@@ -3565,6 +3581,7 @@ void CPlayer::Go_Protego(void* _pArg)
 void CPlayer::Go_Hit(void* _pArg)
 {
 	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
+		0.0f == m_DefensiveDesc.fBuffValueAcc &&
 		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
 			m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
 			m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
@@ -3867,6 +3884,7 @@ void CPlayer::Free()
 		Safe_Release(m_pCard_Fig);
 		Safe_Release(m_pBroom);
 		Safe_Release(m_pWindParticle);
+		Safe_Release(m_pEdurusParticle);
 		
 	//	Safe_Release(m_pBlink);
 

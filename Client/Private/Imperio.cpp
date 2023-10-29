@@ -130,6 +130,10 @@ void CImperio::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	if (wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Enemy_Body")) != nullptr)
 	{
 		Set_MagicBallState(MAGICBALL_STATE_DYING);
+
+		BEGININSTANCE;
+		pGameInstance->Play_Sound(TEXT("ES_Magic Power 8 - SFX Producer.wav"), 1.0f);
+		ENDINSTANCE;
 	}
 }
 
@@ -161,6 +165,10 @@ void CImperio::Ready_DrawMagic()
 
 void CImperio::Ready_CastMagic()
 {
+	BEGININSTANCE;
+	pGameInstance->Play_Sound(TEXT("Imperio.wav"), 1.0f);
+	ENDINSTANCE;
+
 	Ready_SplineSpinMove(m_TrailVec[EFFECT_STATE_MAIN].data()[0],_float2(0.2f, 0.20f),0.5f);
 	__super::Ready_CastMagic();
 }
