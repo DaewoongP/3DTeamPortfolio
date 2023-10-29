@@ -242,6 +242,9 @@ void CPensive_Fail_Ball::Tick_CastMagic(_float fTimeDelta)
 	}
 	else
 	{
+		BEGININSTANCE;
+		pGameInstance->Play_Sound(TEXT("punch-a-rock-1616472.wav"), 0.7f);
+		ENDINSTANCE;
 		Do_MagicBallState_To_Next();
 	}
 }

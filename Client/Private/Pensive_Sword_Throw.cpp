@@ -170,6 +170,9 @@ HRESULT CPensive_Sword_Throw::Reset(MAGICBALLINITDESC& InitDesc)
 void CPensive_Sword_Throw::Ready_Begin()
 {
 	__super::Ready_Begin();
+	BEGININSTANCE;
+	pGameInstance->Play_Sound(TEXT("futuristic-organic-effect-34-99003.wav"), 0.4f);
+	ENDINSTANCE;
 }
 
 void CPensive_Sword_Throw::Ready_DrawMagic()
@@ -249,6 +252,9 @@ void CPensive_Sword_Throw::Tick_CastMagic(_float fTimeDelta)
 	else
 	{
 		Do_MagicBallState_To_Next();
+		BEGININSTANCE;
+		pGameInstance->Play_Sound(TEXT("punch-a-rock-1616472.wav"), 0.7f);
+		ENDINSTANCE;
 	}
 }
 
