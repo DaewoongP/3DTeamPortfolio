@@ -184,9 +184,9 @@ HRESULT CEnemy::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatri
 void CEnemy::StopAllSound()
 {
 	BEGININSTANCE;
-	for (_int iChannel : m_SoundChannel)
+	for (auto& iChannel : m_SoundChannel)
 	{
-		pGameInstance->Stop_Sound(iChannel);
+		pGameInstance->Stop_Sound(iChannel.first);
 	}
 	ENDINSTANCE;
 	m_SoundChannel.clear();
