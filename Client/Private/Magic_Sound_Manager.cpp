@@ -214,7 +214,7 @@ void CMagic_Sound_Manager::Spell_Magic(OWNERTYPE eOwner,SPELL eSpell,_float fVol
 
 	//Play_Sound(const _tchar * pSoundTag, _uint iNumSounds, CSound_Manager::SOUNDCHANNEL eChannel, _float fVolume, _bool bForcePlay)
 	BEGININSTANCE;
-	//pGameInstance->Play_Sound(m_szSoundTag[eOwner][eSpell][rand() % m_szSoundTag[eOwner][eSpell].size()].c_str(), CSound_Manager::SOUND_VOICE, fVolum, true);
+	pGameInstance->Play_Sound(m_szSoundTag[eOwner][eSpell][rand() % m_szSoundTag[eOwner][eSpell].size()].c_str(), fVolum);
 	ENDINSTANCE;
 }
 

@@ -37,8 +37,6 @@ HRESULT CGameObject::Initialize(void* pArg)
 
 void CGameObject::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
-
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
@@ -55,6 +53,8 @@ void CGameObject::Tick(_float fTimeDelta)
 	}
 
 	Safe_Release(pGameInstance);
+
+	__super::Tick(fTimeDelta);
 }
 
 void CGameObject::Late_Tick(_float fTimeDelta)
