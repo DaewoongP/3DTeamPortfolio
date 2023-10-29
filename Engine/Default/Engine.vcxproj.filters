@@ -430,6 +430,9 @@
     <Filter Include="01. Utility\03. Components\23. Camera_Shake">
       <UniqueIdentifier>{5386847c-b707-4ac0-a343-e84c1e9b7fd8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\17. StaticMeshInstance\Anim_Instance">
+      <UniqueIdentifier>{b24dee0b-b0b2-4fa7-a295-fa592f71f546}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -864,6 +867,9 @@
     <ClInclude Include="..\Public\Camera_Shake.h">
       <Filter>01. Utility\03. Components\23. Camera_Shake</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Model_Anim_Instance.h">
+      <Filter>01. Utility\03. Components\17. StaticMeshInstance\Anim_Instance</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1264,6 +1270,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Camera_Shake.cpp">
       <Filter>01. Utility\03. Components\23. Camera_Shake</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Model_Anim_Instance.cpp">
+      <Filter>01. Utility\03. Components\17. StaticMeshInstance\Anim_Instance</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

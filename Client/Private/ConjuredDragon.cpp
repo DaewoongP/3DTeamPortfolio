@@ -77,12 +77,12 @@ HRESULT CConjuredDragon::Initialize_Prototype(_uint iLevel)
 				throw;
 		}
 		
-		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit_Distortion")))
-			{
-				if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit_Distortion")
-					, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/CircleDistortion/"), m_iLevel))))
-					throw;
-		}
+		//if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit_Distortion")))
+		//	{
+		//		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit_Distortion")
+		//			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/CircleDistortion/"), m_iLevel))))
+		//			throw;
+		//}
 
 		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_Rock")))
 		{
@@ -237,7 +237,7 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
 		{
 			m_isSpawn = true;
-			//pGameInstance->Add_CutScene(TEXT("Dragon_Enter"));
+			pGameInstance->Add_CutScene(TEXT("Dragon_Enter"));
 		}
 
 		if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
@@ -1051,7 +1051,7 @@ HRESULT CConjuredDragon::Add_Components()
 
 		/* For.Com_Health */
 		CHealth::HEALTHDESC HealthDesc;
-		HealthDesc.iMaxHP = 1000;
+		HealthDesc.iMaxHP = 5000;
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 			throw TEXT("Com_Health");
@@ -1116,8 +1116,8 @@ HRESULT CConjuredDragon::Add_Components()
 
 		Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::BOSS;
 		Desc.pHealth = m_pHealth;
-		lstrcpy(Desc.wszObjectLevel, TEXT("99"));
-		lstrcpy(Desc.wszObjectName, TEXT("Bone Dragon"));
+		lstrcpy(Desc.wszObjectLevel, TEXT("60"));
+		lstrcpy(Desc.wszObjectName, TEXT("µå·¡°ï ¶õ·Ï"));
 
 		BEGININSTANCE;
 		m_pUI_HP = static_cast<CUI_Group_Enemy_HP*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"), &Desc));
@@ -3117,14 +3117,14 @@ void CConjuredDragon::Pulse_Charge()
 	m_pRenderer->Set_ScreenRadial(true, 0.1f, 1.f);
 	m_pEffect_Pulse_Charge->Play(m_vOffsetPos);
 	m_pEffect_Pulse_CircleEmit->Play(m_vOffsetPos);
-	m_pEffect_Pulse_CircleEmit_Distortion->Play(m_vOffsetPos);
+	//m_pEffect_Pulse_CircleEmit_Distortion->Play(m_vOffsetPos);
 }
 
 void CConjuredDragon::Pulse_Stop_Charge()
 {
 	m_pEffect_Pulse_Charge->Stop();
 	m_pEffect_Pulse_CircleEmit->Stop();
-	m_pEffect_Pulse_CircleEmit_Distortion->Stop();
+	//m_pEffect_Pulse_CircleEmit_Distortion->Stop();
 
 }
 

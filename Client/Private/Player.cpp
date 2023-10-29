@@ -342,7 +342,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	m_isPreLumos = m_isLumosOn;
 
-	for (_uint i = 0; i < m_vecPotionParticle.size(); ++i)
+	for (_uint i = 0; i < m_vecPotionParticle.size()-1; ++i)
 	{
 		m_vecPotionParticle[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
 	}
@@ -374,8 +374,32 @@ void CPlayer::Tick(_float fTimeDelta)
 		case 7:
 		case 8:
 			m_pWindParticle->Get_EmissionModuleRef().fRateOverTime = 0.f;
+			if (m_iCurrentFlySoundChannel != -1)
+			{
+				CGameInstance* pGameInstance = CGameInstance::GetInstance();
+				Safe_AddRef(pGameInstance);
+				if (pGameInstance->Get_ChannelVolume(m_iCurrentFlySoundChannel)<=0.05f)
+				{
+					m_iCurrentFlySoundChannel = -1;
+					m_isFlySoundPlaying = false;
+					pGameInstance->Stop_Sound(m_iCurrentFlySoundChannel);
+				}
+				else 
+				{
+					pGameInstance->Set_ChannelVolume(m_iCurrentFlySoundChannel, pGameInstance->Get_ChannelVolume(m_iCurrentFlySoundChannel) * 0.95);
+				}
+				Safe_Release(pGameInstance);
+			}
 			break;
 		default:
+			if (!m_isFlySoundPlaying)
+			{
+				CGameInstance* pGameInstance = CGameInstance::GetInstance();
+				Safe_AddRef(pGameInstance);
+				m_isFlySoundPlaying = true;
+				m_iCurrentFlySoundChannel = pGameInstance->Play_Sound(TEXT("Bloom_Wind2.wav"), 1.f);
+				Safe_Release(pGameInstance);
+			}
 			m_pWindParticle->Get_EmissionModuleRef().fRateOverTime = iFast * 5.f;
 			break;
 		}
@@ -393,6 +417,22 @@ void CPlayer::Tick(_float fTimeDelta)
 	}
 	else
 	{
+		if (m_iCurrentFlySoundChannel != -1)
+		{
+			CGameInstance* pGameInstance = CGameInstance::GetInstance();
+			Safe_AddRef(pGameInstance);
+			if (pGameInstance->Get_ChannelVolume(m_iCurrentFlySoundChannel) <= 0.05f)
+			{
+				m_iCurrentFlySoundChannel = -1;
+				m_isFlySoundPlaying = false;
+				pGameInstance->Stop_Sound(m_iCurrentFlySoundChannel);
+			}
+			else
+			{
+				pGameInstance->Set_ChannelVolume(m_iCurrentFlySoundChannel, pGameInstance->Get_ChannelVolume(m_iCurrentFlySoundChannel) * 0.95);
+			}
+			Safe_Release(pGameInstance);
+		}
 		m_pWindParticle->Get_EmissionModuleRef().fRateOverTime = 0.f;
 	}
 
@@ -924,11 +964,6 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
-
-
-
-
-
 	m_vecPlayer_StateParicle.resize(3);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Player_Hit_Particle"),
 		TEXT("Com_Player_HitParticle"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[0]))))
@@ -1316,7 +1351,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = CRUCIO;
 		magicInitDesc.fInitCoolTime = 20.f;
-		magicInitDesc.iDamage = 0;
+		magicInitDesc.iDamage = 444;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
@@ -1478,6 +1513,8 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 		RollStateDesc.IsBlink = true;
 
+		pGameInstance->Play_Sound(TEXT("Dash.wav"), 1.f);
+
 		Go_Roll(&RollStateDesc);
 		//Go_Jump();
 	}
@@ -1492,6 +1529,8 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 		if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
 		{
+			pGameInstance->Play_Sound(TEXT("Normal%d.wav"), 8, 1.f);
+
 			Go_MagicCast(&MagicCastingStateDesc);
 		}
 

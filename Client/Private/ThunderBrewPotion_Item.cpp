@@ -55,10 +55,6 @@ HRESULT CThunderBrewPotion_Item::Render()
 void CThunderBrewPotion_Item::Use(_float3 vPlayPos)
 {
 	__super::Use(vPlayPos);
-
-	cout << "천둥구름이 소환됐어요" << endl;
-	// 메쉬 올리기.
-	//m_pPlayerInformation->Get_Health()->Heal(m_fRecoveryAmount);
 }
 
 void CThunderBrewPotion_Item::CreateTool(void* pArg)

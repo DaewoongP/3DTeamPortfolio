@@ -96,16 +96,14 @@ void CUI_Store::Tick(_float fTimeDelta)
 	{
 		if (m_pSlots[i]->Get_Clicked())
 		{
-			if (true )
+			if (false == m_pItems[i]->Buy())
 			{
-				cout << "아이템 구입 실패" << '\n';
 				BEGININSTANCE;
 				pGameInstance->Play_Sound(TEXT("Fail_Buy.wav"), 1.0f);
 				ENDINSTANCE
 			}
 			else
 			{
-				cout << "구입 성공" << '\n';
 				BEGININSTANCE;
 				pGameInstance->Play_Sound(TEXT("Store_Buy.wav"), 1.0f);
 				ENDINSTANCE

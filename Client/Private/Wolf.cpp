@@ -53,6 +53,8 @@ HRESULT CWolf::Initialize_Level(_uint iCurrentLevelIndex)
 	if (FAILED(Make_Notifies()))
 		return E_FAIL;
 
+	m_pTransform->Set_Scale(_float3(0.5f, 0.5f, 0.5f));
+
 	return S_OK;
 }
 
@@ -60,7 +62,26 @@ void CWolf::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);	
 
-	// m_pHitMatrix = m_HitMatrices[rand() % 2];
+	BEGININSTANCE;
+	if (true == m_isSound0 && WF_HOWL == m_eCurrentAnim)
+	{
+		pGameInstance->Play_Sound(TEXT("WolfHowl.wav"), 1.f);
+		m_isSound0 = false;
+	}
+	if (true == m_isSound1 && WF_BARK == m_eCurrentAnim)
+	{
+		pGameInstance->Play_Sound(TEXT("Wolfmm.wav"), 1.f);
+		m_isSound1 = false;
+	}
+	if (true == m_isSound2 && WF_ATTACK_START == m_eCurrentAnim)
+	{
+		pGameInstance->Play_Sound(TEXT("WolfAttack.wav"), 1.f);
+		m_isSound2 = false;
+	}
+	ENDINSTANCE;
+
+	if (true == m_isDissolveStart)
+		m_fDissolveAmount += fTimeDelta; // 디졸브 값 증가
 
 	Set_Current_Target();
 	Wolf_Animation();
@@ -95,6 +116,9 @@ void CWolf::Late_Tick(_float fTimeDelta)
 	// 체력이 0 이하로 떨어지면
 	if (0.f >= m_pHealth->Get_Current_HP())
 	{
+		m_isDissolveStart = true;
+		m_isDead = true;
+
 		m_eCurrentAnim = WF_DIE;
 		m_fDeathTimeAcc += fTimeDelta;
 
@@ -207,14 +231,8 @@ void CWolf::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 
 HRESULT CWolf::Render()
 {
-	if (FAILED(__super::SetUp_ShaderResources()))
+	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
-
-	/*if (FAILED(__super::Render()))
-	{
-		MSG_BOX("[CWolf] Failed Render");
-		return E_FAIL;
-	}*/
 
 	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
 
@@ -225,7 +243,14 @@ HRESULT CWolf::Render()
 		m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 		m_pModelCom->Bind_Material(m_pShaderCom, "g_NormalTexture", iMeshCount, NORMALS);
 
-		m_pShaderCom->Begin("AnimMesh");
+		if (true == m_isDissolveStart)
+		{
+			if (FAILED(m_pShaderCom->Begin("AnimMesh_Dissolve")))
+				return E_FAIL;
+		}
+
+		else
+			m_pShaderCom->Begin("AnimMesh");
 
 		if (FAILED(m_pModelCom->Render(iMeshCount)))
 			return E_FAIL;
@@ -320,7 +345,7 @@ HRESULT CWolf::Add_Components()
 
 		Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::MONSTER;
 		Desc.pHealth = m_pHealth;
-		lstrcpy(Desc.wszObjectLevel, TEXT("1"));
+		lstrcpy(Desc.wszObjectLevel, TEXT("30"));
 		lstrcpy(Desc.wszObjectName, TEXT("늑대"));
 
 		BEGININSTANCE;
@@ -336,6 +361,14 @@ HRESULT CWolf::Add_Components()
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
 
+		return E_FAIL;
+	}
+
+	m_pDissolveTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/VFX/Textures/Noises/VFX_T_NoiseGreypack02_D.png"));
+	if (nullptr == m_pDissolveTexture)
+	{
+		MSG_BOX("Failed CGatherer Add_Texture : (m_pDissolveTexture)");
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -369,6 +402,32 @@ HRESULT CWolf::Bind_HitMatrices()
 	return S_OK;
 }
 
+HRESULT CWolf::SetUp_ShaderResources()
+{
+	BEGININSTANCE;
+
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
+		return E_FAIL;
+
+	if (nullptr != m_pDissolveTexture)
+	{
+		if (FAILED(m_pDissolveTexture->Bind_ShaderResources(m_pShaderCom, "g_DissolveTexture")))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveAmount", &m_fDissolveAmount, sizeof(_float))))
+			return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
 void CWolf::Wolf_Attack()
 {
 }
@@ -386,12 +445,14 @@ void CWolf::Wolf_Animation()
 		if (true == m_pModelCom->Is_Finish_Animation())
 		{
 			m_eCurrentAnim = WF_HOWL;
+			m_isSound0 = true;
 		}
 		break;
 	case WF_HOWL: // 일어난 후 하울링
 		if (true == m_pModelCom->Is_Finish_Animation())
 		{
 			m_eCurrentAnim = WF_BARK;
+			m_isSound1 = true;
 		}
 		break;
 	case WF_BARK: // 공격 전 짖기
@@ -409,6 +470,8 @@ void CWolf::Wolf_Animation()
 	case WF_ATTACK_START: // 공격 직전 자세 잡기
 		if (true == m_pModelCom->Is_Finish_Animation())
 		{
+			m_isSound2 = true;
+
 			m_CollisionRequestDesc.eType = ATTACK_LIGHT;
 			m_CollisionRequestDesc.iDamage = 5;
 			m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
@@ -563,4 +626,6 @@ CGameObject* CWolf::Clone(void* pArg)
 void CWolf::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pDissolveTexture);
 }

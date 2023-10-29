@@ -181,6 +181,17 @@ HRESULT CEnemy::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatri
 	return S_OK;
 }
 
+void CEnemy::StopAllSound()
+{
+	BEGININSTANCE;
+	for (auto& iChannel : m_SoundChannel)
+	{
+		pGameInstance->Stop_Sound(iChannel.first);
+	}
+	ENDINSTANCE;
+	m_SoundChannel.clear();
+}
+
 HRESULT CEnemy::Make_AI()
 {
 	BEGININSTANCE;
@@ -647,9 +658,6 @@ void CEnemy::On_Gravity()
 
 	if (nullptr != m_pRigidBody)
 	{
-#ifdef _DEBUG
-		cout << "On Gravity" << endl;
-#endif // _DEBUG
 		m_pRigidBody->Set_Gravity(true);
 	}
 }
@@ -661,9 +669,6 @@ void CEnemy::Off_Gravity()
 
 	if (nullptr != m_pRigidBody)
 	{
-#ifdef _DEBUG
-		cout << "Off Gravity" << endl;
-#endif // _DEBUG
 		m_pRigidBody->Set_Gravity(false);
 	}
 }

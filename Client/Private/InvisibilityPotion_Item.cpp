@@ -55,10 +55,6 @@ HRESULT CInvisibilityPotion_Item::Render()
 void CInvisibilityPotion_Item::Use(_float3 vPlayPos)
 {
 	__super::Use(vPlayPos);
-
-	cout << "투명해요" << endl;
-	// 메쉬 올리기.
-	//m_pPlayerInformation->Get_Health()->Heal(m_fRecoveryAmount);
 }
 
 void CInvisibilityPotion_Item::CreateTool(void* pArg)

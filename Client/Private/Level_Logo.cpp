@@ -16,6 +16,8 @@ HRESULT CLevel_Logo::Initialize()
 	Safe_AddRef(pGameInstance);
 	// ÇöÀç ¾À ¼³Á¤.
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Logo"), true);
+	FAILED_CHECK_RETURN(pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/BGM/")), E_FAIL);
+	m_iChennelNum = pGameInstance->Play_Sound(TEXT("Intro.wav"), 0.6f);
 	Safe_Release(pGameInstance);
 
 	g_isNight = false;

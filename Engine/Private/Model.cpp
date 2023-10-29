@@ -226,7 +226,7 @@ void CModel::Change_Animation(_uint iAnimIndex, ANIMTYPE eType)
 	m_tAnimationDesc[eType].isFinishAnimation = false;
 }
 
-void CModel::Play_Animation(_float fTimeDelta, _Inout_ vector<_int>* iSoundChannelVec, ANIMTYPE eType, CTransform* pTransform)
+void CModel::Play_Animation(_float fTimeDelta, _Inout_ vector<pair<_int, _float>>* iSoundChannelVec, ANIMTYPE eType, CTransform* pTransform)
 {
 	//애니메이션 없으면 재생하지마
 	if (m_tAnimationDesc[eType].iNumAnimations == 0||

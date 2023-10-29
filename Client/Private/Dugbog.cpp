@@ -346,6 +346,10 @@ HRESULT CDugbog::Make_Notifies()
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Off_Gravity"), Func)))
 		return E_FAIL;
 
+	Func = [&] {(*this).StopAllSound(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("StopAllSound"), Func)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -444,7 +448,7 @@ HRESULT CDugbog::Add_Components()
 
 		Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::MONSTER;
 		Desc.pHealth = m_pHealth;
-		lstrcpy(Desc.wszObjectLevel, TEXT("1"));
+		lstrcpy(Desc.wszObjectLevel, TEXT("3"));
 		lstrcpy(Desc.wszObjectName, TEXT("대척추 더그보그"));
 
 		BEGININSTANCE;
