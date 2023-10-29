@@ -68,7 +68,11 @@ void CSmithToCliff_Gate::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	BEGININSTANCE;	
+	BEGININSTANCE;
+	if (false == pGameInstance->Is_SoundPlaying(m_iSound0))
+	{
+		m_iSound0 = pGameInstance->Play_Sound(TEXT("Portal_Idle.wav"), 1.f);
+	}
 
 	pGameInstance->Set_ChannelVolume(m_iSound0, 0.25f * pGameInstance->Get_SoundPower(m_pTransform->Get_Position()));
 
