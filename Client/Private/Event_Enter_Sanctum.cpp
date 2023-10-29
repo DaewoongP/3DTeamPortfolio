@@ -25,7 +25,7 @@ HRESULT CEvent_Enter_Sanctum::Initialize(void* pArg)
 	/* Set Monsters */
 	BEGININSTANCE;
 
-	CPlayer* pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+	CPlayer* pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Player"), TEXT("GameObject_Player")));
 	if (nullptr == pPlayer)
 	{
 		ENDINSTANCE;

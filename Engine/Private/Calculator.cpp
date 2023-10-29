@@ -256,9 +256,6 @@ HRESULT CCalculator::ReadFileInDirectory(_Inout_ vector<wstring>& OutVector, con
 			// 파일 확장자 체크
 			if (!_wcsicmp(entry.path().extension().c_str(), pExt))
 			{
-#ifdef _DEBUG
-				cout << entry.path() << endl;
-#endif // _DEBUG
 				OutVector.push_back(entry.path().wstring());
 			}
 		}

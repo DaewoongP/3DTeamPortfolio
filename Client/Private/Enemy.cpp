@@ -658,9 +658,6 @@ void CEnemy::On_Gravity()
 
 	if (nullptr != m_pRigidBody)
 	{
-#ifdef _DEBUG
-		cout << "On Gravity" << endl;
-#endif // _DEBUG
 		m_pRigidBody->Set_Gravity(true);
 	}
 }
@@ -672,9 +669,6 @@ void CEnemy::Off_Gravity()
 
 	if (nullptr != m_pRigidBody)
 	{
-#ifdef _DEBUG
-		cout << "Off Gravity" << endl;
-#endif // _DEBUG
 		m_pRigidBody->Set_Gravity(false);
 	}
 }

@@ -149,7 +149,6 @@ void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameI
 				if (pParticleFrame->BindBoneMatrix == nullptr)
 				{
 					pGameInstance->Play_Particle((pParticleFrame->wszParticleTag), _float3(0,0,0));
-					cout << "Please Bind Bone to ParticleNotify :" << Find_Frame_Key((*pCurrentKeyFrameIndex)) <<"\n";
 				}
 				else 
 				{
@@ -357,8 +356,6 @@ void CNotify::Notify_NULL_WarningAlam()
 	_char szName[MAX_PATH]="";
 
 	WCharToChar(m_KeyFrames[m_iCurrentKeyFramesIndex].first.c_str(), szName);
-
-	cout << szName << " : Please Input Notify Action" << endl;
 }
 void CNotify::Find_SpeedFrame()
 {
