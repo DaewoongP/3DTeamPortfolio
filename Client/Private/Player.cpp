@@ -386,7 +386,7 @@ void CPlayer::Tick(_float fTimeDelta)
 				}
 				else 
 				{
-					pGameInstance->Set_ChannelVolume(m_iCurrentFlySoundChannel, pGameInstance->Get_ChannelVolume(m_iCurrentFlySoundChannel) * 0.95);
+					pGameInstance->Set_ChannelVolume(m_iCurrentFlySoundChannel, pGameInstance->Get_ChannelVolume(m_iCurrentFlySoundChannel) * 0.95f);
 				}
 				Safe_Release(pGameInstance);
 			}
@@ -429,7 +429,7 @@ void CPlayer::Tick(_float fTimeDelta)
 			}
 			else
 			{
-				pGameInstance->Set_ChannelVolume(m_iCurrentFlySoundChannel, pGameInstance->Get_ChannelVolume(m_iCurrentFlySoundChannel) * 0.95);
+				pGameInstance->Set_ChannelVolume(m_iCurrentFlySoundChannel, pGameInstance->Get_ChannelVolume(m_iCurrentFlySoundChannel) * 0.95f);
 			}
 			Safe_Release(pGameInstance);
 		}
@@ -1784,7 +1784,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Hair"),
-		CCustomModel::HAIR)))
+		CCustomModel::HAIR, _float4(0.f, 0.f, 0.f, 1.f))))
 	{
 		MSG_BOX("Failed Add MeshPart Hair");
 

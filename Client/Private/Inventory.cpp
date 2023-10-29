@@ -174,7 +174,7 @@ _bool CInventory::Add_Item(CItem* pItem, ITEMTYPE eType)
 
 	Safe_Release(pGameInstance);
 
-	CIngredient* pIngredient = static_cast<CIngredient*>(pItem);
+	CIngredient* pIngredient = dynamic_cast<CIngredient*>(pItem);
 	if (nullptr != pIngredient)
 	{
 		m_ResourcesCount[pIngredient->Get_Ingredient()]++;
