@@ -103,7 +103,7 @@ void CSanctum_Door::Door_Action(_float fTimeDelta)
 			CEase::IN_BOUNCE,
 			6.0f,
 			5.0f,
-			0.1f,
+			0.01f,
 			CCamera_Manager::SHAKE_POWER_DECRECENDO);
 	}
 
@@ -126,8 +126,8 @@ void CSanctum_Door::Door_Action(_float fTimeDelta)
 			CCamera_Manager::SHAKE_AXIS_UP,
 			CEase::IN_EXPO,
 			8.0f,
-			1.0f,
-			0.2f,
+			0.8f,
+			0.1f,
 			CCamera_Manager::SHAKE_POWER_DECRECENDO);
 	}
 

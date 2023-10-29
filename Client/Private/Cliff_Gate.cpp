@@ -4,6 +4,8 @@
 
 #include "LightStand.h"
 
+#include "Camera_Shake.h"
+
 CCliff_Gate::CCliff_Gate(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -49,6 +51,8 @@ HRESULT CCliff_Gate::Initialize(void* pArg)
 
 	m_pEffect->Stop();
 
+	
+
 	return S_OK;
 }
 
@@ -83,6 +87,8 @@ HRESULT CCliff_Gate::Initialize_Level(_uint iCurrentLevelIndex)
 			++m_iLightStandsCnt;
 		}
 	}
+	
+	Bind_Notifys();
 
 	return S_OK;
 }
@@ -193,6 +199,29 @@ HRESULT CCliff_Gate::Add_Components()
 		return E_FAIL;
 	}
 
+	CCamera_Shake::CAMERA_SHAKE_DESC Camera_Shake_Desc = { CCamera_Shake::CAMERA_SHAKE_DESC() };
+
+	_float fMaxDistance = { 30.0f };
+	_float fMinDistance = { 2.0f };
+
+	Camera_Shake_Desc.eShake_Priority = CCamera_Manager::SHAKE_PRIORITY_1;
+	Camera_Shake_Desc.isDistanceOption = true;
+	Camera_Shake_Desc.pTransform = m_pTransform;
+	Camera_Shake_Desc.Shake_Info_Desc.eEase = CEase::IN_EXPO;
+	Camera_Shake_Desc.Shake_Info_Desc.eShake_Axis = CCamera_Manager::SHAKE_AXIS_UP;
+	Camera_Shake_Desc.Shake_Info_Desc.eShake_Power = CCamera_Manager::SHAKE_POWER_DECRECENDO;
+	Camera_Shake_Desc.Shake_Info_Desc.eShake_Type = CCamera_Manager::SHAKE_TYPE_TRANSLATION;
+	Camera_Shake_Desc.Shake_Info_Desc.fShakeDuration = 2.0f;
+	Camera_Shake_Desc.Shake_Info_Desc.fShakePower = 0.05f;
+	Camera_Shake_Desc.Shake_Info_Desc.fShakeSpeed = 6.0f;
+	Camera_Shake_Desc.Shake_Info_Desc.vShake_Axis_Set = _float3();
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Enemy_Camera_Shake"),
+		TEXT("Com_Camera_Shake"), reinterpret_cast<CComponent**>(&m_pCamera_Shake), &Camera_Shake_Desc)))
+		throw TEXT("Com_Camera_Shake");
+
+	m_pCamera_Shake->Ready_Shake(fMaxDistance, fMinDistance, Camera_Shake_Desc.Shake_Info_Desc.fShakePower);
+
 	return S_OK;
 }
 
@@ -294,4 +323,20 @@ void CCliff_Gate::Free()
 	Safe_Release(m_pShader);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pRenderer);
+	Safe_Release(m_pCamera_Shake);
+}
+
+HRESULT CCliff_Gate::Bind_Notifys()
+{
+	if (nullptr == m_pCamera_Shake)
+	{
+		MSG_BOX("Failed Make_Notifies_for_Shake");
+		return E_FAIL;
+	}
+
+	function<void()> func = [&] {m_pCamera_Shake->RandomUpAxisShake(); };
+
+	m_pModel->Bind_Notifies(TEXT("Camera_Shake"), func);
+
+	return S_OK;
 }

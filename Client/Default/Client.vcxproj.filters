@@ -1015,6 +1015,9 @@
     <Filter Include="02. GameObject\00. Sky\Red">
       <UniqueIdentifier>{36f2f32e-d3ac-480c-914b-9f5cf9d20abd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="07. Events\Sky">
+      <UniqueIdentifier>{ed0bc2c2-482c-4dbe-a43f-1eadc176b853}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -2049,6 +2052,9 @@
     <ClInclude Include="..\public\RedSky.h">
       <Filter>02. GameObject\00. Sky\Red</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Event_Sky_Enter.h">
+      <Filter>07. Events\Sky</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -3037,6 +3043,9 @@
     </ClCompile>
     <ClCompile Include="..\private\RedSky.cpp">
       <Filter>02. GameObject\00. Sky\Red</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Sky_Enter.cpp">
+      <Filter>07. Events\Sky</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

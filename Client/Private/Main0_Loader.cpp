@@ -114,6 +114,7 @@
 #include "Event_Cliffside_Next_Level.h"
 #include "Event_Vault_Next_Level.h"
 #include "Event_Smeade_Next_Level.h"
+#include "Event_Sky_Enter.h"
 #pragma endregion
 
 #pragma region Event
@@ -375,6 +376,11 @@ HRESULT CMain0_Loader::Loading_For_Sky(LEVELID eLevelID)
 			CFlyGameManager::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_FlyGameManager");
 	
+		/* For.Prototype_GameObject_Event_Sky_Enter */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Sky_Enter"),
+			CEvent_Sky_Enter::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Event_Sky_Enter");
+
 	}
 
 

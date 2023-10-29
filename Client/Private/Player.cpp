@@ -3535,8 +3535,6 @@ void CPlayer::Go_Use_Item()
 			m_vecPotionParticle[i]->Play(m_pTransform->Get_Position());
 			m_vecMeshEffect[0]->Play(m_pTransform->Get_Position());
 		}
-		
-
 	}
 	break;
 	case Client::ITEM_ID_EDURUS_POTION:	//방어 물약

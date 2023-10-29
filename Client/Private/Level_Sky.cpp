@@ -16,6 +16,7 @@ HRESULT CLevel_Sky::Initialize()
 	FAILED_CHECK_RETURN(Ready_Layer_Monster(TEXT("Layer_Monster")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_FlyGame(TEXT("Layer_Manager")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Shader(), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Events(TEXT("Layer_Event")), E_FAIL);
 
 	BEGININSTANCE;
 	pGameInstance->Reset_World_TimeAcc();
@@ -322,6 +323,21 @@ HRESULT CLevel_Sky::Ready_FlyGame(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 	ENDINSTANCE;
+	return S_OK;
+}
+
+HRESULT CLevel_Sky::Ready_Events(const _tchar* pLayerTag)
+{
+	BEGININSTANCE;
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_Event_Sky_Enter"), pLayerTag, TEXT("Event_Sky_Enter"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Event_Sky_Enter)");
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
 	return S_OK;
 }
 

@@ -9,6 +9,7 @@ class CModel;
 class CShader;
 class CRenderer;
 class CParticleSystem;
+class CCamera_Shake;
 END
 
 BEGIN(Client)
@@ -50,6 +51,7 @@ private:
 	CRenderer* m_pRenderer = { nullptr };
 	CModel* m_pModel = { nullptr };
 	CParticleSystem* m_pEffect = { nullptr };
+	CCamera_Shake* m_pCamera_Shake = { nullptr };
 
 private:
 	_bool			m_isCheckOnce = { true }; // 한번만 상호작용 가능
@@ -69,6 +71,8 @@ private:
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix);
 	void	Check_FireOn();
+
+	HRESULT Bind_Notifys();
 
 public:
 	static CCliff_Gate* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

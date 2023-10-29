@@ -203,6 +203,7 @@
     <ClInclude Include="..\Public\Event_Cliffside.h" />
     <ClInclude Include="..\Public\Event_Cliffside_Next_Level.h" />
     <ClInclude Include="..\Public\Event_Enter_Sanctum.h" />
+    <ClInclude Include="..\Public\Event_Sky_Enter.h" />
     <ClInclude Include="..\Public\Event_Smeade_Next_Level.h" />
     <ClInclude Include="..\Public\Event_Spawn_Darkwizard.h" />
     <ClInclude Include="..\Public\Event_Spawn_Dragon.h" />
@@ -562,6 +563,7 @@
     <ClCompile Include="..\Private\Event_Cliffside.cpp" />
     <ClCompile Include="..\Private\Event_Cliffside_Next_Level.cpp" />
     <ClCompile Include="..\Private\Event_Enter_Sanctum.cpp" />
+    <ClCompile Include="..\Private\Event_Sky_Enter.cpp" />
     <ClCompile Include="..\Private\Event_Smeade_Next_Level.cpp" />
     <ClCompile Include="..\Private\Event_Spawn_Darkwizard.cpp" />
     <ClCompile Include="..\Private\Event_Spawn_Dragon.cpp" />
