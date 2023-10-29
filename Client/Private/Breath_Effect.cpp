@@ -101,6 +101,8 @@ HRESULT CBreath_Effect::Initialize_Prototype(_uint iLevel)
 		}
 	}
 
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Breath/"));
+
 	ENDINSTANCE;
 	return S_OK;
 }
@@ -194,6 +196,11 @@ void CBreath_Effect::Play(const _float3* pStartPos, _float3* pTargetPos, _float 
 	if (true == is_Null(pStartPos, pTargetPos))
 		return;
 
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	m_iChannel = pGameInstance->Play_Sound(TEXT("BreathBurn.wav"), 0.7f);
+	Safe_Release(pGameInstance);
+
 	m_isEnable = true;
 	m_pStartPos = pStartPos;
 	m_pTargetPos = pTargetPos;
@@ -225,6 +232,10 @@ void CBreath_Effect::Stop()
 	m_pParticle_Breath_RedFire->Stop();
 	m_pParticle_Breath_WhiteFire->Stop();
 	m_pParticle_Breath_Vomit->Stop();
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	pGameInstance->Stop_Sound(m_iChannel);
+	Safe_Release(pGameInstance);
 }
 
 void CBreath_Effect::Reset()

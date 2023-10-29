@@ -165,6 +165,7 @@ private: // For. Effect
 	CParticleSystem* m_pEffect_BlackSmokeIdle = { nullptr };
 	CParticleSystem* m_pEffect_Pulse_Charge = { nullptr };
 	CParticleSystem* m_pEffect_Pulse_CircleEmit = { nullptr };
+	CParticleSystem* m_pEffect_Pulse_CircleEmit_Distortion = { nullptr };
 	CParticleSystem* m_pEffect_Pulse_Rock = { nullptr };
 	CParticleSystem* m_pEffect_Pulse_SplashWater= { nullptr };
 	CParticleSystem* m_pEffect_Pulse_BoomWispy = { nullptr };

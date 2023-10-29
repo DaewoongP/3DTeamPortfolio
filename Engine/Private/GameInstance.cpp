@@ -1003,7 +1003,7 @@ _float CGameInstance::Get_SoundPower(_float3 vObjectPosition)
 
 	Saturate(fDist, 0.f, 1.f);
 
-	return fDist;
+	return (1.f - fDist);
 }
 
 _char* CGameInstance::Make_Char(const _char* pMakeChar)

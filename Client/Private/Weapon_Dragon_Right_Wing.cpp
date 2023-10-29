@@ -22,6 +22,7 @@ void CWeapon_Dragon_Right_Wing::Off_Collider_Attack()
 {
 	m_pEffect_WingAttack_TraceDarkCloud->Stop();
 	m_pEffect_WingAttack_TraceRocks->Stop();
+	m_pEffect_WingAttack_TraceDust->Stop();
 	m_pRigidBody->Disable_Collision("Attack");
 }
 
@@ -79,6 +80,17 @@ HRESULT CWeapon_Dragon_Right_Wing::Initialize_Prototype(_uint iLevel)
 		}
 	}
 
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDust")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDust")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/WingAttack/TraceDust/"), m_iLevel))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
 	Safe_Release(pGameInstance);
 	return S_OK;
 }
@@ -101,6 +113,7 @@ HRESULT CWeapon_Dragon_Right_Wing::Initialize(void* pArg)
 
 	m_pEffect_WingAttack_TraceDarkCloud->Disable();
 	m_pEffect_WingAttack_TraceRocks->Disable();
+	m_pEffect_WingAttack_TraceDust->Disable();
 
 	return S_OK;
 }
@@ -120,6 +133,7 @@ void CWeapon_Dragon_Right_Wing::Tick(_float fTimeDelta)
 	// 날개 공격 이펙트 달기.
 	m_pEffect_WingAttack_TraceDarkCloud->Get_Transform()->Set_Position(m_Bones[0].vPosition);
 	m_pEffect_WingAttack_TraceRocks->Get_Transform()->Set_Position(m_Bones[0].vPosition);
+	m_pEffect_WingAttack_TraceDust->Get_Transform()->Set_Position(m_Bones[0].vPosition);
 }
 
 #ifdef _DEBUG
@@ -173,6 +187,10 @@ HRESULT CWeapon_Dragon_Right_Wing::Add_Components()
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_WingAttack_TraceRocks"),
 		TEXT("Com_Particle_WingAttack_TraceRocks"), reinterpret_cast<CComponent**>(&m_pEffect_WingAttack_TraceRocks))))
 		throw TEXT("Com_Particle_WingAttack_TraceRocks");
+
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_WingAttack_TraceDust"),
+		TEXT("Com_Particle_WingAttack_TraceDust"), reinterpret_cast<CComponent**>(&m_pEffect_WingAttack_TraceDust))))
+		throw TEXT("Com_Particle_WingAttack_TraceDust");
 
 	return S_OK;
 }

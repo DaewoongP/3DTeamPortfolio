@@ -39,6 +39,7 @@ public:
 	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
+	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix) override;
 
@@ -47,6 +48,7 @@ private:
 	CShader* m_pShadowShader = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 	CModel* m_pModel = { nullptr };
+	CRigidBody* m_pRigidBody = { nullptr };
 	
 	CTexture* m_pCatTexture = { nullptr }; // 커스텀 고양이 디퓨즈
 

@@ -87,6 +87,7 @@ void CUI_Farming::Tick(_float fTimeDelta)
 		{
 			m_fTimeAcc = 0.f;
 			m_eState = STATE_END;
+			m_isEnable = false;
 		}
 		break;
 	case Client::CUI_Farming::STATE_END:

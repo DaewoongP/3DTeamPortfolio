@@ -461,6 +461,7 @@ HRESULT CMainTool::Ready_Prototype_Object()
 	pGameInstance->Play_BGM(TEXT("Vault.wav"), 0.8f);
 	pGameInstance->Play_BGM(TEXT("Vault_Bgm.wav"), 0.6f);
 
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/ConjuredDragon/"));
 	ENDINSTANCE;
 
 #pragma region Load Particle

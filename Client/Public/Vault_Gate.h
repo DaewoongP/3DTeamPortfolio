@@ -8,6 +8,7 @@ class CModel;
 class CShader;
 class CRenderer;
 class CParticleSystem;
+class CCamera_Shake;
 END
 
 BEGIN(Client)
@@ -49,6 +50,10 @@ private:
 	CRenderer* m_pRenderer = { nullptr };
 	CModel* m_pModel = { nullptr };
 	CParticleSystem* m_pEffect = { nullptr };
+	CCamera_Shake* m_pCamera_Shake_Up = { nullptr };
+	CCamera_Shake* m_pCamera_Shake_Down = { nullptr };
+	CCamera_Shake* m_pCamera_Shake_Loop = { nullptr };
+	CCamera_Shake* m_pCamera_Shake_End = { nullptr };
 
 private:
 	// 절두체 컬링을 위해 Bounding Box를 생성 하기위한 최소, 최대 정점
@@ -58,6 +63,11 @@ private:
 	_bool			m_isCheckOnce = { false }; // 한번만 상호작용 가능
 	_bool			m_isAllLightStandsOn = { false };
 	_bool			m_isGateOpen = { false };
+
+	_bool			m_isSound0 = { true }; // 문 열리는 소리
+	_uint			m_iSound0 = { 0 };	   // 문 열리는 소리 인덱스
+
+	_bool			m_isSound1 = { true }; // 문 닫히고 쿵 소리
 	
 	vector<CLightStand*> m_pLightStands; // 맵에 존재하는 화로들
 
@@ -71,6 +81,7 @@ private:
 	void	Check_MinMaxPoint(_float3 vPoint);
 	void	Check_FireOn();
 
+	HRESULT Bind_Notifys();
 public:
 	static CVault_Gate* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
 	virtual CGameObject* Clone(void* pArg) override;

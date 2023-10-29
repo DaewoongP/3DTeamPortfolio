@@ -173,6 +173,10 @@ void CVault_Torch::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
 		if (eBuff == BUFF_CONFRINGO)
 		{
+			BEGININSTANCE;
+			pGameInstance->Play_Sound(TEXT("FireOn.wav"), 1.f);
+			ENDINSTANCE;
+
 			Switch_OnOff(true);
 		}
 	}
@@ -187,6 +191,10 @@ void CVault_Torch::Torch_On_By_Trigger(_float fTimeDelta)
 
 	if (false == m_isEffectOn)
 	{
+		BEGININSTANCE;
+		pGameInstance->Play_Sound(TEXT("FireOn.wav"), 1.f);
+		ENDINSTANCE;
+
 		m_pEffect->Play(m_pTransform->Get_Position() + _float3(0, 1.2f, 0));
 		m_isEffectOn = true;
 	}	

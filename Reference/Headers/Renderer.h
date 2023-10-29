@@ -25,6 +25,11 @@ public:
 		m_vFogCenterPos = vFogCenterPos;
 		m_fFogRadius = fFogRadius;
 	}
+	void Set_Fog(_bool isFog, _float4 vFogColor, _float fFogY) {
+		m_isYFog = isFog;
+		m_vFogColor = vFogColor;
+		m_fFogY = fFogY;
+	}
 	void FadeOut(_float fFadeSpeed, _float4 vFadeColor = { 0.f, 0.f, 0.f, 1.f }) {
 		m_vFadeColor = vFadeColor;
 		m_isFade = true;
@@ -161,10 +166,11 @@ private:
 	_float		m_fRainTimeAcc = { 0.f };
 	_bool		m_isCircleFog = { false };
 	_bool		m_isFloorFog = { false };
+	_bool		m_isYFog = { false };
 	_float4		m_vFogColor;
 	_float3		m_vFogCenterPos;
 	_float		m_fFogRadius = { 0.f };
-	
+	_float		m_fFogY = { 0.f };
 
 private:
 	_bool		m_isFade = { false };

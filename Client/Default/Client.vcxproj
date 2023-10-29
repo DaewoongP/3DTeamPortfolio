@@ -203,6 +203,7 @@
     <ClInclude Include="..\Public\Event_Cliffside.h" />
     <ClInclude Include="..\Public\Event_Cliffside_Next_Level.h" />
     <ClInclude Include="..\Public\Event_Enter_Sanctum.h" />
+    <ClInclude Include="..\Public\Event_Sky_Enter.h" />
     <ClInclude Include="..\Public\Event_Smeade_Next_Level.h" />
     <ClInclude Include="..\Public\Event_Spawn_Darkwizard.h" />
     <ClInclude Include="..\Public\Event_Spawn_Dragon.h" />
@@ -225,6 +226,7 @@
     <ClInclude Include="..\Public\Lamppost.h" />
     <ClInclude Include="..\Public\Lamp_Wall.h" />
     <ClInclude Include="..\Public\LightStand.h" />
+    <ClInclude Include="..\public\MarioCount.h" />
     <ClInclude Include="..\Public\Meteor.h" />
     <ClInclude Include="..\Public\Quest_Bone.h" />
     <ClInclude Include="..\Public\Quest_Potion.h" />
@@ -562,6 +564,7 @@
     <ClCompile Include="..\Private\Event_Cliffside.cpp" />
     <ClCompile Include="..\Private\Event_Cliffside_Next_Level.cpp" />
     <ClCompile Include="..\Private\Event_Enter_Sanctum.cpp" />
+    <ClCompile Include="..\Private\Event_Sky_Enter.cpp" />
     <ClCompile Include="..\Private\Event_Smeade_Next_Level.cpp" />
     <ClCompile Include="..\Private\Event_Spawn_Darkwizard.cpp" />
     <ClCompile Include="..\Private\Event_Spawn_Dragon.cpp" />
@@ -584,6 +587,7 @@
     <ClCompile Include="..\Private\Lamppost.cpp" />
     <ClCompile Include="..\Private\Lamp_Wall.cpp" />
     <ClCompile Include="..\Private\LightStand.cpp" />
+    <ClCompile Include="..\private\MarioCount.cpp" />
     <ClCompile Include="..\Private\Meteor.cpp" />
     <ClCompile Include="..\Private\Quest_Bone.cpp" />
     <ClCompile Include="..\Private\Quest_Potion.cpp" />
