@@ -186,7 +186,7 @@ HRESULT CConjuredDragon::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pEffect_BlackSmokeIdle->Play(m_pTransform->Get_Position());
-
+	m_fSoundPower = 999999.f;
 	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
 	m_CollisionRequestDesc.iDamage = 20;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;

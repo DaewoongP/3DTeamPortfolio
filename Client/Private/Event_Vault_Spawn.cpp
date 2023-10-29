@@ -54,7 +54,7 @@ void CEvent_Vault_Spawn::Tick(_float fTimeDelta)
 	{
 		BEGININSTANCE;
 		pGameInstance->Set_ChannelVolume(m_iBossBGM, pGameInstance->Get_ChannelVolume(m_iBossBGM)*0.95f);
-		cout << pGameInstance->Get_ChannelVolume(m_iBossBGM) << endl;
+		
 		if (pGameInstance->Get_ChannelVolume(m_iBossBGM) < 0.01f)
 		{
 			pGameInstance->Stop_Sound(m_iBossBGM);

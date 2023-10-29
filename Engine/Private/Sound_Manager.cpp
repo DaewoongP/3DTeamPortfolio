@@ -78,11 +78,12 @@ _int CSound_Manager::Play_Sound(const _tchar* pSoundTag, _float fVolume)
 		
 		++iChecked;
 		// 32개 쓰고있으면 리턴
-		if (iChecked > 32)
+		if (iChecked >= MAX_CHANNEL)
 			return -1;
 	}
 	
-	m_pSystem->playSound(pSound, nullptr, false, &m_Channels[m_iChannel]);
+	if (FMOD_OK != m_pSystem->playSound(pSound, nullptr, false, &m_Channels[m_iChannel]))
+		return -1;
 
 	// 예외처리
 	if (nullptr == m_Channels[m_iChannel])
@@ -121,16 +122,21 @@ _int CSound_Manager::Play_BGM(const _tchar* pSoundTag, _float fVolume)
 
 		++iChecked;
 		// 32개 쓰고있으면 리턴
-		if (iChecked > 32)
+		if (iChecked >= MAX_CHANNEL)
 			return -1;
 	}
-
 
 	if (FMOD_OK != m_pSystem->playSound(pSound, nullptr, false, &m_Channels[m_iChannel]))
 		return -1;
 
-	m_Channels[m_iChannel]->setMode(FMOD_LOOP_NORMAL);
-	m_Channels[m_iChannel]->setVolume(fVolume);
+	if (FMOD_OK != m_Channels[m_iChannel]->setMode(FMOD_LOOP_NORMAL))
+		return -1;
+
+	if (FMOD_OK != m_Channels[m_iChannel]->setVolume(fVolume))
+		return -1;
+
+	if (nullptr != m_pSystem)
+		m_pSystem->update();
 
 	return m_iChannel;
 }
@@ -261,13 +267,6 @@ HRESULT CSound_Manager::Load_SoundFile(const _tchar* pSoundFile)
 		}
 
 		iResult = _wfindnext(handle, &FindDataValue);
-	}
-
-	if (FMOD_OK != m_pSystem->update())
-	{
-		MSG_BOX("Failed update FMOD");
-		_findclose(handle);
-		return E_FAIL;
 	}
 
 	_findclose(handle);

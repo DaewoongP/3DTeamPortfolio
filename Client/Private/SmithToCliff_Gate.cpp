@@ -58,7 +58,7 @@ HRESULT CSmithToCliff_Gate::Initialize_Level(_uint iCurrentLevelIndex)
 	}
 
 	BEGININSTANCE;
-	m_iSound0 = pGameInstance->Play_BGM(TEXT("Portal_Idle.wav"), 0.75f);
+	//m_iSound0 = pGameInstance->Play_BGM(TEXT("Portal_Idle.wav"), 0.45f);
 	ENDINSTANCE;
 
 	return S_OK;
@@ -68,11 +68,6 @@ void CSmithToCliff_Gate::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	BEGININSTANCE;
-
-	pGameInstance->Set_ChannelVolume(m_iSound0, 0.75f * pGameInstance->Get_SoundPower(m_pTransform->Get_Position()));
-
-	ENDINSTANCE;
 }
 
 void CSmithToCliff_Gate::Late_Tick(_float fTimeDelta)

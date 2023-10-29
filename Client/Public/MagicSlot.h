@@ -73,7 +73,7 @@ public:
 
 private:
 	CMagic_Sound_Manager*						m_pMagic_SoundMgr = { nullptr };
-	_float										m_fVolum = { 0.5f };
+	_float										m_fVolum = { 1.f };
 	CMagic_Sound_Manager::OWNERTYPE				m_eOwnerType = { CMagic_Sound_Manager::OWNER_END };
 
 private:

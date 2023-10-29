@@ -53,6 +53,8 @@ HRESULT CDugbog::Initialize(void* pArg)
 	if (FAILED(Add_Components_for_Shake()))
 		return E_FAIL;
 
+	m_fSoundPower = 60.f;
+
 	return S_OK;
 }
 
