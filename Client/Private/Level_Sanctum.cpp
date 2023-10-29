@@ -212,7 +212,7 @@ HRESULT CLevel_Sanctum::Ready_Lights()
 	LightDesc.vAmbient = _float4(1.f, 0.f, 0.f, 0.f);
 	LightDesc.vSpecular = _float4(1.f, 0.f, 0.f, 0.f);
 
-	if (FAILED(pGameInstance->Add_Light(LightDesc, nullptr, true)))
+	if (FAILED(pGameInstance->Add_Light(LightDesc)))
 		return E_FAIL;
 
 	//LightDesc.eType = CLight::TYPE_POINT;
