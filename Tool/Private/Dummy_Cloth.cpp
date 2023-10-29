@@ -140,13 +140,13 @@ void CDummy_Cloth::Set_MeshIndex(_uint _iMeshIndex)
 	if (nullptr == m_pModelCom)
 		return;
 
-	array<CMeshParts*, CCustomModel::MESH_END> MeshParts = m_pModelCom->Get_MeshParts();
+	auto MeshParts = m_pModelCom->Get_MeshParts();
 	for (_uint i = 0; i < CCustomModel::MESH_END; ++i)
 	{
-		if (nullptr == MeshParts[i])
+		if (nullptr == MeshParts[i].pMeshParts)
 			continue;
 
-		const vector<class CMesh*> Meshes = static_cast<CMeshParts*>(MeshParts[i])->Get_Meshes();
+		const vector<class CMesh*> Meshes = static_cast<CMeshParts*>(MeshParts[i].pMeshParts)->Get_Meshes();
 
 		for (auto Mesh : Meshes)
 		{

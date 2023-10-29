@@ -58,6 +58,9 @@ public:
 			return nullptr;
 		return m_HitMatrices[iIndex];
 	}
+	void Set_Boss_BGM_Chennel_Number(const _int& iChennelNumber) {
+		m_iChennelNumber = iChennelNumber;
+	}
 	void Set_Parring() {
 		m_isParring = true;
 	}
@@ -109,6 +112,7 @@ protected:
 	_bool m_isRangeInEnemy = { false };
 	_bool m_isChangeAnimation = { false };
 
+	_int m_iChennelNumber = { -1 };
 	_float m_fDissolveAmount = { 0.f };
 	_float3 m_vCurrentPosition = {};
 	array<const _float4x4*, 3> m_HitMatrices;

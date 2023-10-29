@@ -1,6 +1,7 @@
 #include "..\Public\Level_Smith.h"
 #include "GameInstance.h"
 
+#include "Quest_Manager.h"
 #include "MapObject.h"
 #include "MapObject_Ins.h"
 #include "Level_Loading.h"
@@ -28,7 +29,19 @@ HRESULT CLevel_Smith::Initialize()
 
 	BEGININSTANCE;
 	pGameInstance->Reset_World_TimeAcc();
-	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);	
+	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
+	pGameInstance->Stop_AllSound();
+
+	CQuest_Manager* pQuest_Manager = CQuest_Manager::GetInstance();
+	Safe_AddRef(pQuest_Manager);
+	_bool isFinished_Quest_SaveFig = pQuest_Manager->Is_Quest_Finished(TEXT("Quest_Save_Fig"));
+	Safe_Release(pQuest_Manager);
+
+	if(true == isFinished_Quest_SaveFig)
+		pGameInstance->Play_BGM(TEXT("HogSmead_Night_Bgm.wav"), 0.6f);
+	else
+		pGameInstance->Play_BGM(TEXT("HogSmead_Afternoon_Bgm.wav"), 0.6f);
+
 	ENDINSTANCE;
 
 	return S_OK;

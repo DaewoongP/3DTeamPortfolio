@@ -1,7 +1,11 @@
 #include "Model_Instance.h"
 #include "Model_Instance.h"
 
+#include "Bone.h"
+#include "Notify.h"
+#include "Shader.h"
 #include "Texture.h"
+#include "Animation.h"
 #include "Mesh_Instance.h"
 
 CModel_Instance::CModel_Instance(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -21,7 +25,21 @@ CModel_Instance::CModel_Instance(const CModel_Instance& rhs)
 	, m_iNumMaterials(rhs.m_iNumMaterials)
 	, m_Materials(rhs.m_Materials)
 	, m_PivotMatrix(rhs.m_PivotMatrix)
+	, m_iRootBoneIndex(rhs.m_iRootBoneIndex)
+	, m_isExportedTool(rhs.m_isExportedTool)
 {
+	for (auto& pOriginalBone : rhs.m_Bones)
+	{
+		m_Bones.push_back(pOriginalBone->Clone());
+	}
+
+	m_tAnimationDesc = ANIMATIONDESC(rhs.m_tAnimationDesc);
+	for (auto& pOriginalAnimation : rhs.m_tAnimationDesc.Animations)
+	{
+		m_tAnimationDesc.Animations.push_back(pOriginalAnimation->Clone());
+		m_tAnimationDesc.Animations.back()->Get_Notify_Point()->BindBoneMatrixForParticle(m_Bones);
+	}
+
 	for (auto& pMesh : m_Meshes)
 	{
 		Safe_AddRef(pMesh);
@@ -34,17 +52,23 @@ CModel_Instance::CModel_Instance(const CModel_Instance& rhs)
 	}
 }
 
-HRESULT CModel_Instance::Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _float4x4* pInstanceMatrix, _uint iInstanceCnt, _float4x4 PivotMatrix)
+HRESULT CModel_Instance::Initialize_Prototype(CModel::TYPE eType, const _tchar* pModelFilePath, _float4x4* pInstanceMatrix, _uint iInstanceCnt, _float4x4 PivotMatrix)
 {
 	XMStoreFloat4x4(&m_PivotMatrix, PivotMatrix);
 
 	if (FAILED(Ready_File(eType, pModelFilePath)))
 		return E_FAIL;
 
+	if (FAILED(Ready_Bones(m_NodeDatas.front())))
+		return E_FAIL;
+
 	if (FAILED(Ready_Meshes(eType, pInstanceMatrix, iInstanceCnt, PivotMatrix)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Materials()))
+		return E_FAIL;
+
+	if (FAILED(Ready_Animations()))
 		return E_FAIL;
 
 	return S_OK;
@@ -62,6 +86,78 @@ HRESULT CModel_Instance::Render(_uint iMeshIndex)
 	return S_OK;
 }
 
+void CModel_Instance::Play_Animation(_float fTimeDelta)
+{
+	//애니메이션 없으면 재생하지마
+	if (m_tAnimationDesc.iNumAnimations == 0 ||
+		m_tAnimationDesc.iCurrentAnimIndex >= m_tAnimationDesc.iNumAnimations)
+		return;
+
+
+	CAnimation* currentAnimation = m_tAnimationDesc.Animations[m_tAnimationDesc.iCurrentAnimIndex];
+	if (currentAnimation->Invalidate_AccTime(fTimeDelta) || m_tAnimationDesc.isResetAnimTrigger)
+	{
+		//시간이 지났고, 리셋트리거가 호출됐다면 리셋시킵니다.
+		currentAnimation->Reset();
+		if (currentAnimation->Get_LerpAnim())
+		{
+			m_tAnimationDesc.isAnimChangeLerp = true;
+			m_tAnimationDesc.fAnimChangeTimer = ANIMATIONLERPTIME;
+		}
+		m_isFirstFrame = true;
+		m_tAnimationDesc.isResetAnimTrigger = false;
+	}
+
+	m_tAnimationDesc.isFinishAnimation = currentAnimation->Get_Duration() <= currentAnimation->Get_Accmulation() &&
+		false == currentAnimation->Get_LoopAnim();
+
+	currentAnimation->Invalidate_Frame(fTimeDelta, m_PivotMatrix, nullptr, nullptr);
+
+	if (!m_tAnimationDesc.isAnimChangeLerp)
+	{
+		currentAnimation->Invalidate_TransformationMatrix(m_Bones, fTimeDelta, &m_tAnimationDesc.AffectBoneVec);
+	}
+	else if (m_tAnimationDesc.fAnimChangeTimer >= 0.0) //0보다 크다면?
+	{
+		//감소시킴
+		m_tAnimationDesc.fAnimChangeTimer -= fTimeDelta;
+		//0 이하가 돼버렸으면?
+		if (m_tAnimationDesc.fAnimChangeTimer < 0)
+		{
+			m_tAnimationDesc.isAnimChangeLerp = false;
+			currentAnimation->Invalidate_TransformationMatrix(m_Bones, fTimeDelta, &m_tAnimationDesc.AffectBoneVec);
+		}
+		else //0이하가 아니라면? 러프
+		{
+			currentAnimation->Invalidate_TransformationMatrix_Lerp(m_Bones, fTimeDelta, ANIMATIONLERPTIME - m_tAnimationDesc.fAnimChangeTimer, m_iRootBoneIndex, &m_tAnimationDesc.AffectBoneVec);
+		}
+	}
+
+	for (auto& pBone : m_Bones)
+	{
+		_int iFindIndex = pBone->Get_Index();
+		auto iter = find_if(m_tAnimationDesc.AffectBoneVec.begin(), m_tAnimationDesc.AffectBoneVec.end(), [&](auto data) {
+			if (data == iFindIndex)
+				return true;
+			return false;
+			});
+
+		if (iter == m_tAnimationDesc.AffectBoneVec.end())
+		{
+			continue;
+		}
+
+		if (m_iRootBoneIndex == pBone->Get_ParentNodeIndex() && m_tAnimationDesc.Animations[m_tAnimationDesc.iCurrentAnimIndex]->Get_RootAnim_State())
+		{
+			pBone->Invalidate_CombinedTransformationMatrix_Basic(m_Bones);
+		}
+		else
+		{
+			pBone->Invalidate_CombinedTransformationMatrix(m_Bones);
+		}
+	}
+}
+
 HRESULT CModel_Instance::Bind_Material(CShader* pShader, const char* pConstantName, _uint iMeshIndex, TextureType MaterialType)
 {
 	if (iMeshIndex >= m_iNumMeshes ||
@@ -74,7 +170,27 @@ HRESULT CModel_Instance::Bind_Material(CShader* pShader, const char* pConstantNa
 	return m_Materials[m_Meshes[iMeshIndex]->Get_MaterialIndex()].pMtrlTexture[MaterialType]->Bind_ShaderResource(pShader, pConstantName);
 }
 
-HRESULT CModel_Instance::Ready_File(TYPE eType, const _tchar* pModelFilePath)
+HRESULT CModel_Instance::Bind_BoneMatrices(CShader* pShader, const char* pConstantName, _uint iMeshIndex)
+{
+	_float4x4		BoneMatrices[MAX_SHADERMATRIX];
+	ZeroMemory(BoneMatrices, sizeof(_float4x4) * MAX_SHADERMATRIX);
+
+	m_Meshes[iMeshIndex]->Get_Matrices(m_Bones, BoneMatrices, XMLoadFloat4x4(&m_PivotMatrix));
+
+	pShader->Bind_Matrices(pConstantName, BoneMatrices, MAX_SHADERMATRIX);
+
+	return S_OK;
+}
+
+void CModel_Instance::Change_Animation(_uint iAnimIndex)
+{
+	m_tAnimationDesc.iCurrentAnimIndex = iAnimIndex;
+	m_tAnimationDesc.iPreviousAnimIndex = m_tAnimationDesc.iCurrentAnimIndex;
+	m_tAnimationDesc.isResetAnimTrigger = true;
+	m_tAnimationDesc.isFinishAnimation = false;
+}
+
+HRESULT CModel_Instance::Ready_File(CModel::TYPE eType, const _tchar* pModelFilePath)
 {
 	HANDLE hFile = CreateFile(pModelFilePath,
 		GENERIC_READ,
@@ -272,7 +388,7 @@ HRESULT CModel_Instance::Ready_File(TYPE eType, const _tchar* pModelFilePath)
 	}
 
 	// Read Animations
-	if (TYPE_ANIM == eType)
+	if (CModel::TYPE_ANIM == eType)
 	{
 		// Animation NumAnimations
 		ReadFile(hFile, &(m_Model.iNumAnimations), sizeof(_uint), &dwByte, nullptr);
@@ -357,13 +473,30 @@ HRESULT CModel_Instance::Ready_File(TYPE eType, const _tchar* pModelFilePath)
 	return S_OK;
 }
 
-HRESULT CModel_Instance::Ready_Meshes(TYPE eType, _float4x4* pInstanceMatrix, _uint iInstanceCnt, _float4x4 PivotMatrix)
+HRESULT CModel_Instance::Ready_Bones(Engine::NODE Node)
+{
+	CBone* pBone = CBone::Create(Node);
+
+	if (nullptr == pBone)
+		return E_FAIL;
+
+	m_Bones.push_back(pBone);
+
+	for (_uint i = 0; i < Node.iNumChildren; ++i)
+	{
+		Ready_Bones(m_NodeDatas[Node.iChildrens[i]]);
+	}
+
+	return S_OK;
+}
+
+HRESULT CModel_Instance::Ready_Meshes(CModel::TYPE eType, _float4x4* pInstanceMatrix, _uint iInstanceCnt, _float4x4 PivotMatrix)
 {
 	m_iNumMeshes = m_Model.iNumMeshes;
 
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
-		CMesh_Instance* pMesh = CMesh_Instance::Create(m_pDevice, m_pContext, m_MeshDatas[i], pInstanceMatrix, iInstanceCnt, PivotMatrix);
+		CMesh_Instance* pMesh = CMesh_Instance::Create(m_pDevice, m_pContext, m_MeshDatas[i], pInstanceMatrix, iInstanceCnt, m_Bones, PivotMatrix, eType);
 		if (nullptr == pMesh)
 			return E_FAIL;
 
@@ -407,6 +540,25 @@ HRESULT CModel_Instance::Ready_Materials()
 		m_Materials.push_back(MeshMaterial);
 	}
 
+	return S_OK;
+}
+
+HRESULT CModel_Instance::Ready_Animations()
+{
+	for (int i = 0; i < m_Model.iNumNodes; i++)
+	{
+		m_tAnimationDesc.AffectBoneVec.push_back(i);
+	}
+
+	m_tAnimationDesc.iNumAnimations = m_Model.iNumAnimations;
+	for (_uint i = 0; i < m_Model.iNumAnimations; ++i)
+	{
+		CAnimation* pAnimation = CAnimation::Create(m_AnimationDatas[i], m_Bones);
+		if (nullptr == pAnimation)
+			return E_FAIL;
+
+		m_tAnimationDesc.Animations.push_back(pAnimation);
+	}
 	return S_OK;
 }
 
@@ -460,7 +612,7 @@ void CModel_Instance::Release_FileDatas()
 	m_AnimationDatas.clear();
 }
 
-CModel_Instance* CModel_Instance::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType, const _tchar* pModelFilePath, _float4x4* pInstanceMatrix, _uint iInstanceCnt, _float4x4 PivotMatrix)
+CModel_Instance* CModel_Instance::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::TYPE eType, const _tchar* pModelFilePath, _float4x4* pInstanceMatrix, _uint iInstanceCnt, _float4x4 PivotMatrix)
 {
 	CModel_Instance* pInstance = New CModel_Instance(pDevice, pContext);
 	if (FAILED(pInstance->Initialize_Prototype(eType, pModelFilePath, pInstanceMatrix, iInstanceCnt, PivotMatrix)))
@@ -494,6 +646,13 @@ void CModel_Instance::Free()
 		Release_FileDatas();
 	}
 
+	for (auto& pBone : m_Bones)
+	{
+		Safe_Release(pBone);
+	}
+
+	m_Bones.clear();
+
 	for (auto& pMesh : m_Meshes)
 	{
 		Safe_Release(pMesh);
@@ -508,4 +667,11 @@ void CModel_Instance::Free()
 	}
 
 	m_Materials.clear();
+
+	for (auto& pAnimation : m_tAnimationDesc.Animations)
+	{
+		Safe_Release(pAnimation);
+	}
+
+	m_tAnimationDesc.Animations.clear();
 }

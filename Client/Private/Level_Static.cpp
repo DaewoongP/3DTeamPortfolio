@@ -17,6 +17,7 @@ HRESULT CLevel_Static::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pC
 	FAILED_CHECK_RETURN(Ready_Layer_Inventory(TEXT("Layer_Inventory")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_FieldGuide_UI(TEXT("Layer_FieldGuide_UI")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_Menu_UI(TEXT("Layer_Menu_UI")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Sounds(), E_FAIL);
 	
 #ifdef _DEBUG
 	FAILED_CHECK_RETURN(Ready_Layer_Debug(TEXT("Layer_Debug")), E_FAIL);
@@ -70,10 +71,6 @@ HRESULT CLevel_Static::Ready_Layer_UI(const _tchar* pLayerTag)
 	FAILED_CHECK_RETURN(m_pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC,
 		TEXT("Prototype_GameObject_UI_Farming"), pLayerTag, TEXT("GameObject_UI_Farming")), E_FAIL);
 	
-	BEGININSTANCE;
-	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/UI_Sound/"));
-	ENDINSTANCE;
-
 	return S_OK;
 }
 
@@ -95,6 +92,15 @@ HRESULT CLevel_Static::Ready_Layer_Menu_UI(const _tchar* pLayerTag)
 	// °¡ÀÌµå ºÏ
 	FAILED_CHECK_RETURN(m_pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC,
 		TEXT("Prototype_GameObject_Guide_Book"), pLayerTag, TEXT("GameObject_Guide_Book")), E_FAIL)
+
+	return S_OK;
+}
+
+HRESULT CLevel_Static::Ready_Sounds()
+{
+	BEGININSTANCE;
+	//FAILED_CHECK_RETURN(pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/UI_Sound/")), E_FAIL);
+	ENDINSTANCE;
 
 	return S_OK;
 }

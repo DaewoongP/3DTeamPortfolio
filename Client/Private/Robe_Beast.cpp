@@ -56,6 +56,7 @@ void CRobe_Beast::Equipment()
 {
 	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Robe_Beast")
 		, CCustomModel::MESHTYPE::ROBE, _float4(1.f, 1.f, 1.f, 1.f), TEXT("../../Resources/GameData/ClothData/Robe_Beast.cloth"));
+	m_pPlayerModel->Set_Top_For_Robe(LEVEL_STATIC);
 	m_pPlayer->Set_Robe_Mesh_Index(3);
 }
 

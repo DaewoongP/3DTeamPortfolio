@@ -153,6 +153,9 @@ void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameI
 				}
 				else 
 				{
+					if (nullptr == pWorldMatrix)
+						break;
+
 					//여기에 pivot matrix 곱해주기 모델 가져와야하네?
 					PositionMatrix = pParticleFrame->OffsetMatrix * (*pParticleFrame->BindBoneMatrix)  * PivotMatrix * (*pWorldMatrix);
 

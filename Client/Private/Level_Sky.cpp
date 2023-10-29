@@ -15,13 +15,16 @@ HRESULT CLevel_Sky::Initialize()
 	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_Monster(TEXT("Layer_Monster")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_FlyGame(TEXT("Layer_Manager")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Layer_NPC(TEXT("Layer_NPC")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Shader(), E_FAIL);
 
 	BEGININSTANCE;
 	pGameInstance->Reset_World_TimeAcc();
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
+	pGameInstance->Stop_AllSound();
+	pGameInstance->Play_BGM(TEXT("Sky_Bgm.wav"), 0.6f);
 	ENDINSTANCE;
-	
+
 
 	return S_OK;
 }
@@ -65,12 +68,12 @@ HRESULT CLevel_Sky::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	FAILED_CHECK_RETURN(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SKY,
 		TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"), &isNight), E_FAIL)
 
-	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData5.ddd"))))
-	{
-		MSG_BOX("Failed to Load Map Object in Level_Sky");
+		if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData5.ddd"))))
+		{
+			MSG_BOX("Failed to Load Map Object in Level_Sky");
 
-		return E_FAIL;
-	}
+			return E_FAIL;
+		}
 
 	if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins5.ddd"))))
 	{
@@ -78,7 +81,7 @@ HRESULT CLevel_Sky::Ready_Layer_BackGround(const _tchar* pLayerTag)
 
 		return E_FAIL;
 	}
-	
+
 	_float4x4 Matrix = XMMatrixTranslation(108.f, 35.f, 27.f);
 
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_FireWorks"), pLayerTag, TEXT("FireWork"), &Matrix)))
@@ -181,7 +184,7 @@ HRESULT CLevel_Sky::Ready_Layer_BackGround(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}
-	
+
 	Matrix = XMMatrixTranslation(36.f, 39.f, 166.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_FireWorks"), pLayerTag, TEXT("FireWork14"), &Matrix)))
 	{
@@ -266,7 +269,29 @@ HRESULT CLevel_Sky::Ready_Layer_Monster(const _tchar* pLayerTag)
 
 	ENDINSTANCE;
 
-	//if (FAILED(Load_Monsters(TEXT("../../Resources/GameData/MonsterData/SkyCrowd.mon"))));
+	return S_OK;
+}
+
+HRESULT CLevel_Sky::Ready_Layer_NPC(const _tchar* pLayerTag)
+{
+	BEGININSTANCE;
+
+	if (FAILED(Load_Crowds(TEXT("../../Resources/GameData/MonsterData/Crowds.mon"))));
+
+	/* For.Prototype_Component_Model_Instance_Crowd */
+	_float4x4 WorldMatrix = XMMatrixIdentity();
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_SKY, TEXT("Prototype_Component_Model_Instance_Crowd"),
+		CModel_Instance::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/crowd/crowd.dat"), m_pMatrices, m_iNumCrowds, XMMatrixIdentity()))))
+		throw TEXT("Prototype_Component_Model_Instance_Crowd");
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_crowd"), pLayerTag, TEXT("GameObject_Crowds"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Crowds)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
 
 	return S_OK;
 }
@@ -489,7 +514,7 @@ HRESULT CLevel_Sky::Load_MapObject_Ins(const _tchar* pObjectFilePath)
 	return S_OK;
 }
 
-HRESULT CLevel_Sky::Load_Monsters(const wstring& wstrMonsterFilePath)
+HRESULT CLevel_Sky::Load_Crowds(const wstring& wstrMonsterFilePath)
 {
 	HANDLE hFile = CreateFile(wstrMonsterFilePath.c_str(), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
@@ -501,6 +526,8 @@ HRESULT CLevel_Sky::Load_Monsters(const wstring& wstrMonsterFilePath)
 
 	_uint iMonsterNum = 0;
 	_ulong dwByte = { 0 };
+
+	vector<_float4x4> Matrices;
 
 	while (true)
 	{
@@ -590,16 +617,15 @@ HRESULT CLevel_Sky::Load_Monsters(const wstring& wstrMonsterFilePath)
 		wstrPrototypeTag += wstrMonsterTag;
 		wstring wstrComponentTag = strToWStr(strComponentTag);
 
-		BEGININSTANCE;
-		if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, wstrPrototypeTag.c_str(),
-			TEXT("Layer_NPC"), wstrComponentTag.c_str(), &WorldMatrix)))
-		{
-			MSG_BOX("[Load_Monsters] Failed Load Monster");
-			ENDINSTANCE;
-			return E_FAIL;
-		}
-		ENDINSTANCE;
+		Matrices.push_back(WorldMatrix);
 	}
+
+	m_iNumCrowds = Matrices.size();
+	m_pMatrices = New _float4x4[m_iNumCrowds];
+	_uint i = { 0 };
+
+	for (const auto& Matrix : Matrices)
+		m_pMatrices[i++] = Matrix;
 
 	CloseHandle(hFile);
 
@@ -622,4 +648,6 @@ CLevel_Sky* CLevel_Sky::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 void CLevel_Sky::Free()
 {
 	__super::Free();
+
+	Safe_Delete_Array(m_pMatrices);
 }

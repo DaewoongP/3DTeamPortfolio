@@ -40,6 +40,7 @@ HRESULT CEvent_Enter_Sanctum::Initialize(void* pArg)
 	{
 		wstring wstrObjTag = Pair.first;
 
+		// 스폰하는 몬스터 태그입니다 오해 ㄴㄴ
 		if (wstring::npos != wstrObjTag.find(TEXT("Torch")))
 		{
 			m_pMonsters.emplace(wstrObjTag, static_cast<CEnemy*>(Pair.second));

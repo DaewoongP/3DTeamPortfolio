@@ -14,9 +14,8 @@ BEGIN(Engine)
 class CRenderer;
 END
 
-
 BEGIN(Client)
-class CEnemy;
+class CArmored_Troll;
 class CTrigger;
 class CFireHouse;
 END
@@ -56,7 +55,7 @@ private:
 	
 
 private: /* 몬스터 스폰 관련 */
-	_umap<wstring, CEnemy*> m_pMonsters;
+	CArmored_Troll* m_pTroll = { nullptr };
 	_bool m_isSpawned_Troll = { false };
 	void Check_Event_Spawn_Troll();
 
