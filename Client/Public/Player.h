@@ -295,11 +295,12 @@ private:
 	SPELL m_pFlySpell[4] = { LEVIOSO,FLIPENDO,ACCIO,DESCENDO  };
 	SPELL m_pNonFlySpell[4] = { SPELL(0) };
 	CParticleSystem* m_pWindParticle = { nullptr };
-
+	
 	//포션 버프용
 	POTIONBUFVALUEDESC m_DemegeDesc = { POTIONBUFVALUEDESC() };
 	POTIONBUFVALUEDESC m_DefensiveDesc = { POTIONBUFVALUEDESC() };
 	POTIONBUFVALUEDESC m_CoolTimeDesc = { POTIONBUFVALUEDESC() };
+	CParticleSystem* m_pEdurusParticle = { nullptr };
 
 	_bool m_isTabNext = { false };
 	

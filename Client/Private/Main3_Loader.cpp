@@ -383,6 +383,11 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Broom/Broom_Stick_Local/")))))
 			throw TEXT("Particle_Broom_Broom_Stick_Local");
 
+		/* For.Prototype_GameObject_Edurus_Particle*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Edurus_Particle"),
+			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Edurus/")))))
+			throw TEXT("Prototype_GameObject_Edurus_Particle");
+
 		/* For.Prototype_GameObject_Player*/
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Player"),
 			CPlayer::Create(m_pDevice, m_pContext))))
