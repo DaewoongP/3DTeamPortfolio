@@ -456,7 +456,6 @@ HRESULT CMainTool::Ready_Prototype_Object()
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Golem/"));
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Monster/"));
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Dugbog/"));
-	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Vault_Temp_Bgm/"));
 
 	pGameInstance->Play_BGM(TEXT("Vault.wav"), 0.8f);
 	pGameInstance->Play_BGM(TEXT("Vault_Bgm.wav"), 0.6f);

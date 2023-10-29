@@ -135,9 +135,6 @@ void CPotion_Station::Tick(_float fTimeDelta)
 			m_pPotFire->Play(_float3(99.144f, 7.160f, 77.909f));
 			pGameInstance->Set_Camera(TEXT("Potion_Station_Camera"), 0.5f);
 			m_eState = SHOW;
-			BEGININSTANCE;
-			m_iSoundChannel = pGameInstance->Play_Sound(TEXT("Potion_Brew.wav"), 1.0f);
-			ENDINSTANCE
 		}
 		break;
 	case Client::CPotion_Station::SHOW:
@@ -151,11 +148,6 @@ void CPotion_Station::Tick(_float fTimeDelta)
 			m_pPotFire->Stop();
 			pGameInstance->Set_Camera(TEXT("Player_Camera"), 1.f);
 			m_eState = IDLE;
-			BEGININSTANCE;
-			if (m_iSoundChannel != -1)
-				pGameInstance->Stop_Sound(m_iSoundChannel);
-			ENDINSTANCE
-
 		}
 		break;
 	default:

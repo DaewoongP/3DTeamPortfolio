@@ -45,7 +45,6 @@ private:
 private:
 	STATE m_eState = { IDLE };
 	_uint m_iLevel = {};
-	_int m_iSoundChannel = { -1 };
 	_uint m_iSound = { 0 };
 
 private: // For.Components
