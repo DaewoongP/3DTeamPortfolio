@@ -122,6 +122,7 @@ HRESULT CLevel_Static::Add_Sound()
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Object/TreasureChest/"));
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Magic/"));
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Player_Movement/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Troll/"));
 	ENDINSTANCE;
 
 	return S_OK;

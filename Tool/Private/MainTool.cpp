@@ -457,6 +457,7 @@ HRESULT CMainTool::Ready_Prototype_Object()
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Monster/"));
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Dugbog/"));
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Player_Movement/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Troll/"));
 
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/ConjuredDragon/"));
 	ENDINSTANCE;

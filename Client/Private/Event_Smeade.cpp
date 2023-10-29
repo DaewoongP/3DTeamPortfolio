@@ -98,7 +98,7 @@ void CEvent_Smeade::Check_Event_Spawn_Troll()
 		if (true == m_isEnter)
 		{
 			pGameInstance->Stop_AllSound();
-			_int ChennelNum = pGameInstance->Play_BGM(TEXT("HogSmead_Boss_Bgm.wav"), 0.6f);
+			_int ChennelNum = pGameInstance->Play_BGM(TEXT("HogSmead_Boss_Bgm.wav"), 0.4f);
 			m_pTroll->Set_Boss_BGM_Chennel_Number(ChennelNum);
 			//ÆäÀÌµå ¾Æ¿ô
 			m_pRenderer->FadeOut(1.0f);
