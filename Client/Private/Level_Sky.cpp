@@ -291,7 +291,8 @@ HRESULT CLevel_Sky::Ready_Layer_NPC(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 
-	if (FAILED(Load_Crowds(TEXT("../../Resources/GameData/MonsterData/Crowds.mon"))));
+	if (FAILED(Load_Crowds(TEXT("../../Resources/GameData/MonsterData/Crowds.mon"))))
+		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Instance_Crowd */
 	_float4x4 WorldMatrix = XMMatrixIdentity();
