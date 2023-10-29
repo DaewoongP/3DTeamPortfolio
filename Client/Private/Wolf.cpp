@@ -125,6 +125,9 @@ void CWolf::Late_Tick(_float fTimeDelta)
 		if (3.f <= m_fDeathTimeAcc)
 			Set_ObjEvent(OBJ_DEAD);
 	}
+
+	if (-5.f >= m_pTransform->Get_Position().y)
+		Set_ObjEvent(OBJ_DEAD);
 }
 
 void CWolf::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
