@@ -171,7 +171,6 @@ void CEvent_Spawn_Dragon_2::Check_Event_Spawn_Dragon_2()
 	ENDINSTANCE;
 	
 }
-
 HRESULT CEvent_Spawn_Dragon_2::Add_Components()
 {
 	/* Com_Renderer */
@@ -187,8 +186,8 @@ HRESULT CEvent_Spawn_Dragon_2::Add_Components()
 	TriggerDesc.isCollisionToDead = true;
 	strcpy_s(TriggerDesc.szCollisionTag, "Trigger_Sanctum_Spawn");
 	lstrcpy(TriggerDesc.szOtherTag, TEXT("Player_Default"));
-	TriggerDesc.vTriggerSize = _float3(20.f, 20.f, 10.f);
-	TriggerDesc.vTriggerWorldPos = _float3(-36.f, -33.f, 144.f);
+	TriggerDesc.vTriggerSize = _float3(15.f, 20.f, 5.f);
+	TriggerDesc.vTriggerWorldPos = _float3(-36.f, -40.f, 164.f);
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Trigger"),
 		TEXT("Trigger_Spawn"), reinterpret_cast<CComponent**>(&m_pTrigger_Spawn), &TriggerDesc)))
