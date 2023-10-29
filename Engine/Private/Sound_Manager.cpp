@@ -198,7 +198,7 @@ _float CSound_Manager::Get_ChannelVolume(_int iChannel)
 {
 	if (0 > iChannel ||
 		MAX_CHANNEL <= iChannel)
-		return E_FAIL;
+		return 0.f;
 
 	_float fVolume = { 0.f };
 	m_Channels[iChannel]->getVolume(&fVolume);

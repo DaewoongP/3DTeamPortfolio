@@ -604,13 +604,6 @@ _int CGameInstance::Play_Sound(const _tchar* pSoundTag, _uint iNumSounds, _float
 	return m_pSound_Manager->Play_Sound(pSoundTag, iNumSounds, fVolume);
 }
 
-_int CGameInstance::Play_BGM(const _tchar* pSoundTag, _float fVolume)
-{
-	NULL_CHECK_RETURN_MSG(m_pSound_Manager, -1, TEXT("Sound NULL"));
-
-	return m_pSound_Manager->Play_BGM(pSoundTag, fVolume);
-}
-
 HRESULT CGameInstance::Stop_Sound(_int iChannel)
 {
 	NULL_CHECK_RETURN_MSG(m_pSound_Manager, E_FAIL, TEXT("Sound NULL"));

@@ -142,7 +142,6 @@ public: /* For.Sound_Manager */
 	// 파일경로에 있는 사운드를 자동으로 파일이름을 태그값으로 입력해줌
 	HRESULT Add_Sounds(const _tchar* pSoundFilePath);
 	_bool Is_SoundPlaying(_int iChannel);
-	_int Play_BGM(const _tchar* pSoundTag, _float fVolume);
 	// forceplay 활성화하면 현재 재생중인 사운드 무시하고 실행함.
 	// default 매개변수 설정하는것을 추천함.
 	_int Play_Sound(const _tchar* pSoundTag, _float fVolume);
