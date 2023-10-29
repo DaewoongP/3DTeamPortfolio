@@ -320,7 +320,7 @@ HRESULT CWolf::Add_Components()
 
 		Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::MONSTER;
 		Desc.pHealth = m_pHealth;
-		lstrcpy(Desc.wszObjectLevel, TEXT("1"));
+		lstrcpy(Desc.wszObjectLevel, TEXT("30"));
 		lstrcpy(Desc.wszObjectName, TEXT("´Á´ë"));
 
 		BEGININSTANCE;
