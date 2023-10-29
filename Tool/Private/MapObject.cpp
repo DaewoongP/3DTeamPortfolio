@@ -39,6 +39,9 @@ HRESULT CMapObject::Initialize(void* pArg)
 void CMapObject::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if (nullptr != m_pModel)
+		m_pModel->Play_Animation(fTimeDelta, nullptr, CModel::UPPERBODY, m_pTransform);
 }
 
 void CMapObject::Late_Tick(_float fTimeDelta)

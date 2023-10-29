@@ -456,7 +456,7 @@ HRESULT CArmored_Troll::Add_Components()
 
 		/* For.Com_Health */
 		CHealth::HEALTHDESC HealthDesc;
-		HealthDesc.iMaxHP = 1000;
+		HealthDesc.iMaxHP = 4000;
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 			throw TEXT("Com_Health");
@@ -619,6 +619,35 @@ void CArmored_Troll::DeathBehavior(const _float& fTimeDelta)
 	}
 
 	m_fDeadTimeAcc += fTimeDelta;
+
+	BEGININSTANCE;
+
+	_float fSound = { 0.6f };
+
+	if (2.f > m_fDeadTimeAcc)
+	{
+		// 보스 사운드 줄이고
+		fSound -= m_fDeadTimeAcc * 0.4f;
+		fSound = fSound < 0.f ? 0.f : fSound;
+		pGameInstance->Set_ChannelVolume(m_iChennelNumber, fSound);
+	}
+	else
+	{
+		if (false == m_isEnter_Play_BGM)
+		{
+			// 마을 bgm으로 변경 후
+			pGameInstance->Stop_AllSound();
+			m_iChennelNumber = pGameInstance->Play_BGM(TEXT("HogSmead_Night_Bgm.wav"), 0.01f);
+			m_isEnter_Play_BGM = true;
+		}
+		
+		// bgm 소리 키움
+		fSound = (m_fDeadTimeAcc - 2.f) * 0.5f;
+		fSound = fSound > 0.6f ? 0.6f : fSound;
+		pGameInstance->Set_ChannelVolume(m_iChennelNumber, fSound);
+	}
+
+	ENDINSTANCE;
 
 	if (3.5f < m_fDeadTimeAcc)
 	{
@@ -785,7 +814,7 @@ HRESULT CArmored_Troll::Make_Alive(_Inout_ CSelector* pSelector)
 	return S_OK;
 }
 
-HRESULT CArmored_Troll::Make_Intro(CSequence* pSequence)
+HRESULT CArmored_Troll::Make_Intro(_Inout_ CSequence* pSequence)
 {
 	BEGININSTANCE;
 

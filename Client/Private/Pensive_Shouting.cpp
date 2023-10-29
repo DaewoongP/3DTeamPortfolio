@@ -238,7 +238,6 @@ void CPensive_Shouting::Tick_DrawMagic(_float fTimeDelta)
 {
 	m_ParticleVec[EFFECT_STATE_WAND][1]->Get_ShapeModuleRef().vLength.y += fTimeDelta * 4;
 	m_ParticleVec[EFFECT_STATE_WAND][1]->Get_ShapeModuleRef().vLength.x += fTimeDelta * 4;
-	cout << "µå·Î" << endl;
 }
 
 void CPensive_Shouting::Tick_CastMagic(_float fTimeDelta)

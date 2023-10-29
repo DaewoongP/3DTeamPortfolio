@@ -178,6 +178,10 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
+	
+	//m_DemegeDesc.fBuffValue = 20.f;
+	m_DemegeDesc.fBuffValueTime = 20.f;
+
 
 
 
@@ -219,7 +223,6 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_pFlySpell[3] = { DESCENDO };
 
 	Init_PotionBuffValue();
-
 	return S_OK;
 }
 
@@ -227,7 +230,6 @@ HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 {
 	m_pTransform->Set_Position(m_vLevelInitPosition[iCurrentLevelIndex]);
 	m_pTransform->Rotation(_float3(0.0f, 1.0f, 0.0f), 0.0f);
-
 	m_pPlayer_Camera->Get_TransformPtr()->Set_Position(XMVectorSetY(m_pTransform->Get_Position(), m_pTransform->Get_Position().y + 1.2f));
 	m_pPlayer_Camera->Get_TransformPtr()->Rotation(_float3(0.0f, 1.0f, 0.0f), 0.0f);
 
@@ -273,6 +275,7 @@ void CPlayer::Tick(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
+
 	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
 	{
 		ENDINSTANCE;
@@ -315,11 +318,11 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	Fix_Mouse();
 	Update_Cloth(fTimeDelta);
-	
-	m_pCustomModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
-	m_pCustomModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UNDERBODY);
-	m_pCustomModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::OTHERBODY);
-	m_pCustomModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::ANOTHERBODY);
+
+	m_pCustomModel->Play_Animation(fTimeDelta, &m_SoundChannel, CModel::UPPERBODY, m_pTransform);
+	m_pCustomModel->Play_Animation(fTimeDelta, &m_SoundChannel, CModel::UNDERBODY);
+	m_pCustomModel->Play_Animation(fTimeDelta, &m_SoundChannel, CModel::OTHERBODY);
+	m_pCustomModel->Play_Animation(fTimeDelta, &m_SoundChannel, CModel::ANOTHERBODY);
 
 	Update_CoolTime();
 	Update_Demege();
@@ -338,7 +341,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	m_isPreLumos = m_isLumosOn;
 
-	for (_uint i = 0; i < m_vecPotionParticle.size(); ++i)
+	for (_uint i = 0; i < m_vecPotionParticle.size()-1; ++i)
 	{
 		m_vecPotionParticle[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
 	}
@@ -359,7 +362,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	{
 		_int iFast = (_int)m_pRigidBody->Get_Current_Velocity().Length();
 		switch (iFast)
-		{	
+		{
 		case 0:
 		case 1:
 		case 2:
@@ -385,12 +388,15 @@ void CPlayer::Tick(_float fTimeDelta)
 
 		m_pWindParticle->Get_ShapeModuleRef().ShapeMatrix =
 			m_pWindParticle->Get_ShapeModuleRef().ShapeMatrixInit * TempMatrix;
-		m_pRenderer->Set_ScreenRadial(true,2.f, iFast*0.002f);
+		m_pRenderer->Set_ScreenRadial(true, 2.f, iFast * 0.002f);
 	}
 	else
 	{
 		m_pWindParticle->Get_EmissionModuleRef().fRateOverTime = 0.f;
 	}
+
+	
+	
 
 #ifdef _DEBUG
 	ADD_IMGUI([&] { this->Tick_TestShake(); });
@@ -443,8 +449,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	}
 
 	
-	if (m_DemegeDesc.isFinish)
-		m_vecPotionParticle[8]->Stop();
+	
 
 	ENDINSTANCE;
 }
@@ -880,12 +885,12 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Max_Aura"),
+	/*if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Max_Aura"),
 		TEXT("Com_Max_Aura"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[8]))))
 	{
 		__debugbreak();
 		return E_FAIL;
-	}
+	}*/
 
 	m_vecPlayer_StateParicle.resize(3);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Player_Hit_Particle"),
@@ -894,6 +899,7 @@ HRESULT CPlayer::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Player_Hit_Fog"),
 		TEXT("Com_Player_Hit_Fog"), reinterpret_cast<CComponent**>(&m_vecPlayer_StateParicle[1]))))
 	{
@@ -1273,7 +1279,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = CRUCIO;
 		magicInitDesc.fInitCoolTime = 20.f;
-		magicInitDesc.iDamage = 0;
+		magicInitDesc.iDamage = 444;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
@@ -1435,6 +1441,8 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 		RollStateDesc.IsBlink = true;
 
+		pGameInstance->Play_Sound(TEXT("Dash.wav"), 1.f);
+
 		Go_Roll(&RollStateDesc);
 		//Go_Jump();
 	}
@@ -1449,6 +1457,8 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 		if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
 		{
+			pGameInstance->Play_Sound(TEXT("Normal%d.wav"), 8, 1.f);
+
 			Go_MagicCast(&MagicCastingStateDesc);
 		}
 
@@ -1982,7 +1992,7 @@ void CPlayer::Update_Demege()
 	//기본 스팰, 스팰 공격력 바꾸기, 시간 감소
 	BEGININSTANCE;
 
-	if (20.0f < m_DemegeDesc.fBuffValueAcc)
+	if (0 < m_DemegeDesc.fBuffValueAcc)
 	{
 		m_DemegeDesc.fBuffValuePreAcc = m_DemegeDesc.fBuffValueAcc;
 		m_DemegeDesc.fBuffValueAcc -= pGameInstance->Get_World_Tick();
@@ -1991,7 +2001,7 @@ void CPlayer::Update_Demege()
 	ENDINSTANCE;
 
 	//0.0f에 도달 했을때, 이전 값이 초기화 되지 않은 양수라면
-	if (20.0f > m_DemegeDesc.fBuffValueAcc && 0.0f < m_DemegeDesc.fBuffValuePreAcc)
+	if (0.0f > m_DemegeDesc.fBuffValueAcc && 0.0f < m_DemegeDesc.fBuffValuePreAcc)
 	{
 		//초기화 하고
 		m_DemegeDesc.fBuffValuePreAcc = m_DemegeDesc.fBuffValueAcc = 0.0f;
@@ -2006,11 +2016,16 @@ void CPlayer::Update_Demege()
 		m_DemegeDesc.fBuffValueAcc = m_DemegeDesc.fBuffValueTime;
 
 		m_isPowerUp = true;
+
+		//if (m_isPowerUp)
+		//m_vecPotionParticle[8]->Play(m_pTransform->Get_Position());
+			
 	}
 
 	//원래 구조체 대입
 	if (true == m_DemegeDesc.isFinish)
 	{
+		m_vecPotionParticle[8]->Stop();
 		m_isPowerUp = false;
 	}
 }
@@ -3608,7 +3623,7 @@ void CPlayer::Go_Use_Item()
 	{
 		UseItemDesc.funcPotion = [&] {(*this).Drink_Potion(); };
 
-		for (_uint i = 0; i < 5; ++i)
+		for (_uint i = 0; i < 3; ++i)
 		{
 			m_vecPotionParticle[4+i]->Play(m_pTransform->Get_Position());
 			m_vecMeshEffect[0]->Play(m_pTransform->Get_Position());
@@ -3616,7 +3631,7 @@ void CPlayer::Go_Use_Item()
 
 		DamageTiming();
 
-		m_vecPotionParticle[8]->Play(m_pTransform->Get_Position());
+		//m_vecPotionParticle[8]->Play(m_pTransform->Get_Position());
 				
 	}
 	break;

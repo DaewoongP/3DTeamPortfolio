@@ -60,16 +60,6 @@ void CFocusPotion_Item::Use(_float3 vPlayPos)
 	__super::Use(vPlayPos);
 
 	m_pPlayer->FocusTiming();
-
-#ifdef _DEBUG
-	
-	cout << "집중하고 있어요" << endl;
-
-#endif // _DEBUG
-
-
-	// 메쉬 올리기.
-	//m_pPlayerInformation->Get_Health()->Heal(m_fRecoveryAmount);
 }
 
 void CFocusPotion_Item::CreateTool(void* pArg)

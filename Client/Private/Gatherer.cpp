@@ -232,9 +232,6 @@ void CGatherer::Tick(_float fTimeDelta)
 			if(nullptr != m_pLight_Horklump)
 				pGameInstance->Return_Light(m_pLight_Horklump);
 			ENDINSTANCE;
-#ifdef _DEBUG
-			cout << "Ã¤Áý¹° Á×À½" << '\n';
-#endif // _DEBUG
 		}
 	}
 }

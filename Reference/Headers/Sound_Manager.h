@@ -41,6 +41,7 @@ public:
 	HRESULT Restart_Sound(_int iChannel);
 	HRESULT Stop_AllSound();
 	HRESULT Set_ChannelVolume(_int iChannel, _float fVolume);
+	_float Get_ChannelVolume(_int iChannel);
 
 private:
 	HRESULT Load_SoundFile(const _tchar* pSoundFile);

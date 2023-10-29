@@ -37,6 +37,14 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 		MSG_BOX("Failed to Load ParticleSystem but You can progress");
 	}
 
+	/*if (m_RendererModuleDesc.wstrMaterialPath == TEXT("../../Resources/Effects/Textures/Default_Particle.png") &&
+		m_ShapeModuleDesc.wstrClipTexturePath == TEXT("../../Resources/Effects/Textures/Default_Particle.png") &&
+		m_RendererModuleDesc.isGlow == false &&
+		m_RendererModuleDesc.isDistortion == false)
+	{
+		__debugbreak();
+	}*/
+
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
@@ -56,6 +64,13 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 		}
 			
 	}
+	/*if (0 == lstrcmp(m_ShapeModuleDesc.wstrClipTexturePath.c_str(), TEXT("../../Resources/Effects/Textures/Default_Particle.png"))&&
+		0 == lstrcmp(m_RendererModuleDesc.wstrMaterialPath.c_str(), TEXT("../../Resources/Effects/Textures/Default_Particle.png"))&&
+			false==m_RendererModuleDesc.isGlow)
+	{
+		__debugbreak();
+	}*/
+
 
 	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_ShapeModuleDesc.wstrClipTexturePath.c_str());
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, ProtoTag.data()))
