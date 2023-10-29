@@ -143,6 +143,8 @@ void CRollState::OnStateEnter(void* _pArg)
 			1.5f,
 			-5.0f,
 			CCamera_Manager::SHAKE_POWER_DECRECENDO);
+
+		pGameInstance->Play_Sound(TEXT("Dash.wav"), 1.f);
 	}
 
 	*m_StateMachineDesc.pisFinishAnimation = false;
@@ -214,6 +216,8 @@ void CRollState::OnStateTick()
 				1.0f,
 				-5.0f,
 				CCamera_Manager::SHAKE_POWER_DECRECENDO);
+
+			pGameInstance->Play_Sound(TEXT("Dash.wav"), 1.f);
 		}
 	}
 	ENDINSTANCE;

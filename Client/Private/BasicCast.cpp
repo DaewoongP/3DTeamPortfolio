@@ -215,6 +215,10 @@ HRESULT CBasicCast::Reset(MAGICBALLINITDESC& InitDesc)
 void CBasicCast::Ready_Begin()
 {
 	__super::Ready_Begin();
+
+	BEGININSTANCE;
+	pGameInstance->Play_Sound(TEXT("Normal%d.wav"), 8, 1.f);
+	ENDINSTANCE;
 }
 
 void CBasicCast::Ready_DrawMagic()

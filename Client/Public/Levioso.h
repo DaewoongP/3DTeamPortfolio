@@ -55,6 +55,7 @@ private:
 
 private:
 	HRESULT Add_Components();
+	void	Levioso_Sound();
 
 public:
 	static CLevioso* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);

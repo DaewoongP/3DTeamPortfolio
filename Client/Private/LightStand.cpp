@@ -95,8 +95,10 @@ void CLightStand::Tick(_float fTimeDelta)
 	if (true == m_isFireOn && false == pGameInstance->Is_SoundPlaying(m_iSound0))
 	{
 		if(false == pGameInstance->Is_SoundPlaying(m_iSound1))
-			m_iSound1 = pGameInstance->Play_Sound(TEXT("Firing.wav"), 0.75f);
+			m_iSound1 = pGameInstance->Play_Sound(TEXT("Firing.wav"), 0.25f);
 	}
+
+	pGameInstance->Set_ChannelVolume(m_iSound0, 0.25f * pGameInstance->Get_SoundPower(m_pTransform->Get_Position()));
 	
 	ENDINSTANCE;
 }
@@ -127,7 +129,7 @@ void CLightStand::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		if (eBuff == BUFF_CONFRINGO)
 		{
 			BEGININSTANCE;
-			m_iSound0 = pGameInstance->Play_Sound(TEXT("FireOn.wav"), 1.f);
+			m_iSound0 = pGameInstance->Play_Sound(TEXT("FireOn.wav"), 0.5f);
 			ENDINSTANCE;
 
 			LightOn();
