@@ -90,6 +90,15 @@ HRESULT CLightStand::Initialize_Level(_uint iCurrentLevelIndex)
 void CLightStand::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	BEGININSTANCE;
+	if (true == m_isFireOn && false == pGameInstance->Is_SoundPlaying(m_iSound0))
+	{
+		if(false == pGameInstance->Is_SoundPlaying(m_iSound1))
+			m_iSound1 = pGameInstance->Play_Sound(TEXT("Firing.wav"), 0.75f);
+	}
+	
+	ENDINSTANCE;
 }
 
 void CLightStand::Late_Tick(_float fTimeDelta)
@@ -117,6 +126,10 @@ void CLightStand::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
 		if (eBuff == BUFF_CONFRINGO)
 		{
+			BEGININSTANCE;
+			m_iSound0 = pGameInstance->Play_Sound(TEXT("FireOn.wav"), 1.f);
+			ENDINSTANCE;
+
 			LightOn();
 			m_isFireOn = true;
 		}

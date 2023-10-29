@@ -92,6 +92,15 @@ void CVault_Gate::Tick(_float fTimeDelta)
 	// 화로에 불 다 붙으면 문열림
 	Check_FireOn();
 
+	BEGININSTANCE;
+	if (true == m_isSound0 && true == m_isGateOpen)
+	{
+		m_iSound0 = pGameInstance->Play_Sound(TEXT("Vault_Door_Open.wav"), 1.f);
+		m_isSound0 = false;
+	}
+		
+	ENDINSTANCE;
+
 	if (true == m_isCheckOnce && true == m_isGateOpen)
 		m_pModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 	else

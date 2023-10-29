@@ -153,7 +153,16 @@ void CGatherer::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	if(true == m_isDissolveStart)
-		m_fDissolveAmount += fTimeDelta / 1.5f; // 디졸브 값 증가
+		m_fDissolveAmount += fTimeDelta; // 디졸브 값 증가
+
+	if (true == m_isDissolveStart && true == m_isSound)
+	{
+		BEGININSTANCE;
+		pGameInstance->Play_Sound(TEXT("Gatherer_Dissolve.wav"), 1.f);
+		ENDINSTANCE;
+
+		m_isSound = false;
+	}
 
 	// 플레이어와 충돌했을 때
 	if (true == m_isCol_with_Player && nullptr != m_pModel && true == m_isGetItem)
@@ -178,6 +187,10 @@ void CGatherer::Tick(_float fTimeDelta)
 		BEGININSTANCE;  // 버튼을 누르면 동작(한번만)
 		if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN) && true == m_isGetItem)
 		{
+			BEGININSTANCE;
+			pGameInstance->Play_Sound(TEXT("Gatherer_Pick.wav"), 0.5f);
+			ENDINSTANCE;
+
 			m_isGetItem = false;
 
 			// 채집당하는 애니메이션으로 변경
