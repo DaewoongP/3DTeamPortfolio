@@ -232,12 +232,25 @@ void CConfringo::Ready_DrawMagic()
 
 void CConfringo::Ready_CastMagic()
 {
+	BEGININSTANCE;
+
+	pGameInstance->Play_Sound(TEXT("Confringo.wav"), 1.0f);
+	
+	ENDINSTANCE;
+
 	Ready_SplineSpinMove(m_TrailVec[EFFECT_STATE_MAIN].data()[0],_float2(0.2f, 0.20f),0.5f);
 	__super::Ready_CastMagic();
 }
 
 void CConfringo::Ready_Dying()
 {
+	CGameInstance* pGameInstance1 = CGameInstance::GetInstance();		
+	Safe_AddRef(pGameInstance1);
+
+	pGameInstance1->Play_Sound(TEXT("Confringo_Hit.wav"), pGameInstance1->Get_SoundPower(m_pTransform->Get_Position()));
+
+	Safe_Release(pGameInstance1);
+
 	ADD_DECREASE_LIGHT(m_vEndPosition, 20.f, 0.3f, m_vLightColor);
 	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_HIT].size(); i++)
 	{

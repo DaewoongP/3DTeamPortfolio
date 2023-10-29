@@ -254,6 +254,8 @@ void CDiffindo::Ready_CastMagic()
 		-0.05f,
 		CCamera_Manager::SHAKE_POWER_DECRECENDO);
 
+	pGameInstance->Play_Sound(TEXT("Diffindo.wav"), 1.0f);
+
 	ENDINSTANCE;
 #pragma endregion
 }
