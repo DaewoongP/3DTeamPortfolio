@@ -97,7 +97,7 @@ void CCard_Fig::Tick(_float fTimeDelta)
 		m_pUI_Card->Tick(fTimeDelta);
 
 	if (nullptr != m_pModelCom)
-		m_pModelCom->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
+		m_pModelCom->Play_Animation(fTimeDelta, &m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 }
 
 void CCard_Fig::Late_Tick(_float fTimeDelta)
@@ -509,7 +509,7 @@ HRESULT CCard_Fig::Add_Components()
 		m_pUI_Card->Load(UIDesc);
 		m_pUI_Card->Set_PlayDissolve(false);
 		//m_pUI_Card->Set_Effecttype();
-		                            
+
 
 
 		m_pScripts.clear();
@@ -753,7 +753,7 @@ void CCard_Fig::Play_Script(_float fTimeDelta)
 	}
 
 	if (m_isEnterSanctum)
-	{
+	{ 
 		m_isPlayScript = true;
 		m_isEnterSanctum = false;
 		m_pScripts[ENTERSANCTUM]->Reset_Script();

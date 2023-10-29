@@ -104,37 +104,37 @@ HRESULT CLevel_Sanctum::Ready_Layer_Monsters(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	Matrix = XMMatrixRotationY(XMConvertToRadians(41.f)) * XMMatrixTranslation(-8.1f, 2.2f, 173.7f);
-	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_DarkWizard_Spawn"), pLayerTag, TEXT("Spawn_0"), &Matrix)))
-	{
-		MSG_BOX("Failed Add_GameObject : (Spawn_0)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
+	//Matrix = XMMatrixRotationY(XMConvertToRadians(41.f)) * XMMatrixTranslation(-8.1f, 2.2f, 173.7f);
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_DarkWizard_Spawn"), pLayerTag, TEXT("Spawn_0"), &Matrix)))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (Spawn_0)");
+	//	ENDINSTANCE;
+	//	return E_FAIL;
+	//}
 
-	Matrix = XMMatrixRotationY(XMConvertToRadians(-63.f)) * XMMatrixTranslation(5.6f, 1.2f, 176.f);
-	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_DarkWizard_Spawn"), pLayerTag, TEXT("Spawn_1"), &Matrix)))
-	{
-		MSG_BOX("Failed Add_GameObject : (Spawn_1)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
+	//Matrix = XMMatrixRotationY(XMConvertToRadians(-63.f)) * XMMatrixTranslation(5.6f, 1.2f, 176.f);
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_DarkWizard_Spawn"), pLayerTag, TEXT("Spawn_1"), &Matrix)))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (Spawn_1)");
+	//	ENDINSTANCE;
+	//	return E_FAIL;
+	//}
 
-	Matrix = XMMatrixRotationY(XMConvertToRadians(23.f)) * XMMatrixTranslation(-4.75f, 2.45f, 171.3f); // +2.5f
-	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_DarkWizard_Spawn"), pLayerTag, TEXT("Spawn_2"), &Matrix)))
-	{
-		MSG_BOX("Failed Add_GameObject : (Spawn_2)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
+	//Matrix = XMMatrixRotationY(XMConvertToRadians(23.f)) * XMMatrixTranslation(-4.75f, 2.45f, 171.3f); // +2.5f
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_DarkWizard_Spawn"), pLayerTag, TEXT("Spawn_2"), &Matrix)))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (Spawn_2)");
+	//	ENDINSTANCE;
+	//	return E_FAIL;
+	//}
 
-	Matrix = XMMatrixRotationY(XMConvertToRadians(-27.f)) * XMMatrixTranslation(2.3f, 3.2f, 171.1f);
-	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_DarkWizard_Spawn"), pLayerTag, TEXT("Spawn_3"), &Matrix)))
-	{
-		MSG_BOX("Failed Add_GameObject : (Spawn_3)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
+	//Matrix = XMMatrixRotationY(XMConvertToRadians(-27.f)) * XMMatrixTranslation(2.3f, 3.2f, 171.1f);
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_DarkWizard_Spawn"), pLayerTag, TEXT("Spawn_3"), &Matrix)))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (Spawn_3)");
+	//	ENDINSTANCE;
+	//	return E_FAIL;
+	//}
 
 	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Sanctum.mon"));
 
@@ -196,8 +196,6 @@ HRESULT CLevel_Sanctum::Ready_Layer_MapEffect(const _tchar* pLayerTag)
 
 HRESULT CLevel_Sanctum::Ready_Lights()
 {
-	g_isNight = true;
-
 	BEGININSTANCE;
 	CLight::LIGHTDESC		LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
@@ -224,7 +222,7 @@ HRESULT CLevel_Sanctum::Ready_Lights()
 	LightDesc.vAmbient = _float4(1.f, 0.f, 0.f, 0.f);
 	LightDesc.vSpecular = _float4(1.f, 0.f, 0.f, 0.f);
 
-	if (FAILED(pGameInstance->Add_Light(LightDesc, nullptr, true)))
+	if (FAILED(pGameInstance->Add_Light(LightDesc)))
 		return E_FAIL;
 
 	//LightDesc.eType = CLight::TYPE_POINT;
@@ -299,7 +297,8 @@ HRESULT CLevel_Sanctum::Ready_Shader()
 	CRenderer* pRenderer = static_cast<CRenderer*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer")));
 	pRenderer->Defualt_Shading();
 
-
+	pRenderer->Set_Fog(true, _float4(0.3f, 0.f, 0.f, 0.3f), _float3(0.f, 0.f, 40.f), 40.f);
+	//pRenderer->Set_Fog(true, _float4(0.3f, 0.f, 0.f, 0.5f), 0.f);
 
 	Safe_Release(pRenderer);
 

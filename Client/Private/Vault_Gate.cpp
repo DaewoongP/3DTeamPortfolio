@@ -3,6 +3,8 @@
 
 #include "LightStand.h"
 
+#include "Camera_Shake.h"
+
 CVault_Gate::CVault_Gate(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -82,6 +84,8 @@ HRESULT CVault_Gate::Initialize_Level(_uint iCurrentLevelIndex)
 		}
 	}
 
+	Bind_Notifys();
+
 	return S_OK;
 }
 
@@ -91,6 +95,15 @@ void CVault_Gate::Tick(_float fTimeDelta)
 
 	// 화로에 불 다 붙으면 문열림
 	Check_FireOn();
+
+	BEGININSTANCE;
+	if (true == m_isSound0 && true == m_isGateOpen)
+	{
+		m_iSound0 = pGameInstance->Play_Sound(TEXT("Vault_Door_Open.wav"), 1.f);
+		m_isSound0 = false;
+	}
+		
+	ENDINSTANCE;
 
 	if (true == m_isCheckOnce && true == m_isGateOpen)
 		m_pModel->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
@@ -185,6 +198,84 @@ HRESULT CVault_Gate::Add_Components()
 		return E_FAIL;
 	}
 
+
+	CCamera_Shake::CAMERA_SHAKE_DESC Camera_Shake_Desc = { CCamera_Shake::CAMERA_SHAKE_DESC() };
+
+	_float fMaxDistance = { 30.0f };
+	_float fMinDistance = { 2.0f };
+
+	Camera_Shake_Desc.eShake_Priority = CCamera_Manager::SHAKE_PRIORITY_1;
+	Camera_Shake_Desc.isDistanceOption = true;
+	Camera_Shake_Desc.pTransform = m_pTransform;
+	Camera_Shake_Desc.Shake_Info_Desc.eEase = CEase::IN_EXPO;
+	Camera_Shake_Desc.Shake_Info_Desc.eShake_Axis = CCamera_Manager::SHAKE_AXIS_UP;
+	Camera_Shake_Desc.Shake_Info_Desc.eShake_Power = CCamera_Manager::SHAKE_POWER_DECRECENDO;
+	Camera_Shake_Desc.Shake_Info_Desc.eShake_Type = CCamera_Manager::SHAKE_TYPE_TRANSLATION;
+	Camera_Shake_Desc.Shake_Info_Desc.fShakeDuration = 0.1f;
+	Camera_Shake_Desc.Shake_Info_Desc.fShakePower = 0.08f;
+	Camera_Shake_Desc.Shake_Info_Desc.fShakeSpeed = 10.0f;
+	Camera_Shake_Desc.Shake_Info_Desc.vShake_Axis_Set = _float3();
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Enemy_Camera_Shake"),
+		TEXT("Com_Camera_Shake_Up"), reinterpret_cast<CComponent**>(&m_pCamera_Shake_Up), &Camera_Shake_Desc)))
+		throw TEXT("Com_Camera_Shake_Up");
+
+	m_pCamera_Shake_Up->Ready_Shake(fMaxDistance, fMinDistance, Camera_Shake_Desc.Shake_Info_Desc.fShakePower);
+
+	Camera_Shake_Desc.eShake_Priority = CCamera_Manager::SHAKE_PRIORITY_1;
+	Camera_Shake_Desc.isDistanceOption = true;
+	Camera_Shake_Desc.pTransform = m_pTransform;
+	Camera_Shake_Desc.Shake_Info_Desc.eEase = CEase::IN_EXPO;
+	Camera_Shake_Desc.Shake_Info_Desc.eShake_Axis = CCamera_Manager::SHAKE_AXIS_UP;
+	Camera_Shake_Desc.Shake_Info_Desc.eShake_Power = CCamera_Manager::SHAKE_POWER_DECRECENDO;
+	Camera_Shake_Desc.Shake_Info_Desc.eShake_Type = CCamera_Manager::SHAKE_TYPE_TRANSLATION;
+	Camera_Shake_Desc.Shake_Info_Desc.fShakeDuration = 0.1f;
+	Camera_Shake_Desc.Shake_Info_Desc.fShakePower = -0.08f;
+	Camera_Shake_Desc.Shake_Info_Desc.fShakeSpeed = 10.0f;
+	Camera_Shake_Desc.Shake_Info_Desc.vShake_Axis_Set = _float3();
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Enemy_Camera_Shake"),
+		TEXT("Com_Camera_Shake_Down"), reinterpret_cast<CComponent**>(&m_pCamera_Shake_Down), &Camera_Shake_Desc)))
+		throw TEXT("Com_Camera_Shake_Down");
+
+	m_pCamera_Shake_Down->Ready_Shake(fMaxDistance, fMinDistance, Camera_Shake_Desc.Shake_Info_Desc.fShakePower);
+
+	Camera_Shake_Desc.eShake_Priority = CCamera_Manager::SHAKE_PRIORITY_1;
+	Camera_Shake_Desc.isDistanceOption = true;
+	Camera_Shake_Desc.pTransform = m_pTransform;
+	Camera_Shake_Desc.Shake_Info_Desc.eEase = CEase::IN_EXPO;
+	Camera_Shake_Desc.Shake_Info_Desc.eShake_Axis = CCamera_Manager::SHAKE_AXIS_UP;
+	Camera_Shake_Desc.Shake_Info_Desc.eShake_Power = CCamera_Manager::SHAKE_POWER_DECRECENDO;
+	Camera_Shake_Desc.Shake_Info_Desc.eShake_Type = CCamera_Manager::SHAKE_TYPE_TRANSLATION;
+	Camera_Shake_Desc.Shake_Info_Desc.fShakeDuration = 2.0f;
+	Camera_Shake_Desc.Shake_Info_Desc.fShakePower = 0.05f;
+	Camera_Shake_Desc.Shake_Info_Desc.fShakeSpeed = 6.0f;
+	Camera_Shake_Desc.Shake_Info_Desc.vShake_Axis_Set = _float3();
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Enemy_Camera_Shake"),
+		TEXT("Com_Camera_Shake_Loop"), reinterpret_cast<CComponent**>(&m_pCamera_Shake_Loop), &Camera_Shake_Desc)))
+		throw TEXT("Com_Camera_Shake_Loop");
+
+	m_pCamera_Shake_Loop->Ready_Shake(fMaxDistance, fMinDistance, Camera_Shake_Desc.Shake_Info_Desc.fShakePower);
+
+	Camera_Shake_Desc.eShake_Priority = CCamera_Manager::SHAKE_PRIORITY_1;
+	Camera_Shake_Desc.isDistanceOption = true;
+	Camera_Shake_Desc.pTransform = m_pTransform;
+	Camera_Shake_Desc.Shake_Info_Desc.eEase = CEase::IN_EXPO;
+	Camera_Shake_Desc.Shake_Info_Desc.eShake_Axis = CCamera_Manager::SHAKE_AXIS_UP;
+	Camera_Shake_Desc.Shake_Info_Desc.eShake_Power = CCamera_Manager::SHAKE_POWER_DECRECENDO;
+	Camera_Shake_Desc.Shake_Info_Desc.eShake_Type = CCamera_Manager::SHAKE_TYPE_TRANSLATION;
+	Camera_Shake_Desc.Shake_Info_Desc.fShakeDuration = 0.8f;
+	Camera_Shake_Desc.Shake_Info_Desc.fShakePower = 0.1f;
+	Camera_Shake_Desc.Shake_Info_Desc.fShakeSpeed = 8.0f;
+	Camera_Shake_Desc.Shake_Info_Desc.vShake_Axis_Set = _float3();
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Enemy_Camera_Shake"),
+		TEXT("Com_Camera_Shake_End"), reinterpret_cast<CComponent**>(&m_pCamera_Shake_End), &Camera_Shake_Desc)))
+		throw TEXT("Com_Camera_Shake_End");
+
+	m_pCamera_Shake_End->Ready_Shake(fMaxDistance, fMinDistance, Camera_Shake_Desc.Shake_Info_Desc.fShakePower);
+
 	return S_OK;
 }
 
@@ -263,6 +354,33 @@ void CVault_Gate::Check_FireOn()
 	}		
 }
 
+HRESULT CVault_Gate::Bind_Notifys()
+{
+	if (nullptr == m_pCamera_Shake_Up || nullptr == m_pCamera_Shake_Down || nullptr == m_pCamera_Shake_Loop || nullptr == m_pCamera_Shake_End)
+	{
+		MSG_BOX("Failed Make_Notifies_for_Shake");
+		return E_FAIL;
+	}
+
+	function<void()> func = [&] {m_pCamera_Shake_Up->RandomUpAxisShake(); };
+
+	m_pModel->Bind_Notifies(TEXT("Camera_Shake_Up"), func);
+
+	func = [&] {m_pCamera_Shake_Down->RandomUpAxisShake(); };
+
+	m_pModel->Bind_Notifies(TEXT("Camera_Shake_Down"), func);
+
+	func = [&] {m_pCamera_Shake_Loop->RandomUpAxisShake(); };
+
+	m_pModel->Bind_Notifies(TEXT("Camera_Shake_Loop"), func);
+
+	func = [&] {m_pCamera_Shake_End->RandomUpAxisShake(); };
+
+	m_pModel->Bind_Notifies(TEXT("Camera_Shake_End"), func);
+
+	return S_OK;
+}
+
 CVault_Gate* CVault_Gate::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CVault_Gate* pInstance = New CVault_Gate(pDevice, pContext);
@@ -300,4 +418,8 @@ void CVault_Gate::Free()
 	Safe_Release(m_pModel);
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pEffect);
+	Safe_Release(m_pCamera_Shake_Up);
+	Safe_Release(m_pCamera_Shake_Down);
+	Safe_Release(m_pCamera_Shake_Loop);
+	Safe_Release(m_pCamera_Shake_End);
 }

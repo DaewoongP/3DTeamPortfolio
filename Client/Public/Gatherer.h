@@ -76,6 +76,7 @@ private:
 	_bool			m_isGetItem = { true }; // 아이템 획득 가능 여부
 	_bool			m_isCol_with_Player = { false }; // 플레이어와 충돌 여부
 	_bool			m_isDissolveStart = { false };
+	_bool			m_isSound = { true };
 
 	_uint			m_iCurrentLevel = { LEVEL_END };
 

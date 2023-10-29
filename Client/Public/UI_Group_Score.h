@@ -59,6 +59,9 @@ private:
 	virtual ~CUI_Group_Score() = default;
 
 public:
+	_uint Get_PlayerRank();
+
+public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
@@ -83,6 +86,7 @@ private:
 	_uint				Text8 = 0;
 	_uint				Text9 = 0;
 
+	UISCOREDESC			m_NameDesc;
 
 private:
 	HRESULT		Add_Prototype();

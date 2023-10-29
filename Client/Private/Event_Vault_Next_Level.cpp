@@ -266,4 +266,5 @@ void CEvent_Vault_Next_Level::Free()
 
 	Safe_Release(m_pNext_Level);
 	Safe_Release(m_pVault_Gate);
+	Safe_Release(m_pRenderer);
 }

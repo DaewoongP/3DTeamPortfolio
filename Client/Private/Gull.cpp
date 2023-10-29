@@ -359,6 +359,15 @@ void CGull::Check_Dist_From_Player(_float fTimeDelta)
 	else if (5.f >= m_fDist_From_Player && true == m_isCol_with_Player)
 	{
 		m_GullAnimIndex = GULL_START_FLY;
+
+		if (true == m_isSound)
+		{
+			BEGININSTANCE;
+			pGameInstance->Play_Sound(TEXT("Gull%d.wav"), 6, 0.6f);
+			ENDINSTANCE;
+
+			m_isSound = false;
+		}
 	}
 
 	// Æò»ó½Ã

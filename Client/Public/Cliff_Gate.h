@@ -9,6 +9,7 @@ class CModel;
 class CShader;
 class CRenderer;
 class CParticleSystem;
+class CCamera_Shake;
 END
 
 BEGIN(Client)
@@ -50,12 +51,14 @@ private:
 	CRenderer* m_pRenderer = { nullptr };
 	CModel* m_pModel = { nullptr };
 	CParticleSystem* m_pEffect = { nullptr };
+	CCamera_Shake* m_pCamera_Shake = { nullptr };
 
 private:
 	_bool			m_isCheckOnce = { true }; // 한번만 상호작용 가능
 	_bool			m_isEffectOn = { false }; // 이펙트 한 번만 켜주기
 	_bool			m_isAllLightStandsOn = { false }; // 화로가 전부 점화되었는지
 	_bool			m_isReparoOn = { false };	// 컷신을 위해서 한단계 추가
+	_bool			m_isSoundOn = { false };
 
 	_uint			m_iLightStandsCnt = 0;  // 화로의 개수
 
@@ -69,6 +72,8 @@ private:
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix);
 	void	Check_FireOn();
+
+	HRESULT Bind_Notifys();
 
 public:
 	static CCliff_Gate* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

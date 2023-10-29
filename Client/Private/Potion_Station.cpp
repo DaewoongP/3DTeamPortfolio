@@ -128,6 +128,8 @@ void CPotion_Station::Tick(_float fTimeDelta)
 		// F버튼 누르면 활성화
 		if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
 		{
+			m_iSound = pGameInstance->Play_Sound(TEXT("Boiling2.wav"), 1.f);
+
 			m_pCUI_Group_Brew->Set_isOpen(true);
 			m_pWaterSmoke->Play(_float3(99.574f, 7.540f, 77.789f));
 			m_pPotFire->Play(_float3(99.144f, 7.160f, 77.909f));
@@ -142,6 +144,8 @@ void CPotion_Station::Tick(_float fTimeDelta)
 		// F버튼 누르면 비활성화
 		if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
 		{
+			pGameInstance->Stop_Sound(m_iSound);
+
 			m_pCUI_Group_Brew->Set_isOpen(false);
 			m_pWaterSmoke->Stop();
 			m_pPotFire->Stop();

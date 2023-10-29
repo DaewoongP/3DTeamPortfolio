@@ -130,7 +130,6 @@ void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameI
 				if (returnValue != -1 && iSoundChannelVecconst != nullptr)
 				{
 					iSoundChannelVecconst->push_back(returnValue);
-					cout << returnValue << endl;
 				}
 					
 				Safe_Release(pGameInstance);

@@ -288,6 +288,7 @@ void CEvent_Enter_Sanctum::Free()
 	__super::Free();
 
 	Safe_Release(m_pCard_Fig);
+	Safe_Release(m_pRenderer);
 
 	for (auto& Pair : m_pMonsters)
 		Safe_Release(Pair.second);

@@ -583,6 +583,13 @@ _bool CGameInstance::Is_SoundPlaying(_int iChannel)
 	return m_pSound_Manager->Is_Playing(iChannel);
 }
 
+_int CGameInstance::Play_BGM(const _tchar* pSoundTag, _float fVolume)
+{
+	NULL_CHECK_RETURN_MSG(m_pSound_Manager, -1, TEXT("Sound NULL"));
+
+	return m_pSound_Manager->Play_BGM(pSoundTag, fVolume);
+}
+
 _int CGameInstance::Play_Sound(const _tchar* pSoundTag, _float fVolume)
 {
 	NULL_CHECK_RETURN_MSG(m_pSound_Manager, -1, TEXT("Sound NULL"));
@@ -996,7 +1003,7 @@ _float CGameInstance::Get_SoundPower(_float3 vObjectPosition)
 
 	Saturate(fDist, 0.f, 1.f);
 
-	return fDist;
+	return (1.f - fDist);
 }
 
 _char* CGameInstance::Make_Char(const _char* pMakeChar)
