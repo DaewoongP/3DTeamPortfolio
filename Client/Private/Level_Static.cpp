@@ -111,6 +111,11 @@ HRESULT CLevel_Static::Add_Sound()
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Animal/Cat/"));
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Animal/Owl/"));
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Animal/Gull/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Animal/Wolf/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Spell/Dash/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Spell/Normal/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Spell/Levioso/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Spell/Finisher/"));
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Object/Door/"));
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Object/Gatherer/"));
 	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Object/LightStand/"));
