@@ -26,6 +26,7 @@ private:
 	HRESULT Ready_Layer_Menu_UI(const _tchar * pLayerTag);
 	
 private:
+	HRESULT Add_Sound();
 	HRESULT Add_Scene();
 	HRESULT Add_Cameras(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	HRESULT Add_Quests(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

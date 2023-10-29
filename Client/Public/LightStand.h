@@ -35,6 +35,9 @@ private:
 private:
 	_bool	m_isFireOn = { false };
 
+	_uint m_iSound0 = { 0 }; // 사운드 채널 0
+	_uint m_iSound1 = { 0 }; // 사운드 채널 1
+
 private:
 	void	LightOn();
 

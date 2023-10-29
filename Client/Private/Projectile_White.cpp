@@ -45,16 +45,18 @@ HRESULT CProjectile_White::Initialize_Prototype(_uint iLevel)
 		}
 	}
 
-	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_Trail_Projectile_Black")))
+
+	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_Particle_Projectile_Black_Trail")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_Trail_Projectile_Black")
-			, CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Projectile_Black/Projectile_Black.trail"), iLevel))))
+		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_Particle_Projectile_Black_Trail")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Projectile_Black/BulletTrail"), iLevel))))
 		{
 			__debugbreak();
 			ENDINSTANCE;
 			return E_FAIL;
 		}
 	}
+
 
 	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_MeshEffect_Projectile_Black_SplineUp")))
 	{
@@ -66,7 +68,16 @@ HRESULT CProjectile_White::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
-
+	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_Trail_Projectile_Black")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_Trail_Projectile_Black")
+			, CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Projectile_Black/Projectile_Black.trail"), iLevel))))
+		{
+			__debugbreak();
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
 	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_MeshEffect_Projectile_Black")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_MeshEffect_Projectile_Black")
@@ -182,10 +193,14 @@ void CProjectile_White::Ready_CastMagic()
 	Safe_AddRef(pGameInstance);
 	pGameInstance->Play_Sound(TEXT("ConjuredDragon_Explosion.wav"), 0.7f);
 	Safe_Release(pGameInstance);
+	m_ParticleVec[EFFECT_STATE_MAIN][1]->Play(m_CurrentWeaponMatrix.Translation());
+
 }
 
 void CProjectile_White::Ready_Dying()
 {
+	m_ParticleVec[EFFECT_STATE_MAIN][1]->Stop();
+
 	for (auto& SplineUp : m_pMeshEffect_SplineUp)
 	{
 		SplineUp->Play(m_vEndPosition);
@@ -218,13 +233,18 @@ void CProjectile_White::Tick_CastMagic(_float fTimeDelta)
 		if (m_fLerpAcc > 1)
 			m_fLerpAcc = 1;
 		_float3 vLerpPos = _float3::Lerp(m_vStartPosition, m_vEndPosition, m_fLerpAcc);
-		m_TrailVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Set_Position(vLerpPos);
+
 		_float3 vTrailPos = m_TrailVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Get_Position();
-		m_ParticleVec[EFFECT_STATE_MAIN][0]->Get_Transform()->LookAt(m_vStartPosition);
-		m_ParticleVec[EFFECT_STATE_MAIN][0]->Get_ShapeModuleRef().Set_ShapeLook(m_vEndPosition, m_vStartPosition);
-		m_ParticleVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Set_Position(vTrailPos);
+		
+			m_ParticleVec[EFFECT_STATE_MAIN][0]->Get_Transform()->LookAt(m_vStartPosition);
+			m_ParticleVec[EFFECT_STATE_MAIN][0]->Get_ShapeModuleRef().Set_ShapeLook(m_vEndPosition, m_vStartPosition);
+			m_ParticleVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Set_Position(vTrailPos);
+		
 		m_pMeshEffect_Projectile_Black->Get_Transform()->Set_Position(vLerpPos);
 		m_pMeshEffect_Projectile_Black->Get_Transform()->LookAt(m_vEndPosition);
+		m_ParticleVec[EFFECT_STATE_MAIN][1]->Get_Transform()->Set_Position(m_pMeshEffect_Projectile_Black->Get_Transform()->Get_Position());
+
+
 		m_pTransform->Set_Position(XMVectorLerp(m_vStartPosition, m_vEndPosition, m_fLerpAcc));
 	}
 	else
@@ -248,9 +268,13 @@ HRESULT CProjectile_White::Add_Components()
 	FAILED_CHECK(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_MeshEffect_Projectile_Black"),
 		TEXT("Com_MeshEffect_Projectile_Black"), reinterpret_cast<CComponent**>(&m_pMeshEffect_Projectile_Black)));
 
-	m_ParticleVec[EFFECT_STATE_MAIN].resize(1);
+	m_ParticleVec[EFFECT_STATE_MAIN].resize(2);
 	FAILED_CHECK(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Projectile_Black_Bullet_Trace"),
 		TEXT("Com_Particle_Projectile_Black_Bullet_Trace"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][0])));
+	FAILED_CHECK(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Projectile_Black_Trail"),
+		TEXT("Com_Particle_Projectile_Black_Trail"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][1])));
+
+
 
 	m_ParticleVec[EFFECT_STATE_HIT].resize(1);
 	FAILED_CHECK(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Projectile_Black_SplineUp"),

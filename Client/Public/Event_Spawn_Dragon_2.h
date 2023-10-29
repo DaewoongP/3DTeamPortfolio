@@ -20,6 +20,14 @@ BEGIN(Client)
 
 class CEvent_Spawn_Dragon_2 final : public CGameObject
 {
+	enum SPAWN_DRAGON_2_SEQUENCE
+	{
+		SPAWN_DRAGON_2_SEQUENCE_FADE_OUT,
+		SPAWN_DRAGON_2_SEQUENCE_PLAY_CUTSCENE,
+		SPAWN_DRAGON_2_SEQUENCE_FADE_IN,
+		SPAWN_DRAGON_2_SEQUENCE_END
+	};
+
 private:
 	explicit CEvent_Spawn_Dragon_2(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CEvent_Spawn_Dragon_2(const CEvent_Spawn_Dragon_2& rhs);
@@ -35,6 +43,10 @@ private:
 	CConjuredDragon* m_pDragon = { nullptr };
 	_bool m_isSpawned = { false };
 
+private:
+	CRenderer* m_pRenderer = { nullptr };
+	_bool	m_isEnter = { false };
+	SPAWN_DRAGON_2_SEQUENCE m_eSequence = { SPAWN_DRAGON_2_SEQUENCE_END };
 private:
 	void Check_Event_Spawn_Dragon_2();
 

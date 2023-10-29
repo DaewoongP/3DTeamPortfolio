@@ -50,6 +50,30 @@ HRESULT CTreasure_Chest::Initialize(void* pArg)
 	Safe_AddRef(m_pPlayerInformation);
 	ENDINSTANCE;
 
+	if (FAILED(CComposite::Add_Component(LEVEL_SMITH, TEXT("Prototype_Component_Particle_ChestLight"),
+		TEXT("Com_Effect0"), reinterpret_cast<CComponent**>(&m_pEffect0))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_Component_Particle_ChestLight)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	if (FAILED(CComposite::Add_Component(LEVEL_SMITH, TEXT("Prototype_Component_Particle_ChestParticle"),
+		TEXT("Com_Effect1"), reinterpret_cast<CComponent**>(&m_pEffect1))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_Component_Particle_ChestParticle)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	if (FAILED(CComposite::Add_Component(LEVEL_SMITH, TEXT("Prototype_Component_Particle_ChestLight_ME"),
+		TEXT("Com_Effect2"), reinterpret_cast<CComponent**>(&m_pEffect2))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_Component_Particle_ChestLight_ME)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -107,6 +131,12 @@ void CTreasure_Chest::Tick(_float fTimeDelta)
 		if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN) && true == m_isGetItem)
 		{
 			m_isGetItem = false;
+
+			// 家府客 捞棋飘
+			pGameInstance->Play_Sound(TEXT("ChestOpen.wav"), 1.f);
+			m_pEffect0->Play(m_pTransform->Get_Position());
+			m_pEffect1->Play(m_pTransform->Get_Position());
+			m_pEffect2->Play(m_pTransform->Get_Position());
 
 			// 牢亥配府 裙垫 贸府
 			m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LACEWING_FLIES);
@@ -360,6 +390,9 @@ void CTreasure_Chest::Free()
 	Safe_Release(m_pShader);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pRenderer);
+	Safe_Release(m_pEffect0);
+	Safe_Release(m_pEffect1);
+	Safe_Release(m_pEffect2);
 
 	Safe_Release(m_pUI_Interaction);
 }

@@ -76,6 +76,13 @@ HRESULT CConjuredDragon::Initialize_Prototype(_uint iLevel)
 				, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/CircleEmit/"), m_iLevel))))
 				throw;
 		}
+		
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit_Distortion")))
+			{
+				if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit_Distortion")
+					, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BoneDragon/Pulse/CircleDistortion/"), m_iLevel))))
+					throw;
+		}
 
 		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_Rock")))
 		{
@@ -1307,6 +1314,10 @@ HRESULT CConjuredDragon::Add_Effects()
 		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit"),
 			TEXT("Com_Pulse_CircleEmit"), reinterpret_cast<CComponent**>(&m_pEffect_Pulse_CircleEmit))))
 			throw TEXT("Com_Pulse_CircleEmit");
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_CircleEmit_Distortion"),
+			TEXT("Com_Pulse_CircleEmit_Distortion"), reinterpret_cast<CComponent**>(&m_pEffect_Pulse_CircleEmit_Distortion))))
+			throw TEXT("Com_Pulse_CircleEmit_Distortion");
+
 
 		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Particle_Pulse_BoomWispy"),
 			TEXT("Com_Pulse_BoomWispy"), reinterpret_cast<CComponent**>(&m_pEffect_Pulse_BoomWispy))))
@@ -1339,6 +1350,7 @@ HRESULT CConjuredDragon::Add_Effects()
 		m_pEffect_Pulse_SplashWater->Disable();
 		m_pEffect_Pulse_Rock->Disable();
 		m_pEffect_Pulse_CircleEmit->Disable();
+		m_pEffect_Pulse_CircleEmit_Distortion->Disable();
 		m_pEffect_DragonInvin->Disable();
 		m_pEffect_InvinBreakDust->Disable();
 		m_pEffect_DragonInvinMesh->Stop();
@@ -3104,12 +3116,16 @@ void CConjuredDragon::Pulse_Charge()
 {
 	m_pRenderer->Set_ScreenRadial(true, 0.1f, 1.f);
 	m_pEffect_Pulse_Charge->Play(m_vOffsetPos);
+	m_pEffect_Pulse_CircleEmit->Play(m_vOffsetPos);
+	m_pEffect_Pulse_CircleEmit_Distortion->Play(m_vOffsetPos);
 }
 
 void CConjuredDragon::Pulse_Stop_Charge()
 {
 	m_pEffect_Pulse_Charge->Stop();
 	m_pEffect_Pulse_CircleEmit->Stop();
+	m_pEffect_Pulse_CircleEmit_Distortion->Stop();
+
 }
 
 void CConjuredDragon::Death_Enter()
@@ -3187,6 +3203,7 @@ void CConjuredDragon::Free()
 	Safe_Release(m_pEffect_Breath);
 	Safe_Release(m_pEffect_Pulse_Charge);
 	Safe_Release(m_pEffect_Pulse_CircleEmit);
+	Safe_Release(m_pEffect_Pulse_CircleEmit_Distortion);
 	Safe_Release(m_pEffect_Pulse_Rock);
 	Safe_Release(m_pEffect_Pulse_SplashWater);
 	Safe_Release(m_pEffect_Pulse_BoomWispy);

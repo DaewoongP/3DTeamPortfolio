@@ -114,12 +114,14 @@
 #include "Event_Cliffside_Next_Level.h"
 #include "Event_Vault_Next_Level.h"
 #include "Event_Smeade_Next_Level.h"
+#include "Event_Sky_Enter.h"
 #pragma endregion
 
 #pragma region Event
 #include "Balloon_Coin.h"
 #include "Racer.h"
 #include "FlyGameManager.h"
+#include "MarioCount.h"
 #pragma endregion
 
 #include "Guide_Book.h"
@@ -346,7 +348,20 @@ HRESULT CMain0_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 		CEvent_Smeade_Next_Level::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Event_Smeade_Next_Level");
 
-	
+	/* For.Prototype_Component_Particle_ChestLight */
+	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Particle_ChestLight"),
+		CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Chest/ChestLight/")))))
+		throw TEXT("Prototype_Component_Particle_ChestLight");
+
+	/* For.Prototype_Component_Particle_ChestParticle */
+	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Particle_ChestParticle"),
+		CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Chest/ChestParticle/")))))
+		throw TEXT("Prototype_Component_Particle_ChestParticle");
+
+	/* For.Prototype_Component_Particle_ChestLight_ME */
+	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Particle_ChestLight_ME"),
+		CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Chest/ChestLight.ME")))))
+		throw TEXT("Prototype_Component_Particle_ChestLight_ME");
 
 	ENDINSTANCE;
 
@@ -375,6 +390,15 @@ HRESULT CMain0_Loader::Loading_For_Sky(LEVELID eLevelID)
 			CFlyGameManager::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_FlyGameManager");
 	
+		/* For.Prototype_GameObject_Event_Sky_Enter */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Sky_Enter"),
+			CEvent_Sky_Enter::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Event_Sky_Enter");
+
+		/* For.Prototype_GameObject_MarioCount */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MarioCount"),
+			CMarioCount::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_MarioCount");
 	}
 
 
@@ -844,9 +868,25 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			throw TEXT("Prototype_GameObject_Heal_Ground");
 
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Maxima_Particle")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/Maxima"), eLevelID))))
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/Maxima/MaximaPotion"), eLevelID))))
 			throw TEXT("Prototype_GameObject_Maxima_Particle");
 		
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Max_After_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/Maxima/Max_After"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Max_After_Particle");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Max_After_Particle2")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/Maxima/Max_After2"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Max_After_Particle2");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Max_Ground")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/Maxima/Max_Ground"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Max_Ground");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Max_Aura")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Potion/MaximaFlare"), eLevelID))))
+			throw TEXT("Prototype_GameObject_Max_Aura");
+
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Potion_Distortoin")
 			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Potion/Potion_Distortion.ME"), eLevelID))))
 			throw TEXT("Prototype_GameObject_Potion_Distortoin");
@@ -1317,7 +1357,7 @@ CMain0_Loader* CMain0_Loader::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 
 void CMain0_Loader::Free()
 {
-	// ·ÎµùÀÌ ³¡³¯¶§±îÁö ±â´Ù·Á¾ß ÇÏ¹Ç·Î infinite ¿É¼ÇÀ» ÁÖ¾î ·ÎµùÀÌ ³¡³¯¶§±îÁö ¾²·¹µå ´ë±â.
+	// ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ù·ï¿½ï¿½ï¿½ ï¿½Ï¹Ç·ï¿½ infinite ï¿½É¼ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½.
 	WaitForSingleObject(m_hThread, INFINITE);
 
 	DeleteCriticalSection(&m_Critical_Section);

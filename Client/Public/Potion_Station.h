@@ -45,6 +45,7 @@ private:
 private:
 	STATE m_eState = { IDLE };
 	_uint m_iLevel = {};
+	_uint m_iSound = { 0 };
 
 private: // For.Components
 	CParticleSystem* m_pWaterSmoke = { nullptr };
