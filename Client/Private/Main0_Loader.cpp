@@ -1316,11 +1316,6 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			CTest_Player::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Test_Player");
 
-		/* For.Prototype_GameObject_Test_Particle */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Test_Particle"),
-			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Test/"), eLevelID))))
-			throw TEXT("Prototype_GameObject_Test_Particle");
-
 		/* For.Prototype_GameObject_PhysxRenderer */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_PhysxRenderer"),
 			CPhysXRender::Create(m_pDevice, m_pContext))))
