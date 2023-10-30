@@ -39,8 +39,8 @@ HRESULT CWolf::Initialize_Level(_uint iCurrentLevelIndex)
 		return E_FAIL;
 
 	m_pTransform->Set_RigidBody(m_pRigidBody);
-	m_pTransform->Set_Speed(-1.f);
-	m_pTransform->Set_RotationSpeed(-5.f);
+	m_pTransform->Set_Speed(1.f);
+	m_pTransform->Set_RotationSpeed(5.f);
 
 	m_eCurrentAnim = WF_IDLE;
 	m_ePreAnim = m_eCurrentAnim;
@@ -340,7 +340,7 @@ HRESULT CWolf::Add_Components()
 
 		/* For.Com_Health */
 		CHealth::HEALTHDESC HealthDesc;
-		HealthDesc.iMaxHP = 200;
+		HealthDesc.iMaxHP = 20;
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 			throw TEXT("Com_Health");
@@ -350,7 +350,7 @@ HRESULT CWolf::Add_Components()
 
 		Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::MONSTER;
 		Desc.pHealth = m_pHealth;
-		lstrcpy(Desc.wszObjectLevel, TEXT("30"));
+		lstrcpy(Desc.wszObjectLevel, TEXT("3"));
 		lstrcpy(Desc.wszObjectName, TEXT("´Á´ë"));
 
 		BEGININSTANCE;

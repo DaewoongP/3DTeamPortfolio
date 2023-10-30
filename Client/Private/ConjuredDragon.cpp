@@ -1666,7 +1666,7 @@ HRESULT CConjuredDragon::Make_Next_Phase(_Inout_ CSequence* pSequence)
 		/* Set Options */
 		pAction_Enter_Next_Phase->Set_Options(TEXT("Fly_Next_Phase"), m_pModelCom, false, 0.f, true);
 		pAction_Fly->Set_Options(TEXT("Fly_Loop"), m_pModelCom, true, 0.f, true, false);
-		pRigidMove->Set_Option(m_pRigidBody, m_pTransform, CRigidMove::DIR_LOOK, 20.f, 1000.f);
+		pRigidMove->Set_Option(m_pRigidBody, m_pTransform, CRigidMove::DIR_LOOK, 200.f, 5.f);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Enter_Next_Phase"), pAction_Enter_Next_Phase)))

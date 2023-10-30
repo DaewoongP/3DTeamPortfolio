@@ -110,7 +110,6 @@ void CEvent_Spawn_Dragon::Check_Event_Spawn_Dragon()
 		//진입시
 		if (true == m_isEnter)
 		{
-			pGameInstance->Stop_AllSound();
 			pGameInstance->Play_BGM(TEXT("Sanctum_Boss_Bgm.wav"), 0.6f);
 
 			//페이드 아웃
@@ -345,6 +344,7 @@ void CEvent_Spawn_Dragon::Check_Event_Spawn_Dragon()
 			if (m_pSpawn_Dragon->isDead())
 			{
 				m_isEnter = true;
+				pGameInstance->Stop_AllSound();
 				m_eDragon_Spawn_Sequence = DRAGONSPAWN_SEQUENCE_EGG_FADE_OUT;
 				//타이머 리셋
 				pGameInstance->Reset_Timer(TEXT("Sanctum_CutScene_Fade_Out"));

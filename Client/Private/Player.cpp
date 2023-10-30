@@ -1418,10 +1418,10 @@ HRESULT CPlayer::Add_Magic()
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(3, FINISHER);
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(4, STUPEFY);
 
-	Set_Spell_Botton(0, BOMBARDA);
-	Set_Spell_Botton(1, FLIPENDO);
-	Set_Spell_Botton(2, DIFFINDO);
-	Set_Spell_Botton(3, CRUCIO);
+	Set_Spell_Botton(0, LEVIOSO);
+	Set_Spell_Botton(1, DESCENDO);
+	Set_Spell_Botton(2, BOMBARDA);
+	Set_Spell_Botton(3, CONFRINGO);
 
 	return S_OK;
 }
@@ -1790,6 +1790,16 @@ void CPlayer::Fix_Mouse()
 HRESULT CPlayer::Ready_MeshParts()
 {
 	_float4 vColor = _float4();
+	//Hat
+	if (FAILED(m_pCustomModel->Add_MeshParts(
+		LEVEL_STATIC,
+		TEXT("Prototype_Component_MeshPart_Hat_Wizard"),
+		CCustomModel::HAT)))
+	{
+		MSG_BOX("Failed Add MeshPart Hat");
+
+		return E_FAIL;
+	}
 
 	//Hair
 	if (FAILED(m_pCustomModel->Add_MeshParts(
@@ -1816,7 +1826,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Mask
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Mask_Guardian"),
+		TEXT("Prototype_Component_MeshPart_Mask_Niffler"),
 		CCustomModel::MASK)))
 	{
 		MSG_BOX("Failed Add MeshPart Mask");
@@ -1849,7 +1859,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Top
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Jacket_Arcane"),
+		TEXT("Prototype_Component_MeshPart_Jacket_Celtic"),
 		CCustomModel::TOP)))
 	{
 		MSG_BOX("Failed Add MeshPart Top");
@@ -1860,7 +1870,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Pants
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Pants_Arcane"),
+		TEXT("Prototype_Component_MeshPart_Pants_Merlin"),
 		CCustomModel::PANTS)))
 	{
 		MSG_BOX("Failed Add MeshPart Pants");
@@ -1871,7 +1881,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Socks
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Player_Socks"),
+		TEXT("Prototype_Component_MeshPart_Socks_D"),
 		CCustomModel::SOCKS)))
 	{
 		MSG_BOX("Failed Add MeshPart Socks");
@@ -1882,7 +1892,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Shoes
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Boots_Arcane"),
+		TEXT("Prototype_Component_MeshPart_Boots_Merlin"),
 		CCustomModel::SHOES)))
 	{
 		MSG_BOX("Failed Add MeshPart Shoes");
