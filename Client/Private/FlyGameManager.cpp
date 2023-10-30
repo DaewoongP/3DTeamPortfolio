@@ -1,6 +1,8 @@
 #include "FlyGameManager.h"
 #include "Client_Defines.h"
 #include "GameInstance.h"
+#include "Player.h"
+#include "Card_Fig.h"
 #include "Level.h"
 #include "Racer.h"
 #include "Balloon.h"
@@ -135,6 +137,8 @@ HRESULT CFlyGameManager::Initialize(void* pArg)
 		ReplaceBallon();
 	}
 
+
+
 	return S_OK;
 }
 
@@ -145,6 +149,8 @@ HRESULT CFlyGameManager::Initialize_Level(_uint iCurrentLevelIndex)
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
+	CComponent* pCard_Fig = static_cast<CPlayer*>(m_pRacerOwnerGroup[8])->Find_Component(TEXT("Card_Fig"));
+	static_cast<CCard_Fig*>(pCard_Fig)->Set_Interaction(true);
 	m_pEvent = static_cast<CEvent_Sky_Enter*>(pGameInstance->Find_Component_In_Layer(LEVEL_SKY, TEXT("Layer_Event"), TEXT("Event_Sky_Enter")));
 	Safe_AddRef(m_pEvent);
 	Safe_Release(pGameInstance);
@@ -193,7 +199,8 @@ void CFlyGameManager::Tick(_float fTimeDelta)
 			{
 				static_cast<CDarkWizard_Fly*>(pRacer)->Finish_Race();
 			}
-
+			CComponent* pCard_Fig = static_cast<CPlayer*>(m_pRacerOwnerGroup[8])->Find_Component(TEXT("Card_Fig"));
+			static_cast<CCard_Fig*>(pCard_Fig)->Set_Interaction(false);
 			m_isGameFinished = true;
 			m_isGameContinue = false;
 		}

@@ -1782,6 +1782,17 @@ void CDarkWizard_F::Cast_Protego()
 	if (nullptr == m_pTarget)
 		return;
 
+	CMagic::MAGICDESC magicInitDesc;
+	magicInitDesc.eBuffType = BUFF_PROTEGO;
+	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+	magicInitDesc.eMagicType = CMagic::MT_YELLOW;
+	magicInitDesc.eMagicTag = PROTEGO;
+	magicInitDesc.fInitCoolTime = 0.f;
+	magicInitDesc.iDamage = 0;
+	magicInitDesc.fLifeTime = 3600.f;
+	magicInitDesc.fScale = 3.f;
+	m_pMagicSlot->Add_Magics(magicInitDesc);
+
 	m_pHitMatrix = m_HitMatrices[2];
 	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COL_MAGIC, COL_SHIELD_ENEMY);
 	m_iCurrentSpell |= BUFF_PROTEGO;

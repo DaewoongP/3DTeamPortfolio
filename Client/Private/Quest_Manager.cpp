@@ -66,12 +66,12 @@ void CQuest_Manager::Late_Tick(_float fTimeDelta)
 
 _bool CQuest_Manager::Cheat_Init_Quest()
 {
-	//_uint iSize = m_Quests.size();
-	//if (iSize != 5)
-	//	return false;
+	_uint iSize = m_Quests.size();
+	if (iSize != 5)
+		return false;
 
-	//// 클리어하고싶은거 빼고  주석거세요
-	//BEGININSTANCE;
+	// 클리어하고싶은거 빼고  주석거세요
+	BEGININSTANCE;
 
 	//Clear_Quest(TEXT("Quest_Save_Fig"));
 	//Unlock_Quest(TEXT("Quest_Potion"));
@@ -95,7 +95,7 @@ _bool CQuest_Manager::Cheat_Init_Quest()
 
 	////Clear_Quest(TEXT("Quest_Bone"));
 
-	//ENDINSTANCE;
+	ENDINSTANCE;
 
 	return true;
 }

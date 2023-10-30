@@ -5,13 +5,13 @@
 #include "Player.h"
 
 CRollState::CRollState(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
-	:CStateMachine(_pDevice,_pContext)
+	:CStateMachine(_pDevice, _pContext)
 {
 
 }
 
 CRollState::CRollState(const CRollState& rhs)
-	:CStateMachine(rhs)
+	: CStateMachine(rhs)
 {
 
 }
@@ -115,7 +115,7 @@ void CRollState::OnStateEnter(void* _pArg)
 		m_StateMachineDesc.pPlayerTransform->Set_Up(vUp * vScale.y);
 		m_StateMachineDesc.pPlayerTransform->Set_Look(vLook * vScale.z);
 	}
-	
+
 	CRollState::tagRollStateDesc* pRollStateDesc = static_cast<CRollState::tagRollStateDesc*>(_pArg);
 
 	m_isBlink = pRollStateDesc->IsBlink;
@@ -133,22 +133,26 @@ void CRollState::OnStateEnter(void* _pArg)
 		Change_Animation(TEXT("Blink_Start"));
 		m_eBlink = BLINK_START;
 		m_pRenderer->Set_ScreenRadial(true, 0.5f, 0.1f);
-		
-		pGameInstance->Set_Shake(
-			CCamera_Manager::SHAKE_PRIORITY_2,
-			CCamera_Manager::SHAKE_TYPE_TRANSLATION, 
-			CCamera_Manager::SHAKE_AXIS_LOOK,
-			CEase::IN_SINE,
-			0.3f,
-			1.5f,
-			-5.0f,
-			CCamera_Manager::SHAKE_POWER_DECRECENDO);
+
+		if (0.0f > pGameInstance->Get_CamLook()->y)
+		{
+			pGameInstance->Set_Shake(
+				CCamera_Manager::SHAKE_PRIORITY_2,
+				CCamera_Manager::SHAKE_TYPE_TRANSLATION,
+				CCamera_Manager::SHAKE_AXIS_LOOK,
+				CEase::IN_SINE,
+				0.3f,
+				1.5f,
+				-5.0f,
+				CCamera_Manager::SHAKE_POWER_DECRECENDO);
+		}
+
 
 		pGameInstance->Play_Sound(TEXT("Dash.wav"), 1.f);
 	}
 
 	*m_StateMachineDesc.pisFinishAnimation = false;
-	
+
 	ENDINSTANCE;
 }
 
@@ -199,7 +203,7 @@ void CRollState::OnStateTick()
 	}
 	else if (m_eBlink == BLINK_END)
 	{
-		if (true == pGameInstance->Check_Timer(TEXT("Blink_Delay")) && pGameInstance->Get_DIKeyState(DIK_SPACE,CInput_Device::KEY_DOWN))
+		if (true == pGameInstance->Check_Timer(TEXT("Blink_Delay")) && pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 		{
 			m_eBlink = BLINK_START;
 
@@ -207,15 +211,18 @@ void CRollState::OnStateTick()
 
 			m_pRenderer->Set_ScreenRadial(true, 0.5f, 0.1f);
 
-			pGameInstance->Set_Shake(
-				CCamera_Manager::SHAKE_PRIORITY_2,
-				CCamera_Manager::SHAKE_TYPE_TRANSLATION,
-				CCamera_Manager::SHAKE_AXIS_LOOK,
-				CEase::IN_SINE,
-				0.5f,
-				1.0f,
-				-5.0f,
-				CCamera_Manager::SHAKE_POWER_DECRECENDO);
+			if (0.0f > pGameInstance->Get_CamLook()->y)
+			{
+				pGameInstance->Set_Shake(
+					CCamera_Manager::SHAKE_PRIORITY_2,
+					CCamera_Manager::SHAKE_TYPE_TRANSLATION,
+					CCamera_Manager::SHAKE_AXIS_LOOK,
+					CEase::IN_SINE,
+					0.5f,
+					1.0f,
+					-5.0f,
+					CCamera_Manager::SHAKE_POWER_DECRECENDO);
+			}
 
 			pGameInstance->Play_Sound(TEXT("Dash.wav"), 1.f);
 		}

@@ -434,7 +434,6 @@ HRESULT CProtego::Reset(MAGICBALLINITDESC& InitDesc)
 		m_pBreakParticle[i]->Get_ColorOverLifetimeModuleRef().vEndColor = m_vColor1;
 	}
 
-	m_fScale = { 1.5f };
 	m_fEnterDuration = { 0.1f };
 	m_fExitDuration = { 0.1f };
 	m_fRimPower = { 2.1f };

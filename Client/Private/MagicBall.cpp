@@ -506,6 +506,7 @@ void CMagicBall::Tick_MagicBall_State(_float fTimeDelta)
 			if (nullptr != m_pLight)
 			{
 				pGameInstance->Return_Light(m_pLight);
+				m_pLight = nullptr;
 			}
 			Safe_Release(pGameInstance);
 		}
