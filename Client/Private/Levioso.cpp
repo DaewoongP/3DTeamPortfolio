@@ -22,6 +22,10 @@ void CLevioso::TrailAction (void* pArg)
 	BEGININSTANCE;
 	m_pWingardiumEffect->TrailAction(*desc->pPosition, pGameInstance->Get_World_Tick());
 	ENDINSTANCE;
+	for (_uint i = 0; i < m_MeshEffectVec[EFFECT_STATE_HIT].size(); ++i)
+	{
+		m_MeshEffectVec[EFFECT_STATE_HIT][i]->Get_Transform()->Set_Position(*desc->pPosition);
+	}
 	m_fWingardiumEffectDeadTimer = 0.3f;
 }
 

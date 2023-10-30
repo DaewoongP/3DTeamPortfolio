@@ -44,7 +44,7 @@ HRESULT CBreath::Initialize(void* pArg)
 
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 
-	m_CollisionRequestDesc.eType = CEnemy::ATTACK_HEAVY;
+	m_CollisionRequestDesc.eType = CEnemy::ATTACK_LIGHT;
 	m_CollisionRequestDesc.iDamage = 20;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
 

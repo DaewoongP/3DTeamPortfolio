@@ -215,7 +215,7 @@ void CProjectile_Black::Ready_CastMagic()
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-	pGameInstance->Play_Sound(TEXT("ConjuredDragon_Explosion2.wav"), 0.7f);
+	pGameInstance->Play_Sound(TEXT("ConjuredDragon_Explosion2.wav"), 2.f);
 	Safe_Release(pGameInstance);
 }
 
@@ -226,7 +226,7 @@ void CProjectile_Black::Ready_Dying()
 	m_pMeshEffect_EndBoom->Play(m_pMeshEffect_Outer_Ball->Get_Transform()->Get_Position());
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-	pGameInstance->Play_Sound(TEXT("ConjuredDragon_Explosion3.wav"), 0.3f);
+	pGameInstance->Play_Sound(TEXT("ConjuredDragon_Explosion3.wav"), 2.f);
 	Safe_Release(pGameInstance);
 	__super::Ready_Dying();
 }

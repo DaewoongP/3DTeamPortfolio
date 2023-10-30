@@ -191,7 +191,7 @@ void CProjectile_White::Ready_CastMagic()
 	m_ParticleVec[EFFECT_STATE_MAIN][0]->Play(m_CurrentWeaponMatrix.Translation());
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-	pGameInstance->Play_Sound(TEXT("ConjuredDragon_Explosion.wav"), 0.7f);
+	pGameInstance->Play_Sound(TEXT("ConjuredDragon_Explosion.wav"), 2.f);
 	Safe_Release(pGameInstance);
 	m_ParticleVec[EFFECT_STATE_MAIN][1]->Play(m_CurrentWeaponMatrix.Translation());
 }
@@ -207,7 +207,7 @@ void CProjectile_White::Ready_Dying()
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-	pGameInstance->Play_Sound(TEXT("ConjuredDragon_Explosion3.wav"), 0.3f);
+	pGameInstance->Play_Sound(TEXT("ConjuredDragon_Explosion3.wav"), 2.f);
 	Safe_Release(pGameInstance);
 	__super::Ready_Dying();
 }

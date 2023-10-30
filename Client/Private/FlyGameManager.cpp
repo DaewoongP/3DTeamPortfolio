@@ -125,7 +125,7 @@ HRESULT CFlyGameManager::Initialize(void* pArg)
 
 	//게임 타이머를 설정해줍니다.
 	m_fInitWaitTime = 3.f;
-	m_fGameTimer = 10.f;
+	m_fGameTimer = 180.f;
 
 	_uint iIndex = (_uint)(m_pAllBalloonGroup.size() / 2);
 
