@@ -25,6 +25,55 @@ int g_iEmissionChannel = { 0 };
 texture2D g_EmissionTexture;
 //////
 
+void Unity_PolarCoordinates_float(float2 UV, float2 Center, float RadialScale, float LengthScale, out float2 Out)
+{
+    float2 delta = UV - Center;
+    float radius = length(delta) * 2 * RadialScale;
+    float angle = atan2(delta.x, delta.y) * 1.0 / 6.28 * LengthScale;
+    Out = float2(radius, angle);
+}
+
+void Unity_Twirl_float(float2 UV, float2 Center, float Strength, float2 Offset, out float2 Out)
+{
+    float2 delta = UV - Center;
+    float angle = Strength * length(delta);
+    float x = cos(angle) * delta.x - sin(angle) * delta.y;
+    float y = sin(angle) * delta.x + cos(angle) * delta.y;
+    Out = float2(x + Center.x + Offset.x, y + Center.y + Offset.y);
+}
+
+float2 unity_voronoi_noise_randomVector(float2 UV, float offset)
+{
+    float2x2 m = float2x2(15.27, 47.63, 99.41, 89.98);
+    UV = frac(sin(mul(UV, m)) * 46839.32);
+    return float2(sin(UV.y * +offset) * 0.5 + 0.5, cos(UV.x * offset) * 0.5 + 0.5);
+}
+
+void Unity_Voronoi_float(float2 UV, float AngleOffset, float CellDensity, out float Out, out float Cells)
+{
+    float2 g = floor(UV * CellDensity);
+    float2 f = frac(UV * CellDensity);
+    float t = 8.0;
+    float3 res = float3(8.0, 0.0, 0.0);
+
+    for (int y = -1; y <= 1; y++)
+    {
+        for (int x = -1; x <= 1; x++)
+        {
+            float2 lattice = float2(x, y);
+            float2 offset = unity_voronoi_noise_randomVector(lattice + g, AngleOffset);
+            float d = distance(lattice + offset, f);
+            if (d < res.x)
+            {
+                res = float3(d, offset.x, offset.y);
+                Out = res.x;
+                Cells = res.y;
+            }
+        }
+    }
+}
+
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -67,7 +116,7 @@ void MainLogic(VS_IN In, out VS_OUT Out)
 /* 정점을 받고 변환하고 정점을 리턴한다. */
 VS_OUT VS_MAIN(VS_IN In)
 {
-    VS_OUT Out = (VS_OUT) 0;
+    VS_OUT Out = (VS_OUT)0;
 
     MainLogic(In, Out);
 
@@ -76,9 +125,9 @@ VS_OUT VS_MAIN(VS_IN In)
 
 VS_OUT VS_MAIN2(VS_IN In)
 {
-    VS_OUT Out = (VS_OUT) 0;
+    VS_OUT Out = (VS_OUT)0;
     MainLogic(In, Out);
-	
+
     return Out;
 }
 
@@ -98,12 +147,12 @@ struct PS_OUT
 /* 픽셀을 받고 픽셀의 색을 결정하여 리턴한다. */
 PS_OUT PS_MAIN(PS_IN In)
 {
-    PS_OUT Out = (PS_OUT) 0;
+    PS_OUT Out = (PS_OUT)0;
 
     TilingAndOffset_float(In.vTexUV, g_vTililing, g_vOffset, In.vTexUV);
 
     vector vDiffuse = g_MaterialTexture.Sample(LinearSampler, In.vTexUV);
-	//vector		vClipTexture = g_ClipTexture.Sample(LinearSampler, In.vTexUV);
+    //vector		vClipTexture = g_ClipTexture.Sample(LinearSampler, In.vTexUV);
 
     if (0 == g_iClipChannel)
         Out.vColor.a = vDiffuse.r;
@@ -118,7 +167,7 @@ PS_OUT PS_MAIN(PS_IN In)
     {
         discard;
     }
-	
+
     Out.vColor = vDiffuse;
     Out.vColor *= g_vColor;
 
@@ -136,7 +185,7 @@ PS_OUT PS_MAIN(PS_IN In)
         else if (3 == g_iClipChannel)
             fEmissionValue = vEmission.a;
         // out1 + (val - in1) * (out2 - out1) / (in2 - in1);
-        
+
         Remap_float(fSineTime, float2(-1.f, 1.f), g_vRemap, fRemapValue);
 
         Out.vColor += fRemapValue * fEmissionValue * float4(g_vEmissionColor, 0.f);
@@ -146,7 +195,7 @@ PS_OUT PS_MAIN(PS_IN In)
 
 PS_OUT PS_MAIN_CLOISTER(PS_IN In)
 {
-    PS_OUT Out = (PS_OUT) 0;
+    PS_OUT Out = (PS_OUT)0;
 
     TilingAndOffset_float(In.vTexUV, g_vTililing, g_vOffset, In.vTexUV);
 
@@ -154,7 +203,7 @@ PS_OUT PS_MAIN_CLOISTER(PS_IN In)
 
     if (vDiffuse.a < 0.5f)
         discard;
-	
+
     Out.vColor = vDiffuse;
     Out.vColor *= g_vColor;
     if (g_isEmission)
@@ -181,7 +230,7 @@ PS_OUT PS_MAIN_CLOISTER(PS_IN In)
 /* 픽셀을 받고 픽셀의 색을 결정하여 리턴한다. */
 PS_OUT PS_NONBLEND(PS_IN In)
 {
-    PS_OUT Out = (PS_OUT) 0;
+    PS_OUT Out = (PS_OUT)0;
 
     TilingAndOffset_float(In.vTexUV, g_vTililing, g_vOffset, In.vTexUV);
 
@@ -250,6 +299,87 @@ PS_OUT PS_DRAGON_PROTEGO(PS_IN In)
     return Out;
 }
 
+
+PS_OUT PS_PORTAL(PS_IN In)
+{
+
+    float2 OutValue;
+    Unity_PolarCoordinates_float(In.vTexUV, float2(0.5f, 0.5f), 4.f, 3.f, OutValue);
+
+    PS_OUT Out = (PS_OUT)0;
+
+    TilingAndOffset_float(OutValue, g_vTililing, g_vOffset, OutValue);
+
+    vector vDiffuse = g_MaterialTexture.Sample(LinearSampler, OutValue);
+    //vector		vClipTexture = g_ClipTexture.Sample(LinearSampler, In.vTexUV);
+
+    if (0 == g_iClipChannel)
+        Out.vColor.a = vDiffuse.r;
+    else if (1 == g_iClipChannel)
+        Out.vColor.a = vDiffuse.g;
+    else if (2 == g_iClipChannel)
+        Out.vColor.a = vDiffuse.b;
+    else if (3 == g_iClipChannel)
+        Out.vColor.a = vDiffuse.a;
+
+    if (Out.vColor.a < g_fClipThreshold)
+    {
+        discard;
+    }
+
+    Out.vColor = vDiffuse;
+    Out.vColor *= g_vColor;
+
+    if (g_isEmission)
+    {
+        float fEmissionValue = 0.f, fRemapValue = 0.f;
+        vector vEmission = g_EmissionTexture.Sample(LinearSampler, OutValue);
+        float fSineTime = sin(g_fFrequency * g_fTimeAcc);
+        if (0 == g_iClipChannel)
+            fEmissionValue = vEmission.r;
+        else if (1 == g_iClipChannel)
+            fEmissionValue = vEmission.g;
+        else if (2 == g_iClipChannel)
+            fEmissionValue = vEmission.b;
+        else if (3 == g_iClipChannel)
+            fEmissionValue = vEmission.a;
+        // out1 + (val - in1) * (out2 - out1) / (in2 - in1);
+
+        Remap_float(fSineTime, float2(-1.f, 1.f), g_vRemap, fRemapValue);
+
+        Out.vColor += fRemapValue * fEmissionValue * float4(g_vEmissionColor, 0.f);
+    }
+    return Out;
+
+
+
+}
+
+PS_OUT PS_PORTAL2(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT)0;
+
+    float2 OutValue;
+    float NewTimeValue;
+    NewTimeValue = g_fTimeAcc * 0.5f;
+    Unity_Twirl_float(In.vTexUV, float2(0.5f, 0.5f), 7.35f, NewTimeValue, OutValue);
+    float VoronoiValue;
+    float cellvalue;
+    Unity_Voronoi_float(OutValue, 2.f, 2.89f, VoronoiValue, cellvalue);
+    float PowerVoronoi;
+    PowerVoronoi = VoronoiValue * VoronoiValue;
+
+    vector vDiffuse = g_MaterialTexture.Sample(LinearSampler, In.vTexUV);
+    vector NewColor;
+    NewColor = g_vColor * vDiffuse;
+
+    Out.vColor = NewColor * PowerVoronoi;
+
+    return Out;
+
+
+}
+
 technique11 DefaultTechnique
 {
     pass Default_AlphaBlend
@@ -310,4 +440,29 @@ technique11 DefaultTechnique
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader = compile ps_5_0 PS_DRAGON_PROTEGO();
     }
+    pass Portal
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_PORTAL();
+    }
+    pass Portal2
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+        HullShader = NULL /*compile hs_5_0 HS_M AIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_PORTAL2();
+    }
+
+
+
 }

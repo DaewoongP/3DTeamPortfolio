@@ -49,7 +49,8 @@ private:
 	CShader* m_pShadowShader = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 	CModel* m_pModel = { nullptr };
-	CParticleSystem* m_pEffect = { nullptr };
+	CMeshEffect* m_pEffect = { nullptr };
+	CMeshEffect* m_pEffect2 = { nullptr };
 	CCamera_Shake* m_pCamera_Shake_Up = { nullptr };
 	CCamera_Shake* m_pCamera_Shake_Down = { nullptr };
 	CCamera_Shake* m_pCamera_Shake_Loop = { nullptr };

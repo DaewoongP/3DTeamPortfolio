@@ -55,6 +55,12 @@ HRESULT CMapObject_Ins::Initialize_Level(_uint iCurrentLevelIndex)
 		return E_FAIL;
 	}
 
+	if (LEVEL_SKY == iCurrentLevelIndex)
+	{
+		m_pTransform->Set_Scale(_float3(0.5f, 0.5f, 0.5f));
+		return S_OK;
+	}
+
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 	// 리지드 바디 초기화
