@@ -86,7 +86,7 @@ HRESULT CLevel_Cliffside::Ready_Lights()
 	LightDesc.vLookAt = _float4(51.7f, 0.f, 52.4f, 1.f);
 	LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
 	
-	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vDiffuse = _float4(0.4f, 0.4f, 0.4f, 1.f);
 	LightDesc.vAmbient = LightDesc.vDiffuse;
 	LightDesc.vSpecular = LightDesc.vDiffuse;
 
@@ -103,9 +103,8 @@ HRESULT CLevel_Cliffside::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	_bool isNight = false;
 	FAILED_CHECK_RETURN(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, 
-		TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"), &isNight), E_FAIL)
+		TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"), &g_isNight), E_FAIL)
 		
 	FAILED_CHECK_RETURN(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE,
 		TEXT("Prototype_GameObject_Water"), pLayerTag, TEXT("GameObject_Water")), E_FAIL)
@@ -172,7 +171,7 @@ HRESULT CLevel_Cliffside::Ready_Shader()
 	CRenderer* pRenderer = static_cast<CRenderer*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer")));
 	pRenderer->Defualt_Shading();
 
-	pRenderer->Set_Fog(true, _float4(1.f, 1.f, 1.f, 1.f), _float3(40.5f, 0.f, 63.7f), 40.f);
+	pRenderer->Set_Fog(true, _float4(0.1f, 0.1f, 0.12f, 1.f), _float3(40.5f, 0.f, 63.7f), 40.f);
 
 	Safe_Release(pRenderer);
 

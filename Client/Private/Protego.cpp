@@ -2,7 +2,7 @@
 #include "GameInstance.h"
 
 #include "Enemy.h"
-#include "Professor_FIg.h"
+#include "Professor_Fig.h"
 #include "EnergyBall.h"
 #include "Player.h"
 #include "Pensive.h"
