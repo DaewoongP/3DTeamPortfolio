@@ -795,15 +795,25 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			CCylinder::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Cylinder");
 
-		/* For.Prototype_GameObject_SmithToCliff_Gate_Portal */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_SmithToCliff_Gate_Portal"),
-			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Portal/Door"), eLevelID))))
+		/* Prototype_GameObject_SmithToCliff_Gate_Portal */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_SmithToCliff_Gate_Portal")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Portal/Portal.ME"), eLevelID))))
 			throw TEXT("Prototype_GameObject_SmithToCliff_Gate_Portal");
 
-		/* For.Prototype_GameObject_Vault_Gate_Portal */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Vault_Gate_Portal"),
-			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Portal/Vault_Door"), eLevelID))))
+		/* Prototype_GameObject_Vault_Gate_Portal */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Vault_Gate_Portal")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Portal/Portal2.ME"), eLevelID))))
 			throw TEXT("Prototype_GameObject_Vault_Gate_Portal");
+
+		///* For.Prototype_GameObject_SmithToCliff_Gate_Portal */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_SmithToCliff_Gate_Portal"),
+		//	CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Portal/Door"), eLevelID))))
+		//	throw TEXT("Prototype_GameObject_SmithToCliff_Gate_Portal");
+
+		///* For.Prototype_GameObject_Vault_Gate_Portal */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Vault_Gate_Portal"),
+		//	CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Portal/Vault_Door"), eLevelID))))
+		//	throw TEXT("Prototype_GameObject_Vault_Gate_Portal");
 
 		/* For.Prototype_GameObject_LightStand_Fire */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_LightStand_Fire"),

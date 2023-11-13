@@ -76,6 +76,16 @@ HRESULT CMapObject::Initialize_Level(_uint iCurrentLevelIndex)
 	m_vMaxPoint = _float3(-9999999.f, -9999999.f, -9999999.f);
 	m_vMinPoint = _float3(9999999.f, 9999999.f, 9999999.f);
 
+	if (LEVEL_SKY == iCurrentLevelIndex)
+	{
+		m_ObjectDesc.WorldMatrix._11 *= 0.5f;
+		m_ObjectDesc.WorldMatrix._22 *= 0.5f;
+		m_ObjectDesc.WorldMatrix._33 *= 0.5f;
+		m_ObjectDesc.WorldMatrix._41 *= 0.5f;
+		m_ObjectDesc.WorldMatrix._42 *= 0.5f;
+		m_ObjectDesc.WorldMatrix._43 *= 0.5f;
+	}
+
 	for (auto& pMesh : Meshes)
 	{
 		Vertices.clear();

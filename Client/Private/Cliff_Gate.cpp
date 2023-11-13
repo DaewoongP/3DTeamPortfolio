@@ -49,9 +49,10 @@ HRESULT CCliff_Gate::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	m_pEffect->Stop();
+	m_pEffect->Get_Transform()->Rotation(_float3(0.f, 1.f, 0.f), XMConvertToRadians(-63.f));
+	m_pEffect->Get_Transform()->Set_Scale(m_pEffect->Get_Transform()->Get_Scale() * _float3(1.f, 0.5f, 0.525f));
 
-	
+	m_pEffect->Stop();	
 
 	return S_OK;
 }
@@ -117,7 +118,7 @@ void CCliff_Gate::Tick(_float fTimeDelta)
 
 	if (m_pModel->Is_Finish_Animation() && false == m_isEffectOn)
 	{
-		m_pEffect->Play(m_pTransform->Get_Position() + _float3(0.f, 1.875f, 0.f));
+		m_pEffect->Play(m_pTransform->Get_Position() + _float3(0.f, 2.f, 0.f));
 		m_isEffectOn = true;
 	}
 }

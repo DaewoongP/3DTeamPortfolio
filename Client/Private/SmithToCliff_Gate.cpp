@@ -40,8 +40,9 @@ HRESULT CSmithToCliff_Gate::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	m_pEffect->Play(m_pTransform->Get_Position() + _float3(0.f, 2.5f, 0.f));
-	m_pEffect->Get_MainModuleRef().fSimulationSpeed = Random_Generator(0.5f, 1.0f);
+	m_pEffect->Get_Transform()->Rotation(_float3(0.f, 1.f, 0.f), XMConvertToRadians(95.f));
+	m_pEffect->Get_Transform()->Set_Scale(m_pEffect->Get_Transform()->Get_Scale() * _float3(1.f, 0.5f, 0.75f));
+	m_pEffect->Play(m_pTransform->Get_Position() + _float3(0.f, 2.6f, 0.f));
 
 	return S_OK;
 }

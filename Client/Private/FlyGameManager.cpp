@@ -49,7 +49,7 @@ void CFlyGameManager::ReplaceBallon()
 				isFound = false;
 				for (_uint i = 0; i < m_pRacerGroup.size(); ++i)
 				{
-					vTempPosition = _float3(GetRandomFloat(77.f, 153.f), GetRandomFloat(10.f, 30.f), GetRandomFloat(74.f, 246.f));
+					vTempPosition = _float3(GetRandomFloat(38.5f, 76.5f), GetRandomFloat(10.f, 20.f), GetRandomFloat(37.f, 123.f));
 					if (_float3(vTempPosition - m_pRacerGroup[i]->Get_Transform()->Get_Position()).Length() < 10.f)
 					{
 						isFound = true;
@@ -100,7 +100,7 @@ void CFlyGameManager::Racer_AddForce(_uint iNumber, _uint eType, _float fForce)
 	default:
 		return;
 	}
-	static_cast<CRigidBody*>(m_pRacerOwnerGroup[iNumber]->Find_Component(TEXT("Com_RigidBody")))->Add_Force_OtherCall(vToward * fForce);
+	static_cast<CRigidBody*>(m_pRacerOwnerGroup[iNumber]->Find_Component(TEXT("Com_RigidBody")))->Add_Force_OtherCall(vToward * fForce * 0.5f);
 }
 
 HRESULT CFlyGameManager::Initialize_Prototype()

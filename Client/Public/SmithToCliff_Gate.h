@@ -22,7 +22,8 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 
 private:
-	CParticleSystem* m_pEffect = { nullptr };
+	CMeshEffect* m_pEffect = { nullptr };
+	CMeshEffect* m_pEffect2 = { nullptr };
 
 private:
 	_uint m_iSound0 = { 0 }; // 사운드 채널 0
