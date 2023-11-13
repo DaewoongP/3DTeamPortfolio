@@ -37,10 +37,10 @@ HRESULT CLevel_Smith::Initialize()
 	_bool isFinished_Quest_SaveFig = pQuest_Manager->Is_Quest_Finished(TEXT("Quest_Save_Fig"));
 	Safe_Release(pQuest_Manager);
 
-	if(true == isFinished_Quest_SaveFig)
+	/*if(true == isFinished_Quest_SaveFig)
 		pGameInstance->Play_BGM(TEXT("HogSmead_Night_Bgm.wav"), 0.6f);
 	else
-		pGameInstance->Play_BGM(TEXT("HogSmead_Afternoon_Bgm.wav"), 0.6f);
+		pGameInstance->Play_BGM(TEXT("HogSmead_Afternoon_Bgm.wav"), 0.6f);*/
 
 	ENDINSTANCE;
 

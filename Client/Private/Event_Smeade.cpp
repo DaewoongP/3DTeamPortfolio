@@ -97,7 +97,7 @@ void CEvent_Smeade::Check_Event_Spawn_Troll()
 		//진입시
 		if (true == m_isEnter)
 		{
-			_int ChennelNum = pGameInstance->Play_BGM(TEXT("HogSmead_Boss_Bgm.wav"), 0.6f);
+			//_int ChennelNum = pGameInstance->Play_BGM(TEXT("HogSmead_Boss_Bgm.wav"), 0.6f);
 			m_pTroll->Set_Boss_BGM_Chennel_Number(ChennelNum);
 			//페이드 아웃
 			m_pRenderer->FadeOut(1.0f);

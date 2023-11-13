@@ -25,7 +25,7 @@ HRESULT CLevel_Sanctum::Initialize()
 	pGameInstance->Reset_World_TimeAcc();
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
 	pGameInstance->Stop_AllSound();
-	pGameInstance->Play_BGM(TEXT("Sanctum_Bgm.wav"), 0.6f);
+	//pGameInstance->Play_BGM(TEXT("Sanctum_Bgm.wav"), 0.6f);
 	ENDINSTANCE;
 
 	return S_OK;

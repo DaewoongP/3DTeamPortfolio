@@ -14,13 +14,11 @@ HRESULT CLevel_Logo::Initialize()
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-	// ÇöÀç ¾À ¼³Á¤.
+	// í˜„ìž¬ ì”¬ ì„¤ì •.
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Logo"), true);
 	FAILED_CHECK_RETURN(pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/BGM/")), E_FAIL);
 	m_iChennelNum = pGameInstance->Play_Sound(TEXT("Intro.wav"), 0.6f);
 	Safe_Release(pGameInstance);
-
-	g_isNight = false;
 
 	return S_OK;
 }
@@ -32,10 +30,10 @@ void CLevel_Logo::Tick(_float fTimeDelta)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	// ½ºÅ×ÀÌÁö ÀÌµ¿
+	// ìŠ¤í…Œì´ì§€ ì´ë™
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
-		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVELID::LEVEL_VAULT, false))))
+		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVELID::LEVEL_SMITH, false))))
 		{
 			MSG_BOX("Failed Open LEVEL_LOGO to LEVEL_MAIN");
 			Safe_Release(pGameInstance);
@@ -46,7 +44,7 @@ void CLevel_Logo::Tick(_float fTimeDelta)
 	Safe_Release(pGameInstance);
 
 #ifdef _DEBUG
-	SetWindowText(g_hWnd, TEXT("·Î°í·¹º§ÀÔ´Ï´Ù."));
+	SetWindowText(g_hWnd, TEXT("ë¡œê³ ë ˆë²¨ìž…ë‹ˆë‹¤."));
 #endif //_DEBUG
 }
 

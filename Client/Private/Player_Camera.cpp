@@ -134,7 +134,7 @@ HRESULT CPlayer_Camera::Initialize(void* pArg)
 
 	m_vEyeStandard = _float3(sinf(XMConvertToRadians(45.0f)), 0.0f, -cosf(XMConvertToRadians(45.f)));
 
-	m_fEyeMaxDistance = m_fAtMaxDistance = 1.5f;
+	m_fEyeMaxDistance = m_fAtMaxDistance = 2.0f;
 	m_fEyeMinDistance = m_fAtMinDistance = 0.1f;
 
 

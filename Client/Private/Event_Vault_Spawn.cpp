@@ -132,7 +132,7 @@ void CEvent_Vault_Spawn::Check_Event_Spawn_3()
 		{
 			//페이드 아웃
 			m_pRenderer->FadeOut(1.0f);
-			m_iBossBGM = pGameInstance->Play_BGM(TEXT("Vault_Boss_Bgm.wav"), 0.6f);
+			//m_iBossBGM = pGameInstance->Play_BGM(TEXT("Vault_Boss_Bgm.wav"), 0.6f);
 			//진입 표시
 			m_isEnter = false;
 		}

@@ -639,7 +639,7 @@ void CArmored_Troll::DeathBehavior(const _float& fTimeDelta)
 		{
 			// 마을 bgm으로 변경 후
 			pGameInstance->Stop_Sound(m_iChennelNumber);
-			m_iChennelNumber = pGameInstance->Play_BGM(TEXT("HogSmead_Night_Bgm.wav"), 0.01f);
+			//m_iChennelNumber = pGameInstance->Play_BGM(TEXT("HogSmead_Night_Bgm.wav"), 0.01f);
 			m_isEnter_Play_BGM = true;
 		}
 		
