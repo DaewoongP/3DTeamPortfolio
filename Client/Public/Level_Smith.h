@@ -22,6 +22,8 @@ private:
 	HRESULT Ready_UI(const _tchar* pLayerTag);
 	HRESULT Ready_Event(const _tchar* pLayerTag);
 	HRESULT Ready_Shader();
+	
+	HRESULT Ready_CutScene();
 
 private:
 	HRESULT Load_Dummy_NPC(const _tchar* pLayerTag);

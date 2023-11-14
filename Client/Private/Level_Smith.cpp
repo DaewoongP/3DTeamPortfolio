@@ -26,6 +26,7 @@ HRESULT CLevel_Smith::Initialize()
 	FAILED_CHECK_RETURN(Ready_UI(TEXT("Layer_UI")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Event(TEXT("Layer_Event")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Shader(), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_CutScene(), E_FAIL);
 
 	BEGININSTANCE;
 	pGameInstance->Reset_World_TimeAcc();
@@ -50,6 +51,11 @@ HRESULT CLevel_Smith::Initialize()
 void CLevel_Smith::Tick(_float fTimeDelta)
 {
 	BEGININSTANCE;
+
+	if (pGameInstance->Get_DIKeyState(DIK_0, CInput_Device::KEY_DOWN))
+	{
+		pGameInstance->Add_CutScene(TEXT("Shader_On_Off_Test"));
+	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_ESCAPE, CInput_Device::KEY_DOWN))
 	{
@@ -294,6 +300,22 @@ HRESULT CLevel_Smith::Ready_Shader()
 
 	Safe_Release(pRenderer);
 
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CLevel_Smith::Ready_CutScene()
+{
+	BEGININSTANCE;
+
+	if (pGameInstance->Read_CutSceneCamera(TEXT("Shader_On_Off_Test"), TEXT("../../Resources/GameData/CutScene/Shader_On_Off_Test.cut")))
+	{
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+	
 	ENDINSTANCE;
 
 	return S_OK;
