@@ -345,8 +345,11 @@ void CPlayer::Tick(_float fTimeDelta)
 	for (_uint i = 0; i < m_vecPotionParticle.size()-1; ++i)
 	{
 		m_vecPotionParticle[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+
 	}
-	
+
+	m_vecPotionParticle[13]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+
 	for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
 	{
 		m_vecPlayer_StateParicle[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
