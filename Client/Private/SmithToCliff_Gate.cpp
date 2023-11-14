@@ -32,17 +32,16 @@ HRESULT CSmithToCliff_Gate::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_SmithToCliff_Gate_Portal"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Vault_Gate_Portal"),
 		TEXT("Com_Portal"), reinterpret_cast<CComponent**>(&m_pEffect))))
 	{
-		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_SmithToCliff_Gate_Portal)");
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Vault_Gate_Portal)");
 		__debugbreak();
 		return E_FAIL;
 	}
 
-	m_pEffect->Get_Transform()->Rotation(_float3(0.f, 1.f, 0.f), XMConvertToRadians(95.f));
 	m_pEffect->Get_Transform()->Set_Scale(m_pEffect->Get_Transform()->Get_Scale() * _float3(1.f, 0.5f, 0.75f));
-	m_pEffect->Play(m_pTransform->Get_Position() + _float3(0.f, 2.6f, 0.f));
+	m_pEffect->Play(m_pTransform->Get_Position() + _float3(0.f, 2.3f, 0.f));
 
 	return S_OK;
 }
@@ -58,6 +57,11 @@ HRESULT CSmithToCliff_Gate::Initialize_Level(_uint iCurrentLevelIndex)
 		return E_FAIL;
 	}
 
+	if (0 == lstrcmp(TEXT("GameObject_SmithToCliff_Gate_208"), m_pTag))
+		m_pEffect->Get_Transform()->Rotation(_float3(0.f, 1.f, 0.f), XMConvertToRadians(82.f));
+	else
+		m_pEffect->Get_Transform()->Rotation(_float3(0.f, 1.f, 0.f), XMConvertToRadians(95.f));
+
 	BEGININSTANCE;
 	//m_iSound0 = pGameInstance->Play_BGM(TEXT("Portal_Idle.wav"), 0.45f);
 	ENDINSTANCE;
@@ -68,7 +72,6 @@ HRESULT CSmithToCliff_Gate::Initialize_Level(_uint iCurrentLevelIndex)
 void CSmithToCliff_Gate::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
 }
 
 void CSmithToCliff_Gate::Late_Tick(_float fTimeDelta)
