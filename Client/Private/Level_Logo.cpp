@@ -17,7 +17,7 @@ HRESULT CLevel_Logo::Initialize()
 	// 현재 씬 설정.
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Logo"), true);
 	FAILED_CHECK_RETURN(pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/BGM/")), E_FAIL);
-	m_iChennelNum = pGameInstance->Play_Sound(TEXT("Intro.wav"), 0.6f);
+	//m_iChennelNum = pGameInstance->Play_Sound(TEXT("Intro.wav"), 0.6f);
 	Safe_Release(pGameInstance);
 
 	return S_OK;

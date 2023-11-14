@@ -1032,7 +1032,7 @@ HRESULT CPlayer::Add_Components()
 	}
 
 	m_pMagicSlot->Set_OwnerType(CMagic_Sound_Manager::OWNER_PLAYER);
-	m_pMagicSlot->Set_Volum(0.8f);
+	m_pMagicSlot->Set_Volum(3.2f);
 
 	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
 	RigidBodyDesc.isStatic = false;
