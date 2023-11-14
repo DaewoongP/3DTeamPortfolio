@@ -342,11 +342,14 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	m_isPreLumos = m_isLumosOn;
 
-	for (_uint i = 0; i < m_vecPotionParticle.size()-1; ++i)
+	for (_uint i = 0; i < m_vecPotionParticle.size(); ++i)
 	{
 		m_vecPotionParticle[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+
 	}
-	
+
+	m_vecPotionParticle[13]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+
 	for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
 	{
 		m_vecPlayer_StateParicle[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
@@ -935,31 +938,31 @@ HRESULT CPlayer::Add_Components()
 	}
 	//Focus
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Focus_Particle"),
-		TEXT("Com_Max_Aura"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[9]))))
+		TEXT("Com_Focus_Particle"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[9]))))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Focus_After_Particle"),
-		TEXT("Com_Max_Aura"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[10]))))
+		TEXT("Com_Focus_After_Particle"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[10]))))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Focus_After_Particle2"),
-		TEXT("Com_Max_Aura"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[11]))))
+		TEXT("Com_Focus_After_Particle2"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[11]))))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Focus_Ground"),
-		TEXT("Com_Max_Aura"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[12]))))
+		TEXT("Com_Focus_Ground"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[12]))))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Focus_Effect"),
-		TEXT("Com_Max_Aura"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[13]))))
+		TEXT("Com_Focus_Effect"), reinterpret_cast<CComponent**>(&m_vecPotionParticle[13]))))
 	{
 		__debugbreak();
 		return E_FAIL;
