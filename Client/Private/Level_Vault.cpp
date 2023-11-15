@@ -181,7 +181,8 @@ HRESULT CLevel_Vault::Ready_Shader()
 	CRenderer* pRenderer = static_cast<CRenderer*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer")));
 	pRenderer->Defualt_Shading();
 
-
+	pRenderer->Set_SSAO(false);
+	pRenderer->Get_Dof()->Set_FocusRange(500.f);
 
 	Safe_Release(pRenderer);
 
