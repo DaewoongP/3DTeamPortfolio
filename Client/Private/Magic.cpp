@@ -52,11 +52,9 @@ void CMagic::Tick(_float fTimeDelta)
 		}
 	}
 
-	m_fCurrentCoolTime = 0.0f;
+	//m_fCurrentCoolTime = 0.0f;
 
 	__super::Tick(fTimeDelta);
-
-
 }
 
 void CMagic::Late_Tick(_float fTimeDelta)

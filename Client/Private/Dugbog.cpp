@@ -86,8 +86,6 @@ HRESULT CDugbog::Initialize_Level(_uint iCurrentLevelIndex)
 	m_DarkAuraBoneMatrix[1] = m_pModelCom->Get_Bone_Index(21)->Get_CombinedTransformationMatrixPtr();
 	m_DarkAuraBoneMatrix[2] = m_pModelCom->Get_Bone_Index(98)->Get_CombinedTransformationMatrixPtr();
 
-	m_isSpawn = true;
-
 	BEGININSTANCE;
 
 	auto pNPCLayer = pGameInstance->Find_Components_In_Layer(iCurrentLevelIndex, TEXT("Layer_NPC"));
@@ -105,6 +103,8 @@ HRESULT CDugbog::Initialize_Level(_uint iCurrentLevelIndex)
 		if (wstring::npos != wstrObjTag.find(TEXT("Professor_Fig")))
 			m_RangeInEnemies.emplace(wstrObjTag, static_cast<CGameObject*>(Pair.second));
 	}
+
+	m_RangeInEnemies.emplace(TEXT("Player"), m_pPlayer);
 
 	ENDINSTANCE;
 
@@ -124,7 +124,7 @@ void CDugbog::Tick(_float fTimeDelta)
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
 	
-	m_pTransform->Set_Position(_float3(59.f, 0.6f, 42.f));
+	//m_pTransform->Set_Position(_float3(59.f, 0.6f, 42.f));
 
 	for (_uint i = 0; i < m_DarkAura.size(); i++)
 	{
@@ -374,7 +374,7 @@ HRESULT CDugbog::Add_Components()
 
 		/* For.Com_Health */
 		CHealth::HEALTHDESC HealthDesc;
-		HealthDesc.iMaxHP = 200000;
+		HealthDesc.iMaxHP = 200;
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 			throw TEXT("Com_Health");
@@ -444,7 +444,7 @@ HRESULT CDugbog::Add_Components()
 		RigidBodyDesc.fStaticFriction = 0.f;
 		RigidBodyDesc.fDynamicFriction = 1.f;
 		RigidBodyDesc.fRestitution = 0.f;
-		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.6f, 4.f);
+		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.6f, 3.f);
 		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
 		RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 1.f, 1.f);

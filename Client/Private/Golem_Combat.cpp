@@ -348,11 +348,11 @@ HRESULT CGolem_Combat::Add_Components()
 
 		/* For.Com_Health */
 		CHealth::HEALTHDESC HealthDesc;
-		HealthDesc.iMaxHP = 35000;
+		HealthDesc.iMaxHP = 350;
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 			throw TEXT("Com_Health");
-		m_isSpawn = true;
+		
 		/* For.Com_RigidBody */
 		CRigidBody::RIGIDBODYDESC RigidBodyDesc;
 		RigidBodyDesc.isStatic = false;
