@@ -134,7 +134,7 @@ HRESULT CPlayer_Camera::Initialize(void* pArg)
 
 	m_vEyeStandard = _float3(sinf(XMConvertToRadians(45.0f)), 0.0f, -cosf(XMConvertToRadians(45.f)));
 
-	m_fEyeMaxDistance = m_fAtMaxDistance = 2.0f;
+	m_fEyeMaxDistance = m_fAtMaxDistance = 2.5f;
 	m_fEyeMinDistance = m_fAtMinDistance = 0.1f;
 
 
@@ -159,7 +159,12 @@ void CPlayer_Camera::Tick(const _float& _TimeDelta)
 		m_isPressingTab = true;
 	}
 
+	if (pGameInstance->Get_DIKeyState(DIK_Y, CInput_Device::KEY_PRESSING))
+	{
+		_float3	vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
 
+		m_pTransform->Turn(vUp, _TimeDelta);
+	}
 
 	//마우스 움직이는 조건 나중에 바꿔야함 텝창 또는 인벤토리열렸을때 움직일수 있게
 	if (true == m_pAnimation_Camera_Model->Is_Finish_Animation() && true == *m_pisMove && false == m_isPressingTab)
@@ -307,7 +312,7 @@ void CPlayer_Camera::Eye_At_Distance()
 
 	vEyeDir.Normalize();
 
-	pGameInstance->RayCast(m_pTransform->Get_Position(), vEyeDir, 10.0f, nullptr, &m_fEyeIntersectDistance, TEXT("GameObject_Player"));
+	//pGameInstance->RayCast(m_pTransform->Get_Position(), vEyeDir, 10.0f, nullptr, &m_fEyeIntersectDistance, TEXT("GameObject_Player"));
 	//eye
 	//충돌해서 값이 있고, 최대 거리보다 길다면
 	if (0.0f != m_fEyeIntersectDistance &&

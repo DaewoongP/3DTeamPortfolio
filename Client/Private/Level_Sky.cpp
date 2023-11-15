@@ -13,15 +13,15 @@ HRESULT CLevel_Sky::Initialize()
 {
 	FAILED_CHECK_RETURN(Ready_Lights(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
-	FAILED_CHECK_RETURN(Ready_Layer_Monster(TEXT("Layer_Monster")), E_FAIL);
+	/*FAILED_CHECK_RETURN(Ready_Layer_Monster(TEXT("Layer_Monster")), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_FlyGame(TEXT("Layer_Manager")), E_FAIL);
-	FAILED_CHECK_RETURN(Ready_Layer_NPC(TEXT("Layer_NPC")), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Layer_NPC(TEXT("Layer_NPC")), E_FAIL);*/
 	FAILED_CHECK_RETURN(Ready_Shader(), E_FAIL);
-	FAILED_CHECK_RETURN(Ready_Events(TEXT("Layer_Event")), E_FAIL);
+	//FAILED_CHECK_RETURN(Ready_Events(TEXT("Layer_Event")), E_FAIL);
 
 	BEGININSTANCE;
 	pGameInstance->Reset_World_TimeAcc();
-	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
+	//pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
 	pGameInstance->Stop_AllSound();
 	//pGameInstance->Play_BGM(TEXT("Sky_Bgm.wav"), 0.6f);
 	ENDINSTANCE;
@@ -98,7 +98,24 @@ HRESULT CLevel_Sky::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	}
 
 	_float4x4 Matrix = XMMatrixTranslation(108.f, 35.f, 27.f);
-	Matrix._41 *= 0.5f;
+
+	Matrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixTranslation(59.f, 0.6f, 42.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_Dugbog"), TEXT("Layer_Monster"), TEXT("Prototype_GameObject_Dugbog"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Dugbog)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	/*Matrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixTranslation(48.f, 0.6f, 42.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SKY, LEVEL_SKY, TEXT("Prototype_GameObject_Golem_CombatGrunt"), TEXT("Layer_Monster"), TEXT("Prototype_GameObject_Golem_CombatGrunt"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Golem_CombatGrunt)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}*/
+
+	/*Matrix._41 *= 0.5f;
 	Matrix._42 *= 0.5f;
 	Matrix._43 *= 0.5f;
 
@@ -263,7 +280,7 @@ HRESULT CLevel_Sky::Ready_Layer_BackGround(const _tchar* pLayerTag)
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_FireWorks14)");
 		ENDINSTANCE;
 		return E_FAIL;
-	}
+	}*/
 
 	ENDINSTANCE;
 
@@ -379,14 +396,15 @@ HRESULT CLevel_Sky::Ready_Lights()
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
 	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
-	LightDesc.vPos = _float4(10.f, 100.f, 25.f, 1.f);
-	LightDesc.vDir = _float4(0.33f, -0.99f, 0.33f, 0.f);
+	LightDesc.vPos = _float4(30.f, 63.f, 55.f, 1.f);
+	LightDesc.vLookAt = _float4(56.f, 0.f, 69.f, 1.f);
+	LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
 
-	LightDesc.vDiffuse = WHITEDEFAULT;
-	LightDesc.vAmbient = WHITEDEFAULT;
-	LightDesc.vSpecular = WHITEDEFAULT;
+	LightDesc.vDiffuse = _float4(0.8f, 0.8f, 0.8f, 0.8f);
+	LightDesc.vAmbient = LightDesc.vDiffuse;
+	LightDesc.vSpecular = LightDesc.vDiffuse;
 
-	if (FAILED(pGameInstance->Add_Light(LightDesc)))
+	if (FAILED(pGameInstance->Add_Light(LightDesc, nullptr, true)))
 		return E_FAIL;
 
 	ENDINSTANCE;

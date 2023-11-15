@@ -27,7 +27,7 @@ HRESULT CMagic::Initialize(void* pArg)
 	__super::Initialize(pArg);
 
 	MAGICDESC* InitDesc = static_cast<MAGICDESC*>(pArg);
-	memcpy(&m_MagicDesc, InitDesc,sizeof(MAGICDESC));
+	memcpy(&m_MagicDesc, InitDesc, sizeof(MAGICDESC));
 	m_fCurrentCoolTime = m_MagicDesc.fInitCoolTime;
 	return S_OK;
 }
@@ -38,7 +38,7 @@ void CMagic::Tick(_float fTimeDelta)
 	{
 		m_fCoolMultipleTimer -= fTimeDelta;
 	}
-	else 
+	else
 	{
 		m_fCoolSpeed = 1.0f;
 	}
@@ -46,15 +46,17 @@ void CMagic::Tick(_float fTimeDelta)
 	if (m_fCurrentCoolTime > 0)
 	{
 		m_fCurrentCoolTime -= fTimeDelta * m_fCoolSpeed;
-		if(m_fCurrentCoolTime <= 0.0f)
-	{
-		m_fCurrentCoolTime = 0.0f;
+		if (m_fCurrentCoolTime <= 0.0f)
+		{
+			m_fCurrentCoolTime = 0.0f;
+		}
 	}
-	}
-	
+
+	m_fCurrentCoolTime = 0.0f;
+
 	__super::Tick(fTimeDelta);
-	
-	
+
+
 }
 
 void CMagic::Late_Tick(_float fTimeDelta)
@@ -89,7 +91,7 @@ CMagicBall* CMagic::Magic_Cast(const CGameObject* pTarget, const CGameObject* pW
 	ballInit.pTarget = pTarget;
 	ballInit.pWeapon = pWeapon;
 	ballInit.fScale = m_MagicDesc.fScale;
-	
+
 	if (PowerUp)
 		ballInit.iDamage *= 2;
 
@@ -106,7 +108,7 @@ CMagicBall* CMagic::Magic_Cast(const CGameObject* pTarget, const CGameObject* pW
 
 	CMagicBallPool* pMagicBallPool = CMagicBallPool::GetInstance();
 	Safe_AddRef(pMagicBallPool);
-	
+
 	if (FAILED(pGameInstance->Add_Component(pMagicBallPool->Get_Magic(ballInit), LEVEL_STATIC, TEXT("Layer_Magic"), objTag)))
 	{
 		MSG_BOX(msgBoxText);

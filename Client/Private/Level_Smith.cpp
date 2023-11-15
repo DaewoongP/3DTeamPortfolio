@@ -135,9 +135,25 @@ HRESULT CLevel_Smith::Ready_Layer_Monsters(const _tchar* pLayerTag)
 	Safe_AddRef(pGameInstance);
 
 	_float4x4 Matrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixTranslation(86.f, 10.f, 129.f);
-	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"), &Matrix)))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Armored_Troll)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}*/
+
+	Matrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixTranslation(95.f, 10.f, 124.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Dugbog"), pLayerTag, TEXT("Prototype_GameObject_Dugbog"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Dugbog)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	Matrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixTranslation(100.f, 10.f, 124.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Golem_CombatGrunt"), pLayerTag, TEXT("Prototype_GameObject_Golem_CombatGrunt"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Golem_CombatGrunt)");
 		ENDINSTANCE;
 		return E_FAIL;
 	}

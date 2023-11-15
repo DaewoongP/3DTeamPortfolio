@@ -356,9 +356,50 @@ HRESULT CMain2_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 
 	try
 	{
+		_float4x4 PivotMatrix = PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
+
+		/* For.Prototype_Component_Model_Dugbog */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Dugbog"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Dugbog/Dugbog.gcm"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Dugbog");
+
+		/* For.Prototype_GameObject_Dugbog */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Dugbog"),
+			CDugbog::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Dugbog");
+
 		/* ============ Enemy Weapon Models ============ */
 
-		_float4x4 PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
+		/* For.Prototype_Component_Model_Weopon_Golem_Combat */
+		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weopon_Golem_Combat"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Golem_Combat_Sword/Golem_Combat_Sword.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Weopon_Golem_Combat");
+
+		/* ============ Enemy Weapons ============ */
+
+		/* For.Prototype_Component_Weapon_Golem_Combat */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Weapon_Golem_Combat"),
+			CWeapon_Golem_Combat::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Weapon_Golem_Combat");
+
+		/* ============ Enemy Models ============ */
+
+		PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
+
+		/* For.Prototype_Component_Model_Golem_Combat */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Golem_Combat"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Golem_CombatGrunt/Golem_CombatGrunt.gcm"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Golem_Combat");
+
+		/* ============ Enemies ============ */
+
+		/* For.Prototype_GameObject_Golem_CombatGrunt */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Golem_CombatGrunt"),
+			CGolem_Combat::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Golem_CombatGrunt");
+
+		/* ============ Enemy Weapon Models ============ */
 
 		/* For.Prototype_Component_Model_Weopon_Armored_Troll */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weopon_Armored_Troll"),
@@ -507,7 +548,51 @@ HRESULT CMain2_Loader::Loading_For_Sky(LEVELID eLevelID)
 	try
 	{
 		/* For.Prototype_Component_Model_Weopon_DarkWizard_Wand */
-		_float4x4 PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
+		_float4x4 PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
+
+		/* For.Prototype_Component_Model_Dugbog */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Dugbog"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Dugbog/Dugbog.gcm"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Dugbog");
+
+		/* For.Prototype_GameObject_Dugbog */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Dugbog"),
+			CDugbog::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Dugbog");
+
+		/* ============ Enemy Weapon Models ============ */
+
+		/* For.Prototype_Component_Model_Weopon_Golem_Combat */
+		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weopon_Golem_Combat"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Golem_Combat_Sword/Golem_Combat_Sword.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Weopon_Golem_Combat");
+
+		/* ============ Enemy Weapons ============ */
+
+		/* For.Prototype_Component_Weapon_Golem_Combat */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Weapon_Golem_Combat"),
+			CWeapon_Golem_Combat::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Weapon_Golem_Combat");
+
+		/* ============ Enemy Models ============ */
+
+		PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
+
+		/* For.Prototype_Component_Model_Golem_Combat */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Golem_Combat"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Golem_CombatGrunt/Golem_CombatGrunt.gcm"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Golem_Combat");
+
+		/* ============ Enemies ============ */
+
+		/* For.Prototype_GameObject_Golem_CombatGrunt */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Golem_CombatGrunt"),
+			CGolem_Combat::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Golem_CombatGrunt");
+
+		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
+
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weopon_DarkWizard_Wand"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/DarkWizard_Wand/DarkWizard_Wand.dat"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Weopon_DarkWizard_Wand");

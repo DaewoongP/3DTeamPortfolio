@@ -73,7 +73,7 @@ _bool CQuest_Manager::Cheat_Init_Quest()
 	// 클리어하고싶은거 빼고  주석거세요
 	BEGININSTANCE;
 
-	Clear_Quest(TEXT("Quest_Save_Fig"));
+	/*Clear_Quest(TEXT("Quest_Save_Fig"));
 	Unlock_Quest(TEXT("Quest_Potion"));
 
 	Clear_Quest(TEXT("Quest_Potion"));
@@ -91,7 +91,7 @@ _bool CQuest_Manager::Cheat_Init_Quest()
 	Unlock_Quest(TEXT("Quest_Secret"));
 
 	Clear_Quest(TEXT("Quest_Secret"));
-	Unlock_Quest(TEXT("Quest_Bone"));
+	Unlock_Quest(TEXT("Quest_Bone"));*/
 
 	//Clear_Quest(TEXT("Quest_Bone"));
 

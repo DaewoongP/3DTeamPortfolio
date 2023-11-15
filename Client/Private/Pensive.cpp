@@ -187,6 +187,8 @@ void CPensive::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 HRESULT CPensive::Render()
 {
+	return S_OK;
+
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
@@ -712,7 +714,7 @@ HRESULT CPensive::Add_Components()
 		RigidBodyDesc.isStatic = false;
 		RigidBodyDesc.isTrigger = false;
 		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
-		RigidBodyDesc.vOffsetPosition = _float3(0.f, 5.8f, 0.f);
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 6.f, 0.f);
 		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
 		RigidBodyDesc.fStaticFriction = 0.f;
 		RigidBodyDesc.fDynamicFriction = 1.f;
