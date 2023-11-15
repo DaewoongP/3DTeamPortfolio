@@ -90,6 +90,12 @@ HRESULT CDugbog::Initialize_Level(_uint iCurrentLevelIndex)
 
 	auto pNPCLayer = pGameInstance->Find_Components_In_Layer(iCurrentLevelIndex, TEXT("Layer_NPC"));
 
+	if (nullptr == pNPCLayer)
+	{
+		ENDINSTANCE;
+		return S_OK;
+	}
+
 	for (auto Pair : *pNPCLayer)
 	{
 		wstring wstrObjTag = Pair.first;
@@ -97,6 +103,8 @@ HRESULT CDugbog::Initialize_Level(_uint iCurrentLevelIndex)
 		if (wstring::npos != wstrObjTag.find(TEXT("Professor_Fig")))
 			m_RangeInEnemies.emplace(wstrObjTag, static_cast<CGameObject*>(Pair.second));
 	}
+
+	m_RangeInEnemies.emplace(TEXT("Player"), m_pPlayer);
 
 	ENDINSTANCE;
 
@@ -115,6 +123,8 @@ void CDugbog::Tick(_float fTimeDelta)
 
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
+	
+	//m_pTransform->Set_Position(_float3(59.f, 0.6f, 42.f));
 
 	for (_uint i = 0; i < m_DarkAura.size(); i++)
 	{
@@ -392,7 +402,7 @@ HRESULT CDugbog::Add_Components()
 		RigidBodyDesc.fRestitution = 0.f;
 		PxSphereGeometry pSphereGeomatry1 = PxSphereGeometry(0.5f);
 		RigidBodyDesc.pGeometry = &pSphereGeomatry1;
-		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
+		RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
 		RigidBodyDesc.pOwnerObject = this;
 		RigidBodyDesc.eThisCollsion = COL_ENEMY;
@@ -434,7 +444,7 @@ HRESULT CDugbog::Add_Components()
 		RigidBodyDesc.fStaticFriction = 0.f;
 		RigidBodyDesc.fDynamicFriction = 1.f;
 		RigidBodyDesc.fRestitution = 0.f;
-		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.6f, 1.f);
+		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.6f, 3.f);
 		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
 		RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 1.f, 1.f);

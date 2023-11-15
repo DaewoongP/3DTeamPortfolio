@@ -58,7 +58,7 @@ void COutfit_Arcane_A::Equipment()
 		, CCustomModel::MESHTYPE::TOP);
 	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Pants_Arcane")
 		, CCustomModel::MESHTYPE::PANTS);
-	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Socks_E")
+	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Socks_D")
 		, CCustomModel::MESHTYPE::SOCKS);
 	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Boots_Arcane")
 		, CCustomModel::MESHTYPE::SHOES);

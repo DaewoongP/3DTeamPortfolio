@@ -79,11 +79,7 @@ void CCard_Fig::Tick(_float fTimeDelta)
 
 	if (false == m_isSpawn)
 	{
-		BEGININSTANCE;
-		_float4x4 CameraWorldMatrix = *m_pParentWorldMatrix;
-		_float4x4 WorldMatrix = m_OffsetMatrix * CameraWorldMatrix;
-		m_pTransform->Set_WorldMatrix(WorldMatrix);
-		ENDINSTANCE;
+		m_pTransform->Set_Position(_float3(0.f, 0.f, 0.f));
 	}
 	else
 		m_pTransform->LookAt_Lerp(m_pTarget->Get_Transform()->Get_Position(), fTimeDelta, true);
@@ -205,6 +201,12 @@ void CCard_Fig::Spawn_Fig(CGameObject* pTarget)
 {
 	if (nullptr == pTarget)
 		return;
+
+	BEGININSTANCE;
+	_float4x4 CameraWorldMatrix = *m_pParentWorldMatrix;
+	_float4x4 WorldMatrix = m_OffsetMatrix * CameraWorldMatrix;
+	m_pTransform->Set_WorldMatrix(WorldMatrix);
+	ENDINSTANCE;
 
 	Safe_Release(m_pTarget);
 	m_pTarget = pTarget;

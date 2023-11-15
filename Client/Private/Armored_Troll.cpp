@@ -360,6 +360,8 @@ HRESULT CArmored_Troll::Make_AI()
 			throw TEXT("Failed Add_Type isOverheadAction");
 		if (FAILED(m_pRootBehavior->Add_Type("isPlaySound", &m_isPlaySound)))
 			throw TEXT("Failed Add_Type isPlaySound");
+		if (FAILED(m_pRootBehavior->Add_Type("isFirstFlip", _bool())))
+			throw TEXT("Failed Add_Type isFirstFlip");
 
 		/* Make Childs */
 		CSelector* pSelector = nullptr;
@@ -933,6 +935,35 @@ HRESULT CArmored_Troll::Make_Flipendo(_Inout_ CSequence* pSequence)
 
 				if (BUFF_FLIPENDO & *pCurrentSpell)
 					*pCurrentSpell ^= BUFF_FLIPENDO;
+
+				return true;
+			});
+		pAction_Club_Face_Enter->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool isFirstFlip = { false };
+				if (FAILED(pBlackBoard->Get_Type("isFirstFlip", isFirstFlip)))
+					return false;
+
+				if (true == isFirstFlip)
+				{
+					CHealth* pHealth = { nullptr };
+					if (FAILED(pBlackBoard->Get_Type("pHealth", pHealth)))
+						return false;
+
+					Print_Damage_Font(200);
+
+					pHealth->Damaged(200);
+
+					if (FAILED(pBlackBoard->Set_Type("isFirstFlip", _bool(false))))
+						return false;
+				}
+
+				return true;
+			});
+		pAction_Club_Face_Enter->Add_Success_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				if (FAILED(pBlackBoard->Set_Type("isFirstFlip", _bool(true))))
+					return false;
 
 				return true;
 			});

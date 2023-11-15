@@ -105,6 +105,8 @@ void CGolem_Combat::Tick(_float fTimeDelta)
 
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta,&m_SoundChannel, CModel::UPPERBODY, m_pTransform);
+
+	//m_pTransform->Set_Position(_float3(48.f, 0.6f, 42.f));
 }
 
 void CGolem_Combat::Late_Tick(_float fTimeDelta)
@@ -350,7 +352,7 @@ HRESULT CGolem_Combat::Add_Components()
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 			throw TEXT("Com_Health");
-
+		
 		/* For.Com_RigidBody */
 		CRigidBody::RIGIDBODYDESC RigidBodyDesc;
 		RigidBodyDesc.isStatic = false;
@@ -363,7 +365,7 @@ HRESULT CGolem_Combat::Add_Components()
 		RigidBodyDesc.fRestitution = 0.f;
 		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.6f, 1.5f);
 		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
-		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
+		RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
 		RigidBodyDesc.pOwnerObject = this;
 		RigidBodyDesc.eThisCollsion = COL_ENEMY;

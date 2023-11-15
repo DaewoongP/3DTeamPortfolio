@@ -206,7 +206,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_pCustomModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"), CModel::ANOTHERBODY);
 
 	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(29.f, 2.7f, 26.f);
-	m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
+	//m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
+	m_vLevelInitPosition[LEVEL_VAULT] = _float3(150.f, 0.02f, 90.f);
 	m_vLevelInitPosition[LEVEL_SMITH] = _float3(32.f, 0.8f, 25.f);
 	m_vLevelInitPosition[LEVEL_SKY] = _float3(55.f, 11.f, 45.f);
 
@@ -350,10 +351,10 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	m_vecPotionParticle[13]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
 
-	for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
-	{
-		m_vecPlayer_StateParicle[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
-	}
+	//for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
+	//{
+	//	m_vecPlayer_StateParicle[i]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+	//}
 
 	for (_uint i = 0; i < m_vecMeshEffect.size(); ++i)
 	{
@@ -550,10 +551,10 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			break;
 			case CEnemy::ATTACK_LIGHT:
 			{
-				for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
+				/*for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
 				{
 					m_vecPlayer_StateParicle[i]->Play(pDesc->pEnemyTransform->Get_Position());
-				}
+				}*/
 
 				BEGININSTANCE;
 				_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_24397.wav") },{TEXT("playermale_99996.wav") } ,{TEXT("playermale_35941.wav")},{TEXT("playermale_99995.wav") } };
@@ -573,10 +574,10 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			break;
 			case CEnemy::ATTACK_HEAVY:
 			{
-				for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
+				/*for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
 				{
 					m_vecPlayer_StateParicle[i]->Play(pDesc->pEnemyTransform->Get_Position());
-				}
+				}*/
 
 				BEGININSTANCE;
 				_tchar szVoiceTag[4][MAX_PATH] = { {TEXT("playermale_25735.wav") },{TEXT("playermale_99991.wav") } ,{TEXT("playermale_99992.wav") },{TEXT("playermale_99993.wav") } };
@@ -1807,7 +1808,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Hair
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
-		TEXT("Prototype_Component_MeshPart_Player_Hair"),
+		TEXT("Prototype_Component_MeshPart_Hair_M_C"),
 		CCustomModel::HAIR, _float4(0.f, 0.f, 0.f, 1.f))))
 	{
 		MSG_BOX("Failed Add MeshPart Hair");
@@ -2567,7 +2568,7 @@ void CPlayer::Protego()
     magicInitDesc.fInitCoolTime = 0.f;
     magicInitDesc.iDamage = 0;
     magicInitDesc.fLifeTime = 1.5f;
-    magicInitDesc.fScale = 1.5f;
+    magicInitDesc.fScale = 2.f;
     m_pMagicSlot->Add_Magics(magicInitDesc);
 
 	m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COLLISIONFLAG(COL_ENEMY | COL_ENEMY_ATTACK | COL_MAGIC | COL_SHIELD_ENEMY), COL_SHIELD, m_isPowerUp);
@@ -3237,8 +3238,8 @@ void CPlayer::Go_Roll(void* _pArg)
 		)
 	{
 		m_pStateContext->Set_StateMachine(TEXT("Roll"), _pArg);
-		for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
-			m_vecPlayer_StateParicle[i]->Play(m_pTransform->Get_Position());
+		/*for (_uint i = 0; i < m_vecPlayer_StateParicle.size(); ++i)
+			m_vecPlayer_StateParicle[i]->Play(m_pTransform->Get_Position());*/
 
 	}
 }

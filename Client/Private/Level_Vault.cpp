@@ -561,6 +561,15 @@ HRESULT CLevel_Vault::Ready_Layer_Monster(const _tchar* pLayerTag)
 	BEGININSTANCE;
 	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Vault.mon"));
 	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Pensive.mon"));
+	
+	_float4x4 Matrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixTranslation(165.f, 0.02f, 92.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT, TEXT("Prototype_GameObject_Golem_CombatGrunt"), pLayerTag, TEXT("Prototype_GameObject_Golem_CombatGrunt"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Golem_CombatGrunt)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
 	ENDINSTANCE;
 
 	return S_OK;
