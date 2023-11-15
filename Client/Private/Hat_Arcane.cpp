@@ -57,7 +57,7 @@ void CHat_Arcane::Equipment()
 	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Hat_Arcane")
 		, CCustomModel::MESHTYPE::HAT);
 	m_pPlayerModel->Add_MeshParts(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Hair_M_C")
-		, CCustomModel::MESHTYPE::HAIR);
+		, CCustomModel::MESHTYPE::HAIR, _float4(0.f, 0.f, 0.f, 1.f));
 }
 
 CHat_Arcane* CHat_Arcane::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)

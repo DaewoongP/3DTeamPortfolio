@@ -73,7 +73,7 @@ _bool CQuest_Manager::Cheat_Init_Quest()
 	// 클리어하고싶은거 빼고  주석거세요
 	BEGININSTANCE;
 
-	/*Clear_Quest(TEXT("Quest_Save_Fig"));
+	Clear_Quest(TEXT("Quest_Save_Fig"));
 	Unlock_Quest(TEXT("Quest_Potion"));
 
 	Clear_Quest(TEXT("Quest_Potion"));
@@ -87,7 +87,7 @@ _bool CQuest_Manager::Cheat_Init_Quest()
 
 	static_cast<CCard_Fig*>(pPlayer->Find_Component(TEXT("Card_Fig")))->Set_ShowCard(true);
 
-	Clear_Quest(TEXT("Quest_Town"));
+	/*Clear_Quest(TEXT("Quest_Town"));
 	Unlock_Quest(TEXT("Quest_Secret"));
 
 	Clear_Quest(TEXT("Quest_Secret"));

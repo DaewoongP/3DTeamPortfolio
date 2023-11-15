@@ -312,7 +312,7 @@ void CPlayer_Camera::Eye_At_Distance()
 
 	vEyeDir.Normalize();
 
-	//pGameInstance->RayCast(m_pTransform->Get_Position(), vEyeDir, 10.0f, nullptr, &m_fEyeIntersectDistance, TEXT("GameObject_Player"));
+	pGameInstance->RayCast(m_pTransform->Get_Position(), vEyeDir, 10.0f, nullptr, &m_fEyeIntersectDistance, TEXT("GameObject_Player"));
 	//eye
 	//충돌해서 값이 있고, 최대 거리보다 길다면
 	if (0.0f != m_fEyeIntersectDistance &&

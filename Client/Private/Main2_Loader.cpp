@@ -401,6 +401,7 @@ HRESULT CMain2_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 
 		/* ============ Enemy Weapon Models ============ */
 
+		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
 		/* For.Prototype_Component_Model_Weopon_Armored_Troll */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weopon_Armored_Troll"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Troll_Armored_Club/Troll_Armored_Club.dat"), PivotMatrix))))

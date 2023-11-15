@@ -47,6 +47,16 @@ void CUI_Back::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
+	BEGININSTANCE;
+
+	if (pGameInstance->Is_Playing_CutScene())
+	{
+		ENDINSTANCE;
+		return;
+	}
+
+	ENDINSTANCE;
+
 	if (nullptr != m_pRendererCom)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
