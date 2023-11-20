@@ -417,7 +417,7 @@ HRESULT CLevel_Sky::Ready_Lights()
 	LightDesc.vLookAt = _float4(56.f, 0.f, 69.f, 1.f);
 	LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
 
-	LightDesc.vDiffuse = _float4(0.8f, 0.8f, 0.8f, 0.8f);
+	LightDesc.vDiffuse = _float4(0.6f, 0.6f, 0.6f, 0.8f);
 	LightDesc.vAmbient = LightDesc.vDiffuse;
 	LightDesc.vSpecular = LightDesc.vDiffuse;
 
