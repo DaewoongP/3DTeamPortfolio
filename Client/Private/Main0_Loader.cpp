@@ -375,6 +375,21 @@ HRESULT CMain0_Loader::Loading_For_Sky(LEVELID eLevelID)
 
 	try
 	{
+		/* For.Prototype_Component_Particle_LandingFlame */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Particle_LandingFlame"),
+			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Landing/LandingFlame/")))))
+			throw TEXT("Prototype_Component_Particle_LandingFlame");
+
+		/* For.Prototype_Component_Particle_LandingFog */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Particle_LandingFog"),
+			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Landing/LandingFog/")))))
+			throw TEXT("Prototype_Component_Particle_LandingFog");
+
+		/* For.Prototype_Component_Particle_LandingLight */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Particle_LandingLight"),
+			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Landing/LandingLight/")))))
+			throw TEXT("Prototype_Component_Particle_LandingLight");
+
 		/* For.Prototype_GameObject_Racer */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Racer"),
 			CRacer::Create(m_pDevice, m_pContext))))

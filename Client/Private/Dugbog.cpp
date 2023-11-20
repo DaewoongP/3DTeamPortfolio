@@ -113,6 +113,9 @@ HRESULT CDugbog::Initialize_Level(_uint iCurrentLevelIndex)
 
 void CDugbog::Tick(_float fTimeDelta)
 {
+
+	m_isSpawn = true;
+
 	Set_Current_Target();
 
 	__super::Tick(fTimeDelta);
