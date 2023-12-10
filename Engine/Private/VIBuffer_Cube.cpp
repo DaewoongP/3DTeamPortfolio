@@ -20,7 +20,6 @@ HRESULT CVIBuffer_Cube::Initialize_Prototype()
 	m_eFormat = DXGI_FORMAT_R16_UINT;
 	m_eTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-
 #pragma region VERTEX_BUFFER
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
 
@@ -31,7 +30,8 @@ HRESULT CVIBuffer_Cube::Initialize_Prototype()
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	VTXPOSCUBE* pVertices = new VTXPOSCUBE[m_iNumVertices];
+
+	VTXPOSCUBE* pVertices = New VTXPOSCUBE[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXPOSCUBE) * m_iNumVertices);
 
 	pVertices[0].vPosition = _float3(-0.5f, 0.5f, -0.5f);
@@ -39,19 +39,19 @@ HRESULT CVIBuffer_Cube::Initialize_Prototype()
 
 	pVertices[1].vPosition = _float3(0.5f, 0.5f, -0.5f);
 	pVertices[1].vTexCoord = pVertices[1].vPosition;
-	
+
 	pVertices[2].vPosition = _float3(0.5f, -0.5f, -0.5f);
 	pVertices[2].vTexCoord = pVertices[2].vPosition;
-	
+
 	pVertices[3].vPosition = _float3(-0.5f, -0.5f, -0.5f);
 	pVertices[3].vTexCoord = pVertices[3].vPosition;
-	
+
 	pVertices[4].vPosition = _float3(-0.5f, 0.5f, 0.5f);
 	pVertices[4].vTexCoord = pVertices[4].vPosition;
-	
+
 	pVertices[5].vPosition = _float3(0.5f, 0.5f, 0.5f);
 	pVertices[5].vTexCoord = pVertices[5].vPosition;
-	
+
 	pVertices[6].vPosition = _float3(0.5f, -0.5f, 0.5f);
 	pVertices[6].vTexCoord = pVertices[6].vPosition;
 
@@ -78,56 +78,32 @@ HRESULT CVIBuffer_Cube::Initialize_Prototype()
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	_ushort* pIndices = new _ushort[m_iNumIndices];
+	_ushort* pIndices = New _ushort[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_ushort) * m_iNumIndices);
 
-	pIndices[0] = 1;
-	pIndices[1] = 5;
-	pIndices[2] = 6;
+	/* +X */
+	pIndices[0] = 1; pIndices[1] = 5; pIndices[2] = 6;
+	pIndices[3] = 1; pIndices[4] = 6; pIndices[5] = 2;
 
-	pIndices[3] = 1;
-	pIndices[4] = 6;
-	pIndices[5] = 2;
+	/* -X */
+	pIndices[6] = 4; pIndices[7] = 0; pIndices[8] = 3;
+	pIndices[9] = 4; pIndices[10] = 3; pIndices[11] = 7;
 
-	pIndices[6] = 4;
-	pIndices[7] = 0;
-	pIndices[8] = 3;
+	/* +Y */
+	pIndices[12] = 4; pIndices[13] = 5; pIndices[14] = 1;
+	pIndices[15] = 4; pIndices[16] = 1; pIndices[17] = 0;
 
-	pIndices[9] = 4;
-	pIndices[10] = 3;
-	pIndices[11] = 7;
+	/* -Y */
+	pIndices[18] = 3; pIndices[19] = 2; pIndices[20] = 6;
+	pIndices[21] = 3; pIndices[22] = 6; pIndices[23] = 7;
 
-	pIndices[12] = 4;
-	pIndices[13] = 5;
-	pIndices[14] = 1;
+	/* +Z */
+	pIndices[24] = 5; pIndices[25] = 4; pIndices[26] = 7;
+	pIndices[27] = 5; pIndices[28] = 7; pIndices[29] = 6;
 
-	pIndices[15] = 4;
-	pIndices[16] = 1;
-	pIndices[17] = 0;
-
-	pIndices[18] = 3;
-	pIndices[19] = 2;
-	pIndices[20] = 6;
-
-	pIndices[21] = 3;
-	pIndices[22] = 6;
-	pIndices[23] = 7;
-
-	pIndices[24] = 7;
-	pIndices[25] = 6;
-	pIndices[26] = 5;
-
-	pIndices[27] = 7;
-	pIndices[28] = 5;
-	pIndices[29] = 4;
-
-	pIndices[30] = 0;
-	pIndices[31] = 1;
-	pIndices[32] = 2;
-
-	pIndices[33] = 0;
-	pIndices[34] = 2;
-	pIndices[35] = 3;
+	/* -Z */
+	pIndices[30] = 0; pIndices[31] = 1; pIndices[32] = 2;
+	pIndices[33] = 0; pIndices[34] = 2; pIndices[35] = 3;
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
 	m_SubResourceData.pSysMem = pIndices;
@@ -147,7 +123,7 @@ HRESULT CVIBuffer_Cube::Initialize(void* pArg)
 
 CVIBuffer_Cube* CVIBuffer_Cube::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CVIBuffer_Cube* pInstance = new CVIBuffer_Cube(pDevice, pContext);
+	CVIBuffer_Cube* pInstance = New CVIBuffer_Cube(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -159,7 +135,7 @@ CVIBuffer_Cube* CVIBuffer_Cube::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 
 CComponent* CVIBuffer_Cube::Clone(void* pArg)
 {
-	CVIBuffer_Cube* pInstance = new CVIBuffer_Cube(*this);
+	CVIBuffer_Cube* pInstance = New CVIBuffer_Cube(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
@@ -172,4 +148,5 @@ CComponent* CVIBuffer_Cube::Clone(void* pArg)
 void CVIBuffer_Cube::Free()
 {
 	__super::Free();
+
 }

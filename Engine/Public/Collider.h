@@ -1,4 +1,11 @@
 #pragma once
+/* =============================================== */
+// 
+//	정 : 박대웅
+//	부 :
+//
+/* =============================================== */
+
 #include "Component.h"
 
 BEGIN(Engine)
@@ -14,7 +21,6 @@ private:
 	virtual ~CCollider() = default;
 
 public:
-	TYPE Get_ColliderType() const { return m_eColliderType; }
 	_float3 Get_BoundingCenterPosition() const;
 	void Set_BoundingDesc(void* pBoundingDesc);
 #ifdef _DEBUG
@@ -32,20 +38,22 @@ public:
 #endif // _DEBUG
 
 public:
+	// 선충돌 : 선 시작위치, 선 방향, 길이 반환
 	_bool RayIntersects(_float4 vOrigin, _float4 vDirection, _Inout_ _float& fDist);
 	_bool Intersects(CCollider* pOtherCollider, _float3* pCollisionBox);
 	void OnCollision(COLLISIONDESC::COLTYPE eCollisionType, CCollider* pOtherCollider);
 	_bool IsCollision(CCollider* pOtherCollider);
-	void ExitCollision(CCollider* pOtherCollider);
-	void DeadCollision();
+	// collision vector에 현재 충돌중이 아닌데 값이 있을경우 삭제하기 위한 함수.
+	void IsExitCollision();
 
 private:
 	class CBounding*			m_pBounding = { nullptr };
 	TYPE						m_eColliderType = { TYPE_END };
 
 private:
-	vector<COLLISIONDESC>		m_Collisions;
-	vector<_bool>				m_isDead;
+	// first : 틱마다 충돌이 있는지 확인
+	// second : 충돌체 정보
+	vector<pair<_bool, COLLISIONDESC>>		m_Collisions;
 
 #ifdef _DEBUG
 private:

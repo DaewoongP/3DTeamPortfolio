@@ -8,6 +8,9 @@ class CGameInstance;
 END
 
 BEGIN(Client)
+#ifdef _DEBUG
+class CImGui_Manager;
+#endif // _DEBUG
 
 class CMainApp final : public CBase
 {
@@ -23,13 +26,15 @@ public:
 public:
 	// 게임 전체에서 사용하기 위한 스태틱 컴포넌트 생성 함수
 	HRESULT Ready_Prototype_Component_For_Static();
-	HRESULT Ready_Prototype_Object_For_Loading();
 	HRESULT Ready_Fonts();
 	HRESULT Open_Level(LEVELID eLevelIndex);
 
-#ifdef _DEBUG
 private:
 	void Tick_FPS(_float fTimeDelta);
+
+#ifdef _DEBUG
+private: /* ImGui */
+	void Debug_ImGui();
 #endif // _DEBUG
 
 private:
@@ -40,12 +45,21 @@ private:
 	CGameInstance*			m_pGameInstance = { nullptr };
 	CRenderer*				m_pRenderer = { nullptr };
 
-#ifdef _DEBUG
 private: /* For. Frame Per Second*/
 	_tchar					m_szFPS[MAX_STR];
 	_int					m_iFps = { 0 };
 	_float					m_fFpsTime = { 0.f };
+
+#ifdef _DEBUG
+private: /* ImGui */
+	CImGui_Manager*			m_pImGui_Manager = { nullptr };
+	LEVELID					m_eLevelID = { LEVEL_END };
+	_bool					m_isStaticLoaded = { false };
 #endif // _DEBUG
+
+private: /* Singleton */
+	class CMagicBallPool*	m_pMagicBallPool = { nullptr };
+	class CQuest_Manager*	m_pQuest_Manager = { nullptr };
 
 public:
 	static CMainApp* Create();

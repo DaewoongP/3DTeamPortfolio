@@ -27,84 +27,6 @@ HRESULT CVIBuffer_Point_Color_Instance::Initialize(void* pArg)
 
 	m_iNumInstance = *reinterpret_cast<_uint*>(pArg);
 
-	if (FAILED(Make_Buffers()))
-		return E_FAIL;
-
-	vector<_float4x4> InitializeMatrices;
-
-	for (_uint i = 0; i < m_iNumInstance; ++i)
-	{
-		_float4x4 InitMatrix = XMMatrixIdentity();
-
-		InitializeMatrices.push_back(InitMatrix);
-	}
-
-	if (FAILED(__super::Initialize(InitializeMatrices.data())))
-		return E_FAIL;
-
-	return S_OK;
-}
-
-void CVIBuffer_Point_Color_Instance::Tick(COLORINSTANCE* pInstances, _bool isAlphaBlend, _float4x4 AlphaBlendObjectWorldMatrixInverse)
-{
-	if (true == isAlphaBlend)
-	{
-		Sort_AlphaBlend(pInstances, AlphaBlendObjectWorldMatrixInverse);
-	}
-
-	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
-
-	m_pContext->Map(m_pVBInstance, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
-
-	VTXCOLINSTANCE* pVtxInstance = static_cast<VTXCOLINSTANCE*>(MappedSubResource.pData);
-
-	for (_uint i = 0; i < m_iNumInstance; ++i)
-	{
-		memcpy(&pVtxInstance[i].vRight, &pInstances[i].InstanceLocalMatrix.m[0], sizeof(_float4));
-		memcpy(&pVtxInstance[i].vUp, &pInstances[i].InstanceLocalMatrix.m[1], sizeof(_float4));
-		memcpy(&pVtxInstance[i].vLook, &pInstances[i].InstanceLocalMatrix.m[2], sizeof(_float4));
-		memcpy(&pVtxInstance[i].vTranslation, &pInstances[i].InstanceLocalMatrix.m[3], sizeof(_float4));
-		memcpy(&pVtxInstance[i].vColor, &pInstances[i].vInstanceColor, sizeof(_float4));
-	}
-
-	m_pContext->Unmap(m_pVBInstance, 0);
-}
-
-void CVIBuffer_Point_Color_Instance::Sort_AlphaBlend(COLORINSTANCE* pInstances, _float4x4 AlphaBlendObjectWorldMatrixInverse)
-{
-	CPipeLine* pPipeLine = CPipeLine::GetInstance();
-	Safe_AddRef(pPipeLine);
-
-	_float4 vCamPos = XMLoadFloat4(pPipeLine->Get_CamPosition());
-	_float4 vCamLocalPos = XMVector3TransformCoord(vCamPos, AlphaBlendObjectWorldMatrixInverse);
-
-	Safe_Release(pPipeLine);
-
-	vector<COLORINSTANCE> ColorInstances;
-	ColorInstances.resize(m_iNumInstance);
-
-	memcpy(ColorInstances.data(), pInstances, sizeof(COLORINSTANCE) * m_iNumInstance);
-
-	sort(ColorInstances.begin(), ColorInstances.end(), [vCamLocalPos](COLORINSTANCE SourInstance, COLORINSTANCE DestInstance) {
-		_float4 vSourLocalPos, vDestLocalPos;
-		memcpy(&vSourLocalPos, SourInstance.InstanceLocalMatrix.m[3], sizeof(_float4));
-		memcpy(&vDestLocalPos, DestInstance.InstanceLocalMatrix.m[3], sizeof(_float4));
-
-		_float4 vSour = vSourLocalPos - vCamLocalPos;
-		_float4 vDest = vDestLocalPos - vCamLocalPos;
-
-		// 내림차순 (멀리있는거부터 그림.)
-		if (vSour.Length() > vDest.Length())
-			return true;
-
-		return false;
-		});
-
-	memcpy(pInstances, ColorInstances.data(), sizeof(COLORINSTANCE) * m_iNumInstance);
-}
-
-HRESULT CVIBuffer_Point_Color_Instance::Make_Buffers()
-{
 	m_iIndexCountPerInstance = 1;
 	m_iNumVertexBuffers = { 2 };
 	m_iStride = { sizeof(VTXPOINT) };
@@ -125,7 +47,7 @@ HRESULT CVIBuffer_Point_Color_Instance::Make_Buffers()
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	VTXPOINT* pVertices = new VTXPOINT;
+	VTXPOINT* pVertices = New VTXPOINT;
 	ZeroMemory(pVertices, sizeof(VTXPOINT));
 
 	pVertices->vPosition = _float3(0.f, 0.f, 0.f);
@@ -151,7 +73,7 @@ HRESULT CVIBuffer_Point_Color_Instance::Make_Buffers()
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	_ushort* pIndices = new _ushort[m_iNumIndices];
+	_ushort* pIndices = New _ushort[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_ushort) * m_iNumIndices);
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
@@ -162,12 +84,24 @@ HRESULT CVIBuffer_Point_Color_Instance::Make_Buffers()
 	Safe_Delete_Array(pIndices);
 #pragma endregion
 
+	vector<_float4x4> InitializeMatrices;
+
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		_float4x4 InitMatrix = XMMatrixIdentity();
+
+		InitializeMatrices.push_back(InitMatrix);
+	}
+
+	if (FAILED(__super::Initialize(InitializeMatrices.data())))
+		return E_FAIL;
+
 	return S_OK;
 }
 
 CVIBuffer_Point_Color_Instance* CVIBuffer_Point_Color_Instance::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CVIBuffer_Point_Color_Instance* pInstance = new CVIBuffer_Point_Color_Instance(pDevice, pContext);
+	CVIBuffer_Point_Color_Instance* pInstance = New CVIBuffer_Point_Color_Instance(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -180,7 +114,7 @@ CVIBuffer_Point_Color_Instance* CVIBuffer_Point_Color_Instance::Create(ID3D11Dev
 
 CComponent* CVIBuffer_Point_Color_Instance::Clone(void* pArg)
 {
-	CVIBuffer_Point_Color_Instance* pInstance = new CVIBuffer_Point_Color_Instance(*this);
+	CVIBuffer_Point_Color_Instance* pInstance = New CVIBuffer_Point_Color_Instance(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

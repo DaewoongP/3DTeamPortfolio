@@ -400,5 +400,25 @@ FodyWeavers.xsd
 *.exp
 *.exe
 
-# My data
+Engine.dll
+Engine_d.dll
+Engine.lib
+Engine_d.lib
+Client.lib
+Tool.lib
+*.cso
+
+# Resource
+*.dds
+*.png
+*.jpg
+*.fbx
+*.tga
+*.mat
+*.bmp
+*.txt
 *.dat
+*.zip
+*.spritefont
+
+Resources/

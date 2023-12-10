@@ -44,6 +44,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableUnitySupport>true</EnableUnitySupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -51,6 +52,7 @@
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableUnitySupport>true</EnableUnitySupport>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -116,17 +118,17 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_USE_IMGUI;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_USE_IMGUI;_TOOL;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>backends/;../Public/;../../Reference/Headers/;misc/debuggers/;../Default/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>backends/;../Public/;../../Reference/Headers/;misc/debuggers/;../Default/;../../Reference/Headers/PhysX/;../../Reference/Headers/NvCloth/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4828;4204</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(DXSDK_DIR)/Lib/x64;../../Reference/Librarys/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3dcompiler.lib;dxgi.lib;Engine_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3dcompiler.lib;dxgi.lib;Engine_d.lib;DirectXTKd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderType>Effect</ShaderType>
@@ -141,18 +143,20 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_USE_IMGUI;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_USE_IMGUI;_TOOL;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>backends/;../Public/;../../Reference/Headers/;misc/debuggers/;../Default/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>backends/;../Public/;../../Reference/Headers/;misc/debuggers/;../Default/;../../Reference/Headers/PhysX/;../../Reference/Headers/NvCloth/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4828;4204</DisableSpecificWarnings>
+      <Optimization>MaxSpeed</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3dcompiler.lib;dxgi.lib;Engine_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3dcompiler.lib;dxgi.lib;Engine.lib;DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)/Lib/x64;../../Reference/Librarys/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
       <ShaderType>Effect</ShaderType>
@@ -162,15 +166,56 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Public\Camera_Line.h" />
+    <ClInclude Include="..\Public\Camera_Window.h" />
+    <ClInclude Include="..\public\DummyMeshEffect.h" />
+    <ClInclude Include="..\public\Cloth_Window.h" />
+    <ClInclude Include="..\public\DummyTrail.h" />
+    <ClInclude Include="..\public\Dummy_Cloth.h" />
+    <ClInclude Include="..\public\Dummy_Effect.h" />
+    <ClInclude Include="..\Public\Dummy_Font.h" />
+    <ClInclude Include="..\Public\Dummy_UI_Group.h" />
+    <ClInclude Include="..\Public\LightDot.h" />
+    <ClInclude Include="..\Public\Light_Window.h" />
+    <ClInclude Include="..\Public\ComboBox.h" />
+    <ClInclude Include="..\public\CustomWidget.h" />
+    <ClInclude Include="..\Public\MapObject_Ins.h" />
+    <ClInclude Include="..\Public\Monster_Window.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Public\Navigation_Window.h" />
+    <ClInclude Include="..\Public\PhysXRender.h" />
+    <ClInclude Include="..\Public\DummyFlipBook.h" />
+    <ClInclude Include="..\Public\stb_image.h" />
+    <ClInclude Include="..\Public\Dummy_UI.h" />
+    <ClInclude Include="..\Public\Camera_Point.h" />
+    <ClInclude Include="..\public\CutScene_Camera_Tool.h" />
+    <ClInclude Include="..\public\Main_Camera.h" />
+    <ClInclude Include="..\Public\Tool_Functions.h" />
+    <ClInclude Include="..\Public\TriangleCollider_Window.h" />
+    <ClInclude Include="..\Public\TriangleColMesh.h" />
+    <ClInclude Include="..\Public\UI_Window.h" />
+    <ClInclude Include="..\public\DummyParticle.h" />
+    <ClInclude Include="..\Public\Animation_Window.h" />
+    <ClInclude Include="..\Public\Dummy.h" />
+    <ClInclude Include="..\public\Effect_Window.h" />
+    <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\public\Level_Tool.h" />
     <ClInclude Include="..\public\MainTool.h" />
+    <ClInclude Include="..\Public\MapDummy.h" />
+    <ClInclude Include="..\Public\MapObject.h" />
     <ClInclude Include="..\public\Object_Window.h" />
+    <ClInclude Include="..\public\Sky.h" />
+    <ClInclude Include="..\public\Terrain.h" />
     <ClInclude Include="..\Public\Tool_Defines.h" />
     <ClInclude Include="..\public\ImWindow.h" />
     <ClInclude Include="..\public\Window_Manager.h" />
     <ClInclude Include="backends\imgui_impl_dx11.h" />
     <ClInclude Include="backends\imgui_impl_win32.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="HelpMaker.h" />
+    <ClInclude Include="ImageFileDialog.h" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="ImGuiFileDialog.h" />
@@ -186,19 +231,83 @@
     <ClInclude Include="Tool.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Private\Camera_Line.cpp" />
+    <ClCompile Include="..\Private\Camera_Window.cpp" />
+    <ClCompile Include="..\private\Cloth_Window.cpp" />
+    <ClCompile Include="..\Private\ComboBox.cpp" />
+    <ClCompile Include="..\private\CustomWidget.cpp" />
+    <ClCompile Include="..\private\DummyMeshEffect.cpp" />
+    <ClCompile Include="..\private\DummyTrail.cpp" />
+    <ClCompile Include="..\private\Dummy_Cloth.cpp" />
+    <ClCompile Include="..\private\Dummy_Effect.cpp" />
+    <ClCompile Include="..\Private\Dummy_Font.cpp" />
+    <ClCompile Include="..\Private\Dummy_UI.cpp" />
+    <ClCompile Include="..\Private\Dummy_UI_Group.cpp" />
+    <ClCompile Include="..\Private\LightDot.cpp" />
+    <ClCompile Include="..\Private\Light_Window.cpp" />
+    <ClCompile Include="..\Private\Camera_Point.cpp" />
+    <ClCompile Include="..\private\CutScene_Camera_Tool.cpp" />
+    <ClCompile Include="..\private\Main_Camera.cpp" />
+    <ClCompile Include="..\Private\MapObject_Ins.cpp" />
+    <ClCompile Include="..\Private\Monster_Window.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Private\Navigation_Window.cpp" />
+    <ClCompile Include="..\Private\PhysXRender.cpp" />
+    <ClCompile Include="..\private\DummyFlipBook.cpp" />
+    <ClCompile Include="..\Private\TriangleCollider_Window.cpp" />
+    <ClCompile Include="..\Private\TriangleColMesh.cpp" />
+    <ClCompile Include="..\Private\UI_Window.cpp" />
+    <ClCompile Include="..\private\DummyParticle.cpp" />
+    <ClCompile Include="..\Private\Animation_Window.cpp" />
+    <ClCompile Include="..\Private\Dummy.cpp" />
+    <ClCompile Include="..\private\Effect_Window.cpp" />
+    <ClCompile Include="..\private\Camera_Free.cpp" />
     <ClCompile Include="..\private\Level_Tool.cpp" />
     <ClCompile Include="..\private\MainTool.cpp" />
-    <ClCompile Include="..\private\ImWindow.cpp" />
+    <ClCompile Include="..\private\ImWindow.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Private\MapDummy.cpp" />
+    <ClCompile Include="..\Private\MapObject.cpp" />
     <ClCompile Include="..\private\Object_Window.cpp" />
+    <ClCompile Include="..\private\Sky.cpp" />
+    <ClCompile Include="..\private\Terrain.cpp" />
     <ClCompile Include="..\private\Window_Manager.cpp" />
-    <ClCompile Include="backends\imgui_impl_dx11.cpp" />
-    <ClCompile Include="backends\imgui_impl_win32.cpp" />
-    <ClCompile Include="imgui.cpp" />
-    <ClCompile Include="ImGuiFileDialog.cpp" />
-    <ClCompile Include="imgui_demo.cpp" />
-    <ClCompile Include="imgui_draw.cpp" />
-    <ClCompile Include="imgui_tables.cpp" />
-    <ClCompile Include="imgui_widgets.cpp" />
+    <ClCompile Include="backends\imgui_impl_dx11.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
+    </ClCompile>
+    <ClCompile Include="backends\imgui_impl_win32.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
+    </ClCompile>
+    <ClCompile Include="ImageFileDialog.cpp" />
+    <ClCompile Include="imgui.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
+    </ClCompile>
+    <ClCompile Include="ImGuiFileDialog.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
+    </ClCompile>
+    <ClCompile Include="imgui_demo.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
+    </ClCompile>
+    <ClCompile Include="imgui_draw.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
+    </ClCompile>
+    <ClCompile Include="imgui_tables.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
+    </ClCompile>
+    <ClCompile Include="imgui_widgets.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
+    </ClCompile>
     <ClCompile Include="Tool.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -213,7 +322,15 @@
     <None Include="misc\debuggers\imgui.natstepfilter" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Test.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Sky.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Terrain.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMeshInstance.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointColInstance.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="misc\debuggers\imgui.natvis" />

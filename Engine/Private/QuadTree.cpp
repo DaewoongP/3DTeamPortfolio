@@ -84,7 +84,7 @@ HRESULT CQuadTree::Make_Neighbors()
 	return S_OK;
 }
 
-void CQuadTree::Culling(CFrustum * pFrustum, const _float3 * pVerticesPos, _ulong * pIndices, _uint * pNumIndices)
+void CQuadTree::Culling(CFrustum * pFrustum, const _float3 * pVerticesPos, _uint * pIndices, _uint * pNumIndices)
 {
 	/* 가장 작은 쿼드트리만 들어와. || 
 	내가 잡아놓은 조건을 만족하면 바로 들어와서 그려. */
@@ -97,8 +97,7 @@ void CQuadTree::Culling(CFrustum * pFrustum, const _float3 * pVerticesPos, _ulon
 		{
 			if (nullptr != m_pNeighbors[i])
 				isDraw[i] = m_pNeighbors[i]->isDraw(pVerticesPos);
-		}
-		
+		}		
 		
 		_uint		iIndices[4] = {
 			m_iCorners[CORNER_LT],
@@ -267,7 +266,7 @@ _bool CQuadTree::isDraw(const _float3 * pVerticesPos)
 
 CQuadTree * CQuadTree::Create(_uint iLT, _uint iRT, _uint iRB, _uint iLB)
 {
-	CQuadTree*	pInstance = new CQuadTree();
+	CQuadTree*	pInstance = New CQuadTree();
 
 	if (FAILED(pInstance->Initialize(iLT, iRT, iRB, iLB)))
 	{
@@ -285,4 +284,3 @@ void CQuadTree::Free()
 	}
 
 }
-

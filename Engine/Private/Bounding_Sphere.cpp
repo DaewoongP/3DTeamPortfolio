@@ -9,8 +9,8 @@ CBounding_Sphere::CBounding_Sphere(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 CBounding_Sphere::CBounding_Sphere(const CBounding_Sphere& rhs)
 	: CBounding(rhs)
-	, m_pSphere_Original(new DirectX::BoundingSphere(*rhs.m_pSphere_Original))
-	, m_pSphere(new DirectX::BoundingSphere(*m_pSphere_Original))
+	, m_pSphere_Original(New DirectX::BoundingSphere(*rhs.m_pSphere_Original))
+	, m_pSphere(New DirectX::BoundingSphere(*m_pSphere_Original))
 {
 }
 
@@ -30,7 +30,7 @@ HRESULT CBounding_Sphere::Initialize_Prototype()
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	m_pSphere_Original = new DirectX::BoundingSphere(_float3(0.f, 0.f, 0.f), 0.5f);
+	m_pSphere_Original = New DirectX::BoundingSphere(_float3(0.f, 0.f, 0.f), 0.5f);
 
 	return S_OK;
 }
@@ -86,7 +86,7 @@ HRESULT CBounding_Sphere::Render(_float4 vColor)
 
 CBounding_Sphere* CBounding_Sphere::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CBounding_Sphere* pInstance = new CBounding_Sphere(pDevice, pContext);
+	CBounding_Sphere* pInstance = New CBounding_Sphere(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -97,9 +97,9 @@ CBounding_Sphere* CBounding_Sphere::Create(ID3D11Device* pDevice, ID3D11DeviceCo
 	return pInstance;
 }
 
-CBounding* CBounding_Sphere::Clone(void* pBoundingDesc)
+CBounding_Sphere* CBounding_Sphere::Clone(void* pBoundingDesc)
 {
-	CBounding_Sphere* pInstance = new CBounding_Sphere(*this);
+	CBounding_Sphere* pInstance = New CBounding_Sphere(*this);
 
 	if (FAILED(pInstance->Initialize(pBoundingDesc)))
 	{

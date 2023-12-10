@@ -1,4 +1,11 @@
 #pragma once
+/* =============================================== */
+// 
+//	Á¤ : ¹Ú´ë¿õ
+//	ºÎ :
+//
+/* =============================================== */
+
 #include "VIBuffer_Instance.h"
 
 BEGIN(Engine)
@@ -19,7 +26,6 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype(const INSTANCEDESC * pInstanceDesc, _uint iNumInstance);
 	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Tick(_float fTimeDelta) override;
 
 private:
 	INSTANCEDESC		m_InstanceDesc;

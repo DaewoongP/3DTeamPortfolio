@@ -1,4 +1,11 @@
 #pragma once
+/* =============================================== */
+// 
+//	정 : 심정환
+//	부 :
+//
+/* =============================================== */
+
 #include "Base.h"
 
 BEGIN(Engine)
@@ -17,7 +24,7 @@ private:
 public:
 	HRESULT Initialize(_uint iLT, _uint iRT, _uint iRB, _uint iLB);
 	HRESULT Make_Neighbors();
-	void Culling(class CFrustum* pFrustum, const _float3* pVerticesPos, _ulong* pIndices, _uint* pNumIndices);
+	void Culling(class CFrustum* pFrustum, const _float3* pVerticesPos, _uint* pIndices, _uint* pNumIndices);
 	_bool isDraw(const _float3* pVerticesPos);
 
 private:

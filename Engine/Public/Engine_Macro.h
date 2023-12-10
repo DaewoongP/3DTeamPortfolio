@@ -1,17 +1,20 @@
 #pragma once
 ///////////////////////// My Macros /////////////////////////////
 #define			PURE							= 0
-#define			MAX_SHADERMATRIX				256
+#define			MAX_SHADERMATRIX				512
+#define			MAX_SHADERVECTOR				512
 #define			MAX_STR							256
 #define			MAX_DIK							256
 #define			ZEROMEM(_ptr)					ZeroMemory(_ptr, sizeof *_ptr)
 #define			ZEROMEMSIZE(_ptr, _size)		ZeroMemory(_ptr, sizeof _size)
-#define			CharToWChar(_pChar, _pWchar)	MultiByteToWideChar(CP_ACP, 0, _pChar, (int)strlen(_pChar), _pWchar, MAX_PATH);
+#define			CharToWChar(_pChar, _pWchar)	MultiByteToWideChar(CP_ACP, 0, _pChar, MAX_PATH, _pWchar, MAX_PATH);
 #define         WCharToChar(_pWchar, _pChar)    WideCharToMultiByte(CP_ACP, 0, _pWchar, -1, _pChar, MAX_PATH, nullptr, nullptr);
-
+#define			MAX_PARTICLE_NUM				300
+#define			WHITEDEFAULT					_float4(1.f,1.f,1.f,1.f)
+#define			BLACKDEFAULT					_float4(0.f,0.f,0.f,0.f)
 ///////////////////////// default Macros /////////////////////////////
 #ifndef			MSG_BOX
-#define			MSG_BOX(_message)			MessageBox(nullptr, TEXT(_message), L"System Message", MB_OK)
+#define			MSG_BOX(_message)			Error_Message_Box(_message)
 #endif
 
 #define			BEGIN(NAMESPACE)		namespace NAMESPACE {
@@ -69,7 +72,7 @@
 		CLASSNAME*	CLASSNAME::m_pInstance = nullptr;			\
 		CLASSNAME*	CLASSNAME::GetInstance( void )	{			\
 			if(nullptr == m_pInstance) {						\
-				m_pInstance = new CLASSNAME;					\
+				m_pInstance = New CLASSNAME;					\
 			}													\
 			return m_pInstance;									\
 		}														\

@@ -1,4 +1,12 @@
 #pragma once
+/* =============================================== */
+// 
+//	정 : 박대웅
+//	부 :
+//
+/* =============================================== */
+
+
 #include "Base.h"
 
 BEGIN(Engine)
@@ -10,18 +18,31 @@ private:
 	virtual ~CLayer() = default;
 
 public:
-	HRESULT			Add_GameObjects(const _tchar* pGameObjectTag, class CGameObject* pGameObject);
+	_umap<const _tchar*, class CComponent*>* Get_Components() { return &m_Components; }
+
+public:
+	HRESULT			Initialize_Level(_uint iCurrentLevelIndex);
+	HRESULT			Add_Component(const _tchar* pComponentTag, class CComponent* pComponent);
 	// 레이어 클리어
-	HRESULT			Clear_Layer();
+	HRESULT			Clear_Layer() {
+		for (auto& pComponent : m_Components)
+			Safe_Release(pComponent.second);
+
+		m_Components.clear();
+
+		return S_OK;
+	}
+	HRESULT			Delete_Component(const _tchar* pComponentTag);
+
 public:
 	void Tick(_float fTimeDelta);
 	void Late_Tick(_float fTimeDelta);
 
-private:
-	unordered_map<const _tchar*, class CGameObject*>	m_GameObjects;
+public:
+	class CComponent* Find_Component(const _tchar* pComponentTag);
 
 private:
-	class CGameObject* Find_GameObject(const _tchar* pGameObjectTag);
+	_umap<const _tchar*, class CComponent*>	m_Components;
 
 public:
 	static CLayer* Create();

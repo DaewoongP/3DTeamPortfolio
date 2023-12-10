@@ -4,20 +4,110 @@
     <Filter Include="00. MainApp">
       <UniqueIdentifier>{cc764a3f-4330-44bd-8028-de74905e22ce}</UniqueIdentifier>
     </Filter>
-    <Filter Include="98. Default">
-      <UniqueIdentifier>{cc18812b-2268-4f02-b60b-17a85252121a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="99. Headers">
-      <UniqueIdentifier>{91c3e316-2a51-40fe-a9b3-e3fef6e8989d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Levels">
       <UniqueIdentifier>{25b86a2e-c9b4-49c1-b269-972d8fb989db}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Levels\00. Logo">
       <UniqueIdentifier>{741a9b99-aa71-4277-ba9c-505e87d4c3ad}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject">
+      <UniqueIdentifier>{b74fe5a7-7424-471b-8a3d-0dfab0107bd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\00. Sky">
+      <UniqueIdentifier>{6c37d6c6-263b-4d41-a46d-4ece2e70908a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player">
+      <UniqueIdentifier>{5eb96d63-79e7-4753-bd1d-cc3a3d3f177d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Debug">
+      <UniqueIdentifier>{286ee9a6-b9ef-449f-9303-ba3e8913d1f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Debug\Camera">
+      <UniqueIdentifier>{135ca45c-2c5b-460d-a30c-d6f6b96b6d78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Debug\Player">
+      <UniqueIdentifier>{a7856930-1055-4fbe-9f00-de43c99e8340}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Debug\PhysxRender">
+      <UniqueIdentifier>{ffbc88f7-a780-4e66-87b7-7baf68d24ed3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\00. Camera">
+      <UniqueIdentifier>{f3759d26-a3c7-4580-b9e7-a5b9ac3325cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine">
+      <UniqueIdentifier>{80131a04-5be6-4f74-b2ac-09649853f473}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\02. StateContext">
+      <UniqueIdentifier>{52207591-197e-4e0b-ba0b-670292f5f012}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\00. IdleState">
+      <UniqueIdentifier>{f9cc4dbf-4550-4855-a9f9-8562b44f54a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. Weapon">
+      <UniqueIdentifier>{e492e81f-a203-4fa9-9a45-dbbf54d55c64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. Weapon\Wand">
+      <UniqueIdentifier>{3eacb79d-9519-4b74-935b-b05ac19d8cfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\01. MoveState">
+      <UniqueIdentifier>{cbccc006-d073-4d19-b0ee-2b3ba8950a41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\01. MoveState\00. TurnState">
+      <UniqueIdentifier>{82333232-6f4e-4985-a33f-ca96b14a81f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\01. MoveState\01. StartState">
+      <UniqueIdentifier>{20ef874c-0484-4793-9cd6-f509d35738b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\01. MoveState\02. LoopState">
+      <UniqueIdentifier>{18909992-b942-42f4-bf43-2d702d0b39ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Debug\LoadTrigger">
+      <UniqueIdentifier>{96fc0db4-f307-4049-bde3-38b946932417}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\02. JumpState">
+      <UniqueIdentifier>{f11b9425-7729-4257-9b90-f2a7b314e762}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\03. RollState">
+      <UniqueIdentifier>{021389fc-ab85-4d15-9673-ffdd6778c8aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\04. HardLandState">
+      <UniqueIdentifier>{10f19527-0a06-4f20-977a-2fdb651f7263}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\05. MagicCastingState">
+      <UniqueIdentifier>{ddb0a962-a92a-4544-9b8a-d6aa212b6f34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Debug\SeamLess">
+      <UniqueIdentifier>{846ab9f8-ca54-4c10-bd34-f738c2ec2301}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\06. Protego">
+      <UniqueIdentifier>{80263d30-d536-457d-baca-c468c1fa3fd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\07. Hit">
+      <UniqueIdentifier>{8100d76b-abc1-4a05-a149-ea58ea807be8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\01. Cliffside">
+      <UniqueIdentifier>{1bc6cbc7-4c2b-4ad9-9e0c-6724a4c369f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\03. GreatHall">
+      <UniqueIdentifier>{6547d751-b0f6-4c08-bb0f-9c0040437448}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Levels\99. Loading">
       <UniqueIdentifier>{884f056e-8693-460c-8907-198be0f4c197}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\99. Loading\Loader">
+      <UniqueIdentifier>{5d7f902a-4002-432f-8bd9-34922b397410}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors">
+      <UniqueIdentifier>{68f60c2e-b68f-4392-b9de-da48723e2496}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\01. Selectors">
+      <UniqueIdentifier>{71a935c5-d66c-42f6-b634-774235c64530}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\02. Sequences">
+      <UniqueIdentifier>{d6997012-3cb3-41af-a953-a7da969ed441}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\00. Action">
+      <UniqueIdentifier>{22de2c6d-33c0-405e-880a-8329dd7ffd58}</UniqueIdentifier>
     </Filter>
     <Filter Include="97. ShaderFiles">
       <UniqueIdentifier>{776f72a6-a2da-4037-a3c4-4c09ed568945}</UniqueIdentifier>
@@ -27,6 +117,909 @@
     </Filter>
     <Filter Include="97. ShaderFiles\Meshes">
       <UniqueIdentifier>{458c26bc-3075-44f0-8181-8bf9f722fa27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. ShaderFiles\Debug">
+      <UniqueIdentifier>{1d5583a2-e4a6-4d7c-a4bd-c23fd81f765f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. ShaderFiles\Magic">
+      <UniqueIdentifier>{922a952c-44f9-4be5-8a2d-7c9cffdf861d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. ShaderFiles\Magic\Protego">
+      <UniqueIdentifier>{2b531332-cdaa-4769-a0cb-b4ae97608818}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Effect">
+      <UniqueIdentifier>{b30da159-0cae-438f-a468-3cc4137f82aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Effect\Wingardium_Effect">
+      <UniqueIdentifier>{2225573b-518b-46cd-b9ba-d1ab1cbfdb7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic">
+      <UniqueIdentifier>{e77db5d2-8ca4-49d3-9854-41ff5a14a55b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall">
+      <UniqueIdentifier>{7667aa3f-fd7d-47db-b815-b3a9a26ac4c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\MagicBallPool">
+      <UniqueIdentifier>{9de24398-e881-4455-91ad-ee52934ecab4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\01. Protego">
+      <UniqueIdentifier>{bcd138af-102e-4b5f-b68d-6ea12de5208b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\02. Revelio">
+      <UniqueIdentifier>{35319448-1444-4cfb-8ce5-26aa0f43aca3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\00. BasicCast">
+      <UniqueIdentifier>{753e950f-efbe-4660-a035-8339816dab1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\03. Wingardiumleviosa">
+      <UniqueIdentifier>{679315ef-dd4e-4f8a-8102-42d3e7531140}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\04. Levioso">
+      <UniqueIdentifier>{e6fd5103-b92d-4463-b59d-613d632c8fc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\06. Confringo">
+      <UniqueIdentifier>{f2eb1727-1265-443b-960c-a8800034b231}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\07. Finisher">
+      <UniqueIdentifier>{b47e170c-04d6-4c0c-89b8-452eb34296b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicSlot">
+      <UniqueIdentifier>{b7435dcb-b46c-4066-a7d4-3545d611ef11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. Scene">
+      <UniqueIdentifier>{1a46706e-474c-4231-a7ba-2c809467d7a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. Scene\Field_Guide">
+      <UniqueIdentifier>{0830a1af-837d-437b-8222-61a3830a3f13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. Scene\Main_Menu">
+      <UniqueIdentifier>{2af2e2df-59af-4b37-8ef4-d02fdf00f156}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. Scene\Main_Menu\Gear">
+      <UniqueIdentifier>{a94fd666-69cf-4e38-ab76-d42069fcdbe3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. Scene\Main_Menu\Inventory">
+      <UniqueIdentifier>{30d76204-27e0-46f1-8f3c-4db0fd57b841}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. Scene\Main_Menu\Setting">
+      <UniqueIdentifier>{cfeaefdd-8cd5-43e7-ae2d-c678e5202aa3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. Scene\Main_Menu\Quest">
+      <UniqueIdentifier>{7f6be9ff-3769-4fe7-8798-91aa092a8af5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\08. Ncendio">
+      <UniqueIdentifier>{3ef84178-a7a8-4f3f-9dbe-c88c10fc5a24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Effect\Default_MagicTrail_Effect">
+      <UniqueIdentifier>{5235bea2-54db-4f3f-b105-e99f462db57b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\05. Lumos">
+      <UniqueIdentifier>{852374ec-175b-4b73-9ad4-fe97a917260d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. Headers">
+      <UniqueIdentifier>{91c3e316-2a51-40fe-a9b3-e3fef6e8989d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\03. Movement">
+      <UniqueIdentifier>{d95f3888-ed91-44de-bed2-7ee502737efa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\04. Function">
+      <UniqueIdentifier>{11282af5-bac7-4061-9441-81c0be48d567}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\09. Arrestomomentum">
+      <UniqueIdentifier>{683eec54-b155-4003-932d-9dc50d316cea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\10. Descendo">
+      <UniqueIdentifier>{9519c13e-a7cb-4b96-9eb2-b9ce8a40056a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\11. Accio">
+      <UniqueIdentifier>{703f4170-540d-477e-9e7d-2f10b19b80de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\12. Flipendo">
+      <UniqueIdentifier>{78baa83c-c63f-4943-8e3c-fc5bdef4b1a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\13. Diffindo">
+      <UniqueIdentifier>{5e7fdfdc-7c44-4397-8d4e-53e918a12608}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\14. Expelliarmus">
+      <UniqueIdentifier>{a129608e-6318-4dac-b3d0-548d33adac32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\15. Crucio">
+      <UniqueIdentifier>{27f1b01c-e910-4e62-bf1b-8487ea68fcca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\16. Imperio">
+      <UniqueIdentifier>{3e5daa2a-0540-4c2b-b10a-c7031295ac39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\17. Stupefy">
+      <UniqueIdentifier>{3889487f-722c-4c11-99ae-a49e505aff2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. ImGui">
+      <UniqueIdentifier>{a50a5e26-6a04-4c0e-a541-6d264c6a12fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Effect\Normal">
+      <UniqueIdentifier>{a74d6959-7585-400e-a1ae-d972cc6abd86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\14. Expelliarmus">
+      <UniqueIdentifier>{a129608e-6318-4dac-b3d0-548d33adac32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\15. Crucio">
+      <UniqueIdentifier>{27f1b01c-e910-4e62-bf1b-8487ea68fcca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\16. Imperio">
+      <UniqueIdentifier>{3e5daa2a-0540-4c2b-b10a-c7031295ac39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. ImGui">
+      <UniqueIdentifier>{a50a5e26-6a04-4c0e-a541-6d264c6a12fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\17. Stupefy">
+      <UniqueIdentifier>{3889487f-722c-4c11-99ae-a49e505aff2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. ImGui">
+      <UniqueIdentifier>{a50a5e26-6a04-4c0e-a541-6d264c6a12fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Effect\Normal">
+      <UniqueIdentifier>{a74d6959-7585-400e-a1ae-d972cc6abd86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\18. Bombarda">
+      <UniqueIdentifier>{71aa1272-8b21-4963-b502-4d0bebac9131}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\08. CraftState">
+      <UniqueIdentifier>{d5efb67c-1189-46bb-bd77-8c0dcdb658ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\98. Static">
+      <UniqueIdentifier>{3494d13e-3cfe-40db-a8ee-e89e7a07f613}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy">
+      <UniqueIdentifier>{e612562d-8c4c-44b1-a050-fefc2e43feb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\00. Troll">
+      <UniqueIdentifier>{fe57efd1-c79a-4107-82a4-00502f3125f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\00. Troll\00. Armored_Troll">
+      <UniqueIdentifier>{f4df7d1d-7374-4385-81c0-dbc54a235570}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\00. Troll\00. Armored_Troll\Weapon">
+      <UniqueIdentifier>{cc4def40-eb2b-4c6e-b1d0-03d0027e89bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\00. Troll\01. Forest_Troll">
+      <UniqueIdentifier>{cb12878e-e2df-412e-9377-2c7c29c4cbe2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\00. Troll\01. Forest_Troll\Weapon">
+      <UniqueIdentifier>{716e173e-d10b-4137-8676-391c2c340ccd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\01. Goblin">
+      <UniqueIdentifier>{ebc6f3c1-09ed-45aa-a352-5ddbe82a7e16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\01. Goblin\Assassin">
+      <UniqueIdentifier>{358d6be2-a828-4004-90ac-318723c004be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\01. Goblin\Assassin\Weapon">
+      <UniqueIdentifier>{feebe3d3-b2c6-4159-9f49-bd9a0e8a405d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\02. Dugbog">
+      <UniqueIdentifier>{ea8cf730-c75f-4ad8-a593-3de6f11919a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\03. Golem">
+      <UniqueIdentifier>{75e17a41-3815-4778-b3dd-847b9cc46d8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\05. DarkWizard">
+      <UniqueIdentifier>{344e3ca3-42ef-4166-b228-a633658f314b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\05. DarkWizard\00. Male">
+      <UniqueIdentifier>{fa4cacae-90c5-46ff-a8c7-e033b6d518a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\05. DarkWizard\01. Female">
+      <UniqueIdentifier>{7a43bd67-b607-45bf-877c-8fe218a71743}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\05. DarkWizard\Weapon">
+      <UniqueIdentifier>{231c744f-ab40-44fe-8fe7-d4cd81fb4189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon">
+      <UniqueIdentifier>{0af7f112-5794-49f9-b566-5e0282856103}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\00. Breath">
+      <UniqueIdentifier>{d27190fb-93b1-4fc8-a3ec-cd4237d610f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\00. Breath\Cylinder">
+      <UniqueIdentifier>{a2c2803d-c44f-4cce-979e-3f110506685d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\01. EnergyBall">
+      <UniqueIdentifier>{79dcddca-11cc-4450-a7ad-d7866f733612}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\02. Pulse">
+      <UniqueIdentifier>{577c4cca-621b-45e1-95a4-5f05df3bff21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\03. Projectile_Black">
+      <UniqueIdentifier>{6d239c05-d6d4-4004-932d-61a54fb474d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\04. Projectile_White">
+      <UniqueIdentifier>{90270eef-d6f0-4ecb-9e8f-1de3ab28c703}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\Weapon">
+      <UniqueIdentifier>{4825389d-2310-47a8-8256-7d05c14ba302}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying">
+      <UniqueIdentifier>{fb04081b-632f-4b46-8340-fa8eea9b3f9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Hover">
+      <UniqueIdentifier>{c34becda-e8f5-45d0-954f-ab88adb9236a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Fly">
+      <UniqueIdentifier>{e06f1f0b-1100-4600-a574-4d7ac87ad207}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Fly\Move">
+      <UniqueIdentifier>{2404f150-e1be-45a4-a6f2-c8df7eae227e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Begin">
+      <UniqueIdentifier>{0c403044-32c4-418b-b61e-769717983493}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\End">
+      <UniqueIdentifier>{cb45375f-726f-4341-a96b-8f5708737058}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Idle">
+      <UniqueIdentifier>{93967255-71fb-465d-af15-960c334b8a05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Move">
+      <UniqueIdentifier>{0e2579a0-1d86-4ec8-beac-e26459a4385b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Turn">
+      <UniqueIdentifier>{bd3cc937-a6b8-46d4-a90c-9cc87c222813}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Break">
+      <UniqueIdentifier>{efc4ee26-398a-4d26-a05a-41a298491857}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. UseItem">
+      <UniqueIdentifier>{71339f20-0740-4bfd-88f3-aebe95c69956}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\06. Wolf">
+      <UniqueIdentifier>{6b94e34b-9d3a-4ed2-b20c-95deea862a47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\04. Hogsmeade">
+      <UniqueIdentifier>{93532b46-fcf5-4814-9232-b40f168761fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events">
+      <UniqueIdentifier>{41feed39-b5e2-4b15-99fe-18a8117aafdf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Vault">
+      <UniqueIdentifier>{1f3eeadd-26c0-496a-8e7b-abb99f64931a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\02. Vault">
+      <UniqueIdentifier>{0cc40b5b-ca2a-4eb4-a4df-e1f5dbb77a1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Smeade">
+      <UniqueIdentifier>{2ed55d9c-62e6-455a-a77e-621148ea10a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Effect\BoneDragon">
+      <UniqueIdentifier>{41a12515-ec23-459a-bdc0-6707bacb4e6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Effect\BoneDragon\ImpulseSphere">
+      <UniqueIdentifier>{a94ba46b-41cb-498e-9f1c-e6bd0ddc924e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive">
+      <UniqueIdentifier>{d35bd40d-1992-4218-aee5-6049585803b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\StateContext">
+      <UniqueIdentifier>{c96c2c86-b707-4530-b33b-e4c3cc4544cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\StateMachine">
+      <UniqueIdentifier>{2c58550c-d9ca-45bc-85d4-de58f091efd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\StateMachine\Appearence">
+      <UniqueIdentifier>{f08b9004-9379-4b3d-a212-e7e9ec3edace}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\StateMachine\Hit">
+      <UniqueIdentifier>{9c22d6b5-7c52-48d6-9d17-0972d8827e55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\StateMachine\Groogy">
+      <UniqueIdentifier>{3095c7ae-842c-4269-bf81-4db5b35ca5b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\StateMachine\Physical_Attack">
+      <UniqueIdentifier>{3f985b3e-8b27-47c2-b15c-812acb01dcb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\StateMachine\Orb_Attack">
+      <UniqueIdentifier>{3f90c188-5e65-4dcd-95e1-2edaedcf861a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\StateMachine\Charge_Attack">
+      <UniqueIdentifier>{338dc065-2ff5-49a7-904c-b3348e1c664c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\StateMachine\Death">
+      <UniqueIdentifier>{dd3cb70a-17ff-4e09-9969-665b3aa819d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\StateMachine\Idle">
+      <UniqueIdentifier>{c20b6f87-c73d-428b-aef9-396ce17c6a5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\Weapon">
+      <UniqueIdentifier>{fde3512d-c9d7-4f98-baac-ed8650da6e1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Effect\Blink_Effect">
+      <UniqueIdentifier>{58d8b344-dfb8-4b48-ab00-f18496e8f003}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. Default">
+      <UniqueIdentifier>{cc18812b-2268-4f02-b60b-17a85252121a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. Default\ImGui_Defaults">
+      <UniqueIdentifier>{628cd336-ebfe-4860-bfac-014e7bec45d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Effect\BoneDragon\Breath_Effect">
+      <UniqueIdentifier>{c87cb9f8-370f-4fca-be76-5dda19a43cb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\Magic">
+      <UniqueIdentifier>{8a48c72f-dd17-4083-a311-ce1ed55419dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Ground_Ball">
+      <UniqueIdentifier>{471c54cd-7a5b-4ece-8242-6d120e185254}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Fail_Ball">
+      <UniqueIdentifier>{004bb4c7-ceb5-4b1b-a29b-5f61f3bd54e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Shouting">
+      <UniqueIdentifier>{48067e46-a2b2-46de-a78c-45570d3e579b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\Magic\Pensvie_Sword_Throw">
+      <UniqueIdentifier>{27da13f9-42b9-4e80-9179-08a514172efd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Mace_Attack">
+      <UniqueIdentifier>{7b950a00-70b3-4a01-a959-d6802fab4f56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\04. Projectile_White\Projectile_White_Effect">
+      <UniqueIdentifier>{cf3acc26-742e-445d-aa03-d0df3bc0e85f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Cliffside">
+      <UniqueIdentifier>{db76acf0-1434-4a65-8c6d-2a7074254ab7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. Scene\Main_Menu\Guide_Book">
+      <UniqueIdentifier>{9ea80fb5-bafc-42e2-bc97-7d00918990a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Cliffside">
+      <UniqueIdentifier>{db76acf0-1434-4a65-8c6d-2a7074254ab7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="08. Script">
+      <UniqueIdentifier>{8259d964-e72a-469b-b6fd-a3ced577ab4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="09. GameManager">
+      <UniqueIdentifier>{f7506b35-2a98-4706-aaf0-aacbf2491e33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10. Quest">
+      <UniqueIdentifier>{019794e9-d13f-4ec9-a419-4c2b5ea04f05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10. Quest\Manager">
+      <UniqueIdentifier>{5bfe5cd8-4edc-4bd4-9081-d6bb6fd36925}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10. Quest\Save_Fig">
+      <UniqueIdentifier>{0b6ed71e-efa1-46a6-a1cb-c7dd6e803bbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10. Quest\Town">
+      <UniqueIdentifier>{78e4bee5-2ce8-4d66-948d-ffa6dbbdf9d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10. Quest\Secret">
+      <UniqueIdentifier>{1638d68d-60ff-4540-bbe6-0eef67ce2af6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10. Quest\Potion">
+      <UniqueIdentifier>{dba3ebe7-937c-43a8-ad10-c3a7a2e74dad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10. Quest\Bone">
+      <UniqueIdentifier>{be5494fa-2ceb-45df-b97f-6fc5acc894e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\Magic_Sound_Manager">
+      <UniqueIdentifier>{21076980-ffb0-4b0d-9c8a-4e6c54351f0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Sanctum">
+      <UniqueIdentifier>{311816ca-2fe2-428a-95d1-c51ce652aa31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. Weapon\BroomStick">
+      <UniqueIdentifier>{bf05e386-0b1d-4d1b-ad3e-6fa83f25daf2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Vault\Event_Vault_Torch">
+      <UniqueIdentifier>{f1a2d051-d377-4904-b73d-968294ea2a72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject">
+      <UniqueIdentifier>{0671651e-f669-4b5e-82f4-dfb1f4480ca3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\MapObject_Ins">
+      <UniqueIdentifier>{f13444ba-2393-4bce-95bb-afa19568f604}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj">
+      <UniqueIdentifier>{d7ccccd1-f98f-4c43-b7c6-44c19a20a834}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Treasure_Chest">
+      <UniqueIdentifier>{29d2298d-e409-4ddd-ae89-545341414500}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\PotionStation">
+      <UniqueIdentifier>{e8e87625-76be-4cce-8219-8d85981baf70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\PotionStation\Camera">
+      <UniqueIdentifier>{47ad6082-1c46-48ca-91b9-645d66ca436a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Gatherer">
+      <UniqueIdentifier>{e88e5f73-5766-4d38-b329-5d4e9342c0b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Door">
+      <UniqueIdentifier>{c0f2b156-3bfd-454d-a84c-99b9be093137}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\RP_Core">
+      <UniqueIdentifier>{f8e2e068-d9cf-4946-a565-8d0e2044214d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Cliff_Gate">
+      <UniqueIdentifier>{8c4fbf71-2b03-4298-81fe-afb775f60a81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Vault_Gate">
+      <UniqueIdentifier>{ccd8f7ca-c51d-4f96-bfa8-3ffc359c5efb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Anim_Obj">
+      <UniqueIdentifier>{86c2332f-3c78-49e8-8513-4950f2cb3106}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Anim_Obj\Gull">
+      <UniqueIdentifier>{64519bb8-2a5a-4d8b-974c-39f199b49dfa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Anim_Obj\Cat">
+      <UniqueIdentifier>{b02c580a-c572-4721-bee8-44c0daa7f30e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Anim_Obj\Owl">
+      <UniqueIdentifier>{a2d0ac88-bc9d-4275-b006-47de08699d2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Env">
+      <UniqueIdentifier>{397b10fb-04a8-4524-96cf-1c1ccba12d43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Anim_Obj\BigBird">
+      <UniqueIdentifier>{ff9c3df0-5548-4afc-9001-b274864e6839}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\SmithToCliff_Gate">
+      <UniqueIdentifier>{9c8464ea-6b00-4115-af3d-5cd83bf6afc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Env\Vault_Torch">
+      <UniqueIdentifier>{a0bb4357-e447-4268-9096-a91a1d820286}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Env\Lamppost">
+      <UniqueIdentifier>{932325f7-c36e-46b5-903e-6cd0c72bef3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\LightStand">
+      <UniqueIdentifier>{b89c1f33-7332-4303-8b51-675b8608ea09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Door\Sanctum_Door">
+      <UniqueIdentifier>{e1f83ab2-f7f2-4e31-91a4-387e610fc940}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\03. Golem\Weapon">
+      <UniqueIdentifier>{f57875dd-9b97-4974-a4c8-dbc1374da1c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\05. DarkWizard\01. Female\Spawner">
+      <UniqueIdentifier>{d8aa9f2d-5837-4280-a210-59cd8efcb982}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\05. DarkWizard\02. Fly">
+      <UniqueIdentifier>{1684b91d-3598-4808-8519-dd674df0bae2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Spawn">
+      <UniqueIdentifier>{617e8b7e-9920-4531-a8d3-4c8e4045ddb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Vault\Spawn">
+      <UniqueIdentifier>{0dc22c73-a100-442f-8c3b-9fba51da41c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Vault\Enter_Vault">
+      <UniqueIdentifier>{0154d54e-706e-4c95-85dd-82155f12a0e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Sanctum">
+      <UniqueIdentifier>{28e16e8c-d636-4f9a-b935-2bd1be77a8eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Sanctum\Dragon_HP_Down">
+      <UniqueIdentifier>{9b2a539e-f6ff-415e-bcc1-c9f8c48df7bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Sanctum\Dragon_Death">
+      <UniqueIdentifier>{38e6c889-33ea-4de9-9002-264fac9c5bfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\Weapon\Head">
+      <UniqueIdentifier>{a40255d8-46b3-446f-a61c-a3f4e1694864}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\Weapon\Left_Wing">
+      <UniqueIdentifier>{aa98253f-527d-4ab2-a15d-4159a8c13a35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\Weapon\Right_Wing">
+      <UniqueIdentifier>{53674c22-ce4a-4e55-8645-9efb2e02a1e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\Weapon\Tail">
+      <UniqueIdentifier>{4b1dcaad-641e-4070-a67f-3c29d519c8d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\06. Sanctum%28Dragon%29">
+      <UniqueIdentifier>{a3441117-6109-46b1-8071-26b05cc98d52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\04. PlayerInformation">
+      <UniqueIdentifier>{32c19ffc-fb69-42ca-ba81-07c40b9b305f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI">
+      <UniqueIdentifier>{66149634-b2ec-4e71-ba47-a1cf371175b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\Logo">
+      <UniqueIdentifier>{0126ba42-5a20-40d6-a1fb-a9781cbccd8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group">
+      <UniqueIdentifier>{7206f782-d4db-4b46-8797-de58df3e32e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_HP">
+      <UniqueIdentifier>{081ca7b0-6581-4898-a252-d4947ea8ef08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Finisher">
+      <UniqueIdentifier>{e81ad826-eb83-476b-b1aa-59c061bddf73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Finisher_Icon">
+      <UniqueIdentifier>{fcbbd145-242a-4b88-9a6d-b01139b69406}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Potion">
+      <UniqueIdentifier>{33c5525a-2279-40c2-9d48-f7921b35001b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Skill">
+      <UniqueIdentifier>{48686970-0b4c-42ea-88ac-966830027166}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_R">
+      <UniqueIdentifier>{0bc67e96-28ec-48d2-b52e-271e88fbe34b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_T">
+      <UniqueIdentifier>{279484dd-52a7-44cf-a944-5b3f6d56994d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_MiniMap">
+      <UniqueIdentifier>{39b3c828-0c33-46d7-9115-ed0078317f4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Enemy_HP">
+      <UniqueIdentifier>{bb8be488-5c9d-472c-a62d-2b3677e0ed72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Cursor">
+      <UniqueIdentifier>{a63a6343-ce45-4b8e-a9d3-a44f48775b53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Logo">
+      <UniqueIdentifier>{615f137f-89fd-425e-8a34-0692f9d580b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Loading">
+      <UniqueIdentifier>{9aa8f3bd-bbc6-46ed-92e0-477200a4d147}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Brew">
+      <UniqueIdentifier>{046bcdc3-685b-4522-afa8-40b52b32465c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Skill_Tap">
+      <UniqueIdentifier>{e695472f-e3ce-4164-aeab-698da0e95413}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Store">
+      <UniqueIdentifier>{855a2556-f88a-48b0-a687-12cebb69022e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Composite">
+      <UniqueIdentifier>{bcff362f-a7cb-497b-b754-00e1c5101961}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Composite\UI_Image">
+      <UniqueIdentifier>{6a99be75-1048-4b77-8a00-10a58f385e62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Composite\UI_Inventory">
+      <UniqueIdentifier>{cfd348f8-f70a-4715-9594-2470af08e0a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Composite\UI_Damage">
+      <UniqueIdentifier>{7d0f777e-6a04-4283-a9c2-832e921428e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Composite\UI_Interaction">
+      <UniqueIdentifier>{06c934f6-bf3f-4fee-8a89-9fb722ad475e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI">
+      <UniqueIdentifier>{a0782665-36f6-4fd7-ab5c-79b74a2f4762}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI\UI_None">
+      <UniqueIdentifier>{3b6be744-8047-49de-88b4-d917b595c1ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI\UI_HP">
+      <UniqueIdentifier>{a3f66fec-9f9a-486b-afc5-bfcd37dcf729}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI\UI_Finisher">
+      <UniqueIdentifier>{6cda2f04-0443-4bed-b4ca-7039288a3488}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI\UI_Effect_Back">
+      <UniqueIdentifier>{6f63ec72-3503-4230-9a92-5c2bd38a636e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI\UI_Slot">
+      <UniqueIdentifier>{d0607139-8865-4a93-8350-450642f3cb31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI\UI_Logo">
+      <UniqueIdentifier>{cdb882fd-b63d-411c-a352-12031cde1674}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI\UI_Potion_Tap">
+      <UniqueIdentifier>{36aed02f-50ec-4f84-99e9-0238717d796e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI\UI_Farming">
+      <UniqueIdentifier>{4cbef12d-ec21-4d78-b4dd-15a4c545bc3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI\UI_Dynamic_Back">
+      <UniqueIdentifier>{94884128-bfde-49f0-b76a-4d2f1d79153e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI\UI_Script">
+      <UniqueIdentifier>{473ca6be-871b-4f7c-9069-df1ceb227470}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\Font">
+      <UniqueIdentifier>{8567ad8d-0151-4dca-83f9-c0b84f96b3d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\Font\Normal">
+      <UniqueIdentifier>{a6ce031a-ee39-48b9-aa3c-287c539e6515}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\Font\DamageFont">
+      <UniqueIdentifier>{de3fa021-8d91-41bb-9c35-a3c8c9e7d681}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\06. Terrain">
+      <UniqueIdentifier>{2308a2fe-dbf8-40e5-a674-b8a9988760c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\06. Terrain\03. PlayerInformation">
+      <UniqueIdentifier>{32c19ffc-fb69-42ca-ba81-07c40b9b305f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\07. NPC">
+      <UniqueIdentifier>{1048769e-752f-4d43-a082-e0d3163efe97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\07. NPC\Vendor">
+      <UniqueIdentifier>{d1bedd6c-b93e-498b-92c0-a4f87c373550}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\07. NPC\Oakes">
+      <UniqueIdentifier>{764aed44-be6d-4fba-b2df-e9dfbee0dbb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\07. NPC\Fig">
+      <UniqueIdentifier>{f57312ad-47ea-49f5-928a-bbbe0da4e59a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\07. NPC\Fig\Combat">
+      <UniqueIdentifier>{5ee826f6-c052-4db1-9653-5a2d4a8a6b09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\07. NPC\Fig\Combat\Weapons">
+      <UniqueIdentifier>{469a34a9-d8a0-49f7-8077-04a0e0c53e16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\07. NPC\Fig\NonCombat">
+      <UniqueIdentifier>{86b2a51a-067b-4c8b-b5f5-1dfa2b277e83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\07. NPC\Fig\Card">
+      <UniqueIdentifier>{d82ab8bd-779f-43e8-b78e-097b556318ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\07. NPC\Dummy">
+      <UniqueIdentifier>{dfc55a73-3047-4bbc-b36c-564040baf9e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\07. NPC\House_Elf">
+      <UniqueIdentifier>{15e98751-98a2-4629-a638-7f71b9ab4fce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\08. Trigger">
+      <UniqueIdentifier>{b738306a-5e9e-4d2f-91bd-31bb6708ef2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Inventory">
+      <UniqueIdentifier>{121cb925-396f-4fe8-bc1e-353a51babe27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Inventory\Item">
+      <UniqueIdentifier>{a8a056c1-627a-4e55-9a40-91512c0110cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Inventory\Item\MPBall">
+      <UniqueIdentifier>{5eb7cb7b-6f9e-420b-bad4-8d44bfc40af4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Inventory\Item\Potion">
+      <UniqueIdentifier>{468d1cd9-e6fb-4a3a-8b33-c14df4a7eb93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Inventory\PotionTap">
+      <UniqueIdentifier>{bb5f7ed2-3b1a-4f84-9841-e49923a81270}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item">
+      <UniqueIdentifier>{ab9b91ab-d68d-4f81-9267-777bc595a5e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\02. Ingredient">
+      <UniqueIdentifier>{d1c4c5bb-3054-45a2-b861-88bb25724c63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\02. Ingredient\AshwinderEggs_Item">
+      <UniqueIdentifier>{7e32aa57-41a8-477e-81c1-095fb42e7e6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\02. Ingredient\Dugbog_Tongue_Item">
+      <UniqueIdentifier>{f52c08c4-b035-4b2a-94aa-afd2572a5c74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\02. Ingredient\Dittany_Leaves_Item">
+      <UniqueIdentifier>{f13b1b1b-ff19-488c-a6ab-ecbc454e0a34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\02. Ingredient\Leaping_Toadstool_Caps_Item">
+      <UniqueIdentifier>{6882e52f-bb6c-4bdf-82b4-a7749f3eab92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\02. Ingredient\Lacewing_Flies_Item">
+      <UniqueIdentifier>{425b6a55-9f0d-4cc0-894d-2f254aedd0b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\02. Ingredient\Knotgrass_Item">
+      <UniqueIdentifier>{10161daa-8b70-47d3-baf8-e674ecd43b3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\02. Ingredient\Leech_Juice_Item">
+      <UniqueIdentifier>{4749fd5d-4bcc-489e-9d18-23556b885cf7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\02. Ingredient\MallowSweet_Item">
+      <UniqueIdentifier>{24f7e11c-deba-4a87-aabf-3eb75d2c3a8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\02. Ingredient\MoonStone_Item">
+      <UniqueIdentifier>{e1d0774c-9abe-4c8e-9fa2-0a36332a24bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\02. Ingredient\Spider_Fang_Item">
+      <UniqueIdentifier>{7cd1fe41-5274-4652-bbbd-d57e6bf6e602}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\02. Ingredient\Fluxweed_Stem_Item">
+      <UniqueIdentifier>{ec6ca023-d204-421f-b987-e6dd05104f10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\02. Ingredient\Horklump_Juice_Item">
+      <UniqueIdentifier>{cfd8b21e-6777-4f34-895c-61b1742bcb57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\02. Ingredient\Troll_Bogeys_Item">
+      <UniqueIdentifier>{b617e8ac-647b-4517-b567-fbc871646981}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\02. Ingredient\Shrivelfig_Item">
+      <UniqueIdentifier>{8b32bd0e-0931-48bb-b464-9347fbdc14a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\02. Ingredient\Mongrel_Fur_Item">
+      <UniqueIdentifier>{1d482665-58b1-4b52-8f5a-7ca07153b2d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\01. Tool">
+      <UniqueIdentifier>{9cd20c79-d1dd-4c10-aa3f-aa47c981708a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\01. Tool\EdurusPotion_Item">
+      <UniqueIdentifier>{5c406098-07b5-46fb-9d45-b1311c184ef5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\01. Tool\FocusPotion_Item">
+      <UniqueIdentifier>{8d95b445-6949-4451-89ed-bb3e4b04ad31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\01. Tool\InvisibilityPotion_Item">
+      <UniqueIdentifier>{99b2c27d-89d3-49de-b6a8-52cf4a5d03cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\01. Tool\MaximaPotion_Item">
+      <UniqueIdentifier>{b86b4ae2-6cfd-485b-a56c-04feb5040ba7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\01. Tool\ThunderBrewPotion_Item">
+      <UniqueIdentifier>{97d176b2-8213-4c84-936e-eb62c849c5c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\01. Tool\WiggenweldPotion_Item">
+      <UniqueIdentifier>{03e8a175-ad44-477d-9e2e-0e367bbba782}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\01. Tool\ChineseChompingCabbage_Item">
+      <UniqueIdentifier>{26e2e61d-8c32-4e1e-869e-f932d2308d43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\03. Gear">
+      <UniqueIdentifier>{50b1d4b5-dafa-493a-9f8c-87271ae5385f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\03. Gear\Robe_Arcane">
+      <UniqueIdentifier>{70bd1214-7e78-4b8b-beeb-d7fa5c144a62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\03. Gear\Robe_DarkArts">
+      <UniqueIdentifier>{ea35c19a-2103-4aac-ba37-6f1fb11c8149}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\03. Gear\Robe_DarkArts_Delux">
+      <UniqueIdentifier>{3f677848-5cf7-4190-879d-b9acaa1ffd74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\03. Gear\Robe_Quidditch">
+      <UniqueIdentifier>{26197476-318d-44f4-becc-e1700ac2521d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\03. Gear\Hat_Arcane">
+      <UniqueIdentifier>{9d38cff9-49a8-4c6f-a8e3-3447833afadf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\03. Gear\Hat_Wizard">
+      <UniqueIdentifier>{b3f977ca-80cc-4f4f-a762-74eb0e2a969d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\03. Gear\Mask_Guardian">
+      <UniqueIdentifier>{1d2284ef-b036-4cd2-afbf-c917da929933}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\03. Gear\Mask_Niffler">
+      <UniqueIdentifier>{91b79626-6382-404f-8027-971f39ad2964}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\03. Gear\Mask_Demiguise">
+      <UniqueIdentifier>{fc9ede64-43ef-4cec-940a-6065fdc3e62c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\03. Gear\Robe_Beast">
+      <UniqueIdentifier>{36c29b00-f38a-484e-8661-21ae9aa96338}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\03. Gear\Outfit_Arcane">
+      <UniqueIdentifier>{754235f9-e76d-4699-bd54-16cb4a5c3344}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\03. Gear\Outfit_Arcane_A">
+      <UniqueIdentifier>{96ab1784-6823-4e52-af24-68eaf8cc0037}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\03. Gear\Outfit_DarkArts_Delux">
+      <UniqueIdentifier>{a79ee72e-01a5-4cf9-bc16-c4a82394f18d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\03. Gear\Outfit_DarkArts_Delux_A">
+      <UniqueIdentifier>{a3a13b7f-f9a9-4fa4-8e9c-aaf572b9419b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\03. Gear\Outfit_Celtic">
+      <UniqueIdentifier>{c34b0471-10b9-4cf0-81db-6d3317fc86d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\10. Item\03. Gear\Outfit_Celtic_A">
+      <UniqueIdentifier>{f30e6931-634b-4b49-8a40-9f635dfd73c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\11. Potion">
+      <UniqueIdentifier>{d222bc39-5d68-4a81-b3ee-7248d5f63e62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\11. Potion\EdurusPotion">
+      <UniqueIdentifier>{e0f8e81c-7682-4cf5-a671-009fe0c7b2dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\11. Potion\FocusPotion">
+      <UniqueIdentifier>{7cb5d380-3253-4755-a164-7338fda2ebf8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\11. Potion\MaximaPotion">
+      <UniqueIdentifier>{5a4aa143-71df-4884-91e1-ca2caf295348}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\11. Potion\ThunderBrewPotion">
+      <UniqueIdentifier>{53450692-f201-4b2c-a74b-edc0d08f89e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\11. Potion\WiggenweldPotion">
+      <UniqueIdentifier>{c07071fe-c006-4bca-b390-e403b214f1e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\11. Potion\InvisibilityPotion">
+      <UniqueIdentifier>{e904701a-4d69-4b17-8f05-2bc317be6f15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\12. Water">
+      <UniqueIdentifier>{1b33b363-0555-47c0-bfe6-21b18984e66b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\05. DarkWizard\02. Fly\Broom_Stick">
+      <UniqueIdentifier>{523461e7-0194-4951-b840-289835dd5815}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Env\FireHouse">
+      <UniqueIdentifier>{3ff7d6fc-2dbc-4c49-8742-7a09473f52fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Env\Lamp_Wall">
+      <UniqueIdentifier>{3914e668-c075-44ca-b36d-46b40b97100d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Env\FireWood">
+      <UniqueIdentifier>{c1375e26-5c15-417e-b1db-d78bebb3a69a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\08. Ncendio\Meteor">
+      <UniqueIdentifier>{97f40771-8d72-4a53-8140-5be88cc65c3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Timer">
+      <UniqueIdentifier>{ffac594c-5cc7-4a3f-990e-d9125d211e1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Score">
+      <UniqueIdentifier>{8e71c64d-fbc2-4a7b-b13a-a98d7790c0fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\FireWorks">
+      <UniqueIdentifier>{b7215cba-fa2f-42ae-ae7c-54432c46f8ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Cliffside\Event_Cliffside">
+      <UniqueIdentifier>{845740ad-58bc-488d-8592-72c639b6d61c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Cliffside\Event_Cliffside_Next_Level">
+      <UniqueIdentifier>{545bbce7-132f-40de-883e-672dad5d9745}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Vault\Event_Vault_Next_Level">
+      <UniqueIdentifier>{c961ace7-5bb6-45e0-ae70-f02e2a9776b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Smeade\Event_Smeade_Next_Level">
+      <UniqueIdentifier>{ff487640-9204-48ee-99ce-1bfd06459d06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager">
+      <UniqueIdentifier>{3b00833f-14ab-4e76-913b-384667efaaba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\Racer">
+      <UniqueIdentifier>{83891048-7011-45b0-a313-93d35a148860}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\Balloons">
+      <UniqueIdentifier>{08e42436-be57-4278-b8fc-a101a9a19b43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\Balloons\ScoreBalloon">
+      <UniqueIdentifier>{3bd866b0-5d68-4133-8231-5dc234dff144}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\Balloons\Timer">
+      <UniqueIdentifier>{8cd92469-996e-4f21-82ee-6fa64ddcbede}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\Balloons\ABCD">
+      <UniqueIdentifier>{d1c24aee-579f-46e7-b851-1319e0c3ec24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Sanctum\Enter_Sanctum">
+      <UniqueIdentifier>{aa5de3f7-03ce-47a3-92fe-c1f77c90f4d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\07. NPC\FlyMan">
+      <UniqueIdentifier>{8605f585-f64d-431e-8c45-ebafd5e60d77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Smeade\Event_Smeade">
+      <UniqueIdentifier>{890fa528-9c0c-4d93-93e2-6289c8ea4852}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\05. Sky">
+      <UniqueIdentifier>{8daaa0f5-8eda-4c23-b5f9-f4ec1e89c6c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\07. NPC\Crowd">
+      <UniqueIdentifier>{616803ff-182f-45f8-970d-796f12e0c7f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\Coin">
+      <UniqueIdentifier>{632277b4-5f7a-4e80-8da8-4cd95bc0c5e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Effect\Santum_MapEffects">
+      <UniqueIdentifier>{5fbc3e11-c006-4d49-851d-fd6c99ef63df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\00. Sky\Red">
+      <UniqueIdentifier>{36f2f32e-d3ac-480c-914b-9f5cf9d20abd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Events\Sky">
+      <UniqueIdentifier>{ed0bc2c2-482c-4dbe-a43f-1eadc176b853}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\13. FlyGameManager\MarioCount">
+      <UniqueIdentifier>{2a575062-c9a7-4842-84d4-0c2ca2ba07c0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -54,8 +1047,1019 @@
     <ClInclude Include="..\Public\Level_Loading.h">
       <Filter>01. Levels\99. Loading</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Loader.h">
-      <Filter>01. Levels\99. Loading</Filter>
+    <ClInclude Include="..\Public\Client_GameInstance_Functions.h">
+      <Filter>99. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sky.h">
+      <Filter>02. GameObject\00. Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Logo_BackGround.h">
+      <Filter>02. GameObject\05. UI\Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_Cliffside.h">
+      <Filter>01. Levels\01. Cliffside</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Terrain.h">
+      <Filter>02. GameObject\06. Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Camera_Debug.h">
+      <Filter>02. GameObject\99. Debug\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Test_Player.h">
+      <Filter>02. GameObject\99. Debug\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imconfig.h">
+      <Filter>98. Default\ImGui_Defaults</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_internal.h">
+      <Filter>98. Default\ImGui_Defaults</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\ImGuiFileDialog.h">
+      <Filter>98. Default\ImGui_Defaults</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\ImGuiFileDialogConfig.h">
+      <Filter>98. Default\ImGui_Defaults</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imstb_rectpack.h">
+      <Filter>98. Default\ImGui_Defaults</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imstb_textedit.h">
+      <Filter>98. Default\ImGui_Defaults</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imstb_truetype.h">
+      <Filter>98. Default\ImGui_Defaults</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\stb\stb_image.h">
+      <Filter>98. Default\ImGui_Defaults</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\stb\stb_image_resize.h">
+      <Filter>98. Default\ImGui_Defaults</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\backends\imgui_impl_dx11.h">
+      <Filter>98. Default\ImGui_Defaults</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\backends\imgui_impl_win32.h">
+      <Filter>98. Default\ImGui_Defaults</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui.h">
+      <Filter>98. Default\ImGui_Defaults</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Armored_Troll.h">
+      <Filter>02. GameObject\02. Enemy\00. Troll\00. Armored_Troll</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Armored_Troll.h">
+      <Filter>02. GameObject\02. Enemy\00. Troll\00. Armored_Troll\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Goblin_Assasin.h">
+      <Filter>02. GameObject\02. Enemy\01. Goblin\Assassin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Forest_Troll.h">
+      <Filter>02. GameObject\02. Enemy\00. Troll\01. Forest_Troll</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Forest_Troll.h">
+      <Filter>02. GameObject\02. Enemy\00. Troll\01. Forest_Troll\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Behavior_Includes.h">
+      <Filter>99. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Wait.h">
+      <Filter>03. Behaviors\03. Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Dugbog.h">
+      <Filter>02. GameObject\02. Enemy\02. Dugbog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Action.h">
+      <Filter>03. Behaviors\00. Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PhysXRender.h">
+      <Filter>02. GameObject\99. Debug\PhysxRender</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Turn.h">
+      <Filter>03. Behaviors\03. Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Selector_Degree.h">
+      <Filter>03. Behaviors\01. Selectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Magic.h">
+      <Filter>05. Magic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MagicBall.h">
+      <Filter>05. Magic\MagicBall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MagicBallPool.h">
+      <Filter>05. Magic\MagicBall\MagicBallPool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Protego.h">
+      <Filter>05. Magic\MagicBall\01. Protego</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Revelio.h">
+      <Filter>05. Magic\MagicBall\02. Revelio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BasicCast.h">
+      <Filter>05. Magic\MagicBall\00. BasicCast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player.h">
+      <Filter>02. GameObject\01. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Player_Camera.h">
+      <Filter>02. GameObject\01. Player\00. Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sequence_Attack.h">
+      <Filter>03. Behaviors\02. Sequences</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sequence_MoveTarget.h">
+      <Filter>03. Behaviors\02. Sequences</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\StateMachine.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\IdleState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\00. IdleState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Player_Wand.h">
+      <Filter>02. GameObject\01. Player\01. Weapon\Wand</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StateContext.h">
+      <Filter>02. GameObject\01. Player\02. StateContext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MoveStartState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\01. MoveState\01. StartState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MoveTurnState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\01. MoveState\00. TurnState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MoveLoopState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\01. MoveState\02. LoopState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Wingardium_Effect.h">
+      <Filter>04. Effect\Wingardium_Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Wingardiumleviosa.h">
+      <Filter>05. Magic\MagicBall\03. Wingardiumleviosa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Levioso.h">
+      <Filter>05. Magic\MagicBall\04. Levioso</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Default_MagicTrail_Effect.h">
+      <Filter>04. Effect\Default_MagicTrail_Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sequence_Groggy.h">
+      <Filter>03. Behaviors\02. Sequences</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\LoadTrigger.h">
+      <Filter>02. GameObject\99. Debug\LoadTrigger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Effect_Back.h">
+      <Filter>02. GameObject\05. UI\UI\UI_Effect_Back</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Finisher.h">
+      <Filter>02. GameObject\05. UI\UI\UI_Finisher</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Back.h">
+      <Filter>02. GameObject\05. UI\UI\UI_None</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Finisher.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Finisher</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Finisher_Icon.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Finisher_Icon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_HP.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_HP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Potion.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Potion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_R.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_R</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_T.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_T</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Skill.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Skill</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_MiniMap.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_MiniMap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Enemy_HP.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Enemy_HP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Main1_Loader.h">
+      <Filter>01. Levels\99. Loading\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Main3_Loader.h">
+      <Filter>01. Levels\99. Loading\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Main2_Loader.h">
+      <Filter>01. Levels\99. Loading\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Main0_Loader.h">
+      <Filter>01. Levels\99. Loading\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sequence_Levitate.h">
+      <Filter>03. Behaviors\02. Sequences</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\RollState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\03. RollState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\JumpState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\02. JumpState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\HardLandState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\04. HardLandState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Confringo.h">
+      <Filter>05. Magic\MagicBall\06. Confringo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Cursor.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Cursor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Main_Menu.h">
+      <Filter>06. Scene\Main_Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Field_Guide.h">
+      <Filter>06. Scene\Field_Guide</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Menu_Invectory.h">
+      <Filter>06. Scene\Main_Menu\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Menu_Quest.h">
+      <Filter>06. Scene\Main_Menu\Quest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Menu_Setting.h">
+      <Filter>06. Scene\Main_Menu\Setting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MagicCastingState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\05. MagicCastingState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Fig_Wand.h">
+      <Filter>02. GameObject\07. NPC\Fig\Combat\Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Seamless_Loader.h">
+      <Filter>02. GameObject\99. Debug\SeamLess</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_HP.h">
+      <Filter>02. GameObject\05. UI\UI\UI_HP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Image.h">
+      <Filter>02. GameObject\05. UI\UI_Composite\UI_Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Inventory.h">
+      <Filter>02. GameObject\05. UI\UI_Composite\UI_Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Inventory.h">
+      <Filter>02. GameObject\09. Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Slot.h">
+      <Filter>02. GameObject\05. UI\UI\UI_Slot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ProtegoState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\06. Protego</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\HitState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\07. Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Finisher.h">
+      <Filter>05. Magic\MagicBall\07. Finisher</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_GreatHall.h">
+      <Filter>01. Levels\03. GreatHall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_Smith.h">
+      <Filter>01. Levels\04. Hogsmeade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LookAt.h">
+      <Filter>03. Behaviors\03. Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Menu_Gear.h">
+      <Filter>06. Scene\Main_Menu\Gear</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sequence_AirHit.h">
+      <Filter>03. Behaviors\02. Sequences</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Death.h">
+      <Filter>03. Behaviors\03. Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Enemy.h">
+      <Filter>02. GameObject\02. Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Ncendio.h">
+      <Filter>05. Magic\MagicBall\08. Ncendio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MagicSlot.h">
+      <Filter>05. Magic\MagicSlot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Logo.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Dissolve.h">
+      <Filter>02. GameObject\05. UI\UI\UI_Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Golem_Combat.h">
+      <Filter>02. GameObject\02. Enemy\03. Golem\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Lumos.h">
+      <Filter>05. Magic\MagicBall\05. Lumos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Loading.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StandingState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\07. Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Trigger_Vault.h">
+      <Filter>02. GameObject\08. Trigger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Quest.h">
+      <Filter>02. GameObject\05. UI\UI_Group</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\WiggenweldPotion.h">
+      <Filter>02. GameObject\11. Potion\WiggenweldPotion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MPBall.h">
+      <Filter>02. GameObject\09. Inventory\Item\MPBall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FocusPotion.h">
+      <Filter>02. GameObject\11. Potion\FocusPotion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Arrestomomentum.h">
+      <Filter>05. Magic\MagicBall\09. Arrestomomentum</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Descendo.h">
+      <Filter>05. Magic\MagicBall\10. Descendo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Accio.h">
+      <Filter>05. Magic\MagicBall\11. Accio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MaximaPotion.h">
+      <Filter>02. GameObject\11. Potion\MaximaPotion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Check_Degree.h" />
+    <ClInclude Include="..\Public\Check_Distance.h" />
+    <ClInclude Include="..\Public\Check_Distance.h">
+      <Filter>03. Behaviors\04. Function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Check_Degree.h">
+      <Filter>03. Behaviors\04. Function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Animation_Camera_Model.h">
+      <Filter>02. GameObject\01. Player\00. Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ChineseChompingCabbageItem.h">
+      <Filter>02. GameObject\10. Item\01. Tool\ChineseChompingCabbage_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Ingredient.h">
+      <Filter>02. GameObject\10. Item\02. Ingredient</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PotionTap.h">
+      <Filter>02. GameObject\09. Inventory\PotionTap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Potion_Tap.h">
+      <Filter>02. GameObject\05. UI\UI\UI_Potion_Tap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Flipendo.h">
+      <Filter>05. Magic\MagicBall\12. Flipendo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Client_Struct.h">
+      <Filter>99. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Expelliarmus.h">
+      <Filter>05. Magic\MagicBall\14. Expelliarmus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Imperio.h">
+      <Filter>05. Magic\MagicBall\16. Imperio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Crucio.h">
+      <Filter>05. Magic\MagicBall\15. Crucio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\EdurusPotion.h">
+      <Filter>02. GameObject\11. Potion\EdurusPotion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui_Manager.h">
+      <Filter>96. ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\InvisibilityPotion.h">
+      <Filter>02. GameObject\11. Potion\InvisibilityPotion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ConjuredDragon.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\RigidMove.h">
+      <Filter>03. Behaviors\03. Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Stupefy.h">
+      <Filter>05. Magic\MagicBall\17. Stupefy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui_Manager.h">
+      <Filter>96. ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Norm_Test.h">
+      <Filter>04. Effect\Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Brew.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Brew</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_SKillTap.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Skill_Tap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Goblin_Assasin.h">
+      <Filter>02. GameObject\02. Enemy\01. Goblin\Assassin\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sequence_Descendo.h">
+      <Filter>03. Behaviors\02. Sequences</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Diffindo.h">
+      <Filter>05. Magic\MagicBall\13. Diffindo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThunderBrewPotion.h">
+      <Filter>02. GameObject\11. Potion\ThunderBrewPotion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\AshwinderEggs_Item.h">
+      <Filter>02. GameObject\10. Item\02. Ingredient\AshwinderEggs_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Dittany_Leaves_Item.h">
+      <Filter>02. GameObject\10. Item\02. Ingredient\Dittany_Leaves_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Dugbog_Tongue_Item.h">
+      <Filter>02. GameObject\10. Item\02. Ingredient\Dugbog_Tongue_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Leaping_Toadstool_Caps_Item.h">
+      <Filter>02. GameObject\10. Item\02. Ingredient\Leaping_Toadstool_Caps_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Lacewing_Flies_Item.h">
+      <Filter>02. GameObject\10. Item\02. Ingredient\Lacewing_Flies_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Knotgrass_Item.h">
+      <Filter>02. GameObject\10. Item\02. Ingredient\Knotgrass_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Horklump_Juice_Item.h">
+      <Filter>02. GameObject\10. Item\02. Ingredient\Horklump_Juice_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Leech_Juice_Item.h">
+      <Filter>02. GameObject\10. Item\02. Ingredient\Leech_Juice_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MallowSweet_Item.h">
+      <Filter>02. GameObject\10. Item\02. Ingredient\MallowSweet_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MoonStone_Item.h">
+      <Filter>02. GameObject\10. Item\02. Ingredient\MoonStone_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Fluxweed_Stem_Item.h">
+      <Filter>02. GameObject\10. Item\02. Ingredient\Fluxweed_Stem_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Spider_Fang_Item.h">
+      <Filter>02. GameObject\10. Item\02. Ingredient\Spider_Fang_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Troll_Bogeys_Item.h">
+      <Filter>02. GameObject\10. Item\02. Ingredient\Troll_Bogeys_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Shrivelfig_Item.h">
+      <Filter>02. GameObject\10. Item\02. Ingredient\Shrivelfig_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Farming.h">
+      <Filter>02. GameObject\05. UI\UI\UI_Farming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Dynamic_Back.h">
+      <Filter>02. GameObject\05. UI\UI\UI_Dynamic_Back</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Potion.h">
+      <Filter>02. GameObject\11. Potion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\WiggenweldPotion_Item.h">
+      <Filter>02. GameObject\10. Item\01. Tool\WiggenweldPotion_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Tool.h">
+      <Filter>02. GameObject\10. Item\01. Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThunderBrewPotion_Item.h">
+      <Filter>02. GameObject\10. Item\01. Tool\ThunderBrewPotion_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MaximaPotion_Item.h">
+      <Filter>02. GameObject\10. Item\01. Tool\MaximaPotion_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\InvisibilityPotion_Item.h">
+      <Filter>02. GameObject\10. Item\01. Tool\InvisibilityPotion_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FocusPotion_Item.h">
+      <Filter>02. GameObject\10. Item\01. Tool\FocusPotion_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EdurusPotion_Item.h">
+      <Filter>02. GameObject\10. Item\01. Tool\EdurusPotion_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DarkWizard_M.h">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\00. Male</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_DarkWizard_Wand.h">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Bombarda.h">
+      <Filter>05. Magic\MagicBall\18. Bombarda</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level_Sanctum.h">
+      <Filter>01. Levels\06. Sanctum%28Dragon%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CraftState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\08. CraftState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Mongrel_Fur_Item.h">
+      <Filter>02. GameObject\10. Item\02. Ingredient\Mongrel_Fur_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\EnergyBall.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\01. EnergyBall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level_Sky.h">
+      <Filter>01. Levels\05. Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Wolf.h">
+      <Filter>02. GameObject\02. Enemy\06. Wolf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UseItemState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. UseItem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Damage.h">
+      <Filter>02. GameObject\05. UI\UI_Composite\UI_Damage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Store.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Fly_Move.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Fly\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Hover_Idle.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Hover_Move.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Hover_Turn.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Turn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Broom_End.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\End</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Broom_Begin.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Begin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Broom_Break.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Break</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Breath.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\00. Breath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cylinder.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\00. Breath\Cylinder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Projectile_White.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\04. Projectile_White</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pulse.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\02. Pulse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Projectile_Black.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\03. Projectile_Black</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_Static.h">
+      <Filter>01. Levels\98. Static</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Client_Enum.h">
+      <Filter>99. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_Vault.h">
+      <Filter>01. Levels\02. Vault</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Includes.h">
+      <Filter>99. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Trigger.h">
+      <Filter>02. GameObject\08. Trigger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player.h">
+      <Filter>02. GameObject\01. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_Information.h">
+      <Filter>02. GameObject\04. PlayerInformation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Gear_Item.h">
+      <Filter>02. GameObject\10. Item\03. Gear</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Interaction.h">
+      <Filter>02. GameObject\05. UI\UI_Composite\UI_Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Script.h">
+      <Filter>08. Script</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Script.h">
+      <Filter>02. GameObject\05. UI\UI\UI_Script</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImpulseSphere_Effect.h">
+      <Filter>04. Effect\BoneDragon\ImpulseSphere</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Appearence.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Appearence</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StateMachine_Enemy.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateContext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StateContext_Enemy.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateContext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Physical_Attack.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Physical_Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Orb_Attack.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Orb_Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Idle.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Death.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Death</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Charge_Attack.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Charge_Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Groogy.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Groogy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Hit.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Pensive_Flail.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Pensive_Sword.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Ground_Ball.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Ground_Ball</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Blink_Effect.h">
+      <Filter>04. Effect\Blink_Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Game_Manager.h">
+      <Filter>09. GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Breath_Effect.h">
+      <Filter>04. Effect\BoneDragon\Breath_Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Robe_Arcane.h">
+      <Filter>02. GameObject\10. Item\03. Gear\Robe_Arcane</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Robe_DarkArts.h">
+      <Filter>02. GameObject\10. Item\03. Gear\Robe_DarkArts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Robe_DarkArts_Delux.h">
+      <Filter>02. GameObject\10. Item\03. Gear\Robe_DarkArts_Delux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Robe_Quidditch.h">
+      <Filter>02. GameObject\10. Item\03. Gear\Robe_Quidditch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Hat_Arcane.h">
+      <Filter>02. GameObject\10. Item\03. Gear\Hat_Arcane</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Hat_Wizard.h">
+      <Filter>02. GameObject\10. Item\03. Gear\Hat_Wizard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Outfit_Arcane.h">
+      <Filter>02. GameObject\10. Item\03. Gear\Outfit_Arcane</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Outfit_Arcane_A.h">
+      <Filter>02. GameObject\10. Item\03. Gear\Outfit_Arcane_A</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Outfit_Celtic.h">
+      <Filter>02. GameObject\10. Item\03. Gear\Outfit_Celtic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Outfit_Celtic_A.h">
+      <Filter>02. GameObject\10. Item\03. Gear\Outfit_Celtic_A</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Outfit_DarkArts_Delux.h">
+      <Filter>02. GameObject\10. Item\03. Gear\Outfit_DarkArts_Delux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Outfit_DarkArts_Delux_A.h">
+      <Filter>02. GameObject\10. Item\03. Gear\Outfit_DarkArts_Delux_A</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Mask_Guardian.h">
+      <Filter>02. GameObject\10. Item\03. Gear\Mask_Guardian</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Mask_Demiguise.h">
+      <Filter>02. GameObject\10. Item\03. Gear\Mask_Demiguise</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Mask_Niffler.h">
+      <Filter>02. GameObject\10. Item\03. Gear\Mask_Niffler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Vendor.h">
+      <Filter>02. GameObject\07. NPC\Vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Oakes.h">
+      <Filter>02. GameObject\07. NPC\Oakes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Dummy_NPC.h">
+      <Filter>02. GameObject\07. NPC\Dummy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Fail_Ball.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Fail_Ball</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Shouting.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Shouting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Sword_Throw.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pensvie_Sword_Throw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive_Mace_Attack.h">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Mace_Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Water.h">
+      <Filter>02. GameObject\12. Water</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Projectile_White_Effect.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\04. Projectile_White\Projectile_White_Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\House_Elf.h">
+      <Filter>02. GameObject\07. NPC\House_Elf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Robe_Beast.h">
+      <Filter>02. GameObject\10. Item\03. Gear\Robe_Beast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Professor_Fig.h">
+      <Filter>02. GameObject\07. NPC\Fig\Combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Smith_FIg.h">
+      <Filter>02. GameObject\07. NPC\Fig\NonCombat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Card_Fig.h">
+      <Filter>02. GameObject\07. NPC\Fig\Card</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Guide_Book.h">
+      <Filter>06. Scene\Main_Menu\Guide_Book</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Cliffside.h">
+      <Filter>07. Events\Cliffside</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Quest.h">
+      <Filter>10. Quest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Quest_Manager.h">
+      <Filter>10. Quest\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Quest_Save_Fig.h">
+      <Filter>10. Quest\Save_Fig</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Quest_Potion.h">
+      <Filter>10. Quest\Potion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Quest_Town.h">
+      <Filter>10. Quest\Town</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Quest_Secret.h">
+      <Filter>10. Quest\Secret</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Quest_Bone.h">
+      <Filter>10. Quest\Bone</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DarkWizard_F.h">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\01. Female</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Magic_Sound_Manager.h">
+      <Filter>05. Magic\Magic_Sound_Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Broom_Stick.h">
+      <Filter>02. GameObject\01. Player\01. Weapon\BroomStick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Vault_Torch.h">
+      <Filter>07. Events\Vault\Event_Vault_Torch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BigBird.h">
+      <Filter>02. GameObject\03. MapObject\Anim_Obj\BigBird</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SmithToCliff_Gate.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\SmithToCliff_Gate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Vault_Torch.h">
+      <Filter>02. GameObject\03. MapObject\Env\Vault_Torch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Lamppost.h">
+      <Filter>02. GameObject\03. MapObject\Env\Lamppost</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LightStand.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\LightStand</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sanctum_Door.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\Sanctum_Door</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Golem_Combat.h">
+      <Filter>02. GameObject\02. Enemy\03. Golem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DarkWizard_Spawn.h">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\01. Female\Spawner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DarkWizard_Fly.h">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\02. Fly</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Spawn.h">
+      <Filter>07. Events\Spawn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Event_Vault_Spawn.h">
+      <Filter>07. Events\Vault\Spawn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Enter_Vault.h">
+      <Filter>07. Events\Vault\Enter_Vault</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Dragon_Hp_Down.h">
+      <Filter>07. Events\Sanctum\Dragon_HP_Down</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Dragon_Death.h">
+      <Filter>07. Events\Sanctum\Dragon_Death</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Dragon_Head.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Head</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Dragon_Left_Wing.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Left_Wing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Dragon_Tail.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Tail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Dragon_Right_Wing.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Right_Wing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cat.h">
+      <Filter>02. GameObject\03. MapObject\Anim_Obj\Cat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Gull.h">
+      <Filter>02. GameObject\03. MapObject\Anim_Obj\Gull</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Owl.h">
+      <Filter>02. GameObject\03. MapObject\Anim_Obj\Owl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MapObject.h">
+      <Filter>02. GameObject\03. MapObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MapObject_Ins.h">
+      <Filter>02. GameObject\03. MapObject\MapObject_Ins</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cliff_Gate.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Cliff_Gate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Door.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Gatherer.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Gatherer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Potion_Station.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\PotionStation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PotionStationCamera.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\PotionStation\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Treasure_Chest.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Treasure_Chest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Vault_Gate.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Vault_Gate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Vault_Torch.h">
+      <Filter>02. GameObject\03. MapObject\Env\Vault_Torch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FireHouse.h">
+      <Filter>02. GameObject\03. MapObject\Env\FireHouse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Lamp_Wall.h">
+      <Filter>02. GameObject\03. MapObject\Env\Lamp_Wall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FireWood.h">
+      <Filter>02. GameObject\03. MapObject\Env\FireWood</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Item.h">
+      <Filter>02. GameObject\10. Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_DamageFont.h">
+      <Filter>02. GameObject\05. UI\Font\DamageFont</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Font.h">
+      <Filter>02. GameObject\05. UI\Font\Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_DamageFont.h" />
+    <ClInclude Include="..\public\Item.h" />
+    <ClInclude Include="..\Public\UI_Font.h" />
+    <ClInclude Include="..\Public\Broom_Stick_DarkWizard.h">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\02. Fly\Broom_Stick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Meteor.h">
+      <Filter>05. Magic\MagicBall\08. Ncendio\Meteor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Item.h">
+      <Filter>02. GameObject\10. Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_DamageFont.h">
+      <Filter>02. GameObject\05. UI\Font\DamageFont</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Font.h">
+      <Filter>02. GameObject\05. UI\Font\Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Timer.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Score.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Score</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FireWorks.h">
+      <Filter>02. GameObject\03. MapObject\FireWorks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Cliffside.h">
+      <Filter>07. Events\Cliffside\Event_Cliffside</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Cliffside_Next_Level.h">
+      <Filter>07. Events\Cliffside\Event_Cliffside_Next_Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Vault_Next_Level.h">
+      <Filter>07. Events\Vault\Event_Vault_Next_Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Smeade_Next_Level.h">
+      <Filter>07. Events\Smeade\Event_Smeade_Next_Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FlyGameManager.h">
+      <Filter>02. GameObject\13. FlyGameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Racer.h">
+      <Filter>02. GameObject\13. FlyGameManager\Racer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ScoreBalloon.h">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ScoreBalloon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Balloon.h">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Balloon_Timer.h">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Enter_Sanctum.h">
+      <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Spawn_Dragon_2.h">
+      <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Spawn_Darkwizard.h">
+      <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Spawn_Dragon.h">
+      <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_D.h">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_A.h">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_B.h">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_C.h">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FlyMan.h">
+      <Filter>02. GameObject\07. NPC\FlyMan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_A.h" />
+    <ClInclude Include="..\Public\BeastBalloon_B.h" />
+    <ClInclude Include="..\Public\BeastBalloon_C.h" />
+    <ClInclude Include="..\Public\BeastBalloon_D.h" />
+    <ClInclude Include="..\Public\Event_Smeade.h">
+      <Filter>07. Events\Smeade\Event_Smeade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_A.h">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_B.h">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_C.h">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BeastBalloon_D.h">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Crowd.h">
+      <Filter>02. GameObject\07. NPC\Crowd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Balloon_Coin.h">
+      <Filter>02. GameObject\13. FlyGameManager\Coin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Santum_MapEffects.h">
+      <Filter>04. Effect\Santum_MapEffects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RedSky.h">
+      <Filter>02. GameObject\00. Sky\Red</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Sky_Enter.h">
+      <Filter>07. Events\Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MarioCount.h">
+      <Filter>02. GameObject\13. FlyGameManager\MarioCount</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -71,8 +2075,986 @@
     <ClCompile Include="..\Private\Level_Loading.cpp">
       <Filter>01. Levels\99. Loading</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Loader.cpp">
-      <Filter>01. Levels\99. Loading</Filter>
+    <ClCompile Include="..\private\Sky.cpp">
+      <Filter>02. GameObject\00. Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Logo_BackGround.cpp">
+      <Filter>02. GameObject\05. UI\Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_Cliffside.cpp">
+      <Filter>01. Levels\01. Cliffside</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Terrain.cpp">
+      <Filter>02. GameObject\06. Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Camera_Debug.cpp">
+      <Filter>02. GameObject\99. Debug\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Test_Player.cpp">
+      <Filter>02. GameObject\99. Debug\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui.cpp">
+      <Filter>98. Default\ImGui_Defaults</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_draw.cpp">
+      <Filter>98. Default\ImGui_Defaults</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_demo.cpp">
+      <Filter>98. Default\ImGui_Defaults</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_tables.cpp">
+      <Filter>98. Default\ImGui_Defaults</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_widgets.cpp">
+      <Filter>98. Default\ImGui_Defaults</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\ImGuiFileDialog.cpp">
+      <Filter>98. Default\ImGui_Defaults</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\backends\imgui_impl_dx11.cpp">
+      <Filter>98. Default\ImGui_Defaults</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\backends\imgui_impl_win32.cpp">
+      <Filter>98. Default\ImGui_Defaults</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Armored_Troll.cpp">
+      <Filter>02. GameObject\02. Enemy\00. Troll\00. Armored_Troll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Armored_Troll.cpp">
+      <Filter>02. GameObject\02. Enemy\00. Troll\00. Armored_Troll\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Goblin_Assasin.cpp">
+      <Filter>02. GameObject\02. Enemy\01. Goblin\Assassin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Forest_Troll.cpp">
+      <Filter>02. GameObject\02. Enemy\00. Troll\01. Forest_Troll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Forest_Troll.cpp">
+      <Filter>02. GameObject\02. Enemy\00. Troll\01. Forest_Troll\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Wait.cpp">
+      <Filter>03. Behaviors\03. Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Dugbog.cpp">
+      <Filter>02. GameObject\02. Enemy\02. Dugbog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Action.cpp">
+      <Filter>03. Behaviors\00. Action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PhysXRender.cpp">
+      <Filter>02. GameObject\99. Debug\PhysxRender</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Turn.cpp">
+      <Filter>03. Behaviors\03. Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Selector_Degree.cpp">
+      <Filter>03. Behaviors\01. Selectors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MagicBall.cpp">
+      <Filter>05. Magic\MagicBall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Protego.cpp">
+      <Filter>05. Magic\MagicBall\01. Protego</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Revelio.cpp">
+      <Filter>05. Magic\MagicBall\02. Revelio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MagicBallPool.cpp">
+      <Filter>05. Magic\MagicBall\MagicBallPool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BasicCast.cpp">
+      <Filter>05. Magic\MagicBall\00. BasicCast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player.cpp">
+      <Filter>02. GameObject\01. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Player_Camera.cpp">
+      <Filter>02. GameObject\01. Player\00. Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sequence_Attack.cpp">
+      <Filter>03. Behaviors\02. Sequences</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sequence_MoveTarget.cpp">
+      <Filter>03. Behaviors\02. Sequences</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\StateMachine.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\StateContext.cpp">
+      <Filter>02. GameObject\01. Player\02. StateContext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\IdleState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\00. IdleState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Player_Wand.cpp">
+      <Filter>02. GameObject\01. Player\01. Weapon\Wand</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MoveStartState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\01. MoveState\01. StartState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MoveTurnState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\01. MoveState\00. TurnState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MoveLoopState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\01. MoveState\02. LoopState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Wingardium_Effect.cpp">
+      <Filter>04. Effect\Wingardium_Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Wingardiumleviosa.cpp">
+      <Filter>05. Magic\MagicBall\03. Wingardiumleviosa</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Levioso.cpp">
+      <Filter>05. Magic\MagicBall\04. Levioso</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Default_MagicTrail_Effect.cpp">
+      <Filter>04. Effect\Default_MagicTrail_Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sequence_Groggy.cpp">
+      <Filter>03. Behaviors\02. Sequences</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MagicSlot.cpp">
+      <Filter>05. Magic\MagicSlot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\LoadTrigger.cpp">
+      <Filter>02. GameObject\99. Debug\LoadTrigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Back.cpp">
+      <Filter>02. GameObject\05. UI\UI\UI_None</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Effect_Back.cpp">
+      <Filter>02. GameObject\05. UI\UI\UI_Effect_Back</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Finisher.cpp">
+      <Filter>02. GameObject\05. UI\UI\UI_Finisher</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_HP.cpp">
+      <Filter>02. GameObject\05. UI\UI\UI_HP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Finisher.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Finisher</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Finisher_Icon.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Finisher_Icon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_HP.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_HP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_MiniMap.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_MiniMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Potion.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Potion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_R.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_R</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_T.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_T</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Skill.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Skill</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Enemy_HP.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Enemy_HP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Main1_Loader.cpp">
+      <Filter>01. Levels\99. Loading\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Main3_Loader.cpp">
+      <Filter>01. Levels\99. Loading\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Main2_Loader.cpp">
+      <Filter>01. Levels\99. Loading\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Main0_Loader.cpp">
+      <Filter>01. Levels\99. Loading\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sequence_Levitate.cpp">
+      <Filter>03. Behaviors\02. Sequences</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\RollState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\03. RollState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\JumpState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\02. JumpState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\HardLandState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\04. HardLandState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Confringo.cpp">
+      <Filter>05. Magic\MagicBall\06. Confringo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Cursor.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Cursor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Main_Menu.cpp">
+      <Filter>06. Scene\Main_Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Field_Guide.cpp">
+      <Filter>06. Scene\Field_Guide</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Menu_Gear.cpp">
+      <Filter>06. Scene\Main_Menu\Gear</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Menu_Invectory.cpp">
+      <Filter>06. Scene\Main_Menu\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Menu_Quest.cpp">
+      <Filter>06. Scene\Main_Menu\Quest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Menu_Setting.cpp">
+      <Filter>06. Scene\Main_Menu\Setting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MagicCastingState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\05. MagicCastingState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Fig_Wand.cpp">
+      <Filter>02. GameObject\07. NPC\Fig\Combat\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Seamless_Loader.cpp">
+      <Filter>02. GameObject\99. Debug\SeamLess</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Image.cpp">
+      <Filter>02. GameObject\05. UI\UI_Composite\UI_Image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Inventory.cpp">
+      <Filter>02. GameObject\05. UI\UI_Composite\UI_Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Inventory.cpp">
+      <Filter>02. GameObject\09. Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Slot.cpp">
+      <Filter>02. GameObject\05. UI\UI\UI_Slot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ProtegoState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\06. Protego</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\HitState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\07. Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_Information.cpp">
+      <Filter>02. GameObject\04. PlayerInformation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Finisher.cpp">
+      <Filter>05. Magic\MagicBall\07. Finisher</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_Vault.cpp">
+      <Filter>01. Levels\02. Vault</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_GreatHall.cpp">
+      <Filter>01. Levels\03. GreatHall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_Smith.cpp">
+      <Filter>01. Levels\04. Hogsmeade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LookAt.cpp">
+      <Filter>03. Behaviors\03. Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sequence_AirHit.cpp">
+      <Filter>03. Behaviors\02. Sequences</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Death.cpp">
+      <Filter>03. Behaviors\03. Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Enemy.cpp">
+      <Filter>02. GameObject\02. Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Ncendio.cpp">
+      <Filter>05. Magic\MagicBall\08. Ncendio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Logo.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Dissolve.cpp">
+      <Filter>02. GameObject\05. UI\UI\UI_Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Golem_Combat.cpp">
+      <Filter>02. GameObject\02. Enemy\03. Golem\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Lumos.cpp">
+      <Filter>05. Magic\MagicBall\05. Lumos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Loading.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StandingState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\07. Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Trigger_Vault.cpp">
+      <Filter>02. GameObject\08. Trigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Quest.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\WiggenweldPotion.cpp">
+      <Filter>02. GameObject\11. Potion\WiggenweldPotion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Magic.cpp">
+      <Filter>05. Magic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FocusPotion.cpp">
+      <Filter>02. GameObject\11. Potion\FocusPotion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Arrestomomentum.cpp">
+      <Filter>05. Magic\MagicBall\09. Arrestomomentum</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Descendo.cpp">
+      <Filter>05. Magic\MagicBall\10. Descendo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Accio.cpp">
+      <Filter>05. Magic\MagicBall\11. Accio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MaximaPotion.cpp">
+      <Filter>02. GameObject\11. Potion\MaximaPotion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Check_Degree.cpp" />
+    <ClCompile Include="..\Private\Check_Distance.cpp" />
+    <ClCompile Include="..\Private\MPBall.cpp">
+      <Filter>02. GameObject\09. Inventory\Item\MPBall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Check_Degree.cpp">
+      <Filter>03. Behaviors\04. Function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Check_Distance.cpp">
+      <Filter>03. Behaviors\04. Function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Animation_Camera_Model.cpp">
+      <Filter>02. GameObject\01. Player\00. Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ChineseChompingCabbageItem.cpp">
+      <Filter>02. GameObject\10. Item\01. Tool\ChineseChompingCabbage_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Ingredient.cpp">
+      <Filter>02. GameObject\10. Item\02. Ingredient</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PotionTap.cpp">
+      <Filter>02. GameObject\09. Inventory\PotionTap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Potion_Tap.cpp">
+      <Filter>02. GameObject\05. UI\UI\UI_Potion_Tap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Flipendo.cpp">
+      <Filter>05. Magic\MagicBall\12. Flipendo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Expelliarmus.cpp">
+      <Filter>05. Magic\MagicBall\14. Expelliarmus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Imperio.cpp">
+      <Filter>05. Magic\MagicBall\16. Imperio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Crucio.cpp">
+      <Filter>05. Magic\MagicBall\15. Crucio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EdurusPotion.cpp">
+      <Filter>02. GameObject\11. Potion\EdurusPotion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ImGui_Manager.cpp">
+      <Filter>96. ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\InvisibilityPotion.cpp">
+      <Filter>02. GameObject\11. Potion\InvisibilityPotion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ConjuredDragon.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\RigidMove.cpp">
+      <Filter>03. Behaviors\03. Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Stupefy.cpp">
+      <Filter>05. Magic\MagicBall\17. Stupefy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ImGui_Manager.cpp">
+      <Filter>96. ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Norm_Test.cpp">
+      <Filter>04. Effect\Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Brew.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Brew</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_SKillTap.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Skill_Tap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Goblin_Assasin.cpp">
+      <Filter>02. GameObject\02. Enemy\01. Goblin\Assassin\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sequence_Descendo.cpp">
+      <Filter>03. Behaviors\02. Sequences</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Diffindo.cpp">
+      <Filter>05. Magic\MagicBall\13. Diffindo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThunderBrewPotion.cpp">
+      <Filter>02. GameObject\11. Potion\ThunderBrewPotion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\AshwinderEggs_Item.cpp">
+      <Filter>02. GameObject\10. Item\02. Ingredient\AshwinderEggs_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Dittany_Leaves_Item.cpp">
+      <Filter>02. GameObject\10. Item\02. Ingredient\Dittany_Leaves_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Dugbog_Tongue_Item.cpp">
+      <Filter>02. GameObject\10. Item\02. Ingredient\Dugbog_Tongue_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Leaping_Toadstool_Caps_Item.cpp">
+      <Filter>02. GameObject\10. Item\02. Ingredient\Leaping_Toadstool_Caps_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Lacewing_Flies_Item.cpp">
+      <Filter>02. GameObject\10. Item\02. Ingredient\Lacewing_Flies_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Knotgrass_Item.cpp">
+      <Filter>02. GameObject\10. Item\02. Ingredient\Knotgrass_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Horklump_Juice_Item.cpp">
+      <Filter>02. GameObject\10. Item\02. Ingredient\Horklump_Juice_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Leech_Juice_Item.cpp">
+      <Filter>02. GameObject\10. Item\02. Ingredient\Leech_Juice_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MallowSweet_Item.cpp">
+      <Filter>02. GameObject\10. Item\02. Ingredient\MallowSweet_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MoonStone_Item.cpp">
+      <Filter>02. GameObject\10. Item\02. Ingredient\MoonStone_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Fluxweed_Stem_Item.cpp">
+      <Filter>02. GameObject\10. Item\02. Ingredient\Fluxweed_Stem_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Spider_Fang_Item.cpp">
+      <Filter>02. GameObject\10. Item\02. Ingredient\Spider_Fang_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Troll_Bogeys_Item.cpp">
+      <Filter>02. GameObject\10. Item\02. Ingredient\Troll_Bogeys_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Shrivelfig_Item.cpp">
+      <Filter>02. GameObject\10. Item\02. Ingredient\Shrivelfig_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Farming.cpp">
+      <Filter>02. GameObject\05. UI\UI\UI_Farming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Dynamic_Back.cpp">
+      <Filter>02. GameObject\05. UI\UI\UI_Dynamic_Back</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Potion.cpp">
+      <Filter>02. GameObject\11. Potion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\WiggenweldPotion_Item.cpp">
+      <Filter>02. GameObject\10. Item\01. Tool\WiggenweldPotion_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Tool.cpp">
+      <Filter>02. GameObject\10. Item\01. Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThunderBrewPotion_Item.cpp">
+      <Filter>02. GameObject\10. Item\01. Tool\ThunderBrewPotion_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MaximaPotion_Item.cpp">
+      <Filter>02. GameObject\10. Item\01. Tool\MaximaPotion_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\InvisibilityPotion_Item.cpp">
+      <Filter>02. GameObject\10. Item\01. Tool\InvisibilityPotion_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FocusPotion_Item.cpp">
+      <Filter>02. GameObject\10. Item\01. Tool\FocusPotion_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EdurusPotion_Item.cpp">
+      <Filter>02. GameObject\10. Item\01. Tool\EdurusPotion_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DarkWizard_M.cpp">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\00. Male</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_DarkWizard_Wand.cpp">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Bombarda.cpp">
+      <Filter>05. Magic\MagicBall\18. Bombarda</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_Sanctum.cpp">
+      <Filter>01. Levels\06. Sanctum%28Dragon%29</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CraftState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\08. CraftState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Mongrel_Fur_Item.cpp">
+      <Filter>02. GameObject\10. Item\02. Ingredient\Mongrel_Fur_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EnergyBall.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\01. EnergyBall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_Sky.cpp">
+      <Filter>01. Levels\05. Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Wolf.cpp">
+      <Filter>02. GameObject\02. Enemy\06. Wolf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UseItemState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. UseItem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Font.cpp">
+      <Filter>02. GameObject\05. UI\Font\Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Damage.cpp">
+      <Filter>02. GameObject\05. UI\UI_Composite\UI_Damage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Store.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Fly_Move.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Fly\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hover_Idle.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hover_Move.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hover_Turn.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Turn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Broom_Begin.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Begin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Broom_End.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\End</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Broom_Break.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Break</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Breath.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\00. Breath</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cylinder.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\00. Breath\Cylinder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Projectile_White.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\04. Projectile_White</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pulse.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\02. Pulse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Projectile_Black.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\03. Projectile_Black</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_Static.cpp">
+      <Filter>01. Levels\98. Static</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Trigger.cpp">
+      <Filter>02. GameObject\08. Trigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player.cpp">
+      <Filter>02. GameObject\01. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Gear_Item.cpp">
+      <Filter>02. GameObject\10. Item\03. Gear</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Interaction.cpp">
+      <Filter>02. GameObject\05. UI\UI_Composite\UI_Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Script.cpp">
+      <Filter>08. Script</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Script.cpp">
+      <Filter>02. GameObject\05. UI\UI\UI_Script</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ImpulseSphere_Effect.cpp">
+      <Filter>04. Effect\BoneDragon\ImpulseSphere</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Appearence.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Appearence</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StateMachine_Enemy.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateContext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StateContext_Enemy.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateContext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Orb_Attack.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Orb_Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Physical_Attack.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Physical_Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Idle.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Death.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Death</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Charge_Attack.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Charge_Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Groogy.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Groogy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Hit.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\StateMachine\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Pensive_Flail.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Pensive_Sword.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Ground_Ball.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Ground_Ball</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Blink_Effect.cpp">
+      <Filter>04. Effect\Blink_Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Game_Manager.cpp">
+      <Filter>09. GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Breath_Effect.cpp">
+      <Filter>04. Effect\BoneDragon\Breath_Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Robe_Arcane.cpp">
+      <Filter>02. GameObject\10. Item\03. Gear\Robe_Arcane</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Robe_DarkArts.cpp">
+      <Filter>02. GameObject\10. Item\03. Gear\Robe_DarkArts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Robe_DarkArts_Delux.cpp">
+      <Filter>02. GameObject\10. Item\03. Gear\Robe_DarkArts_Delux</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Robe_Quidditch.cpp">
+      <Filter>02. GameObject\10. Item\03. Gear\Robe_Quidditch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hat_Arcane.cpp">
+      <Filter>02. GameObject\10. Item\03. Gear\Hat_Arcane</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hat_Wizard.cpp">
+      <Filter>02. GameObject\10. Item\03. Gear\Hat_Wizard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Outfit_Arcane.cpp">
+      <Filter>02. GameObject\10. Item\03. Gear\Outfit_Arcane</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Outfit_Arcane_A.cpp">
+      <Filter>02. GameObject\10. Item\03. Gear\Outfit_Arcane_A</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Outfit_Celtic.cpp">
+      <Filter>02. GameObject\10. Item\03. Gear\Outfit_Celtic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Outfit_Celtic_A.cpp">
+      <Filter>02. GameObject\10. Item\03. Gear\Outfit_Celtic_A</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Outfit_DarkArts_Delux.cpp">
+      <Filter>02. GameObject\10. Item\03. Gear\Outfit_DarkArts_Delux</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Outfit_DarkArts_Delux_A.cpp">
+      <Filter>02. GameObject\10. Item\03. Gear\Outfit_DarkArts_Delux_A</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Mask_Guardian.cpp">
+      <Filter>02. GameObject\10. Item\03. Gear\Mask_Guardian</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Mask_Demiguise.cpp">
+      <Filter>02. GameObject\10. Item\03. Gear\Mask_Demiguise</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Mask_Niffler.cpp">
+      <Filter>02. GameObject\10. Item\03. Gear\Mask_Niffler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Vendor.cpp">
+      <Filter>02. GameObject\07. NPC\Vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Oakes.cpp">
+      <Filter>02. GameObject\07. NPC\Oakes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Dummy_NPC.cpp">
+      <Filter>02. GameObject\07. NPC\Dummy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Fail_Ball.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Fail_Ball</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Shouting.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Shouting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Sword_Throw.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pensvie_Sword_Throw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive_Mace_Attack.cpp">
+      <Filter>02. GameObject\02. Enemy\07. Pensive\Magic\Pensive_Mace_Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Water.cpp">
+      <Filter>02. GameObject\12. Water</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Projectile_White_Effect.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\04. Projectile_White\Projectile_White_Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\House_Elf.cpp">
+      <Filter>02. GameObject\07. NPC\House_Elf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Robe_Beast.cpp">
+      <Filter>02. GameObject\10. Item\03. Gear\Robe_Beast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Professor_Fig.cpp">
+      <Filter>02. GameObject\07. NPC\Fig\Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Smith_FIg.cpp">
+      <Filter>02. GameObject\07. NPC\Fig\NonCombat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Card_Fig.cpp">
+      <Filter>02. GameObject\07. NPC\Fig\Card</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Guide_Book.cpp">
+      <Filter>06. Scene\Main_Menu\Guide_Book</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Cliffside.cpp">
+      <Filter>07. Events\Cliffside</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Quest.cpp">
+      <Filter>10. Quest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Quest_Manager.cpp">
+      <Filter>10. Quest\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Quest_Save_Fig.cpp">
+      <Filter>10. Quest\Save_Fig</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Quest_Potion.cpp">
+      <Filter>10. Quest\Potion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Quest_Town.cpp">
+      <Filter>10. Quest\Town</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Quest_Secret.cpp">
+      <Filter>10. Quest\Secret</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Quest_Bone.cpp">
+      <Filter>10. Quest\Bone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DarkWizard_F.cpp">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\01. Female</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Magic_Sound_Manager.cpp">
+      <Filter>05. Magic\Magic_Sound_Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Broom_Stick.cpp">
+      <Filter>02. GameObject\01. Player\01. Weapon\BroomStick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Vault_Torch.cpp">
+      <Filter>07. Events\Vault\Event_Vault_Torch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BigBird.cpp">
+      <Filter>02. GameObject\03. MapObject\Anim_Obj\BigBird</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SmithToCliff_Gate.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\SmithToCliff_Gate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Vault_Torch.cpp">
+      <Filter>02. GameObject\03. MapObject\Env\Vault_Torch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Lamppost.cpp">
+      <Filter>02. GameObject\03. MapObject\Env\Lamppost</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LightStand.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\LightStand</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sanctum_Door.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\Sanctum_Door</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Golem_Combat.cpp">
+      <Filter>02. GameObject\02. Enemy\03. Golem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DarkWizard_Spawn.cpp">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\01. Female\Spawner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DarkWizard_Fly.cpp">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\02. Fly</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Spawn.cpp">
+      <Filter>07. Events\Spawn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Event_Vault_Spawn.cpp">
+      <Filter>07. Events\Vault\Spawn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Enter_Vault.cpp">
+      <Filter>07. Events\Vault\Enter_Vault</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Dragon_Hp_Down.cpp">
+      <Filter>07. Events\Sanctum\Dragon_HP_Down</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Dragon_Death.cpp">
+      <Filter>07. Events\Sanctum\Dragon_Death</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Dragon_Head.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Head</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Dragon_Left_Wing.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Left_Wing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Dragon_Tail.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Tail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Dragon_Right_Wing.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon\Right_Wing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_DamageFont.cpp" />
+    <ClCompile Include="..\Private\Cat.cpp">
+      <Filter>02. GameObject\03. MapObject\Anim_Obj\Cat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Gull.cpp">
+      <Filter>02. GameObject\03. MapObject\Anim_Obj\Gull</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Owl.cpp">
+      <Filter>02. GameObject\03. MapObject\Anim_Obj\Owl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MapObject.cpp">
+      <Filter>02. GameObject\03. MapObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MapObject_Ins.cpp">
+      <Filter>02. GameObject\03. MapObject\MapObject_Ins</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cliff_Gate.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Cliff_Gate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Door.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Gatherer.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Gatherer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Potion_Station.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\PotionStation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PotionStationCamera.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\PotionStation\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Treasure_Chest.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Treasure_Chest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Vault_Gate.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Vault_Gate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Vault_Torch.cpp">
+      <Filter>02. GameObject\03. MapObject\Env\Vault_Torch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FireHouse.cpp">
+      <Filter>02. GameObject\03. MapObject\Env\FireHouse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Lamp_Wall.cpp">
+      <Filter>02. GameObject\03. MapObject\Env\Lamp_Wall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FireWood.cpp">
+      <Filter>02. GameObject\03. MapObject\Env\FireWood</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Item.cpp">
+      <Filter>02. GameObject\10. Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_DamageFont.cpp" />
+    <ClCompile Include="..\private\Item.cpp" />
+    <ClCompile Include="..\Private\Broom_Stick_DarkWizard.cpp">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\02. Fly\Broom_Stick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_DamageFont.cpp">
+      <Filter>02. GameObject\05. UI\Font\DamageFont</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Meteor.cpp">
+      <Filter>05. Magic\MagicBall\08. Ncendio\Meteor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Item.cpp">
+      <Filter>02. GameObject\10. Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Timer.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Score.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Score</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FireWorks.cpp">
+      <Filter>02. GameObject\03. MapObject\FireWorks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Cliffside.cpp">
+      <Filter>07. Events\Cliffside\Event_Cliffside</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Cliffside_Next_Level.cpp">
+      <Filter>07. Events\Cliffside\Event_Cliffside_Next_Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Vault_Next_Level.cpp">
+      <Filter>07. Events\Vault\Event_Vault_Next_Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Smeade_Next_Level.cpp">
+      <Filter>07. Events\Smeade\Event_Smeade_Next_Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FlyGameManager.cpp">
+      <Filter>02. GameObject\13. FlyGameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Racer.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Racer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ScoreBalloon.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ScoreBalloon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Balloon.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Balloon_Timer.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Enter_Sanctum.cpp">
+      <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Spawn_Darkwizard.cpp">
+      <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Spawn_Dragon.cpp">
+      <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Spawn_Dragon_2.cpp">
+      <Filter>07. Events\Sanctum\Enter_Sanctum</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_A.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_B.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_C.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_D.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FlyMan.cpp">
+      <Filter>02. GameObject\07. NPC\FlyMan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_A.cpp" />
+    <ClCompile Include="..\Private\BeastBalloon_B.cpp" />
+    <ClCompile Include="..\Private\BeastBalloon_C.cpp" />
+    <ClCompile Include="..\Private\BeastBalloon_D.cpp" />
+    <ClCompile Include="..\Private\Event_Smeade.cpp">
+      <Filter>07. Events\Smeade\Event_Smeade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_A.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_B.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_C.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BeastBalloon_D.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Balloons\ABCD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Crowd.cpp">
+      <Filter>02. GameObject\07. NPC\Crowd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Balloon_Coin.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\Coin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Santum_MapEffects.cpp">
+      <Filter>04. Effect\Santum_MapEffects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RedSky.cpp">
+      <Filter>02. GameObject\00. Sky\Red</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Sky_Enter.cpp">
+      <Filter>07. Events\Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MarioCount.cpp">
+      <Filter>02. GameObject\13. FlyGameManager\MarioCount</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -89,13 +3071,66 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl">
-      <Filter>97. ShaderFiles</Filter>
-    </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Shader_Client_Defines.hlsli">
       <Filter>97. ShaderFiles</Filter>
     </None>
+    <None Include="ImGui\misc\debuggers\imgui.natstepfilter">
+      <Filter>98. Default\ImGui_Defaults</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl">
+      <Filter>97. ShaderFiles\Textures</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCube.hlsl">
+      <Filter>97. ShaderFiles\Textures</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Terrain.hlsl">
+      <Filter>97. ShaderFiles\Textures</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl">
+      <Filter>97. ShaderFiles\Meshes</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl">
+      <Filter>97. ShaderFiles\Meshes</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl">
+      <Filter>97. ShaderFiles\Debug</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Protego.hlsl">
+      <Filter>97. ShaderFiles\Magic\Protego</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTexRotation.hlsl">
+      <Filter>97. ShaderFiles\Textures</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMeshInstance.hlsl">
+      <Filter>97. ShaderFiles\Meshes</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowAnimMesh.hlsl">
+      <Filter>97. ShaderFiles\Meshes</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMesh.hlsl">
+      <Filter>97. ShaderFiles\Meshes</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_ImpulseSphere.hlsl">
+      <Filter>04. Effect\BoneDragon\ImpulseSphere</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Water.hlsl">
+      <Filter>97. ShaderFiles\Textures</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Projectile_White.hlsl">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\04. Projectile_White\Projectile_White_Effect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMeshInstance.hlsl">
+      <Filter>97. ShaderFiles\Meshes</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMeshInstance.hlsl">
+      <Filter>97. ShaderFiles\Meshes</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="ImGui\misc\debuggers\imgui.natvis">
+      <Filter>98. Default\ImGui_Defaults</Filter>
+    </Natvis>
   </ItemGroup>
 </Project>

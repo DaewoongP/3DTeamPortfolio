@@ -8,6 +8,8 @@
 #pragma warning (disable : 4828) // korean comment
 #pragma warning (disable : 26495) // Value Initialize
 #pragma warning (disable : 6387) // Inout Value NULL
+#pragma warning (disable : 4267) // size_t to uint change
+#pragma warning (disable : 4018) // signed, unsigned comp
 
 #define DIRECTINPUT_VERSION		0x0800
 #include <dinput.h>
@@ -30,22 +32,80 @@
 #include "fmod\fmod.h"
 #include "fmod\fmod.hpp"
 
+#include "DirectXTex/DirectXTex.h"
+
+#ifdef _DEBUG
+
+#pragma comment(lib, "PhysXd/PhysX_64.lib")
+#pragma comment(lib, "PhysXd/PhysXCommon_64.lib")
+#pragma comment(lib, "PhysXd/PhysXCooking_64.lib")
+#pragma comment(lib, "PhysXd/PhysXFoundation_64.lib")
+#pragma comment(lib, "PhysXd/PhysXExtensions_static_64.lib")
+#pragma comment(lib, "PhysXd/PhysXCharacterKinematic_static_64.lib")
+
+#pragma comment(lib, "Clothd/NvClothDEBUG_x64.lib")
+
+#else // Release
+
+#pragma comment(lib, "PhysX/PhysX_64.lib")
+#pragma comment(lib, "PhysX/PhysXCommon_64.lib")
+// 지금 디버깅용인데 패스할거임.
+#pragma comment(lib, "PhysXd/PhysXCooking_64.lib")
+#pragma comment(lib, "PhysX/PhysXFoundation_64.lib")
+#pragma comment(lib, "PhysX/PhysXExtensions_static_64.lib")
+#pragma comment(lib, "PhysX/PhysXCharacterKinematic_static_64.lib")
+
+#pragma comment(lib, "Cloth/NvCloth_x64.lib")
+
+#endif // _DEBUG
+
+// physx
+#include <PxPhysicsAPI.h>
+#include <PxShape.h>
+#include <PhysX/geometry/PxGeometry.h>
+
+// nvcloth
+#include <Factory.h>
+#include <PhaseConfig.h>
+#include <DxContextManagerCallback.h>
+#include <NvClothExt/ClothFabricCooker.h>
+#include <NvClothExt/ClothMeshDesc.h>
+#include <Fabric.h>
+#include <Cloth.h>
+#include <Range.h>
+#include <Solver.h>
+
 #include <iostream>
 #include <vector>
 #include <list>
 #include <map>
 #include <array>
+#include <queue>
 #include <unordered_map>
 #include <string>
 #include <algorithm>
 #include <functional>
+#include <any>
+#include <stack>
+#include <random>
+#include <tchar.h>
+#include <mutex>
+#include <thread>
+#include <condition_variable>
+#include <future>
+#include <ctime>
+#include <memory>
+static std::mutex mtx;
 
 // file system - c++ 17
 #include <filesystem>
+
 namespace fs = std::filesystem;
 
 using namespace std;
 using namespace DirectX;
+using namespace physx; // physx
+using namespace nv; // nvCloth
 
 #include "DirectXTK\matrix.h"
 
@@ -58,6 +118,10 @@ using namespace DirectX;
 #include "Engine_Converter.h"
 
 #ifdef _DEBUG
+#include "Debug_Functions.h"
+#endif // _DEBUG
+
+#ifdef _DEBUG
 
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
@@ -67,11 +131,7 @@ using namespace DirectX;
 
 #define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ ) 
 
-#ifndef _USE_IMGUI
-#define new DBG_NEW 
-#else
 #define New DBG_NEW
-#endif // _USE_IMGUI
 
 #endif // DBG_NEW
 #endif // _DEBUG

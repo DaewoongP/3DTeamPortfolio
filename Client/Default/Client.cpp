@@ -86,14 +86,18 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CLIENT));
 
 	CMainApp* pMainApp = CMainApp::Create();
-	NULL_CHECK_RETURN_MSG(pMainApp, FALSE, L"Failed Create MainApp");
-
+	if (nullptr == pMainApp)
+	{
+		MSG_BOX("Failed Create MainApp");
+		return false;
+	}
+	
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (FAILED(pGameInstance->Add_Timer(TEXT("Timer_Default"))))
+	if (FAILED(pGameInstance->Add_QueryTimer(TEXT("Timer_Default"))))
 		return FALSE;
-	if (FAILED(pGameInstance->Add_Timer(TEXT("MainTimer"))))
+	if (FAILED(pGameInstance->Add_QueryTimer(TEXT("MainTimer"))))
 		return FALSE;
 
     MSG msg;
@@ -114,13 +118,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			}
 		}
 
-		pGameInstance->Tick_Timer(TEXT("Timer_Default"));
-		fTimerAcc += pGameInstance->Get_TimeDelta(TEXT("Timer_Default"));
+		pGameInstance->Tick_QueryTimer(TEXT("Timer_Default"));
+		fTimerAcc += pGameInstance->Get_QueryTimeDelta(TEXT("Timer_Default"));
 
 		if (fTimerAcc >= 1.f / g_fFrame)
 		{
-			pGameInstance->Tick_Timer(TEXT("MainTimer"));
-			pMainApp->Tick(pGameInstance->Get_TimeDelta(TEXT("MainTimer")));
+			pGameInstance->Tick_QueryTimer(TEXT("MainTimer"));
+			pMainApp->Tick(pGameInstance->Get_QueryTimeDelta(TEXT("MainTimer")));
 
 			if (FAILED(pMainApp->Render()))
 			{
@@ -141,8 +145,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     return (int) msg.wParam;
 }
-
-
 
 //
 //  함수: MyRegisterClass()
@@ -214,8 +216,17 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY  - 종료 메시지를 게시하고 반환합니다.
 //
 //
+#ifdef _DEBUG
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+#endif // _DEBUG
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+#ifdef _DEBUG
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
+		return true;
+#endif // _DEBUG
+
     switch (message)
     {
     case WM_COMMAND:
@@ -235,6 +246,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
+#ifdef _DEBUG
+	case WM_DPICHANGED:
+		if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DpiEnableScaleViewports)
+		{
+			//const int dpi = HIWORD(wParam);
+			//printf("WM_DPICHANGED to %d (%.0f%%)\n", dpi, (float)dpi / 96.0f * 100.0f);
+			const RECT* suggested_rect = (RECT*)lParam;
+			::SetWindowPos(hWnd, nullptr,
+				suggested_rect->left, suggested_rect->top,
+				suggested_rect->right - suggested_rect->left, suggested_rect->bottom - suggested_rect->top, SWP_NOZORDER | SWP_NOACTIVATE);
+		}
+		break;
+#endif // _DEBUG
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }

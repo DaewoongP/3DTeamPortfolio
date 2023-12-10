@@ -47,9 +47,6 @@ void CFrustum::Tick()
 	m_vWorldPlanes[3] = XMPlaneFromPoints(vPoints[3], vPoints[2], vPoints[6]);
 	m_vWorldPlanes[4] = XMPlaneFromPoints(vPoints[5], vPoints[4], vPoints[7]);
 	m_vWorldPlanes[5] = XMPlaneFromPoints(vPoints[0], vPoints[1], vPoints[2]);
-
-	// 컬링된 포지션 미리 초기화.
-	m_CulledPositions.clear();
 }
 
 void CFrustum::Transform_ToLocalSpace(_float4x4 WorldMatrix)
@@ -64,15 +61,10 @@ void CFrustum::Transform_ToLocalSpace(_float4x4 WorldMatrix)
 
 _bool CFrustum::isIn_WorldFrustum(_float4 vWorldPos, _float fRange)
 {
-	_float4 vCulledPos;
-
 	for (_uint i = 0; i < 6; ++i)
 	{
 		if (fRange < XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&m_vWorldPlanes[i]), vWorldPos)))
 		{
-			ZEROMEM(&vCulledPos);
-			XMStoreFloat4(&vCulledPos, vWorldPos);
-			m_CulledPositions.push_back(vCulledPos);
 			return false;
 		}
 	}

@@ -33,12 +33,27 @@ void Engine::CTimer::Tick(void)
 
 	m_fTimeDelta = ((m_tFrameTime.QuadPart) - (m_tLastTime.QuadPart)) / _float(m_CpuTick.QuadPart);
 
+	if (true == m_isSlowed)
+	{
+		// 미리 실제 지나가는 timedelta 더하고
+		m_fSlowedTimeAcc += m_fTimeDelta;
+		// 클라이언트로 던져줄 timedelta는 power처리해주고
+		m_fTimeDelta *= m_fSlowedPower;
+		// 시간이 지났으면 false
+		if (m_fSlowedTimeAcc > m_fSlowedTime)
+		{
+			m_isSlowed = false;
+			m_fSlowedTimeAcc = 0.f;
+			m_fSlowedPower = 1.f;
+		}
+	}
+
 	m_tLastTime = m_tFrameTime;
 }
 
 CTimer * CTimer::Create(void)
 {
-	CTimer *	pInstance = new CTimer;
+	CTimer *	pInstance = New CTimer;
 
 	if (FAILED(pInstance->Initialize()))
 		Safe_Release(pInstance);

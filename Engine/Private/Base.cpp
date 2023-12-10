@@ -22,4 +22,3 @@ _ulong CBase::Release()
 	else
 		return m_dwRefCnt;
 }
-

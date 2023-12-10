@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -20,14 +20,87 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Animation.h" />
+    <ClInclude Include="..\Public\Camera_Shake.h" />
+    <ClInclude Include="..\public\CoolTime.h" />
+    <ClInclude Include="..\Public\DOF.h" />
+    <ClInclude Include="..\Public\Flowmap.h" />
+    <ClInclude Include="..\Public\Model_Anim_Instance.h" />
+    <ClInclude Include="..\public\MotionBlurInst.h" />
+    <ClInclude Include="..\public\MotionBlur.h" />
+    <ClInclude Include="..\public\ParticleSystemPool.h" />
+    <ClInclude Include="..\public\Phase.h" />
+    <ClInclude Include="..\public\RadialBlur.h" />
+    <ClInclude Include="..\public\RaycastCallBack.h" />
+    <ClInclude Include="..\public\TexturePool.h" />
+    <ClInclude Include="..\public\UI_ScaleButton.h" />
+    <ClInclude Include="..\public\VIBuffer_Particle_Instance.h" />
+    <ClInclude Include="..\public\VIBuffer_Rect_Particle_Instance.h" />
+    <ClInclude Include="..\public\Shadow.h" />
+    <ClInclude Include="..\public\ThreadPool.h" />
+    <ClInclude Include="..\public\VIBuffer_UVSphere.h" />
+    <ClInclude Include="..\public\VIBuffer_Rect_Color_Index_Instance.h" />
     <ClInclude Include="..\Public\Base.h" />
+    <ClInclude Include="..\Public\Behavior.h" />
+    <ClInclude Include="..\public\BehaviorCallBack.h" />
+    <ClInclude Include="..\Public\BlackBoard.h" />
+    <ClInclude Include="..\Public\Bloom.h" />
+    <ClInclude Include="..\public\Blur.h" />
     <ClInclude Include="..\Public\Bone.h" />
     <ClInclude Include="..\public\Bounding.h" />
     <ClInclude Include="..\Public\Bounding_AABB.h" />
     <ClInclude Include="..\Public\Bounding_OBB.h" />
     <ClInclude Include="..\public\Bounding_Sphere.h" />
+    <ClInclude Include="..\Public\ConvexMesh.h" />
+    <ClInclude Include="..\public\Debug_Render_TriangleMesh.h" />
+    <ClInclude Include="..\public\Ease.h" />
+    <ClInclude Include="..\Public\Debug_Functions.h" />
+    <ClInclude Include="..\public\Debug_Render_Box.h" />
+    <ClInclude Include="..\public\Debug_Render_Capsule.h" />
+    <ClInclude Include="..\public\Debug_Render_HeightField.h" />
+    <ClInclude Include="..\public\Debug_Render_Ring.h" />
+    <ClInclude Include="..\public\Debug_Render_Sphere.h" />
+    <ClInclude Include="..\Public\Glow.h" />
+    <ClInclude Include="..\Public\Mesh_Instance.h" />
+    <ClInclude Include="..\Public\Model_Instance.h" />
+    <ClInclude Include="..\public\Model_LOD.h" />
+    <ClInclude Include="..\Public\RandomChoose.h" />
+    <ClInclude Include="..\public\VIBuffer_Color_Index_Instance.h" />
+    <ClInclude Include="..\public\ReportCallBack.h" />
+    <ClInclude Include="..\Public\Shape_GeoSphere.h" />
+    <ClInclude Include="..\public\Dynamic_Mesh.h" />
+    <ClInclude Include="..\Public\JobManager.h" />
+    <ClInclude Include="..\public\String_Manager.h" />
+    <ClInclude Include="..\public\Calculator.h" />
+    <ClInclude Include="..\public\Camera.h" />
+    <ClInclude Include="..\public\Camera_Manager.h" />
+    <ClInclude Include="..\Public\Attack.h" />
+    <ClInclude Include="..\public\CharacterController.h" />
+    <ClInclude Include="..\Public\MeshEffect.h" />
+    <ClInclude Include="..\public\NVContextCallBack.h" />
+    <ClInclude Include="..\Public\Parts.h" />
+    <ClInclude Include="..\public\PXAssertHandler.h" />
+    <ClInclude Include="..\public\PXEventCallBack.h" />
+    <ClInclude Include="..\Public\PhysXConverter.h" />
+    <ClInclude Include="..\public\PhysX_Manager.h" />
+    <ClInclude Include="..\public\RigidBody.h" />
+    <ClInclude Include="..\Public\MeshParts.h" />
+    <ClInclude Include="..\Public\CustomModel.h" />
+    <ClInclude Include="..\Public\Modules.h" />
+    <ClInclude Include="..\Public\Texture_Filpbook.h" />
+    <ClInclude Include="..\public\Trail.h" />
+    <ClInclude Include="..\Public\TriangleMesh.h" />
+    <ClInclude Include="..\Public\UI.h" />
+    <ClInclude Include="..\Public\UI_Button.h" />
+    <ClInclude Include="..\Public\UI_Progress1.h" />
+    <ClInclude Include="..\public\VIBuffer_Geometry.h" />
+    <ClInclude Include="..\public\VIBuffer_GeoSphere.h" />
+    <ClInclude Include="..\public\VIBuffer_Cloth.h" />
+    <ClInclude Include="..\public\VIBuffer_Rect_Color_Instance.h" />
+    <ClInclude Include="..\Public\VIBuffer_Sprite.h" />
+    <ClInclude Include="..\Public\Defence.h" />
     <ClInclude Include="..\public\Cell.h" />
     <ClInclude Include="..\Public\Channel.h" />
+    <ClInclude Include="..\Public\Health.h" />
     <ClInclude Include="..\public\Collider.h" />
     <ClInclude Include="..\Public\Collision_Manager.h" />
     <ClInclude Include="..\Public\Component.h" />
@@ -35,6 +108,8 @@
     <ClInclude Include="..\public\Composite.h" />
     <ClInclude Include="..\public\CustomFont.h" />
     <ClInclude Include="..\Public\DebugDraw.h" />
+    <ClInclude Include="..\Public\Decorator.h" />
+    <ClInclude Include="..\Public\DirectXTK\matrix.h" />
     <ClInclude Include="..\Public\Engine_Converter.h" />
     <ClInclude Include="..\public\Font_Manager.h" />
     <ClInclude Include="..\public\Frustum.h" />
@@ -53,16 +128,21 @@
     <ClInclude Include="..\Public\Level_Manager.h" />
     <ClInclude Include="..\Public\Light.h" />
     <ClInclude Include="..\Public\Light_Manager.h" />
-    <ClInclude Include="..\Public\matrix.h" />
     <ClInclude Include="..\Public\Mesh.h" />
     <ClInclude Include="..\Public\Model.h" />
     <ClInclude Include="..\public\Navigation.h" />
-    <ClInclude Include="..\Public\Object_Manager.h" />
+    <ClInclude Include="..\Public\Notify.h" />
+    <ClInclude Include="..\Public\ParticleSystem.h" />
     <ClInclude Include="..\Public\PipeLine.h" />
+    <ClInclude Include="..\public\PXAllocator.h" />
+    <ClInclude Include="..\Public\PXErrorCallBack.h" />
     <ClInclude Include="..\Public\QuadTree.h" />
     <ClInclude Include="..\Public\Renderer.h" />
     <ClInclude Include="..\public\RenderTarget.h" />
     <ClInclude Include="..\public\RenderTarget_Manager.h" />
+    <ClInclude Include="..\Public\RootBehavior.h" />
+    <ClInclude Include="..\Public\Selector.h" />
+    <ClInclude Include="..\Public\Sequence.h" />
     <ClInclude Include="..\Public\Shader.h" />
     <ClInclude Include="..\Public\Sound_Manager.h" />
     <ClInclude Include="..\Public\Texture.h" />
@@ -83,17 +163,91 @@
     <ClInclude Include="..\Public\Timer_Manager.h" />
     <ClInclude Include="..\Public\VIBuffer.h" />
     <ClInclude Include="..\Public\VIBuffer_Rect.h" />
+    <ClInclude Include="..\public\VIBuffer_Triangle.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Animation.cpp" />
+    <ClCompile Include="..\Private\Camera_Shake.cpp" />
+    <ClCompile Include="..\private\CoolTime.cpp" />
+    <ClCompile Include="..\Private\DOF.cpp" />
+    <ClCompile Include="..\Private\Flowmap.cpp" />
+    <ClCompile Include="..\Private\Model_Anim_Instance.cpp" />
+    <ClCompile Include="..\Private\Model_Instance.cpp" />
+    <ClCompile Include="..\private\MotionBlurInst.cpp" />
+    <ClCompile Include="..\private\MotionBlur.cpp" />
+    <ClCompile Include="..\private\ParticleSystemPool.cpp" />
+    <ClCompile Include="..\private\Phase.cpp" />
+    <ClCompile Include="..\private\RadialBlur.cpp" />
+    <ClCompile Include="..\private\RaycastCallBack.cpp" />
+    <ClCompile Include="..\private\TexturePool.cpp" />
+    <ClCompile Include="..\private\UI_ScaleButton.cpp" />
+    <ClCompile Include="..\private\VIBuffer_Particle_Instance.cpp" />
+    <ClCompile Include="..\private\VIBuffer_Rect_Particle_Instance.cpp" />
+    <ClCompile Include="..\private\Shadow.cpp" />
+    <ClCompile Include="..\private\ThreadPool.cpp" />
+    <ClCompile Include="..\private\VIBuffer_UVSphere.cpp" />
+    <ClCompile Include="..\private\VIBuffer_Rect_Color_Index_Instance.cpp" />
     <ClCompile Include="..\Private\Base.cpp" />
+    <ClCompile Include="..\Private\Behavior.cpp" />
+    <ClCompile Include="..\private\BehaviorCallBack.cpp" />
+    <ClCompile Include="..\Private\BlackBoard.cpp" />
+    <ClCompile Include="..\Private\Bloom.cpp" />
+    <ClCompile Include="..\private\Blur.cpp" />
     <ClCompile Include="..\Private\Bone.cpp" />
     <ClCompile Include="..\private\Bounding.cpp" />
     <ClCompile Include="..\Private\Bounding_AABB.cpp" />
     <ClCompile Include="..\Private\Bounding_OBB.cpp" />
     <ClCompile Include="..\private\Bounding_Sphere.cpp" />
+    <ClCompile Include="..\Private\ConvexMesh.cpp" />
+    <ClCompile Include="..\private\Debug_Render_TriangleMesh.cpp" />
+    <ClCompile Include="..\Private\Ease.cpp" />
+    <ClCompile Include="..\private\Debug_Render_Box.cpp" />
+    <ClCompile Include="..\private\Debug_Render_Capsule.cpp" />
+    <ClCompile Include="..\private\Debug_Render_HeightField.cpp" />
+    <ClCompile Include="..\private\Debug_Render_Ring.cpp" />
+    <ClCompile Include="..\private\Debug_Render_Sphere.cpp" />
+    <ClCompile Include="..\Private\Glow.cpp" />
+    <ClCompile Include="..\Private\Mesh_Instance.cpp" />
+    <ClCompile Include="..\private\Model_LOD.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</IncludeInUnityFile>
+    </ClCompile>
+    <ClCompile Include="..\Private\RandomChoose.cpp" />
+    <ClCompile Include="..\private\VIBuffer_Color_Index_Instance.cpp" />
+    <ClCompile Include="..\private\ReportCallBack.cpp" />
+    <ClCompile Include="..\Private\Shape_GeoSphere.cpp" />
+    <ClCompile Include="..\private\Dynamic_Mesh.cpp" />
+    <ClCompile Include="..\Private\JobManager.cpp" />
+    <ClCompile Include="..\private\String_Manager.cpp" />
+    <ClCompile Include="..\private\Calculator.cpp" />
+    <ClCompile Include="..\private\Camera.cpp" />
+    <ClCompile Include="..\private\Camera_Manager.cpp" />
+    <ClCompile Include="..\Private\Attack.cpp" />
+    <ClCompile Include="..\private\CharacterController.cpp" />
+    <ClCompile Include="..\private\MeshEffect.cpp" />
+    <ClCompile Include="..\private\NVContextCallBack.cpp" />
+    <ClCompile Include="..\Private\Parts.cpp" />
+    <ClCompile Include="..\private\PXAssertHandler.cpp" />
+    <ClCompile Include="..\private\PXEventCallBack.cpp" />
+    <ClCompile Include="..\private\PhysX_Manager.cpp" />
+    <ClCompile Include="..\private\RigidBody.cpp" />
+    <ClCompile Include="..\Private\MeshParts.cpp" />
+    <ClCompile Include="..\Private\CustomModel.cpp" />
+    <ClCompile Include="..\Private\Modules.cpp" />
+    <ClCompile Include="..\Private\Texture_Filpbook.cpp" />
+    <ClCompile Include="..\private\Trail.cpp" />
+    <ClCompile Include="..\Private\TriangleMesh.cpp" />
+    <ClCompile Include="..\Private\UI.cpp" />
+    <ClCompile Include="..\Private\UI_Button.cpp" />
+    <ClCompile Include="..\Private\UI_Progress1.cpp" />
+    <ClCompile Include="..\private\VIBuffer_Geometry.cpp" />
+    <ClCompile Include="..\private\VIBuffer_GeoSphere.cpp" />
+    <ClCompile Include="..\private\VIBuffer_Cloth.cpp" />
+    <ClCompile Include="..\Private\VIBuffer_Rect_Color_Instance.cpp" />
+    <ClCompile Include="..\Private\VIBuffer_Sprite.cpp" />
+    <ClCompile Include="..\Private\Defence.cpp" />
     <ClCompile Include="..\private\Cell.cpp" />
     <ClCompile Include="..\Private\Channel.cpp" />
+    <ClCompile Include="..\Private\Health.cpp" />
     <ClCompile Include="..\private\Collider.cpp" />
     <ClCompile Include="..\Private\Collision_Manager.cpp" />
     <ClCompile Include="..\Private\Component.cpp" />
@@ -101,6 +255,7 @@
     <ClCompile Include="..\private\Composite.cpp" />
     <ClCompile Include="..\private\CustomFont.cpp" />
     <ClCompile Include="..\Private\DebugDraw.cpp" />
+    <ClCompile Include="..\Private\Decorator.cpp" />
     <ClCompile Include="..\private\Font_Manager.cpp" />
     <ClCompile Include="..\private\Frustum.cpp" />
     <ClCompile Include="..\Private\Input_Device.cpp" />
@@ -116,12 +271,16 @@
     <ClCompile Include="..\Private\Mesh.cpp" />
     <ClCompile Include="..\Private\Model.cpp" />
     <ClCompile Include="..\private\Navigation.cpp" />
-    <ClCompile Include="..\Private\Object_Manager.cpp" />
+    <ClCompile Include="..\Private\Notify.cpp" />
+    <ClCompile Include="..\Private\ParticleSystem.cpp" />
     <ClCompile Include="..\Private\PipeLine.cpp" />
     <ClCompile Include="..\Private\QuadTree.cpp" />
     <ClCompile Include="..\Private\Renderer.cpp" />
     <ClCompile Include="..\private\RenderTarget.cpp" />
     <ClCompile Include="..\private\RenderTarget_Manager.cpp" />
+    <ClCompile Include="..\Private\RootBehavior.cpp" />
+    <ClCompile Include="..\Private\Selector.cpp" />
+    <ClCompile Include="..\Private\Sequence.cpp" />
     <ClCompile Include="..\Private\Shader.cpp" />
     <ClCompile Include="..\Private\Sound_Manager.cpp" />
     <ClCompile Include="..\Private\Texture.cpp" />
@@ -142,14 +301,47 @@
     <ClCompile Include="..\Private\Timer_Manager.cpp" />
     <ClCompile Include="..\Private\VIBuffer.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Rect.cpp" />
+    <ClCompile Include="..\private\VIBuffer_Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Fade.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Flowmap.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Edge.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Bloom.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Blur.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_DefaultEffect.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_DOF.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Flipbook.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Distortion.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Geometry.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Glow.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_LightShaft.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Noise.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_RadialBlur.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Rain.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_RenderFunc.hlsli" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Light.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_MotionBlur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_PostProcessing.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Shadow.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_SSAO.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Trail.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VelocityMapInst.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointColInstance.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstance.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectColIdxInstance.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectColInstance.hlsl" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Private\matrix.inl" />
+    <None Include="..\Bin\ShaderFiles\Shader_EngineHeader.hlsli" />
+    <None Include="..\Bin\ShaderFiles\Shader_Functions.hlsli" />
+    <None Include="..\Bin\ShaderFiles\Shader_PBR.hlsli" />
+    <None Include="..\Public\DirectXTK\matrix.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -177,6 +369,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableUnitySupport>true</EnableUnitySupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -184,6 +377,7 @@
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableUnitySupport>true</EnableUnitySupport>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -254,15 +448,17 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../Public/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Public/;../Public/PhysX/;../Public/NvCloth/;../Public/DirectXTex/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <DisableSpecificWarnings>4828;4204;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>d3d11.lib;dxguid.lib;dinput8.lib;fmod_vc.lib;Effects11d.lib;DirectXTKd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;dxguid.lib;dinput8.lib;fmod_vc.lib;Effects11d.lib;DirectXTKd.lib;DirectXTexd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../ThirdPartyLib/</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -284,9 +480,11 @@ call Copy.bat</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../Public/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Public/;../Public/PhysX/;../Public/NvCloth/;../Public/DirectXTex/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <DisableSpecificWarnings>4828;4204;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <Optimization>MaxSpeed</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -294,7 +492,7 @@ call Copy.bat</Command>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>d3d11.lib;dxguid.lib;dinput8.lib;fmod_vc.lib;Effects11.lib;DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;dxguid.lib;dinput8.lib;fmod_vc.lib;Effects11.lib;DirectXTK.lib;DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../ThirdPartyLib/</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>

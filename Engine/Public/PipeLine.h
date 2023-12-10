@@ -1,4 +1,11 @@
 #pragma once
+/* =============================================== */
+// 
+//	정 : 박대웅
+//	부 :
+//
+/* =============================================== */
+
 #include "Base.h"
 
 BEGIN(Engine)
@@ -15,13 +22,18 @@ public:
 	virtual ~CPipeLine() = default;
 
 public:
+	// 카메라에서 뷰, 투영 행렬 세팅
 	void Set_Transform(D3DTRANSFORMSTATE eTransformState, _float4x4 TransformStateMatrix);
+	// 카메라에서 Far 값 세팅.
 	void Set_CameraFar(_float fCamFar) { m_fCameraFar = fCamFar; }
 
-	_float4x4* Get_TransformMatrix(D3DTRANSFORMSTATE eTransformState);
-	_float4x4* Get_TransformMatrix_Inverse(D3DTRANSFORMSTATE eTransformState);
-	_float4* Get_CamPosition();
-	_float* Get_CamFar();
+	const _float4x4* Get_TransformMatrix(D3DTRANSFORMSTATE eTransformState);
+	const _float4x4* Get_TransformMatrix_Inverse(D3DTRANSFORMSTATE eTransformState);
+	const _float4* Get_CamPosition();
+	const _float3* Get_CamUp();
+	const _float3* Get_CamLook();
+	const _float3* Get_CamRight();
+	const _float* Get_CamFar();
 
 public:
 	void Tick();
@@ -29,7 +41,10 @@ public:
 private:
 	_float4x4				m_TransformMatrix[D3DTS_END];
 	_float4x4				m_TransformMatrix_Inverse[D3DTS_END];
-	_float4					m_vCameraPos;
+	_float3					m_vCameraRight{};
+	_float3					m_vCameraLook{};
+	_float3					m_vCameraUp{};
+	_float4					m_vCameraPos{};
 	_float					m_fCameraFar = { 0.f };
 
 public:

@@ -11,6 +11,7 @@ CTexture::CTexture(const CTexture& rhs)
 	: CComponent(rhs)
 	, m_Textures(rhs.m_Textures)
 	, m_iNumTextures(rhs.m_iNumTextures)
+	, m_szTextureFilePathes(rhs.m_szTextureFilePathes)
 {
 	for (auto& pTexture : m_Textures)
 	{
@@ -57,25 +58,39 @@ const _float2 CTexture::Get_TextureSize(_uint iTextureIndex)
 	return vSize;
 }
 
+_int CTexture::Get_TextureIndex_By_Path(const _tchar* pPath)
+{
+	_int iIndex = -1;
+	for (auto& TexturePath : m_szTextureFilePathes)
+	{
+		if (!lstrcmp(TexturePath, pPath))
+			return iIndex;
+		++iIndex;
+	}
+
+	return -1;
+}
+
 HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNumTextures)
 {
-	//FAILED_CHECK_RETURN(CoInitializeEx(nullptr, 0), E_FAIL);
-
 	_tchar			szTextureFilePath[MAX_PATH] = TEXT("");
 	
 	m_iNumTextures = iNumTextures;
 	
 	m_Textures.reserve(m_iNumTextures);
+	m_szTextureFilePathes.reserve(m_iNumTextures);
+
+	lstrcpy(m_szTextureFilePath, pTextureFilePath);
 
 	// 텍스처들을 순회하면서 SRV를 생성하여 처리
-	for (_uint i = 0; i < iNumTextures; ++i)
+	for (_uint i = 0; i < m_iNumTextures; ++i)
 	{
 		ID3D11ShaderResourceView* pSRV = { nullptr };
 
 		wsprintf(szTextureFilePath, pTextureFilePath, i);
 
-		lstrcpy(m_szTextureFilePath, pTextureFilePath);
-
+		m_szTextureFilePathes.push_back(pTextureFilePath);
+		
 		_tchar			szExt[MAX_PATH] = TEXT("");
 		_wsplitpath_s(szTextureFilePath, nullptr, 0, nullptr, 0, nullptr, 0, szExt, 256);
 
@@ -97,7 +112,8 @@ HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNu
 		
 		if (FAILED(hr))
 		{
-			//MSG_BOX("Failed Create Texture");
+			MSG_BOX("Failed Create Texture");
+			__debugbreak();
 			return E_FAIL;
 		}
 
@@ -107,16 +123,11 @@ HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNu
 	return S_OK;
 }
 
-HRESULT CTexture::Initialize(void* pArg)
-{
-	return S_OK;
-}
-
 HRESULT CTexture::Bind_ShaderResource(CShader* pShader, const _char* pContantName, _uint iTextureIndex)
 {
 	if (iTextureIndex >= m_iNumTextures)
 		return E_FAIL;
-
+	
 	return pShader->Bind_ShaderResource(pContantName, m_Textures[iTextureIndex]);
 }
 
@@ -127,11 +138,33 @@ HRESULT CTexture::Bind_ShaderResources(CShader* pShader, const _char* pContantNa
 
 CTexture* CTexture::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTextureFilePath, _uint iNumTextures)
 {
-	CTexture* pInstance = new CTexture(pDevice, pContext);
+	CTexture* pInstance = { nullptr };
+
+	CTexturePool* pTexturePool = CTexturePool::GetInstance();
+	Safe_AddRef(pTexturePool);
+
+	pInstance = pTexturePool->Reuse_Texture(pDevice, pContext, pTextureFilePath, iNumTextures);
+
+	Safe_Release(pTexturePool);
+	
+	if (nullptr == pInstance)
+	{
+		MSG_BOX("Failed to Reuse CTexture");
+		return nullptr;
+	}
+
+	return pInstance;
+}
+
+CTexture* CTexture::Create_Origin(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTextureFilePath, _uint iNumTextures)
+{
+	std::lock_guard<std::mutex> lock(mtx);
+
+	CTexture* pInstance = New CTexture(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pTextureFilePath, iNumTextures)))
 	{
-		//MSG_BOX("Failed to Created CTexture");
+		MSG_BOX("Failed to Created CTexture");
 		Safe_Release(pInstance);
 	}
 
@@ -140,7 +173,7 @@ CTexture* CTexture::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
 
 CComponent* CTexture::Clone(void* pArg)
 {
- 	CTexture* pInstance = new CTexture(*this);
+	CTexture* pInstance = New CTexture(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
@@ -150,7 +183,6 @@ CComponent* CTexture::Clone(void* pArg)
 
 	return pInstance;
 }
-
 
 void CTexture::Free()
 {

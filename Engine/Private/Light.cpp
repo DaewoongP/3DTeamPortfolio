@@ -2,11 +2,54 @@
 #include "Shader.h"
 #include "VIBuffer_Rect.h"
 
-HRESULT CLight::Initialize(const LIGHTDESC & LightDesc)
+void CLight::Set_LightDesc(LIGHTDESC LightDesc)
+{
+	m_LightDesc = LightDesc;
+}
+
+void CLight::Set_Position(_float4 vPosition)
+{
+	m_LightDesc.vPos = vPosition;
+}
+
+void CLight::Set_Range(_float fRange)
+{
+	m_LightDesc.fRange = fRange;
+}
+
+HRESULT CLight::Initialize(const LIGHTDESC& LightDesc)
 {
 	m_LightDesc = LightDesc;
 
 	return S_OK;
+}
+
+_bool CLight::Tick_Increase(_float fTimeDelta)
+{
+	m_fTimeAcc += fTimeDelta;
+
+	if (m_fTimeAcc > m_LightDesc.fTime)
+		return false;
+	
+	m_LightDesc.fRange += m_LightDesc.fIncreasePower * fTimeDelta;
+
+	return true;
+}
+
+_bool CLight::Tick_Decrease(_float fTimeDelta)
+{
+	m_fTimeAcc += fTimeDelta;
+
+	if (m_fTimeAcc > m_LightDesc.fTime)
+	{
+		m_fTimeAcc = 0.f;
+		return false;
+	}
+	
+	// Delta Range / Total Time - ºñÀ²
+	m_LightDesc.fRange -= m_LightDesc.fDecreaseStartRange * fTimeDelta / m_LightDesc.fTime;
+
+	return true;
 }
 
 HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
@@ -32,10 +75,10 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 	}
 	else if (TYPE_SPOTLIGHT == m_LightDesc.eType)
 	{
-		if (FAILED(pShader->Bind_RawValue("g_vLightDir", &m_LightDesc.vDir, sizeof(_float4))))
+		if (FAILED(pShader->Bind_RawValue("g_vLightPos", &m_LightDesc.vPos, sizeof(_float4))))
 			return E_FAIL;
 
-		if (FAILED(pShader->Bind_RawValue("g_vLightPos", &m_LightDesc.vPos, sizeof(_float4))))
+		if (FAILED(pShader->Bind_RawValue("g_vLightDir", &m_LightDesc.vDir, sizeof(_float4))))
 			return E_FAIL;
 
 		if (FAILED(pShader->Bind_RawValue("g_fSpotPower", &m_LightDesc.fSpotPower, sizeof(_float))))
@@ -60,9 +103,9 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 	return S_OK;
 }
 
-CLight * CLight::Create(const LIGHTDESC & LightDesc)
+CLight* CLight::Create(const LIGHTDESC& LightDesc)
 {
-	CLight*	pInstance = new CLight();
+	CLight* pInstance = New CLight();
 
 	if (FAILED(pInstance->Initialize(LightDesc)))
 	{

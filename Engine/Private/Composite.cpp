@@ -1,6 +1,5 @@
 #include "..\Public\Composite.h"
 #include "Component_Manager.h"
-#include "Object_Manager.h"
 #include "GameObject.h"
 
 CComposite::CComposite(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -14,6 +13,14 @@ CComposite::CComposite(const CComposite& rhs)
 {
 	for (auto& Pair : m_Components)
 		Safe_AddRef(Pair.second);
+}
+
+HRESULT CComposite::Initialize_Level(_uint iCurrentLevelIndex)
+{
+	for (auto& Pair : m_Components)
+		Pair.second->Initialize_Level(iCurrentLevelIndex);
+
+	return S_OK;
 }
 
 void CComposite::Tick(_float fTimeDelta)
@@ -39,8 +46,8 @@ HRESULT CComposite::Add_Component(_uint iLevelIndex, const _tchar* pPrototypeTag
 		return E_FAIL;
 
 	pComponent->Set_Owner(this);
-
-	m_Components.emplace(pComponentTag, pComponent);
+	pComponent->Set_Tag(pComponentTag);
+	m_Components.emplace(pComponent->Get_Tag(), pComponent);
 
 	*ppOut = pComponent;
 
@@ -61,11 +68,30 @@ CComponent* CComposite::Find_Component(const _tchar* pComponentTag)
 	return iter->second;
 }
 
+HRESULT CComposite::Delete_Component(const _tchar* pComponentTag)
+{
+	for (auto iter = m_Components.begin(); iter != m_Components.end(); )
+	{
+		if (0 == lstrcmp(iter->second->Get_Tag(), pComponentTag))
+		{
+			CComponent* pComponent = iter->second;
+			m_Components.erase(iter);
+			Safe_Release(pComponent);
+			return S_OK;
+		}
+		else
+			++iter;
+	}
+	
+	return E_FAIL;
+}
+
 void CComposite::Free()
 {
 	__super::Free();
 	
 	for (auto& Pair : m_Components)
 		Safe_Release(Pair.second);
+
 	m_Components.clear();
 }

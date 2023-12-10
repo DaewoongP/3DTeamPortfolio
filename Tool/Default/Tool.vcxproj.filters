@@ -28,6 +28,120 @@
     <Filter Include="01. Window\Window\Object">
       <UniqueIdentifier>{2bc6b588-e6c2-45a9-9a6a-54d36e172674}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. ToolObjects">
+      <UniqueIdentifier>{b502ae6c-8fee-4ddd-97a3-10ad6e32360b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy">
+      <UniqueIdentifier>{2a978e69-b607-4bbe-893c-3b5a6184f2b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\00. Terrain">
+      <UniqueIdentifier>{4972e54d-e58c-4d7f-87fe-f634679e5a7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Window\Window\UI">
+      <UniqueIdentifier>{05d913c5-58e8-4c63-8c76-3241b4090d81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Window\Window\Effect">
+      <UniqueIdentifier>{37ceec7f-c6e3-4d9c-821b-540ccead54ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\02. Camera">
+      <UniqueIdentifier>{29c98f31-784c-4063-929c-8e2c7599ba88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\03. Sky">
+      <UniqueIdentifier>{4461d7fd-a6a1-45bd-9424-3d9bfaf2e36f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Window\Window\Animation">
+      <UniqueIdentifier>{f24db859-61c1-45a9-96e6-80c730ace989}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Window\Window\Camera">
+      <UniqueIdentifier>{f32468df-1843-449e-b24d-9013f22a9513}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\02. Camera\MainCamera">
+      <UniqueIdentifier>{e3607828-83c0-4f82-982c-0cd009bdbfef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\02. Camera\Point">
+      <UniqueIdentifier>{7a033ea7-4f83-4cb2-8315-2a2d2969d849}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\02. Camera\CutScece_Camera_Tool">
+      <UniqueIdentifier>{efbdc30c-fe98-48c6-8a3c-5cd9b074b7b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\02. Camera\OffSet_Camera_Tool">
+      <UniqueIdentifier>{0df86fb0-2477-40ae-ae99-76e3b1229111}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. Default\Std_Image">
+      <UniqueIdentifier>{fd6cb91a-0121-492c-b29f-3622ec8c0c61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy\MapDummy">
+      <UniqueIdentifier>{a4baf458-dc0d-43c6-8d7d-f8bbed6e8418}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\04. MapObject">
+      <UniqueIdentifier>{acfec862-2a8b-4247-b8d7-d1fb72b2b96b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy\Dummy_UI">
+      <UniqueIdentifier>{c00841da-60c8-4a06-8085-e61201453246}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Window\Window\Light">
+      <UniqueIdentifier>{1a991a8d-af21-4d4f-8ec1-97cdc81216c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Window\CustomWidget">
+      <UniqueIdentifier>{5829ef33-95f1-4ef6-9d84-dfbc9937f3db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Window\CustomWidget\ComboBox">
+      <UniqueIdentifier>{f9534f91-957f-4cb3-b18a-f0c81e29a299}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Window\CustomWidget\ImageFileDialog">
+      <UniqueIdentifier>{81507f5c-9829-4bd2-aef0-11d9fe9c488b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy\Dummy_Font">
+      <UniqueIdentifier>{93814c9a-ebfe-4f49-93d2-c4b71a7a60fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Window\CustomWidget\HelpMaker">
+      <UniqueIdentifier>{d6c45bec-d187-4db1-adf1-30da1bfb54cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\02. Camera\CameraLine">
+      <UniqueIdentifier>{f3dc9106-3922-45b1-89cd-257988ae1513}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\04. MapObject\MapObject_Ins">
+      <UniqueIdentifier>{ed120183-3292-48e2-bb04-e5ea122e3821}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Window\Window\Navigation">
+      <UniqueIdentifier>{1604be8a-97e3-4386-885c-d69774abbd80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Window\Window\Light\LightDot">
+      <UniqueIdentifier>{349bca11-b3f2-43b9-9433-c761b0c4903a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Window\Window\Cloth">
+      <UniqueIdentifier>{b22e6093-ef65-47d6-8b49-65a9a34f497e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy\Dummy_Cloth">
+      <UniqueIdentifier>{96d81abe-75a6-4828-952f-2eb9e1a68bb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\06. PhysX">
+      <UniqueIdentifier>{f99c162b-06a0-4805-9bf5-4624a6157e42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Window\Window\TriangleCollider">
+      <UniqueIdentifier>{37f2fa06-2d22-45ba-b600-79e1ddd37989}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\05. TrianlgeColMesh">
+      <UniqueIdentifier>{a1c13a60-e1b0-4642-95b8-30f251a9228d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy\Dummy_Effect">
+      <UniqueIdentifier>{bda54650-3679-4a83-97e6-2e489457f5aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy\Dummy_Effect\DummyParticle">
+      <UniqueIdentifier>{7edb6c26-6338-4754-9239-502063c38924}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy\Dummy_Effect\DummyMeshEffect">
+      <UniqueIdentifier>{5c072822-d3f0-4560-b1e1-0352b7658505}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy\Dummy_Effect\DummyTrail">
+      <UniqueIdentifier>{54e7e86b-5a40-424a-957c-7e19887c5f19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy\Dummy_Effect\DummyFlipbook">
+      <UniqueIdentifier>{665a7634-50a5-4d36-b316-13f012d01026}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Window\Window\Monster">
+      <UniqueIdentifier>{13a1d64c-b8ec-4bc3-b317-1a0bf7f90ef5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -96,6 +210,120 @@
     <ClInclude Include="..\public\Object_Window.h">
       <Filter>01. Window\Window\Object</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Terrain.h">
+      <Filter>02. ToolObjects\00. Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Window.h">
+      <Filter>01. Window\Window\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Window.h">
+      <Filter>01. Window\Window\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Camera_Free.h">
+      <Filter>02. ToolObjects\02. Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sky.h">
+      <Filter>02. ToolObjects\03. Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DummyParticle.h">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Effect\DummyParticle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Animation_Window.h">
+      <Filter>01. Window\Window\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Dummy.h">
+      <Filter>02. ToolObjects\01. Dummy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Window.h">
+      <Filter>01. Window\Window\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Main_Camera.h">
+      <Filter>02. ToolObjects\02. Camera\MainCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Point.h">
+      <Filter>02. ToolObjects\02. Camera\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CutScene_Camera_Tool.h">
+      <Filter>02. ToolObjects\02. Camera\CutScece_Camera_Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\stb_image.h">
+      <Filter>98. Default\Std_Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Dummy_UI.h">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MapDummy.h">
+      <Filter>02. ToolObjects\01. Dummy\MapDummy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MapObject.h">
+      <Filter>02. ToolObjects\04. MapObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Light_Window.h">
+      <Filter>01. Window\Window\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CustomWidget.h">
+      <Filter>01. Window\CustomWidget</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ComboBox.h">
+      <Filter>01. Window\CustomWidget\ComboBox</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageFileDialog.h">
+      <Filter>01. Window\CustomWidget\ImageFileDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tool_Functions.h">
+      <Filter>99. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Dummy_Font.h">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Dummy_UI_Group.h">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_UI</Filter>
+    </ClInclude>
+    <ClInclude Include="HelpMaker.h">
+      <Filter>01. Window\CustomWidget\HelpMaker</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Line.h">
+      <Filter>02. ToolObjects\02. Camera\CameraLine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MapObject_Ins.h">
+      <Filter>02. ToolObjects\04. MapObject\MapObject_Ins</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DummyMeshEffect.h">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Effect\DummyMeshEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Navigation_Window.h">
+      <Filter>01. Window\Window\Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LightDot.h">
+      <Filter>01. Window\Window\Light\LightDot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Cloth_Window.h">
+      <Filter>01. Window\Window\Cloth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Dummy_Cloth.h">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Cloth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DummyTrail.h">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Effect\DummyTrail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PhysXRender.h">
+      <Filter>02. ToolObjects\06. PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TriangleCollider_Window.h">
+      <Filter>01. Window\Window\TriangleCollider</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TriangleColMesh.h">
+      <Filter>02. ToolObjects\05. TrianlgeColMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Dummy_Effect.h">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DummyFlipBook.h">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Effect\DummyFlipbook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Monster_Window.h">
+      <Filter>01. Window\Window\Monster</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -153,6 +381,111 @@
     <ClCompile Include="..\private\Object_Window.cpp">
       <Filter>01. Window\Window\Object</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Terrain.cpp">
+      <Filter>02. ToolObjects\00. Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Window.cpp">
+      <Filter>01. Window\Window\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Window.cpp">
+      <Filter>01. Window\Window\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Camera_Free.cpp">
+      <Filter>02. ToolObjects\02. Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sky.cpp">
+      <Filter>02. ToolObjects\03. Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DummyParticle.cpp">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Effect\DummyParticle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Animation_Window.cpp">
+      <Filter>01. Window\Window\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Dummy.cpp">
+      <Filter>02. ToolObjects\01. Dummy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Camera_Window.cpp">
+      <Filter>01. Window\Window\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Main_Camera.cpp">
+      <Filter>02. ToolObjects\02. Camera\MainCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Camera_Point.cpp">
+      <Filter>02. ToolObjects\02. Camera\Point</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CutScene_Camera_Tool.cpp">
+      <Filter>02. ToolObjects\02. Camera\CutScece_Camera_Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Dummy_UI.cpp">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MapDummy.cpp">
+      <Filter>02. ToolObjects\01. Dummy\MapDummy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MapObject.cpp">
+      <Filter>02. ToolObjects\04. MapObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Light_Window.cpp">
+      <Filter>01. Window\Window\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CustomWidget.cpp">
+      <Filter>01. Window\CustomWidget</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ComboBox.cpp">
+      <Filter>01. Window\CustomWidget\ComboBox</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageFileDialog.cpp">
+      <Filter>01. Window\CustomWidget\ImageFileDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Dummy_Font.cpp">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Font</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Dummy_UI_Group.cpp">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Camera_Line.cpp">
+      <Filter>02. ToolObjects\02. Camera\CameraLine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MapObject_Ins.cpp">
+      <Filter>02. ToolObjects\04. MapObject\MapObject_Ins</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DummyMeshEffect.cpp">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Effect\DummyMeshEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Navigation_Window.cpp">
+      <Filter>01. Window\Window\Navigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LightDot.cpp">
+      <Filter>01. Window\Window\Light\LightDot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Cloth_Window.cpp">
+      <Filter>01. Window\Window\Cloth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Dummy_Cloth.cpp">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Cloth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DummyTrail.cpp">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Effect\DummyTrail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PhysXRender.cpp">
+      <Filter>02. ToolObjects\06. PhysX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TriangleCollider_Window.cpp">
+      <Filter>01. Window\Window\TriangleCollider</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TriangleColMesh.cpp">
+      <Filter>02. ToolObjects\05. TrianlgeColMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Dummy_Effect.cpp">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DummyFlipBook.cpp">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Effect\DummyFlipbook</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Monster_Window.cpp">
+      <Filter>01. Window\Window\Monster</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Shader_Tool_Defines.hlsli">
@@ -163,7 +496,31 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Test.hlsl">
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Terrain.hlsl">
+      <Filter>97. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Sky.hlsl">
+      <Filter>97. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl">
+      <Filter>97. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl">
+      <Filter>97. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl">
+      <Filter>97. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl">
+      <Filter>97. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl">
+      <Filter>97. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointColInstance.hlsl">
+      <Filter>97. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMeshInstance.hlsl">
       <Filter>97. ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

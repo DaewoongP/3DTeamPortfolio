@@ -1,67 +1,102 @@
 #include "..\Public\Layer.h"
-#include "..\Public\GameObject.h"
+#include "Component.h"
 
 CLayer::CLayer()
 {
 }
 
-HRESULT CLayer::Add_GameObjects(const _tchar* pGameObjectTag, CGameObject* pGameObject)
+HRESULT CLayer::Initialize_Level(_uint iCurrentLevelIndex)
 {
-	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-
-	if (nullptr != Find_GameObject(pGameObjectTag))
-	{
-		MSG_BOX("GameObject Tag is Already Used");
-		return E_FAIL;
-	}
-	
-	m_GameObjects.emplace(pGameObjectTag, pGameObject);
+	for (auto& pComponent : m_Components)
+		pComponent.second->Initialize_Level(iCurrentLevelIndex);
 
 	return S_OK;
 }
 
-CGameObject* CLayer::Find_GameObject(const _tchar* pGameObjectTag)
+HRESULT CLayer::Add_Component(const _tchar* pComponentTag, CComponent* pComponent)
 {
-	auto	iter = find_if(m_GameObjects.begin(), m_GameObjects.end(), CTag_Finder(pGameObjectTag));
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
 
-	if (iter == m_GameObjects.end())
-		return nullptr;
+	if (nullptr != Find_Component(pComponentTag))
+	{
+		MSG_BOX("Component Tag is Already Used");
+		return E_FAIL;
+	}
 
-	return iter->second;
+	pComponent->Set_Tag(pComponentTag);
+
+	m_Components.emplace(pComponent->Get_Tag(), pComponent);
+
+	return S_OK;
 }
 
-HRESULT CLayer::Clear_Layer()
+HRESULT CLayer::Delete_Component(const _tchar* pComponentTag)
 {
-	for (auto& pGameObject : m_GameObjects)
-		Safe_Release(pGameObject.second);
+	CComponent* pComponent = Find_Component(pComponentTag);
+	if (nullptr == pComponent)
+	{
+		return E_FAIL;
+	}
 
-	m_GameObjects.clear();
+	for (auto iter = m_Components.begin(); iter != m_Components.end(); )
+	{
+		if (0 == lstrcmp(iter->first, pComponentTag))
+		{
+			iter = m_Components.erase(iter);
+			Safe_Release(pComponent);
+			return S_OK;
+		}
+		else
+			++iter;
+	}
 
 	return S_OK;
 }
 
 void CLayer::Tick(_float fTimeDelta)
 {
-	for (auto& pGameObject : m_GameObjects)
-		pGameObject.second->Tick(fTimeDelta);
+	for (auto& pComponent : m_Components)
+		pComponent.second->Tick(fTimeDelta);
 }
 
 void CLayer::Late_Tick(_float fTimeDelta)
 {
-	for (auto& pGameObject : m_GameObjects)
-		pGameObject.second->Late_Tick(fTimeDelta);
+	for (auto iter = m_Components.begin(); iter != m_Components.end();)
+	{
+		iter->second->Late_Tick(fTimeDelta);
+
+		if (CComponent::OBJ_DEAD == iter->second->Get_ObjEvent())
+		{
+			Safe_Release(iter->second);
+			iter = m_Components.erase(iter);
+		}
+		else
+		{
+			++iter;
+		}
+	}
+}
+
+CComponent* CLayer::Find_Component(const _tchar* pComponentTag)
+{
+	auto	iter = find_if(m_Components.begin(), m_Components.end(), CTag_Finder(pComponentTag));
+
+	if (iter == m_Components.end())
+		return nullptr;
+
+	return iter->second;
 }
 
 CLayer* CLayer::Create()
 {
-	return new CLayer();
+	return New CLayer();
 }
 
 void CLayer::Free()
 {
-	for (auto& pGameObject : m_GameObjects)
-		Safe_Release(pGameObject.second);
+	for (auto& pComponent : m_Components)
+		Safe_Release(pComponent.second);
 
-	m_GameObjects.clear();
+	m_Components.clear();
 }
 

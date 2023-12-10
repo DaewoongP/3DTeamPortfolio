@@ -81,7 +81,13 @@ HRESULT CGraphic_Device::Present()
 {
 	NULL_CHECK_RETURN_MSG(m_pSwapChain, E_FAIL, L"SwapChain NULL");
 
-	return m_pSwapChain->Present(0, 0);
+	if (FAILED(m_pSwapChain->Present(0, 0)))
+	{
+		HRESULT hr = m_pDevice->GetDeviceRemovedReason();
+		__debugbreak();
+	}
+
+	return S_OK;
 }
 
 HRESULT CGraphic_Device::Bind_BackBuffer()
@@ -170,7 +176,7 @@ HRESULT CGraphic_Device::Ready_DepthStencilRenderTargetView(_uint iWinCX, _uint 
 	TextureDesc.SampleDesc.Count = 1;
 	TextureDesc.Usage = D3D11_USAGE_DEFAULT;
 
-	TextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL/*| D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE*/;
+	TextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	TextureDesc.CPUAccessFlags = 0;
 	TextureDesc.MiscFlags = 0;
 
@@ -191,7 +197,7 @@ void CGraphic_Device::Free()
 	Safe_Release(m_pDepthStencilView);
 
 	// 컴객체 누수시 디버그 용도.
-	/*#if defined(DEBUG) || defined(_DEBUG)
+	#if defined(DEBUG) || defined(_DEBUG)
 		ID3D11Debug* d3dDebug;
 		HRESULT hr = m_pDevice->QueryInterface(__uuidof(ID3D11Debug), reinterpret_cast<void**>(&d3dDebug));
 		if (SUCCEEDED(hr))
@@ -207,7 +213,7 @@ void CGraphic_Device::Free()
 			OutputDebugStringW(L"----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- \r ");
 		}
 		if (d3dDebug != nullptr)            d3dDebug->Release();
-	#endif*/
+	#endif
 
 	// 디버그할때 디바이스가 필요하여 아래쪽에서 삭제처리.
 	Safe_Release(m_pDevice);

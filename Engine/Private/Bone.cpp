@@ -14,16 +14,16 @@ CBone::CBone(const CBone& rhs)
 	lstrcpy(m_szName, rhs.m_szName);
 }
 
-HRESULT CBone::Initialize(Engine::NODE* pNode)
+HRESULT CBone::Initialize(Engine::NODE Node)
 {
-	lstrcpy(m_szName, pNode->szName);
-	memcpy(&m_TransformationMatrix, &pNode->TransformationMatrix, sizeof _float4x4);
+	lstrcpy(m_szName, Node.szName);
+	memcpy(&m_TransformationMatrix, &Node.TransformationMatrix, sizeof _float4x4);
 	m_TransformationMatrix = m_TransformationMatrix;
 	m_CombinedTransformationMatrix = XMMatrixIdentity();
 	m_OffsetMatrix = XMMatrixIdentity();
 
-	m_iParentIndex = pNode->iParent;
-	m_iIndex = pNode->iNodeIndex;
+	m_iParentIndex = Node.iParent;
+	m_iIndex = Node.iNodeIndex;
 	
 	return S_OK;
 }
@@ -43,20 +43,40 @@ void CBone::Invalidate_CombinedTransformationMatrix(const CModel::BONES& Bones)
 	}
 }
 
-CBone* CBone::Create(Engine::NODE* pNode)
+void CBone::Invalidate_CombinedTransformationMatrix_Basic(const CModel::BONES& Bones)
 {
-	CBone* pInstance = new CBone();
-	if (FAILED(pInstance->Initialize(pNode)))
+	_float4x4 scaleAddMatrix = m_TransformationMatrix;
+
+	_float fXLength = Bones[m_iParentIndex]->m_CombinedTransformationMatrix.Right().Length();
+	_float fYLength = Bones[m_iParentIndex]->m_CombinedTransformationMatrix.Up().Length();
+	_float fZLength = Bones[m_iParentIndex]->m_CombinedTransformationMatrix.Look().Length();
+
+	_float4x4 scaleMatrix = XMMatrixScaling(fXLength, fYLength, fZLength);
+	m_CombinedTransformationMatrix = m_TransformationMatrix * scaleMatrix;
+}
+
+void CBone::Reset_CombinedTransformationMatrix()
+{
+	XMStoreFloat4x4(&m_CombinedTransformationMatrix,
+		XMMatrixIdentity());
+}
+
+CBone* CBone::Create(Engine::NODE Node)
+{
+	CBone* pInstance = New CBone();
+
+	if (FAILED(pInstance->Initialize(Node)))
 	{
 		MSG_BOX("Failed to Created CBone");
 		Safe_Release(pInstance);
 	}
+
 	return pInstance;
 }
 
 CBone* CBone::Clone()
 {
-	return new CBone(*this);
+	return New CBone(*this);
 }
 
 void CBone::Free()

@@ -1,6 +1,24 @@
-#include "..\Public\MainTool.h"
+#include "MainTool.h"
 #include "GameInstance.h"
 #include "Level_Tool.h"
+#include "Dummy.h"
+#include "MapDummy.h"
+#include "MapObject.h"
+#include "MapObject_Ins.h"
+#include "LightDot.h"
+#include "Camera_Point.h"
+#include "DummyMeshEffect.h"
+#include "DummyTrail.h"
+#include "DummyFlipBook.h"
+#include "Dummy_Effect.h"
+#include "TriangleColMesh.h"
+#include "Sound_Manager.h"
+
+#ifdef _DEBUG
+
+#include "Camera_Line.h"
+
+#endif
 
 CMainTool::CMainTool()
 	: m_pGameInstance(CGameInstance::GetInstance())
@@ -16,10 +34,10 @@ CMainTool::CMainTool()
 
 HRESULT CMainTool::Initialize()
 {
-	// ±×·¡ÇÈ µð¹ÙÀÌ½º¸¦ ¸¸µé±â À§ÇÑ ±¸Á¶Ã¼ ÇÒ´ç
+	// ê·¸ëž˜í”½ ë””ë°”ì´ìŠ¤ë¥¼ ë§Œë“¤ê¸° ìœ„í•œ êµ¬ì¡°ì²´ í• ë‹¹
 	GRAPHICDESC		GraphicDesc;
 	ZEROMEM(&GraphicDesc);
-
+	
 	GraphicDesc.hWnd = g_hWnd;
 	GraphicDesc.iViewportSizeX = g_iWinSizeX;
 	GraphicDesc.iViewportSizeY = g_iWinSizeY;
@@ -27,17 +45,20 @@ HRESULT CMainTool::Initialize()
 
 	if (FAILED(m_pGameInstance->Initialize_Engine(g_hInst, LEVEL_END, GraphicDesc, &m_pDevice, &m_pContext)))
 		return E_FAIL;
-
+	
 	if (FAILED(Initialize_ImGui()))
 		return E_FAIL;
 
-	if (FAILED(Ready_Prototype_Component_For_Static()))
+	if (FAILED(Ready_Prototype_Component()))
+		return E_FAIL;
+
+	if (FAILED(Ready_Prototype_Object()))
 		return E_FAIL;
 
 	if (FAILED(Ready_Fonts()))
 		return E_FAIL;
 
-	if (FAILED(Add_Windows()))
+	if (FAILED(m_pWindow_Manager->Initialize(m_pDevice, m_pContext)))
 		return E_FAIL;
 
 	if (FAILED(Open_Level(LEVEL_TOOL)))
@@ -56,9 +77,7 @@ void CMainTool::Tick(_float fTimeDelta)
 	
 	Tick_ImGui();
 
-	ImGui::ShowDemoWindow();
-
-	// ¿£ÁøÀÇ Tick È£Ãâ
+	// ì—”ì§„ì˜ Tick í˜¸ì¶œ
 	m_pGameInstance->Tick_Engine(fTimeDelta);
 
 	m_pWindow_Manager->Tick(fTimeDelta);
@@ -110,6 +129,7 @@ HRESULT CMainTool::Initialize_ImGui()
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
+	io.Fonts->AddFontFromFileTTF("../../Resources/Fonts/NEXONLv1GothicBold.ttf", 15.0f, NULL, io.Fonts->GetGlyphRangesKorean());
 
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
@@ -156,39 +176,22 @@ HRESULT CMainTool::Initialize_ImGui()
 
 HRESULT CMainTool::Render_ImGui()
 {
-	// ¿©±â¼­ ³» ¹é¹öÆÛ¸¦ »©°í ¹«½¼ ÀÛ¾÷À» ÃÄ³õ°í ±×·È´Âµ¥,
-	// ³»¹é¹öÆÛ¸¦ ´Ù½Ã ÀåÄ¡¿¡ ¹ÙÀÎµùÇÏ±âÀ§ÇØ ·»´õ 
+	// ì—¬ê¸°ì„œ ë‚´ ë°±ë²„í¼ë¥¼ ë¹¼ê³  ë¬´ìŠ¨ ìž‘ì—…ì„ ì³ë†“ê³  ê·¸ë ¸ëŠ”ë°,
+	// ë‚´ë°±ë²„í¼ë¥¼ ë‹¤ì‹œ ìž¥ì¹˜ì— ë°”ì¸ë”©í•˜ê¸°ìœ„í•´ ë Œë” 
 	ImGui::EndFrame();
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	ImGui::UpdatePlatformWindows();
 	ImGui::RenderPlatformWindowsDefault();
 
-	// ¿ø·¡ÀÇ ¹é¹öÆÛ¸¦ ´Ù½Ã ÀåÄ¡¿¡ ¹ÙÀÎµù ÇØÁØ´Ù.
+	// ì›ëž˜ì˜ ë°±ë²„í¼ë¥¼ ë‹¤ì‹œ ìž¥ì¹˜ì— ë°”ì¸ë”© í•´ì¤€ë‹¤.
 	if (FAILED(m_pGameInstance->Bind_BackBuffer()))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-HRESULT CMainTool::Add_Windows()
-{
-	if (nullptr == m_pWindow_Manager)
-		return E_FAIL;
-
-	RECT rc;
-	ZEROMEM(&rc);
-	GetWindowRect(g_hWnd, &rc);
-
-	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Object_Window"), 
-		CObject_Window::Create(m_pDevice, m_pContext, 
-			ImVec2(_float(rc.right), _float(rc.top)), ImVec2(100.f, 100.f)))))
-		return E_FAIL;
-
-	return S_OK;
-}
-
-HRESULT CMainTool::Ready_Prototype_Component_For_Static()
+HRESULT CMainTool::Ready_Prototype_Component()
 {
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
@@ -201,7 +204,475 @@ HRESULT CMainTool::Ready_Prototype_Component_For_Static()
 		return E_FAIL;
 	}
 	Safe_AddRef(m_pRenderer);
+	m_pRenderer->Get_Dof()->Off();
 
+	/* Prototype_Component_Shader_Debug */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_Debug"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Debug.hlsl"),
+			VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
+		return E_FAIL;
+
+	/* Prototype_Component_Shader_Terrain */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_Terrain"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Terrain.hlsl"),
+			VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
+		return E_FAIL;
+
+	/* Prototype_Component_Shader_DefaultEffect */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_DefaultEffect"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_DefaultEffect.hlsl"),
+			VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
+		return E_FAIL;
+
+	/* Prototype_Component_Shader_VtxTex */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxTex"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTex.hlsl"),
+			VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Shader_VtxCube */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxCube"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Sky.hlsl"),
+			VTXPOSCUBE_DECL::Elements, VTXPOSCUBE_DECL::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Shader_VtxPointColInstance */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxPointColInstance"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointColInstance.hlsl"),
+			VTXPOINTCOLORINSTANCE_DECL::Elements, VTXPOINTCOLORINSTANCE_DECL::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Shader_VtxRectColInstance */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxRectColInstance"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxRectColInstance.hlsl"),
+			VTXRECTCOLORINSTANCE_DECL::Elements, VTXRECTCOLORINSTANCE_DECL::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Shader_VtxMesh */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxMesh"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMesh.hlsl"),
+			VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Shader_VtxAnimMesh */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAnimMesh.hlsl"), 
+			VTXANIMMESH_DECL::Elements, VTXANIMMESH_DECL::iNumElements))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Shader_VtxAnimMesh)");
+		return E_FAIL;
+	}
+
+	/* For.Prototype_Component_Shader_MeshInstance */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxMeshInstance"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshInstance.hlsl"),
+			VTXMESHINSTANCE_DECL::Elements, VTXMESHINSTANCE_DECL::iNumElements))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Shader_VtxMeshInstance)");
+		return E_FAIL;
+	}
+
+	/* For.Prototype_Component_Shader_Navigation */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_Navigation"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Navigation.hlsl"),
+			VTXPOS_DECL::Elements, VTXPOS_DECL::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_VIBuffer_Line */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Line"),
+		CVIBuffer_Line::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_VIBuffer_Line)");
+		return E_FAIL;
+	}
+
+	/* For.Prototype_Component_VIBuffer_Triangle */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Triangle"),
+		CVIBuffer_Triangle::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Prototype_Component_VIBuffer_Rect */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Rect"),
+		CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Prototype_Component_VIBuffer_GeoSphere */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_GeoSphere"),
+		CVIBuffer_GeoSphere::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Prototype_Component_VIBuffer_Terrain */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Terrain"),
+		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 513, 513))))
+		return E_FAIL;
+
+	/* Prototype_Component_VIBuffer_Cube */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Cube"),
+		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Prototype_Component_VIBuffer_Point_Color_Instance*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Point_Color_Instance"),
+		CVIBuffer_Point_Color_Instance::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Prototype_Component_VIBuffer_Rect_Color_Instance*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Rect_Color_Instance"),
+		CVIBuffer_Rect_Color_Instance::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Prototype_Component_Texture_Terrain */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Terrain"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Tile%d.dds"), 2))))
+		return E_FAIL;
+
+	/* Prototype_Component_Texture_Burger_Sky */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Burger_Sky"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/SkyBox/Sky_%d.dds"), 4))))
+		return E_FAIL;
+
+	/* Prototype_Component_Texture_Default */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Default"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Default0.jpg")))))
+		return E_FAIL;
+
+	/* Prototype_Component_Texture_Default_Particle*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Default_Particle"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Default_Particle.png")))))
+		return E_FAIL;
+
+	/* Prototype_Component_Texture_T_Default_Material_Grid_M*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_T_Default_Material_Grid_M"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/T_Default_Material_Grid_M.png")))))
+		return E_FAIL;
+
+	/* Prototype_Component_Texture_Ground */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Ground"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Texture/Terrain/Ground/Ground%d.dds"), 4))))
+		return E_FAIL;
+
+	/* Prototype_Component_Sphere_Collider*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Sphere_Collider"),
+		CCollider::Create(m_pDevice, m_pContext,CCollider::TYPE_SPHERE))))
+		return E_FAIL;
+	
+	/* Prototype_Component_RigidBody*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_RigidBody"),
+		CRigidBody::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	
+	/* Prototype_Component_Model_SM_SpherePrimitiveRegularNormals_01*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL
+		, TEXT("Prototype_Component_Model_SM_SpherePrimitiveRegularNormals_01")
+		, CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM
+		, TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat")))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CMainTool::Ready_Prototype_Object()
+{
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_Terrain"),
+		CTerrain::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_Camera_Free"),
+		CCamera_Free::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_Sky"),
+		CSky::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyParticle"),
+		CDummyParticle::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Test/")))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyMeshEffect"),
+		CDummyMeshEffect::Create(m_pDevice, m_pContext, TEXT(""), LEVEL_TOOL))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyTrail"),
+		CDummyTrail::Create(m_pDevice, m_pContext, TEXT(""), LEVEL_TOOL))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyFlipbook"),
+		CDummyFlipBook::Create(m_pDevice, m_pContext, LEVEL_TOOL, nullptr))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyEffect"),
+		CDummy_Effect::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Prototype_GameObject_Dummy*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_Dummy"),
+		CDummy::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Prototype_GameObject_MapDummy*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_MapDummy"),
+		CMapDummy::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Prototype_GameObject_MapObject*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_MapObject"),
+		CMapObject::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Prototype_GameObject_MapObject_Ins*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_MapObject_Ins"),
+		CMapObject_Ins::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+		
+	/* Prototype_GameObject_LightDot*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_LightDot"),
+		CLightDot::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Prototype_GameObject_Camera_Point*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_Camera_Point"),
+		CCamera_Point::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Prototype_GameObject_Camera_Point*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_Shape_GeoSphere"),
+		CShape_GeoSphere::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Prototype_GameObject_TriangleColMesh*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_TriangleColMesh"),
+		CTriangleColMesh::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	
+	BEGININSTANCE;
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Dark_Wizard_Male_A/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Dark_Wizard_Male_B/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Dark_Wizard_Male_C/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Dark_Wizard_Male_D/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Player/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Eleazar_Fig/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Pensive/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Golem/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Monster/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Dugbog/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Player_Movement/"));
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/Troll/"));
+
+	pGameInstance->Add_Sounds(TEXT("../../Resources/Sound/ConjuredDragon/"));
+	ENDINSTANCE;
+
+#pragma region Load Particle
+	{
+		std::lock_guard<std::mutex> lock(mtx);
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Dust01"),
+			TEXT("../../Resources/GameData/ParticleData/Misc/Dust01/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Dust01");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Dust02"),
+			TEXT("../../Resources/GameData/ParticleData/Misc/Dust02/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Dust02");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_RockChunksRough"),
+			TEXT("../../Resources/GameData/ParticleData/Misc/RockChunksRough/"), 3)))
+			throw TEXT("Reserve Particle : Particle_RockChunksRough");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Golem_Dash_Gas_Splash"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Golem_Dash/Gas_Splash/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Golem_Dash_Gas_Splash");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Golem_Dash_Gas_Twinkle"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Golem_Dash/Gas_Twinkle/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Golem_Dash_Gas_Twinkle");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Golem_Hit"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Golem_Hit/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Golem_Hit");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Golem_Slash_Trace_Twinkle"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Golem_Slash/Trace_Twinkle/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Golem_Slash_Trace_Twinkle");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_Hammer_Trace_Rock"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Troll_Hammer_Trace_Rock/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Troll_Hammer_Trace_Rock");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_Hand_Black"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Troll_Hand_Black/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Troll_Hand_Black");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_TwoHand_Dust"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Troll_TwoHand_Dust/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Troll_TwoHand_Dust");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_TwoHand_Stone"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Troll_TwoHand_Stone/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Troll_TwoHand_Stone");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_TwoHand_Dust_Mini"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Troll_TwoHand_Dust_Mini/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Troll_TwoHand_Dust_Mini");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_TwoHand_Stone_Mini"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Troll_TwoHand_Stone_Mini/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Troll_TwoHand_Stone_Mini");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_TwoHand_StoneRain"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Troll_TwoHand_StoneRain/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Troll_TwoHand_StoneRain");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_Foot_Circle_Dust"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Troll_Foot_Circle_Dust/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Troll_Foot_Circle_Dust");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_Landing_Dust"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Troll_Landing_Dust/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Troll_Landing_Dust");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_Toe_Landing_Dust"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Troll_Toe_Landing_Dust/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Troll_Toe_Landing_Dust");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_Weapon_Trace"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Troll_Weapon_Trace/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Troll_Weapon_Trace");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DugBog_Chim"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/DugBog_Chim/"), 3)))
+			throw TEXT("Reserve Particle : Particle_DugBog_Chim");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DogBog_Trace_Rock"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/DogBog_Trace_Rock/"), 3)))
+			throw TEXT("Reserve Particle : Particle_DogBog_Trace_Rock");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DogBog_Chim_Red"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/DogBog_Chim_Red/"), 3)))
+			throw TEXT("Reserve Particle : Particle_DogBog_Chim_Red");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DogBog_Chim_Blue"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/DogBog_Chim_Blue/"), 3)))
+			throw TEXT("Reserve Particle : Particle_DogBog_Chim_Blue");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DogBog_Trace_Water"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/DogBog_Trace_Water/"), 3)))
+			throw TEXT("Reserve Particle : Particle_DogBog_Trace_Water");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_DogBog_Water_Foot"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/DogBog_Water_Foot/"), 3)))
+			throw TEXT("Reserve Particle : Particle_DogBog_Water_Foot");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Hit_Circle"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Hit/Circle/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Pensive_Hit_Circle");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Hit_Distotion"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Hit/Distotion/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Pensive_Hit_Distotion");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Hit_Spread"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Hit/Spread/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Pensive_Hit_Spread");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Hit_Stick_Glow"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Hit/Stick_Glow/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Pensive_Hit_Stick_Glow");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Black_Water"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Black_Water/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Pensive_Appear_Black_Water");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Water_Bubble"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Water_Bubble/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Pensive_Appear_Water_Bubble");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Water_Main"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Water_Main/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Pensive_Appear_Water_Main");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Water_Splash_01"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Water_Splash_01/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Pensive_Appear_Water_Splash_01");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Water_Splash_02"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Water_Splash_02/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Pensive_Appear_Water_Splash_02");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Pensive_Appear_Flare"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Pensive/Appear/Flare/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Pensive_Appear_Flare");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Conjured_Step_Dust"),
+			TEXT("../../Resources/GameData/ParticleData/BoneDragon/StepDust/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Conjured_Step_Dust");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Conjured_FallDown_Dust_01"),
+			TEXT("../../Resources/GameData/ParticleData/Misc/FallDownDust01/"), 1)))
+			throw TEXT("Reserve Particle : Particle_Conjured_FallDown_Dust_01");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Conjured_FallDown_Dust_02"),
+			TEXT("../../Resources/GameData/ParticleData/Misc/FallDownDust02/"), 1)))
+			throw TEXT("Reserve Particle : Particle_Conjured_FallDown_Dust_02");
+	}
+#pragma endregion
+
+	/*For.Player_BlinkEffect*/
+	if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Effect"),
+		TEXT("../../Resources/GameData/ParticleData/Blink/BlinkFog"))))
+		throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Effect");
+
+	if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Effect1"),
+		TEXT("../../Resources/GameData/ParticleData/Blink/BlinkFog1"))))
+		throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Effect1");
+
+	if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Effect2"),
+		TEXT("../../Resources/GameData/ParticleData/Blink/BlinkFog2"))))
+		throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Effect2");
+
+
+	if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Disotrtion"),
+		TEXT("../../Resources/GameData/ParticleData/Blink/BlinkDistortion"))))
+		throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Disotrtion");
+
+	if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_SubEffect"),
+		TEXT("../../Resources/GameData/ParticleData/Blink/BlinkFoot"))))
+		throw TEXT("Reserve Particle : Prototype_GameObject_Blink_SubEffect");
+
+	if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Particle"),
+		TEXT("../../Resources/GameData/ParticleData/Blink/BlinkParticle"))))
+		throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Particle");
+
+	if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Blink_Ring"),
+		TEXT("../../Resources/GameData/ParticleData/Blink/BlinkRing"))))
+		throw TEXT("Reserve Particle : Prototype_GameObject_Blink_Ring");
+
+	/*For.Player_Hit_Particle*/
+	if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Player_Hit_Dust"),
+		TEXT("../../Resources/GameData/ParticleData/PlayerHit/HitDust"))))
+		throw TEXT("Reserve Particle : Prototype_GameObject_Player_Hit_Dust");
+
+	/*For.Player_BasicCast_Particle*/
+	if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_WandLine"),
+		TEXT("../../Resources/GameData/ParticleData/BasicCast/WandLine"))))
+		throw TEXT("Reserve Particle : Prototype_GameObject_WandLine");
+	/*For.Player_DiffindoLine_Particle*/
+	if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_DiffindoLine"),
+		TEXT("../../Resources/GameData/ParticleData/Diffindo/Cast_Line"))))
+		throw TEXT("Reserve Particle : Prototype_GameObject_DiffindoLine");
+	/*For.Player_Crusio_Particle*/
+	if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Prototype_GameObject_Finisher_WandLine"),
+		TEXT("../../Resources/GameData/ParticleData/Lightning/WandLine"))))
+		throw TEXT("Reserve Particle : Prototype_GameObject_Finisher_WandLine");
+
+
+#ifdef _DEBUG
+
+	/* Prototype_GameObject_Camera_Line*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_Camera_Line"),
+		CCamera_Line::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+#endif
 	return S_OK;
 }
 

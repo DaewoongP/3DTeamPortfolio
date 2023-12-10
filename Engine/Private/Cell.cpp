@@ -7,6 +7,7 @@
 CCell::CCell(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
 	, m_pContext(pContext)
+
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
@@ -80,19 +81,32 @@ _bool CCell::Compare_Points(_float3 vSourPoint, _float3 vDestPoint)
 	return false;
 }
 
-_bool CCell::is_In(_float3 vPosition, _int* pNeighborIndex)
+_bool CCell::Is_In(_float3 vPosition, _Inout_ _float3* pNormal, _Inout_ _int* pNeighborIndex, _Inout_ CELLFLAG* pFlag)
 {
-	for (size_t i = 0; i < NEIGHBOR_END; i++)
+	for (_uint i = 0; i < NEIGHBOR_END; ++i)
 	{
 		_float3		vDir = XMVector3Normalize(vPosition - m_vPoints[i]);
 		_float3		vNormal = XMVector3Normalize(m_vNormals[i]);
-		
-		if (0 < vDir.Dot(vNormal))
+
+		if (0 < XMVectorGetX(XMVector3Dot(vDir, vNormal)))
 		{
-			*pNeighborIndex = m_iNeighborIndices[i];
+			if (nullptr != pNeighborIndex)
+				*pNeighborIndex = m_iNeighborIndices[i];
+
+			if (nullptr != pNormal &&
+				nullptr != pFlag)
+			{
+				*pNormal = vNormal;
+
+				*pFlag = m_eCellFlag;
+			}
+
 			return false;
 		}
 	}
+
+	if (nullptr != pFlag)
+		*pFlag = m_eCellFlag;
 
 	return true;
 }
@@ -113,7 +127,7 @@ HRESULT CCell::Render()
 
 CCell* CCell::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _float3* pPoints, _int iIndex)
 {
-	CCell* pInstance = new CCell(pDevice, pContext);
+	CCell* pInstance = New CCell(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize(pPoints, iIndex)))
 	{

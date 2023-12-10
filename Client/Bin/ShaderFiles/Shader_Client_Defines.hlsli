@@ -37,6 +37,12 @@ RasterizerState RS_Cull_None
 	FrontCounterClockwise = false;
 };
 
+RasterizerState RS_WireFrame
+{
+    FillMode = WireFrame;
+    CullMode = None;
+};
+
 /* Depth_Stencil State */
 
 DepthStencilState DSS_Default
@@ -50,6 +56,14 @@ DepthStencilState DSS_Depth_Disable
 {
 	DepthEnable = false;
 	DepthWriteMask = zero;
+};
+
+DepthStencilState DSS_Alpha
+{
+	// Z test On
+    DepthEnable = true;
+	// Z Write Off
+    DepthWriteMask = zero;
 };
 
 /* Blend State */

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -44,6 +44,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableUnitySupport>true</EnableUnitySupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -51,6 +52,7 @@
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableUnitySupport>true</EnableUnitySupport>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -119,13 +121,14 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>../../Reference/Headers/;../Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Reference/Headers/;../Public/;../../Reference/Headers/PhysX/;../../Reference/Headers/NvCloth/;ImGui/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../../Reference/Librarys/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Engine_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engine_d.lib;DirectXTKd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderType>Effect</ShaderType>
@@ -143,7 +146,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>../../Reference/Headers/;../Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Reference/Headers/;../Public/;../../Reference/Headers/PhysX/;../../Reference/Headers/NvCloth/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -151,26 +154,737 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../../Reference/Librarys/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engine.lib;DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <FxCompile>
+      <ShaderType>Effect</ShaderType>
+    </FxCompile>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Public\Accio.h" />
+    <ClInclude Include="..\Public\Action.h" />
+    <ClInclude Include="..\Public\Animation_Camera_Model.h" />
+    <ClInclude Include="..\public\AshwinderEggs_Item.h" />
+    <ClInclude Include="..\Public\Balloon.h" />
+    <ClInclude Include="..\public\Balloon_Coin.h" />
+    <ClInclude Include="..\public\Balloon_Timer.h" />
+    <ClInclude Include="..\Public\BeastBalloon_A.h" />
+    <ClInclude Include="..\Public\BeastBalloon_B.h" />
+    <ClInclude Include="..\Public\BeastBalloon_C.h" />
+    <ClInclude Include="..\Public\BeastBalloon_D.h" />
+    <ClInclude Include="..\Public\BigBird.h" />
+    <ClInclude Include="..\Public\Blink_Effect.h" />
+    <ClInclude Include="..\Public\Bombarda.h" />
+    <ClInclude Include="..\public\Breath_Effect.h" />
+    <ClInclude Include="..\Public\Broom_Begin.h" />
+    <ClInclude Include="..\Public\Broom_Break.h" />
+    <ClInclude Include="..\Public\Broom_End.h" />
+    <ClInclude Include="..\Public\Breath.h" />
+    <ClInclude Include="..\Public\Broom_Stick.h" />
+    <ClInclude Include="..\Public\Broom_Stick_DarkWizard.h" />
+    <ClInclude Include="..\Public\Camera_Includes.h" />
+    <ClInclude Include="..\Public\Card_Fig.h" />
+    <ClInclude Include="..\Public\Cat.h" />
+    <ClInclude Include="..\public\ChineseChompingCabbageItem.h" />
+    <ClInclude Include="..\Public\Cliff_Gate.h" />
+    <ClInclude Include="..\Public\Client_Enum.h" />
+    <ClInclude Include="..\Public\ConjuredDragon.h" />
+    <ClInclude Include="..\public\CraftState.h" />
+    <ClInclude Include="..\Public\Crowd.h" />
+    <ClInclude Include="..\Public\Cylinder.h" />
+    <ClInclude Include="..\Public\DarkWizard_F.h" />
+    <ClInclude Include="..\Public\DarkWizard_M.h" />
+    <ClInclude Include="..\Public\DarkWizard_Spawn.h" />
+    <ClInclude Include="..\Public\Door.h" />
+    <ClInclude Include="..\Public\Dummy_NPC.h" />
+    <ClInclude Include="..\Public\Event_Cliffside.h" />
+    <ClInclude Include="..\Public\Event_Cliffside_Next_Level.h" />
+    <ClInclude Include="..\Public\Event_Enter_Sanctum.h" />
+    <ClInclude Include="..\Public\Event_Sky_Enter.h" />
+    <ClInclude Include="..\Public\Event_Smeade_Next_Level.h" />
+    <ClInclude Include="..\Public\Event_Spawn_Darkwizard.h" />
+    <ClInclude Include="..\Public\Event_Spawn_Dragon.h" />
+    <ClInclude Include="..\Public\Event_Dragon_Death.h" />
+    <ClInclude Include="..\Public\Event_Dragon_Hp_Down.h" />
+    <ClInclude Include="..\Public\Event_Enter_Vault.h" />
+    <ClInclude Include="..\Public\Event_Spawn.h" />
+    <ClInclude Include="..\Public\Event_Smeade.h" />
+    <ClInclude Include="..\Public\Event_Spawn_Dragon_2.h" />
+    <ClInclude Include="..\Public\Event_Vault_Next_Level.h" />
+    <ClInclude Include="..\Public\Event_Vault_Torch.h" />
+    <ClInclude Include="..\Public\DarkWizard_Fly.h" />
+    <ClInclude Include="..\Public\FireHouse.h" />
+    <ClInclude Include="..\Public\FireWood.h" />
+    <ClInclude Include="..\Public\FireWorks.h" />
+    <ClInclude Include="..\Public\FlyGameManager.h" />
+    <ClInclude Include="..\Public\Fly_Move.h" />
+    <ClInclude Include="..\public\Game_Manager.h" />
+    <ClInclude Include="..\public\Gear_Item.h" />
+    <ClInclude Include="..\Public\Lamppost.h" />
+    <ClInclude Include="..\Public\Lamp_Wall.h" />
+    <ClInclude Include="..\Public\LightStand.h" />
+    <ClInclude Include="..\public\MarioCount.h" />
+    <ClInclude Include="..\Public\Meteor.h" />
+    <ClInclude Include="..\Public\Quest_Bone.h" />
+    <ClInclude Include="..\Public\Quest_Potion.h" />
+    <ClInclude Include="..\Public\Guide_Book.h" />
+    <ClInclude Include="..\Public\Gull.h" />
+    <ClInclude Include="..\Public\Hat_Arcane.h" />
+    <ClInclude Include="..\Public\Hat_Wizard.h" />
+    <ClInclude Include="..\Public\House_Elf.h" />
+    <ClInclude Include="..\Public\Hover_Idle.h" />
+    <ClInclude Include="..\Public\Hover_Move.h" />
+    <ClInclude Include="..\Public\Hover_Turn.h" />
+    <ClInclude Include="..\public\ImpulseSphere_Effect.h" />
+    <ClInclude Include="..\Public\Outfit_Arcane.h" />
+    <ClInclude Include="..\Public\Outfit_Arcane_A.h" />
+    <ClInclude Include="..\Public\Outfit_Celtic.h" />
+    <ClInclude Include="..\Public\Outfit_Celtic_A.h" />
+    <ClInclude Include="..\Public\Outfit_DarkArts_Delux.h" />
+    <ClInclude Include="..\Public\Outfit_DarkArts_Delux_A.h" />
+    <ClInclude Include="..\Public\FlyMan.h" />
+    <ClInclude Include="..\Public\Level_Sky.h" />
+    <ClInclude Include="..\public\Level_Static.h" />
+    <ClInclude Include="..\Public\Magic_Sound_Manager.h" />
+    <ClInclude Include="..\Public\Mask_Demiguise.h" />
+    <ClInclude Include="..\Public\Mask_Guardian.h" />
+    <ClInclude Include="..\Public\Mask_Niffler.h" />
+    <ClInclude Include="..\public\Mongrel_Fur_Item.h" />
+    <ClInclude Include="..\Public\EnergyBall.h" />
+    <ClInclude Include="..\Public\Level_Sanctum.h" />
+    <ClInclude Include="..\Public\Oakes.h" />
+    <ClInclude Include="..\Public\Owl.h" />
+    <ClInclude Include="..\Public\Pensive_Appearence.h" />
+    <ClInclude Include="..\Public\Pensive_Charge_Attack.h" />
+    <ClInclude Include="..\Public\Pensive_Death.h" />
+    <ClInclude Include="..\Public\Pensive_Fail_Ball.h" />
+    <ClInclude Include="..\Public\Pensive_Groogy.h" />
+    <ClInclude Include="..\Public\Pensive_Ground_Ball.h" />
+    <ClInclude Include="..\Public\Pensive_Hit.h" />
+    <ClInclude Include="..\Public\Pensive_Idle.h" />
+    <ClInclude Include="..\Public\Pensive_Mace_Attack.h" />
+    <ClInclude Include="..\Public\Pensive_Orb_Attack.h" />
+    <ClInclude Include="..\Public\Pensive_Physical_Attack.h" />
+    <ClInclude Include="..\Public\Pensive_Shouting.h" />
+    <ClInclude Include="..\Public\Pensive_Sword_Throw.h" />
+    <ClInclude Include="..\Public\Player.h" />
+    <ClInclude Include="..\public\PotionStationCamera.h" />
+    <ClInclude Include="..\public\Projectile_White_Effect.h" />
+    <ClInclude Include="..\public\Quest.h" />
+    <ClInclude Include="..\public\Quest_Manager.h" />
+    <ClInclude Include="..\public\Quest_Save_Fig.h" />
+    <ClInclude Include="..\Public\Quest_Secret.h" />
+    <ClInclude Include="..\Public\Racer.h" />
+    <ClInclude Include="..\public\RedSky.h" />
+    <ClInclude Include="..\public\Robe_Arcane.h" />
+    <ClInclude Include="..\Public\Robe_DarkArts.h" />
+    <ClInclude Include="..\Public\Robe_DarkArts_Delux.h" />
+    <ClInclude Include="..\Public\Robe_Beast.h" />
+    <ClInclude Include="..\Public\Robe_Quidditch.h" />
+    <ClInclude Include="..\Public\Sanctum_Door.h" />
+    <ClInclude Include="..\public\Santum_MapEffects.h" />
+    <ClInclude Include="..\Public\ScoreBalloon.h" />
+    <ClInclude Include="..\Public\Script.h" />
+    <ClInclude Include="..\Public\SmithToCliff_Gate.h" />
+    <ClInclude Include="..\Public\Smith_FIg.h" />
+    <ClInclude Include="..\Public\Quest_Town.h" />
+    <ClInclude Include="..\Public\UI_DamageFont.h" />
+    <ClInclude Include="..\Public\UI_Group_Score.h" />
+    <ClInclude Include="..\Public\UI_Group_Timer.h" />
+    <ClInclude Include="..\Public\UI_Interaction.h" />
+    <ClInclude Include="..\Public\UI_Script.h" />
+    <ClInclude Include="..\Public\StateContext_Enemy.h" />
+    <ClInclude Include="..\Public\StateMachine_Enemy.h" />
+    <ClInclude Include="..\Public\Vault_Gate.h" />
+    <ClInclude Include="..\Public\UseItemState.h" />
+    <ClInclude Include="..\Public\UI_Damage.h" />
+    <ClInclude Include="..\Public\UI_Store.h" />
+    <ClInclude Include="..\Public\Projectile_Black.h" />
+    <ClInclude Include="..\Public\Projectile_White.h" />
+    <ClInclude Include="..\Public\Pulse.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\public\Trigger.h" />
+    <ClInclude Include="..\Public\Vault_Torch.h" />
+    <ClInclude Include="..\Public\Vendor.h" />
+    <ClInclude Include="..\public\Water.h" />
+    <ClInclude Include="..\Public\Weapon_DarkWizard_Wand.h" />
+    <ClInclude Include="..\Public\Diffindo.h" />
+    <ClInclude Include="..\public\Dittany_Leaves_Item.h" />
+    <ClInclude Include="..\public\Dugbog_Tongue_Item.h" />
+    <ClInclude Include="..\public\EdurusPotion_Item.h" />
+    <ClInclude Include="..\public\Fluxweed_Stem_Item.h" />
+    <ClInclude Include="..\public\FocusPotion_Item.h" />
+    <ClInclude Include="..\public\Horklump_Juice_Item.h" />
+    <ClInclude Include="..\Public\Gatherer.h" />
+    <ClInclude Include="..\public\ImGui_Manager.h" />
+    <ClInclude Include="..\Public\Ingredient.h" />
+    <ClInclude Include="..\Public\Arrestomomentum.h" />
+    <ClInclude Include="..\Public\Client_Struct.h" />
+    <ClInclude Include="..\Public\Crucio.h" />
+    <ClInclude Include="..\Public\Expelliarmus.h" />
+    <ClInclude Include="..\Public\Flipendo.h" />
+    <ClInclude Include="..\Public\Imperio.h" />
+    <ClInclude Include="..\Public\EdurusPotion.h" />
+    <ClInclude Include="..\public\InvisibilityPotion_Item.h" />
+    <ClInclude Include="..\Public\InvisibilityPotion.h" />
+    <ClInclude Include="..\public\Item.h" />
+    <ClInclude Include="..\public\Knotgrass_Item.h" />
+    <ClInclude Include="..\public\Lacewing_Flies_Item.h" />
+    <ClInclude Include="..\public\Leaping_Toadstool_Caps_Item.h" />
+    <ClInclude Include="..\public\Leech_Juice_Item.h" />
+    <ClInclude Include="..\public\MallowSweet_Item.h" />
+    <ClInclude Include="..\public\MaximaPotion_Item.h" />
+    <ClInclude Include="..\public\MoonStone_Item.h" />
+    <ClInclude Include="..\public\Norm_Test.h" />
+    <ClInclude Include="..\Public\Potion.h" />
+    <ClInclude Include="..\public\Shrivelfig_Item.h" />
+    <ClInclude Include="..\public\Spider_Fang_Item.h" />
+    <ClInclude Include="..\Public\Potion_Station.h" />
+    <ClInclude Include="..\Public\Sequence_Descendo.h" />
+    <ClInclude Include="..\Public\Stupefy.h" />
+    <ClInclude Include="..\public\ThunderBrewPotion.h" />
+    <ClInclude Include="..\Public\Death.h" />
+    <ClInclude Include="..\Public\Descendo.h" />
+    <ClInclude Include="..\Public\Enemy.h" />
+    <ClInclude Include="..\public\Event_Vault_Spawn.h" />
+    <ClInclude Include="..\Public\Lumos.h" />
+    <ClInclude Include="..\Public\FocusPotion.h" />
+    <ClInclude Include="..\Public\MPBall.h" />
+    <ClInclude Include="..\Public\Ncendio.h" />
+    <ClInclude Include="..\Public\Inventory.h" />
+    <ClInclude Include="..\Public\Check_Degree.h" />
+    <ClInclude Include="..\Public\Check_Distance.h" />
+    <ClInclude Include="..\Public\HitState.h" />
+    <ClInclude Include="..\Public\Player_Information.h" />
+    <ClInclude Include="..\Public\LookAt.h" />
+    <ClInclude Include="..\Public\Finisher.h" />
+    <ClInclude Include="..\public\Level_GreatHall.h" />
+    <ClInclude Include="..\public\Level_Smith.h" />
+    <ClInclude Include="..\public\Level_Vault.h" />
+    <ClInclude Include="..\Public\MaximaPotion.h" />
+    <ClInclude Include="..\Public\PotionTap.h" />
+    <ClInclude Include="..\Public\ProtegoState.h" />
+    <ClInclude Include="..\Public\Menu_Gear.h" />
+    <ClInclude Include="..\Public\HardLandState.h" />
+    <ClInclude Include="..\Public\JumpState.h" />
+    <ClInclude Include="..\Public\Confringo.h" />
+    <ClInclude Include="..\Public\MagicCastingState.h" />
+    <ClInclude Include="..\public\Main3_Loader.h" />
+    <ClInclude Include="..\Public\Main_Menu.h" />
+    <ClInclude Include="..\Public\Menu_Invectory.h" />
+    <ClInclude Include="..\Public\Menu_Quest.h" />
+    <ClInclude Include="..\Public\Menu_Setting.h" />
+    <ClInclude Include="..\Public\MapObject_Ins.h" />
+    <ClInclude Include="..\Public\UI_Group_Brew.h" />
+    <ClInclude Include="..\Public\UI_Group_SKillTap.h" />
+    <ClInclude Include="..\public\ThunderBrewPotion_Item.h" />
+    <ClInclude Include="..\public\Tool.h" />
+    <ClInclude Include="..\public\Troll_Bogeys_Item.h" />
+    <ClInclude Include="..\public\UI_Dynamic_Back.h" />
+    <ClInclude Include="..\public\UI_Farming.h" />
+    <ClInclude Include="..\Public\UI_Potion_Tap.h" />
+    <ClInclude Include="..\Public\RigidMove.h" />
+    <ClInclude Include="..\Public\Weapon_Dragon_Head.h" />
+    <ClInclude Include="..\Public\Weapon_Dragon_Left_Wing.h" />
+    <ClInclude Include="..\Public\Weapon_Dragon_Right_Wing.h" />
+    <ClInclude Include="..\Public\Weapon_Dragon_Tail.h" />
+    <ClInclude Include="..\Public\Weapon_Goblin_Assasin.h" />
+    <ClInclude Include="..\Public\Weapon_Pensive_Flail.h" />
+    <ClInclude Include="..\Public\Weapon_Pensive_Sword.h" />
+    <ClInclude Include="..\public\WiggenweldPotion.h" />
+    <ClInclude Include="..\Public\Sequence_AirHit.h" />
+    <ClInclude Include="..\Public\StandingState.h" />
+    <ClInclude Include="..\Public\Treasure_Chest.h" />
+    <ClInclude Include="..\public\Trigger_Vault.h" />
+    <ClInclude Include="..\Public\UI_Font.h" />
+    <ClInclude Include="..\Public\UI_Group_Cursor.h" />
+    <ClInclude Include="..\Public\UI_Group_Enemy_HP.h" />
+    <ClInclude Include="..\public\Main0_Loader.h" />
+    <ClInclude Include="..\Public\MoveLoopState.h" />
+    <ClInclude Include="..\public\MoveStartState.h" />
+    <ClInclude Include="..\Public\MoveTurnState.h" />
+    <ClInclude Include="..\Public\Default_MagicTrail_Effect.h" />
+    <ClInclude Include="..\Public\Levioso.h" />
+    <ClInclude Include="..\public\Field_Guide.h" />
+    <ClInclude Include="..\public\LoadTrigger.h" />
+    <ClInclude Include="..\public\MagicSlot.h" />
+    <ClInclude Include="..\Public\RollState.h" />
+    <ClInclude Include="..\public\Seamless_Loader.h" />
+    <ClInclude Include="..\Public\Sequence_Attack.h" />
+    <ClInclude Include="..\Public\Sequence_Groggy.h" />
+    <ClInclude Include="..\Public\Sequence_Levitate.h" />
+    <ClInclude Include="..\Public\Sequence_MoveTarget.h" />
+    <ClInclude Include="..\Public\StateContext.h" />
+    <ClInclude Include="..\public\StateMachine.h" />
+    <ClInclude Include="..\public\IdleState.h" />
+    <ClInclude Include="..\public\Main2_Loader.h" />
+    <ClInclude Include="..\Public\UI_Back.h" />
+    <ClInclude Include="..\Public\UI_Effect_Back.h" />
+    <ClInclude Include="..\Public\UI_Finisher.h" />
+    <ClInclude Include="..\Public\UI_Group_Finisher.h" />
+    <ClInclude Include="..\Public\UI_Group_Finisher_Icon.h" />
+    <ClInclude Include="..\Public\UI_Group_HP.h" />
+    <ClInclude Include="..\Public\UI_Group_Loading.h" />
+    <ClInclude Include="..\Public\UI_Group_Logo.h" />
+    <ClInclude Include="..\Public\UI_Group_MiniMap.h" />
+    <ClInclude Include="..\Public\UI_Group_Potion.h" />
+    <ClInclude Include="..\Public\UI_Group_Quest.h" />
+    <ClInclude Include="..\Public\UI_Group_R.h" />
+    <ClInclude Include="..\Public\UI_Group_Skill.h" />
+    <ClInclude Include="..\Public\UI_Group_T.h" />
+    <ClInclude Include="..\Public\UI_HP.h" />
+    <ClInclude Include="..\Public\BasicCast.h" />
+    <ClInclude Include="..\Public\Magic.h" />
+    <ClInclude Include="..\Public\MagicBall.h" />
+    <ClInclude Include="..\Public\MagicBallPool.h" />
+    <ClInclude Include="..\Public\Protego.h" />
+    <ClInclude Include="..\Public\Revelio.h" />
+    <ClInclude Include="..\Public\Professor_Fig.h" />
+    <ClInclude Include="..\Public\Selector_Degree.h" />
+    <ClInclude Include="..\Public\Armored_Troll.h" />
+    <ClInclude Include="..\Public\Goblin_Assasin.h" />
+    <ClInclude Include="..\Public\Behavior_Includes.h" />
+    <ClInclude Include="..\public\Camera_Debug.h" />
+    <ClInclude Include="..\Public\Golem_Combat.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
+    <ClInclude Include="..\Public\Client_GameInstance_Functions.h" />
+    <ClInclude Include="..\Public\Dugbog.h" />
+    <ClInclude Include="..\Public\Forest_Troll.h" />
+    <ClInclude Include="..\Public\MapObject.h" />
+    <ClInclude Include="..\Public\Pensive.h" />
+    <ClInclude Include="..\Public\PhysXRender.h" />
+    <ClInclude Include="..\public\Player_Camera.h" />
+    <ClInclude Include="..\Public\Turn.h" />
+    <ClInclude Include="..\Public\UI_Image.h" />
+    <ClInclude Include="..\Public\UI_Inventory.h" />
+    <ClInclude Include="..\Public\UI_Dissolve.h" />
+    <ClInclude Include="..\Public\UI_Slot.h" />
+    <ClInclude Include="..\Public\Wait.h" />
+    <ClInclude Include="..\Public\Weapon_Armored_Troll.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\Public\Level_Logo.h" />
-    <ClInclude Include="..\Public\Loader.h" />
+    <ClInclude Include="..\public\Level_Cliffside.h" />
+    <ClInclude Include="..\Public\Main1_Loader.h" />
+    <ClInclude Include="..\public\Logo_BackGround.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\public\MainApp.h" />
+    <ClInclude Include="..\public\Sky.h" />
+    <ClInclude Include="..\public\Terrain.h" />
+    <ClInclude Include="..\public\Test_Player.h" />
+    <ClInclude Include="..\Public\Weapon_Fig_Wand.h" />
+    <ClInclude Include="..\Public\Weapon_Forest_Troll.h" />
+    <ClInclude Include="..\Public\Weapon_Golem_Combat.h" />
+    <ClInclude Include="..\Public\Weapon_Player_Wand.h" />
+    <ClInclude Include="..\public\WiggenweldPotion_Item.h" />
+    <ClInclude Include="..\Public\Wingardiumleviosa.h" />
+    <ClInclude Include="..\Public\Wingardium_Effect.h" />
+    <ClInclude Include="..\Public\Wolf.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="ImGui\backends\imgui_impl_dx11.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="ImGui\backends\imgui_impl_win32.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="ImGui\imconfig.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="ImGui\ImGuiFileDialog.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="ImGui\ImGuiFileDialogConfig.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_internal.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="ImGui\imstb_rectpack.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="ImGui\imstb_textedit.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="ImGui\imstb_truetype.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="ImGui\stb\stb_image.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="ImGui\stb\stb_image_resize.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Private\Accio.cpp" />
+    <ClCompile Include="..\Private\Action.cpp" />
+    <ClCompile Include="..\Private\Animation_Camera_Model.cpp" />
+    <ClCompile Include="..\Private\AshwinderEggs_Item.cpp" />
+    <ClCompile Include="..\Private\Balloon.cpp" />
+    <ClCompile Include="..\private\Balloon_Coin.cpp" />
+    <ClCompile Include="..\private\Balloon_Timer.cpp" />
+    <ClCompile Include="..\Private\BeastBalloon_A.cpp" />
+    <ClCompile Include="..\Private\BeastBalloon_B.cpp" />
+    <ClCompile Include="..\Private\BeastBalloon_C.cpp" />
+    <ClCompile Include="..\Private\BeastBalloon_D.cpp" />
+    <ClCompile Include="..\Private\BigBird.cpp" />
+    <ClCompile Include="..\Private\Blink_Effect.cpp" />
+    <ClCompile Include="..\Private\Bombarda.cpp" />
+    <ClCompile Include="..\private\Breath_Effect.cpp" />
+    <ClCompile Include="..\Private\Broom_Begin.cpp" />
+    <ClCompile Include="..\Private\Broom_Break.cpp" />
+    <ClCompile Include="..\Private\Broom_End.cpp" />
+    <ClCompile Include="..\Private\Breath.cpp" />
+    <ClCompile Include="..\Private\Broom_Stick.cpp" />
+    <ClCompile Include="..\Private\Broom_Stick_DarkWizard.cpp" />
+    <ClCompile Include="..\Private\Card_Fig.cpp" />
+    <ClCompile Include="..\Private\Cat.cpp" />
+    <ClCompile Include="..\private\ChineseChompingCabbageItem.cpp" />
+    <ClCompile Include="..\Private\Cliff_Gate.cpp" />
+    <ClCompile Include="..\Private\ConjuredDragon.cpp" />
+    <ClCompile Include="..\private\CraftState.cpp" />
+    <ClCompile Include="..\Private\Crowd.cpp" />
+    <ClCompile Include="..\Private\Cylinder.cpp" />
+    <ClCompile Include="..\Private\DarkWizard_F.cpp" />
+    <ClCompile Include="..\Private\DarkWizard_M.cpp" />
+    <ClCompile Include="..\Private\DarkWizard_Spawn.cpp" />
+    <ClCompile Include="..\Private\Door.cpp" />
+    <ClCompile Include="..\Private\Dummy_NPC.cpp" />
+    <ClCompile Include="..\Private\Event_Cliffside.cpp" />
+    <ClCompile Include="..\Private\Event_Cliffside_Next_Level.cpp" />
+    <ClCompile Include="..\Private\Event_Enter_Sanctum.cpp" />
+    <ClCompile Include="..\Private\Event_Sky_Enter.cpp" />
+    <ClCompile Include="..\Private\Event_Smeade_Next_Level.cpp" />
+    <ClCompile Include="..\Private\Event_Spawn_Darkwizard.cpp" />
+    <ClCompile Include="..\Private\Event_Spawn_Dragon.cpp" />
+    <ClCompile Include="..\Private\Event_Dragon_Death.cpp" />
+    <ClCompile Include="..\Private\Event_Dragon_Hp_Down.cpp" />
+    <ClCompile Include="..\Private\Event_Enter_Vault.cpp" />
+    <ClCompile Include="..\Private\Event_Spawn.cpp" />
+    <ClCompile Include="..\Private\Event_Smeade.cpp" />
+    <ClCompile Include="..\Private\Event_Spawn_Dragon_2.cpp" />
+    <ClCompile Include="..\Private\Event_Vault_Next_Level.cpp" />
+    <ClCompile Include="..\Private\Event_Vault_Torch.cpp" />
+    <ClCompile Include="..\Private\DarkWizard_Fly.cpp" />
+    <ClCompile Include="..\Private\FireHouse.cpp" />
+    <ClCompile Include="..\Private\FireWood.cpp" />
+    <ClCompile Include="..\Private\FireWorks.cpp" />
+    <ClCompile Include="..\Private\FlyGameManager.cpp" />
+    <ClCompile Include="..\Private\Fly_Move.cpp" />
+    <ClCompile Include="..\private\Game_Manager.cpp" />
+    <ClCompile Include="..\private\Gear_Item.cpp" />
+    <ClCompile Include="..\Private\Lamppost.cpp" />
+    <ClCompile Include="..\Private\Lamp_Wall.cpp" />
+    <ClCompile Include="..\Private\LightStand.cpp" />
+    <ClCompile Include="..\private\MarioCount.cpp" />
+    <ClCompile Include="..\Private\Meteor.cpp" />
+    <ClCompile Include="..\Private\Quest_Bone.cpp" />
+    <ClCompile Include="..\Private\Quest_Potion.cpp" />
+    <ClCompile Include="..\Private\Guide_Book.cpp" />
+    <ClCompile Include="..\Private\Gull.cpp" />
+    <ClCompile Include="..\Private\Hat_Arcane.cpp" />
+    <ClCompile Include="..\Private\Hat_Wizard.cpp" />
+    <ClCompile Include="..\Private\House_Elf.cpp" />
+    <ClCompile Include="..\Private\Hover_Idle.cpp" />
+    <ClCompile Include="..\Private\Hover_Move.cpp" />
+    <ClCompile Include="..\Private\Hover_Turn.cpp" />
+    <ClCompile Include="..\private\ImpulseSphere_Effect.cpp" />
+    <ClCompile Include="..\Private\Outfit_Arcane.cpp" />
+    <ClCompile Include="..\Private\Outfit_Arcane_A.cpp" />
+    <ClCompile Include="..\Private\Outfit_Celtic.cpp" />
+    <ClCompile Include="..\Private\Outfit_Celtic_A.cpp" />
+    <ClCompile Include="..\Private\Outfit_DarkArts_Delux.cpp" />
+    <ClCompile Include="..\Private\Outfit_DarkArts_Delux_A.cpp" />
+    <ClCompile Include="..\Private\FlyMan.cpp" />
+    <ClCompile Include="..\Private\Level_Sky.cpp" />
+    <ClCompile Include="..\private\Level_Static.cpp" />
+    <ClCompile Include="..\Private\Magic_Sound_Manager.cpp" />
+    <ClCompile Include="..\Private\Mask_Demiguise.cpp" />
+    <ClCompile Include="..\Private\Mask_Guardian.cpp" />
+    <ClCompile Include="..\Private\Mask_Niffler.cpp" />
+    <ClCompile Include="..\private\Mongrel_Fur_Item.cpp" />
+    <ClCompile Include="..\Private\EnergyBall.cpp" />
+    <ClCompile Include="..\Private\Level_Sanctum.cpp" />
+    <ClCompile Include="..\Private\Oakes.cpp" />
+    <ClCompile Include="..\Private\Owl.cpp" />
+    <ClCompile Include="..\Private\Pensive_Appearence.cpp" />
+    <ClCompile Include="..\Private\Pensive_Charge_Attack.cpp" />
+    <ClCompile Include="..\Private\Pensive_Death.cpp" />
+    <ClCompile Include="..\Private\Pensive_Fail_Ball.cpp" />
+    <ClCompile Include="..\Private\Pensive_Groogy.cpp" />
+    <ClCompile Include="..\Private\Pensive_Ground_Ball.cpp" />
+    <ClCompile Include="..\Private\Pensive_Hit.cpp" />
+    <ClCompile Include="..\Private\Pensive_Idle.cpp" />
+    <ClCompile Include="..\Private\Pensive_Mace_Attack.cpp" />
+    <ClCompile Include="..\Private\Pensive_Orb_Attack.cpp" />
+    <ClCompile Include="..\Private\Pensive_Physical_Attack.cpp" />
+    <ClCompile Include="..\Private\Pensive_Shouting.cpp" />
+    <ClCompile Include="..\Private\Pensive_Sword_Throw.cpp" />
+    <ClCompile Include="..\Private\Player.cpp" />
+    <ClCompile Include="..\private\PotionStationCamera.cpp" />
+    <ClCompile Include="..\private\Projectile_White_Effect.cpp" />
+    <ClCompile Include="..\private\Quest.cpp" />
+    <ClCompile Include="..\private\Quest_Manager.cpp" />
+    <ClCompile Include="..\private\Quest_Save_Fig.cpp" />
+    <ClCompile Include="..\Private\Quest_Secret.cpp" />
+    <ClCompile Include="..\Private\Racer.cpp" />
+    <ClCompile Include="..\private\RedSky.cpp" />
+    <ClCompile Include="..\private\Robe_Arcane.cpp" />
+    <ClCompile Include="..\Private\Robe_DarkArts.cpp" />
+    <ClCompile Include="..\Private\Robe_DarkArts_Delux.cpp" />
+    <ClCompile Include="..\Private\Robe_Beast.cpp" />
+    <ClCompile Include="..\Private\Robe_Quidditch.cpp" />
+    <ClCompile Include="..\Private\Sanctum_Door.cpp" />
+    <ClCompile Include="..\private\Santum_MapEffects.cpp" />
+    <ClCompile Include="..\Private\ScoreBalloon.cpp" />
+    <ClCompile Include="..\Private\Script.cpp" />
+    <ClCompile Include="..\Private\SmithToCliff_Gate.cpp" />
+    <ClCompile Include="..\Private\Smith_FIg.cpp" />
+    <ClCompile Include="..\Private\Quest_Town.cpp" />
+    <ClCompile Include="..\Private\UI_DamageFont.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Score.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Timer.cpp" />
+    <ClCompile Include="..\Private\UI_Interaction.cpp" />
+    <ClCompile Include="..\Private\UI_Script.cpp" />
+    <ClCompile Include="..\Private\StateContext_Enemy.cpp" />
+    <ClCompile Include="..\Private\StateMachine_Enemy.cpp" />
+    <ClCompile Include="..\Private\Vault_Gate.cpp" />
+    <ClCompile Include="..\Private\UseItemState.cpp" />
+    <ClCompile Include="..\Private\UI_Damage.cpp" />
+    <ClCompile Include="..\Private\UI_Store.cpp" />
+    <ClCompile Include="..\Private\Projectile_Black.cpp" />
+    <ClCompile Include="..\Private\Projectile_White.cpp" />
+    <ClCompile Include="..\Private\Pulse.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\private\Trigger.cpp" />
+    <ClCompile Include="..\Private\Vault_Torch.cpp" />
+    <ClCompile Include="..\Private\Vendor.cpp" />
+    <ClCompile Include="..\private\Water.cpp" />
+    <ClCompile Include="..\Private\Weapon_DarkWizard_Wand.cpp" />
+    <ClCompile Include="..\Private\Diffindo.cpp" />
+    <ClCompile Include="..\private\Dittany_Leaves_Item.cpp" />
+    <ClCompile Include="..\private\Dugbog_Tongue_Item.cpp" />
+    <ClCompile Include="..\private\EdurusPotion_Item.cpp" />
+    <ClCompile Include="..\private\Fluxweed_Stem_Item.cpp" />
+    <ClCompile Include="..\private\FocusPotion_Item.cpp" />
+    <ClCompile Include="..\private\Horklump_Juice_Item.cpp" />
+    <ClCompile Include="..\Private\Gatherer.cpp" />
+    <ClCompile Include="..\private\ImGui_Manager.cpp" />
+    <ClCompile Include="..\Private\Ingredient.cpp" />
+    <ClCompile Include="..\Private\Arrestomomentum.cpp" />
+    <ClCompile Include="..\Private\Crucio.cpp" />
+    <ClCompile Include="..\Private\Expelliarmus.cpp" />
+    <ClCompile Include="..\Private\Flipendo.cpp" />
+    <ClCompile Include="..\Private\Imperio.cpp" />
+    <ClCompile Include="..\Private\EdurusPotion.cpp" />
+    <ClCompile Include="..\private\InvisibilityPotion_Item.cpp" />
+    <ClCompile Include="..\Private\InvisibilityPotion.cpp" />
+    <ClCompile Include="..\private\Item.cpp" />
+    <ClCompile Include="..\Private\Death.cpp" />
+    <ClCompile Include="..\Private\Descendo.cpp" />
+    <ClCompile Include="..\Private\Enemy.cpp" />
+    <ClCompile Include="..\private\Event_Vault_Spawn.cpp" />
+    <ClCompile Include="..\private\Knotgrass_Item.cpp" />
+    <ClCompile Include="..\private\Lacewing_Flies_Item.cpp" />
+    <ClCompile Include="..\private\Leaping_Toadstool_Caps_Item.cpp" />
+    <ClCompile Include="..\private\Leech_Juice_Item.cpp" />
+    <ClCompile Include="..\Private\Lumos.cpp" />
+    <ClCompile Include="..\Private\FocusPotion.cpp" />
+    <ClCompile Include="..\private\MallowSweet_Item.cpp" />
+    <ClCompile Include="..\private\MaximaPotion_Item.cpp" />
+    <ClCompile Include="..\private\MoonStone_Item.cpp" />
+    <ClCompile Include="..\private\Norm_Test.cpp" />
+    <ClCompile Include="..\Private\Potion.cpp" />
+    <ClCompile Include="..\Private\MPBall.cpp" />
+    <ClCompile Include="..\Private\Ncendio.cpp" />
+    <ClCompile Include="..\Private\Inventory.cpp" />
+    <ClCompile Include="..\Private\Check_Degree.cpp" />
+    <ClCompile Include="..\Private\Check_Distance.cpp" />
+    <ClCompile Include="..\Private\HitState.cpp" />
+    <ClCompile Include="..\Private\Player_Information.cpp" />
+    <ClCompile Include="..\Private\LookAt.cpp" />
+    <ClCompile Include="..\Private\Finisher.cpp" />
+    <ClCompile Include="..\private\Level_GreatHall.cpp" />
+    <ClCompile Include="..\private\Level_Smith.cpp" />
+    <ClCompile Include="..\private\Level_Vault.cpp" />
+    <ClCompile Include="..\Private\MaximaPotion.cpp" />
+    <ClCompile Include="..\Private\Potion_Station.cpp" />
+    <ClCompile Include="..\Private\PotionTap.cpp" />
+    <ClCompile Include="..\Private\ProtegoState.cpp" />
+    <ClCompile Include="..\Private\Menu_Gear.cpp" />
+    <ClCompile Include="..\Private\HardLandState.cpp" />
+    <ClCompile Include="..\Private\JumpState.cpp" />
+    <ClCompile Include="..\Private\Confringo.cpp" />
+    <ClCompile Include="..\Private\MagicCastingState.cpp" />
+    <ClCompile Include="..\private\Main3_Loader.cpp" />
+    <ClCompile Include="..\Private\Main_Menu.cpp" />
+    <ClCompile Include="..\Private\Menu_Invectory.cpp" />
+    <ClCompile Include="..\Private\Menu_Quest.cpp" />
+    <ClCompile Include="..\Private\Menu_Setting.cpp" />
+    <ClCompile Include="..\Private\MapObject_Ins.cpp" />
+    <ClCompile Include="..\private\Shrivelfig_Item.cpp" />
+    <ClCompile Include="..\private\Spider_Fang_Item.cpp" />
+    <ClCompile Include="..\Private\Sequence_Descendo.cpp" />
+    <ClCompile Include="..\Private\Stupefy.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Brew.cpp" />
+    <ClCompile Include="..\Private\UI_Group_SKillTap.cpp" />
+    <ClCompile Include="..\private\ThunderBrewPotion.cpp" />
+    <ClCompile Include="..\private\ThunderBrewPotion_Item.cpp" />
+    <ClCompile Include="..\private\Tool.cpp" />
+    <ClCompile Include="..\private\Troll_Bogeys_Item.cpp" />
+    <ClCompile Include="..\private\UI_Dynamic_Back.cpp" />
+    <ClCompile Include="..\private\UI_Farming.cpp" />
+    <ClCompile Include="..\Private\UI_Potion_Tap.cpp" />
+    <ClCompile Include="..\Private\RigidMove.cpp" />
+    <ClCompile Include="..\Private\Weapon_Dragon_Head.cpp" />
+    <ClCompile Include="..\Private\Weapon_Dragon_Left_Wing.cpp" />
+    <ClCompile Include="..\Private\Weapon_Dragon_Right_Wing.cpp" />
+    <ClCompile Include="..\Private\Weapon_Dragon_Tail.cpp" />
+    <ClCompile Include="..\Private\Weapon_Goblin_Assasin.cpp" />
+    <ClCompile Include="..\Private\Weapon_Pensive_Flail.cpp" />
+    <ClCompile Include="..\Private\Weapon_Pensive_Sword.cpp" />
+    <ClCompile Include="..\private\WiggenweldPotion.cpp" />
+    <ClCompile Include="..\Private\Sequence_AirHit.cpp" />
+    <ClCompile Include="..\Private\StandingState.cpp" />
+    <ClCompile Include="..\Private\Treasure_Chest.cpp" />
+    <ClCompile Include="..\private\Trigger_Vault.cpp" />
+    <ClCompile Include="..\Private\UI_Font.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Cursor.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Enemy_HP.cpp" />
+    <ClCompile Include="..\private\Main0_Loader.cpp" />
+    <ClCompile Include="..\Private\MoveLoopState.cpp" />
+    <ClCompile Include="..\private\MoveStartState.cpp" />
+    <ClCompile Include="..\Private\MoveTurnState.cpp" />
+    <ClCompile Include="..\Private\Default_MagicTrail_Effect.cpp" />
+    <ClCompile Include="..\Private\Levioso.cpp" />
+    <ClCompile Include="..\private\Field_Guide.cpp" />
+    <ClCompile Include="..\private\LoadTrigger.cpp" />
+    <ClCompile Include="..\private\MagicSlot.cpp" />
+    <ClCompile Include="..\Private\RollState.cpp" />
+    <ClCompile Include="..\private\Seamless_Loader.cpp" />
+    <ClCompile Include="..\Private\Sequence_Attack.cpp" />
+    <ClCompile Include="..\Private\Sequence_Groggy.cpp" />
+    <ClCompile Include="..\Private\Sequence_Levitate.cpp" />
+    <ClCompile Include="..\Private\Sequence_MoveTarget.cpp" />
+    <ClCompile Include="..\private\StateMachine.cpp" />
+    <ClCompile Include="..\Private\IdleState.cpp" />
+    <ClCompile Include="..\private\StateContext.cpp" />
+    <ClCompile Include="..\private\Main2_Loader.cpp" />
+    <ClCompile Include="..\Private\UI_Back.cpp" />
+    <ClCompile Include="..\Private\UI_Effect_Back.cpp" />
+    <ClCompile Include="..\Private\UI_Finisher.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Finisher.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Finisher_Icon.cpp" />
+    <ClCompile Include="..\Private\UI_Group_HP.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Loading.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Logo.cpp" />
+    <ClCompile Include="..\Private\UI_Group_MiniMap.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Potion.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Quest.cpp" />
+    <ClCompile Include="..\Private\UI_Group_R.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Skill.cpp" />
+    <ClCompile Include="..\Private\UI_Group_T.cpp" />
+    <ClCompile Include="..\Private\UI_HP.cpp" />
+    <ClCompile Include="..\Private\BasicCast.cpp" />
+    <ClCompile Include="..\Private\Magic.cpp" />
+    <ClCompile Include="..\Private\MagicBall.cpp" />
+    <ClCompile Include="..\Private\MagicBallPool.cpp" />
+    <ClCompile Include="..\Private\Protego.cpp" />
+    <ClCompile Include="..\Private\Revelio.cpp" />
+    <ClCompile Include="..\Private\Professor_Fig.cpp" />
+    <ClCompile Include="..\Private\Selector_Degree.cpp" />
+    <ClCompile Include="..\Private\Armored_Troll.cpp" />
+    <ClCompile Include="..\Private\Goblin_Assasin.cpp" />
+    <ClCompile Include="..\private\Camera_Debug.cpp" />
+    <ClCompile Include="..\private\Player_Camera.cpp" />
+    <ClCompile Include="..\Private\Golem_Combat.cpp" />
+    <ClCompile Include="..\Private\Dugbog.cpp" />
+    <ClCompile Include="..\Private\Forest_Troll.cpp" />
+    <ClCompile Include="..\Private\MapObject.cpp" />
+    <ClCompile Include="..\Private\Pensive.cpp" />
+    <ClCompile Include="..\Private\PhysXRender.cpp" />
+    <ClCompile Include="..\Private\Turn.cpp" />
+    <ClCompile Include="..\Private\UI_Image.cpp" />
+    <ClCompile Include="..\Private\UI_Inventory.cpp" />
+    <ClCompile Include="..\Private\UI_Dissolve.cpp" />
+    <ClCompile Include="..\Private\UI_Slot.cpp" />
+    <ClCompile Include="..\Private\Wait.cpp" />
+    <ClCompile Include="..\Private\Weapon_Armored_Troll.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\Private\Level_Logo.cpp" />
-    <ClCompile Include="..\Private\Loader.cpp" />
+    <ClCompile Include="..\private\Level_Cliffside.cpp" />
+    <ClCompile Include="..\Private\Main1_Loader.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</IncludeInUnityFile>
+    </ClCompile>
+    <ClCompile Include="..\private\Logo_BackGround.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\private\MainApp.cpp" />
+    <ClCompile Include="..\private\Sky.cpp" />
+    <ClCompile Include="..\private\Terrain.cpp" />
+    <ClCompile Include="..\private\Test_Player.cpp" />
+    <ClCompile Include="..\Private\Weapon_Fig_Wand.cpp" />
+    <ClCompile Include="..\Private\Weapon_Forest_Troll.cpp" />
+    <ClCompile Include="..\Private\Weapon_Golem_Combat.cpp" />
+    <ClCompile Include="..\Private\Weapon_Player_Wand.cpp" />
+    <ClCompile Include="..\private\WiggenweldPotion_Item.cpp" />
+    <ClCompile Include="..\Private\Wingardiumleviosa.cpp" />
+    <ClCompile Include="..\Private\Wingardium_Effect.cpp" />
+    <ClCompile Include="..\Private\Wolf.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="ImGui\backends\imgui_impl_dx11.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ImGui\backends\imgui_impl_win32.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ImGui\ImGuiFileDialog.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_demo.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_draw.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_tables.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_widgets.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico" />
@@ -180,10 +894,33 @@
     <ResourceCompile Include="Client.rc" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_ImpulseSphere.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Projectile_White.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Protego.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowAnimMesh.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMesh.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMeshInstance.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Terrain.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMeshInstance.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCube.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMeshInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTexRotation.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Water.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Shader_Client_Defines.hlsli" />
+    <None Include="ImGui\misc\debuggers\imgui.natstepfilter">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="ImGui\misc\debuggers\imgui.natvis">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Natvis>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

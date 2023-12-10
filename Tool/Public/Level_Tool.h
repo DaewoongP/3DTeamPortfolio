@@ -1,6 +1,10 @@
 #pragma once
 #include "Level.h"
 #include "Tool_Defines.h"
+#include "Sky.h"
+#include "Terrain.h"
+#include "Camera_Free.h"
+#include "DummyParticle.h"
 
 BEGIN(Tool)
 
@@ -17,7 +21,7 @@ public:
 
 private:
 	HRESULT Ready_For_Layer_Tool(const _tchar* pLayerTag);
-
+	HRESULT Ready_For_Layer_Light(const _tchar* pLayerTag);
 public:
 	static CLevel_Tool* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;

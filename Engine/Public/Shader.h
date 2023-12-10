@@ -1,4 +1,11 @@
 #pragma once
+/* =============================================== */
+// 
+//	정 : 박정환
+//	부 :
+//
+/* =============================================== */
+
 #include "Component.h"
 
 BEGIN(Engine)
@@ -27,8 +34,18 @@ public:
 	HRESULT Bind_Matrix(const _char * pConstantName, const _float4x4 * pMatrix);
 	// 쉐이더파일에 바인딩 할 행렬
 	HRESULT Bind_Matrices(const _char * pConstantName, const _float4x4 * pMatrix, _uint iNumMatrices);
+	// 쉐이더파일에 바인딩 할 벡터
+	HRESULT Bind_Vectors(const _char * pConstantName, const _float3 * pVector, _uint iNumVectors);
+	// 쉐이더파일에 바인딩 할 float 배열
+	HRESULT Bind_FloatValues(const _char * pConstantName, const _float * pFloatValue, _uint iNumValues);
+	// 쉐이더파일에 바인딩 할 Int 배열
+	HRESULT Bind_IntValues(const _char * pConstantName, const _int * pIntValue, _uint iNumValues);
 	// 쉐이더파일에 바인딩 할 일반 변수
 	HRESULT Bind_RawValue(const _char * pConstantName, const void* pData, _uint iSize);
+
+	// 셰이더 패스 이름들을 string 벡터에 담아서 반환한다.
+	// 콤보박스에 활용하기 위해 만듬.
+	vector<string> Get_PassList();
 
 private:
 	ID3DX11Effect*				m_pEffect = { nullptr };
