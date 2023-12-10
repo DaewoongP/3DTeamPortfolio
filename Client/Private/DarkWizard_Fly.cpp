@@ -93,12 +93,14 @@ HRESULT CDarkWizard_Fly::Initialize_Level(_uint iCurrentLevelIndex)
 	if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
 		return E_FAIL;
 
+	m_isSpawn = true;
+
 	return S_OK;
 }
 
 void CDarkWizard_Fly::Tick(_float fTimeDelta)
 {
-	Update_Target();
+	/*Update_Target();
 	switch (m_iMy_Number)
 	{
 	case 1:
@@ -124,12 +126,12 @@ void CDarkWizard_Fly::Tick(_float fTimeDelta)
 
 	default:
 		break;
-	}
+	}*/
 
 	__super::Tick(fTimeDelta);
 
-	if (true == m_isSpawn)
-		Move(fTimeDelta);
+	/*if (true == m_isSpawn)
+		Move(fTimeDelta);*/
 
 	m_pHitMatrix = m_HitMatrices[rand() % 3];
 
@@ -255,15 +257,15 @@ HRESULT CDarkWizard_Fly::Make_AI()
 
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_Check_Spell"), pSelector_Check_Spell)))
 			throw TEXT("Failed Assemble_Behavior Selector_Check_Spell");
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Random_Attacks"), pRandom_Attacks)))
-			throw TEXT("Failed Assemble_Behavior Random_Attacks");
+		/*if (FAILED(pSelector->Assemble_Behavior(TEXT("Random_Attacks"), pRandom_Attacks)))
+			throw TEXT("Failed Assemble_Behavior Random_Attacks");*/
 		/*if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Move"), pSequence_Move)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Move");*/
 
 		if (FAILED(Make_Check_Spell(pSelector_Check_Spell)))
 			throw TEXT("Failed Make_Check_Spell");
-		if (FAILED(Make_Attacks(pRandom_Attacks)))
-			throw TEXT("Failed Make_Attacks");
+		/*if (FAILED(Make_Attacks(pRandom_Attacks)))
+			throw TEXT("Failed Make_Attacks");*/
 		/*if (FAILED(Make_Move(pSequence_Move)))
 			throw TEXT("Failed Make_Move");*/
 	}
@@ -690,9 +692,9 @@ HRESULT CDarkWizard_Fly::Make_Check_Spell(_Inout_ CSelector* pSelector)
 		pAction_Descendo->Set_Options(TEXT("Impact_Descendo"), m_pModelCom, true);
 		pAction_Flipendo->Set_Options(TEXT("Impact_Flipendo"), m_pModelCom);
 		pAction_Accio->Set_Options(TEXT("Impact_Arrestomomentum"), m_pModelCom);
-		pTsk_RigidMove_Up->Set_Option(m_pRigidBody, m_pTransform, CRigidMove::DIR_UP, 100.f, 1.f);
-		pTsk_RigidMove_Down->Set_Option(m_pRigidBody, m_pTransform, CRigidMove::DIR_UP, -100.f, 1.f);
-		pTsk_RigidMove_Back->Set_Option(m_pRigidBody, m_pTransform, CRigidMove::DIR_LOOK, -200.f, 1.f);
+		pTsk_RigidMove_Up->Set_Option(m_pRigidBody, m_pTransform, CRigidMove::DIR_UP, 50.f, 1.f);
+		pTsk_RigidMove_Down->Set_Option(m_pRigidBody, m_pTransform, CRigidMove::DIR_UP, -50.f, 1.f);
+		pTsk_RigidMove_Back->Set_Option(m_pRigidBody, m_pTransform, CRigidMove::DIR_LOOK, 50.f, 1.f);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Action_Levitate"), pAction_Levitate)))

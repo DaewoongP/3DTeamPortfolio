@@ -42,7 +42,7 @@ void CPensive_Appearence::OnStateEnter(void* _pArg)
 
 void CPensive_Appearence::OnStateTick()
 {
-	/*if (true == m_StateMachineDesc.pOwnerModel->Is_Finish_Animation())
+	if (true == m_StateMachineDesc.pOwnerModel->Is_Finish_Animation())
 	{
 		if (m_iAppearAnimIndex == 0)
 		{
@@ -54,7 +54,7 @@ void CPensive_Appearence::OnStateTick()
 		}
 		m_iAppearAnimIndex++;
 		
-	}*/
+	}
 }
 
 void CPensive_Appearence::OnStateExit()

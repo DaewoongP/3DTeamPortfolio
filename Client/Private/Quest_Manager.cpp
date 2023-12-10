@@ -87,11 +87,12 @@ _bool CQuest_Manager::Cheat_Init_Quest()
 
 	static_cast<CCard_Fig*>(pPlayer->Find_Component(TEXT("Card_Fig")))->Set_ShowCard(true);
 
-	/*Clear_Quest(TEXT("Quest_Town"));
+	Clear_Quest(TEXT("Quest_Town"));
 	Unlock_Quest(TEXT("Quest_Secret"));
 
+	
 	Clear_Quest(TEXT("Quest_Secret"));
-	Unlock_Quest(TEXT("Quest_Bone"));*/
+	Unlock_Quest(TEXT("Quest_Bone"));
 
 	//Clear_Quest(TEXT("Quest_Bone"));
 

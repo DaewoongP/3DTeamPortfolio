@@ -206,10 +206,11 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_pCustomModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"), CModel::ANOTHERBODY);
 
 	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(29.f, 2.7f, 26.f);
-	//m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
-	m_vLevelInitPosition[LEVEL_VAULT] = _float3(150.f, 0.02f, 90.f);
+	m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
+	//m_vLevelInitPosition[LEVEL_VAULT] = _float3(150.f, 0.02f, 90.f);
 	m_vLevelInitPosition[LEVEL_SMITH] = _float3(32.f, 0.8f, 25.f);
 	m_vLevelInitPosition[LEVEL_SKY] = _float3(55.f, 11.f, 45.f);
+	m_vLevelInitPosition[LEVEL_SANCTUM] = _float3(-3.4f, 0.f, 113.f);
 
 	m_fTargetViewRange = 2.0f;
 

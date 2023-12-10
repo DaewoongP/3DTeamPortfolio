@@ -394,7 +394,14 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 	}
 	else
 	{
-		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE;// | PxShapeFlag::eVISUALIZATION;
+		if (true == pRigidBodyDesc->isRayCast)
+		{
+			ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE;// | PxShapeFlag::eVISUALIZATION;
+		}
+		else
+		{
+			ePxFlag = PxShapeFlag::eSIMULATION_SHAPE;
+		}
 	}
 
 	m_pGeometry = pRigidBodyDesc->pGeometry;

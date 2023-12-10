@@ -81,6 +81,22 @@ void CUI_Font::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
+	BEGININSTANCE;
+
+	if (pGameInstance->Is_Playing_CutScene())
+	{
+		ENDINSTANCE;
+		return;
+	}
+
+	ENDINSTANCE;
+
+	if (true)
+	{
+
+	}
+
+
 	if (nullptr != m_pParent)
 	{
 		_float2 vParentPos = m_pParent->Get_XY();

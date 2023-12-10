@@ -623,6 +623,23 @@ HRESULT CMain2_Loader::Loading_For_Sky(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_DarkWizard_Fly"),
 			CDarkWizard_Fly::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_DarkWizard_Fly");
+
+		/* For.Prototype_GameObject_Weapon_DarkWizard_Wand */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Weapon_DarkWizard_Wand"),
+			CWeapon_DarkWizard_Wand::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Weapon_DarkWizard_Wand");
+
+		/* For.Prototype_Component_Model_DarkWizard_M */
+		PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_DarkWizard_M"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/DarkWizard_M/DarkWizard_M.gcm"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_DarkWizard_M");
+
+		/* For.Prototype_GameObject_DarkWizard_M */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_DarkWizard_M"),
+			CDarkWizard_M::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_DarkWizard_M");
+
 	}
 	catch (const _tchar* pErrorTag)
 	{

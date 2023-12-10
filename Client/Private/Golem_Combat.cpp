@@ -83,6 +83,8 @@ HRESULT CGolem_Combat::Initialize_Level(_uint iCurrentLevelIndex)
 
 	m_pTarget = m_pPlayer;
 
+	m_isSpawn = true;
+
 	return S_OK;
 }
 

@@ -39,6 +39,7 @@ public:
 		_bool				isStatic = { false };
 		_bool				isTrigger = { false };
 		_bool				isGravity = { true };
+		_bool				isRayCast = { true };
 		_float3				vInitPosition = _float3(0.f, 0.f, 0.f);
 		_float4				vInitRotation = _float4(0.f, 0.f, 0.f, 1.f);
 		_float3				vOffsetPosition = _float3(0.f, 0.f, 0.f);

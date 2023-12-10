@@ -538,6 +538,7 @@ HRESULT CProtego::Add_RigidBody()
 	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
 	RigidBodyDesc.isStatic = false;
 	RigidBodyDesc.isTrigger = false;
+	RigidBodyDesc.isRayCast = false;
 	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
 	RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.0f, 0.f);
 	RigidBodyDesc.fStaticFriction = 0.f;

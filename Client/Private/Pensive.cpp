@@ -187,8 +187,6 @@ void CPensive::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 HRESULT CPensive::Render()
 {
-	return S_OK;
-
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 

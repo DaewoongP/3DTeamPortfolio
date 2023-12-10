@@ -50,7 +50,7 @@ HRESULT CRigidMove::Tick_Behavior(const _float& fTimeDelta)
 
 	vForce = vForce - (m_fTimeAcc / (m_fTime / 2.f)) * vForce;
 
-	if (m_fTimeAcc < m_fTime)
+	if (m_fTimeAcc < m_fTime / 2.f)
 	{
 		m_pOwnerRigidBody->Add_Force(vForce);
 		

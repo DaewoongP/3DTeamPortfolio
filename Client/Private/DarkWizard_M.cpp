@@ -96,6 +96,7 @@ HRESULT CDarkWizard_M::Initialize_Level(_uint iCurrentLevelIndex)
 
 void CDarkWizard_M::Tick(_float fTimeDelta)
 {
+	m_isSpawn = true;
 	fAttackCoolTime += fTimeDelta;
 
 	if (false == m_isSpawn)
@@ -109,9 +110,12 @@ void CDarkWizard_M::Tick(_float fTimeDelta)
 
 	m_pHitMatrix = m_HitMatrices[rand() % 3];
 
-	m_pEffect_LandingFlame->Get_Transform()->Set_Position(m_pTransform->Get_Position());
-	m_pEffect_LandingFog->Get_Transform()->Set_Position(m_pTransform->Get_Position());
-	m_pEffect_LandingLight->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+	/*if(nullptr != m_pEffect_LandingFlame)
+		m_pEffect_LandingFlame->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+	if (nullptr != m_pEffect_LandingFog)
+		m_pEffect_LandingFog->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+	if (nullptr != m_pEffect_LandingLight)
+		m_pEffect_LandingLight->Get_Transform()->Set_Position(m_pTransform->Get_Position());*/
 
 	Tick_Spells();
 
