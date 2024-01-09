@@ -142,7 +142,7 @@ HRESULT CCrowd::SetUp_ShaderResources()
 		if (nullptr == m_pShaderCom)
 			throw TEXT("m_pShaderCom is nullptr");
 
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_pTransform->Get_WorldMatrixRef())))
 			throw TEXT("Failed Bind_Matrix : g_WorldMatrix");
 
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
