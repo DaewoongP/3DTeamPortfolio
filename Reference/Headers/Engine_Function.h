@@ -351,7 +351,7 @@ namespace Engine
 		WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), &strTo[0], size_needed, NULL, NULL);
 		return strTo;
 	}
-	/* lowBound 에서 highBound로 변환 */
+	/* lowBound와 highBound 사이의 랜덤 값 반환 함수 */
 	float GetRandomFloat(float lowBound, float highBound)
 	{
 		if (lowBound >= highBound)

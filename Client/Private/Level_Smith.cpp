@@ -343,7 +343,6 @@ HRESULT CLevel_Smith::Load_Dummy_NPC(const _tchar* pLayerTag)
 
 	/* NPC Male */
 	CDummy_NPC::NPCINITDESC InitDesc;
-	InitDesc.WorldMatrix = XMMatrixRotationY(XMConvertToRadians(51.f)) * XMMatrixTranslation(59.9f, 6.9f, 88.95f);
 	InitDesc.wstrAnimationTag = TEXT("Table_Convor_2");
 	InitDesc.MeshPartsTags[0] = TEXT("Prototype_Component_MeshPart_Hat_Arcane");
 	InitDesc.MeshPartsTags[1] = TEXT("Prototype_Component_MeshPart_Hair_M_C");

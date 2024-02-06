@@ -1004,12 +1004,14 @@ HRESULT CGolem_Combat::Make_Attack(_Inout_ CSequence* pSequence)
 		if (nullptr == pSequence)
 			throw TEXT("Parameter pSequence is nullptr");
 
+#pragma region 코드 중략
 		CCheck_Distance* pCheck_Distance = { nullptr };
 		if (FAILED(Create_Behavior(pCheck_Distance)))
 			throw TEXT("Failed Create_Behavior pCheck_Distance");
 		CSelector* pSelector_Attack = { nullptr };
 		if (FAILED(Create_Behavior(pSelector_Attack)))
 			throw TEXT("Failed Create_Behavior pSelector_Attack");
+#pragma endregion
 
 		CRandomChoose* pRandom_Attack = nullptr;
 		if (FAILED(Create_Behavior(pRandom_Attack)))
@@ -1021,6 +1023,8 @@ HRESULT CGolem_Combat::Make_Attack(_Inout_ CSequence* pSequence)
 		CSequence_Attack* pSequence_Attack_Slash = nullptr;
 		if (FAILED(Create_Behavior(pSequence_Attack_Slash)))
 			throw TEXT("Failed Create_Behavior pSequence_Attack_Slash");
+
+#pragma region 코드 중략
 		CSequence_Attack* pSequence_Attack_Shoulder = nullptr;
 		if (FAILED(Create_Behavior(pSequence_Attack_Shoulder)))
 			throw TEXT("Failed Create_Behavior pSequence_Attack_Shoulder");
@@ -1030,8 +1034,19 @@ HRESULT CGolem_Combat::Make_Attack(_Inout_ CSequence* pSequence)
 		CSequence_Attack* pSequence_Attack_Jab = nullptr;
 		if (FAILED(Create_Behavior(pSequence_Attack_Jab)))
 			throw TEXT("Failed Create_Behavior pSequence_Attack_Jab");
+#pragma endregion // 추가 공격 생략
 
 		/* Set Decorations */
+		pRandom_Attack->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsParring = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isParring", pIsParring)))
+					return false;
+
+				return !*pIsParring;
+			});
+
+#pragma region 코드 중략
 		pSelector_Attack->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_float fAttackRange = { 0.f };
@@ -1057,14 +1072,6 @@ HRESULT CGolem_Combat::Make_Attack(_Inout_ CSequence* pSequence)
 
 				return true;
 			});
-		pRandom_Attack->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
-			{
-				_bool* pIsParring = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("isParring", pIsParring)))
-					return false;
-
-				return !*pIsParring;
-			});
 		pRandom_Attack->Add_Change_Condition(CBehavior::BEHAVIOR_SUCCESS, [&](CBlackBoard* pBlackBoard)->_bool
 			{
 				return true;
@@ -1087,17 +1094,21 @@ HRESULT CGolem_Combat::Make_Attack(_Inout_ CSequence* pSequence)
 
 				return true;
 			});
+#pragma endregion // 데코레이터 생략
 
 		/* Set Options */
-		pCheck_Distance->Set_Option(m_pTransform);
 		pSequence_Attack_Slash->Set_Attack_Action_Options(TEXT("Attack_Slash_Sword"), m_pModelCom);
 		pSequence_Attack_Slash->Set_Attack_Option(7.f);
+
+#pragma region 코드 중략
+		pCheck_Distance->Set_Option(m_pTransform);
 		pSequence_Attack_Shoulder->Set_Attack_Action_Options(TEXT("Attack_Shoulder"), m_pModelCom);
 		pSequence_Attack_Shoulder->Set_Attack_Option(4.5f);
 		pSequence_Attack_OverHand->Set_Attack_Action_Options(TEXT("Attack_OverHand_Sword"), m_pModelCom);
 		pSequence_Attack_OverHand->Set_Attack_Option(7.5f);
 		pSequence_Attack_Jab->Set_Attack_Action_Options(TEXT("Attack_Jab"), m_pModelCom);
 		pSequence_Attack_Jab->Set_Attack_Option(4.5f);
+#pragma endregion // 옵션 생략
 
 		pAction_Protego_Deflect->Set_Options(TEXT("Protego_Deflect"), m_pModelCom);
 

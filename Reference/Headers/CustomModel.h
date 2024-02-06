@@ -30,6 +30,7 @@ public:
 		wstring wstrPrototypeTag = { TEXT("") };
 	}PARTSDESC;
 
+#pragma region 코드 중략
 private:
 	explicit CCustomModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CCustomModel(const CCustomModel& rhs);
@@ -45,21 +46,24 @@ public:
 	// 로브 없는 상의로 변경
 	HRESULT								Set_Top_For_NonRobe(const _uint& _iLevelIndex);
 	_bool								is_Equip_Robe() const { return m_isRobeTop; }
-
-public:
-	virtual HRESULT Initialize_Prototype(TYPE eType, const wstring& _wstrModelFilePath, _float4x4 _PivotMatrix);
-	virtual HRESULT Initialize(void* pArg) override;
 	// 동적 메쉬 Tick 호출
 	virtual void Tick(const _uint& _iMeshPartsIndex, const _uint& _iMeshIndex, _float _fTimeDelta);
-	virtual HRESULT Render(const _uint& _iMeshPartsIndex, const _uint& _iMeshIndex);
+#pragma endregion
 
 public:
-	HRESULT	Add_MeshParts(const _uint& _iLevelIndex, const wstring& _wstrPrototypeTag,
-		MESHTYPE _eMeshPartsType, const _float4& _vColor = _float4(1.f, 1.f, 1.f, 1.f), const _tchar* _szClothDataFilePath = nullptr);
-	virtual HRESULT Bind_Material(CShader* _pShader, const char* _pConstantName,
-		const _uint& _iMeshPartsIndex, const _uint& _iMeshIndex, Engine::TextureType _MaterialType);
-	virtual HRESULT Bind_BoneMatrices(CShader* _pShader, const char* _pConstantName, const _uint& _iMeshPartsIndex, const _uint& _iMeshIndex);
-	HRESULT Bind_Color(CShader* _pShader, const char* _pConstantName, const _uint& _iMeshPartsIndex);
+	virtual HRESULT Initialize_Prototype(TYPE eType, const wstring& wstrModelFilePath, _float4x4 PivotMatrix);
+	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Render(const _uint& iMeshPartsIndex, const _uint& iMeshIndex);
+
+public:
+	HRESULT	Add_MeshParts(const _uint& iLevelIndex, const wstring& wstrPrototypeTag,
+		MESHTYPE eMeshPartsType, const _float4& vColor = _float4(1.f, 1.f, 1.f, 1.f), 
+		const _tchar* szClothDataFilePath = nullptr);
+	virtual HRESULT Bind_Material(CShader* pShader, const char* pConstantName,
+		const _uint& iMeshPartsIndex, const _uint& iMeshIndex, Engine::TextureType MaterialType);
+	virtual HRESULT Bind_BoneMatrices(CShader* pShader, const char* pConstantName, 
+		const _uint& iMeshPartsIndex, const _uint& iMeshIndex);
+	HRESULT Bind_Color(CShader* pShader, const char* pConstantName, const _uint& iMeshPartsIndex);
 
 private: /* For.MeshParts */
 	array<PARTSDESC, MESH_END>	m_MeshParts = { nullptr };
@@ -67,8 +71,9 @@ private: /* For.MeshParts */
 	_bool m_isRobeTop = { false }; 
 
 public:
-	static CCustomModel* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, TYPE eType, const wstring& _wstrModelFilePath, _float4x4 _PivotMatrix = XMMatrixIdentity());
-	virtual CComponent* Clone(void* _pArg) override;
+	static CCustomModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, 
+		TYPE eType, const wstring& wstrModelFilePath, _float4x4 PivotMatrix = XMMatrixIdentity());
+	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;
 };
 

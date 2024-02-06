@@ -161,10 +161,10 @@ HRESULT CCustomModel::Bind_Color(CShader* _pShader, const char* _pConstantName, 
 	return S_OK;
 }
 
-HRESULT CCustomModel::Add_MeshParts(const _uint& _iLevelIndex, const wstring& _wstrPrototypeTag, 
-	MESHTYPE _eMeshPartsType, const _float4& _vColor, const _tchar* _szClothDataFilePath)
+HRESULT CCustomModel::Add_MeshParts(const _uint& iLevelIndex, const wstring& wstrPrototypeTag, 
+	MESHTYPE eMeshPartsType, const _float4& vColor, const _tchar* szClothDataFilePath)
 {
-	if (0 > _eMeshPartsType || MESH_END <= _eMeshPartsType)
+	if (0 > eMeshPartsType || MESH_END <= eMeshPartsType)
 	{
 		MSG_BOX("[CCustomModel] Range Of Out Array");
 		return E_FAIL;
@@ -173,12 +173,15 @@ HRESULT CCustomModel::Add_MeshParts(const _uint& _iLevelIndex, const wstring& _w
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
+	// 메쉬 파츠 초기화 데이터 세팅
 	CMeshParts::MESHPARTSDESC MeshPartsDesc;
 	MeshPartsDesc.pBones = &m_Bones;
-	MeshPartsDesc.szClothDataFilePath = _szClothDataFilePath;
-	MeshPartsDesc.vColor = _vColor;
+	MeshPartsDesc.szClothDataFilePath = szClothDataFilePath;
+	MeshPartsDesc.vColor = vColor;
 
-	CMeshParts* pMeshParts = static_cast<CMeshParts*>(pGameInstance->Clone_Component(_iLevelIndex, _wstrPrototypeTag.c_str(), &MeshPartsDesc));
+	// 메쉬 파츠 생성
+	CMeshParts* pMeshParts = static_cast<CMeshParts*>(
+		pGameInstance->Clone_Component(iLevelIndex, wstrPrototypeTag.c_str(), &MeshPartsDesc));
 
 	Safe_Release(pGameInstance);
 
@@ -188,12 +191,14 @@ HRESULT CCustomModel::Add_MeshParts(const _uint& _iLevelIndex, const wstring& _w
 		return E_FAIL;
 	}
 
-	if (nullptr != m_MeshParts[_eMeshPartsType].pMeshParts)
-		Safe_Release(m_MeshParts[_eMeshPartsType].pMeshParts);
+	// 기존에 파츠가 장착되어 있으면, 삭제하고 새로운 파츠로 교체
+	if (nullptr != m_MeshParts[eMeshPartsType].pMeshParts)
+		Safe_Release(m_MeshParts[eMeshPartsType].pMeshParts);
 
-	m_MeshParts[_eMeshPartsType].pMeshParts = pMeshParts;
-	m_MeshParts[_eMeshPartsType].wstrPrototypeTag = _wstrPrototypeTag;
-	pMeshParts->Set_MeshType(_eMeshPartsType);
+	// 커스텀 모델의 메쉬 파츠 갱신
+	m_MeshParts[eMeshPartsType].pMeshParts = pMeshParts;
+	m_MeshParts[eMeshPartsType].wstrPrototypeTag = wstrPrototypeTag;
+	pMeshParts->Set_MeshType(eMeshPartsType);
 	
 	return S_OK;
 }

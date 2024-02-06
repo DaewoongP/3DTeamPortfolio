@@ -29,7 +29,6 @@ public:
 
 		if (iter == m_Types.end())
 			m_Types.emplace(strTypename, Type);
-
 		else
 			iter->second = Type;
 
@@ -44,9 +43,6 @@ public:
 		{
 			string strErrorMSG = strTypename + " is Not in BlackBoard";
 			MessageBoxA(nullptr, strErrorMSG.c_str(), "System Message", MB_OK);
-#ifdef _DEBUG
-			__debugbreak();
-#endif // _DEBUG
 			return E_FAIL;
 		}
 

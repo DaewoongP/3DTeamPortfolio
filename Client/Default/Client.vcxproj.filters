@@ -1021,6 +1021,9 @@
     <Filter Include="02. GameObject\13. FlyGameManager\MarioCount">
       <UniqueIdentifier>{2a575062-c9a7-4842-84d4-0c2ca2ba07c0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="11. ObjTagFinder">
+      <UniqueIdentifier>{748e597b-8a11-4485-8221-4f932a6e1dde}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">

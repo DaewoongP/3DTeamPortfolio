@@ -1,6 +1,6 @@
 #include "Decorator.h"
 
-HRESULT CDecorator::Bind_Decoration(function<_bool(class CBlackBoard*)> Func)
+HRESULT CDecorator::Bind_Decoration(const function<_bool(class CBlackBoard*)>& Func)
 {
 	if (nullptr == Func)
 	{
@@ -24,7 +24,7 @@ _bool CDecorator::Is_Execute(CBlackBoard* pBlackBoard)
 	return m_Function(pBlackBoard);
 }
 
-CDecorator* CDecorator::Create(function<_bool(class CBlackBoard*)> Func)
+CDecorator* CDecorator::Create(const function<_bool(class CBlackBoard*)>& Func)
 {
 	CDecorator* pInstance = New CDecorator();
 

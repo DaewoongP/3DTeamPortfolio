@@ -1,5 +1,5 @@
 #include "..\Public\Main0_Loader.h"
-#include "GameInstance.h"
+#include "Client_GameInstance_Functions.h"
 
 ////////////////////////////////////////////////////////////
 // UI / Texture / Buffer / Debug / Shader / Effect / Magic//
@@ -235,10 +235,7 @@ HRESULT CMain0_Loader::Loading_For_Logo(LEVELID eLevelID)
 
 	try /* Failed Check Add_Prototype*/
 	{
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_Logo"),
-			CUI_Group_Logo::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_Logo");
-
+		Create_Prototype(eLevelID, CUI_Group_Logo::Create(m_pDevice, m_pContext),GAMEOBJECT);
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -259,20 +256,9 @@ HRESULT CMain0_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 		return E_FAIL;
 	try /* Failed Check Add_Prototype*/
 	{
-		/* For.Prototype_GameObject_Water */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Water"),
-			CWater::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Water");
-
-		/* For.Prototype_GameObject_Event_Cliffside */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Cliffside"),
-			CEvent_Cliffside::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Event_Cliffside");
-
-		/* For.Prototype_GameObject_Event_Cliffside_Next_Level */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Event_Cliffside_Next_Level"),
-			CEvent_Cliffside_Next_Level::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Event_Cliffside_Next_Level");
+		Create_Prototype(eLevelID, CWater::Create(m_pDevice, m_pContext), GAMEOBJECT);
+		Create_Prototype(eLevelID, CEvent_Cliffside::Create(m_pDevice, m_pContext), GAMEOBJECT);
+		Create_Prototype(eLevelID, CEvent_Cliffside_Next_Level::Create(m_pDevice, m_pContext), GAMEOBJECT);
 	}
 	catch (const _tchar* pErrorTag)
 	{

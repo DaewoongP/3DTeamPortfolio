@@ -29,9 +29,11 @@ public:
 		_float4					vColor;
 	}MESHPARTSDESC;
 
+#pragma region 코드 중략
+
 private:
-	explicit CMeshParts(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
-	explicit CMeshParts(const CMeshParts& _rhs);
+	explicit CMeshParts(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CMeshParts(const CMeshParts& rhs);
 	virtual ~CMeshParts() = default;
 
 public:
@@ -42,7 +44,7 @@ public:
 		return m_iNumMeshes;
 	}
 	const vector<class CMesh*> Get_Meshes() const { return m_Meshes; }
-	void Get_Matrices(const _uint& _iMeshIndex, CModel::BONES _Bones, 
+	void Get_Matrices(const _uint& _iMeshIndex, CModel::BONES _Bones,
 		_Inout_ _float4x4* _pMatrices, _float4x4 _PivotMatrix);
 	const _float4& Get_Parts_Color() const {
 		return m_vPartsColor;
@@ -55,16 +57,27 @@ public:
 		m_vPartsColor = vColor;
 	}
 
-public:
-	virtual HRESULT Initialize_Prototype(const wstring& _wstrMeshPartsFilePath, const wstring& _wstrMeshPartsTag);
-	virtual HRESULT Initialize(void* pArg);
 	// 동적 메쉬 Tick 호출
 	void Tick(const _uint& _iMeshIndex, _float _fTimeDelta);
-	virtual HRESULT Render(const _uint& _iMeshIndex);
+	// Dynamic Mesh Index
+	vector<_uint>				m_DynamicMeshIndices;
+	HRESULT Ready_DynamicMesh(const CModel::BONES& _Bones, const _tchar* szClothDataFilePath);
+
+private:
+	MODEL						m_Model;
+	vector<NODE>				m_NodeDatas;
+	vector<ANIMATION>			m_AnimationDatas;
+#pragma endregion // getter, setter 생략
 
 public:
-	HRESULT Bind_Material(class CShader* _pShader, const char* _pConstantName, 
-		const _uint& _iMeshIndex, Engine::TextureType _MaterialType);
+	virtual HRESULT Initialize_Prototype(const wstring& wstrMeshPartsFilePath, 
+		const wstring& wstrMeshPartsTag);
+	virtual HRESULT Initialize(void* pArg);
+	virtual HRESULT Render(const _uint& iMeshIndex);
+
+public:
+	HRESULT Bind_Material(class CShader* pShader, const char* pConstantName, 
+		const _uint& iMeshIndex, Engine::TextureType MaterialType);
 
 private:
 	CCustomModel::MESHTYPE		m_eMeshType = { CCustomModel::MESH_END };
@@ -72,27 +85,20 @@ private:
 	_float4						m_vPartsColor;
 
 private: // Files
-	MODEL						m_Model;
-	vector<NODE>				m_NodeDatas;
 	vector<MESH>				m_MeshDatas;
 	vector<MATERIAL>			m_MaterialDatas;
-	vector<ANIMATION>			m_AnimationDatas;
 
 private: /* For.Meshes */
 	_uint						m_iNumMeshes = { 0 };
 	vector<class CMesh*>		m_Meshes;
-
-	// Dynamic Mesh Index
-	vector<_uint>				m_DynamicMeshIndices;
 
 private: /* For.Materials */
 	_uint						m_iNumMaterials = { 0 };
 	vector<MESHMATERIAL>		m_Materials;
 
 private:
-	HRESULT Ready_File(const _tchar* _pMeshPartsFilePath);
-	HRESULT Ready_Mesh(const CModel::BONES& _Bones);
-	HRESULT Ready_DynamicMesh(const CModel::BONES& _Bones, const _tchar* szClothDataFilePath);
+	HRESULT Ready_File(const _tchar* pMeshPartsFilePath);
+	HRESULT Ready_Mesh(const CModel::BONES& Bones);
 	HRESULT Ready_Material();
 
 	void Release_FileDatas();
@@ -101,9 +107,9 @@ private: /* cloth */
 	HANDLE Read_ClothIndexData(const _tchar* szClothDataFilePath, _uint iMeshIndex);
 
 public:
-	static CMeshParts* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, 
-		const wstring& _wstrMeshPartsFilePath, const wstring& _wstrMeshPartsTag);
-	virtual CMeshParts* Clone(void* _pArg) override;
+	static CMeshParts* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, 
+		const wstring& wstrMeshPartsFilePath, const wstring& wstrMeshPartsTag);
+	virtual CMeshParts* Clone(void* pArg) override;
 	virtual void Free() override;
 };
 

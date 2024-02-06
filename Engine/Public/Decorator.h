@@ -20,18 +20,18 @@ protected:
 	virtual ~CDecorator() = default;
 
 public:
-	HRESULT Initialize(function<_bool(class CBlackBoard*)> Func) {
+	HRESULT Initialize(const function<_bool(class CBlackBoard*)>& Func) {
 		m_Function = Func;
 		return S_OK;
 	}
-	HRESULT Bind_Decoration(function<_bool(class CBlackBoard*)> Func);
+	HRESULT Bind_Decoration(const function<_bool(class CBlackBoard*)>& Func);
 	_bool Is_Execute(class CBlackBoard* pBlackBoard);
 
 protected:
 	function<_bool(class CBlackBoard*)> m_Function = { nullptr };
 
 public:
-	static CDecorator* Create(function<_bool(class CBlackBoard*)> Func);
+	static CDecorator* Create(const function<_bool(class CBlackBoard*)>& Func);
 	virtual void Free() override {}
 };
 

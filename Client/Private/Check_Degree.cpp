@@ -50,8 +50,6 @@ HRESULT CCheck_Degree::Tick_Behavior(const _float& fTimeDelta)
 	vDirection.Normalize();
 
 	_float fCrossY = vLook.Cross(vDirection).y;
-	_bool isLeft = { false };
-	isLeft = (0.f > fCrossY);
 
 	_float fDegree = XMConvertToDegrees(acosf(vLook.Dot(vDirection)));
 
@@ -60,6 +58,7 @@ HRESULT CCheck_Degree::Tick_Behavior(const _float& fTimeDelta)
 		fDegree = 0.f;
 	}
 
+	_bool isLeft = (0.f > fCrossY);
 	if (FAILED(m_pBlackBoard->Set_Type("isTargetToLeft", isLeft)))
 	{
 		MSG_BOX("[CCheck_Degree] Failed Set_Type fTargetToLR");

@@ -26,10 +26,6 @@ public:
 
 		_bool	isInteraction = { false };
 		_tchar  wszScriptTag[MAX_PATH] = TEXT("");
-
-#ifdef _DEBUG
-		_bool isCheckPosition = { false };
-#endif // _DEBUG
 	}NPCINITDESC;
 
 private:

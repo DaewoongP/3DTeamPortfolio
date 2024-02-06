@@ -15,7 +15,7 @@ CBehavior::CBehavior(const CBehavior& rhs)
 {
 }
 
-HRESULT CBehavior::Add_Decorator(function<_bool(class CBlackBoard*)> Func)
+HRESULT CBehavior::Add_Decorator(const function<_bool(class CBlackBoard*)>& Func)
 {
 	if (nullptr == Func)
 		return E_FAIL;
@@ -29,7 +29,7 @@ HRESULT CBehavior::Add_Decorator(function<_bool(class CBlackBoard*)> Func)
 	return S_OK;
 }
 
-HRESULT CBehavior::Add_End_Decorator(function<_bool(class CBlackBoard*)> Func)
+HRESULT CBehavior::Add_End_Decorator(const function<_bool(class CBlackBoard*)>& Func)
 {
 	if (nullptr == Func)
 		return E_FAIL;
@@ -43,7 +43,7 @@ HRESULT CBehavior::Add_End_Decorator(function<_bool(class CBlackBoard*)> Func)
 	return S_OK;
 }
 
-HRESULT CBehavior::Add_Success_Decorator(function<_bool(class CBlackBoard*)> Func)
+HRESULT CBehavior::Add_Success_Decorator(const function<_bool(class CBlackBoard*)>& Func)
 {
 	if (nullptr == Func)
 		return E_FAIL;
@@ -57,7 +57,7 @@ HRESULT CBehavior::Add_Success_Decorator(function<_bool(class CBlackBoard*)> Fun
 	return S_OK;
 }
 
-HRESULT CBehavior::Add_Fail_Decorator(function<_bool(class CBlackBoard*)> Func)
+HRESULT CBehavior::Add_Fail_Decorator(const function<_bool(class CBlackBoard*)>& Func)
 {
 	if (nullptr == Func)
 		return E_FAIL;

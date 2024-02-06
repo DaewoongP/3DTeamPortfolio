@@ -64,15 +64,15 @@ HRESULT CMeshParts::Initialize_Prototype(const wstring& _wstrMeshPartsFilePath, 
 	return S_OK;
 }
 
-HRESULT CMeshParts::Initialize(void* _pArg)
+HRESULT CMeshParts::Initialize(void* pArg)
 {
-	if (nullptr == _pArg)
+	if (nullptr == pArg)
 	{
 		MSG_BOX("[CMeshParts] _pArg is nullptr");
 		return E_FAIL;
 	}
 
-	MESHPARTSDESC* pMeshPartsDesc = static_cast<MESHPARTSDESC*>(_pArg);
+	MESHPARTSDESC* pMeshPartsDesc = static_cast<MESHPARTSDESC*>(pArg);
 	if (nullptr == pMeshPartsDesc->pBones)
 	{
 		MSG_BOX("[CMeshParts] pMeshPartsDesc's m_pBones is nullptr");
@@ -388,13 +388,13 @@ HRESULT CMeshParts::Ready_File(const _tchar* _pMeshPartsFilePath)
 	return S_OK;
 }
 
-HRESULT CMeshParts::Ready_Mesh(const CModel::BONES& _Bones)
+HRESULT CMeshParts::Ready_Mesh(const CModel::BONES& Bones)
 {
 	m_iNumMeshes = m_Model.iNumMeshes;
 
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
-		CMesh* pMesh = CMesh::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, _Bones, m_MeshDatas[i], _float4x4());
+		CMesh* pMesh = CMesh::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, Bones, m_MeshDatas[i], _float4x4());
 		if (nullptr == pMesh)
 			return E_FAIL;
 
@@ -559,11 +559,11 @@ CMeshParts* CMeshParts::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pCo
 	return pInstance;
 }
 
-CMeshParts* CMeshParts::Clone(void* _pArg)
+CMeshParts* CMeshParts::Clone(void* pArg)
 {
 	CMeshParts* pInstance = New CMeshParts(*this);
 
-	if (FAILED(pInstance->Initialize(_pArg)))
+	if (FAILED(pInstance->Initialize(pArg)))
 	{
 		MSG_BOX("Failed to Cloned CMeshParts");
 		Safe_Release(pInstance);
